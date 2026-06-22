@@ -1,0 +1,28 @@
+{
+
+  "teacherPin": "teacher2026",
+
+  "pricePerLesson": 299,
+
+  "currency": "ILS",
+
+  "currencySymbol": "₪",
+
+  "lessonDurationMinutes": 50,
+
+  "lessonName": "שיעור אנגלית פרטי",
+
+  "workingDays": [0, 1, 2, 3, 4],
+
+  "workingHours": { "start": 9, "end": 20 },
+
+  "slotIntervalMinutes": 50,
+
+  "bookingHorizonDays": 30,
+
+  "bitPhone": "050-0000000",
+
+  "bitPayName": "English Play"
+
+}
+

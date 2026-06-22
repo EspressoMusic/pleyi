@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0066FF" />
+  <title>English Play — שיעורי אנגלית ביחד</title>
+  <meta name="description" content="שיעורי אנגלית פרטיים — קבעו שיעור, למדו ביחד עם משחקים אינטראקטיביים" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="memphis-body">
+
+  <div class="memphis-bg" aria-hidden="true">
+    <div class="memphis-parallax" data-parallax="0.08">
+      <svg class="memphis-svg memphis-svg-slow" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="120" cy="80" r="40" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
+        <polygon points="520,40 580,120 460,120" fill="#FF9ECF" stroke="#1a0a2e" stroke-width="4"/>
+        <polygon points="650,200 720,280 600,300" fill="#D4FF00" stroke="#1a0a2e" stroke-width="4"/>
+        <path d="M40 420 Q120 360 200 420 T360 420" stroke="#B967FF" stroke-width="10" stroke-linecap="round" fill="none"/>
+        <path d="M600 480 L640 440 L680 500 Z" fill="#00E5CC" stroke="#1a0a2e" stroke-width="4"/>
+      </svg>
+    </div>
+    <div class="memphis-parallax memphis-parallax-right" data-parallax="0.18">
+      <svg class="memphis-svg memphis-svg-mid" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 100 L80 60 L140 100 L80 140 Z" fill="#FF6B35" stroke="#1a0a2e" stroke-width="5"/>
+        <path d="M300 50 L320 120 L250 90 L330 90 L260 120 Z" fill="#FF9ECF" stroke="#1a0a2e" stroke-width="5"/>
+        <circle cx="480" cy="120" r="28" fill="#0066FF" stroke="#1a0a2e" stroke-width="4"/>
+        <circle cx="380" cy="320" r="18" fill="#FFE135" stroke="#1a0a2e" stroke-width="3"/>
+        <circle cx="520" cy="340" r="22" fill="#D4FF00" stroke="#1a0a2e" stroke-width="3"/>
+      </svg>
+    </div>
+    <div class="memphis-parallax memphis-parallax-bottom" data-parallax="0.32">
+      <svg class="memphis-svg memphis-svg-fast" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 200 L100 180 L200 200 L300 170 L400 200 L500 175 L600 200 L700 168 L800 200 L900 200 L900 240 L0 240 Z" fill="#B967FF" stroke="#1a0a2e" stroke-width="5"/>
+        <path d="M30 320 Q150 260 270 320 T510 320 T750 320" stroke="#FF6B35" stroke-width="12" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="memphis-parallax memphis-parallax-spin" data-parallax="0.48">
+      <div class="memphis-dotted-ring"></div>
+    </div>
+    <div class="memphis-sticker memphis-sticker-1" data-parallax="0.58"></div>
+    <div class="memphis-sticker memphis-sticker-2" data-parallax="0.22"></div>
+    <div class="memphis-sticker memphis-sticker-3" data-parallax="0.65"></div>
+  </div>
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <div class="loader" id="loader">
+    <div class="loader-logo font-cartoon">English Play</div>
+    <div class="loader-bar"></div>
+  </div>
+
+  <header class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo" id="logoHome">
+        <span class="logo-badge" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="#1a0a2e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 28 L24 12 L36 28 M24 12 V38"/>
+          </svg>
+        </span>
+        <span class="logo-text font-cartoon">English Play</span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#home" class="nav-pill">בית</a>
+        <a href="#how" class="nav-pill" title="ולמה זה יעזור לילד שלכם">איך זה עובד</a>
+        <a href="#games" class="nav-pill">דוגמא למשחקים</a>
+        <a href="#game-room" class="nav-pill">חדר משחקים</a>
+        <a href="#booking" class="nav-pill">קביעת שיעור</a>
+        <a href="#contact" class="nav-pill">צור קשר</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="nav-cta btn-candy" id="navBookBtn">קביעת שיעור</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-cta" id="mobileBookBtn">קביעת שיעור</button>
+    <a href="#home">בית</a>
+    <a href="#how">איך זה עובד</a>
+    <a href="#games">דוגמא למשחקים</a>
+    <a href="#game-room">חדר משחקים</a>
+    <a href="#booking">קביעת שיעור</a>
+    <a href="#contact">צור קשר</a>
+  </nav>
+
+  <!-- Landing -->
+  <main id="landingView">
+    <section class="hero scroll-section" id="home">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="hero-badge" data-reveal="scale">משחקים × אנגלית × כיף!</p>
+          <h1 class="hero-title font-cartoon">
+            <span class="line accent" data-reveal="scale">לומדים אנגלית</span>
+            <span class="line" data-reveal="up" data-reveal-delay="1">ביחד — בזמן אמת!</span>
+          </h1>
+          <p class="section-lead hero-lead sticker-box" data-reveal="left" data-reveal-delay="2">שיעורי אנגלית אישיים עם משחקים כמו בטלפון — ריצה, ממתקים, חנות ועוד!</p>
+          <div class="hero-cta" data-reveal="up" data-reveal-delay="3">
+            <a href="#booking" class="btn btn-primary btn-hero-book btn-candy font-cartoon" id="heroBookBtn">קביעת שיעור</a>
+            <a href="#game-room" class="btn btn-outline btn-hero-secondary btn-candy">חדר משחקים</a>
+          </div>
+        </div>
+        <div class="hero-sticker" aria-hidden="true" data-reveal="scale" data-reveal-delay="2">
+          <div class="hero-sticker-card">
+            <svg width="72" height="72" viewBox="0 0 72 72" fill="none" stroke="#1a0a2e" stroke-width="5" stroke-linecap="round">
+              <path d="M36 8 L44 28 L64 28 L48 40 L54 60 L36 48 L18 60 L24 40 L8 28 L28 28 Z" fill="#FFE135"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C360,90 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z"/></svg>
+    </div>
+
+    <section id="how" class="scroll-section section-yellow">
+      <div class="container">
+        <h2 class="section-title font-cartoon" data-reveal="up">איך זה עובד — ולמה זה יעזור לילד שלכם</h2>
+        <p class="section-lead" data-reveal="up" data-reveal-delay="1">שיעור אישי אחד על אחד, בקצב של הילד, עם משחקים שגורמים לו לרצות לדבר באנגלית.</p>
+        <div class="steps">
+          <div class="step-card" data-reveal="up" data-reveal-delay="1">
+            <div class="num">1</div>
+            <h3>שיעור אישי מותאם</h3>
+            <p>כל שיעור בנוי לפי הרמה, הקצב והתחומים שחשובים לילד שלכם</p>
+          </div>
+          <div class="step-card" data-reveal="up" data-reveal-delay="2">
+            <div class="num">2</div>
+            <h3>לומדים דרך משחק</h3>
+            <p>במקום שעממות — משחקים אינטראקטיביים שמחזקים אוצר מילים וביטחון</p>
+          </div>
+          <div class="step-card" data-reveal="up" data-reveal-delay="3">
+            <div class="num">3</div>
+            <h3>תוצאות שמרגישים</h3>
+            <p>יותר ביטחון בדיבור, הבנה טובה יותר בכיתה, ויחס חיובי לאנגלית</p>
+          </div>
+        </div>
+        <div class="cards cols-3 benefit-cards">
+          <article class="pitch-card sticker-card sticker-yellow" data-reveal="scale" data-reveal-delay="1">
+            <h3>ביטחון בדיבור</h3>
+            <p>ילדים שמתרגלים ביחד עם מורה — מדברים יותר ופחות מפחדים מטעויות</p>
+          </article>
+          <article class="pitch-card sticker-card sticker-teal" data-reveal="scale" data-reveal-delay="2">
+            <h3>התקדמות אישית</h3>
+            <p>לא נשארים מאחור בכיתה — כל שיעור מתמקד במה שהילד צריך עכשיו</p>
+          </article>
+          <article class="pitch-card sticker-card sticker-purple" data-reveal="scale" data-reveal-delay="3">
+            <h3>חוויה מהנה</h3>
+            <p>כשלימוד הוא משחק, הילד מגיע לשיעור בחיוך — לא בלחץ</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-wave section-wave--flip" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,20 C240,70 480,0 720,30 C960,60 1200,10 1440,35 L1440,80 L0,80 Z"/></svg>
+    </div>
+
+    <section id="games" class="scroll-section section-electric">
+      <div class="container">
+        <h2 class="section-title font-cartoon" data-reveal="up">דוגמא למשחקים</h2>
+        <p class="section-lead" data-reveal="up" data-reveal-delay="1">משחקים רציניים כמו בטלפון — לחצו על כרטיס ושחקו מיד בדף חדש!</p>
+        <div class="cards cols-3 games-showcase">
+          <a href="/play/spot-diff" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-yellow" data-reveal="scale" data-reveal-delay="1">
+            <h3>מצא את ההבדלים</h3>
+            <p>שני לוחות — מי רואה את ההבדל?</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+          <a href="/play/word-runner" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-teal" data-reveal="scale" data-reveal-delay="2">
+            <h3>רץ וקופץ</h3>
+            <p>Temple Run — תפסו מילים נכונות, הימנעו משגויות!</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+          <a href="/play/candy-match" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-pink" data-reveal="scale" data-reveal-delay="3">
+            <h3>ממתקים Match 3</h3>
+            <p>התאימו 3 ממתקים — כמו Candy Crush</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+          <a href="/play/word-shop" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-purple" data-reveal="scale" data-reveal-delay="4">
+            <h3>חנות קטנה</h3>
+            <p>שרתו לקוחות — מי מהיר יותר?</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+          <a href="/play/vocabulary-duel" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-orange" data-reveal="scale" data-reveal-delay="5">
+            <h3>Duel מילים</h3>
+            <p>שאלות אמריקאיות — מה התרגום?</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+          <a href="/play/hangman" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-lime" data-reveal="scale" data-reveal-delay="6">
+            <h3>איש תלוי</h3>
+            <p>נחשו אותיות לפני שנגמר הזמן</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+          <a href="/play/word-memory" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-yellow" data-reveal="scale" data-reveal-delay="7">
+            <h3>זיכרון מילים</h3>
+            <p>התאימו en ↔ עברית</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+          <a href="/play/sentence-scramble" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-teal" data-reveal="scale" data-reveal-delay="8">
+            <h3>בניית משפט</h3>
+            <p>סדרו מילים למשפט שלם</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+          <a href="/play/spelling-bee" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-pink" data-reveal="scale" data-reveal-delay="9">
+            <h3>איות</h3>
+            <p>כתבו באנגלית לפי הרמז</p>
+            <span class="play-now-tag">שחק עכשיו →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-wave section-wave--flip" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,30 C400,80 800,10 1200,40 L1440,35 L1440,80 L0,80 Z"/></svg>
+    </div>
+
+    <section id="game-room" class="scroll-section section-pink">
+      <div class="container">
+        <h2 class="section-title font-cartoon" data-reveal="up">חדר משחקים</h2>
+        <p class="section-lead" data-reveal="up" data-reveal-delay="1">משחקי אוצר מילים רב-משתתפים — המורה פותח חדר, התלמיד מצטרף בקישור או בקוד, ושניכם רואים אחד את השני ומשחקים ביחד.</p>
+        <div class="game-room-actions" data-reveal="scale" data-reveal-delay="2">
+          <button type="button" class="btn btn-primary btn-lg" id="openTeacherRoomBtn">אני המורה — פתח חדר</button>
+          <button type="button" class="btn btn-outline btn-lg" id="openStudentRoomBtn">אני תלמיד — הצטרף לחדר</button>
+        </div>
+        <div class="game-room-info cards cols-3" data-reveal="up" data-reveal-delay="3">
+          <article class="pitch-card sticker-card sticker-yellow">
+            <h3>מצא הבדלים</h3>
+            <p>משחק תצפית — מי מגלה את ההבדל?</p>
+          </article>
+          <article class="pitch-card sticker-card sticker-teal">
+            <h3>רץ וקופץ</h3>
+            <p>ריצה עם מכשולי מילים</p>
+          </article>
+          <article class="pitch-card sticker-card sticker-pink">
+            <h3>ממתקים Match 3</h3>
+            <p>התאמת 3 — כמו Candy Crush</p>
+          </article>
+          <article class="pitch-card sticker-card sticker-purple">
+            <h3>חנות קטנה</h3>
+            <p>שרתו לקוחות מהר!</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,50 C320,10 640,70 960,35 C1200,10 1320,55 1440,45 L1440,80 L0,80 Z"/></svg>
+    </div>
+
+    <section id="booking" class="scroll-section section-white">
+      <div class="container">
+        <h2 class="section-title font-cartoon" data-reveal="up">קביעת שיעור</h2>
+        <p class="section-lead" data-reveal="up" data-reveal-delay="1" id="bookingIntro">בחרו תאריך, שעה, מלאו פרטים ושלמו — התור יופיע אצל המורה מיד.</p>
+
+        <div class="booking-progress" data-reveal="scale">
+          <span class="booking-progress-dot active" data-step="1">1</span>
+          <span class="booking-progress-line"></span>
+          <span class="booking-progress-dot" data-step="2">2</span>
+          <span class="booking-progress-line"></span>
+          <span class="booking-progress-dot" data-step="3">3</span>
+          <span class="booking-progress-line"></span>
+          <span class="booking-progress-dot" data-step="4">4</span>
+        </div>
+
+        <!-- Step 1: Calendar -->
+        <div class="booking-step" id="bookingStep1">
+          <div class="booking-layout">
+            <div class="calendar-box">
+              <div class="cal-nav">
+                <button type="button" class="cal-nav-btn" id="calPrev">→</button>
+                <h3 id="calMonthLabel"></h3>
+                <button type="button" class="cal-nav-btn" id="calNext">←</button>
+              </div>
+              <div class="cal-grid" id="calGrid"></div>
+            </div>
+            <div class="slots-box">
+              <h3>שעות פנויות</h3>
+              <p class="booking-price" id="bookingPriceLabel"></p>
+              <div class="slot-list" id="slotList"><p class="slot-hint">בחרו תאריך ביומן</p></div>
+              <button type="button" class="btn btn-primary btn-full" id="bookingNext1" disabled>המשך לפרטים</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Details -->
+        <div class="booking-step hidden" id="bookingStep2">
+          <form class="booking-form" id="bookingDetailsForm">
+            <label><span>שם מלא</span><input name="studentName" required placeholder="שם התלמיד/ה" /></label>
+            <label><span>טלפון</span><input name="studentPhone" type="tel" required placeholder="050-0000000" dir="ltr" /></label>
+            <label class="hidden"><span>אימייל</span><input name="studentEmail" type="email" placeholder="you@email.com" dir="ltr" /></label>
+            <p class="form-error hidden" id="bookingFormError"></p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-outline" id="bookingBack2">חזרה</button>
+              <button type="submit" class="btn btn-primary">המשך לתשלום</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Step 3: Payment -->
+        <div class="booking-step hidden" id="bookingStep3">
+          <div class="payment-box">
+            <div class="pay-summary" id="paySummary"></div>
+            <div class="pay-method-tabs">
+              <button type="button" class="pay-tab active" data-pay="bit">ביט</button>
+              <button type="button" class="pay-tab" data-pay="card">כרטיס (הדגמה)</button>
+            </div>
+            <div class="pay-panel" id="payPanelBit">
+              <div class="bit-pay-box">
+                <p class="bit-pay-amount" id="bitPayAmount"></p>
+                <p class="bit-pay-phone">לטלפון: <strong dir="ltr" id="bitPayPhone"></strong></p>
+                <p class="bit-pay-name" id="bitPayName"></p>
+                <p class="bit-pay-note">פתחו את אפליקציית ביט, שלחו את הסכום לטלפון למעלה, ואז לחצו "אישרתי ששילמתי".</p>
+                <a href="https://bit.app.link/" target="_blank" rel="noopener" class="btn btn-outline btn-full" id="bitOpenApp">פתח את אפליקציית ביט</a>
+              </div>
+              <button type="button" class="btn btn-primary btn-full" id="bitConfirmBtn">אישרתי ששילמתי בביט</button>
+            </div>
+            <div class="pay-panel hidden" id="payPanelCard">
+              <p class="demo-pay-note">מצב הדגמה — לבדיקה בלבד, ללא חיוב אמיתי.</p>
+              <form id="paymentForm" class="booking-form">
+                <label><span>שם על הכרטיס</span><input id="cardName" placeholder="Full Name" dir="ltr" /></label>
+                <label><span>מספר כרטיס</span><input id="cardNumber" placeholder="4111 1111 1111 1111" dir="ltr" maxlength="19" /></label>
+                <div class="pay-row">
+                  <label><span>תוקף</span><input id="cardExpiry" placeholder="MM/YY" dir="ltr" maxlength="5" /></label>
+                  <label><span>CVV</span><input id="cardCvv" placeholder="123" dir="ltr" maxlength="4" /></label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" id="paySubmitBtn">שלם ואשר תור</button>
+              </form>
+            </div>
+            <p class="form-error hidden" id="payFormError"></p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-outline" id="bookingBack3">חזרה</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Confirm -->
+        <div class="booking-step hidden" id="bookingStep4">
+          <div class="booking-confirm" id="bookingConfirm"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-wave section-wave--flip" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,25 C400,75 800,5 1200,40 L1440,30 L1440,80 L0,80 Z"/></svg>
+    </div>
+
+    <section id="contact" class="scroll-section section-pink">
+      <div class="container">
+        <h2 class="section-title font-cartoon" data-reveal="up">צור קשר</h2>
+        <p class="section-lead" data-reveal="up" data-reveal-delay="1">יש שאלה לפני שמקבעים שיעור? אשמח לעזור.</p>
+        <div class="contact-layout">
+          <form class="contact-form" id="contactForm" data-reveal="right">
+            <label><span>שם</span><input name="name" required placeholder="השם שלכם" /></label>
+            <label><span>אימייל</span><input name="email" type="email" required placeholder="you@email.com" dir="ltr" /></label>
+            <label><span>הודעה</span><textarea name="message" rows="4" required placeholder="ספרו לי על הילד/ה, גיל, רמה..."></textarea></label>
+            <button type="submit" class="btn btn-primary btn-full">שליחה</button>
+          </form>
+          <div class="contact-info" data-reveal="left">
+            <div class="contact-info-card">
+              <h3>אימייל</h3>
+              <a href="mailto:shilohdhd1@gmail.com" dir="ltr">shilohdhd1@gmail.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer section-yellow">
+      <div class="container footer-inner">
+        <p class="footer-tagline font-cartoon">לומדים בכיף — ביחד!</p>
+        <p class="footer-copy">© English Play — שיעורי אנגלית פרטיים</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Lobby / Room -->
+  <div id="roomView" class="room-view hidden">
+    <div class="container room-container">
+      <div class="room-header">
+        <div>
+          <h2 class="room-title font-cartoon">חדר משחקים</h2>
+          <p class="room-code-label">קוד חדר: <strong id="roomCodeDisplay">------</strong>
+            <button class="btn-copy" id="copyCodeBtn" title="העתק">העתק קוד</button>
+          </p>
+          <p class="room-join-link">קישור לתלמיד: <a href="#" id="roomJoinLink" dir="ltr"></a>
+            <button class="btn-copy" id="copyJoinLinkBtn" title="העתק">העתק קישור</button>
+          </p>
+        </div>
+        <div class="room-scores">
+          <span class="score-pill teacher" id="scoreTeacher">מורה: 0</span>
+          <span class="score-pill student" id="scoreStudent">תלמיד: 0</span>
+        </div>
+      </div>
+
+      <div class="players-bar">
+        <div class="player-slot" id="teacherSlot">
+          <span class="player-name" id="teacherNameDisplay">ממתין למורה...</span>
+          <span class="player-status" id="teacherStatus">●</span>
+        </div>
+        <div class="vs">VS</div>
+        <div class="player-slot" id="studentSlot">
+          <span class="player-name" id="studentNameDisplay">ממתין לתלמיד...</span>
+          <span class="player-status waiting" id="studentStatus">○</span>
+        </div>
+      </div>
+
+      <div class="room-tabs hidden" id="roomTabs">
+        <button type="button" class="room-tab active" id="roomGamesTab">משחקים</button>
+        <button type="button" class="room-tab" id="roomCalendarTab">
+          יומן תורים
+          <span class="tab-badge hidden" id="calendarBadge">0</span>
+        </button>
+      </div>
+
+      <div id="roomCalendarPanel" class="room-calendar-panel hidden">
+        <h3 class="lobby-heading">תורים שנקבעו</h3>
+        <p class="lobby-hint">תורים ששולמו וממתינים לתשלום — מתעדכן בזמן אמת</p>
+        <div class="dash-filters">
+          <button type="button" class="dash-filter-btn active" data-filter="upcoming">קרובים</button>
+          <button type="button" class="dash-filter-btn" data-filter="paid">שולמו</button>
+          <button type="button" class="dash-filter-btn" data-filter="all">הכל</button>
+        </div>
+        <div class="bookings-list" id="roomBookingsList"></div>
+      </div>
+
+      <div id="lobbyPanel">
+        <h3 class="lobby-heading">בחרו משחק</h3>
+        <p class="lobby-hint" id="lobbyHint">המורה בוחר משחק כששניכם מחוברים</p>
+        <div class="game-picker" id="gamePicker">
+          <button class="game-btn" data-game="spot-diff">מצא הבדלים</button>
+          <button class="game-btn" data-game="word-runner">רץ וקופץ</button>
+          <button class="game-btn" data-game="candy-match">ממתקים</button>
+          <button class="game-btn" data-game="word-shop">חנות</button>
+          <button class="game-btn" data-game="vocabulary-duel">Duel מילים</button>
+          <button class="game-btn" data-game="word-memory">זיכרון</button>
+          <button class="game-btn" data-game="hangman">איש תלוי</button>
+          <button class="game-btn" data-game="sentence-scramble">משפטים</button>
+          <button class="game-btn" data-game="spelling-bee">איות</button>
+        </div>
+      </div>
+
+      <div id="gamePanel" class="game-panel hidden">
+        <div class="game-panel-header">
+          <h3 id="activeGameTitle">משחק</h3>
+          <button class="btn btn-outline btn-sm" id="leaveGameBtn">← חזרה ללובי</button>
+        </div>
+        <div id="gameContent"></div>
+      </div>
+
+      <button class="btn btn-outline leave-room-btn" id="leaveRoomBtn">עזוב חדר</button>
+    </div>
+  </div>
+
+  <!-- Teacher full dashboard -->
+  <div id="teacherDashView" class="teacher-dash-view hidden">
+    <div class="container">
+      <div class="dash-header">
+        <h2>יומן המורה</h2>
+        <div class="dash-header-actions">
+          <button type="button" class="btn btn-primary btn-sm" id="dashStartLessonBtn">פתח חדר שיעור</button>
+          <button type="button" class="btn btn-outline btn-sm" id="dashBackHome">← חזרה לאתר</button>
+        </div>
+      </div>
+      <div class="dash-filters">
+        <button type="button" class="dash-filter-btn active" data-filter="upcoming">קרובים</button>
+        <button type="button" class="dash-filter-btn" data-filter="paid">שולמו</button>
+        <button type="button" class="dash-filter-btn" data-filter="all">הכל</button>
+      </div>
+      <div class="bookings-list" id="teacherBookingsList"></div>
+    </div>
+  </div>
+
+  <!-- Teacher PIN Modal -->
+  <div class="modal-overlay hidden" id="teacherPinModal">
+    <div class="modal">
+      <button class="modal-close" id="teacherPinClose">×</button>
+      <h2>יומן מורה</h2>
+      <p class="modal-desc">הזינו את קוד המורה שלכם לצפייה בתורים</p>
+      <form id="teacherPinForm">
+        <label>
+          <span>קוד מורה</span>
+          <input type="password" id="teacherPinInput" placeholder="••••••••" required autocomplete="current-password" />
+        </label>
+        <p class="form-error hidden" id="teacherPinError"></p>
+        <button type="submit" class="btn btn-primary btn-full">כניסה ליומן</button>
+      </form>
+      <p class="pin-hint">ברירת מחדל לבדיקה: <code dir="ltr">teacher2026</code></p>
+    </div>
+  </div>
+
+  <!-- Game preview modal -->
+  <div class="modal-overlay hidden" id="gamePreviewModal">
+    <div class="modal modal-lg">
+      <button class="modal-close" id="gamePreviewClose" type="button">×</button>
+      <h2 id="gamePreviewTitle">תצוגה מקדימה</h2>
+      <p class="modal-desc" id="gamePreviewDesc"></p>
+      <div class="game-preview-frame" id="gamePreviewContent"></div>
+      <p class="game-preview-note">כך נראה המשחק בשיעור חי — שניכם משחקים ביחד בזמן אמת</p>
+    </div>
+  </div>
+
+  <!-- Join Modal -->
+  <div class="modal-overlay hidden" id="joinModal">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">×</button>
+      <h2 id="modalTitle">הצטרפות לחדר</h2>
+      <p class="modal-desc" id="modalDesc">הזינו את שמכם ופרטי החיבור</p>
+      <form id="joinForm">
+        <label>
+          <span>השם שלך</span>
+          <input type="text" id="playerName" placeholder="למשל: דנה" required maxlength="24" />
+        </label>
+        <label id="codeField" class="hidden">
+          <span>קוד חדר (6 ספרות)</span>
+          <input type="text" id="roomCodeInput" placeholder="123456" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" />
+        </label>
+        <p class="form-error hidden" id="formError"></p>
+        <button type="submit" class="btn btn-primary btn-full" id="formSubmit">המשך</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/games.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/teacher-dashboard.js"></script>
+  <script src="js/scroll-animations.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
