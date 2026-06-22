@@ -274,6 +274,46 @@ $("#contactForm")?.addEventListener("submit", (e) => {
   e.target.reset();
 });
 
+function formatWhatsAppPhone(phone) {
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("972")) return digits;
+  if (digits.startsWith("0")) return `972${digits.slice(1)}`;
+  return digits;
+}
+
+function initContactExtras() {
+  const siteUrl = `${window.location.origin}${window.location.pathname.replace(/\/$/, "") || ""}`;
+  const qrImg = document.getElementById("siteQrCode");
+  const qrUrlEl = document.getElementById("siteQrUrl");
+  if (qrImg) {
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(siteUrl)}`;
+  }
+  if (qrUrlEl) qrUrlEl.textContent = siteUrl;
+
+  document.getElementById("copySiteUrlBtn")?.addEventListener("click", () => {
+    navigator.clipboard?.writeText(siteUrl).then(() => showToast("הקישור הועתק!"));
+  });
+
+  fetch("/api/booking/settings")
+    .then((r) => r.json())
+    .then((data) => {
+      if (!data?.ok) return;
+      const phone = data.whatsappPhone || data.bitPhone || "";
+      const waNum = formatWhatsAppPhone(phone);
+      const btn = document.getElementById("whatsappBtn");
+      const display = document.getElementById("whatsappPhoneDisplay");
+      if (display) display.textContent = phone;
+      if (btn && waNum) {
+        const text = encodeURIComponent("שלום! אשמח לשמוע על שיעור אנגלית 🙂");
+        btn.href = `https://wa.me/${waNum}?text=${text}`;
+      }
+    })
+    .catch(() => {});
+}
+
+initContactExtras();
+
 $$(".game-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const gameId = btn.dataset.game;

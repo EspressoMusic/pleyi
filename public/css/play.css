@@ -5,6 +5,7 @@
   background: var(--electric);
   display: flex;
   flex-direction: column;
+  color: var(--ink);
 }
 
 .play-header {
@@ -126,6 +127,11 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow-sticker);
   font-weight: 800;
+  color: var(--ink);
+}
+
+.solo-hud span {
+  color: var(--ink);
 }
 
 .solo-hud strong { color: var(--mempurple); }
@@ -190,6 +196,7 @@
   margin: 0 0 10px;
   font-weight: 900;
   text-align: center;
+  color: var(--ink);
 }
 
 .spot-solo-grid {

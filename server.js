@@ -42,6 +42,7 @@ app.get("/api/booking/settings", (_req, res) => {
     lessonDurationMinutes: s.lessonDurationMinutes,
     lessonName: s.lessonName,
     bitPhone: s.bitPhone,
+    whatsappPhone: s.whatsappPhone || s.bitPhone,
     bitPayName: s.bitPayName,
     paymentMode: process.env.STRIPE_SECRET_KEY ? "stripe" : "bit",
   });

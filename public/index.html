@@ -18,32 +18,22 @@
       <svg class="memphis-svg memphis-svg-slow" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="120" cy="80" r="40" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
         <polygon points="520,40 580,120 460,120" fill="#FF9ECF" stroke="#1a0a2e" stroke-width="4"/>
-        <polygon points="650,200 720,280 600,300" fill="#D4FF00" stroke="#1a0a2e" stroke-width="4"/>
         <path d="M40 420 Q120 360 200 420 T360 420" stroke="#B967FF" stroke-width="10" stroke-linecap="round" fill="none"/>
-        <path d="M600 480 L640 440 L680 500 Z" fill="#00E5CC" stroke="#1a0a2e" stroke-width="4"/>
       </svg>
     </div>
     <div class="memphis-parallax memphis-parallax-right" data-parallax="0.18">
       <svg class="memphis-svg memphis-svg-mid" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 100 L80 60 L140 100 L80 140 Z" fill="#FF6B35" stroke="#1a0a2e" stroke-width="5"/>
         <path d="M300 50 L320 120 L250 90 L330 90 L260 120 Z" fill="#FF9ECF" stroke="#1a0a2e" stroke-width="5"/>
-        <circle cx="480" cy="120" r="28" fill="#0066FF" stroke="#1a0a2e" stroke-width="4"/>
-        <circle cx="380" cy="320" r="18" fill="#FFE135" stroke="#1a0a2e" stroke-width="3"/>
-        <circle cx="520" cy="340" r="22" fill="#D4FF00" stroke="#1a0a2e" stroke-width="3"/>
+        <circle cx="480" cy="120" r="28" fill="#D4FF00" stroke="#1a0a2e" stroke-width="4"/>
       </svg>
     </div>
     <div class="memphis-parallax memphis-parallax-bottom" data-parallax="0.32">
       <svg class="memphis-svg memphis-svg-fast" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 200 L100 180 L200 200 L300 170 L400 200 L500 175 L600 200 L700 168 L800 200 L900 200 L900 240 L0 240 Z" fill="#B967FF" stroke="#1a0a2e" stroke-width="5"/>
         <path d="M30 320 Q150 260 270 320 T510 320 T750 320" stroke="#FF6B35" stroke-width="12" stroke-linecap="round" fill="none"/>
       </svg>
     </div>
-    <div class="memphis-parallax memphis-parallax-spin" data-parallax="0.48">
-      <div class="memphis-dotted-ring"></div>
-    </div>
     <div class="memphis-sticker memphis-sticker-1" data-parallax="0.58"></div>
     <div class="memphis-sticker memphis-sticker-2" data-parallax="0.22"></div>
-    <div class="memphis-sticker memphis-sticker-3" data-parallax="0.65"></div>
   </div>
 
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -67,7 +57,6 @@
         <a href="#home" class="nav-pill">בית</a>
         <a href="#how" class="nav-pill" title="ולמה זה יעזור לילד שלכם">איך זה עובד</a>
         <a href="#games" class="nav-pill">דוגמא למשחקים</a>
-        <a href="#game-room" class="nav-pill">חדר משחקים</a>
         <a href="#booking" class="nav-pill">קביעת שיעור</a>
         <a href="#contact" class="nav-pill">צור קשר</a>
       </nav>
@@ -83,7 +72,6 @@
     <a href="#home">בית</a>
     <a href="#how">איך זה עובד</a>
     <a href="#games">דוגמא למשחקים</a>
-    <a href="#game-room">חדר משחקים</a>
     <a href="#booking">קביעת שיעור</a>
     <a href="#contact">צור קשר</a>
   </nav>
@@ -91,6 +79,17 @@
   <!-- Landing -->
   <main id="landingView">
     <section class="hero scroll-section" id="home">
+      <div class="hero-shapes" aria-hidden="true">
+        <div class="hero-shape-layer hero-shape-layer--back" data-parallax="0.05">
+          <svg class="hero-shape-svg hero-shape-svg--slow" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="70" cy="90" r="44" fill="#FFE135" stroke="#1a0a2e" stroke-width="5"/>
+            <polygon points="1140,50 1210,130 1070,130" fill="#D4FF00" stroke="#1a0a2e" stroke-width="5"/>
+            <path d="M30 820 Q160 740 300 820 T520 800" stroke="#B967FF" stroke-width="12" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="hero-shape-sticker hero-shape-sticker--1" data-parallax="0.08"></div>
+        <div class="hero-shape-sticker hero-shape-sticker--2" data-parallax="0.12"></div>
+      </div>
       <div class="container hero-grid">
         <div class="hero-copy">
           <p class="hero-badge" data-reveal="scale">משחקים × אנגלית × כיף!</p>
@@ -101,7 +100,7 @@
           <p class="section-lead hero-lead sticker-box" data-reveal="left" data-reveal-delay="2">שיעורי אנגלית אישיים עם משחקים כמו בטלפון — ריצה, ממתקים, חנות ועוד!</p>
           <div class="hero-cta" data-reveal="up" data-reveal-delay="3">
             <a href="#booking" class="btn btn-primary btn-hero-book btn-candy font-cartoon" id="heroBookBtn">קביעת שיעור</a>
-            <a href="#game-room" class="btn btn-outline btn-hero-secondary btn-candy">חדר משחקים</a>
+            <a href="#games" class="btn btn-outline btn-hero-secondary btn-candy">למשחקים</a>
           </div>
         </div>
         <div class="hero-sticker" aria-hidden="true" data-reveal="scale" data-reveal-delay="2">
@@ -140,7 +139,7 @@
           </div>
         </div>
         <div class="cards cols-3 benefit-cards">
-          <article class="pitch-card sticker-card sticker-yellow" data-reveal="scale" data-reveal-delay="1">
+          <article class="pitch-card sticker-card sticker-pink" data-reveal="scale" data-reveal-delay="1">
             <h3>ביטחון בדיבור</h3>
             <p>ילדים שמתרגלים ביחד עם מורה — מדברים יותר ופחות מפחדים מטעויות</p>
           </article>
@@ -163,7 +162,7 @@
     <section id="games" class="scroll-section section-electric">
       <div class="container">
         <h2 class="section-title font-cartoon" data-reveal="up">דוגמא למשחקים</h2>
-        <p class="section-lead" data-reveal="up" data-reveal-delay="1">משחקים רציניים כמו בטלפון — לחצו על כרטיס ושחקו מיד בדף חדש!</p>
+        <p class="section-lead" data-reveal="up" data-reveal-delay="1">משחקים כיפיים כמו בטלפון — לחצו על כרטיס ושחקו מיד בדף חדש!</p>
         <div class="cards cols-3 games-showcase">
           <a href="/play/spot-diff" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-yellow" data-reveal="scale" data-reveal-delay="1">
             <h3>מצא את ההבדלים</h3>
@@ -180,75 +179,12 @@
             <p>התאימו 3 ממתקים — כמו Candy Crush</p>
             <span class="play-now-tag">שחק עכשיו →</span>
           </a>
-          <a href="/play/word-shop" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-purple" data-reveal="scale" data-reveal-delay="4">
-            <h3>חנות קטנה</h3>
-            <p>שרתו לקוחות — מי מהיר יותר?</p>
-            <span class="play-now-tag">שחק עכשיו →</span>
-          </a>
-          <a href="/play/vocabulary-duel" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-orange" data-reveal="scale" data-reveal-delay="5">
-            <h3>Duel מילים</h3>
-            <p>שאלות אמריקאיות — מה התרגום?</p>
-            <span class="play-now-tag">שחק עכשיו →</span>
-          </a>
-          <a href="/play/hangman" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-lime" data-reveal="scale" data-reveal-delay="6">
-            <h3>איש תלוי</h3>
-            <p>נחשו אותיות לפני שנגמר הזמן</p>
-            <span class="play-now-tag">שחק עכשיו →</span>
-          </a>
-          <a href="/play/word-memory" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-yellow" data-reveal="scale" data-reveal-delay="7">
-            <h3>זיכרון מילים</h3>
-            <p>התאימו en ↔ עברית</p>
-            <span class="play-now-tag">שחק עכשיו →</span>
-          </a>
-          <a href="/play/sentence-scramble" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-teal" data-reveal="scale" data-reveal-delay="8">
-            <h3>בניית משפט</h3>
-            <p>סדרו מילים למשפט שלם</p>
-            <span class="play-now-tag">שחק עכשיו →</span>
-          </a>
-          <a href="/play/spelling-bee" target="_blank" rel="noopener" class="pitch-card pitch-card--clickable sticker-card sticker-pink" data-reveal="scale" data-reveal-delay="9">
-            <h3>איות</h3>
-            <p>כתבו באנגלית לפי הרמז</p>
-            <span class="play-now-tag">שחק עכשיו →</span>
-          </a>
         </div>
       </div>
     </section>
 
     <div class="section-wave section-wave--flip" aria-hidden="true">
       <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,30 C400,80 800,10 1200,40 L1440,35 L1440,80 L0,80 Z"/></svg>
-    </div>
-
-    <section id="game-room" class="scroll-section section-pink">
-      <div class="container">
-        <h2 class="section-title font-cartoon" data-reveal="up">חדר משחקים</h2>
-        <p class="section-lead" data-reveal="up" data-reveal-delay="1">משחקי אוצר מילים רב-משתתפים — המורה פותח חדר, התלמיד מצטרף בקישור או בקוד, ושניכם רואים אחד את השני ומשחקים ביחד.</p>
-        <div class="game-room-actions" data-reveal="scale" data-reveal-delay="2">
-          <button type="button" class="btn btn-primary btn-lg" id="openTeacherRoomBtn">אני המורה — פתח חדר</button>
-          <button type="button" class="btn btn-outline btn-lg" id="openStudentRoomBtn">אני תלמיד — הצטרף לחדר</button>
-        </div>
-        <div class="game-room-info cards cols-3" data-reveal="up" data-reveal-delay="3">
-          <article class="pitch-card sticker-card sticker-yellow">
-            <h3>מצא הבדלים</h3>
-            <p>משחק תצפית — מי מגלה את ההבדל?</p>
-          </article>
-          <article class="pitch-card sticker-card sticker-teal">
-            <h3>רץ וקופץ</h3>
-            <p>ריצה עם מכשולי מילים</p>
-          </article>
-          <article class="pitch-card sticker-card sticker-pink">
-            <h3>ממתקים Match 3</h3>
-            <p>התאמת 3 — כמו Candy Crush</p>
-          </article>
-          <article class="pitch-card sticker-card sticker-purple">
-            <h3>חנות קטנה</h3>
-            <p>שרתו לקוחות מהר!</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <div class="section-wave" aria-hidden="true">
-      <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,50 C320,10 640,70 960,35 C1200,10 1320,55 1440,45 L1440,80 L0,80 Z"/></svg>
     </div>
 
     <section id="booking" class="scroll-section section-white">
@@ -360,11 +296,30 @@
             <button type="submit" class="btn btn-primary btn-full">שליחה</button>
           </form>
           <div class="contact-info" data-reveal="left">
-            <div class="contact-info-card">
+            <div class="contact-info-card contact-info-card--email">
               <h3>אימייל</h3>
               <a href="mailto:shilohdhd1@gmail.com" dir="ltr">shilohdhd1@gmail.com</a>
             </div>
+            <a href="#" id="whatsappBtn" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
+              <span class="whatsapp-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="72" height="72" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+              </span>
+              <span class="whatsapp-label">פנו בוואטסאפ</span>
+              <span class="whatsapp-phone" id="whatsappPhoneDisplay" dir="ltr"></span>
+            </a>
           </div>
+        </div>
+
+        <div class="site-qr" data-reveal="up" data-reveal-delay="2">
+          <h3 class="site-qr-title font-cartoon">QR לאתר</h3>
+          <p class="site-qr-lead">סרקו כדי להגיע ישר לאתר — להדפסה, כרטיס ביקור או שיתוף</p>
+          <div class="site-qr-box">
+            <img id="siteQrCode" width="240" height="240" alt="QR code לאתר English Play" />
+          </div>
+          <p class="site-qr-url" id="siteQrUrl" dir="ltr"></p>
+          <button type="button" class="btn btn-outline btn-sm site-qr-copy" id="copySiteUrlBtn">העתק קישור</button>
         </div>
       </div>
     </section>
