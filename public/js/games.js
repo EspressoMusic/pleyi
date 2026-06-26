@@ -68,9 +68,10 @@ const Games = {
 
   renderVocabularyDuel(state, ctx) {
     const { question, round, maxRounds, phase, answers, roundWinner } = state;
-    const myAnswer = answers?.[ctx.role];
-    const otherAnswer = answers?.[ctx.role === "teacher" ? "student" : "teacher"];
+    const pk = ctx.playerKey || ctx.role;
+    const myAnswer = answers?.[pk];
     const showResults = phase === "round-end" || phase === "finished";
+    const answeredCount = answers ? Object.keys(answers).length : 0;
 
     let optionsHtml = question.options
       .map(
@@ -87,23 +88,30 @@ const Games = {
       .join("");
 
     let statusHtml = "";
-    if (myAnswer && !otherAnswer && phase === "playing") {
-      statusHtml = `<div class="game-status waiting">ממתינים ל${ctx.role === "teacher" ? roleLabel("student", ctx.room) : roleLabel("teacher", ctx.room)}...</div>`;
+    if (myAnswer && phase === "playing") {
+      statusHtml = `<div class="game-status waiting">ענית! ממתינים לשאר השחקנים...</div>`;
+    }
+    if (ctx.role === "teacher" && phase === "playing") {
+      statusHtml += `<div class="game-status">ענו: ${answeredCount} שחקנים</div>`;
     }
     if (showResults) {
-      statusHtml += `<div class="round-result"><h4>${winnerText(roundWinner, ctx.room)}</h4><p>המילה: <strong dir="ltr">${question.word}</strong> = ${question.correct}</p></div>`;
+      const myOk = myAnswer === question.correct;
+      statusHtml += `<div class="round-result"><h4>${myOk ? "נכון! ✓" : "לא נכון"}</h4><p>המילה: <strong dir="ltr">${question.word}</strong> = ${question.correct}</p></div>`;
     }
     if (phase === "finished") {
-      statusHtml += `<div class="game-status win">המשחק הסתיים! ניקוד סופי — מורה: ${ctx.scores.teacher} | תלמיד: ${ctx.scores.student}</div>`;
+      const sc = ctx.scores || {};
+      statusHtml += `<div class="game-status win">סיום! ניקוד מורה: ${sc.teacher ?? 0}</div>`;
     }
 
     const nextBtn =
       ctx.role === "teacher" && showResults && phase !== "finished"
         ? `<div class="game-actions"><button class="btn btn-primary" id="nextRoundBtn">סיבוב הבא →</button></div>`
-        : "";
+        : ctx.role === "teacher" && phase === "playing"
+          ? `<div class="game-actions"><button class="btn btn-primary" id="nextRoundBtn">סיבוב הבא →</button></div>`
+          : "";
 
     return `
-      <div class="game-round-info">סיבוב ${round} מתוך ${maxRounds} — מי שעונה נכון ראשון מנצח!</div>
+      <div class="game-round-info">סיבוב ${round} מתוך ${maxRounds}</div>
       <div class="game-question">${question.word}</div>
       <div class="game-hint">${question.hint}</div>
       <div class="quiz-options">${optionsHtml}</div>

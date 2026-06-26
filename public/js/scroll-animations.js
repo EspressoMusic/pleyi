@@ -37,21 +37,55 @@
   }
 
   /* ── Active nav link on scroll ── */
-  const navLinks = $$(".nav-links a, .mobile-nav a[href^='#']");
-  if (sections.length && navLinks.length) {
-    const navObs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const id = entry.target.id;
-          navLinks.forEach((a) => {
-            a.classList.toggle("active", a.getAttribute("href") === "#" + id);
-          });
-        });
+  const sectionEls = Array.from($$(".scroll-section")).filter((s) => s.id);
+  const navLinks = $$(".nav-links a[href^='#'], .mobile-nav a[href^='#']");
+
+  function setActiveNav(id) {
+    if (!id) return;
+    navLinks.forEach((a) => {
+      a.classList.toggle("active", a.getAttribute("href") === "#" + id);
+    });
+  }
+
+  function updateActiveNavFromScroll() {
+    if (!sectionEls.length) return;
+    const offset = (document.getElementById("navbar")?.offsetHeight || 80) + 32;
+    const scrollPos = window.scrollY + offset;
+    let current = sectionEls[0].id;
+
+    for (const section of sectionEls) {
+      if (section.offsetTop <= scrollPos) current = section.id;
+    }
+
+    const nearBottom =
+      window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 60;
+    if (nearBottom) current = sectionEls[sectionEls.length - 1].id;
+
+    setActiveNav(current);
+  }
+
+  if (sectionEls.length && navLinks.length) {
+    updateActiveNavFromScroll();
+    window.addEventListener("scroll", updateActiveNavFromScroll, { passive: true });
+    window.addEventListener("resize", updateActiveNavFromScroll, { passive: true });
+    navLinks.forEach((a) => {
+      a.addEventListener("click", () => {
+        const href = a.getAttribute("href");
+        if (href?.startsWith("#")) setActiveNav(href.slice(1));
+      });
+    });
+  }
+
+  /* How timeline — light beam + confetti when section visible */
+  const howTimeline = document.getElementById("howTimeline");
+  if (howTimeline && !prefersReduced) {
+    const howObs = new IntersectionObserver(
+      ([entry]) => {
+        howTimeline.classList.toggle("is-active", entry.isIntersecting);
       },
-      { threshold: 0.35, rootMargin: "-80px 0px -40% 0px" }
+      { threshold: 0.35 }
     );
-    sections.forEach((s) => s.id && navObs.observe(s));
+    howObs.observe(howTimeline);
   }
 
   /* ── Parallax blobs & decor ── */

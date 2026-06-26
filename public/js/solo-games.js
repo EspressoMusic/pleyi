@@ -11,9 +11,29 @@ const SoloGames = {
     hangman: "איש תלוי",
     "sentence-scramble": "בניית משפט",
     "spelling-bee": "איות",
+    "tower-stack": "מגדל מילים",
+    "math-blitz": "ברק מתמטי",
+    "math-duel": "Duel מתמטי",
+    "math-memory": "זיכרון מספרים",
+    "math-tower": "מגדל מספרים",
+    "math-runner": "רץ ומחשב",
+    "math-shop": "חנות מתמטית",
+  },
+
+  _aliases: {
+    "math-duel": "vocabulary-duel",
+    "math-memory": "word-memory",
+    "math-tower": "tower-stack",
+    "math-runner": "word-runner",
+    "math-shop": "word-shop",
+  },
+
+  _data() {
+    return typeof getGameData === "function" ? getGameData(window._currentGameId) : VOCAB_DATA;
   },
 
   mount(gameId, root, ui) {
+    const resolved = this._aliases[gameId] || gameId;
     const fn = {
       "word-runner": this.mountWordRunner,
       "spot-diff": this.mountSpotDiff,
@@ -24,21 +44,24 @@ const SoloGames = {
       hangman: this.mountHangman,
       "sentence-scramble": this.mountScramble,
       "spelling-bee": this.mountSpelling,
-    }[gameId];
+      "tower-stack": this.mountTowerStack,
+      "math-blitz": this.mountMathBlitz,
+    }[resolved];
 
     if (!fn) return null;
+    window._currentGameId = gameId;
     return fn.call(this, root, ui);
   },
 
   overlayHtml(title, desc, btnId, btnText = "התחל!") {
     return `
       <div class="solo-overlay" id="${btnId}Overlay">
-        <h2>${title}</h2>
+        <h2 class="font-cartoon">${title}</h2>
         <p>${desc}</p>
         <button type="button" class="btn btn-primary btn-candy solo-play-again" id="${btnId}Start">${btnText}</button>
       </div>
       <div class="solo-overlay hidden" id="${btnId}Over">
-        <h2 id="${btnId}OverTitle">Game Over</h2>
+        <h2 class="font-cartoon" id="${btnId}OverTitle">Game Over</h2>
         <p id="${btnId}OverMsg"></p>
         <button type="button" class="solo-play-again" id="${btnId}Retry">שחק שוב</button>
       </div>`;
@@ -69,7 +92,7 @@ const SoloGames = {
 
   /* ── Temple Run word runner ── */
   mountWordRunner(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     root.innerHTML = `
       <div class="solo-game-wrap wr-wrap">
         ${this.overlayHtml(
@@ -139,45 +162,118 @@ const SoloGames = {
       }
     };
 
+    let roadOffset = 0;
+    let runBounce = 0;
+
+    const drawRoad = (w, h) => {
+      const GE = window.GameEngine;
+      const sky = ctx.createLinearGradient(0, 0, 0, h * 0.55);
+      sky.addColorStop(0, "#5ec6ff");
+      sky.addColorStop(1, "#3a9ee8");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h * 0.55);
+
+      ctx.fillStyle = "#2d9a55";
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.45);
+      ctx.lineTo(w, h * 0.45);
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fill();
+
+      const horizon = h * 0.45;
+      ctx.fillStyle = "#444";
+      ctx.beginPath();
+      ctx.moveTo(w * 0.18, horizon);
+      ctx.lineTo(w * 0.82, horizon);
+      ctx.lineTo(w * 0.68, h - 80);
+      ctx.lineTo(w * 0.32, h - 80);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#555";
+      ctx.beginPath();
+      ctx.moveTo(w * 0.32, h - 80);
+      ctx.lineTo(w * 0.68, h - 80);
+      ctx.lineTo(w * 0.62, h);
+      ctx.lineTo(w * 0.38, h);
+      ctx.closePath();
+      ctx.fill();
+
+      for (let i = 0; i < 8; i++) {
+        const t = ((i * 0.12 + roadOffset) % 1);
+        const y = horizon + (h - 80 - horizon) * t;
+        const l1 = w * GE.lerp(0.32, 0.18, t);
+        const r1 = w * GE.lerp(0.68, 0.82, t);
+        const l2 = w * GE.lerp(0.38, 0.18, t + 0.08);
+        const r2 = w * GE.lerp(0.62, 0.82, t + 0.08);
+        ctx.fillStyle = i % 2 ? "#666" : "#5a5a5a";
+        ctx.beginPath();
+        ctx.moveTo(l1, y);
+        ctx.lineTo(r1, y);
+        ctx.lineTo(r2, y + (h - 80 - horizon) * 0.08);
+        ctx.lineTo(l2, y + (h - 80 - horizon) * 0.08);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.strokeStyle = "rgba(255,255,255,0.5)";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([18, 14]);
+      ctx.beginPath();
+      ctx.moveTo(w / 2, horizon);
+      ctx.lineTo(w / 2, h - 80);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    };
+
+    const laneXAtY = (ln, w, y) => {
+      const GE = window.GameEngine;
+      const h = canvas.getBoundingClientRect().height;
+      const horizon = h * 0.45;
+      const t = GE.clamp((y - horizon) / (h - 80 - horizon), 0, 1);
+      const left = w * GE.lerp(0.18, 0.32, t);
+      const right = w * GE.lerp(0.82, 0.68, t);
+      const third = (right - left) / 3;
+      return left + third * ln + third / 2;
+    };
+
     const draw = () => {
       const w = canvas.getBoundingClientRect().width;
       const h = canvas.getBoundingClientRect().height;
-      ctx.fillStyle = "#0044cc";
-      ctx.fillRect(0, 0, w, h);
+      const GE = window.GameEngine;
 
-      for (let i = 1; i < 3; i++) {
-        ctx.strokeStyle = "rgba(255,255,255,0.25)";
-        ctx.lineWidth = 2;
-        ctx.setLineDash([12, 12]);
-        ctx.beginPath();
-        ctx.moveTo((w / 3) * i, 0);
-        ctx.lineTo((w / 3) * i, h);
-        ctx.stroke();
-      }
-      ctx.setLineDash([]);
-
-      ctx.fillStyle = "rgba(0,0,0,0.15)";
-      ctx.fillRect(0, h - 90, w, 90);
+      drawRoad(w, h);
 
       words.forEach((wd) => {
-        const x = laneX(wd.lane, w);
-        const bw = w / 3 - 16;
+        const x = laneXAtY(wd.lane, w, wd.y);
+        const t = GE.clamp((wd.y - h * 0.45) / (h - 80 - h * 0.45), 0.05, 1);
+        const bw = GE.lerp(w * 0.12, w / 3 - 16, t);
+        const bh = GE.lerp(20, 48, t);
+
         ctx.fillStyle = wd.isCorrect ? "#FFE135" : "#FF9ECF";
+        if (wd.isCorrect) {
+          ctx.shadowColor = "#FFE135";
+          ctx.shadowBlur = 12;
+        }
         ctx.strokeStyle = "#1a0a2e";
         ctx.lineWidth = 3;
-        roundRect(ctx, x - bw / 2, wd.y, bw, 44, 10);
+        roundRect(ctx, x - bw / 2, wd.y, bw, bh, 10);
         ctx.fill();
         ctx.stroke();
+        ctx.shadowBlur = 0;
         ctx.fillStyle = "#1a0a2e";
-        ctx.font = "bold 16px Heebo, sans-serif";
+        ctx.font = `900 ${Math.max(11, bh * 0.38)}px Heebo, sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText(wd.text, x, wd.y + 28);
+        ctx.fillText(wd.text, x, wd.y + bh * 0.62);
       });
 
       const px = laneX(lane, w);
-      ctx.font = "48px serif";
+      runBounce = Math.sin(roadOffset * Math.PI * 2) * 4;
+      ctx.font = "52px serif";
       ctx.textAlign = "center";
-      ctx.fillText("🏃", px, h - 24);
+      ctx.fillText("🏃", px, h - 28 + runBounce);
     };
 
     function roundRect(c, x, y, wd, ht, r) {
@@ -209,6 +305,7 @@ const SoloGames = {
       if (!running) return;
       const dt = Math.min(ts - lastTs, 50);
       lastTs = ts;
+      roadOffset = (roadOffset + speed * 0.004 * (dt / 16)) % 1;
       spawnTimer += dt;
       if (spawnTimer > Math.max(900 - level * 40, 450)) {
         spawnWave();
@@ -234,6 +331,7 @@ const SoloGames = {
             if (wd.isCorrect) {
               score += 10 + level;
               ui.setScore(score);
+              window.GameEngine?.sfxCorrect();
               level = Math.floor(score / 50) + 1;
               speed = 2.2 + level * 0.25;
               document.getElementById("wrSpeed").textContent = String(level);
@@ -311,7 +409,7 @@ const SoloGames = {
 
   /* ── Spot the difference ── */
   mountSpotDiff(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     let round = 0;
     let score = 0;
     const maxRounds = 10;
@@ -379,7 +477,7 @@ const SoloGames = {
 
   /* ── Candy Match 3 ── */
   mountCandyMatch(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     const COLORS = ["yellow", "pink", "purple", "teal"];
     const ROWS = 6;
     const COLS = 6;
@@ -529,7 +627,7 @@ const SoloGames = {
 
   /* ── Word shop ── */
   mountWordShop(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     let score = 0;
     let round = 0;
     let timeLeft = 0;
@@ -611,7 +709,7 @@ const SoloGames = {
 
   /* ── Vocabulary duel solo ── */
   mountVocabDuel(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     let score = 0;
     let q = 0;
     const total = 10;
@@ -661,7 +759,7 @@ const SoloGames = {
 
   /* ── Memory ── */
   mountMemory(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     let score = 0;
     let flipped = [];
     let lock = false;
@@ -742,7 +840,7 @@ const SoloGames = {
 
   /* ── Hangman ── */
   mountHangman(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     let score = 0;
     let word = "";
     let guessed = [];
@@ -811,7 +909,7 @@ const SoloGames = {
 
   /* ── Sentence scramble ── */
   mountScramble(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     let score = 0;
     let round = 0;
     const max = 8;
@@ -879,7 +977,7 @@ const SoloGames = {
 
   /* ── Spelling bee ── */
   mountSpelling(root, ui) {
-    const D = VOCAB_DATA;
+    const D = this._data();
     let score = 0;
     let round = 0;
     const max = 10;
@@ -926,5 +1024,17 @@ const SoloGames = {
     root.innerHTML = `<div class="solo-game-wrap">${SoloGames.overlayHtml("איות", "כתבו את המילה באנגלית לפי הרמז", "sp")}</div>`;
     SoloGames.bindStartRetry("sp", next);
     return () => {};
+  },
+
+  /* ── Tower Stack Pro ── */
+  mountTowerStack(root, ui) {
+    if (window.TowerStackPro) return TowerStackPro.mount(root, ui, this._data());
+    return null;
+  },
+
+  /* ── Math Blitz Pro ── */
+  mountMathBlitz(root, ui) {
+    if (window.MathBlitzPro) return MathBlitzPro.mount(root, ui, this._data());
+    return null;
   },
 };

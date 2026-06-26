@@ -1,7 +1,7 @@
 {
   "name": "english-tutor-games",
   "version": "1.0.0",
-  "description": "Private English tutoring platform with real-time multiplayer games",
+  "description": "Game-based learning platform for teachers — live game rooms and solo practice",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

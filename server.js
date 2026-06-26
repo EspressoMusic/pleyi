@@ -1,9 +1,11 @@
 const express = require("express");
 const http = require("http");
+const fs = require("fs");
 const { Server } = require("socket.io");
 const path = require("path");
 const bookingsLib = require("./lib/bookings");
 const miniGames = require("./lib/mini-games");
+const roomsLib = require("./lib/rooms");
 
 const app = express();
 const server = http.createServer(app);
@@ -12,15 +14,51 @@ const io = new Server(server);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.get("/join", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "join.html"));
+});
+
+app.get("/games", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "games.html"));
+});
+
 app.get("/play/:gameId", (req, res) => {
   const valid = [
     "word-runner", "spot-diff", "candy-match", "word-shop",
     "vocabulary-duel", "word-memory", "hangman", "sentence-scramble", "spelling-bee",
+    "tower-stack",
+    "math-blitz", "math-duel", "math-memory", "math-tower", "math-runner", "math-shop",
   ];
   if (!valid.includes(req.params.gameId)) {
     return res.status(404).send("Game not found");
   }
   res.sendFile(path.join(__dirname, "public", "play.html"));
+});
+
+function getFirebaseConfig() {
+  if (process.env.FIREBASE_API_KEY) {
+    return {
+      apiKey: process.env.FIREBASE_API_KEY,
+      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.FIREBASE_APP_ID,
+    };
+  }
+  const configPath = path.join(__dirname, "data", "firebase.json");
+  if (fs.existsSync(configPath)) {
+    try {
+      return JSON.parse(fs.readFileSync(configPath, "utf8"));
+    } catch {
+      /* ignore */
+    }
+  }
+  return {};
+}
+
+app.get("/api/firebase-config", (_req, res) => {
+  res.json(getFirebaseConfig());
 });
 
 /* ── Booking API ── */
@@ -122,15 +160,7 @@ function getRoom(code) {
 }
 
 function roomSummary(room) {
-  return {
-    code: room.code,
-    teacherConnected: !!room.teacherId,
-    studentConnected: !!room.studentId,
-    teacherName: room.teacherName || "",
-    studentName: room.studentName || "",
-    activeGame: room.activeGame,
-    scores: { ...room.scores },
-  };
+  return roomsLib.roomSummary(room);
 }
 
 function emitRoom(code) {
@@ -139,9 +169,16 @@ function emitRoom(code) {
   io.to(`room:${code}`).emit("room:update", roomSummary(room));
 }
 
-function addScore(room, role, points) {
-  if (role === "teacher") room.scores.teacher += points;
-  else room.scores.student += points;
+function getRole(room, socketId) {
+  return roomsLib.getRole(room, socketId);
+}
+
+function bothConnected(room) {
+  return roomsLib.hasStudents(room);
+}
+
+function scorePlayer(room, socketId, role, points) {
+  roomsLib.addScore(room, socketId, role, points);
 }
 
 /* ── Vocabulary bank ── */
@@ -306,23 +343,13 @@ function resetGameState(room, gameId) {
   }
 }
 
-function bothConnected(room) {
-  return room.teacherId && room.studentId;
-}
-
-function getRole(room, socketId) {
-  if (room.teacherId === socketId) return "teacher";
-  if (room.studentId === socketId) return "student";
-  return null;
-}
-
 function broadcastGame(code) {
   const room = getRoom(code);
   if (!room) return;
   io.to(`room:${code}`).emit("game:state", {
     activeGame: room.activeGame,
     state: room.gameState,
-    scores: room.scores,
+    scores: roomSummary(room).scores,
   });
 }
 
@@ -331,7 +358,7 @@ function sendGameStateToSocket(socket, room) {
   socket.emit("game:state", {
     activeGame: room.activeGame,
     state: room.gameState,
-    scores: room.scores,
+    scores: roomSummary(room).scores,
   });
 }
 
@@ -350,16 +377,7 @@ io.on("connection", (socket) => {
 
   socket.on("room:create", ({ name }, cb) => {
     const code = generateCode();
-    const room = {
-      code,
-      teacherId: socket.id,
-      studentId: null,
-      teacherName: name || "מורה",
-      studentName: "",
-      activeGame: null,
-      gameState: {},
-      scores: { teacher: 0, student: 0 },
-    };
+    const room = roomsLib.createRoom(code, socket.id, name);
     rooms.set(code, room);
     socket.data.roomCode = code;
     socket.data.role = "teacher";
@@ -370,23 +388,33 @@ io.on("connection", (socket) => {
   socket.on("room:join", ({ code, name }, cb) => {
     const room = getRoom(code);
     if (!room) return cb?.({ ok: false, error: "חדר לא נמצא. בדקו את הקוד." });
-    if (room.studentId) return cb?.({ ok: false, error: "החדר מלא — כבר יש תלמיד מחובר." });
+    if (room.students.has(socket.id)) {
+      return cb?.({ ok: false, error: "כבר מחובר/ת לחדר זה." });
+    }
+    const studentName = (name || "תלמיד").trim().slice(0, 24);
+    if (Array.from(room.students.values()).some((s) => s.name === studentName)) {
+      return cb?.({ ok: false, error: "השם תפוס — בחרו שם אחר." });
+    }
+    if (room.students.size >= 30) {
+      return cb?.({ ok: false, error: "החדר מלא (30 תלמידים)." });
+    }
 
-    room.studentId = socket.id;
-    room.studentName = name || "תלמיד";
+    room.students.set(socket.id, { name: studentName, score: 0 });
     socket.data.roomCode = code;
     socket.data.role = "student";
+    socket.data.playerId = socket.id;
     socket.join(`room:${code}`);
 
     cb?.({
       ok: true,
       ...roomSummary(room),
       role: "student",
+      playerId: socket.id,
       gameState: room.activeGame ? room.gameState : null,
     });
     emitRoom(code);
     sendGameStateToSocket(socket, room);
-    io.to(`room:${code}`).emit("room:partner-joined", { name: room.studentName, role: "student" });
+    io.to(`room:${code}`).emit("room:student-joined", { name: studentName, id: socket.id });
   });
 
   socket.on("game:start", ({ gameId }, cb) => {
@@ -396,10 +424,13 @@ io.on("connection", (socket) => {
       return cb?.({ ok: false, error: "רק המורה יכול להתחיל משחק" });
     }
     if (!bothConnected(room)) {
-      return cb?.({ ok: false, error: "ממתינים לתלמיד..." });
+      return cb?.({ ok: false, error: "ממתינים לתלמיד אחד לפחות..." });
     }
     resetGameState(room, gameId);
-    room.scores = { teacher: 0, student: 0 };
+    room.scores = { teacher: 0 };
+    room.students.forEach((s) => {
+      s.score = 0;
+    });
     cb?.({ ok: true });
     broadcastGame(code);
   });
@@ -416,28 +447,14 @@ io.on("connection", (socket) => {
     const state = room.gameState;
 
     if (room.activeGame === "vocabulary-duel" && action === "answer") {
-      if (state.answers[role] || state.phase !== "playing") return cb?.({ ok: false });
-      state.answers[role] = data.answer;
+      const pk = roomsLib.playerKey(room, socket.id, role);
+      if (state.answers[pk] || state.phase !== "playing") return cb?.({ ok: false });
+      state.answers[pk] = data.answer;
       const correct = data.answer === state.question.correct;
-      if (correct) {
-        addScore(room, role, 10);
-        state.roundWinner = role;
-        state.phase = "round-end";
-        broadcastGame(code);
-        return cb?.({ ok: true, correct: true });
-      }
-      const other = role === "teacher" ? "student" : "teacher";
-      if (state.answers[other] !== undefined) {
-        const teacherCorrect = state.answers.teacher === state.question.correct;
-        const studentCorrect = state.answers.student === state.question.correct;
-        if (teacherCorrect && !studentCorrect) state.roundWinner = "teacher";
-        else if (studentCorrect && !teacherCorrect) state.roundWinner = "student";
-        else if (teacherCorrect && studentCorrect) state.roundWinner = "tie";
-        else state.roundWinner = "none";
-        state.phase = "round-end";
-      }
+      if (correct) scorePlayer(room, socket.id, role, 10);
       broadcastGame(code);
-      return cb?.({ ok: true, correct: false });
+      emitRoom(code);
+      return cb?.({ ok: true, correct });
     }
 
     if (room.activeGame === "vocabulary-duel" && action === "next-round") {
@@ -471,7 +488,7 @@ io.on("connection", (socket) => {
           a.matched = true;
           b.matched = true;
           state.pairsFound[role]++;
-          addScore(room, role, 15);
+          scorePlayer(room, socket.id, role, 15);
           state.flipped = [];
           if (state.cards.every((c) => c.matched)) {
             state.phase = "finished";
@@ -515,8 +532,8 @@ io.on("connection", (socket) => {
         if (allFound) {
           state.won = true;
           state.phase = "finished";
-          addScore(room, "teacher", 20);
-          addScore(room, "student", 20);
+          scorePlayer(room, room.teacherId, "teacher", 20);
+          room.students.forEach((_s, sid) => scorePlayer(room, sid, "student", 20));
         }
       }
       broadcastGame(code);
@@ -546,7 +563,7 @@ io.on("connection", (socket) => {
       state.submissions[role] = attempt;
       const correct = attempt.toLowerCase() === state.answer.toLowerCase();
       if (correct) {
-        addScore(room, role, 12);
+        scorePlayer(room, socket.id, role, 12);
         state.roundWinner = role;
         state.phase = "round-end";
         broadcastGame(code);
@@ -591,7 +608,7 @@ io.on("connection", (socket) => {
       state.submissions[role] = attempt;
       const correct = attempt === state.current.word.toLowerCase();
       if (correct) {
-        addScore(room, role, 10);
+        scorePlayer(room, socket.id, role, 10);
         state.roundWinner = role;
         state.phase = "round-end";
         broadcastGame(code);
@@ -627,7 +644,10 @@ io.on("connection", (socket) => {
       return cb?.({ ok: true });
     }
 
-    const addScoreFn = (r, pts) => addScore(room, r, pts);
+    const addScoreFn = (r, pts) => {
+      const sid = r === "teacher" ? room.teacherId : socket.id;
+      scorePlayer(room, sid, r, pts);
+    };
     let miniResult = null;
 
     if (room.activeGame === "spot-diff") {
@@ -675,11 +695,16 @@ io.on("connection", (socket) => {
       rooms.delete(code);
       io.to(`room:${code}`).emit("room:closed", { reason: "המורה התנתק" });
     } else if (role === "student") {
-      room.studentId = null;
-      room.studentName = "";
-      room.activeGame = null;
-      room.gameState = {};
-      io.to(`room:${code}`).emit("room:partner-left", { role: "student" });
+      const student = room.students.get(socket.id);
+      room.students.delete(socket.id);
+      if (room.students.size === 0) {
+        room.activeGame = null;
+        room.gameState = {};
+      }
+      io.to(`room:${code}`).emit("room:student-left", {
+        name: student?.name || "תלמיד",
+        id: socket.id,
+      });
       emitRoom(code);
     }
   });
@@ -687,5 +712,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3456;
 server.listen(PORT, () => {
-  console.log(`English Tutor Games → http://localhost:${PORT}`);
+  console.log(`GameClass → http://localhost:${PORT}`);
 });

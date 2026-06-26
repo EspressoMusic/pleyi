@@ -26,8 +26,6 @@ const Booking = {
 
     await this.loadSettings();
 
-    this.bindNav();
-
     this.bindPaymentTabs();
 
     if (document.getElementById("booking")) {
@@ -49,18 +47,6 @@ const Booking = {
     const data = await res.json();
 
     if (data.ok) this.settings = data;
-
-  },
-
-
-
-  bindNav() {
-
-    document.getElementById("heroBookBtn")?.addEventListener("click", () => {
-
-      document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
-
-    });
 
   },
 
@@ -334,7 +320,7 @@ const Booking = {
 
     document.getElementById("bitPayPhone").textContent = this.settings?.bitPhone || "050-0000000";
 
-    document.getElementById("bitPayName").textContent = `שם לתשלום: ${this.settings?.bitPayName || "English Play"}`;
+    document.getElementById("bitPayName").textContent = `שם לתשלום: ${this.settings?.bitPayName || "GameClass"}`;
 
   },
 

@@ -1,4 +1,4 @@
-/* English Play — main app */
+/* GameClass — main app */
 
 const socket = io();
 
@@ -30,7 +30,7 @@ function showView(view) {
 }
 
 function roomJoinUrl(code) {
-  return `${window.location.origin}${window.location.pathname}?join=${code}`;
+  return `${window.location.origin}/join?code=${code}`;
 }
 
 function updateRoomJoinLink(code) {
@@ -41,13 +41,21 @@ function updateRoomJoinLink(code) {
   link.textContent = url;
 }
 
+function t(key) {
+  return typeof I18n !== "undefined" ? I18n.t(key) : key;
+}
+
 function openModal(mode) {
   state.modalMode = mode;
-  $("#modalTitle").textContent = mode === "teacher" ? "יצירת חדר — מורה" : "הצטרפות — תלמיד";
+  $("#modalTitle").textContent =
+    mode === "teacher" ? "פתיחת חדר כיתה" : "הצטרפות לחדר";
   $("#modalDesc").textContent =
     mode === "teacher"
-      ? "הזינו את שמכם ויצרו חדר חדש"
-      : "הזינו את שמכם ואת קוד החדר שקיבלתם מהמורה";
+      ? "הזינו את שם החדר — תקבלו קוד לשיתוף עם התלמידים"
+      : "הזינו קוד חדר ושם — או השתמשו בדף /join מהטלפון";
+  $("#modalNameLabel").textContent = mode === "teacher" ? "שם החדר" : "השם שלך";
+  $("#playerName").placeholder = mode === "teacher" ? "למשל: אנגלית ז׳" : "למשל: דנה";
+  $("#formSubmit").textContent = mode === "teacher" ? "פתח חדר" : "הצטרף";
   $("#codeField").classList.toggle("hidden", mode === "teacher");
   $("#formError").classList.add("hidden");
   $("#joinForm").reset();
@@ -65,25 +73,43 @@ function updateRoomUI(room) {
   $("#roomCodeDisplay").textContent = room.code;
   updateRoomJoinLink(room.code);
   $("#teacherNameDisplay").textContent = room.teacherName || "מורה";
-  $("#studentNameDisplay").textContent = room.studentConnected
-    ? room.studentName
-    : "ממתין לתלמיד...";
   $("#teacherStatus").classList.toggle("waiting", !room.teacherConnected);
-  $("#studentStatus").classList.toggle("waiting", !room.studentConnected);
-  $("#scoreTeacher").textContent = `מורה: ${room.scores?.teacher ?? 0}`;
-  $("#scoreStudent").textContent = `תלמיד: ${room.scores?.student ?? 0}`;
 
-  const bothIn = room.teacherConnected && room.studentConnected;
+  const students = room.students || [];
+  const listEl = $("#studentsList");
+  if (listEl) {
+    listEl.innerHTML =
+      students.length === 0
+        ? '<p class="students-empty">ממתינים לתלמידים — שלחו את הקישור או QR</p>'
+        : students
+            .map(
+              (s) =>
+                `<div class="student-chip"><span class="student-dot"></span>${s.name} <strong>${s.score || 0} נק׳</strong></div>`
+            )
+            .join("");
+  }
+  $("#studentCountBadge").textContent = String(students.length);
+
+  const joinUrl = roomJoinUrl(room.code);
+  const qrImg = $("#roomQrCode");
+  if (qrImg) {
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(joinUrl)}`;
+  }
+  $("#joinUrlDisplay").textContent = joinUrl;
+
+  $("#scoreTeacher").textContent = `מורה: ${room.scores?.teacher ?? 0}`;
+
   const isTeacher = state.role === "teacher";
-  $("#lobbyHint").textContent = bothIn
-    ? "לחצו על משחק — ייפתח בדף חדש לשחק מיד!"
-    : "לחצו על משחק לתרגול לבד, או המתינו לשותף לשיעור חי";
+  const hasStudents = students.length > 0;
+  $("#lobbyHint").textContent = hasStudents
+    ? isTeacher
+      ? "בחרו משחק — כל התלמידים ישחקו מהטלפון!"
+      : "ממתינים שהמורה יתחיל משחק..."
+    : "שתפו QR או קישור — התלמידים יצטרפו מהטלפון";
 
   $$(".game-btn").forEach((btn) => {
-    btn.disabled = false;
+    btn.disabled = isTeacher && !hasStudents;
   });
-
-  $("#roomTabs")?.classList.toggle("hidden", !isTeacher);
 }
 
 function renderGame() {
@@ -99,6 +125,8 @@ function renderGame() {
 
   const ctx = {
     role: state.role,
+    playerId: socket.id,
+    playerKey: state.role === "teacher" ? "teacher" : socket.id,
     room: state.room,
     scores: state.scores,
     sendAction: (action, data) => {
@@ -170,17 +198,26 @@ $$("#mobileNav a").forEach((a) =>
   })
 );
 
-function scrollToBooking() {
-  document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
-  $("#menuToggle")?.classList.remove("open");
-  $("#mobileNav")?.classList.remove("open");
+function openTeacherRoom() {
+  openModal("teacher");
 }
 
-["#navBookBtn", "#mobileBookBtn", "#heroBookBtn"].forEach((sel) => {
-  $(sel)?.addEventListener("click", (e) => {
-    e.preventDefault();
-    scrollToBooking();
-  });
+document.getElementById("openClassroomBtn")?.addEventListener("click", () => openModal("teacher"));
+document.getElementById("heroClassroomBtn")?.addEventListener("click", () => openModal("teacher"));
+document.getElementById("howClassroomBtn")?.addEventListener("click", () => openModal("teacher"));
+document.getElementById("gamesClassroomBtn")?.addEventListener("click", () => openModal("teacher"));
+document.getElementById("mobileClassroomBtn")?.addEventListener("click", () => {
+  openModal("teacher");
+  $("#menuToggle")?.classList.remove("open");
+  $("#mobileNav")?.classList.remove("open");
+});
+
+initContactExtras();
+GameAuth?.bindModals(showToast);
+document.getElementById("mobileLoginBtn")?.addEventListener("click", () => {
+  document.getElementById("loginModal")?.classList.remove("hidden");
+  $("#menuToggle")?.classList.remove("open");
+  $("#mobileNav")?.classList.remove("open");
 });
 
 $("#modalClose")?.addEventListener("click", closeModal);
@@ -228,19 +265,18 @@ $("#joinForm")?.addEventListener("submit", (e) => {
 $("#copyCodeBtn")?.addEventListener("click", () => {
   const code = $("#roomCodeDisplay")?.textContent;
   if (code) {
-    navigator.clipboard?.writeText(code).then(() => showToast("הקוד הועתק!"));
+    navigator.clipboard?.writeText(code).then(() => showToast(t("toast.codeCopied")));
   }
 });
 
 $("#copyJoinLinkBtn")?.addEventListener("click", () => {
   const code = $("#roomCodeDisplay")?.textContent;
   if (code && code !== "------") {
-    navigator.clipboard?.writeText(roomJoinUrl(code)).then(() => showToast("הקישור הועתק!"));
+    navigator.clipboard?.writeText(roomJoinUrl(code)).then(() => showToast(t("toast.linkCopied")));
   }
 });
 
-document.getElementById("openTeacherRoomBtn")?.addEventListener("click", () => openModal("teacher"));
-document.getElementById("openStudentRoomBtn")?.addEventListener("click", () => openModal("student"));
+document.getElementById("dashBackHome")?.addEventListener("click", () => showView("landing"));
 
 function openPlayGame(gameId) {
   window.open(`/play/${gameId}`, "_blank", "noopener");
@@ -257,20 +293,15 @@ document.getElementById("gamePreviewModal")?.addEventListener("click", (e) => {
 
 (function handleJoinFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  const joinCode = params.get("join");
+  const joinCode = params.get("join") || params.get("code");
   if (joinCode && /^\d{6}$/.test(joinCode)) {
-    window.addEventListener("load", () => {
-      openModal("student");
-      const input = document.getElementById("roomCodeInput");
-      if (input) input.value = joinCode;
-      history.replaceState({}, "", window.location.pathname + window.location.hash);
-    });
+    window.location.href = `/join?code=${joinCode}`;
   }
 })();
 
 $("#contactForm")?.addEventListener("submit", (e) => {
   e.preventDefault();
-  showToast("ההודעה נשלחה! אחזור אליכם בהקדם");
+  showToast(t("toast.contactSent"));
   e.target.reset();
 });
 
@@ -282,41 +313,63 @@ function formatWhatsAppPhone(phone) {
   return digits;
 }
 
+let contactWaNum = formatWhatsAppPhone("0586122187");
+
 function initContactExtras() {
   const siteUrl = `${window.location.origin}${window.location.pathname.replace(/\/$/, "") || ""}`;
   const qrImg = document.getElementById("siteQrCode");
-  const qrUrlEl = document.getElementById("siteQrUrl");
   if (qrImg) {
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(siteUrl)}`;
   }
-  if (qrUrlEl) qrUrlEl.textContent = siteUrl;
 
-  document.getElementById("copySiteUrlBtn")?.addEventListener("click", () => {
-    navigator.clipboard?.writeText(siteUrl).then(() => showToast("הקישור הועתק!"));
-  });
+  const copyBtn = document.getElementById("copySiteUrlBtn");
+  if (copyBtn && !copyBtn.dataset.bound) {
+    copyBtn.dataset.bound = "1";
+    copyBtn.addEventListener("click", () => {
+      navigator.clipboard?.writeText(siteUrl).then(() => showToast(t("toast.linkCopied")));
+    });
+  }
+
+  updateWhatsAppLink();
 
   fetch("/api/booking/settings")
     .then((r) => r.json())
     .then((data) => {
       if (!data?.ok) return;
-      const phone = data.whatsappPhone || data.bitPhone || "";
-      const waNum = formatWhatsAppPhone(phone);
-      const btn = document.getElementById("whatsappBtn");
-      const display = document.getElementById("whatsappPhoneDisplay");
-      if (display) display.textContent = phone;
-      if (btn && waNum) {
-        const text = encodeURIComponent("שלום! אשמח לשמוע על שיעור אנגלית 🙂");
-        btn.href = `https://wa.me/${waNum}?text=${text}`;
-      }
+      const phone = data.whatsappPhone || data.bitPhone || "0586122187";
+      contactWaNum = formatWhatsAppPhone(phone);
+      updateWhatsAppLink();
     })
     .catch(() => {});
 }
 
+function updateWhatsAppLink() {
+  const btn = document.getElementById("whatsappBtn");
+  if (btn && contactWaNum) {
+    const text = encodeURIComponent(t("toast.waText"));
+    btn.href = `https://wa.me/${contactWaNum}?text=${text}`;
+  }
+}
+
 initContactExtras();
+
+window.addEventListener("gameclass:lang", () => {
+  if (!$("#joinModal")?.classList.contains("hidden")) {
+    openModal(state.modalMode);
+  }
+  updateWhatsAppLink();
+});
 
 $$(".game-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const gameId = btn.dataset.game;
+    if (state.role === "teacher" && state.room) {
+      socket.emit("game:start", { gameId }, (res) => {
+        if (res?.ok) showToast("המשחק התחיל!");
+        else showToast(res?.error || "לא ניתן להתחיל");
+      });
+      return;
+    }
     openPlayGame(gameId);
   });
 });
@@ -343,16 +396,23 @@ $("#logoHome")?.addEventListener("click", (e) => {
 document.getElementById("dashBackHome")?.addEventListener("click", () => showView("landing"));
 
 /* Socket events */
-socket.on("room:update", (room) => updateRoomUI(room));
+socket.on("room:update", (room) => {
+  updateRoomUI(room);
+  if (state.activeGame && room.activeGame) renderGame();
+});
+
+socket.on("room:student-joined", ({ name }) => {
+  showToast(`${name} הצטרף/ה מהטלפון!`);
+});
+
+socket.on("room:student-left", ({ name }) => {
+  showToast(`${name} התנתק/ה`);
+  state.activeGame = null;
+  renderGame();
+});
 
 socket.on("room:partner-joined", ({ name }) => {
   showToast(`${name} הצטרף/ה!`);
-});
-
-socket.on("room:partner-left", () => {
-  showToast("התלמיד התנתק");
-  state.activeGame = null;
-  renderGame();
 });
 
 socket.on("room:closed", ({ reason }) => {

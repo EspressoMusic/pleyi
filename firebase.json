@@ -1,0 +1,14 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "auth": {
+    "authorizedDomains": [
+      "localhost",
+      "127.0.0.1",
+      "gameclass-481fb.firebaseapp.com",
+      "gameclass-481fb.web.app"
+    ]
+  }
+}

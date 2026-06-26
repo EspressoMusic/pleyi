@@ -4,13 +4,13 @@
   "currency": "ILS",
   "currencySymbol": "₪",
   "lessonDurationMinutes": 50,
-  "lessonName": "שיעור אנגלית פרטי",
+  "lessonName": "שיעור עם משחקים",
   "workingDays": [0, 1, 2, 3, 4],
   "workingHours": { "start": 10, "end": 20 },
   "breakBetweenLessonsMinutes": 15,
   "slotIntervalMinutes": 65,
   "bookingHorizonDays": 30,
-  "bitPhone": "050-0000000",
-  "whatsappPhone": "050-0000000",
-  "bitPayName": "English Play"
+  "bitPhone": "0586122187",
+  "whatsappPhone": "0586122187",
+  "bitPayName": "GameClass"
 }

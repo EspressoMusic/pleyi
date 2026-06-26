@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0066FF" />
+  <title>משחקים — GameClass</title>
+  <meta name="description" content="ספריית משחקי למידה לפי נושאים — אנגלית, מתמטיקה, והתאמה אישית לתוכן השיעור" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/css/games-hub.css" />
+  <link rel="stylesheet" href="/css/legal.css" />
+  <link rel="stylesheet" href="/css/accessibility.css" />
+</head>
+<body class="hub-body memphis-body">
+
+  <div class="memphis-bg hub-memphis-bg" aria-hidden="true">
+    <div class="memphis-parallax" data-parallax="0.06">
+      <svg class="memphis-svg memphis-svg-slow" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="120" cy="80" r="40" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
+        <polygon points="520,40 580,120 460,120" fill="#FF9ECF" stroke="#1a0a2e" stroke-width="4"/>
+        <rect x="640" y="380" width="72" height="72" rx="12" fill="#5CE1E6" stroke="#1a0a2e" stroke-width="4" transform="rotate(18 676 416)"/>
+        <circle cx="80" cy="480" r="28" fill="#B388FF" stroke="#1a0a2e" stroke-width="4"/>
+      </svg>
+    </div>
+    <div class="memphis-parallax memphis-parallax-right" data-parallax="0.04">
+      <svg class="memphis-svg memphis-svg-mid" viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="300,60 360,180 240,180" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
+        <circle cx="480" cy="320" r="52" fill="#FF9ECF" stroke="#1a0a2e" stroke-width="4"/>
+        <rect x="40" y="200" width="90" height="90" rx="16" fill="#5CE1E6" stroke="#1a0a2e" stroke-width="4" transform="rotate(-12 85 245)"/>
+      </svg>
+    </div>
+    <div class="memphis-parallax memphis-parallax-bottom" data-parallax="0.03">
+      <svg class="memphis-svg memphis-svg-fast" viewBox="0 0 700 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="600" cy="80" r="36" fill="#B388FF" stroke="#1a0a2e" stroke-width="4"/>
+        <polygon points="120,120 200,240 40,240" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
+      </svg>
+    </div>
+    <span class="hub-memphis-sticker hub-memphis-sticker--purple"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--yellow"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--pink"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--teal"></span>
+    <span class="hub-memphis-ring"></span>
+  </div>
+
+  <header class="navbar scrolled" id="navbar">
+    <div class="container nav-inner">
+      <a href="/" class="logo">
+        <span class="logo-badge" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="#1a0a2e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 28 L24 12 L36 28 M24 12 V38"/>
+          </svg>
+        </span>
+        <span class="logo-text font-cartoon">GameClass</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/" class="nav-pill">בית</a>
+        <a href="/games" class="nav-pill active">משחקים</a>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="nav-auth-btn" id="authLoginBtn">התחברות</button>
+        <div class="nav-user hidden" id="authUserMenu">
+          <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
+            <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            <span class="nav-user-initial hidden" id="authUserInitial" aria-hidden="true"></span>
+          </button>
+          <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
+            <p class="nav-user-name" id="authUserName"></p>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="hub-main container">
+    <header class="hub-hero">
+      <p class="hero-badge">ספריית משחקים</p>
+      <h1 class="hub-title font-cartoon">בחרו נושא — שחקו מיד</h1>
+    </header>
+
+    <div class="hub-tabs" role="tablist">
+      <button type="button" class="hub-tab active" data-subject="english" role="tab">אנגלית</button>
+      <button type="button" class="hub-tab" data-subject="tanakh" role="tab">תנ״ך</button>
+      <button type="button" class="hub-tab" data-subject="math" role="tab">מתמטיקה</button>
+      <button type="button" class="hub-tab" data-subject="science" role="tab">מדעים</button>
+    </div>
+
+    <div class="hub-grid cards cols-3" id="gamesGrid"></div>
+
+    <button type="button" class="hub-custom-cta-card pitch-card sticker-card sticker-yellow" id="openCustomModalBtn">
+      <h2 class="hub-custom-cta-title font-cartoon">התאמה אישית</h2>
+      <p class="hub-custom-cta-text">הדביקו את תוכן השיעור — המערכת תיצור משחק מותאם</p>
+    </button>
+
+    <section class="hub-library hidden" id="userLibrary">
+      <header class="hub-library-header">
+        <h2 class="font-cartoon">האזור שלי</h2>
+        <div class="hub-library-tabs" role="tablist">
+          <button type="button" class="hub-library-tab active" data-lib="saved" role="tab">משחקים שיצרתי</button>
+          <button type="button" class="hub-library-tab" data-lib="history" role="tab">משחקים ששיחקתי</button>
+        </div>
+      </header>
+      <div class="hub-library-panel" id="savedGamesPanel">
+        <div class="hub-library-list" id="savedGamesList"></div>
+      </div>
+      <div class="hub-library-panel hidden" id="playHistoryPanel">
+        <div class="hub-library-list" id="playHistoryList"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Custom game builder -->
+  <div class="modal-overlay hidden" id="customGameModal">
+    <div class="modal modal-custom-game">
+      <button class="modal-close" id="customModalClose" type="button" aria-label="סגירה">×</button>
+      <h2 class="font-cartoon modal-custom-title">התאמה אישית</h2>
+      <p class="modal-desc">הדביקו את תוכן השיעור — המערכת תיצור משחק מותאם מהנתונים שלכם</p>
+      <form class="hub-custom-form" id="customGameForm">
+        <div class="hub-custom-row">
+          <label>
+            <span>שם המשחק (אופציונלי)</span>
+            <input type="text" id="customTitle" placeholder="למשל: אוצר מילים — יחידה 3" maxlength="80" />
+          </label>
+          <label>
+            <span>נושא</span>
+            <select id="customSubject">
+              <option value="english">אנגלית — מילה = תרגום</option>
+              <option value="tanakh">תנ״ך — מילה = פירוש</option>
+              <option value="math">מתמטיקה — תרגיל = תשובה</option>
+              <option value="science">מדעים — מושג = הגדרה</option>
+            </select>
+          </label>
+        </div>
+        <div class="hub-custom-row">
+          <label>
+            <span>סוג משחק</span>
+            <select id="customGamePick">
+              <option value="auto">בחירה אוטומטית (מומלץ)</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span>תוכן השיעור</span>
+          <textarea id="customContent" rows="8" placeholder="שורה לכל פריט, למשל:&#10;apple=תפוח&#10;book=ספר&#10;happy=שמח&#10;&#10;או במתמטיקה:&#10;5+3=8&#10;12-4=8"></textarea>
+        </label>
+        <div class="hub-custom-actions">
+          <button type="button" class="btn btn-outline btn-candy" id="customExampleBtn">טען דוגמה</button>
+          <button type="button" class="btn btn-outline btn-candy hidden" id="customSaveBtn">שמור לחשבון</button>
+          <button type="submit" class="btn btn-primary btn-candy font-cartoon">צור משחק ושחק</button>
+        </div>
+        <div class="hub-preview" id="customPreview"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Game info -->
+  <div class="modal-overlay hidden" id="gameInfoModal">
+    <div class="modal modal-game-info">
+      <button class="modal-close" id="gameInfoClose" type="button" aria-label="סגירה">×</button>
+      <h2 class="font-cartoon" id="gameInfoTitle">משחק</h2>
+      <div class="game-info-body">
+        <section>
+          <h3>על המשחק</h3>
+          <p id="gameInfoAbout"></p>
+        </section>
+        <section>
+          <h3>תוכן שנרכש</h3>
+          <p id="gameInfoContent"></p>
+        </section>
+        <section>
+          <h3>מיומנויות</h3>
+          <p id="gameInfoSkills"></p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Play setup -->
+  <div class="modal-overlay hidden" id="playSetupModal">
+    <div class="modal modal-play-setup">
+      <button class="modal-close" id="playSetupClose" type="button" aria-label="סגירה">×</button>
+      <h2 class="font-cartoon" id="playSetupGameTitle">משחק</h2>
+      <p class="modal-desc" id="playSetupGameDesc"></p>
+      <form id="playSetupForm">
+        <input type="hidden" id="playSetupGameId" value="" />
+        <label>
+          <span>נושא</span>
+          <select id="playSetupTopic" required></select>
+        </label>
+        <label>
+          <span>רמה</span>
+          <select id="playSetupLevel" required>
+            <option value="easy">קל — בסיסי</option>
+            <option value="medium">בינוני</option>
+            <option value="hard">קשה — מתקדם</option>
+          </select>
+        </label>
+        <p class="play-setup-preview hidden" id="playSetupPreview"></p>
+        <button type="submit" class="btn btn-primary btn-candy btn-full">שחק עכשיו →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Login -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal modal-login">
+      <button class="modal-close" id="loginClose" type="button">×</button>
+      <h2>התחברות</h2>
+      <button type="button" id="googleSignInBtn" class="btn btn-google btn-full">
+        <span class="btn-google-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+        </span>
+        התחברות עם Google
+      </button>
+      <p class="form-error hidden" id="loginError"></p>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <footer class="site-footer-mini">
+    <nav class="site-legal-nav" aria-label="מידע משפטי">
+      <a href="/legal/terms.html">תקנון</a>
+      <a href="/legal/privacy.html">פרטיות</a>
+      <a href="/legal/cookies.html">עוגיות</a>
+      <a href="/legal/accessibility.html">נגישות</a>
+    </nav>
+    <p class="footer-copy">© GameClass</p>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/user-data.js"></script>
+  <script src="/js/games-catalog.js"></script>
+  <script src="/js/game-content.js"></script>
+  <script src="/js/games-hub.js"></script>
+  <script src="/js/cookie-consent.js"></script>
+</body>
+</html>

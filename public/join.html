@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0066FF" />
+  <title>הצטרפות — GameClass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/css/join.css" />
+  <link rel="stylesheet" href="/css/legal.css" />
+  <link rel="stylesheet" href="/css/accessibility.css" />
+</head>
+<body class="join-body">
+
+  <header class="join-header">
+    <a href="/" class="join-back">← ראשי</a>
+    <span class="join-brand font-cartoon">GameClass</span>
+  </header>
+
+  <main class="join-main" id="joinScreen">
+    <div class="join-card">
+      <div class="join-icon">📱</div>
+      <h1 class="font-cartoon">הצטרפות למשחק</h1>
+      <p class="join-lead">הזינו את קוד החדר שקיבלתם מהמורה והשם שלכם</p>
+      <form id="joinForm" class="join-form">
+        <label>
+          <span>קוד חדר (6 ספרות)</span>
+          <input type="text" id="joinCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required />
+        </label>
+        <label>
+          <span>השם שלך</span>
+          <input type="text" id="joinName" maxlength="24" placeholder="למשל: דנה" required />
+        </label>
+        <p class="join-error hidden" id="joinError"></p>
+        <button type="submit" class="join-submit">הצטרף למשחק →</button>
+      </form>
+    </div>
+  </main>
+
+  <main class="join-main hidden" id="studentRoom">
+    <div class="join-room-card">
+      <div class="join-room-top">
+        <span class="join-room-badge">מחובר/ת</span>
+        <h2 class="font-cartoon" id="studentWelcome">שלום!</h2>
+        <p class="join-room-code">קוד: <strong id="studentCode">------</strong></p>
+      </div>
+      <div class="join-waiting" id="studentWaiting">
+        <div class="join-pulse"></div>
+        <p>ממתינים שהמורה יתחיל משחק...</p>
+        <p class="join-wait-hint">השאירו את המסך פתוח</p>
+      </div>
+      <div class="join-game hidden" id="studentGame">
+        <div id="studentGameContent"></div>
+      </div>
+      <button type="button" class="join-leave" id="joinLeave">עזוב חדר</button>
+    </div>
+  </main>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <footer class="site-footer-mini">
+    <nav class="site-legal-nav" aria-label="מידע משפטי">
+      <a href="/legal/terms.html">תקנון</a>
+      <a href="/legal/privacy.html">פרטיות</a>
+      <a href="/legal/cookies.html">עוגיות</a>
+      <a href="/legal/accessibility.html">נגישות</a>
+    </nav>
+  </footer>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/games.js"></script>
+  <script src="/js/join.js"></script>
+  <script src="/js/cookie-consent.js"></script>
+</body>
+</html>

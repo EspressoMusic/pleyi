@@ -70,3 +70,9 @@ window.VOCAB_DATA = {
     };
   },
 };
+
+window.getGameData = function (gameId) {
+  if (window._activeGameData) return window._activeGameData;
+  if (String(gameId).startsWith("math")) return window.MATH_DATA;
+  return window.VOCAB_DATA;
+};

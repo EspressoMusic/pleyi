@@ -1,0 +1,161 @@
+.join-body {
+  min-height: 100vh;
+  background: linear-gradient(165deg, #0066ff 0%, #0044cc 50%, #1a0a2e 100%);
+  font-family: Heebo, sans-serif;
+  color: #1a0a2e;
+}
+
+.join-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+
+.join-back {
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+
+.join-brand {
+  color: #ffe135;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.join-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  min-height: calc(100vh - 70px);
+}
+
+.join-card,
+.join-room-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 4px solid #1a0a2e;
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 0 16px 0 #1a0a2e;
+  text-align: center;
+}
+
+.join-icon {
+  font-size: 56px;
+  margin-bottom: 8px;
+}
+
+.join-card h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.join-lead {
+  color: #555;
+  font-weight: 700;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.join-form label {
+  display: block;
+  text-align: right;
+  margin-bottom: 16px;
+  font-weight: 800;
+}
+
+.join-form input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: 800;
+  font-family: inherit;
+  border: 3px solid #1a0a2e;
+  border-radius: 14px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.join-error {
+  color: #c0392b;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+.join-submit {
+  width: 100%;
+  padding: 18px;
+  font-size: 20px;
+  font-weight: 900;
+  font-family: inherit;
+  background: #ffe135;
+  border: 4px solid #1a0a2e;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #1a0a2e;
+}
+
+.join-room-badge {
+  display: inline-block;
+  background: #6bbf8a;
+  color: #1a0a2e;
+  font-weight: 900;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.join-room-code {
+  font-weight: 700;
+  color: #666;
+}
+
+.join-waiting {
+  padding: 32px 0;
+}
+
+.join-pulse {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #0066ff;
+  animation: join-pulse 1.4s ease infinite;
+}
+
+@keyframes join-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
+.join-wait-hint {
+  font-size: 14px;
+  color: #888;
+  font-weight: 700;
+}
+
+.join-leave {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  font-weight: 800;
+  font-family: inherit;
+  background: transparent;
+  border: 3px solid #1a0a2e;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.join-game {
+  text-align: right;
+  margin-top: 16px;
+}
