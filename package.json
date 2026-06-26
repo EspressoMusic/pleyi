@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "stop": "node scripts/kill-port.js 3456",
+    "restart": "node scripts/kill-port.js 3456 && node server.js"
   },
   "engines": {
     "node": ">=18"

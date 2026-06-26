@@ -258,6 +258,13 @@ html.a11y-dark-mode .legal-content {
   color: #e8e8e8 !important;
 }
 
+html.a11y-dark-mode .modal input,
+html.a11y-dark-mode .modal select,
+html.a11y-dark-mode .modal textarea {
+  background: var(--white) !important;
+  color: var(--ink) !important;
+}
+
 html.a11y-dark-mode .a11y-panel {
   background: #1e1e32;
   color: #e8e8e8;

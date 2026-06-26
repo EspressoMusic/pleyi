@@ -4,11 +4,11 @@ const TeacherDash = {
   pin: null,
   bookings: [],
   filter: "upcoming",
+  _authSeq: 0,
 
   init() {
     this.pin = localStorage.getItem("teacher-pin") || "";
     this.bindEvents();
-    if (this.pin) this.tryAuth(this.pin);
   },
 
   bindEvents() {
@@ -67,13 +67,17 @@ const TeacherDash = {
     document.getElementById("teacherPinInput")?.focus();
   },
 
-  tryAuth(pin) {
+  tryAuth(pin, { showDashboard = true } = {}) {
     if (typeof socket === "undefined") return;
+    const seq = ++this._authSeq;
     socket.emit("teacher:subscribe", { pin }, (res) => {
+      if (seq !== this._authSeq) return;
       const err = document.getElementById("teacherPinError");
       if (!res?.ok) {
-        err.textContent = res?.error || "שגיאה";
-        err.classList.remove("hidden");
+        if (showDashboard) {
+          err.textContent = res?.error || "שגיאה";
+          err.classList.remove("hidden");
+        }
         return;
       }
       this.pin = pin;
@@ -81,13 +85,14 @@ const TeacherDash = {
       this.bookings = res.bookings || [];
       document.getElementById("teacherPinModal")?.classList.add("hidden");
       err?.classList.add("hidden");
-      this.showDashboard();
+      if (showDashboard) this.showDashboard();
       this.renderList();
       this.updateBadge();
     });
   },
 
   showDashboard() {
+    if (window.GameClassApp?.isInRoom?.()) return;
     document.getElementById("landingView")?.classList.add("hidden");
     document.getElementById("roomView")?.classList.add("hidden");
     document.getElementById("teacherDashView")?.classList.remove("hidden");
@@ -220,15 +225,13 @@ const TeacherDash = {
 
 document.addEventListener("DOMContentLoaded", () => TeacherDash.init());
 
-// Auto-subscribe when teacher creates room
+// Subscribe to booking updates when teacher creates room — without leaving the room view
 window.teacherDashAutoAuth = () => {
-  if (TeacherDash.pin) TeacherDash.tryAuth(TeacherDash.pin);
-  else if (localStorage.getItem("teacher-pin")) TeacherDash.tryAuth(localStorage.getItem("teacher-pin"));
+  const pin = TeacherDash.pin || localStorage.getItem("teacher-pin");
+  if (pin) TeacherDash.tryAuth(pin, { showDashboard: false });
 };
 
 window.teacherDashShowInRoom = () => {
-  if (TeacherDash.pin || localStorage.getItem("teacher-pin")) {
-    TeacherDash.tryAuth(TeacherDash.pin || localStorage.getItem("teacher-pin"));
-    setTimeout(() => TeacherDash.showInRoom(), 300);
-  }
+  const pin = TeacherDash.pin || localStorage.getItem("teacher-pin");
+  if (pin) TeacherDash.tryAuth(pin, { showDashboard: false });
 };

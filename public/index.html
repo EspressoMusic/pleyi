@@ -225,42 +225,49 @@
   </main>
 
   <!-- Lobby / Room (teacher) -->
-  <div id="roomView" class="room-view hidden">
+  <div id="roomView" class="room-view hidden" tabindex="-1" aria-label="חדר כיתה">
     <div class="container room-container">
-      <div class="room-header">
-        <div>
-          <h2 class="room-title font-cartoon">חדר כיתה</h2>
+      <div class="room-top-bar">
+        <div class="room-top-info">
+          <h2 class="room-title font-cartoon" id="roomTitleDisplay">חדר כיתה</h2>
           <p class="room-code-label">קוד: <strong id="roomCodeDisplay">------</strong>
-            <button class="btn-copy" id="copyCodeBtn" title="העתק">העתק</button>
-          </p>
-          <p class="room-join-link hidden" aria-hidden="true">
-            <a href="#" id="roomJoinLink" dir="ltr"></a>
+            <button type="button" class="btn-copy" id="copyCodeBtn" title="העתק קוד">📋</button>
           </p>
         </div>
-        <div class="room-scores">
-          <span class="score-pill teacher" id="scoreTeacher">מורה: 0</span>
-          <span class="player-name" id="teacherNameDisplay" style="font-size:14px;color:var(--muted)"></span>
-          <span class="player-status" id="teacherStatus">●</span>
+        <div class="room-share-toolbar">
+          <button type="button" class="btn btn-primary btn-candy btn-sm" id="shareRoomBtn">📤 שתף קישור</button>
+          <button type="button" class="btn btn-outline btn-candy btn-sm" id="copyJoinLinkBtn">🔗 העתק קישור</button>
+          <a href="/join" class="btn btn-outline btn-candy btn-sm" id="openJoinPageBtn" target="_blank" rel="noopener">📱 דף הצטרפות</a>
         </div>
       </div>
 
       <div class="room-classroom-bar">
         <div class="room-share-card">
-          <h3>📲 שיתוף לתלמידים</h3>
-          <p style="margin:0 0 8px;font-size:0.9rem;color:var(--muted)">סרקו QR או שלחו קישור — הם יצטרפו מהטלפון</p>
+          <h3>QR לסריקה</h3>
+          <p class="room-share-lead">התלמידים סורקים ונכנסים ישר למשחק כשתתחילו</p>
           <div class="room-qr-wrap">
             <img id="roomQrCode" width="180" height="180" alt="QR להצטרפות" />
           </div>
           <p class="room-join-url" id="joinUrlDisplay"></p>
-          <div class="room-share-actions">
-            <button class="btn btn-outline btn-sm" id="copyJoinLinkBtn">העתק קישור</button>
-            <a href="/join" class="btn btn-outline btn-sm" target="_blank" rel="noopener">דף הצטרפות</a>
-          </div>
         </div>
         <div class="room-students-card">
-          <h3>תלמידים מחוברים <span class="student-count-badge" id="studentCountBadge">0</span></h3>
+          <h3>תלמידים <span class="student-count-badge" id="studentCountBadge">0</span></h3>
           <div class="students-list" id="studentsList">
-            <p class="students-empty">ממתינים לתלמידים — שלחו QR או קישור</p>
+            <p class="students-empty">ממתינים לתלמידים — שתפו קישור או QR</p>
+          </div>
+        </div>
+        <div class="room-chat-card">
+          <h3>💬 צ'אט כיתה</h3>
+          <div class="room-chat-log" id="roomChatLog" aria-live="polite"></div>
+          <div class="room-emoji-bar" id="roomEmojiBar">
+            <button type="button" data-emoji="👍" aria-label="אגודלים">👍</button>
+            <button type="button" data-emoji="🎉" aria-label="חגיגה">🎉</button>
+            <button type="button" data-emoji="❤️" aria-label="לב">❤️</button>
+            <button type="button" data-emoji="😂" aria-label="צחוק">😂</button>
+            <button type="button" data-emoji="🔥" aria-label="אש">🔥</button>
+            <button type="button" data-emoji="👏" aria-label="מחיאות">👏</button>
+            <button type="button" data-emoji="⭐" aria-label="כוכב">⭐</button>
+            <button type="button" data-emoji="💪" aria-label="חוזק">💪</button>
           </div>
         </div>
       </div>
@@ -269,25 +276,27 @@
         <h3 class="lobby-heading font-cartoon">בחרו משחק לכיתה</h3>
         <p class="lobby-hint" id="lobbyHint">שתפו QR — התלמידים יצטרפו מהטלפון</p>
         <div class="game-picker" id="gamePicker">
-          <button class="game-btn" data-game="vocabulary-duel">Duel מילים ⭐</button>
-          <button class="game-btn" data-game="word-memory">זיכרון</button>
-          <button class="game-btn" data-game="hangman">איש תלוי</button>
-          <button class="game-btn" data-game="sentence-scramble">משפטים</button>
-          <button class="game-btn" data-game="spelling-bee">איות</button>
-          <button class="game-btn" data-game="tower-stack">מגדל מילים</button>
-          <button class="game-btn" data-game="word-runner">רץ וקופץ</button>
+          <button type="button" class="game-btn" data-game="vocabulary-duel">⚔️ Duel מילים</button>
+          <button type="button" class="game-btn" data-game="word-memory">🧠 זיכרון</button>
+          <button type="button" class="game-btn" data-game="hangman">🎯 איש תלוי</button>
+          <button type="button" class="game-btn" data-game="sentence-scramble">📝 משפטים</button>
+          <button type="button" class="game-btn" data-game="spelling-bee">✏️ איות</button>
+          <button type="button" class="game-btn" data-game="word-runner">🏃 רץ וקופץ</button>
+          <button type="button" class="game-btn" data-game="spot-diff">🔍 מצא הבדל</button>
+          <button type="button" class="game-btn" data-game="candy-match">🍬 ממתקים</button>
+          <button type="button" class="game-btn" data-game="word-shop">🏪 חנות</button>
         </div>
       </div>
 
       <div id="gamePanel" class="game-panel hidden">
         <div class="game-panel-header">
           <h3 id="activeGameTitle">משחק</h3>
-          <button class="btn btn-outline btn-sm" id="leaveGameBtn">← חזרה ללובי</button>
+          <button type="button" class="btn btn-outline btn-sm" id="leaveGameBtn">← חזרה ללובי</button>
         </div>
-        <div id="gameContent"></div>
+        <div id="gameContent" class="game-content-stage"></div>
       </div>
 
-      <button class="btn btn-outline leave-room-btn" id="leaveRoomBtn">עזוב חדר</button>
+      <button type="button" class="btn btn-outline leave-room-btn" id="leaveRoomBtn">עזוב חדר</button>
     </div>
   </div>
 
@@ -362,6 +371,7 @@
           <input type="text" id="roomCodeInput" placeholder="123456" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" />
         </label>
         <p class="form-error hidden" id="formError"></p>
+        <p class="modal-conn-hint hidden" id="socketConnHint"></p>
         <button type="submit" class="btn btn-primary btn-full" id="formSubmit">פתח חדר</button>
       </form>
     </div>
@@ -379,7 +389,7 @@
   <script src="js/booking.js"></script>
   <script src="js/teacher-dashboard.js"></script>
   <script src="js/scroll-animations.js"></script>
-  <script src="js/app.js"></script>
+  <script src="/js/app.js?v=5"></script>
   <script src="js/cookie-consent.js"></script>
 </body>
 </html>

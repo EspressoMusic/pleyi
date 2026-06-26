@@ -1,6 +1,43 @@
 /* GameClass — main app */
 
-const socket = io();
+const ROOM_LOG = "[GameClass Room]";
+
+function roomLog(...args) {
+  console.log(ROOM_LOG, ...args);
+}
+
+function roomLogError(...args) {
+  console.error(ROOM_LOG, ...args);
+}
+
+if (typeof io === "undefined") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const warn = document.createElement("p");
+    warn.className = "form-error";
+    warn.style.cssText = "margin:12px;text-align:center;font-weight:700";
+    warn.textContent =
+      "אין חיבור לשרת — הריצו npm start וגלשו ל-http://localhost:3456 (לא לפתוח קובץ HTML מהמחשב)";
+    document.body.prepend(warn);
+    roomLogError("socket.io not loaded");
+  });
+}
+
+const socket =
+  typeof io !== "undefined"
+    ? io()
+    : {
+        connected: false,
+        active: false,
+        on() {},
+        once() {},
+        off() {},
+        connect() {},
+        emit(_event, _payload, cb) {
+          if (typeof cb === "function") {
+            cb({ ok: false, error: "אין חיבור לשרת — הריצו npm start" });
+          }
+        },
+      };
 
 const state = {
   role: null,
@@ -23,10 +60,62 @@ function showToast(msg) {
 }
 
 function showView(view) {
-  $("#landingView").classList.toggle("hidden", view !== "landing");
-  $("#roomView").classList.toggle("hidden", view !== "room");
-  $("#teacherDashView")?.classList.toggle("hidden", view !== "teacher");
-  document.body.classList.toggle("in-room", view === "room");
+  const landing = $("#landingView");
+  const room = $("#roomView");
+  const dash = $("#teacherDashView");
+  if (!landing || !room) return;
+
+  const inRoom = view === "room";
+  landing.classList.toggle("hidden", view !== "landing");
+  room.classList.toggle("hidden", !inRoom);
+  dash?.classList.toggle("hidden", view !== "teacher");
+  document.body.classList.toggle("in-room", inRoom);
+  document.documentElement.classList.toggle("in-room", inRoom);
+
+  if (inRoom) {
+    window.scrollTo(0, 0);
+    room.setAttribute("tabindex", "-1");
+    room.focus({ preventScroll: true });
+  }
+}
+
+function isInRoom() {
+  return state.role === "teacher" && !!state.room && !$("#roomView")?.classList.contains("hidden");
+}
+
+window.GameClassApp = { isInRoom, showView, enterRoom: null };
+
+function waitForSocket(timeoutMs = 15000) {
+  return new Promise((resolve, reject) => {
+    if (socket.connected) {
+      resolve();
+      return;
+    }
+    const timer = setTimeout(() => {
+      socket.off("connect", onConnect);
+      reject(new Error("לא מתחבר לשרת — ודאו שהשרת רץ (npm start) ושאתם ב-http://localhost:3456"));
+    }, timeoutMs);
+    function onConnect() {
+      clearTimeout(timer);
+      resolve();
+    }
+    socket.once("connect", onConnect);
+    if (!socket.active) socket.connect();
+  });
+}
+
+function emitAck(event, payload, timeoutMs = 12000) {
+  return waitForSocket(timeoutMs).then(
+    () =>
+      new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("השרת לא עונה — בדקו שהוא פועל")), timeoutMs);
+        socket.emit(event, payload, (res) => {
+          clearTimeout(timer);
+          if (res === undefined) reject(new Error("אין תשובה מהשרת"));
+          else resolve(res);
+        });
+      })
+  );
 }
 
 function roomJoinUrl(code) {
@@ -34,11 +123,8 @@ function roomJoinUrl(code) {
 }
 
 function updateRoomJoinLink(code) {
-  const link = $("#roomJoinLink");
-  if (!link || !code) return;
-  const url = roomJoinUrl(code);
-  link.href = url;
-  link.textContent = url;
+  const joinPage = document.getElementById("openJoinPageBtn");
+  if (joinPage && code) joinPage.href = `/join?code=${code}`;
 }
 
 function t(key) {
@@ -47,6 +133,7 @@ function t(key) {
 
 function openModal(mode) {
   state.modalMode = mode;
+  roomLog("open modal", mode);
   $("#modalTitle").textContent =
     mode === "teacher" ? "פתיחת חדר כיתה" : "הצטרפות לחדר";
   $("#modalDesc").textContent =
@@ -60,31 +147,58 @@ function openModal(mode) {
   $("#formError").classList.add("hidden");
   $("#joinForm").reset();
   $("#joinModal").classList.remove("hidden");
+  const connHint = document.getElementById("socketConnHint");
+  if (connHint) {
+    connHint.textContent = socket.connected
+      ? ""
+      : "מתחבר לשרת… אם זה נתקע, ודאו שהשרת רץ (npm start).";
+    connHint.classList.toggle("hidden", socket.connected);
+  }
   setTimeout(() => $("#playerName").focus(), 100);
 }
 
 function closeModal() {
-  $("#joinModal").classList.add("hidden");
+  $("#joinModal")?.classList.add("hidden");
+  const submitBtn = $("#formSubmit");
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = state.modalMode === "teacher" ? "פתח חדר" : "הצטרף";
+  }
 }
 
 function updateRoomUI(room) {
   if (!room) return;
   state.room = room;
   $("#roomCodeDisplay").textContent = room.code;
+  $("#roomTitleDisplay").textContent = room.roomTitle || room.teacherName || "חדר כיתה";
   updateRoomJoinLink(room.code);
-  $("#teacherNameDisplay").textContent = room.teacherName || "מורה";
-  $("#teacherStatus").classList.toggle("waiting", !room.teacherConnected);
 
   const students = room.students || [];
   const listEl = $("#studentsList");
+  const isTeacher = state.role === "teacher";
   if (listEl) {
     listEl.innerHTML =
       students.length === 0
-        ? '<p class="students-empty">ממתינים לתלמידים — שלחו את הקישור או QR</p>'
+        ? '<p class="students-empty">ממתינים לתלמידים — שתפו קישור או QR</p>'
         : students
             .map(
-              (s) =>
-                `<div class="student-chip"><span class="student-dot"></span>${s.name} <strong>${s.score || 0} נק׳</strong></div>`
+              (s) => `
+              <div class="student-chip${s.suspended ? " student-chip--suspended" : ""}" data-student-id="${s.id}">
+                <div class="student-chip-main">
+                  <span class="student-dot${s.suspended ? " waiting" : ""}"></span>
+                  <span class="student-chip-name">${escapeHtml(s.name)}</span>
+                  <strong class="student-chip-score">${s.score || 0} נק׳</strong>
+                  ${s.suspended ? '<span class="student-suspended-tag">מושהה</span>' : ""}
+                </div>
+                ${
+                  isTeacher
+                    ? `<div class="student-chip-actions">
+                  <button type="button" class="student-action-btn" data-action="suspend" data-student-id="${s.id}" title="${s.suspended ? "בטל השהיה" : "השהה"}">${s.suspended ? "▶️" : "⏸"}</button>
+                  <button type="button" class="student-action-btn student-action-btn--kick" data-action="kick" data-student-id="${s.id}" title="העף">✕</button>
+                </div>`
+                    : ""
+                }
+              </div>`
             )
             .join("");
   }
@@ -97,18 +211,47 @@ function updateRoomUI(room) {
   }
   $("#joinUrlDisplay").textContent = joinUrl;
 
-  $("#scoreTeacher").textContent = `מורה: ${room.scores?.teacher ?? 0}`;
-
-  const isTeacher = state.role === "teacher";
   const hasStudents = students.length > 0;
   $("#lobbyHint").textContent = hasStudents
     ? isTeacher
-      ? "בחרו משחק — כל התלמידים ישחקו מהטלפון!"
+      ? "בחרו משחק — כל התלמידים ייכנסו אוטומטית למשחק!"
       : "ממתינים שהמורה יתחיל משחק..."
-    : "שתפו QR או קישור — התלמידים יצטרפו מהטלפון";
+    : "שתפו קישור או QR — התלמידים יצטרפו מהטלפון";
 
   $$(".game-btn").forEach((btn) => {
     btn.disabled = isTeacher && !hasStudents;
+  });
+
+  if (room.chat) renderChatLog(room.chat);
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderChatLog(messages) {
+  const log = $("#roomChatLog");
+  if (!log) return;
+  if (!messages?.length) {
+    log.innerHTML = '<p class="room-chat-empty">שלחו אימוג\'י — כולם רואים!</p>';
+    return;
+  }
+  log.innerHTML = messages
+    .map(
+      (m) =>
+        `<div class="room-chat-msg room-chat-msg--${m.role}"><span class="room-chat-emoji">${m.emoji}</span><span class="room-chat-who">${escapeHtml(m.fromName)}</span></div>`
+    )
+    .join("");
+  log.scrollTop = log.scrollHeight;
+}
+
+function sendRoomEmoji(emoji) {
+  socket.emit("room:chat", { emoji }, (res) => {
+    if (res?.ok === false) showToast(res?.error || "לא ניתן לשלוח");
   });
 }
 
@@ -116,10 +259,12 @@ function renderGame() {
   if (!state.activeGame || !state.gameState) {
     $("#gamePanel").classList.add("hidden");
     $("#lobbyPanel").classList.remove("hidden");
+    document.querySelector(".room-classroom-bar")?.classList.remove("hidden");
     return;
   }
 
   $("#lobbyPanel").classList.add("hidden");
+  document.querySelector(".room-classroom-bar")?.classList.add("hidden");
   $("#gamePanel").classList.remove("hidden");
   $("#activeGameTitle").textContent = GAME_NAMES[state.activeGame] || state.activeGame;
 
@@ -147,26 +292,126 @@ function renderGame() {
   Games.bind(state.activeGame, content, ctx);
 }
 
+function saveHostSession(data, title) {
+  if (!data?.code) {
+    roomLogError("saveHostSession skipped — no code");
+    return false;
+  }
+  sessionStorage.setItem(
+    "gameclass-host",
+    JSON.stringify({
+      code: data.code,
+      token: data.teacherToken || "",
+      title: data.roomTitle || data.teacherName || title || "",
+    })
+  );
+  return true;
+}
+
+function savePendingRoom(data, roomName) {
+  sessionStorage.setItem(
+    "gameclass-pending-room",
+    JSON.stringify({
+      ...data,
+      role: "teacher",
+      roomTitle: data.roomTitle || data.teacherName || roomName,
+      savedAt: Date.now(),
+    })
+  );
+}
+
+function navigateToRoomUrl(url) {
+  roomLog(`navigating to ${url}`);
+  try {
+    const target = new URL(url, window.location.origin);
+    const form = document.createElement("form");
+    form.method = "GET";
+    form.action = target.pathname;
+    target.searchParams.forEach((value, key) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+    roomLog("navigation executed");
+  } catch (err) {
+    roomLogError("form navigation failed, using location.href", err);
+    window.location.href = url;
+    roomLog("navigation executed (href fallback)");
+  }
+}
+
+function showRoomRedirectOverlay() {
+  let el = document.getElementById("roomRedirectOverlay");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "roomRedirectOverlay";
+    el.className = "room-redirect-overlay";
+    el.innerHTML = '<p class="font-cartoon">פותח חדר…</p>';
+    document.body.appendChild(el);
+  }
+  el.classList.remove("hidden");
+}
+
+function goToTeacherRoom(data, roomName) {
+  if (!data?.code) {
+    roomLogError("goToTeacherRoom aborted — missing room code", data);
+    showToast("שגיאה: לא התקבל קוד חדר מהשרת");
+    return;
+  }
+
+  savePendingRoom(data, roomName);
+  const savedHost = saveHostSession(data, roomName);
+  const savedPending = !!sessionStorage.getItem("gameclass-pending-room");
+  roomLog("saved room data", {
+    code: data.code,
+    host: savedHost,
+    pending: savedPending,
+    hasToken: !!data.teacherToken,
+  });
+
+  closeModal();
+  showRoomRedirectOverlay();
+
+  const q = new URLSearchParams();
+  q.set("code", data.code);
+  if (data.teacherToken) q.set("t", data.teacherToken);
+
+  const url = `${window.location.origin}/room?${q.toString()}`;
+  navigateToRoomUrl(url);
+}
+
 function enterRoom(data) {
+  if (!data?.ok && !data?.code) return;
   state.role = data.role;
   state.room = data;
   state.scores = data.scores || { teacher: 0, student: 0 };
-  if (data.activeGame && data.gameState) {
-    state.activeGame = data.activeGame;
-    state.gameState = data.gameState;
-  }
-  showView("room");
-  updateRoomUI(data);
-  renderGame();
+  state.activeGame = data.activeGame || null;
+  state.gameState = data.gameState || null;
+
   closeModal();
+  showView("room");
+
+  try {
+    updateRoomUI(data);
+    if (data.chat) renderChatLog(data.chat);
+    renderGame();
+  } catch (err) {
+    console.error("enterRoom UI error:", err);
+  }
+
   if (data.role === "teacher") {
-    showToast(`חדר נוצר! קוד: ${data.code}`);
+    showToast(`חדר «${data.roomTitle || data.teacherName || ""}» נוצר! קוד: ${data.code}`);
     updateRoomJoinLink(data.code);
-    window.teacherDashAutoAuth?.();
   } else {
     showToast("הצטרפת בהצלחה!");
   }
 }
+
+window.GameClassApp.enterRoom = enterRoom;
 
 /* Loader */
 window.addEventListener("load", () => {
@@ -198,19 +443,112 @@ $$("#mobileNav a").forEach((a) =>
   })
 );
 
+function bindOpenRoomFlow() {
+  const openRoomBtnIds = [
+    "openClassroomBtn",
+    "heroClassroomBtn",
+    "howClassroomBtn",
+    "gamesClassroomBtn",
+    "mobileClassroomBtn",
+    "dashStartLessonBtn",
+  ];
+
+  openRoomBtnIds.forEach((id) => {
+    const btn = document.getElementById(id);
+    if (!btn || btn.dataset.roomBound) return;
+    btn.dataset.roomBound = "1";
+    btn.addEventListener("click", () => {
+      roomLog("clicked open room (open modal)");
+      openModal("teacher");
+      if (id === "mobileClassroomBtn") {
+        $("#menuToggle")?.classList.remove("open");
+        $("#mobileNav")?.classList.remove("open");
+      }
+    });
+  });
+
+  const joinForm = document.getElementById("joinForm");
+  const submitBtn = document.getElementById("formSubmit");
+
+  if (!joinForm) {
+    roomLogError("joinForm not found — submit handler not bound");
+    return;
+  }
+  if (joinForm.dataset.roomBound) return;
+  joinForm.dataset.roomBound = "1";
+
+  submitBtn?.addEventListener("click", () => {
+    roomLog("clicked open room");
+  });
+
+  joinForm.addEventListener("submit", handleJoinFormSubmit);
+  roomLog("joinForm bound OK");
+}
+
+async function handleJoinFormSubmit(e) {
+  e.preventDefault();
+  roomLog("form submit", { mode: state.modalMode });
+
+  const name = $("#playerName").value.trim();
+  const err = $("#formError");
+  const submitBtn = $("#formSubmit");
+  err.classList.add("hidden");
+
+  if (!name) {
+    err.textContent = "נא להזין שם";
+    err.classList.remove("hidden");
+    roomLogError("submit blocked — empty name");
+    return;
+  }
+
+  const prevLabel = submitBtn?.textContent;
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "פותח חדר…";
+  }
+
+  try {
+    if (state.modalMode === "teacher") {
+      roomLog("room:create sending…", { name });
+      const res = await emitAck("room:create", { name });
+      roomLog("room:create response", res);
+
+      if (res?.ok && res?.code) {
+        roomLog(`created room code ${res.code}`);
+        goToTeacherRoom(res, name);
+        return;
+      }
+      throw new Error(res?.error || "שגיאה ביצירת חדר — לא התקבל קוד");
+    }
+
+    const code = $("#roomCodeInput").value.trim();
+    if (!/^\d{6}$/.test(code)) {
+      err.textContent = "קוד חדר חייב להיות 6 ספרות";
+      err.classList.remove("hidden");
+      return;
+    }
+    const res = await emitAck("room:join", { code, name });
+    if (res?.ok) enterRoom(res);
+    else throw new Error(res?.error || "שגיאה");
+  } catch (ex) {
+    roomLogError("room create/join failed", ex);
+    err.textContent = ex.message || "שגיאה";
+    err.classList.remove("hidden");
+    showToast(ex.message || "שגיאה");
+  } finally {
+    if (submitBtn && !window.location.pathname.includes("/room")) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = prevLabel || "פתח חדר";
+    }
+  }
+}
+
 function openTeacherRoom() {
+  roomLog("clicked open room (open modal)");
   openModal("teacher");
 }
 
-document.getElementById("openClassroomBtn")?.addEventListener("click", () => openModal("teacher"));
-document.getElementById("heroClassroomBtn")?.addEventListener("click", () => openModal("teacher"));
-document.getElementById("howClassroomBtn")?.addEventListener("click", () => openModal("teacher"));
-document.getElementById("gamesClassroomBtn")?.addEventListener("click", () => openModal("teacher"));
-document.getElementById("mobileClassroomBtn")?.addEventListener("click", () => {
-  openModal("teacher");
-  $("#menuToggle")?.classList.remove("open");
-  $("#mobileNav")?.classList.remove("open");
-});
+bindOpenRoomFlow();
 
 initContactExtras();
 GameAuth?.bindModals(showToast);
@@ -224,42 +562,21 @@ $("#modalClose")?.addEventListener("click", closeModal);
 $("#joinModal")?.addEventListener("click", (e) => {
   if (e.target === $("#joinModal")) closeModal();
 });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !$("#joinModal")?.classList.contains("hidden")) closeModal();
+});
 
-$("#joinForm")?.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const name = $("#playerName").value.trim();
-  const err = $("#formError");
-  err.classList.add("hidden");
+socket.on("connect", () => {
+  const connHint = document.getElementById("socketConnHint");
+  if (connHint) connHint.classList.add("hidden");
+});
 
-  if (!name) {
-    err.textContent = "נא להזין שם";
-    err.classList.remove("hidden");
-    return;
-  }
+socket.on("connect_error", () => {
+  showToast("לא מתחבר לשרת — ודאו ש-npm start רץ");
+});
 
-  if (state.modalMode === "teacher") {
-    socket.emit("room:create", { name }, (res) => {
-      if (res?.ok) enterRoom(res);
-      else {
-        err.textContent = res?.error || "שגיאה";
-        err.classList.remove("hidden");
-      }
-    });
-  } else {
-    const code = $("#roomCodeInput").value.trim();
-    if (!/^\d{6}$/.test(code)) {
-      err.textContent = "קוד חדר חייב להיות 6 ספרות";
-      err.classList.remove("hidden");
-      return;
-    }
-    socket.emit("room:join", { code, name }, (res) => {
-      if (res?.ok) enterRoom(res);
-      else {
-        err.textContent = res?.error || "שגיאה";
-        err.classList.remove("hidden");
-      }
-    });
-  }
+socket.on("disconnect", () => {
+  if (state.room) showToast("החיבור נותק — מנסה להתחבר מחדש…");
 });
 
 $("#copyCodeBtn")?.addEventListener("click", () => {
@@ -276,7 +593,47 @@ $("#copyJoinLinkBtn")?.addEventListener("click", () => {
   }
 });
 
-document.getElementById("dashBackHome")?.addEventListener("click", () => showView("landing"));
+$("#shareRoomBtn")?.addEventListener("click", async () => {
+  const code = $("#roomCodeDisplay")?.textContent;
+  if (!code || code === "------") return;
+  const url = roomJoinUrl(code);
+  const title = $("#roomTitleDisplay")?.textContent || "חדר GameClass";
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text: `הצטרפו לחדר ${title}`, url });
+      return;
+    } catch {
+      /* cancelled or failed — fall through to copy */
+    }
+  }
+  navigator.clipboard?.writeText(url).then(() => showToast("הקישור הועתק"));
+});
+
+$("#roomEmojiBar")?.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-emoji]");
+  if (btn) sendRoomEmoji(btn.dataset.emoji);
+});
+
+$("#studentsList")?.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action]");
+  if (!btn || state.role !== "teacher") return;
+  const studentId = btn.dataset.studentId;
+  const action = btn.dataset.action;
+  if (action === "kick") {
+    if (!confirm("להעיף את התלמיד/ה מהחדר?")) return;
+    socket.emit("room:kick", { studentId }, (res) => {
+      if (res?.ok) showToast("התלמיד/ה הוצא/ה מהחדר");
+      else showToast(res?.error || "שגיאה");
+    });
+  } else if (action === "suspend") {
+    const chip = btn.closest(".student-chip");
+    const suspending = !chip?.classList.contains("student-chip--suspended");
+    socket.emit("room:suspend", { studentId, suspend: suspending }, (res) => {
+      if (res?.ok) showToast(suspending ? "התלמיד/ה הושהה" : "ההשהיה בוטלה");
+      else showToast(res?.error || "שגיאה");
+    });
+  }
+});
 
 function openPlayGame(gameId) {
   window.open(`/play/${gameId}`, "_blank", "noopener");
@@ -293,7 +650,7 @@ document.getElementById("gamePreviewModal")?.addEventListener("click", (e) => {
 
 (function handleJoinFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  const joinCode = params.get("join") || params.get("code");
+  const joinCode = params.get("join");
   if (joinCode && /^\d{6}$/.test(joinCode)) {
     window.location.href = `/join?code=${joinCode}`;
   }
@@ -382,15 +739,35 @@ $("#leaveRoomBtn")?.addEventListener("click", () => {
   state.role = null;
   state.room = null;
   state.activeGame = null;
+  sessionStorage.removeItem("gameclass-host");
+  document.title = "GameClass — לימוד דרך משחקים";
+  history.replaceState(null, "", "/");
   showView("landing");
-  socket.disconnect();
-  socket.connect();
+  socket.emit("room:leave-teacher", {}, () => {
+    socket.disconnect();
+    socket.connect();
+  });
   showToast("עזבת את החדר");
 });
 
+function guardNavWhileInRoom(e) {
+  if (state.role === "teacher" && state.room) {
+    e.preventDefault();
+    showToast("אתם בחדר כיתה — «עזוב חדר» לחזרה לדף הבית");
+  }
+}
+
 $("#logoHome")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  if (!state.room) showView("landing");
+  if (state.room) {
+    e.preventDefault();
+    guardNavWhileInRoom(e);
+    return;
+  }
+  showView("landing");
+});
+
+document.querySelectorAll('.nav-pill[href^="#"], #mobileNav a[href^="#"]').forEach((a) => {
+  a.addEventListener("click", guardNavWhileInRoom);
 });
 
 document.getElementById("dashBackHome")?.addEventListener("click", () => showView("landing"));
@@ -419,7 +796,16 @@ socket.on("room:closed", ({ reason }) => {
   showToast(reason || "החדר נסגר");
   state.role = null;
   state.room = null;
+  sessionStorage.removeItem("gameclass-host");
+  document.title = "GameClass — לימוד דרך משחקים";
+  history.replaceState(null, "", "/");
   showView("landing");
+});
+
+socket.on("room:chat", (msg) => {
+  if (!state.room) return;
+  state.room.chat = [...(state.room.chat || []), msg].slice(-50);
+  renderChatLog(state.room.chat);
 });
 
 socket.on("game:state", ({ activeGame, state: gs, scores }) => {
@@ -438,4 +824,9 @@ socket.on("game:left", () => {
   state.activeGame = null;
   state.gameState = null;
   renderGame();
+});
+
+roomLog("app.js ready", {
+  joinForm: !!document.getElementById("joinForm"),
+  socketIo: typeof io !== "undefined",
 });

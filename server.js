@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const fs = require("fs");
+const crypto = require("crypto");
 const { Server } = require("socket.io");
 const path = require("path");
 const bookingsLib = require("./lib/bookings");
@@ -20,6 +21,10 @@ app.get("/join", (_req, res) => {
 
 app.get("/games", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "games.html"));
+});
+
+app.get("/room", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "room.html"));
 });
 
 app.get("/play/:gameId", (req, res) => {
@@ -153,6 +158,35 @@ function generateCode() {
     code = String(Math.floor(100000 + Math.random() * 900000));
   } while (rooms.has(code));
   return code;
+}
+
+function scheduleTeacherGrace(code) {
+  const room = getRoom(code);
+  if (!room) return;
+  if (room.teacherGraceTimer) clearTimeout(room.teacherGraceTimer);
+  room.teacherId = null;
+  room.teacherGraceTimer = setTimeout(() => {
+    const r = getRoom(code);
+    if (r && !r.teacherId) {
+      rooms.delete(code);
+      io.to(`room:${code}`).emit("room:closed", { reason: "המורה התנתק" });
+    }
+  }, 60000);
+}
+
+function clearTeacherGrace(room) {
+  if (room?.teacherGraceTimer) {
+    clearTimeout(room.teacherGraceTimer);
+    room.teacherGraceTimer = null;
+  }
+}
+
+function closeRoom(code, reason) {
+  const room = getRoom(code);
+  if (!room) return;
+  clearTeacherGrace(room);
+  rooms.delete(code);
+  io.to(`room:${code}`).emit("room:closed", { reason });
 }
 
 function getRoom(code) {
@@ -377,12 +411,43 @@ io.on("connection", (socket) => {
 
   socket.on("room:create", ({ name }, cb) => {
     const code = generateCode();
-    const room = roomsLib.createRoom(code, socket.id, name);
+    const teacherToken = crypto.randomBytes(16).toString("hex");
+    const room = roomsLib.createRoom(code, socket.id, name, teacherToken);
     rooms.set(code, room);
     socket.data.roomCode = code;
     socket.data.role = "teacher";
     socket.join(`room:${code}`);
-    cb?.({ ok: true, ...roomSummary(room), role: "teacher" });
+    cb?.({ ok: true, teacherToken, ...roomSummary(room), role: "teacher" });
+  });
+
+  socket.on("room:host-rejoin", ({ code, token }, cb) => {
+    const room = getRoom(code);
+    if (!room || room.teacherToken !== token) {
+      return cb?.({ ok: false, error: "חדר לא נמצא — פתחו חדר חדש מהדף הראשי" });
+    }
+    clearTeacherGrace(room);
+    room.teacherId = socket.id;
+    socket.data.roomCode = code;
+    socket.data.role = "teacher";
+    socket.join(`room:${code}`);
+    cb?.({
+      ok: true,
+      ...roomSummary(room),
+      role: "teacher",
+      gameState: room.activeGame ? room.gameState : null,
+    });
+    emitRoom(code);
+  });
+
+  socket.on("room:leave-teacher", (_payload, cb) => {
+    const code = socket.data.roomCode;
+    const room = getRoom(code);
+    if (room && socket.data.role === "teacher") {
+      closeRoom(code, "החדר נסגר");
+    }
+    socket.data.roomCode = null;
+    socket.data.role = null;
+    cb?.({ ok: true });
   });
 
   socket.on("room:join", ({ code, name }, cb) => {
@@ -399,7 +464,7 @@ io.on("connection", (socket) => {
       return cb?.({ ok: false, error: "החדר מלא (30 תלמידים)." });
     }
 
-    room.students.set(socket.id, { name: studentName, score: 0 });
+    room.students.set(socket.id, { name: studentName, score: 0, suspended: false });
     socket.data.roomCode = code;
     socket.data.role = "student";
     socket.data.playerId = socket.id;
@@ -442,6 +507,9 @@ io.on("connection", (socket) => {
 
     const role = getRole(room, socket.id);
     if (!role) return cb?.({ ok: false });
+    if (role === "student" && roomsLib.isSuspended(room, socket.id)) {
+      return cb?.({ ok: false, error: "הושהיתם על ידי המורה" });
+    }
 
     const { action, data } = payload;
     const state = room.gameState;
@@ -684,6 +752,71 @@ io.on("connection", (socket) => {
     cb?.({ ok: false });
   });
 
+  socket.on("room:chat", ({ emoji }, cb) => {
+    const code = socket.data.roomCode;
+    const room = getRoom(code);
+    if (!room) return cb?.({ ok: false });
+
+    const role = getRole(room, socket.id);
+    if (!role) return cb?.({ ok: false });
+    if (role === "student" && roomsLib.isSuspended(room, socket.id)) {
+      return cb?.({ ok: false, error: "הושהיתם" });
+    }
+
+    const allowed = ["😀", "👍", "🎉", "❤️", "😂", "🔥", "👏", "🤔", "😮", "🙌", "💪", "⭐"];
+    const e = String(emoji || "").trim();
+    if (!allowed.includes(e)) return cb?.({ ok: false });
+
+    const fromName =
+      role === "teacher" ? room.teacherName || "מורה" : room.students.get(socket.id)?.name || "תלמיד";
+    const msg = roomsLib.addChatMessage(room, {
+      fromId: socket.id,
+      fromName,
+      role,
+      emoji: e,
+    });
+    io.to(`room:${code}`).emit("room:chat", msg);
+    cb?.({ ok: true });
+  });
+
+  socket.on("room:kick", ({ studentId }, cb) => {
+    const code = socket.data.roomCode;
+    const room = getRoom(code);
+    if (!room || socket.data.role !== "teacher") return cb?.({ ok: false, error: "אין הרשאה" });
+    if (!studentId || !room.students.has(studentId)) return cb?.({ ok: false, error: "תלמיד לא נמצא" });
+
+    const student = room.students.get(studentId);
+    room.students.delete(studentId);
+    io.to(studentId).emit("room:kicked", { reason: "הוצאתם מהחדר על ידי המורה" });
+    const kickedSocket = io.sockets.sockets.get(studentId);
+    if (kickedSocket) {
+      kickedSocket.leave(`room:${code}`);
+      kickedSocket.data.roomCode = null;
+      kickedSocket.data.role = null;
+    }
+    if (room.students.size === 0) {
+      room.activeGame = null;
+      room.gameState = {};
+      io.to(`room:${code}`).emit("game:left");
+    }
+    emitRoom(code);
+    io.to(`room:${code}`).emit("room:student-left", { name: student?.name || "תלמיד", id: studentId });
+    cb?.({ ok: true });
+  });
+
+  socket.on("room:suspend", ({ studentId, suspend }, cb) => {
+    const code = socket.data.roomCode;
+    const room = getRoom(code);
+    if (!room || socket.data.role !== "teacher") return cb?.({ ok: false, error: "אין הרשאה" });
+    const student = room.students.get(studentId);
+    if (!student) return cb?.({ ok: false, error: "תלמיד לא נמצא" });
+
+    student.suspended = suspend !== false;
+    io.to(studentId).emit("room:suspended", { suspended: student.suspended });
+    emitRoom(code);
+    cb?.({ ok: true, suspended: student.suspended });
+  });
+
   socket.on("disconnect", () => {
     const code = socket.data.roomCode;
     if (!code) return;
@@ -692,8 +825,7 @@ io.on("connection", (socket) => {
 
     const role = getRole(room, socket.id);
     if (role === "teacher") {
-      rooms.delete(code);
-      io.to(`room:${code}`).emit("room:closed", { reason: "המורה התנתק" });
+      scheduleTeacherGrace(code);
     } else if (role === "student") {
       const student = room.students.get(socket.id);
       room.students.delete(socket.id);

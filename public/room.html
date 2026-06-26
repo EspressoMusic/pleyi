@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0066FF" />
+  <title>חדר כיתה — GameClass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/css/clean-site.css" />
+  <link rel="stylesheet" href="/css/room-page.css?v=23" />
+</head>
+<body class="clean-site in-room">
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <div class="room-memphis-bg" aria-hidden="true">
+    <span class="room-memphis-sticker room-memphis-sticker--yellow"></span>
+    <span class="room-memphis-sticker room-memphis-sticker--pink"></span>
+    <span class="room-memphis-sticker room-memphis-sticker--purple"></span>
+    <span class="room-memphis-sticker room-memphis-sticker--lime"></span>
+  </div>
+
+  <header class="navbar scrolled" id="navbar">
+    <div class="container nav-inner room-nav-inner">
+      <a href="/" class="logo" id="roomHomeLink">
+        <span class="logo-text font-cartoon">GameClass</span>
+      </a>
+      <button type="button" class="room-nav-share-btn" id="openSharePanelBtn" aria-expanded="false" aria-controls="roomSharePanel">
+        שתף חדר
+      </button>
+      <button type="button" class="room-nav-leave-btn" id="leaveRoomBtn">עזוב חדר</button>
+      <span class="visually-hidden" id="roomTitleDisplay">חדר כיתה</span>
+    </div>
+  </header>
+
+  <div id="roomLoading" class="room-loading">
+    <p>מתחבר לחדר…</p>
+  </div>
+
+  <div id="roomError" class="room-error hidden">
+    <p class="room-error-text"></p>
+    <a href="/" class="btn btn-primary btn-candy room-error-home">חזרה לדף הבית</a>
+  </div>
+
+  <div id="roomView" class="room-view hidden" tabindex="-1" aria-label="חדר כיתה">
+    <div class="container room-container">
+
+      <div class="room-layout room-zoom-stage-wrap room-classroom-bar">
+        <div class="room-main-block">
+          <div class="room-top-strip" aria-live="polite">
+            <span class="room-stat-pill">קוד: <strong id="roomCodeDisplay" dir="ltr">------</strong></span>
+            <span class="room-stat-pill">מחוברים: <strong id="connectedTotal">1</strong></span>
+          </div>
+
+          <div class="room-game-area" id="roomZoomStage">
+            <div class="room-game-screen">
+              <div class="room-idle-runner" id="roomIdleRunner" aria-label="תצוגת המתנה — רץ וקופץ">
+                <div class="room-idle-runner-sky"></div>
+                <div class="room-idle-runner-ground"></div>
+                <div class="room-idle-runner-track" aria-hidden="true"></div>
+                <div class="room-idle-runner-player" aria-hidden="true">🏃</div>
+              </div>
+              <p class="room-idle-wait-msg" id="roomIdleWaitMsg">ממתינים למשחק…</p>
+            </div>
+            <aside class="room-stage-chat hidden" id="roomStageChat" aria-label="צ'אט כיתה">
+              <div class="room-stage-chat-head">
+                <h3 class="room-stage-chat-title">צ'אט כיתה</h3>
+                <button type="button" class="room-stage-chat-close" id="closeChatBtn" aria-label="סגור צ'אט">×</button>
+              </div>
+              <div class="room-chat-log" id="roomChatLog" aria-live="polite"></div>
+              <div class="room-emoji-bar" id="roomEmojiBar">
+                <button type="button" data-emoji="👍" aria-label="אגודלים">👍</button>
+                <button type="button" data-emoji="🎉" aria-label="חגיגה">🎉</button>
+                <button type="button" data-emoji="❤️" aria-label="לב">❤️</button>
+                <button type="button" data-emoji="😂" aria-label="צחוק">😂</button>
+                <button type="button" data-emoji="🔥" aria-label="אש">🔥</button>
+                <button type="button" data-emoji="👏" aria-label="מחיאות">👏</button>
+                <button type="button" data-emoji="⭐" aria-label="כוכב">⭐</button>
+                <button type="button" data-emoji="💪" aria-label="חוזק">💪</button>
+              </div>
+            </aside>
+          </div>
+
+          <div class="room-bottom-dock-wrap" id="roomBottomDockWrap">
+            <button
+              type="button"
+              class="room-dock-toggle"
+              id="toggleDockBtn"
+              aria-expanded="true"
+              aria-controls="roomBottomDock"
+              aria-label="הסתר משתתפים"
+            >
+              <span class="room-dock-toggle-icon" aria-hidden="true"></span>
+            </button>
+            <div class="room-bottom-dock" id="roomBottomDock" aria-live="polite">
+              <div class="room-teacher-dock" id="teacherDock"></div>
+              <div class="room-students-strip" id="studentsGrid"></div>
+            </div>
+          </div>
+
+          <div class="room-bottom-bar hidden" aria-hidden="true">
+          <button type="button" class="room-bottom-btn" id="toggleChatBtn" aria-expanded="false" aria-controls="roomStageChat">
+            צ'אט
+          </button>
+          <button type="button" class="room-bottom-btn room-bottom-btn--soon" id="toggleVideoBtn" aria-expanded="false" title="בקרוב">
+            מצלמת וידאו
+          </button>
+        </div>
+        </div>
+      </div>
+
+      <div class="room-share-panel hidden" id="roomSharePanel" role="dialog" aria-modal="true" aria-labelledby="roomSharePanelTitle">
+        <div class="room-share-panel-backdrop" id="roomSharePanelBackdrop"></div>
+        <div class="room-share-panel-sheet">
+          <div class="room-share-panel-header">
+            <h2 id="roomSharePanelTitle">שיתוף החדר</h2>
+            <button type="button" class="room-share-panel-close" id="closeSharePanelBtn" aria-label="סגירה">×</button>
+          </div>
+          <p class="room-share-panel-lead">שלחו לתלמידים — קוד, קישור או QR</p>
+
+          <div class="room-share-panel-code">
+            <span class="room-share-panel-code-label">קוד חדר</span>
+            <strong id="sharePanelCode" dir="ltr">------</strong>
+            <button type="button" class="btn btn-outline btn-sm btn-candy" id="copyCodeBtn">העתק קוד</button>
+          </div>
+
+          <div class="room-share-panel-qr">
+            <img id="roomQrCode" width="160" height="160" alt="QR להצטרפות" />
+          </div>
+
+          <div class="room-share-options">
+            <button type="button" class="room-share-option-btn room-share-option-btn--primary btn-candy" id="shareRoomBtn">שתף קישור</button>
+            <button type="button" class="room-share-option-btn btn-candy" id="copyJoinLinkBtn">העתק קישור</button>
+            <a href="/join" class="room-share-option-btn room-share-option-btn--link btn-candy" id="openJoinPageBtn" target="_blank" rel="noopener">פתח דף הצטרפות</a>
+          </div>
+        </div>
+      </div>
+
+      <div id="gamePanel" class="game-panel hidden">
+        <div class="game-panel-header">
+          <h3 id="activeGameTitle">משחק</h3>
+          <button type="button" class="btn btn-outline btn-sm btn-candy" id="leaveGameBtn">חזרה ללובי</button>
+        </div>
+        <div id="gameContent" class="game-content-stage"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/games.js"></script>
+  <script src="/js/room-idle-runner.js"></script>
+  <script src="/js/room-host.js?v=14"></script>
+</body>
+</html>

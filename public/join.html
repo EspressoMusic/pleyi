@@ -49,10 +49,26 @@
       <div class="join-waiting" id="studentWaiting">
         <div class="join-pulse"></div>
         <p>ממתינים שהמורה יתחיל משחק...</p>
-        <p class="join-wait-hint">השאירו את המסך פתוח</p>
+        <p class="join-wait-hint">השאירו את המסך פתוח — תיכנסו אוטומטית למשחק</p>
+      </div>
+      <div class="join-suspended hidden" id="studentSuspended">
+        <p>⏸ הושהיתם על ידי המורה</p>
       </div>
       <div class="join-game hidden" id="studentGame">
         <div id="studentGameContent"></div>
+      </div>
+      <div class="join-chat">
+        <h3>💬 צ'אט</h3>
+        <div class="room-chat-log" id="studentChatLog"></div>
+        <div class="room-emoji-bar" id="studentEmojiBar">
+          <button type="button" data-emoji="👍">👍</button>
+          <button type="button" data-emoji="🎉">🎉</button>
+          <button type="button" data-emoji="❤️">❤️</button>
+          <button type="button" data-emoji="😂">😂</button>
+          <button type="button" data-emoji="🔥">🔥</button>
+          <button type="button" data-emoji="👏">👏</button>
+          <button type="button" data-emoji="⭐">⭐</button>
+        </div>
       </div>
       <button type="button" class="join-leave" id="joinLeave">עזוב חדר</button>
     </div>
