@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/css/join.css" />
+  <link rel="stylesheet" href="/css/join.css?v=3" />
   <link rel="stylesheet" href="/css/legal.css" />
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -39,38 +39,46 @@
     </div>
   </main>
 
-  <main class="join-main hidden" id="studentRoom">
-    <div class="join-room-card">
-      <div class="join-room-top">
-        <span class="join-room-badge">מחובר/ת</span>
+  <main class="guest-room hidden" id="studentRoom">
+    <div class="guest-room-top">
+      <div class="guest-room-info">
+        <span class="guest-room-badge">אורח/ת</span>
         <h2 class="font-cartoon" id="studentWelcome">שלום!</h2>
-        <p class="join-room-code">קוד: <strong id="studentCode">------</strong></p>
+        <p class="guest-room-code">קוד: <strong id="studentCode">------</strong></p>
       </div>
-      <div class="join-waiting" id="studentWaiting">
+      <button type="button" class="guest-leave-btn" id="joinLeave">עזוב</button>
+    </div>
+
+    <div class="guest-game-stage">
+      <div class="guest-waiting" id="studentWaiting">
         <div class="join-pulse"></div>
         <p>ממתינים שהמורה יתחיל משחק...</p>
-        <p class="join-wait-hint">השאירו את המסך פתוח — תיכנסו אוטומטית למשחק</p>
+        <p class="guest-wait-hint">השאירו את המסך פתוח — תיכנסו אוטומטית למשחק</p>
       </div>
-      <div class="join-suspended hidden" id="studentSuspended">
+      <div class="guest-suspended hidden" id="studentSuspended">
         <p>⏸ הושהיתם על ידי המורה</p>
       </div>
-      <div class="join-game hidden" id="studentGame">
+      <div class="guest-game hidden" id="studentGame">
         <div id="studentGameContent"></div>
       </div>
-      <div class="join-chat">
-        <h3>💬 צ'אט</h3>
-        <div class="room-chat-log" id="studentChatLog"></div>
-        <div class="room-emoji-bar" id="studentEmojiBar">
-          <button type="button" data-emoji="👍">👍</button>
-          <button type="button" data-emoji="🎉">🎉</button>
-          <button type="button" data-emoji="❤️">❤️</button>
-          <button type="button" data-emoji="😂">😂</button>
-          <button type="button" data-emoji="🔥">🔥</button>
-          <button type="button" data-emoji="👏">👏</button>
-          <button type="button" data-emoji="⭐">⭐</button>
-        </div>
+    </div>
+
+    <div class="guest-participants-wrap" id="guestParticipantsWrap">
+      <h3 class="guest-participants-title">משתתפים</h3>
+      <div class="guest-participants-strip" id="guestParticipantsStrip" aria-live="polite"></div>
+    </div>
+
+    <div class="guest-chat-wrap hidden" id="guestChatWrap">
+      <div class="guest-chat-log room-chat-log" id="studentChatLog" aria-live="polite"></div>
+      <div class="room-emoji-bar hidden" id="studentEmojiBar">
+        <button type="button" data-emoji="👍">👍</button>
+        <button type="button" data-emoji="🎉">🎉</button>
+        <button type="button" data-emoji="❤️">❤️</button>
+        <button type="button" data-emoji="😂">😂</button>
+        <button type="button" data-emoji="🔥">🔥</button>
+        <button type="button" data-emoji="👏">👏</button>
+        <button type="button" data-emoji="⭐">⭐</button>
       </div>
-      <button type="button" class="join-leave" id="joinLeave">עזוב חדר</button>
     </div>
   </main>
 
@@ -87,7 +95,7 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/games.js"></script>
-  <script src="/js/join.js"></script>
+  <script src="/js/join.js?v=4"></script>
   <script src="/js/cookie-consent.js"></script>
 </body>
 </html>

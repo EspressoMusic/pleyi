@@ -168,7 +168,7 @@ function renderParticipantsGrid(room) {
     <div class="room-participant room-participant--teacher room-participant--color-purple">
       <div class="room-participant-avatar">${escapeHtml(participantInitial(teacherName))}</div>
       <span class="room-participant-name">${escapeHtml(teacherName)}</span>
-      <span class="room-participant-badge">מורה</span>
+      <span class="room-participant-badge">מנהל/ת</span>
     </div>`;
 
   if (!studentsStrip) return;
@@ -187,7 +187,8 @@ function renderParticipantsGrid(room) {
           <span class="room-participant-name">${escapeHtml(s.name)}</span>
           <span class="room-participant-score">${s.score || 0} נק׳</span>
           ${s.suspended ? '<span class="room-participant-badge">מושהה</span>' : ""}
-          <div class="room-participant-actions">
+          <div class="room-participant-actions room-manager-only">
+            <button type="button" class="room-participant-promote" data-action="transfer" data-student-id="${s.id}">העבר ניהול</button>
             <button type="button" data-action="suspend" data-student-id="${s.id}">${s.suspended ? "המשך" : "השהה"}</button>
             <button type="button" class="room-participant-kick" data-action="kick" data-student-id="${s.id}">העף</button>
           </div>
@@ -218,9 +219,60 @@ function sendRoomEmoji(emoji) {
   });
 }
 
+function isCurrentManager(room) {
+  if (!room || !socket?.id) return false;
+  const managerId = room.managerId || room.teacherId;
+  return managerId === socket.id;
+}
+
+function updateManagerAccess(room) {
+  const isManager = isCurrentManager(room);
+  state.isManager = isManager;
+  document.body.classList.toggle("is-room-manager", isManager);
+  if (!isManager) {
+    closeGamesPanel();
+    closeSettingsPanel();
+    closeSharePanel();
+  }
+}
+
+function updateGameNameButton() {
+  const label = $("#currentGameBtnLabel");
+  if (!label) return;
+  label.textContent = state.activeGame
+    ? GAME_NAMES[state.activeGame] || state.activeGame
+    : "בחרו משחק";
+}
+
+function syncSettingsUI(room) {
+  if (!room) return;
+  const reactions = $("#enableReactionsToggle");
+  const chat = $("#enableChatToggle");
+  const participants = $("#showParticipantsToggle");
+  if (reactions) reactions.checked = room.enableReactions !== false;
+  if (chat) chat.checked = room.enableChat !== false;
+  if (participants) participants.checked = room.showParticipantsToGuests !== false;
+}
+
+function updateLobbyUI(room) {
+  const students = room?.students || [];
+  const hasStudents = students.length > 0;
+  const hint = $("#roomLobbyHint");
+  if (hint) {
+    hint.textContent = hasStudents
+      ? "גללו ובחרו משחק — האורחים ייכנסו אוטומטית"
+      : "בחרו משחק — שתפו קישור כדי שאורחים יצטרפו";
+  }
+  $$(".room-game-btn").forEach((btn) => {
+    btn.disabled = false;
+  });
+  syncSettingsUI(room);
+}
+
 function updateRoomUI(room) {
   if (!room) return;
   state.room = room;
+  updateManagerAccess(room);
   $("#roomCodeDisplay").textContent = room.code;
   $("#sharePanelCode").textContent = room.code;
   $("#roomTitleDisplay").textContent = room.roomTitle || room.teacherName || "חדר כיתה";
@@ -229,9 +281,11 @@ function updateRoomUI(room) {
 
   const students = room.students || [];
   renderParticipantsGrid(room);
+  updateLobbyUI(room);
 
   updateConnectedStats(students.length);
   renderChatLog(room.chat);
+  updateGameNameButton();
 
   const joinUrl = roomJoinUrl(room.code);
   const qrImg = $("#roomQrCode");
@@ -242,20 +296,25 @@ function updateRoomUI(room) {
 
 function renderGame() {
   const waitMsg = $("#roomIdleWaitMsg");
+  const zoomStage = $("#roomZoomStage");
   if (!state.activeGame || !state.gameState) {
     $("#gamePanel")?.classList.add("hidden");
-    document.querySelector(".room-zoom-stage-wrap")?.classList.remove("hidden");
+    zoomStage?.classList.remove("hidden");
+    document.querySelector(".room-host-body")?.classList.remove("room-host-body--in-game");
     waitMsg?.classList.remove("hidden");
     if (typeof RoomIdleRunner !== "undefined") RoomIdleRunner.start();
+    updateGameNameButton();
     return;
   }
 
   waitMsg?.classList.add("hidden");
+  document.querySelector(".room-host-body")?.classList.add("room-host-body--in-game");
 
   if (typeof RoomIdleRunner !== "undefined") RoomIdleRunner.stop();
-  document.querySelector(".room-zoom-stage-wrap")?.classList.add("hidden");
+  zoomStage?.classList.add("hidden");
   $("#gamePanel")?.classList.remove("hidden");
   $("#activeGameTitle").textContent = GAME_NAMES[state.activeGame] || state.activeGame;
+  updateGameNameButton();
 
   const ctx = {
     role: state.role,
@@ -383,6 +442,16 @@ if (socket) {
     }, 1800);
   });
 
+  socket.on("room:manager-transferred", ({ demoted, code, message }) => {
+    if (!demoted) return;
+    sessionStorage.removeItem(HOST_KEY);
+    sessionStorage.removeItem(PENDING_KEY);
+    showToast(message || "העברת את ניהול החדר");
+    setTimeout(() => {
+      window.location.href = `/join?code=${code || state.room?.code || ""}`;
+    }, 1800);
+  });
+
   socket.on("game:state", ({ activeGame, state: gs, scores }) => {
     state.activeGame = activeGame;
     state.gameState = gs;
@@ -420,11 +489,15 @@ $("#copyCodeBtn")?.addEventListener("click", () => {
 });
 
 function openSharePanel() {
+  closeGamesPanel();
+  closeSettingsPanel();
   const panel = $("#roomSharePanel");
   const btn = $("#openSharePanelBtn");
   if (!panel) return;
   panel.classList.remove("hidden");
   btn?.setAttribute("aria-expanded", "true");
+  $("#roomShareSocial")?.classList.add("hidden");
+  $("#shareRoomBtn")?.setAttribute("aria-expanded", "false");
 }
 
 function closeSharePanel() {
@@ -433,16 +506,82 @@ function closeSharePanel() {
   if (!panel) return;
   panel.classList.add("hidden");
   btn?.setAttribute("aria-expanded", "false");
+  $("#roomShareSocial")?.classList.add("hidden");
+  $("#shareRoomBtn")?.setAttribute("aria-expanded", "false");
+}
+
+function openGamesPanel() {
+  if (!state.isManager) return;
+  closeSharePanel();
+  closeSettingsPanel();
+  const panel = $("#roomGamesPanel");
+  const btn = $("#openGamesPanelBtn");
+  if (!panel) return;
+  panel.classList.remove("hidden");
+  btn?.setAttribute("aria-expanded", "true");
+}
+
+function closeGamesPanel() {
+  const panel = $("#roomGamesPanel");
+  const btn = $("#openGamesPanelBtn");
+  if (!panel) return;
+  panel.classList.add("hidden");
+  btn?.setAttribute("aria-expanded", "false");
+}
+
+function openSettingsPanel() {
+  if (!state.isManager) return;
+  closeSharePanel();
+  closeGamesPanel();
+  const panel = $("#roomSettingsPanel");
+  const btn = $("#openSettingsPanelBtn");
+  if (!panel) return;
+  syncSettingsUI(state.room);
+  panel.classList.remove("hidden");
+  btn?.setAttribute("aria-expanded", "true");
+}
+
+function closeSettingsPanel() {
+  const panel = $("#roomSettingsPanel");
+  const btn = $("#openSettingsPanelBtn");
+  if (!panel) return;
+  panel.classList.add("hidden");
+  btn?.setAttribute("aria-expanded", "false");
+}
+
+function emitRoomSettings() {
+  if (!socket) return;
+  const payload = {
+    enableReactions: $("#enableReactionsToggle")?.checked !== false,
+    enableChat: $("#enableChatToggle")?.checked !== false,
+    showParticipantsToGuests: $("#showParticipantsToggle")?.checked !== false,
+  };
+  socket.emit("room:update-settings", payload, (res) => {
+    if (res?.ok) showToast("ההגדרות עודכנו");
+    else {
+      syncSettingsUI(state.room);
+      showToast(res?.error || "שגיאה בעדכון הגדרות");
+    }
+  });
 }
 
 $("#openSharePanelBtn")?.addEventListener("click", openSharePanel);
 $("#closeSharePanelBtn")?.addEventListener("click", closeSharePanel);
 $("#roomSharePanelBackdrop")?.addEventListener("click", closeSharePanel);
 
+$("#openGamesPanelBtn")?.addEventListener("click", openGamesPanel);
+$("#closeGamesPanelBtn")?.addEventListener("click", closeGamesPanel);
+$("#roomGamesPanelBackdrop")?.addEventListener("click", closeGamesPanel);
+
+$("#openSettingsPanelBtn")?.addEventListener("click", openSettingsPanel);
+$("#closeSettingsPanelBtn")?.addEventListener("click", closeSettingsPanel);
+$("#roomSettingsPanelBackdrop")?.addEventListener("click", closeSettingsPanel);
+
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !$("#roomSharePanel")?.classList.contains("hidden")) {
-    closeSharePanel();
-  }
+  if (e.key !== "Escape") return;
+  if (!$("#roomSharePanel")?.classList.contains("hidden")) closeSharePanel();
+  else if (!$("#roomGamesPanel")?.classList.contains("hidden")) closeGamesPanel();
+  else if (!$("#roomSettingsPanel")?.classList.contains("hidden")) closeSettingsPanel();
 });
 
 $("#copyJoinLinkBtn")?.addEventListener("click", () => {
@@ -454,23 +593,25 @@ $("#copyJoinLinkBtn")?.addEventListener("click", () => {
 
 $("#shareRoomBtn")?.addEventListener("click", async () => {
   const code = $("#roomCodeDisplay")?.textContent;
-  if (!code || code === "------") return;
-  const url = roomJoinUrl(code);
   const title =
     state.room?.roomTitle || state.room?.teacherName || $("#roomTitleDisplay")?.textContent || "חדר GameClass";
-  if (navigator.share) {
-    try {
-      await navigator.share({ title, text: `הצטרפו לחדר ${title}`, url });
-      closeSharePanel();
-      return;
-    } catch {
-      /* cancelled or failed */
-    }
-  }
-  navigator.clipboard?.writeText(url).then(() => {
-    showToast("הקישור הועתק");
-    closeSharePanel();
+  const socialContainer = $("#roomShareSocial");
+  const shared = await shareRoomLink({
+    code,
+    title,
+    socialContainer,
+    onNativeSuccess: () => closeSharePanel(),
+    onSocialShown: () => {
+      $("#shareRoomBtn")?.setAttribute("aria-expanded", "true");
+      socialContainer?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    },
   });
+  if (!shared) {
+    navigator.clipboard?.writeText(roomJoinUrl(code)).then(() => {
+      showToast("הקישור הועתק");
+      closeSharePanel();
+    });
+  }
 });
 
 $(".room-bottom-dock")?.addEventListener("click", (e) => {
@@ -482,6 +623,14 @@ $(".room-bottom-dock")?.addEventListener("click", (e) => {
     if (!confirm("להעיף את התלמיד/ה מהחדר?")) return;
     socket.emit("room:kick", { studentId }, (res) => {
       if (res?.ok) showToast("התלמיד/ה הוצא/ה מהחדר");
+      else showToast(res?.error || "שגיאה");
+    });
+  } else if (action === "transfer") {
+    const tile = btn.closest(".room-participant");
+    const name = tile?.querySelector(".room-participant-name")?.textContent?.trim() || "משתתף/ת";
+    if (!confirm(`להעביר את ניהול החדר ל${name}?`)) return;
+    socket.emit("room:transfer-manager", { targetId: studentId }, (res) => {
+      if (res?.ok) showToast("ניהול החדר הועבר");
       else showToast(res?.error || "שגיאה");
     });
   } else if (action === "suspend") {
@@ -553,4 +702,22 @@ $("#roomEmojiBar")?.addEventListener("click", (e) => {
 $("#roomHomeLink")?.addEventListener("click", (e) => {
   e.preventDefault();
   showToast("לחצו «עזוב חדר» כדי לחזור לדף הבית");
+});
+
+$$(".room-game-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (!state.isManager) return;
+    const gameId = btn.dataset.game;
+    if (!gameId || !socket) return;
+    socket.emit("game:start", { gameId }, (res) => {
+      if (res?.ok) {
+        closeGamesPanel();
+        showToast("המשחק התחיל!");
+      } else showToast(res?.error || "לא ניתן להתחיל משחק");
+    });
+  });
+});
+
+["enableReactionsToggle", "enableChatToggle", "showParticipantsToggle"].forEach((id) => {
+  $(`#${id}`)?.addEventListener("change", emitRoomSettings);
 });

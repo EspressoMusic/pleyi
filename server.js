@@ -427,6 +427,7 @@ io.on("connection", (socket) => {
     }
     clearTeacherGrace(room);
     room.teacherId = socket.id;
+    room.managerId = socket.id;
     socket.data.roomCode = code;
     socket.data.role = "teacher";
     socket.join(`room:${code}`);
@@ -485,11 +486,8 @@ io.on("connection", (socket) => {
   socket.on("game:start", ({ gameId }, cb) => {
     const code = socket.data.roomCode;
     const room = getRoom(code);
-    if (!room || socket.data.role !== "teacher") {
+    if (!room || !roomsLib.isManager(room, socket.id)) {
       return cb?.({ ok: false, error: "רק המורה יכול להתחיל משחק" });
-    }
-    if (!bothConnected(room)) {
-      return cb?.({ ok: false, error: "ממתינים לתלמיד אחד לפחות..." });
     }
     resetGameState(room, gameId);
     room.scores = { teacher: 0 };
@@ -762,6 +760,9 @@ io.on("connection", (socket) => {
     if (role === "student" && roomsLib.isSuspended(room, socket.id)) {
       return cb?.({ ok: false, error: "הושהיתם" });
     }
+    if (role === "student" && room.enableReactions === false) {
+      return cb?.({ ok: false, error: "תגובות כבויות בחדר זה" });
+    }
 
     const allowed = ["😀", "👍", "🎉", "❤️", "😂", "🔥", "👏", "🤔", "😮", "🙌", "💪", "⭐"];
     const e = String(emoji || "").trim();
@@ -775,7 +776,12 @@ io.on("connection", (socket) => {
       role,
       emoji: e,
     });
-    io.to(`room:${code}`).emit("room:chat", msg);
+    if (room.enableChat !== false) {
+      io.to(`room:${code}`).emit("room:chat", msg);
+    } else {
+      if (room.teacherId) io.to(room.teacherId).emit("room:chat", msg);
+      if (role === "student") io.to(socket.id).emit("room:chat", msg);
+    }
     cb?.({ ok: true });
   });
 
@@ -815,6 +821,79 @@ io.on("connection", (socket) => {
     io.to(studentId).emit("room:suspended", { suspended: student.suspended });
     emitRoom(code);
     cb?.({ ok: true, suspended: student.suspended });
+  });
+
+  socket.on("room:update-settings", (payload, cb) => {
+    const code = socket.data.roomCode;
+    const room = getRoom(code);
+    if (!room || !roomsLib.isManager(room, socket.id)) {
+      return cb?.({ ok: false, error: "אין הרשאה" });
+    }
+    if (typeof payload.showParticipantsToGuests === "boolean") {
+      room.showParticipantsToGuests = payload.showParticipantsToGuests;
+    }
+    if (typeof payload.enableReactions === "boolean") {
+      room.enableReactions = payload.enableReactions;
+    }
+    if (typeof payload.enableChat === "boolean") {
+      room.enableChat = payload.enableChat;
+    }
+    emitRoom(code);
+    cb?.({
+      ok: true,
+      showParticipantsToGuests: room.showParticipantsToGuests !== false,
+      enableReactions: room.enableReactions !== false,
+      enableChat: room.enableChat !== false,
+    });
+  });
+
+  socket.on("room:transfer-manager", ({ targetId }, cb) => {
+    const code = socket.data.roomCode;
+    const room = getRoom(code);
+    if (!room || !roomsLib.isManager(room, socket.id)) {
+      return cb?.({ ok: false, error: "רק מנהל/ת החדר יכול/ה להעביר ניהול" });
+    }
+    if (!targetId || targetId === socket.id || !room.students.has(targetId)) {
+      return cb?.({ ok: false, error: "משתתף/ת לא נמצא/ה" });
+    }
+
+    const newManagerSocket = io.sockets.sockets.get(targetId);
+    if (!newManagerSocket) {
+      return cb?.({ ok: false, error: "המשתתף/ת לא מחובר/ת" });
+    }
+
+    const oldManagerId = socket.id;
+    const newTeacherToken = crypto.randomBytes(16).toString("hex");
+
+    room.students.delete(targetId);
+    room.teacherId = targetId;
+    room.managerId = targetId;
+    room.teacherToken = newTeacherToken;
+
+    newManagerSocket.data.role = "teacher";
+    newManagerSocket.data.roomCode = code;
+    delete newManagerSocket.data.playerId;
+
+    socket.data.role = null;
+    socket.data.roomCode = null;
+    socket.leave(`room:${code}`);
+
+    newManagerSocket.emit("room:manager-transferred", {
+      demoted: false,
+      role: "teacher",
+      teacherToken: newTeacherToken,
+      code,
+      message: "קיבלת/י את ניהול החדר!",
+    });
+
+    socket.emit("room:manager-transferred", {
+      demoted: true,
+      code,
+      message: "העברת את ניהול החדר. אפשר להצטרף מחדש כמשתתף/ת.",
+    });
+
+    emitRoom(code);
+    cb?.({ ok: true });
   });
 
   socket.on("disconnect", () => {

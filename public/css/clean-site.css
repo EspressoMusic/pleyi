@@ -163,26 +163,27 @@ body.clean-site .mobile-nav-cta::after {
   animation: memphis-float 6.5s ease-in-out infinite;
 }
 
-.clean-memphis-pos--h-zig { bottom: 10%; left: 5%; rotate: 8deg; animation-delay: -2s; }
-.clean-memphis-pos--g-zig { top: 12%; right: 5%; rotate: -6deg; animation-delay: -1.5s; }
+.clean-memphis-pos--h-zig { bottom: 12%; right: 5%; left: auto; top: auto; rotate: 8deg; animation-delay: -2s; }
+.clean-memphis-pos--g-zig { top: 14%; left: 5%; bottom: auto; right: auto; rotate: -6deg; animation-delay: -1.5s; }
 
-.clean-memphis-pos--h1 { width: 110px; height: 110px; bottom: 12%; right: 5%; top: auto; }
-.clean-memphis-pos--h2 { width: 90px; height: 90px; bottom: 10%; left: 5%; top: auto; rotate: 12deg; animation-delay: -2s; }
-.clean-memphis-pos--h3 { width: 70px; height: 70px; bottom: 22%; right: 8%; top: auto; rotate: -8deg; animation-delay: -4s; }
+/* One decorative shape per corner — no overlap */
+.clean-memphis-pos--h1 { width: 100px; height: 100px; top: 16%; left: 4%; bottom: auto; right: auto; }
+.clean-memphis-pos--h2 { width: 86px; height: 86px; top: 14%; right: 5%; bottom: auto; left: auto; rotate: 12deg; animation-delay: -2s; }
+.clean-memphis-pos--h3 { width: 72px; height: 72px; bottom: 14%; left: 5%; top: auto; right: auto; rotate: -8deg; animation-delay: -4s; }
 
-.clean-memphis-pos--s1 { width: 95px; height: 95px; top: 8%; left: 5%; }
-.clean-memphis-pos--s2 { width: 80px; height: 80px; bottom: 10%; right: 5%; rotate: -10deg; animation-delay: -3s; }
-.clean-memphis-pos--s3 { width: 60px; height: 60px; top: 10%; right: 6%; animation-delay: -1.5s; }
+.clean-memphis-pos--s1 { width: 92px; height: 92px; top: 10%; left: 5%; bottom: auto; right: auto; }
+.clean-memphis-pos--s2 { width: 80px; height: 80px; bottom: 12%; right: 5%; top: auto; left: auto; rotate: -10deg; animation-delay: -3s; }
+.clean-memphis-pos--s3 { width: 64px; height: 64px; bottom: 14%; left: 6%; top: auto; right: auto; animation-delay: -1.5s; }
 
-.clean-memphis-pos--g1 { width: 100px; height: 100px; bottom: 10%; left: 5%; rotate: 8deg; }
-.clean-memphis-pos--g2 { width: 85px; height: 85px; bottom: 12%; right: 5%; animation-delay: -2s; }
-.clean-memphis-pos--g3 { width: 72px; height: 72px; top: 18%; left: 4%; rotate: 12deg; animation-delay: -1s; }
-.clean-memphis-pos--g-ring { width: 138px; height: 138px; top: 8%; left: 5%; border-width: 12px; }
-.clean-memphis-pos--g-ring-r { width: 110px; height: 110px; top: 14%; right: 4%; border-width: 10px; animation-delay: -2.5s; }
+.clean-memphis-pos--g1 { width: 96px; height: 96px; top: 10%; left: 4%; bottom: auto; right: auto; rotate: 8deg; }
+.clean-memphis-pos--g2 { width: 84px; height: 84px; top: 12%; right: 5%; bottom: auto; left: auto; animation-delay: -2s; }
+.clean-memphis-pos--g3 { width: 70px; height: 70px; bottom: 12%; left: 5%; top: auto; right: auto; rotate: 12deg; animation-delay: -1s; }
+.clean-memphis-pos--g-ring { width: 118px; height: 118px; bottom: 10%; right: 4%; top: auto; left: auto; border-width: 10px; }
+.clean-memphis-pos--g-ring-r { width: 92px; height: 92px; top: 18%; left: 50%; bottom: auto; right: auto; margin-left: -46px; border-width: 9px; animation-delay: -2.5s; }
 
-.clean-memphis-pos--c1 { width: 80px; height: 80px; top: 10%; right: 6%; rotate: -12deg; }
-.clean-memphis-pos--c2 { width: 105px; height: 105px; bottom: 10%; left: 5%; animation-delay: -3s; }
-.clean-memphis-pos--c3 { width: 70px; height: 70px; top: 8%; left: 6%; rotate: 10deg; animation-delay: -1s; }
+.clean-memphis-pos--c1 { width: 78px; height: 78px; top: 12%; right: 6%; bottom: auto; left: auto; rotate: -12deg; }
+.clean-memphis-pos--c2 { width: 100px; height: 100px; bottom: 12%; left: 5%; top: auto; right: auto; animation-delay: -3s; }
+.clean-memphis-pos--c3 { width: 68px; height: 68px; bottom: 14%; right: 6%; top: auto; left: auto; rotate: 10deg; animation-delay: -1s; }
 
 @media (prefers-reduced-motion: reduce) {
   .clean-memphis-sticker,
@@ -204,10 +205,22 @@ body.clean-site .mobile-nav-cta::after {
     height: 112px;
   }
 
-  .clean-memphis-pos--h1 { width: 80px; height: 80px; }
+  .clean-memphis-pos--h1 { width: 72px; height: 72px; top: 12%; left: 3%; }
+  .clean-memphis-pos--h2 { width: 64px; height: 64px; top: 11%; right: 3%; }
+  .clean-memphis-pos--h3 { width: 56px; height: 56px; bottom: 10%; left: 3%; }
   .clean-memphis-pos--h-zig,
   .clean-memphis-pos--g-zig {
-    width: 112px;
+    width: 96px;
+  }
+  .clean-memphis-pos--g-ring-r {
+    width: 72px;
+    height: 72px;
+    margin-left: -36px;
+    top: 14%;
+  }
+  .clean-memphis-pos--g-ring {
+    width: 92px;
+    height: 92px;
   }
 }
 

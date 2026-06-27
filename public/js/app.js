@@ -193,6 +193,7 @@ function updateRoomUI(room) {
                 ${
                   isTeacher
                     ? `<div class="student-chip-actions">
+                  <button type="button" class="student-action-btn student-action-btn--promote" data-action="transfer" data-student-id="${s.id}" title="העבר ניהול">👑</button>
                   <button type="button" class="student-action-btn" data-action="suspend" data-student-id="${s.id}" title="${s.suspended ? "בטל השהיה" : "השהה"}">${s.suspended ? "▶️" : "⏸"}</button>
                   <button type="button" class="student-action-btn student-action-btn--kick" data-action="kick" data-student-id="${s.id}" title="העף">✕</button>
                 </div>`
@@ -219,7 +220,7 @@ function updateRoomUI(room) {
     : "שתפו קישור או QR — התלמידים יצטרפו מהטלפון";
 
   $$(".game-btn").forEach((btn) => {
-    btn.disabled = isTeacher && !hasStudents;
+    btn.disabled = false;
   });
 
   if (room.chat) renderChatLog(room.chat);
@@ -625,6 +626,14 @@ $("#studentsList")?.addEventListener("click", (e) => {
       if (res?.ok) showToast("התלמיד/ה הוצא/ה מהחדר");
       else showToast(res?.error || "שגיאה");
     });
+  } else if (action === "transfer") {
+    const chip = btn.closest(".student-chip");
+    const name = chip?.querySelector(".student-chip-name")?.textContent?.trim() || "משתתף/ת";
+    if (!confirm(`להעביר את ניהול החדר ל${name}?`)) return;
+    socket.emit("room:transfer-manager", { targetId: studentId }, (res) => {
+      if (res?.ok) showToast("ניהול החדר הועבר");
+      else showToast(res?.error || "שגיאה");
+    });
   } else if (action === "suspend") {
     const chip = btn.closest(".student-chip");
     const suspending = !chip?.classList.contains("student-chip--suspended");
@@ -800,6 +809,33 @@ socket.on("room:closed", ({ reason }) => {
   document.title = "GameClass — לימוד דרך משחקים";
   history.replaceState(null, "", "/");
   showView("landing");
+});
+
+socket.on("room:manager-transferred", ({ demoted, teacherToken, code, message }) => {
+  if (demoted) {
+    sessionStorage.removeItem("gameclass-host");
+    showToast(message || "העברת את ניהול החדר");
+    setTimeout(() => {
+      window.location.href = `/join?code=${code || state.room?.code || ""}`;
+    }, 1500);
+    return;
+  }
+  showToast(message || "קיבלת/י את ניהול החדר!");
+  const roomCode = code || state.room?.code;
+  sessionStorage.setItem(
+    "gameclass-host",
+    JSON.stringify({
+      code: roomCode,
+      token: teacherToken,
+      title: state.room?.roomTitle || state.room?.teacherName || "",
+    })
+  );
+  setTimeout(() => {
+    const q = new URLSearchParams();
+    q.set("code", roomCode);
+    q.set("t", teacherToken);
+    window.location.href = `/room?${q.toString()}`;
+  }, 1500);
 });
 
 socket.on("room:chat", (msg) => {

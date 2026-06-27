@@ -35,11 +35,18 @@
       .replace(/"/g, "&quot;");
   }
 
+  const TILE_COLORS = ["teal", "pink", "yellow", "orange", "lime", "blue", "purple"];
+
+  function participantInitial(name) {
+    const t = String(name || "?").trim();
+    return t ? t.charAt(0).toUpperCase() : "?";
+  }
+
   function renderChatLog(messages) {
     const log = $("studentChatLog");
     if (!log) return;
     if (!messages?.length) {
-      log.innerHTML = '<p class="room-chat-empty">שלחו אימוג\'י!</p>';
+      log.innerHTML = '<p class="room-chat-empty">אין הודעות עדיין</p>';
       return;
     }
     log.innerHTML = messages
@@ -51,9 +58,60 @@
     log.scrollTop = log.scrollHeight;
   }
 
+  function applyGuestSettings(room) {
+    if (!room) return;
+    const chatOn = room.enableChat !== false;
+    const reactionsOn = room.enableReactions !== false;
+    const participantsOn = room.showParticipantsToGuests !== false;
+    $("guestChatWrap")?.classList.toggle("hidden", !chatOn && !reactionsOn);
+    $("studentEmojiBar")?.classList.toggle("hidden", !reactionsOn || state.suspended);
+    $("guestParticipantsWrap")?.classList.toggle("hidden", !participantsOn);
+    if (chatOn && room.chat) renderChatLog(room.chat);
+  }
+
+  function renderGuestParticipants(room) {
+    const wrap = $("guestParticipantsWrap");
+    const strip = $("guestParticipantsStrip");
+    if (!wrap || !strip || !room) return;
+
+    if (room.showParticipantsToGuests === false) {
+      wrap.classList.add("hidden");
+      strip.innerHTML = "";
+      return;
+    }
+
+    wrap.classList.remove("hidden");
+    const students = room.students || [];
+    const visible = students.map((s) => ({
+      ...s,
+      isMe: s.id === state.playerId,
+    }));
+
+    if (visible.length === 0) {
+      strip.innerHTML = "";
+      return;
+    }
+
+    strip.innerHTML = visible
+      .map((s, i) => {
+        const color = TILE_COLORS[i % TILE_COLORS.length];
+        return `
+          <div class="guest-participant guest-participant--${color}${s.suspended ? " guest-participant--suspended" : ""}${s.isMe ? " guest-participant--me" : ""}">
+            <div class="guest-participant-avatar">${escapeHtml(participantInitial(s.name))}</div>
+            <span class="guest-participant-name">${escapeHtml(s.name)}${s.isMe ? " (את/ה)" : ""}</span>
+            ${s.suspended ? '<span class="guest-participant-badge">מושהה</span>' : ""}
+          </div>`;
+      })
+      .join("");
+  }
+
   function updateSuspendedUI() {
     $("studentSuspended")?.classList.toggle("hidden", !state.suspended);
-    $("studentEmojiBar")?.classList.toggle("hidden", state.suspended);
+    if (state.suspended && !state.activeGame) {
+      $("studentWaiting")?.classList.add("hidden");
+    } else if (!state.activeGame) {
+      $("studentWaiting")?.classList.remove("hidden");
+    }
   }
 
   function enterRoom(data) {
@@ -67,8 +125,9 @@
     $("studentWelcome").textContent = data.roomTitle || data.teacherName || "חדר כיתה";
     $("studentCode").textContent = data.code;
 
-    if (data.chat) renderChatLog(data.chat);
     updateSuspendedUI();
+    renderGuestParticipants(data);
+    applyGuestSettings(data);
 
     if (data.activeGame && data.gameState) {
       state.activeGame = data.activeGame;
@@ -103,9 +162,11 @@
     if (!state.activeGame || !state.gameState) {
       $("studentWaiting").classList.remove("hidden");
       $("studentGame").classList.add("hidden");
+      $("studentSuspended")?.classList.toggle("hidden", !state.suspended);
       return;
     }
     $("studentWaiting").classList.add("hidden");
+    $("studentSuspended")?.classList.add("hidden");
     $("studentGame").classList.remove("hidden");
     const root = $("studentGameContent");
     root.innerHTML = Games.render(state.activeGame, state.gameState, gameCtx());
@@ -136,7 +197,7 @@
 
   $("studentEmojiBar")?.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-emoji]");
-    if (!btn || state.suspended) return;
+    if (!btn || state.suspended || state.room?.enableReactions === false) return;
     socket.emit("room:chat", { emoji: btn.dataset.emoji }, (res) => {
       if (res?.ok === false) toast(res?.error || "לא ניתן לשלוח");
     });
@@ -162,11 +223,12 @@
       if (me) state.suspended = !!me.suspended;
     }
     updateSuspendedUI();
-    if (room.chat) renderChatLog(room.chat);
+    renderGuestParticipants(state.room);
+    applyGuestSettings(state.room);
   });
 
   socket.on("room:chat", (msg) => {
-    if (!state.room) return;
+    if (!state.room || state.room.enableChat === false) return;
     state.room.chat = [...(state.room.chat || []), msg].slice(-50);
     renderChatLog(state.room.chat);
   });
@@ -174,12 +236,37 @@
   socket.on("room:suspended", ({ suspended }) => {
     state.suspended = !!suspended;
     updateSuspendedUI();
+    applyGuestSettings(state.room);
     toast(suspended ? "הושהיתם על ידי המורה" : "ההשהיה בוטלה");
   });
 
   socket.on("room:kicked", ({ reason }) => {
     toast(reason || "הוצאתם מהחדר");
     setTimeout(() => (location.href = "/join"), 1500);
+  });
+
+  socket.on("room:manager-transferred", ({ demoted, teacherToken, code, message }) => {
+    if (demoted) {
+      toast(message || "ניהול החדר הועבר");
+      setTimeout(() => (location.href = `/join?code=${code || ""}`), 1500);
+      return;
+    }
+    toast(message || "קיבלת/י את ניהול החדר!");
+    const roomCode = code || state.room?.code;
+    sessionStorage.setItem(
+      "gameclass-host",
+      JSON.stringify({
+        code: roomCode,
+        token: teacherToken,
+        title: state.room?.roomTitle || state.room?.teacherName || "",
+      })
+    );
+    setTimeout(() => {
+      const q = new URLSearchParams();
+      q.set("code", roomCode);
+      q.set("t", teacherToken);
+      location.href = `/room?${q.toString()}`;
+    }, 1500);
   });
 
   socket.on("room:closed", ({ reason }) => {
