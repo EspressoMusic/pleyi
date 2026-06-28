@@ -27,8 +27,8 @@ body.clean-site .navbar.scrolled {
   background: var(--nav-scrolled-bg);
 }
 
-body.clean-site .logo-text {
-  font-size: clamp(26px, 3.5vw, 42px);
+body.clean-site .logo-text.font-brand {
+  font-size: clamp(1.65rem, 3.8vw, 2.35rem);
 }
 
 body.clean-site .nav-links {
@@ -974,8 +974,8 @@ body.in-room {
     padding-bottom: 14px;
   }
 
-  body.clean-site .logo-text {
-    font-size: clamp(20px, 5.5vw, 28px);
+  body.clean-site .logo-text.font-brand {
+    font-size: clamp(1.25rem, 5.5vw, 1.65rem);
   }
 
   body.clean-site .nav-pill,

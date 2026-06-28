@@ -10,6 +10,7 @@ const state = {
   activeGame: null,
   gameState: null,
   scores: { teacher: 0, student: 0 },
+  pendingStudentsCanPlay: null,
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -82,7 +83,29 @@ function readHostSession() {
   }
 }
 
+function closeAllRoomPanels() {
+  closeGamesPanel();
+  closeSettingsPanel();
+  closeSharePanel();
+}
+
+function isRoomActive() {
+  const view = $("#roomView");
+  return !!state.room && !!view && !view.classList.contains("hidden");
+}
+
+function setRoomChromeEnabled(enabled) {
+  $("#openSharePanelBtn")?.toggleAttribute("disabled", !enabled);
+  $("#leaveRoomBtn")?.toggleAttribute("disabled", !enabled);
+}
+
 function showRoomError(message, homeHref = "/") {
+  closeAllRoomPanels();
+  state.room = null;
+  state.isManager = false;
+  document.body.classList.remove("is-room-manager");
+  document.body.classList.add("room-has-error");
+  setRoomChromeEnabled(false);
   $("#roomLoading")?.classList.add("hidden");
   $("#roomView")?.classList.add("hidden");
   const err = $("#roomError");
@@ -131,6 +154,8 @@ function emitAck(event, payload, timeoutMs = 15000) {
 }
 
 function showRoom() {
+  document.body.classList.remove("room-has-error");
+  setRoomChromeEnabled(true);
   $("#roomLoading")?.classList.add("hidden");
   $("#roomError")?.classList.add("hidden");
   $("#roomView")?.classList.remove("hidden");
@@ -156,6 +181,23 @@ function participantInitial(name) {
   return t ? t.charAt(0).toUpperCase() : "?";
 }
 
+function getRoundWinnerHighlight() {
+  return window.GameEngine?.getRoundWinMeta?.(state.gameState) || null;
+}
+
+function isParticipantRoundWinner(participantId, role, winMeta) {
+  if (!winMeta) return false;
+  if (winMeta.winnerId) return winMeta.winnerId === participantId;
+  if (role === "teacher") return winMeta.winner === "teacher";
+  return winMeta.winner === "student";
+}
+
+function applyRoundWinEffects() {
+  const meta = window.GameEngine?.celebrateRoundWin?.(state.gameState, state.room);
+  if (meta && state.room) renderParticipantsGrid(state.room);
+  return meta;
+}
+
 function renderParticipantsGrid(room) {
   const teacherDock = $("#teacherDock");
   const studentsStrip = $("#studentsGrid");
@@ -163,26 +205,45 @@ function renderParticipantsGrid(room) {
 
   const teacherName = room.roomTitle || room.teacherName || "מורה";
   const students = room.students || [];
+  const winMeta = getRoundWinnerHighlight();
+  const teacherLed = room.studentsCanPlay !== true;
+  const teacherId = room.managerId || room.teacherId;
+  const teacherWon = !teacherLed && isParticipantRoundWinner(teacherId, "teacher", winMeta);
 
-  teacherDock.innerHTML = `
-    <div class="room-participant room-participant--teacher room-participant--color-purple">
+  const winConfetti = () => window.GameEngine?.participantWinConfettiHtml?.() || "";
+
+  if (teacherLed) {
+    teacherDock.innerHTML = "";
+    teacherDock.classList.add("hidden");
+  } else {
+    teacherDock.classList.remove("hidden");
+    teacherDock.innerHTML = `
+    <div class="room-participant room-participant--teacher room-participant--color-purple${teacherWon ? " room-participant--round-winner" : ""}" data-participant-id="${escapeHtml(teacherId || "")}">
+      ${teacherWon ? winConfetti() : ""}
       <div class="room-participant-avatar">${escapeHtml(participantInitial(teacherName))}</div>
       <span class="room-participant-name">${escapeHtml(teacherName)}</span>
       <span class="room-participant-badge">מנהל/ת</span>
     </div>`;
+  }
 
-  if (!studentsStrip) return;
+  if (!studentsStrip) {
+    updateTeacherLedLayout(room);
+    return;
+  }
 
   if (students.length === 0) {
     studentsStrip.innerHTML = "";
+    updateTeacherLedLayout(room);
     return;
   }
 
   studentsStrip.innerHTML = students
     .map((s, i) => {
       const color = TILE_COLORS[i % TILE_COLORS.length];
+      const studentWon = !teacherLed && isParticipantRoundWinner(s.id, "student", winMeta);
       return `
-        <div class="room-participant room-participant--student room-participant--color-${color}${s.suspended ? " room-participant--suspended" : ""}" data-student-id="${s.id}">
+        <div class="room-participant room-participant--student room-participant--color-${color}${s.suspended ? " room-participant--suspended" : ""}${studentWon ? " room-participant--round-winner" : ""}" data-student-id="${s.id}">
+          ${studentWon ? winConfetti() : ""}
           <div class="room-participant-avatar">${escapeHtml(participantInitial(s.name))}</div>
           <span class="room-participant-name">${escapeHtml(s.name)}</span>
           <span class="room-participant-score">${s.score || 0} נק׳</span>
@@ -195,6 +256,8 @@ function renderParticipantsGrid(room) {
         </div>`;
     })
     .join("");
+
+  updateTeacherLedLayout(room);
 }
 
 function renderChatLog(messages) {
@@ -244,14 +307,44 @@ function updateGameNameButton() {
     : "בחרו משחק";
 }
 
+function updateGameModeUI(canPlay) {
+  const participateBtn = $("#studentsCanPlayParticipateBtn");
+  const watchBtn = $("#studentsCanPlayWatchBtn");
+  participateBtn?.classList.toggle("is-selected", canPlay);
+  watchBtn?.classList.toggle("is-selected", !canPlay);
+  participateBtn?.setAttribute("aria-pressed", canPlay ? "true" : "false");
+  watchBtn?.setAttribute("aria-pressed", canPlay ? "false" : "true");
+}
+
+function roomStudentsCanPlay(room) {
+  return room?.studentsCanPlay === true;
+}
+
+function selectStudentsCanPlayMode(canPlay) {
+  if (roomStudentsCanPlay(state.room) === canPlay && readStudentsCanPlayFromUI() === canPlay) return;
+  state.pendingStudentsCanPlay = canPlay;
+  updateGameModeUI(canPlay);
+  updateTeacherLedLayout({ ...(state.room || {}), studentsCanPlay: canPlay });
+  emitRoomSettings(canPlay);
+}
+
 function syncSettingsUI(room) {
   if (!room) return;
   const reactions = $("#enableReactionsToggle");
   const chat = $("#enableChatToggle");
   const participants = $("#showParticipantsToggle");
+  const sound = $("#enableGameSoundToggle");
   if (reactions) reactions.checked = room.enableReactions !== false;
   if (chat) chat.checked = room.enableChat !== false;
   if (participants) participants.checked = room.showParticipantsToGuests !== false;
+  if (sound) sound.checked = room.enableGameSound !== false;
+  const canPlay =
+    typeof state.pendingStudentsCanPlay === "boolean"
+      ? state.pendingStudentsCanPlay
+      : roomStudentsCanPlay(room);
+  updateGameModeUI(canPlay);
+  updateTeacherLedLayout({ ...room, studentsCanPlay: canPlay });
+  window.GameEngine?.applyRoomSound?.(room);
 }
 
 function updateLobbyUI(room) {
@@ -269,9 +362,23 @@ function updateLobbyUI(room) {
   syncSettingsUI(room);
 }
 
+function readStudentsCanPlayFromUI() {
+  return $("#studentsCanPlayWatchBtn")?.classList.contains("is-selected") !== true;
+}
+
+function updateTeacherLedLayout(room) {
+  if (!room) return;
+  const teacherLed = room.studentsCanPlay !== true;
+  const students = room.students || [];
+
+  $("#roomTopStripStats")?.classList.toggle("hidden", teacherLed);
+  $("#teacherDock")?.classList.toggle("hidden", teacherLed);
+  $("#roomBottomDockWrap")?.classList.toggle("hidden", teacherLed && students.length === 0);
+}
+
 function updateRoomUI(room) {
   if (!room) return;
-  state.room = room;
+  state.room = { ...(state.room || {}), ...room };
   updateManagerAccess(room);
   $("#roomCodeDisplay").textContent = room.code;
   $("#sharePanelCode").textContent = room.code;
@@ -282,6 +389,7 @@ function updateRoomUI(room) {
   const students = room.students || [];
   renderParticipantsGrid(room);
   updateLobbyUI(room);
+  updateTeacherLedLayout(room);
 
   updateConnectedStats(students.length);
   renderChatLog(room.chat);
@@ -313,7 +421,6 @@ function renderGame() {
   if (typeof RoomIdleRunner !== "undefined") RoomIdleRunner.stop();
   zoomStage?.classList.add("hidden");
   $("#gamePanel")?.classList.remove("hidden");
-  $("#activeGameTitle").textContent = GAME_NAMES[state.activeGame] || state.activeGame;
   updateGameNameButton();
 
   const ctx = {
@@ -335,6 +442,7 @@ function renderGame() {
   const content = $("#gameContent");
   content.innerHTML = Games.render(state.activeGame, state.gameState, ctx);
   Games.bind(state.activeGame, content, ctx);
+  applyRoundWinEffects();
 }
 
 function enterRoom(data) {
@@ -343,7 +451,7 @@ function enterRoom(data) {
   state.scores = data.scores || { teacher: 0, student: 0 };
   state.activeGame = data.activeGame || null;
   state.gameState = data.gameState || null;
-  document.title = `חדר ${data.code} — GameClass`;
+  document.title = `חדר ${data.code} — Pleyi`;
 
   const host = readHostSession();
   if (host?.token) {
@@ -371,9 +479,7 @@ async function connectToRoom() {
 
   const host = readHostSession();
   if (!host?.code || !host?.token) {
-    if (!state.room) {
-      showRoomError("לא נמצא חדר — חזרו לדף הבית ולחצו «פתח חדר כיתה»");
-    }
+    showRoomError("לא נמצא חדר — חזרו לדף הבית ולחצו «פתח חדר כיתה»");
     joinStarted = false;
     return;
   }
@@ -386,20 +492,18 @@ async function connectToRoom() {
         showToast(`חדר «${res.roomTitle || res.teacherName || ""}» מחובר!`);
         return;
       }
-      if (!state.room) {
-        showRoomError(res?.error || "חדר לא נמצא — פתחו חדר חדש מהדף הראשי");
-      }
+      sessionStorage.removeItem(PENDING_KEY);
+      sessionStorage.removeItem(HOST_KEY);
+      showRoomError(res?.error || "חדר לא נמצא — פתחו חדר חדש מהדף הראשי");
       return;
     } catch (err) {
       if (attempt < 3) {
         await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
         continue;
       }
-      if (!state.room) {
-        showRoomError(err.message || "שגיאת חיבור — ודאו ש-npm start רץ");
-      } else {
-        showToast("מחובר לחדר — מנסה לסנכרן שוב…");
-      }
+      sessionStorage.removeItem(PENDING_KEY);
+      sessionStorage.removeItem(HOST_KEY);
+      showRoomError(err.message || "שגיאת חיבור — ודאו ש-npm start רץ");
     }
   }
   joinStarted = false;
@@ -459,7 +563,7 @@ if (socket) {
     if (state.room) {
       state.room.scores = scores;
       state.room.activeGame = activeGame;
-      updateRoomUI(state.room);
+      renderParticipantsGrid(state.room);
     }
     renderGame();
   });
@@ -467,6 +571,7 @@ if (socket) {
   socket.on("game:left", () => {
     state.activeGame = null;
     state.gameState = null;
+    window.GameEngine?.resetWinCelebration?.();
     renderGame();
   });
 
@@ -481,14 +586,8 @@ if (socket) {
   showRoomError("אין חיבור לשרת — הריצו npm start וגלשו ל-http://localhost:3456");
 }
 
-$("#copyCodeBtn")?.addEventListener("click", () => {
-  const code = $("#roomCodeDisplay")?.textContent;
-  if (code && code !== "------") {
-    navigator.clipboard?.writeText(code).then(() => showToast("הקוד הועתק"));
-  }
-});
-
 function openSharePanel() {
+  if (!isRoomActive()) return;
   closeGamesPanel();
   closeSettingsPanel();
   const panel = $("#roomSharePanel");
@@ -511,7 +610,7 @@ function closeSharePanel() {
 }
 
 function openGamesPanel() {
-  if (!state.isManager) return;
+  if (!isRoomActive() || !state.isManager) return;
   closeSharePanel();
   closeSettingsPanel();
   const panel = $("#roomGamesPanel");
@@ -530,7 +629,7 @@ function closeGamesPanel() {
 }
 
 function openSettingsPanel() {
-  if (!state.isManager) return;
+  if (!isRoomActive() || !state.isManager) return;
   closeSharePanel();
   closeGamesPanel();
   const panel = $("#roomSettingsPanel");
@@ -549,16 +648,33 @@ function closeSettingsPanel() {
   btn?.setAttribute("aria-expanded", "false");
 }
 
-function emitRoomSettings() {
-  if (!socket) return;
+function emitRoomSettings(studentsCanPlayOverride) {
+  if (!socket || !state.isManager) {
+    showToast("אין הרשאה לשנות הגדרות");
+    return;
+  }
+  const studentsCanPlay =
+    typeof studentsCanPlayOverride === "boolean"
+      ? studentsCanPlayOverride
+      : roomStudentsCanPlay(state.room);
   const payload = {
     enableReactions: $("#enableReactionsToggle")?.checked !== false,
     enableChat: $("#enableChatToggle")?.checked !== false,
     showParticipantsToGuests: $("#showParticipantsToggle")?.checked !== false,
+    enableGameSound: $("#enableGameSoundToggle")?.checked !== false,
+    studentsCanPlay,
   };
+  window.GameEngine?.setSoundEnabled?.(payload.enableGameSound);
   socket.emit("room:update-settings", payload, (res) => {
-    if (res?.ok) showToast("ההגדרות עודכנו");
-    else {
+    state.pendingStudentsCanPlay = null;
+    if (res?.ok) {
+      state.room = {
+        ...state.room,
+        studentsCanPlay: res.studentsCanPlay === true,
+      };
+      syncSettingsUI(state.room);
+      showToast("ההגדרות עודכנו");
+    } else {
       syncSettingsUI(state.room);
       showToast(res?.error || "שגיאה בעדכון הגדרות");
     }
@@ -594,7 +710,7 @@ $("#copyJoinLinkBtn")?.addEventListener("click", () => {
 $("#shareRoomBtn")?.addEventListener("click", async () => {
   const code = $("#roomCodeDisplay")?.textContent;
   const title =
-    state.room?.roomTitle || state.room?.teacherName || $("#roomTitleDisplay")?.textContent || "חדר GameClass";
+    state.room?.roomTitle || state.room?.teacherName || $("#roomTitleDisplay")?.textContent || "חדר Pleyi";
   const socialContainer = $("#roomShareSocial");
   const shared = await shareRoomLink({
     code,
@@ -614,37 +730,54 @@ $("#shareRoomBtn")?.addEventListener("click", async () => {
   }
 });
 
+function closeParticipantActionMenus(except) {
+  $$(".room-participant--student.is-actions-open").forEach((el) => {
+    if (el !== except) el.classList.remove("is-actions-open");
+  });
+}
+
 $(".room-bottom-dock")?.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-action]");
-  if (!btn || !socket) return;
-  const studentId = btn.dataset.studentId;
-  const action = btn.dataset.action;
-  if (action === "kick") {
-    if (!confirm("להעיף את התלמיד/ה מהחדר?")) return;
-    socket.emit("room:kick", { studentId }, (res) => {
-      if (res?.ok) showToast("התלמיד/ה הוצא/ה מהחדר");
-      else showToast(res?.error || "שגיאה");
-    });
-  } else if (action === "transfer") {
-    const tile = btn.closest(".room-participant");
-    const name = tile?.querySelector(".room-participant-name")?.textContent?.trim() || "משתתף/ת";
-    if (!confirm(`להעביר את ניהול החדר ל${name}?`)) return;
-    socket.emit("room:transfer-manager", { targetId: studentId }, (res) => {
-      if (res?.ok) showToast("ניהול החדר הועבר");
-      else showToast(res?.error || "שגיאה");
-    });
-  } else if (action === "suspend") {
-    const tile = btn.closest(".room-participant");
-    const suspending = !tile?.classList.contains("room-participant--suspended");
-    socket.emit("room:suspend", { studentId, suspend: suspending }, (res) => {
-      if (res?.ok) showToast(suspending ? "התלמיד/ה הושהה" : "ההשהיה בוטלה");
-      else showToast(res?.error || "שגיאה");
-    });
+  if (btn) {
+    if (!socket) return;
+    const studentId = btn.dataset.studentId;
+    const action = btn.dataset.action;
+    if (action === "kick") {
+      if (!confirm("להעיף את התלמיד/ה מהחדר?")) return;
+      socket.emit("room:kick", { studentId }, (res) => {
+        if (res?.ok) showToast("התלמיד/ה הוצא/ה מהחדר");
+        else showToast(res?.error || "שגיאה");
+      });
+    } else if (action === "transfer") {
+      const tile = btn.closest(".room-participant");
+      const name = tile?.querySelector(".room-participant-name")?.textContent?.trim() || "משתתף/ת";
+      if (!confirm(`להעביר את ניהול החדר ל${name}?`)) return;
+      socket.emit("room:transfer-manager", { targetId: studentId }, (res) => {
+        if (res?.ok) showToast("ניהול החדר הועבר");
+        else showToast(res?.error || "שגיאה");
+      });
+    } else if (action === "suspend") {
+      const tile = btn.closest(".room-participant");
+      const suspending = !tile?.classList.contains("room-participant--suspended");
+      socket.emit("room:suspend", { studentId, suspend: suspending }, (res) => {
+        if (res?.ok) showToast(suspending ? "התלמיד/ה הושהה" : "ההשהיה בוטלה");
+        else showToast(res?.error || "שגיאה");
+      });
+    }
+    return;
+  }
+
+  const tile = e.target.closest(".room-participant--student");
+  if (tile) {
+    const wasOpen = tile.classList.contains("is-actions-open");
+    closeParticipantActionMenus(null);
+    if (!wasOpen) tile.classList.add("is-actions-open");
+    e.stopPropagation();
   }
 });
 
-$("#leaveGameBtn")?.addEventListener("click", () => {
-  socket?.emit("game:action", { action: "leave-game" });
+document.addEventListener("click", () => {
+  closeParticipantActionMenus(null);
 });
 
 $("#leaveRoomBtn")?.addEventListener("click", () => {
@@ -718,6 +851,8 @@ $$(".room-game-btn").forEach((btn) => {
   });
 });
 
-["enableReactionsToggle", "enableChatToggle", "showParticipantsToggle"].forEach((id) => {
-  $(`#${id}`)?.addEventListener("change", emitRoomSettings);
+["enableReactionsToggle", "enableChatToggle", "showParticipantsToggle", "enableGameSoundToggle"].forEach((id) => {
+  $(`#${id}`)?.addEventListener("change", () => emitRoomSettings());
 });
+$("#studentsCanPlayParticipateBtn")?.addEventListener("click", () => selectStudentsCanPlayMode(true));
+$("#studentsCanPlayWatchBtn")?.addEventListener("click", () => selectStudentsCanPlayMode(false));

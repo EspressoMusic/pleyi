@@ -1,6 +1,6 @@
-/* GameClass — main app */
+/* Pleyi — main app */
 
-const ROOM_LOG = "[GameClass Room]";
+const ROOM_LOG = "[Pleyi Room]";
 
 function roomLog(...args) {
   console.log(ROOM_LOG, ...args);
@@ -598,7 +598,7 @@ $("#shareRoomBtn")?.addEventListener("click", async () => {
   const code = $("#roomCodeDisplay")?.textContent;
   if (!code || code === "------") return;
   const url = roomJoinUrl(code);
-  const title = $("#roomTitleDisplay")?.textContent || "חדר GameClass";
+  const title = $("#roomTitleDisplay")?.textContent || "חדר Pleyi";
   if (navigator.share) {
     try {
       await navigator.share({ title, text: `הצטרפו לחדר ${title}`, url });
@@ -749,7 +749,7 @@ $("#leaveRoomBtn")?.addEventListener("click", () => {
   state.room = null;
   state.activeGame = null;
   sessionStorage.removeItem("gameclass-host");
-  document.title = "GameClass — לימוד דרך משחקים";
+  document.title = "Pleyi — לימוד דרך משחקים";
   history.replaceState(null, "", "/");
   showView("landing");
   socket.emit("room:leave-teacher", {}, () => {
@@ -806,7 +806,7 @@ socket.on("room:closed", ({ reason }) => {
   state.role = null;
   state.room = null;
   sessionStorage.removeItem("gameclass-host");
-  document.title = "GameClass — לימוד דרך משחקים";
+  document.title = "Pleyi — לימוד דרך משחקים";
   history.replaceState(null, "", "/");
   showView("landing");
 });

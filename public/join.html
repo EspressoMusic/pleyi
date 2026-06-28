@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0066FF" />
-  <title>הצטרפות — GameClass</title>
+  <title>הצטרפות — Pleyi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/css/join.css?v=3" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=27" />
+  <link rel="stylesheet" href="/css/join.css?v=16" />
   <link rel="stylesheet" href="/css/legal.css" />
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -16,12 +16,11 @@
 
   <header class="join-header">
     <a href="/" class="join-back">← ראשי</a>
-    <span class="join-brand font-cartoon">GameClass</span>
+    <span class="join-brand font-brand">Pleyi</span>
   </header>
 
   <main class="join-main" id="joinScreen">
     <div class="join-card">
-      <div class="join-icon">📱</div>
       <h1 class="font-cartoon">הצטרפות למשחק</h1>
       <p class="join-lead">הזינו את קוד החדר שקיבלתם מהמורה והשם שלכם</p>
       <form id="joinForm" class="join-form">
@@ -34,22 +33,25 @@
           <input type="text" id="joinName" maxlength="24" placeholder="למשל: דנה" required />
         </label>
         <p class="join-error hidden" id="joinError"></p>
-        <button type="submit" class="join-submit">הצטרף למשחק →</button>
+        <button type="submit" class="join-submit">הצטרף למשחק</button>
       </form>
     </div>
   </main>
 
   <main class="guest-room hidden" id="studentRoom">
-    <div class="guest-room-top">
-      <div class="guest-room-info">
-        <span class="guest-room-badge">אורח/ת</span>
-        <h2 class="font-cartoon" id="studentWelcome">שלום!</h2>
-        <p class="guest-room-code">קוד: <strong id="studentCode">------</strong></p>
+    <div class="guest-room-panel">
+      <div class="guest-room-top">
+        <div class="guest-top-strip">
+          <div class="guest-top-strip-info">
+            <span class="guest-stat-pill">אורח/ת</span>
+            <span class="guest-stat-pill guest-stat-pill--name"><span id="studentWelcome">שלום!</span></span>
+            <span class="guest-stat-pill">קוד: <strong id="studentCode" dir="ltr">------</strong></span>
+          </div>
+          <button type="button" class="guest-stat-pill guest-leave-btn" id="joinLeave">עזוב</button>
+        </div>
       </div>
-      <button type="button" class="guest-leave-btn" id="joinLeave">עזוב</button>
-    </div>
 
-    <div class="guest-game-stage">
+      <div class="guest-game-stage">
       <div class="guest-waiting" id="studentWaiting">
         <div class="join-pulse"></div>
         <p>ממתינים שהמורה יתחיל משחק...</p>
@@ -61,6 +63,7 @@
       <div class="guest-game hidden" id="studentGame">
         <div id="studentGameContent"></div>
       </div>
+    </div>
     </div>
 
     <div class="guest-participants-wrap" id="guestParticipantsWrap">
@@ -94,8 +97,9 @@
   </footer>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/games.js"></script>
-  <script src="/js/join.js?v=4"></script>
+  <script src="/js/game-engine.js"></script>
+  <script src="/js/games.js?v=18"></script>
+  <script src="/js/join.js?v=8"></script>
   <script src="/js/cookie-consent.js"></script>
 </body>
 </html>

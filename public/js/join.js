@@ -66,7 +66,23 @@
     $("guestChatWrap")?.classList.toggle("hidden", !chatOn && !reactionsOn);
     $("studentEmojiBar")?.classList.toggle("hidden", !reactionsOn || state.suspended);
     $("guestParticipantsWrap")?.classList.toggle("hidden", !participantsOn);
+    window.GameEngine?.applyRoomSound?.(room);
     if (chatOn && room.chat) renderChatLog(room.chat);
+  }
+
+  function getRoundWinnerHighlight() {
+    return window.GameEngine?.getRoundWinMeta?.(state.gameState) || null;
+  }
+
+  function isGuestParticipantRoundWinner(participantId, winMeta) {
+    if (!winMeta) return false;
+    if (winMeta.winnerId) return winMeta.winnerId === participantId;
+    return winMeta.winner === "student";
+  }
+
+  function applyRoundWinEffects() {
+    window.GameEngine?.celebrateRoundWin?.(state.gameState, state.room);
+    if (state.room) renderGuestParticipants(state.room);
   }
 
   function renderGuestParticipants(room) {
@@ -82,6 +98,7 @@
 
     wrap.classList.remove("hidden");
     const students = room.students || [];
+    const winMeta = getRoundWinnerHighlight();
     const visible = students.map((s) => ({
       ...s,
       isMe: s.id === state.playerId,
@@ -92,11 +109,16 @@
       return;
     }
 
+    const winConfetti = () => window.GameEngine?.participantWinConfettiHtml?.() || "";
+
     strip.innerHTML = visible
       .map((s, i) => {
         const color = TILE_COLORS[i % TILE_COLORS.length];
+        const teacherLed = room.studentsCanPlay !== true;
+        const studentWon = !teacherLed && isGuestParticipantRoundWinner(s.id, winMeta);
         return `
-          <div class="guest-participant guest-participant--${color}${s.suspended ? " guest-participant--suspended" : ""}${s.isMe ? " guest-participant--me" : ""}">
+          <div class="guest-participant guest-participant--${color}${s.suspended ? " guest-participant--suspended" : ""}${s.isMe ? " guest-participant--me" : ""}${studentWon ? " guest-participant--round-winner" : ""}">
+            ${studentWon ? winConfetti() : ""}
             <div class="guest-participant-avatar">${escapeHtml(participantInitial(s.name))}</div>
             <span class="guest-participant-name">${escapeHtml(s.name)}${s.isMe ? " (את/ה)" : ""}</span>
             ${s.suspended ? '<span class="guest-participant-badge">מושהה</span>' : ""}
@@ -169,8 +191,10 @@
     $("studentSuspended")?.classList.add("hidden");
     $("studentGame").classList.remove("hidden");
     const root = $("studentGameContent");
+    root.classList.toggle("game-watch-only", state.room?.studentsCanPlay !== true);
     root.innerHTML = Games.render(state.activeGame, state.gameState, gameCtx());
     Games.bind(state.activeGame, root, gameCtx());
+    applyRoundWinEffects();
   }
 
   const params = new URLSearchParams(location.search);
@@ -213,6 +237,7 @@
   socket.on("game:left", () => {
     state.activeGame = null;
     state.gameState = null;
+    window.GameEngine?.resetWinCelebration?.();
     renderGame();
   });
 
@@ -225,6 +250,7 @@
     updateSuspendedUI();
     renderGuestParticipants(state.room);
     applyGuestSettings(state.room);
+    if (state.activeGame) renderGame();
   });
 
   socket.on("room:chat", (msg) => {

@@ -355,7 +355,9 @@ function resetGameState(room, gameId) {
       answer: s.answer,
       he: s.he,
       submissions: {},
+      submissionIds: {},
       roundWinner: null,
+      roundWinnerId: null,
     };
   } else if (gameId === "spelling-bee") {
     room.gameState = {
@@ -364,7 +366,9 @@ function resetGameState(room, gameId) {
       maxRounds: 6,
       current: makeSpellingRound(),
       submissions: {},
+      submissionIds: {},
       roundWinner: null,
+      roundWinnerId: null,
     };
   } else if (gameId === "spot-diff") {
     room.gameState = miniGames.makeSpotDiffState(VOCAB);
@@ -508,6 +512,9 @@ io.on("connection", (socket) => {
     if (role === "student" && roomsLib.isSuspended(room, socket.id)) {
       return cb?.({ ok: false, error: "הושהיתם על ידי המורה" });
     }
+    if (role === "student" && room.studentsCanPlay !== true) {
+      return cb?.({ ok: false, error: "מצב צפייה — רק המורה משחק" });
+    }
 
     const { action, data } = payload;
     const state = room.gameState;
@@ -540,7 +547,12 @@ io.on("connection", (socket) => {
     }
 
     if (room.activeGame === "word-memory" && action === "flip") {
-      if (state.turn !== role || state.phase !== "playing") return cb?.({ ok: false });
+      if (state.phase !== "playing") return cb?.({ ok: false });
+      if (role === "student" && room.studentsCanPlay !== true) {
+        return cb?.({ ok: false, error: "מצב צפייה — רק המורה משחק" });
+      }
+      const activeTurn = room.studentsCanPlay === true ? state.turn : "teacher";
+      if (activeTurn !== role) return cb?.({ ok: false });
       const cardId = data.cardId;
       const card = state.cards.find((c) => c.id === cardId);
       if (!card || card.matched || card.faceUp) return cb?.({ ok: false });
@@ -568,7 +580,7 @@ io.on("connection", (socket) => {
             a.faceUp = false;
             b.faceUp = false;
             state.flipped = [];
-            state.turn = state.turn === "teacher" ? "student" : "teacher";
+            state.turn = room.studentsCanPlay === true ? (state.turn === "teacher" ? "student" : "teacher") : "teacher";
             state.phase = "playing";
             broadcastGame(code);
           }, 900);
@@ -626,11 +638,14 @@ io.on("connection", (socket) => {
     if (room.activeGame === "sentence-scramble" && action === "submit") {
       if (state.submissions[role]) return cb?.({ ok: false });
       const attempt = (data.sentence || "").trim();
+      state.submissionIds = state.submissionIds || {};
+      state.submissionIds[role] = socket.id;
       state.submissions[role] = attempt;
       const correct = attempt.toLowerCase() === state.answer.toLowerCase();
       if (correct) {
         scorePlayer(room, socket.id, role, 12);
         state.roundWinner = role;
+        state.roundWinnerId = socket.id;
         state.phase = "round-end";
         broadcastGame(code);
         return cb?.({ ok: true, correct: true });
@@ -639,9 +654,13 @@ io.on("connection", (socket) => {
       if (state.submissions[other] !== undefined) {
         const tOk = state.submissions.teacher.toLowerCase() === state.answer.toLowerCase();
         const sOk = state.submissions.student.toLowerCase() === state.answer.toLowerCase();
-        if (tOk && !sOk) state.roundWinner = "teacher";
-        else if (sOk && !tOk) state.roundWinner = "student";
-        else if (tOk && sOk) state.roundWinner = "tie";
+        if (tOk && !sOk) {
+          state.roundWinner = "teacher";
+          state.roundWinnerId = state.submissionIds.teacher || room.teacherId;
+        } else if (sOk && !tOk) {
+          state.roundWinner = "student";
+          state.roundWinnerId = state.submissionIds.student || null;
+        } else if (tOk && sOk) state.roundWinner = "tie";
         else state.roundWinner = "none";
         state.phase = "round-end";
       }
@@ -662,7 +681,9 @@ io.on("connection", (socket) => {
       state.answer = s.answer;
       state.he = s.he;
       state.submissions = {};
+      state.submissionIds = {};
       state.roundWinner = null;
+      state.roundWinnerId = null;
       state.phase = "playing";
       broadcastGame(code);
       return cb?.({ ok: true });
@@ -671,11 +692,14 @@ io.on("connection", (socket) => {
     if (room.activeGame === "spelling-bee" && action === "submit") {
       if (state.submissions[role]) return cb?.({ ok: false });
       const attempt = (data.spelling || "").trim().toLowerCase();
+      state.submissionIds = state.submissionIds || {};
+      state.submissionIds[role] = socket.id;
       state.submissions[role] = attempt;
       const correct = attempt === state.current.word.toLowerCase();
       if (correct) {
         scorePlayer(room, socket.id, role, 10);
         state.roundWinner = role;
+        state.roundWinnerId = socket.id;
         state.phase = "round-end";
         broadcastGame(code);
         return cb?.({ ok: true, correct: true });
@@ -684,9 +708,13 @@ io.on("connection", (socket) => {
       if (state.submissions[other] !== undefined) {
         const tOk = state.submissions.teacher === state.current.word.toLowerCase();
         const sOk = state.submissions.student === state.current.word.toLowerCase();
-        if (tOk && !sOk) state.roundWinner = "teacher";
-        else if (sOk && !tOk) state.roundWinner = "student";
-        else if (tOk && sOk) state.roundWinner = "tie";
+        if (tOk && !sOk) {
+          state.roundWinner = "teacher";
+          state.roundWinnerId = state.submissionIds.teacher || room.teacherId;
+        } else if (sOk && !tOk) {
+          state.roundWinner = "student";
+          state.roundWinnerId = state.submissionIds.student || null;
+        } else if (tOk && sOk) state.roundWinner = "tie";
         else state.roundWinner = "none";
         state.phase = "round-end";
       }
@@ -704,7 +732,9 @@ io.on("connection", (socket) => {
       state.round++;
       state.current = makeSpellingRound();
       state.submissions = {};
+      state.submissionIds = {};
       state.roundWinner = null;
+      state.roundWinnerId = null;
       state.phase = "playing";
       broadcastGame(code);
       return cb?.({ ok: true });
@@ -716,16 +746,18 @@ io.on("connection", (socket) => {
     };
     let miniResult = null;
 
+    const teacherOnly = room.studentsCanPlay !== true;
+
     if (room.activeGame === "spot-diff") {
-      miniResult = miniGames.handleSpotDiff(state, role, action, data, addScoreFn, VOCAB);
+      miniResult = miniGames.handleSpotDiff(state, role, action, data, addScoreFn, VOCAB, teacherOnly);
       if (action === "next-round" && socket.data.role !== "teacher") return cb?.({ ok: false });
     } else if (room.activeGame === "word-runner") {
-      miniResult = miniGames.handleRunner(state, role, action, data, addScoreFn, VOCAB);
+      miniResult = miniGames.handleRunner(state, role, action, data, addScoreFn, VOCAB, teacherOnly);
       if (action === "next-round" && socket.data.role !== "teacher") return cb?.({ ok: false });
     } else if (room.activeGame === "candy-match") {
-      miniResult = miniGames.handleCandy(state, role, action, data, addScoreFn, VOCAB);
+      miniResult = miniGames.handleCandy(state, role, action, data, addScoreFn, VOCAB, teacherOnly);
     } else if (room.activeGame === "word-shop") {
-      miniResult = miniGames.handleShop(state, role, action, data, addScoreFn, VOCAB);
+      miniResult = miniGames.handleShop(state, role, action, data, addScoreFn, VOCAB, teacherOnly);
       if (action === "next-round" && socket.data.role !== "teacher") return cb?.({ ok: false });
     }
 
@@ -838,12 +870,26 @@ io.on("connection", (socket) => {
     if (typeof payload.enableChat === "boolean") {
       room.enableChat = payload.enableChat;
     }
+    if (typeof payload.enableGameSound === "boolean") {
+      room.enableGameSound = payload.enableGameSound;
+    }
+    if ("studentsCanPlay" in payload) {
+      room.studentsCanPlay = payload.studentsCanPlay === true;
+      if (room.studentsCanPlay !== true && room.gameState?.turn) {
+        room.gameState.turn = "teacher";
+      }
+    }
     emitRoom(code);
+    if (room.studentsCanPlay !== true && room.activeGame) {
+      broadcastGame(code);
+    }
     cb?.({
       ok: true,
       showParticipantsToGuests: room.showParticipantsToGuests !== false,
       enableReactions: room.enableReactions !== false,
       enableChat: room.enableChat !== false,
+      enableGameSound: room.enableGameSound !== false,
+      studentsCanPlay: room.studentsCanPlay === true,
     });
   });
 
@@ -923,5 +969,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3456;
 server.listen(PORT, () => {
-  console.log(`GameClass → http://localhost:${PORT}`);
+  console.log(`Pleyi → http://localhost:${PORT}`);
 });

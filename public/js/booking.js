@@ -320,7 +320,7 @@ const Booking = {
 
     document.getElementById("bitPayPhone").textContent = this.settings?.bitPhone || "050-0000000";
 
-    document.getElementById("bitPayName").textContent = `שם לתשלום: ${this.settings?.bitPayName || "GameClass"}`;
+    document.getElementById("bitPayName").textContent = `שם לתשלום: ${this.settings?.bitPayName || "Pleyi"}`;
 
   },
 

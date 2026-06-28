@@ -1,4 +1,4 @@
-/* GameClass — catalog by subject */
+/* Pleyi — catalog by subject */
 
 window.GAMES_CATALOG = {
   english: [

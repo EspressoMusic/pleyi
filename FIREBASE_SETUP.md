@@ -1,4 +1,4 @@
-# Firebase Setup — GameClass
+# Firebase Setup — Pleyi
 
 Google sign-in and cloud storage for saved games + play history.
 

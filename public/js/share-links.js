@@ -2,8 +2,8 @@
 
 function buildRoomSharePayload(code, title) {
   const url = `${window.location.origin}/join?code=${code}`;
-  const shareTitle = title || "חדר GameClass";
-  const text = `הצטרפו לחדר ${shareTitle} ב-GameClass! קוד: ${code}`;
+  const shareTitle = title || "חדר Pleyi";
+  const text = `הצטרפו לחדר ${shareTitle} ב-Pleyi! קוד: ${code}`;
   return { url, title: shareTitle, text };
 }
 

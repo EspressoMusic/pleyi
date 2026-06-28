@@ -1,4 +1,4 @@
-/* GameClass — shared premium game engine (canvas, particles, sfx) */
+/* Pleyi — shared premium game engine (canvas, particles, sfx) */
 
 window.GameEngine = {
   easeOutBack(t) {
@@ -23,6 +23,19 @@ window.GameEngine = {
 
   /* ── Web Audio SFX (no external files) ── */
   _audio: null,
+  _soundEnabled: true,
+
+  setSoundEnabled(on) {
+    this._soundEnabled = on !== false;
+  },
+
+  isSoundEnabled() {
+    return this._soundEnabled !== false;
+  },
+
+  applyRoomSound(room) {
+    this.setSoundEnabled(room?.enableGameSound !== false);
+  },
 
   sfx() {
     if (!this._audio) {
@@ -37,6 +50,7 @@ window.GameEngine = {
   },
 
   playTone(freq, dur = 0.12, type = "sine", vol = 0.08) {
+    if (!this.isSoundEnabled()) return;
     const ctx = this.sfx();
     if (!ctx) return;
     const o = ctx.createOscillator();
@@ -281,5 +295,61 @@ window.GameEngine = {
       ctx.fillText(p.text, p.x, p.y);
     });
     ctx.globalAlpha = 1;
+  },
+
+  _lastWinFxKey: null,
+
+  getRoundWinMeta(gameState) {
+    if (!gameState) return null;
+    const winner = gameState.roundWinner ?? gameState.winner ?? null;
+    if (!winner || winner === "tie" || winner === "none") return null;
+    if (gameState.phase !== "round-end" && gameState.phase !== "finished") return null;
+    return {
+      winner,
+      winnerId: gameState.roundWinnerId || null,
+      key: `${gameState.round ?? 0}-${winner}-${gameState.roundWinnerId || ""}`,
+    };
+  },
+
+  resetWinCelebration() {
+    this._lastWinFxKey = null;
+  },
+
+  celebrateRoundWin(gameState, room) {
+    const meta = this.getRoundWinMeta(gameState);
+    if (!meta) return null;
+    if (meta.key !== this._lastWinFxKey) {
+      this._lastWinFxKey = meta.key;
+      if (room?.studentsCanPlay !== true) {
+        this.launchConfetti();
+      }
+      this.sfxCorrect();
+    }
+    return meta;
+  },
+
+  participantWinConfettiHtml() {
+    return `<span class="participant-win-confetti" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>`;
+  },
+
+  launchConfetti(opts = {}) {
+    const layer = document.createElement("div");
+    layer.className = "win-confetti-layer";
+    layer.setAttribute("aria-hidden", "true");
+    const colors = ["#FFE135", "#FF9ECF", "#B967FF", "#00E5CC", "#FFD700", "#FF6B35", "#fff"];
+    const count = opts.count || 60;
+    for (let i = 0; i < count; i++) {
+      const piece = document.createElement("i");
+      piece.className = "win-confetti-piece";
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[i % colors.length];
+      piece.style.animationDelay = `${Math.random() * 0.4}s`;
+      piece.style.animationDuration = `${2.4 + Math.random() * 1.6}s`;
+      piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+      if (Math.random() > 0.5) piece.style.borderRadius = "50%";
+      layer.appendChild(piece);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 4200);
   },
 };

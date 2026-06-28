@@ -1,4 +1,4 @@
-/* GameClass — preset content by subject + topic + level for solo play */
+/* Pleyi — preset content by subject + topic + level for solo play */
 
 (function () {
   const english = [

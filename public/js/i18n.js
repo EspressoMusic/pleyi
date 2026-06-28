@@ -1,11 +1,11 @@
-/* GameClass — Hebrew / English UI strings */
+/* Pleyi — Hebrew / English UI strings */
 
 const I18n = {
   lang: "he",
 
   strings: {
     he: {
-      "meta.title": "GameClass — לימוד דרך משחקים למורים",
+      "meta.title": "Pleyi — לימוד דרך משחקים למורים",
       "meta.description":
         "פלטפורמת משחקי למידה למורים — שלבו משחקים במערך השיעור, שחקו בזמן אמת עם הכיתה, או שלחו לתרגול עצמי.",
       "nav.home": "בית",
@@ -73,10 +73,10 @@ const I18n = {
       "contact.whatsapp": "פנו בוואטסאפ",
       "contact.qrTitle": "QR לאתר",
       "contact.qrLead": "סרקו כדי להגיע ישר לאתר — להדפסה, כרטיס ביקור או שיתוף",
-      "contact.qrAlt": "QR code לאתר GameClass",
+      "contact.qrAlt": "QR code לאתר Pleyi",
       "contact.copyLink": "העתק קישור",
       "footer.tagline": "לימוד במשחקים — בכל שיעור!",
-      "footer.copy": "© GameClass — פלטפורמת משחקי למידה למורים",
+      "footer.copy": "© Pleyi — פלטפורמת משחקי למידה למורים",
       "modal.teacher.title": "יצירת חדר — מורה",
       "modal.teacher.desc": "הזינו את שם החדר — תקבלו קוד לשיתוף עם התלמידים",
       "modal.student.title": "הצטרפות — תלמיד",
@@ -90,13 +90,13 @@ const I18n = {
       "toast.contactSent": "ההודעה נשלחה! נחזור אליכם בהקדם",
       "toast.linkCopied": "הקישור הועתק!",
       "toast.codeCopied": "הקוד הועתק!",
-      "toast.waText": "שלום! מעוניין/ת לשמוע על GameClass למורים 🙂",
+      "toast.waText": "שלום! מעוניין/ת לשמוע על Pleyi למורים 🙂",
       "play.back": "← חזרה לאתר",
       "play.score": "ניקוד",
       "play.meta": "משחקי למידה — תרגול עצמי או שילוב בשיעור עם המורה",
     },
     en: {
-      "meta.title": "GameClass — Learn Through Games for Teachers",
+      "meta.title": "Pleyi — Learn Through Games for Teachers",
       "meta.description":
         "Game-based learning platform for teachers — plug games into your lesson plan, play live with class, or share solo practice links.",
       "nav.home": "Home",
@@ -164,10 +164,10 @@ const I18n = {
       "contact.whatsapp": "WhatsApp us",
       "contact.qrTitle": "Site QR",
       "contact.qrLead": "Scan to open the site — for print, business cards, or sharing",
-      "contact.qrAlt": "QR code for GameClass site",
+      "contact.qrAlt": "QR code for Pleyi site",
       "contact.copyLink": "Copy link",
       "footer.tagline": "Learning through games — every lesson!",
-      "footer.copy": "© GameClass — game-based learning for teachers",
+      "footer.copy": "© Pleyi — game-based learning for teachers",
       "modal.teacher.title": "Create room — teacher",
       "modal.teacher.desc": "Enter your name to create a new lesson room",
       "modal.student.title": "Join — student",
@@ -181,7 +181,7 @@ const I18n = {
       "toast.contactSent": "Message sent! We’ll get back to you soon",
       "toast.linkCopied": "Link copied!",
       "toast.codeCopied": "Code copied!",
-      "toast.waText": "Hi! I’d like to learn about GameClass for teachers 🙂",
+      "toast.waText": "Hi! I’d like to learn about Pleyi for teachers 🙂",
       "play.back": "← Back to site",
       "play.score": "Score",
       "play.meta": "Learning games — solo practice or live lesson with your teacher",

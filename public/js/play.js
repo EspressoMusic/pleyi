@@ -38,7 +38,7 @@
 
   const displayTitle = customMeta?.title || SoloGames.names[gameId];
   titleEl.textContent = displayTitle;
-  document.title = `${displayTitle} — GameClass`;
+  document.title = `${displayTitle} — Pleyi`;
 
   const ui = {
     setScore(n) {

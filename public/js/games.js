@@ -20,16 +20,41 @@ function roleLabel(role, room) {
 function winnerText(winner, room) {
   if (winner === "tie") return "תיקו!";
   if (winner === "none") return "אף אחד לא צדק הפעם";
+  if (room?.studentsCanPlay !== true) return "כל הכבוד!";
   if (winner === "teacher") return `${roleLabel("teacher", room)} ניצח/ה!`;
   if (winner === "student") return `${roleLabel("student", room)} ניצח/ה!`;
   return "";
 }
 
+function roundResultClass(winner) {
+  const isWin = winner && winner !== "tie" && winner !== "none";
+  return isWin ? "round-result round-result--win" : "round-result";
+}
+
 function raceWaitStatus(clicks, ctx, phase) {
   if (phase !== "playing" || clicks?.[ctx.role] === undefined) return "";
+  if (isTeacherOnlyRoom(ctx)) return "";
   const other = ctx.role === "teacher" ? "student" : "teacher";
   if (clicks[other] !== undefined) return "";
   return `<div class="game-status waiting">ממתינים ל${roleLabel(other, ctx.room)}...</div>`;
+}
+
+function canPlayGame(ctx) {
+  if (ctx.role === "teacher") return true;
+  return ctx.room?.studentsCanPlay === true;
+}
+
+function watchModeBanner(ctx) {
+  if (canPlayGame(ctx)) return "";
+  return `<div class="game-watch-banner" role="status">👀 מצב צפייה — המורה מנחה, אין אפשרות לענות</div>`;
+}
+
+function isTeacherOnlyRoom(ctx) {
+  return ctx.room?.studentsCanPlay !== true;
+}
+
+function effectiveGameTurn(state, ctx) {
+  return isTeacherOnlyRoom(ctx) ? "teacher" : state.turn;
 }
 
 const Games = {
@@ -47,7 +72,7 @@ const Games = {
     }[activeGame];
 
     if (!fn) return "<p>משחק לא נמצא</p>";
-    return fn.call(this, state, ctx);
+    return watchModeBanner(ctx) + fn.call(this, state, ctx);
   },
 
   bind(activeGame, root, ctx) {
@@ -63,7 +88,10 @@ const Games = {
       "word-shop": this.bindWordShop,
     }[activeGame];
 
-    if (fn) fn.call(this, root, ctx);
+    if (fn) {
+      if (ctx.role !== "teacher" && !canPlayGame(ctx)) return;
+      fn.call(this, root, ctx);
+    }
   },
 
   renderVocabularyDuel(state, ctx) {
@@ -82,7 +110,7 @@ const Games = {
             if (opt === question.correct) cls += " correct";
             else if (myAnswer === opt) cls += " wrong";
           }
-          return `<button class="${cls}" data-answer="${opt}" ${myAnswer || showResults ? "disabled" : ""}>${opt}</button>`;
+          return `<button class="${cls}" data-answer="${opt}" ${myAnswer || showResults || !canPlayGame(ctx) ? "disabled" : ""}>${opt}</button>`;
         }
       )
       .join("");
@@ -96,7 +124,7 @@ const Games = {
     }
     if (showResults) {
       const myOk = myAnswer === question.correct;
-      statusHtml += `<div class="round-result"><h4>${myOk ? "נכון! ✓" : "לא נכון"}</h4><p>המילה: <strong dir="ltr">${question.word}</strong> = ${question.correct}</p></div>`;
+      statusHtml += `<div class="${roundResultClass(myOk ? "teacher" : null)}"><h4>${myOk ? "נכון! ✓" : "לא נכון"}</h4><p>המילה: <strong dir="ltr">${question.word}</strong> = ${question.correct}</p></div>`;
     }
     if (phase === "finished") {
       const sc = ctx.scores || {};
@@ -132,32 +160,108 @@ const Games = {
   },
 
   renderWordMemory(state, ctx) {
-    const { cards, turn, phase, pairsFound, winner } = state;
+    const { cards, phase, pairsFound, winner } = state;
+    const turn = effectiveGameTurn(state, ctx);
     const isMyTurn = turn === ctx.role;
-    const canFlip = phase === "playing" && isMyTurn;
+    const canFlip = phase === "playing" && isMyTurn && canPlayGame(ctx);
+    const watchOnly = isTeacherOnlyRoom(ctx);
 
     const cardsHtml = cards
       .map((c) => {
-        const showFace = c.faceUp || c.matched;
-        const cls = ["memory-card", showFace ? "face" : "back", c.matched ? "matched" : ""].filter(Boolean).join(" ");
-        const content = showFace ? c.text : "?";
-        return `<button class="${cls}" data-id="${c.id}" ${!canFlip || c.matched || c.faceUp ? "disabled" : ""}>${content}</button>`;
+        const isFlipped = c.faceUp || c.matched;
+        const cls = ["memory-card", isFlipped ? "is-flipped" : "", c.matched ? "is-matched" : ""]
+          .filter(Boolean)
+          .join(" ");
+        return `<button type="button" class="${cls}" data-id="${c.id}" ${!canFlip || c.matched || c.faceUp ? "disabled" : ""}>
+          <span class="memory-card-inner">
+            <span class="memory-card-side memory-card-back" aria-hidden="true">?</span>
+            <span class="memory-card-side memory-card-front">${c.text}</span>
+          </span>
+        </button>`;
       })
       .join("");
 
-    let status = `<div class="turn-indicator">${isMyTurn ? "התור שלך!" : `תור של ${roleLabel(turn, ctx.room)}`}</div>`;
-    status += `<div class="game-round-info">זוגות — מורה: ${pairsFound.teacher} | תלמיד: ${pairsFound.student}</div>`;
+    const turnLabel = isMyTurn ? "שלך!" : roleLabel(turn, ctx.room);
+    const turnHtml =
+      watchOnly && ctx.role === "teacher"
+        ? ""
+        : watchOnly && ctx.role === "student"
+          ? `
+      <div class="memory-turn-bar" role="status" aria-live="polite">
+        <span class="memory-turn-player">המורה מנחה את המשחק</span>
+      </div>`
+          : isMyTurn
+            ? `
+      <div class="memory-turn-bar memory-turn-bar--mine" role="status" aria-live="polite">
+        <span class="memory-turn-player">התור שלך!</span>
+      </div>`
+            : `
+      <div class="memory-turn-bar" role="status" aria-live="polite">
+        <span class="memory-turn-player"><span class="memory-turn-prefix">תור</span> <span class="memory-turn-of">של</span> <span class="memory-turn-name">${turnLabel}</span></span>
+      </div>`;
+
+    let headHtml = `
+      <div class="memory-score-bar" aria-label="ניקוד זוגות">
+        <span class="memory-score-title">זוגות</span>
+        <span class="memory-score-pill">${roleLabel("teacher", ctx.room)}: <strong>${pairsFound.teacher}</strong></span>
+        ${watchOnly ? "" : `<span class="memory-score-pill">${roleLabel("student", ctx.room)}: <strong>${pairsFound.student}</strong></span>`}
+      </div>`;
 
     if (phase === "finished") {
-      status += `<div class="round-result"><h4>${winnerText(winner, ctx.room)}</h4></div>`;
+      headHtml += `<div class="${roundResultClass(winner)}"><h4>${winnerText(winner, ctx.room)}</h4></div>`;
     }
 
-    return `<div class="memory-grid">${cardsHtml}</div>${status}`;
+    return `
+      <div class="word-memory-game">
+        ${turnHtml}
+        <div class="word-memory-head">${headHtml}</div>
+        <div class="memory-grid">${cardsHtml}</div>
+      </div>`;
   },
 
   bindWordMemory(root, ctx) {
+    const prevFlipped = root._memoryFlippedIds || new Set();
+
+    const animateFlip = (card, flipped) => {
+      const inner = card.querySelector(".memory-card-inner");
+      if (!inner) return;
+      card.classList.add("is-flipping");
+      if (flipped) {
+        card.classList.remove("is-flipped");
+        void card.offsetWidth;
+        card.classList.add("is-flipped");
+      } else {
+        card.classList.add("is-flipped");
+        void card.offsetWidth;
+        card.classList.remove("is-flipped");
+      }
+      inner.addEventListener(
+        "transitionend",
+        () => card.classList.remove("is-flipping"),
+        { once: true }
+      );
+    };
+
+    root.querySelectorAll(".memory-card").forEach((card) => {
+      const id = card.dataset.id;
+      const shouldFlip = card.classList.contains("is-flipped");
+
+      if (shouldFlip && !prevFlipped.has(id)) {
+        animateFlip(card, true);
+      } else if (!shouldFlip && prevFlipped.has(id)) {
+        animateFlip(card, false);
+      }
+    });
+
+    root._memoryFlippedIds = new Set(
+      [...root.querySelectorAll(".memory-card.is-flipped")].map((c) => c.dataset.id)
+    );
+
     root.querySelectorAll(".memory-card:not([disabled])").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (btn.classList.contains("is-flipped")) return;
+        animateFlip(btn, true);
+        root._memoryFlippedIds.add(btn.dataset.id);
         ctx.sendAction("flip", { cardId: btn.dataset.id });
       });
     });
@@ -175,7 +279,7 @@ const Games = {
         if (guessed.includes(L)) {
           cls += word.includes(L) ? " used-correct" : " used-wrong";
         }
-        return `<button class="${cls}" data-letter="${L}" ${guessed.includes(L) || won || lost ? "disabled" : ""}>${L}</button>`;
+        return `<button class="${cls}" data-letter="${L}" ${guessed.includes(L) || won || lost || !canPlayGame(ctx) ? "disabled" : ""}>${L}</button>`;
       })
       .join("");
 
@@ -189,12 +293,14 @@ const Games = {
         : "";
 
     return `
-      <div class="hangman-drawing"><span class="hangman-misses">טעויות: ${wrongGuesses}/${maxWrong}</span></div>
-      <div class="hangman-display">${display}</div>
-      <div class="game-hint">${hint} · ${he}</div>
-      <div class="hangman-letters">${lettersHtml}</div>
-      ${result}
-      ${newWordBtn}
+      <div class="hangman-game">
+        <p class="hangman-misses">טעויות: ${wrongGuesses}/${maxWrong}</p>
+        <div class="hangman-display">${display}</div>
+        <p class="hangman-hint">${hint} · ${he}</p>
+        <div class="hangman-letters">${lettersHtml}</div>
+        ${result}
+        ${newWordBtn}
+      </div>
     `;
   },
 
@@ -223,22 +329,32 @@ const Games = {
       status = `<div class="game-status waiting">שלחת! ממתינים לצד השני...</div>`;
     }
     if (showResults) {
-      status += `<div class="round-result"><h4>${winnerText(roundWinner, ctx.room)}</h4><p dir="ltr"><strong>${answer}</strong></p><p>${he}</p></div>`;
+      status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p dir="ltr"><strong>${answer}</strong></p><p>${he}</p></div>`;
     }
     if (phase === "finished") {
       status += `<div class="game-status win">סיום! ניקוד — מורה: ${ctx.scores.teacher} | תלמיד: ${ctx.scores.student}</div>`;
     }
 
     const form =
-      !showResults && mySubmit === undefined
+      !showResults && mySubmit === undefined && canPlayGame(ctx)
         ? `
-      <div class="scramble-input-area" id="sentenceArea"></div>
-      <div class="scramble-words" id="wordPool">${poolHtml}</div>
-      <div class="game-actions">
-        <button class="btn btn-outline btn-sm" id="clearSentence">נקה</button>
-        <button class="btn btn-primary" id="submitSentence">שלח משפט</button>
+      <div class="sentence-scramble-workspace">
+        <section class="scramble-build-section" aria-label="בניית משפט">
+          <p class="scramble-section-label">המשפט שלי</p>
+          <div class="scramble-input-area" id="sentenceArea"></div>
+        </section>
+        <section class="scramble-pool-section" aria-label="מילים לבחירה">
+          <p class="scramble-section-label">בחרו מילים</p>
+          <div class="scramble-words" id="wordPool">${poolHtml}</div>
+        </section>
+        <div class="game-actions sentence-scramble-actions">
+          <button class="btn btn-outline btn-sm" id="clearSentence">נקה</button>
+          <button class="btn btn-primary" id="submitSentence">שלח משפט</button>
+        </div>
       </div>`
-        : "";
+        : !showResults && !canPlayGame(ctx)
+          ? `<div class="scramble-watch-pool">${scrambled.map((w) => `<span class="scramble-chip scramble-chip--static">${w}</span>`).join("")}</div>`
+          : "";
 
     const nextBtn =
       ctx.role === "teacher" && showResults && phase !== "finished"
@@ -246,10 +362,18 @@ const Games = {
         : "";
 
     return `
-      <div class="game-round-info">סיבוב ${round}/${maxRounds} · ${he}</div>
+      <div class="sentence-scramble-game">
+      <div class="sentence-scramble-head">
+        <div class="sentence-scramble-round">
+          <span class="sentence-scramble-round-label font-cartoon">סיבוב</span>
+          <span class="sentence-scramble-round-num font-cartoon">${round}/${maxRounds}</span>
+        </div>
+        <p class="sentence-scramble-prompt">${he}</p>
+      </div>
       ${form}
       ${status}
       ${nextBtn}
+      </div>
     `;
   },
 
@@ -261,12 +385,18 @@ const Games = {
     const selected = [];
 
     function renderArea() {
-      area.innerHTML = selected
-        .map(
-          (w, i) =>
-            `<button type="button" class="scramble-chip in-sentence" data-i="${i}">${w}</button>`
-        )
-        .join("") || '<span style="color:var(--muted)">לחצו על מילים לבניית המשפט</span>';
+      if (selected.length === 0) {
+        area.classList.add("is-empty");
+        area.innerHTML = '<span class="scramble-area-hint">לחצו על מילים למטה כדי לבנות את המשפט</span>';
+      } else {
+        area.classList.remove("is-empty");
+        area.innerHTML = selected
+          .map(
+            (w, i) =>
+              `<button type="button" class="scramble-chip in-sentence" data-i="${i}">${w}</button>`
+          )
+          .join("");
+      }
       area.querySelectorAll(".scramble-chip").forEach((chip) => {
         chip.addEventListener("click", () => {
           const idx = Number(chip.dataset.i);
@@ -309,7 +439,7 @@ const Games = {
     const showResults = phase === "round-end" || phase === "finished";
 
     let form = "";
-    if (!showResults && mySubmit === undefined) {
+    if (!showResults && mySubmit === undefined && canPlayGame(ctx)) {
       form = `
         <div class="game-hint">${current.hint} · ${current.he}</div>
         <input type="text" class="spelling-input" id="spellingInput" placeholder="Type the word..." autocomplete="off" autocapitalize="off" />
@@ -321,7 +451,7 @@ const Games = {
       status = `<div class="game-status waiting">ממתינים לצד השני...</div>`;
     }
     if (showResults) {
-      status += `<div class="round-result"><h4>${winnerText(roundWinner, ctx.room)}</h4><p>המילה: <strong dir="ltr">${current.word}</strong></p></div>`;
+      status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p>המילה: <strong dir="ltr">${current.word}</strong></p></div>`;
     }
     if (phase === "finished") {
       status += `<div class="game-status win">סיום! ניקוד — מורה: ${ctx.scores.teacher} | תלמיד: ${ctx.scores.student}</div>`;
@@ -358,6 +488,8 @@ const Games = {
     const myPick = clicks?.[ctx.role];
     const showEnd = phase === "round-end" || phase === "finished";
 
+    const watchOnly = isTeacherOnlyRoom(ctx);
+
     const panel = (items, side) =>
       items
         .map(
@@ -366,7 +498,7 @@ const Games = {
             if (myPick === i) cls += " picked";
             if (showEnd && i === state.diffIndex) cls += " correct";
             if (showEnd && myPick === i && myPick !== state.diffIndex) cls += " wrong";
-            return `<button type="button" class="${cls}" data-index="${i}" data-side="${side}" ${myPick !== undefined || showEnd ? "disabled" : ""}>
+            return `<button type="button" class="${cls}" data-index="${i}" data-side="${side}" ${myPick !== undefined || showEnd || !canPlayGame(ctx) ? "disabled" : ""}>
               <span class="spot-emoji">${item.emoji}</span>
               <span class="spot-word" dir="ltr">${item.en}</span>
             </button>`;
@@ -376,8 +508,10 @@ const Games = {
 
     let status = "";
     status += raceWaitStatus(clicks, ctx, phase);
-    if (showEnd) status += `<div class="round-result"><h4>${winnerText(roundWinner, ctx.room)}</h4></div>`;
-    if (phase === "finished") status += `<div class="game-status win">סיום! ניקוד — מורה: ${ctx.scores.teacher} | תלמיד: ${ctx.scores.student}</div>`;
+    if (showEnd) status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4></div>`;
+    if (phase === "finished") {
+      status += `<div class="game-status win">סיום! ניקוד — מורה: ${ctx.scores.teacher}${watchOnly ? "" : ` | תלמיד: ${ctx.scores.student}`}</div>`;
+    }
 
     const nextBtn =
       ctx.role === "teacher" && phase === "round-end"
@@ -385,14 +519,28 @@ const Games = {
         : "";
 
     return `
-      <div class="game-round-info">סיבוב ${round}/${maxRounds} — מצאו את ההבדל בין התמונות!</div>
-      <div class="spot-diff-board">
-        <div class="spot-panel"><h4>A</h4><div class="spot-grid">${panel(left, "left")}</div></div>
-        <div class="spot-panel"><h4>B</h4><div class="spot-grid">${panel(right, "right")}</div></div>
-      </div>
-      <p class="game-hint">לחצו על הפריט השונה בין שני הצדדים</p>
-      ${status}${nextBtn}
-    `;
+      <div class="spot-diff-game">
+        <div class="spot-diff-intro">
+          <div class="memory-score-bar spot-diff-round-bar" aria-label="סיבוב">
+            <span class="memory-score-title">סיבוב</span>
+            <span class="memory-score-pill">${round}/${maxRounds}</span>
+          </div>
+          <div class="spot-diff-prompt-zone">
+            <p class="spot-diff-prompt"><span class="spot-diff-prompt-text">מצאו את ההבדל בין התמונות!</span></p>
+          </div>
+        </div>
+        <div class="spot-diff-board">
+          <div class="spot-panel" aria-label="לוח A">
+            <div class="spot-panel-label">A</div>
+            <div class="spot-grid">${panel(left, "left")}</div>
+          </div>
+          <div class="spot-panel" aria-label="לוח B">
+            <div class="spot-panel-label">B</div>
+            <div class="spot-grid">${panel(right, "right")}</div>
+          </div>
+        </div>
+        <div class="spot-diff-foot">${status}${nextBtn}</div>
+      </div>`;
   },
 
   bindSpotDiff(root, ctx) {
@@ -412,13 +560,13 @@ const Games = {
     const opts = options
       .map(
         (opt) =>
-          `<button type="button" class="runner-lane-btn ${myPick === opt ? "picked" : ""}" data-choice="${opt}" ${myPick || showEnd ? "disabled" : ""} dir="ltr">${opt}</button>`
+          `<button type="button" class="runner-lane-btn ${myPick === opt ? "picked" : ""}" data-choice="${opt}" ${myPick || showEnd || !canPlayGame(ctx) ? "disabled" : ""} dir="ltr">${opt}</button>`
       )
       .join("");
 
     let status = "";
     status += raceWaitStatus(clicks, ctx, phase);
-    if (showEnd) status += `<div class="round-result"><h4>${winnerText(roundWinner, ctx.room)}</h4><p dir="ltr">${obstacle.emoji} ${obstacle.word} = ${obstacle.hint}</p></div>`;
+    if (showEnd) status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p dir="ltr">${obstacle.emoji} ${obstacle.word} = ${obstacle.hint}</p></div>`;
     if (phase === "finished") status += `<div class="game-status win">מרathon סיים! מורה: ${distance.teacher}m | תלמיד: ${distance.student}m</div>`;
 
     const nextBtn =
@@ -448,26 +596,33 @@ const Games = {
   },
 
   renderCandyMatch(state, ctx) {
-    const { grid, turn, selected, phase, lastMatch, rows, cols, moves, maxMoves, winner } = state;
+    const { grid, selected, phase, lastMatch, rows, cols, moves, maxMoves, winner } = state;
+    const turn = effectiveGameTurn(state, ctx);
     const isMyTurn = turn === ctx.role;
+    const watchOnly = isTeacherOnlyRoom(ctx);
     const colorClass = (c) => `candy-${c}`;
 
     const tiles = [...grid]
       .sort((a, b) => a.r - b.r || a.c - b.c)
       .map(
         (t) =>
-          `<button type="button" class="candy-tile ${colorClass(t.color)} ${selected === t.id ? "selected" : ""}" data-id="${t.id}" ${!isMyTurn || phase !== "playing" ? "disabled" : ""}>
+          `<button type="button" class="candy-tile ${colorClass(t.color)} ${selected === t.id ? "selected" : ""}" data-id="${t.id}" ${!isMyTurn || phase !== "playing" || !canPlayGame(ctx) ? "disabled" : ""}>
             <span dir="ltr">${t.word}</span>
           </button>`
       )
       .join("");
 
     const totalMoves = (moves?.teacher || 0) + (moves?.student || 0);
-    let status = `<div class="game-status">${isMyTurn ? "התור שלך!" : `תור ${roleLabel(turn, ctx.room)}`}</div>`;
+    let status = "";
+    if (watchOnly && ctx.role === "student") {
+      status = `<div class="game-status">המורה מנחה את המשחק</div>`;
+    } else {
+      status = `<div class="game-status">${isMyTurn ? (watchOnly ? "המורה מנחה — התור שלך!" : "התור שלך!") : `תור ${roleLabel(turn, ctx.room)}`}</div>`;
+    }
     status += `<div class="game-round-info">מהלכים: ${totalMoves}/${maxMoves} · מורה ${moves?.teacher || 0} | תלמיד ${moves?.student || 0}</div>`;
     if (lastMatch > 0) status += `<div class="game-hint">+${lastMatch * 5} נקודות על ${lastMatch} ממתקים!</div>`;
     if (phase === "finished") {
-      status += `<div class="round-result"><h4>${winnerText(winner, ctx.room)}</h4></div>`;
+      status += `<div class="${roundResultClass(winner)}"><h4>${winnerText(winner, ctx.room)}</h4></div>`;
       status += `<div class="game-status win">ניקוד — מורה: ${ctx.scores.teacher} | תלמיד: ${ctx.scores.student}</div>`;
     }
 
@@ -492,7 +647,7 @@ const Games = {
     const items = shelf
       .map(
         (item) =>
-          `<button type="button" class="shop-item ${myPick === item.en ? "picked" : ""}" data-en="${item.en}" ${myPick || showEnd ? "disabled" : ""}>
+          `<button type="button" class="shop-item ${myPick === item.en ? "picked" : ""}" data-en="${item.en}" ${myPick || showEnd || !canPlayGame(ctx) ? "disabled" : ""}>
             <span class="shop-emoji">${item.emoji}</span>
             <span dir="ltr">${item.en}</span>
           </button>`
@@ -501,7 +656,7 @@ const Games = {
 
     let status = "";
     status += raceWaitStatus(clicks, ctx, phase);
-    if (showEnd) status += `<div class="round-result"><h4>${winnerText(roundWinner, ctx.room)}</h4></div>`;
+    if (showEnd) status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4></div>`;
     if (phase === "finished") status += `<div class="game-status win">החנות נסגרה! ניקוד — מורה: ${ctx.scores.teacher} | תלמיד: ${ctx.scores.student}</div>`;
 
     const nextBtn =

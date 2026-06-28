@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0066FF" />
-  <title>חדר כיתה — GameClass</title>
+  <title>חדר כיתה — Pleyi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=27" />
   <link rel="stylesheet" href="/css/clean-site.css" />
-  <link rel="stylesheet" href="/css/room-page.css?v=41" />
+  <link rel="stylesheet" href="/css/room-page.css?v=62" />
 </head>
 <body class="clean-site in-room">
 
@@ -25,7 +25,7 @@
   <header class="navbar scrolled" id="navbar">
     <div class="container nav-inner room-nav-inner">
       <a href="/" class="logo" id="roomHomeLink">
-        <span class="logo-text font-cartoon">GameClass</span>
+        <span class="logo-text font-brand">Pleyi</span>
       </a>
       <button type="button" class="room-nav-share-btn" id="openSharePanelBtn" aria-expanded="false" aria-controls="roomSharePanel">
         שתף חדר
@@ -50,8 +50,10 @@
       <div class="room-layout room-zoom-stage-wrap room-classroom-bar">
         <div class="room-main-block">
           <div class="room-top-strip" aria-live="polite">
-            <span class="room-stat-pill">קוד: <strong id="roomCodeDisplay" dir="ltr">------</strong></span>
-            <span class="room-stat-pill">מחוברים: <strong id="connectedTotal">1</strong></span>
+            <div class="room-top-strip-stats" id="roomTopStripStats">
+              <span class="room-stat-pill">קוד: <strong id="roomCodeDisplay" dir="ltr">------</strong></span>
+              <span class="room-stat-pill">מחוברים: <strong id="connectedTotal">1</strong></span>
+            </div>
             <div class="room-top-strip-actions room-manager-only">
               <button type="button" class="room-stat-pill room-stat-pill--games-btn" id="openGamesPanelBtn" aria-expanded="false" aria-controls="roomGamesPanel">
                 <span id="currentGameBtnLabel">בחרו משחק</span>
@@ -92,10 +94,6 @@
               </div>
 
               <div id="gamePanel" class="game-panel hidden">
-                <div class="game-panel-header">
-                  <h3 id="activeGameTitle">משחק</h3>
-                  <button type="button" class="btn btn-outline btn-sm btn-candy" id="leaveGameBtn">חזרה ללובי</button>
-                </div>
                 <div id="gameContent" class="game-content-stage"></div>
               </div>
             </div>
@@ -129,7 +127,10 @@
         </div>
       </div>
 
-      <div class="room-games-panel room-manager-only hidden" id="roomGamesPanel" role="dialog" aria-modal="true" aria-labelledby="roomGamesPanelTitle">
+    </div>
+  </div>
+
+  <div class="room-games-panel room-page-overlay room-manager-only hidden" id="roomGamesPanel" role="dialog" aria-modal="true" aria-labelledby="roomGamesPanelTitle">
         <div class="room-games-panel-backdrop" id="roomGamesPanelBackdrop"></div>
         <div class="room-games-panel-sheet">
           <div class="room-games-panel-header">
@@ -151,7 +152,7 @@
         </div>
       </div>
 
-      <div class="room-settings-panel room-manager-only hidden" id="roomSettingsPanel" role="dialog" aria-modal="true" aria-labelledby="roomSettingsPanelTitle">
+      <div class="room-settings-panel room-page-overlay room-manager-only hidden" id="roomSettingsPanel" role="dialog" aria-modal="true" aria-labelledby="roomSettingsPanelTitle">
         <div class="room-settings-panel-backdrop" id="roomSettingsPanelBackdrop"></div>
         <div class="room-settings-panel-sheet">
           <div class="room-games-panel-header">
@@ -159,27 +160,54 @@
             <button type="button" class="room-games-panel-close" id="closeSettingsPanelBtn" aria-label="סגירה">×</button>
           </div>
           <div class="room-settings-list">
-            <label class="room-setting-toggle">
-              <input type="checkbox" id="enableReactionsToggle" checked />
-              <span class="room-setting-toggle-ui" aria-hidden="true"></span>
-              <span class="room-setting-toggle-label">תגובות (אימוג'ים)</span>
+            <label class="room-setting-toggle" for="enableReactionsToggle">
+              <span class="room-setting-toggle-label">תגובות</span>
+              <span class="room-setting-toggle-switch">
+                <input type="checkbox" id="enableReactionsToggle" checked />
+                <span class="room-setting-toggle-ui" aria-hidden="true"></span>
+              </span>
             </label>
-            <label class="room-setting-toggle">
-              <input type="checkbox" id="enableChatToggle" checked />
-              <span class="room-setting-toggle-ui" aria-hidden="true"></span>
+            <label class="room-setting-toggle" for="enableChatToggle">
               <span class="room-setting-toggle-label">צ'אט כיתה</span>
+              <span class="room-setting-toggle-switch">
+                <input type="checkbox" id="enableChatToggle" checked />
+                <span class="room-setting-toggle-ui" aria-hidden="true"></span>
+              </span>
             </label>
-            <label class="room-setting-toggle">
-              <input type="checkbox" id="showParticipantsToggle" checked />
-              <span class="room-setting-toggle-ui" aria-hidden="true"></span>
+            <label class="room-setting-toggle" for="showParticipantsToggle">
               <span class="room-setting-toggle-label">הצגת משתתפים לאורחים</span>
+              <span class="room-setting-toggle-switch">
+                <input type="checkbox" id="showParticipantsToggle" checked />
+                <span class="room-setting-toggle-ui" aria-hidden="true"></span>
+              </span>
             </label>
+            <label class="room-setting-toggle" for="enableGameSoundToggle">
+              <span class="room-setting-toggle-label">קול במשחק</span>
+              <span class="room-setting-toggle-switch">
+                <input type="checkbox" id="enableGameSoundToggle" checked />
+                <span class="room-setting-toggle-ui" aria-hidden="true"></span>
+              </span>
+            </label>
+            <div class="room-setting-mode-group">
+              <p class="room-setting-mode-heading">שיטת משחק</p>
+              <button type="button" class="room-setting-mode-card" id="studentsCanPlayParticipateBtn" data-can-play="1" aria-pressed="false">
+                <span class="room-setting-mode-card-body">
+                  <span class="room-setting-toggle-label">משחק משותף — תלמידים עונים ומשתתפים</span>
+                  <span class="room-setting-mode-badge" aria-hidden="true">✓</span>
+                </span>
+              </button>
+              <button type="button" class="room-setting-mode-card is-selected" id="studentsCanPlayWatchBtn" data-can-play="0" aria-pressed="true">
+                <span class="room-setting-mode-card-body">
+                  <span class="room-setting-toggle-label">המורה מנחה — תלמידים צופים בלבד</span>
+                  <span class="room-setting-mode-badge" aria-hidden="true">✓</span>
+                </span>
+              </button>
+            </div>
           </div>
-          <p class="room-setting-hint">כיבוי «הצגת משתתפים» — האורחים לא יראו את רשימת המשתתפים</p>
         </div>
       </div>
 
-      <div class="room-share-panel hidden" id="roomSharePanel" role="dialog" aria-modal="true" aria-labelledby="roomSharePanelTitle">
+  <div class="room-share-panel room-page-overlay hidden" id="roomSharePanel" role="dialog" aria-modal="true" aria-labelledby="roomSharePanelTitle">
         <div class="room-share-panel-backdrop" id="roomSharePanelBackdrop"></div>
         <div class="room-share-panel-sheet">
           <div class="room-share-panel-header">
@@ -190,7 +218,6 @@
           <div class="room-share-panel-code">
             <span class="room-share-panel-code-label">קוד חדר</span>
             <strong id="sharePanelCode" dir="ltr">------</strong>
-            <button type="button" class="btn btn-outline btn-sm btn-candy" id="copyCodeBtn">העתק קוד</button>
           </div>
 
           <div class="room-share-panel-qr">
@@ -232,15 +259,13 @@
         </div>
       </div>
 
-    </div>
-  </div>
-
   <div class="toast hidden" id="toast"></div>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/games.js"></script>
+  <script src="/js/game-engine.js"></script>
+  <script src="/js/games.js?v=18"></script>
   <script src="/js/share-links.js"></script>
   <script src="/js/room-idle-runner.js"></script>
-  <script src="/js/room-host.js?v=20"></script>
+  <script src="/js/room-host.js?v=34"></script>
 </body>
 </html>

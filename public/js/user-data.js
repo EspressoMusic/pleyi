@@ -1,4 +1,4 @@
-/* GameClass — Firestore: saved games + play history */
+/* Pleyi — Firestore: saved games + play history */
 
 window.UserData = {
   _uid() {

@@ -1,4 +1,4 @@
-/* GameClass — Firebase Auth (Google sign-in) */
+/* Pleyi — Firebase Auth (Google sign-in) */
 
 window.GameAuth = {
   _user: null,
