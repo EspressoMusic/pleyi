@@ -49,7 +49,43 @@
     return catalog.gameSummary ? catalog.gameSummary(desc) : desc || "";
   }
 
-  const STICKER_COLORS = ["purple", "yellow", "teal", "pink", "white"];
+  const STICKER_COLORS = ["purple", "yellow", "teal", "pink", "orange", "lime", "blue", "green", "white"];
+
+  const CARD_COLORS = ["purple", "pink", "teal", "orange", "lime", "blue", "green"];
+
+  let cardColors = [];
+
+  function getHubGridCols() {
+    if (window.matchMedia("(min-width: 900px)").matches) return 3;
+    if (window.matchMedia("(min-width: 640px)").matches) return 2;
+    return 1;
+  }
+
+  function buildCardColors(count, cols) {
+    const assigned = [];
+    for (let i = 0; i < count; i++) {
+      const row = Math.floor(i / cols);
+      const col = i % cols;
+      const banned = new Set();
+      if (col > 0) banned.add(assigned[i - 1]);
+      if (row > 0) {
+        banned.add(assigned[i - cols]);
+        if (col > 0) banned.add(assigned[i - cols - 1]);
+        if (col < cols - 1) banned.add(assigned[i - cols + 1]);
+      }
+      const used = new Set(assigned);
+      const pick =
+        CARD_COLORS.find((c) => !banned.has(c) && !used.has(c)) ||
+        CARD_COLORS.find((c) => !banned.has(c)) ||
+        CARD_COLORS[i % CARD_COLORS.length];
+      assigned.push(pick);
+    }
+    return assigned;
+  }
+
+  function cardColorForIndex(index) {
+    return cardColors[index] || CARD_COLORS[index % CARD_COLORS.length];
+  }
 
   function applyModalSticker(el, color) {
     if (!el) return;
@@ -57,15 +93,17 @@
     if (color) el.classList.add(`sticker-${color}`);
   }
 
-  function cardHtml(game) {
-    const sticker = `sticker-${game.color}`;
+  function cardHtml(game, index) {
+    const color = cardColorForIndex(index);
+    const sticker = `sticker-${color}`;
     const meta = catalog.gameMeta(game, activeSubject);
     const skillsText = meta.skills.join(" · ");
     const summary = gameSummary(game.desc);
     return `
-      <article class="hub-game-card pitch-card sticker-card ${sticker}" data-game-id="${game.id}" data-game-title="${escapeHtml(game.title)}" data-game-desc="${escapeHtml(summary)}" data-game-color="${game.color}">
+      <article class="hub-game-card pitch-card sticker-card ${sticker}" data-game-id="${game.id}" data-game-title="${escapeHtml(game.title)}" data-game-desc="${escapeHtml(summary)}" data-game-color="${color}">
         <button type="button" class="hub-game-info-btn" aria-label="מידע על ${escapeHtml(game.title)}"
-          data-game-color="${game.color}"
+          data-game-color="${color}"
+          data-info-icon="${escapeHtml(game.icon || "🎮")}"
           data-info-title="${escapeHtml(game.title)}"
           data-info-about="${escapeHtml(meta.about)}"
           data-info-content="${escapeHtml(meta.content)}"
@@ -73,14 +111,22 @@
           <span aria-hidden="true">i</span>
         </button>
         <h3 class="hub-game-title font-cartoon">${game.title}</h3>
-        <button type="button" class="hub-game-play-btn">שחק עכשיו →</button>
+        <button type="button" class="hub-game-play-btn btn btn-primary btn-candy btn-full">שחק עכשיו</button>
       </article>`;
   }
 
   function renderGrid() {
     const games = catalog[activeSubject] || [];
-    grid.innerHTML = games.map(cardHtml).join("");
+    cardColors = buildCardColors(games.length, getHubGridCols());
+    grid.innerHTML = games.map((game, index) => cardHtml(game, index)).join("");
   }
+
+  let gridResizeTimer;
+  window.addEventListener("resize", () => {
+    if (!grid) return;
+    clearTimeout(gridResizeTimer);
+    gridResizeTimer = setTimeout(renderGrid, 150);
+  });
 
   grid?.addEventListener("click", (e) => {
     if (e.target.closest(".hub-game-info-btn")) {
@@ -100,22 +146,12 @@
   const playSetupGameId = document.getElementById("playSetupGameId");
   const playSetupGameTitle = document.getElementById("playSetupGameTitle");
   const playSetupGameDesc = document.getElementById("playSetupGameDesc");
-  const playSetupPreview = document.getElementById("playSetupPreview");
 
   function populatePlaySetupTopics() {
     if (!playSetupTopic || !window.GAME_CONTENT) return;
     playSetupTopic.innerHTML = GAME_CONTENT.getTopics(activeSubject)
       .map((t) => `<option value="${t.id}">${escapeHtml(t.label)}</option>`)
       .join("");
-  }
-
-  function updatePlaySetupPreview() {
-    if (!playSetupPreview || !window.GAME_CONTENT) return;
-    const topic = playSetupTopic?.value || "all";
-    const level = playSetupLevel?.value;
-    const count = GAME_CONTENT.getPool(activeSubject, level, topic).length;
-    playSetupPreview.textContent = `${count} פריטים זמינים בנושא וברמה זו`;
-    playSetupPreview.classList.remove("hidden");
   }
 
   function openPlaySetup(btn) {
@@ -131,16 +167,12 @@
     playSetupGameDesc.textContent = desc || "";
     populatePlaySetupTopics();
     playSetupLevel.value = "medium";
-    updatePlaySetupPreview();
     playSetupModal.classList.remove("hidden");
   }
 
   function closePlaySetup() {
     playSetupModal?.classList.add("hidden");
   }
-
-  playSetupTopic?.addEventListener("change", updatePlaySetupPreview);
-  playSetupLevel?.addEventListener("change", updatePlaySetupPreview);
 
   playSetupForm?.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -163,17 +195,34 @@
   const gameInfoModal = document.getElementById("gameInfoModal");
   const gameInfoModalBox = gameInfoModal?.querySelector(".modal-game-info");
   const gameInfoTitle = document.getElementById("gameInfoTitle");
+  const gameInfoIcon = document.getElementById("gameInfoIcon");
   const gameInfoAbout = document.getElementById("gameInfoAbout");
   const gameInfoContent = document.getElementById("gameInfoContent");
   const gameInfoSkills = document.getElementById("gameInfoSkills");
 
+  const TAG_COLORS = ["pink", "teal", "purple", "orange", "lime", "blue", "green"];
+
   function openGameInfo(btn) {
     if (!gameInfoModal) return;
     applyModalSticker(gameInfoModalBox, btn.dataset.gameColor);
+    if (gameInfoIcon) gameInfoIcon.textContent = btn.dataset.infoIcon || "🎮";
     gameInfoTitle.textContent = btn.dataset.infoTitle || "";
     gameInfoAbout.textContent = btn.dataset.infoAbout || "";
     gameInfoContent.textContent = btn.dataset.infoContent || "";
-    gameInfoSkills.textContent = btn.dataset.infoSkills || "";
+    if (gameInfoSkills) {
+      const tags = (btn.dataset.infoSkills || "")
+        .split(" · ")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      gameInfoSkills.innerHTML = tags.length
+        ? tags
+            .map(
+              (tag, i) =>
+                `<span class="game-info-tag game-info-tag--${TAG_COLORS[i % TAG_COLORS.length]}">${escapeHtml(tag)}</span>`
+            )
+            .join("")
+        : `<span class="game-info-tag game-info-tag--muted">כללי</span>`;
+    }
     gameInfoModal.classList.remove("hidden");
   }
 

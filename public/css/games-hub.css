@@ -237,9 +237,9 @@
   justify-content: center;
   text-align: center;
   margin: 0;
-  padding: 12px 16px;
-  font-size: clamp(1.35rem, 3.5vw, 1.85rem);
-  line-height: 1.2;
+  padding: 8px 12px;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  line-height: 1.1;
   cursor: pointer;
   width: 100%;
 }
@@ -250,25 +250,12 @@
 }
 
 .hub-game-play-btn {
-  width: 100%;
   margin-top: 4px;
-  padding: 14px 18px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--memyellow);
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 4px 4px 0 rgba(26, 10, 46, 0.4);
-  transition: transform 0.12s ease, background 0.12s ease;
+  font-size: clamp(15px, 2.5vw, 17px);
 }
 
 .hub-game-play-btn:hover {
   transform: translateY(-2px);
-  background: var(--memyellow);
-  color: var(--ink);
 }
 
 .hub-game-card:focus-within {
@@ -677,46 +664,284 @@
   max-width: 400px;
 }
 
-.modal-game-info {
-  max-width: 440px;
+.modal-play-setup {
+  max-width: 420px;
+  padding-top: 28px;
+  border: 4px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-candy);
 }
 
-.modal-play-setup h2,
-.modal-game-info h2 {
+.modal-play-setup h2.play-setup-title {
+  margin: 0 0 10px;
+  padding: 0 16px 4px;
+  text-align: center;
+  font-size: clamp(1.55rem, 4.8vw, 2.05rem);
+  line-height: 1.15;
+  font-weight: 900;
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
+  -webkit-text-stroke: 3px var(--ink);
+  -webkit-text-stroke-color: var(--ink);
+  paint-order: stroke fill;
+  text-shadow: none;
+}
+
+.modal-play-setup .modal-desc {
+  text-align: center;
+  margin: 0 0 18px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink, #1a0a2e);
+}
+
+.modal-play-setup .modal-close {
+  top: 10px;
+  left: 10px;
+  z-index: 6;
+  min-width: 40px;
+  min-height: 40px;
+  background: var(--white);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 2px 2px 0 var(--ink);
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.modal-play-setup .modal-close:hover {
+  background: var(--memyellow);
+}
+
+.modal-game-info {
+  max-width: 460px;
+  padding: 28px 22px 22px;
+  border: 4px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-candy);
+}
+
+.modal-game-info h2.game-info-title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.45rem, 4.2vw, 1.95rem);
+  line-height: 1.12;
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
+}
+
+.game-info-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-top: 4px;
+}
+
+.game-info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(56px, 14vw, 72px);
+  height: clamp(56px, 14vw, 72px);
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  line-height: 1;
+  background: var(--white);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.game-info-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-info-panel {
+  background: rgba(255, 255, 255, 0.94);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 3px 3px 0 rgba(26, 10, 46, 0.28);
+  text-align: right;
+}
+
+.game-info-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.game-info-panel-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+  line-height: 1;
+  background: var(--memyellow);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.game-info-panel h3 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+
+.game-info-panel p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--ink);
+  opacity: 0.88;
+}
+
+.game-info-panel--skills {
+  padding-bottom: 12px;
+}
+
+.game-info-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.game-info-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 13px;
+  background: var(--white);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.game-info-tag--pink { background: var(--mempink); }
+.game-info-tag--teal { background: var(--memteal); }
+.game-info-tag--purple { background: var(--mempurple); color: var(--white); }
+.game-info-tag--orange { background: var(--memorange); color: var(--white); }
+.game-info-tag--lime { background: var(--memlime); }
+.game-info-tag--blue { background: var(--electric); color: var(--white); }
+.game-info-tag--green { background: #6bbf8a; }
+
+.game-info-tag--muted {
+  opacity: 0.72;
+  background: var(--white);
+  color: var(--ink);
+}
+
+.modal-game-info .modal-close {
+  top: 10px;
+  left: 10px;
+  z-index: 6;
+  min-width: 40px;
+  min-height: 40px;
+  background: var(--white);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 2px 2px 0 var(--ink);
+  font-size: 22px;
+}
+
+.modal-game-info .modal-close:hover {
+  background: var(--memyellow);
+  color: var(--ink);
+}
+
+.modal-play-setup h2:not(.play-setup-title),
+.modal-game-info h2:not(.game-info-title) {
   text-align: center;
   margin: 0 0 8px;
   color: var(--electric);
 }
 
-.modal-game-info h2 {
+.modal-game-info h2:not(.game-info-title) {
   margin-bottom: 20px;
 }
 
-.modal-play-setup.sticker-purple h2,
-.modal-game-info.sticker-purple h2 {
-  color: var(--white);
+.modal-play-setup.sticker-pink h2:not(.play-setup-title),
+.modal-play-setup.sticker-purple h2:not(.play-setup-title),
+.modal-play-setup.sticker-yellow h2:not(.play-setup-title),
+.modal-play-setup.sticker-teal h2:not(.play-setup-title),
+.modal-play-setup.sticker-lime h2:not(.play-setup-title),
+.modal-play-setup.sticker-orange h2:not(.play-setup-title),
+.modal-play-setup.sticker-blue h2:not(.play-setup-title),
+.modal-play-setup.sticker-green h2:not(.play-setup-title),
+.modal-game-info.sticker-pink h2,
+.modal-game-info.sticker-purple h2,
+.modal-game-info.sticker-yellow h2,
+.modal-game-info.sticker-teal h2,
+.modal-game-info.sticker-lime h2,
+.modal-game-info.sticker-orange h2,
+.modal-game-info.sticker-blue h2 {
+  color: var(--ink, #1a0a2e);
 }
 
-.modal-play-setup .modal-desc {
-  text-align: center;
-  margin: 0 0 20px;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.45;
+.modal-play-setup.sticker-pink h2.play-setup-title,
+.modal-play-setup.sticker-purple h2.play-setup-title,
+.modal-play-setup.sticker-yellow h2.play-setup-title,
+.modal-play-setup.sticker-teal h2.play-setup-title,
+.modal-play-setup.sticker-lime h2.play-setup-title,
+.modal-play-setup.sticker-orange h2.play-setup-title,
+.modal-play-setup.sticker-blue h2.play-setup-title,
+.modal-play-setup.sticker-green h2.play-setup-title {
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
 }
 
+.modal-play-setup.sticker-pink .modal-desc,
 .modal-play-setup.sticker-purple .modal-desc,
-.modal-play-setup.sticker-purple .play-setup-preview {
-  color: rgba(255, 255, 255, 0.92);
+.modal-play-setup.sticker-yellow .modal-desc,
+.modal-play-setup.sticker-teal .modal-desc,
+.modal-play-setup.sticker-lime .modal-desc,
+.modal-play-setup.sticker-orange .modal-desc,
+.modal-play-setup.sticker-blue .modal-desc,
+.modal-play-setup.sticker-green .modal-desc {
+  color: var(--ink, #1a0a2e);
 }
 
+.modal-play-setup.sticker-pink label span,
 .modal-play-setup.sticker-purple label span,
-.modal-game-info.sticker-purple .game-info-body h3 {
-  color: var(--white);
+.modal-play-setup.sticker-yellow label span,
+.modal-play-setup.sticker-teal label span,
+.modal-play-setup.sticker-lime label span,
+.modal-play-setup.sticker-orange label span,
+.modal-play-setup.sticker-blue label span,
+.modal-game-info.sticker-pink .game-info-body h3,
+.modal-game-info.sticker-purple .game-info-body h3,
+.modal-game-info.sticker-yellow .game-info-body h3,
+.modal-game-info.sticker-teal .game-info-body h3,
+.modal-game-info.sticker-lime .game-info-body h3,
+.modal-game-info.sticker-orange .game-info-body h3,
+.modal-game-info.sticker-blue .game-info-body h3,
+.modal-game-info.sticker-green .game-info-body h3 {
+  color: var(--ink, #1a0a2e);
 }
 
-.modal-game-info.sticker-purple .game-info-body p {
-  color: rgba(255, 255, 255, 0.95);
+.modal-game-info.sticker-pink .game-info-body p,
+.modal-game-info.sticker-purple .game-info-body p,
+.modal-game-info.sticker-yellow .game-info-body p,
+.modal-game-info.sticker-teal .game-info-body p,
+.modal-game-info.sticker-lime .game-info-body p,
+.modal-game-info.sticker-orange .game-info-body p,
+.modal-game-info.sticker-blue .game-info-body p,
+.modal-game-info.sticker-green .game-info-body p {
+  color: var(--ink, #1a0a2e);
 }
 
 .modal-play-setup label {
@@ -743,37 +968,4 @@
   background: var(--white);
   color: var(--ink);
   cursor: pointer;
-}
-
-.play-setup-preview {
-  margin: 0 0 16px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--muted);
-  text-align: center;
-}
-
-.game-info-body section {
-  margin-bottom: 18px;
-}
-
-.game-info-body section:last-child {
-  margin-bottom: 0;
-}
-
-.game-info-body h3 {
-  margin: 0 0 6px;
-  font-size: 14px;
-  font-weight: 900;
-  color: var(--ink);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.game-info-body p {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.55;
-  color: var(--body);
 }

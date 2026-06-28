@@ -19,13 +19,17 @@
   <div class="scroll-progress" id="scrollProgress"></div>
 
   <div class="loader" id="loader">
-    <div class="loader-logo font-brand">Pleyi</div>
+    <div class="loader-brand">
+      <img src="images/pleyi-logo.png" alt="" class="logo-mark logo-mark--loader" width="80" height="80" decoding="async" />
+      <div class="loader-logo font-brand">Pleyi</div>
+    </div>
     <div class="loader-bar"></div>
   </div>
 
   <header class="navbar" id="navbar">
     <div class="container nav-inner">
       <a href="#home" class="logo" id="logoHome">
+        <img src="images/pleyi-logo.png" alt="" class="logo-mark" width="48" height="48" decoding="async" />
         <span class="logo-text font-brand">Pleyi</span>
       </a>
       <nav class="nav-links" id="navLinks">
@@ -358,7 +362,7 @@
 
   <div class="modal-overlay hidden" id="joinModal">
     <div class="modal">
-      <button class="modal-close" id="modalClose">×</button>
+      <button class="modal-close" id="modalClose" type="button" aria-label="סגירה">×</button>
       <h2 class="font-cartoon" id="modalTitle">פתיחת חדר כיתה</h2>
       <p class="modal-desc" id="modalDesc">הזינו את שם החדר — תקבלו קוד לשיתוף עם התלמידים</p>
       <form id="joinForm">

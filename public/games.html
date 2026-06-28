@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -48,11 +48,7 @@
   <header class="navbar scrolled" id="navbar">
     <div class="container nav-inner">
       <a href="/" class="logo">
-        <span class="logo-badge" aria-hidden="true">
-          <svg width="28" height="28" viewBox="0 0 48 48" fill="none" stroke="#1a0a2e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 28 L24 12 L36 28 M24 12 V38"/>
-          </svg>
-        </span>
+        <img src="/images/pleyi-logo.png" alt="" class="logo-mark" width="48" height="48" decoding="async" />
         <span class="logo-text font-brand">Pleyi</span>
       </a>
       <nav class="nav-links">
@@ -160,19 +156,31 @@
   <div class="modal-overlay hidden" id="gameInfoModal">
     <div class="modal modal-game-info">
       <button class="modal-close" id="gameInfoClose" type="button" aria-label="סגירה">×</button>
-      <h2 class="font-cartoon" id="gameInfoTitle">משחק</h2>
+      <header class="game-info-head">
+        <span class="game-info-icon" id="gameInfoIcon" aria-hidden="true">🎮</span>
+        <h2 class="font-cartoon game-info-title" id="gameInfoTitle">משחק</h2>
+      </header>
       <div class="game-info-body">
-        <section>
-          <h3>על המשחק</h3>
+        <section class="game-info-panel">
+          <div class="game-info-panel-head">
+            <span class="game-info-panel-icon" aria-hidden="true">📖</span>
+            <h3>על המשחק</h3>
+          </div>
           <p id="gameInfoAbout"></p>
         </section>
-        <section>
-          <h3>תוכן שנרכש</h3>
+        <section class="game-info-panel">
+          <div class="game-info-panel-head">
+            <span class="game-info-panel-icon" aria-hidden="true">🎯</span>
+            <h3>תוכן שנלמד</h3>
+          </div>
           <p id="gameInfoContent"></p>
         </section>
-        <section>
-          <h3>מיומנויות</h3>
-          <p id="gameInfoSkills"></p>
+        <section class="game-info-panel game-info-panel--skills">
+          <div class="game-info-panel-head">
+            <span class="game-info-panel-icon" aria-hidden="true">⭐</span>
+            <h3>מיומנויות</h3>
+          </div>
+          <div class="game-info-tags" id="gameInfoSkills"></div>
         </section>
       </div>
     </div>
@@ -182,7 +190,7 @@
   <div class="modal-overlay hidden" id="playSetupModal">
     <div class="modal modal-play-setup">
       <button class="modal-close" id="playSetupClose" type="button" aria-label="סגירה">×</button>
-      <h2 class="font-cartoon" id="playSetupGameTitle">משחק</h2>
+      <h2 class="font-cartoon play-setup-title" id="playSetupGameTitle">משחק</h2>
       <p class="modal-desc" id="playSetupGameDesc"></p>
       <form id="playSetupForm">
         <input type="hidden" id="playSetupGameId" value="" />
@@ -198,8 +206,7 @@
             <option value="hard">קשה — מתקדם</option>
           </select>
         </label>
-        <p class="play-setup-preview hidden" id="playSetupPreview"></p>
-        <button type="submit" class="btn btn-primary btn-candy btn-full">שחק עכשיו →</button>
+        <button type="submit" class="btn btn-primary btn-candy btn-full">שחק עכשיו</button>
       </form>
     </div>
   </div>

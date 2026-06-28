@@ -110,24 +110,25 @@ body {
 .loader-logo.font-brand,
 .join-brand.font-brand {
   paint-order: stroke fill;
-  -webkit-text-stroke: 2.5px var(--ink);
+  -webkit-text-stroke: 4px var(--ink);
   -webkit-text-stroke-color: var(--ink);
   -webkit-text-fill-color: var(--memyellow);
   color: var(--memyellow);
-  text-shadow: 3px 3px 0 var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
   text-rendering: optimizeLegibility;
 }
 
 .loader-logo.font-brand {
   font-size: clamp(2rem, 7vw, 3rem);
   font-weight: 600;
-  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-width: 4.5px;
   animation: brand-float 2s ease-in-out infinite;
 }
 
 .logo-text.font-brand {
   font-size: clamp(1.45rem, 3.2vw, 2.1rem);
   font-weight: 600;
+  -webkit-text-stroke-width: 4px;
 }
 
 .join-brand.font-brand {
@@ -139,7 +140,9 @@ body {
 body.in-room .logo-text.font-brand {
   -webkit-text-fill-color: var(--mempurple);
   color: var(--mempurple);
-  text-shadow: 2px 2px 0 rgba(26, 10, 46, 0.12);
+  -webkit-text-stroke: 4px var(--ink);
+  -webkit-text-stroke-color: var(--ink);
+  text-shadow: 3px 3px 0 rgba(26, 10, 46, 0.18);
 }
 
 @keyframes brand-float {
@@ -380,6 +383,8 @@ h3.font-cartoon { color: var(--electric); }
 .sticker-orange { background: var(--memorange) !important; color: var(--white); }
 .sticker-orange h3, .sticker-orange p { color: var(--white); }
 .sticker-lime { background: var(--memlime) !important; }
+.sticker-blue { background: var(--electric) !important; --modal-fill: var(--electric); }
+.sticker-green { background: #6bbf8a !important; --modal-fill: #6bbf8a; }
 
 .sticker-box {
   display: inline-block;
@@ -765,8 +770,39 @@ button { font-family: inherit; }
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   rotate: -2deg;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-mark {
+  width: clamp(40px, 7vw, 52px);
+  height: clamp(40px, 7vw, 52px);
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+  background: transparent;
+}
+
+.logo-mark--loader {
+  width: clamp(68px, 16vw, 92px);
+  height: clamp(68px, 16vw, 92px);
+}
+
+.loader-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.join-brand-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
 }
 
 .logo-badge {
@@ -2045,8 +2081,14 @@ html.in-room .room-view {
 .game-round-info {
   text-align: center;
   margin-bottom: 20px;
-  color: var(--muted);
+  color: var(--ink, #1a0a2e);
   font-size: 16px;
+  font-weight: 800;
+}
+
+body.in-room .game-round-info,
+.guest-game .game-round-info {
+  color: var(--ink, #1a0a2e);
 }
 
 .game-question {
@@ -3051,7 +3093,7 @@ body.in-room .game-actions .btn {
 
 #loginModal .modal-close {
   color: var(--ink);
-  z-index: 1;
+  z-index: 5;
 }
 
 #loginModal .btn-google {
@@ -3108,14 +3150,24 @@ body.in-room .game-actions .btn {
 
 .modal-close {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 8px;
+  left: 8px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
   background: none;
   border: none;
   font-size: 28px;
   cursor: pointer;
-  color: var(--muted);
+  color: var(--ink, #1a0a2e);
   line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--memorange, #ff6b35);
 }
 
 .modal h2 {
@@ -3128,9 +3180,11 @@ body.in-room .game-actions .btn {
   text-align: center;
   width: 100%;
   margin: 0 0 12px;
+  padding-top: 4px;
   font-size: clamp(1.65rem, 5vw, 2rem);
   -webkit-text-fill-color: var(--memyellow);
   color: var(--memyellow);
+  pointer-events: none;
 }
 
 #joinModal .modal-desc {
