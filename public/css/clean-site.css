@@ -623,12 +623,34 @@ body.clean-site .mobile-nav-cta::after {
   margin-top: 8px;
 }
 
-.clean-center-cta .btn {
-  padding: 24px 52px;
-  font-size: clamp(22px, 3.2vw, 28px);
-  min-height: 68px;
-  background: var(--mempurple);
-  color: #fff;
+.how-classroom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(28px, 4.5vw, 38px) clamp(56px, 9vw, 88px);
+  font-size: clamp(26px, 4.2vw, 36px);
+  min-height: clamp(84px, 13vw, 104px);
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    #fff9d0 0%,
+    #ffd700 28%,
+    #ffcc00 52%,
+    #ffe566 78%,
+    #fff8c4 100%
+  ) !important;
+  color: var(--ink) !important;
+  box-shadow: var(--shadow-candy);
+}
+
+.how-classroom-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+}
+
+.how-classroom-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 4px 4px 0 0 var(--ink);
 }
 
 /* Games panel */
@@ -1062,12 +1084,12 @@ body.in-room {
     line-height: 1.35;
   }
 
-  .clean-center-cta .btn {
+  .how-classroom-btn {
     width: 100%;
-    max-width: 360px;
-    padding: 18px 28px;
-    font-size: clamp(17px, 4.2vw, 21px);
-    min-height: 58px;
+    max-width: min(480px, 100%);
+    padding: 22px 32px;
+    font-size: clamp(20px, 5vw, 26px);
+    min-height: 72px;
   }
 
   .clean-panel--card {
@@ -1145,10 +1167,6 @@ body.in-room {
   }
 
   .clean-hero-actions .btn {
-    max-width: none;
-  }
-
-  .clean-center-cta .btn {
     max-width: none;
   }
 }

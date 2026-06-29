@@ -63,6 +63,7 @@ window.TowerStackPro = {
     let time = 0;
     const judgeTime = 8;
     let judgeLeft = 8;
+    let timerEnabled = true;
     let particles = GE.createParticles();
     let popups = GE.createPopups();
     let clouds = [];
@@ -173,14 +174,24 @@ window.TowerStackPro = {
       trails = [];
     };
 
+    const syncTimerSetting = () => {
+      timerEnabled = !window.PlaySettings?.get("tower-stack")?.disableTimer;
+    };
+
     const beginJudge = () => {
       phase = "he-judge";
+      trails = [];
       falling.y = falling.targetY;
       falling.vy = 0;
+      syncTimerSetting();
       judgeLeft = judgeTime;
       document.getElementById("tsProControls").classList.remove("hidden");
-      document.getElementById("tsProTimer").classList.remove("hidden");
-      document.getElementById("tsProTimerNum").textContent = String(Math.ceil(judgeLeft));
+      if (timerEnabled) {
+        document.getElementById("tsProTimer").classList.remove("hidden");
+        document.getElementById("tsProTimerNum").textContent = String(Math.ceil(judgeLeft));
+      } else {
+        document.getElementById("tsProTimer").classList.add("hidden");
+      }
     };
 
     const endGame = () => {
@@ -301,15 +312,17 @@ window.TowerStackPro = {
         GE.drawCube(ctx, { ...block, x: w / 2 + swayX * (idx / Math.max(tower.length, 1)), y: by, w: bw, h: BLOCK_H });
       });
 
-      trails.forEach((t) => {
-        ctx.globalAlpha = t.alpha;
-        GE.drawCube(ctx, { ...t, scale: 0.95 });
-      });
-      ctx.globalAlpha = 1;
+      if (phase === "en-fall" || phase === "he-fall") {
+        trails.forEach((t) => {
+          ctx.globalAlpha = t.alpha;
+          GE.drawCube(ctx, { ...t, scale: 0.95 });
+        });
+        ctx.globalAlpha = 1;
+      }
 
       if (falling) {
         const hover = phase === "he-judge" ? Math.sin(time * 0.006) * 4 : 0;
-        const glow = phase === "he-judge";
+        const glow = false;
         GE.drawCube(ctx, { ...falling, y: falling.y + hover, w: bw, h: BLOCK_H, glow });
       }
 
@@ -334,7 +347,7 @@ window.TowerStackPro = {
 
       GE.drawPopups(ctx, popups);
 
-      if (phase === "he-judge") {
+      if (phase === "he-judge" && timerEnabled) {
         const ring = document.getElementById("tsProTimerRing");
         if (ring) {
           const pct = judgeLeft / judgeTime;
@@ -363,11 +376,13 @@ window.TowerStackPro = {
         falling.vy += 0.65 * (dt / 16);
         falling.y += falling.vy * (dt / 16);
         falling.targetY = towerTopY() - BLOCK_H;
-        trails.unshift({ ...falling, alpha: 0.25 });
-        if (trails.length > 4) trails.pop();
-        trails.forEach((t, i) => {
-          t.alpha = 0.2 - i * 0.04;
-        });
+        if (phase === "en-fall" || phase === "he-fall") {
+          trails.unshift({ ...falling, alpha: 0.18 });
+          if (trails.length > 3) trails.pop();
+          trails.forEach((t, i) => {
+            t.alpha = 0.16 - i * 0.05;
+          });
+        }
 
         if (falling.y >= falling.targetY) {
           if (phase === "en-fall") {
@@ -387,7 +402,7 @@ window.TowerStackPro = {
         }
       }
 
-      if (phase === "he-judge") {
+      if (phase === "he-judge" && timerEnabled) {
         judgeLeft -= dt / 1000;
         document.getElementById("tsProTimerNum").textContent = String(Math.max(0, Math.ceil(judgeLeft)));
         if (judgeLeft <= 0) resolveAnswer(false);
@@ -436,6 +451,20 @@ window.TowerStackPro = {
     document.getElementById("tsProRetry").addEventListener("click", startGame);
     document.getElementById("tsProYes").addEventListener("click", () => resolveAnswer(true));
     document.getElementById("tsProNo").addEventListener("click", () => resolveAnswer(false));
+
+    window.addEventListener("play-settings-change", (e) => {
+      if (e.detail?.gameId !== "tower-stack") return;
+      syncTimerSetting();
+      if (phase === "he-judge") {
+        if (timerEnabled) {
+          document.getElementById("tsProTimer")?.classList.remove("hidden");
+        } else {
+          document.getElementById("tsProTimer")?.classList.add("hidden");
+        }
+      }
+    });
+
+    syncTimerSetting();
 
     return () => {
       running = false;

@@ -110,25 +110,25 @@ body {
 .loader-logo.font-brand,
 .join-brand.font-brand {
   paint-order: stroke fill;
-  -webkit-text-stroke: 4px var(--ink);
+  -webkit-text-stroke: 6px var(--ink);
   -webkit-text-stroke-color: var(--ink);
   -webkit-text-fill-color: var(--memyellow);
   color: var(--memyellow);
-  text-shadow: 4px 4px 0 var(--ink);
+  text-shadow: 5px 5px 0 var(--ink);
   text-rendering: optimizeLegibility;
 }
 
 .loader-logo.font-brand {
   font-size: clamp(2rem, 7vw, 3rem);
   font-weight: 600;
-  -webkit-text-stroke-width: 4.5px;
+  -webkit-text-stroke-width: 6.5px;
   animation: brand-float 2s ease-in-out infinite;
 }
 
 .logo-text.font-brand {
   font-size: clamp(1.45rem, 3.2vw, 2.1rem);
   font-weight: 600;
-  -webkit-text-stroke-width: 4px;
+  -webkit-text-stroke-width: 6px;
 }
 
 .join-brand.font-brand {
@@ -140,9 +140,9 @@ body {
 body.in-room .logo-text.font-brand {
   -webkit-text-fill-color: var(--mempurple);
   color: var(--mempurple);
-  -webkit-text-stroke: 4px var(--ink);
+  -webkit-text-stroke: 6px var(--ink);
   -webkit-text-stroke-color: var(--ink);
-  text-shadow: 3px 3px 0 rgba(26, 10, 46, 0.18);
+  text-shadow: 4px 4px 0 rgba(26, 10, 46, 0.22);
 }
 
 @keyframes brand-float {
@@ -176,7 +176,7 @@ body.in-room .logo-text.font-brand {
 /* כותרות סקשן — מסגרת עבה סביב האותיות והסימנים, בלי צל */
 .clean-section-title.font-cartoon,
 body.clean-site h2.font-cartoon,
-.hub-body :is(.hub-title, .hub-library-header h2, .hub-custom-header h2).font-cartoon {
+.hub-body :is(.hub-title, .hub-library-header h2, .hub-custom-header h2, .hub-skill-filters-label).font-cartoon {
   paint-order: stroke fill;
   -webkit-text-stroke: clamp(6px, 1vw, 10px) var(--ink);
   -webkit-text-stroke-color: var(--ink);
@@ -768,12 +768,23 @@ button { font-family: inherit; }
 }
 
 .logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   rotate: -2deg;
   text-decoration: none;
   color: inherit;
+  padding: 4px 14px 4px 8px;
+  background: var(--white);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: translate 0.12s ease, box-shadow 0.12s ease;
+}
+
+.logo:hover {
+  translate: -1px -1px;
+  box-shadow: 4px 4px 0 var(--ink);
 }
 
 .logo-mark {
@@ -3189,6 +3200,17 @@ body.in-room .game-actions .btn {
 
 #joinModal .modal-desc {
   text-align: center;
+}
+
+#joinModal .join-modal-name-field span {
+  text-align: center;
+}
+
+#joinModal .join-modal-submit {
+  font-size: clamp(22px, 4.5vw, 30px);
+  font-weight: 800;
+  padding: 20px 28px;
+  min-height: 64px;
 }
 
 .modal-desc {

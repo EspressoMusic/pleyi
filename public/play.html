@@ -10,23 +10,76 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/css/room-page.css" />
   <link rel="stylesheet" href="/css/play.css" />
+  <link rel="stylesheet" href="/css/premium.css" />
   <link rel="stylesheet" href="/css/legal.css" />
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
 <body class="play-body">
-  <header class="play-header">
-    <a href="/" class="play-back btn-candy">← חזרה לאתר</a>
-    <h1 class="play-title font-cartoon" id="playTitle">Game</h1>
-    <div class="play-header-actions">
-      <div class="play-hud">
-        <span class="play-score-label">ניקוד</span>
-        <strong id="playScore" class="play-score">0</strong>
+  <div class="play-shell">
+    <div class="play-main-block">
+      <div class="play-top-strip room-top-strip" id="playTopStrip">
+        <div class="play-top-strip-stats room-top-strip-stats">
+          <span class="room-stat-pill hidden" id="playRoomCodePill">קוד: <strong id="playRoomCode" dir="ltr">------</strong></span>
+          <span class="room-stat-pill">ניקוד: <strong id="playScore">0</strong></span>
+          <span class="room-stat-pill" id="playGameNamePill"></span>
+          <a href="/room" class="room-stat-pill play-room-link hidden" id="playRoomLink">פתח חדר</a>
+        </div>
+        <div class="play-top-strip-actions room-top-strip-actions">
+          <button type="button" class="room-stat-pill room-stat-pill--games-btn" id="playGamesBtn" aria-expanded="false" aria-controls="playGamesPanel">בחרו משחק</button>
+          <button type="button" class="room-stat-pill room-stat-pill--settings-btn" id="openPlaySettingsBtn" aria-expanded="false" aria-controls="playSettingsPanel">הגדרות</button>
+        </div>
+      </div>
+
+      <h1 class="visually-hidden" id="playTitle">Game</h1>
+      <main id="playRoot" class="play-root"></main>
+    </div>
+  </div>
+
+  <div class="room-games-panel room-page-overlay hidden" id="playGamesPanel" role="dialog" aria-modal="true" aria-labelledby="playGamesPanelTitle">
+    <div class="room-games-panel-backdrop" id="playGamesPanelBackdrop"></div>
+    <div class="room-games-panel-sheet">
+      <div class="room-games-panel-header">
+        <h2 id="playGamesPanelTitle">בחירת משחק</h2>
+        <button type="button" class="room-games-panel-close" id="closePlayGamesBtn" aria-label="סגירה">×</button>
+      </div>
+      <div class="room-games-panel-body">
+        <div class="room-game-picker" id="playGamePicker"></div>
+      </div>
+      <div class="room-games-panel-footer">
+        <a href="/games" class="room-games-library-btn btn-candy">לספריית המשחקים</a>
       </div>
     </div>
-  </header>
+  </div>
 
-  <main id="playRoot" class="play-root"></main>
+  <div class="room-settings-panel room-page-overlay hidden" id="playSettingsPanel" role="dialog" aria-modal="true" aria-labelledby="playSettingsTitle">
+    <div class="room-settings-panel-backdrop" id="playSettingsBackdrop"></div>
+    <div class="room-settings-panel-sheet">
+      <div class="room-games-panel-header">
+        <h2 id="playSettingsTitle">הגדרות משחק</h2>
+        <button type="button" class="room-games-panel-close" id="closePlaySettingsBtn" aria-label="סגירה">×</button>
+      </div>
+      <div class="room-settings-list" id="playSettingsList"></div>
+    </div>
+  </div>
+
+  <div class="room-material-panel room-page-overlay hidden" id="playMaterialPanel" role="dialog" aria-modal="true" aria-labelledby="playMaterialPanelTitle">
+    <div class="room-material-panel-backdrop" id="playMaterialPanelBackdrop"></div>
+    <div class="room-material-panel-sheet">
+      <div class="room-games-panel-header">
+        <h2 id="playMaterialPanelTitle">חומר לימודי</h2>
+        <button type="button" class="room-games-panel-close" id="closePlayMaterialBtn" aria-label="סגירה">×</button>
+      </div>
+      <textarea id="playMaterialInput" class="room-material-textarea" rows="10" placeholder="apple=תפוח&#10;book=ספר&#10;happy=שמח"></textarea>
+      <div class="room-material-actions">
+        <button type="button" class="btn btn-candy btn-full room-material-save-btn" id="playSaveMaterialBtn">שמור חומר לימודי</button>
+        <button type="button" class="btn btn-candy btn-full room-material-cancel-btn" id="playCancelMaterialBtn">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="playToast" role="status"></div>
 
   <footer class="site-footer-mini">
     <nav class="site-legal-nav" aria-label="מידע משפטי">
@@ -43,13 +96,18 @@
   <script src="/js/firebase-app.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/user-data.js"></script>
+  <script src="/js/premium.js"></script>
   <script src="/js/vocab-data.js"></script>
   <script src="/js/math-data.js"></script>
+  <script src="/js/parse-content.js"></script>
+  <script src="/js/games-catalog.js"></script>
   <script src="/js/game-content.js"></script>
   <script src="/js/game-engine.js"></script>
   <script src="/js/tower-stack-pro.js"></script>
   <script src="/js/math-blitz-pro.js"></script>
   <script src="/js/solo-games.js"></script>
+  <script src="/js/play-settings.js"></script>
+  <script src="/js/play-chrome.js"></script>
   <script src="/js/play.js"></script>
   <script src="/js/cookie-consent.js"></script>
 </body>

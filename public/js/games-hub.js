@@ -5,6 +5,10 @@
   if (!catalog) return;
 
   const grid = document.getElementById("gamesGrid");
+  const gridEmpty = document.getElementById("hubGridEmpty");
+  const skillFilters = document.getElementById("hubSkillFilters");
+  const skillFiltersList = document.getElementById("hubSkillFiltersList");
+  const skillFiltersClear = document.getElementById("hubSkillFiltersClear");
   const tabs = document.querySelectorAll(".hub-tab");
   const customForm = document.getElementById("customGameForm");
   const customModal = document.getElementById("customGameModal");
@@ -23,6 +27,7 @@
 
   let activeSubject = "english";
   let editingSavedId = null;
+  const activeSkillFilters = new Set();
 
   function showToast(msg) {
     const t = document.getElementById("toast");
@@ -93,6 +98,55 @@
     if (color) el.classList.add(`sticker-${color}`);
   }
 
+  function skillTagHtml(tag, { filterBtn = false, active = false } = {}) {
+    const color = catalog.skillColor(tag);
+    const base = `game-info-tag game-info-tag--${color}`;
+    if (filterBtn) {
+      return `<button type="button" class="hub-skill-filter ${base}${active ? " is-active" : ""}" data-skill="${escapeHtml(tag)}" aria-pressed="${active}">${escapeHtml(tag)}</button>`;
+    }
+    return `<span class="${base}">${escapeHtml(tag)}</span>`;
+  }
+
+  function gamesForSubject() {
+    const games = catalog[activeSubject] || [];
+    if (!activeSkillFilters.size) return games;
+    return games.filter((game) => (game.tags || []).some((tag) => activeSkillFilters.has(tag)));
+  }
+
+  function renderSkillFilters() {
+    if (!skillFilters || !skillFiltersList) return;
+    const skills = catalog.skillsForSubject(activeSubject);
+    if (!skills.length) {
+      skillFilters.classList.add("hidden");
+      skillFiltersList.innerHTML = "";
+      skillFiltersClear?.classList.add("hidden");
+      return;
+    }
+    skillFilters.classList.remove("hidden");
+    skillFiltersList.innerHTML = skills
+      .map((tag) => skillTagHtml(tag, { filterBtn: true, active: activeSkillFilters.has(tag) }))
+      .join("");
+    skillFiltersClear?.classList.toggle("hidden", activeSkillFilters.size === 0);
+  }
+
+  function clearSkillFilters() {
+    activeSkillFilters.clear();
+    renderSkillFilters();
+    renderGrid();
+  }
+
+  skillFiltersList?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-skill]");
+    if (!btn) return;
+    const skill = btn.dataset.skill;
+    if (activeSkillFilters.has(skill)) activeSkillFilters.delete(skill);
+    else activeSkillFilters.add(skill);
+    renderSkillFilters();
+    renderGrid();
+  });
+
+  skillFiltersClear?.addEventListener("click", clearSkillFilters);
+
   function cardHtml(game, index) {
     const color = cardColorForIndex(index);
     const sticker = `sticker-${color}`;
@@ -116,9 +170,14 @@
   }
 
   function renderGrid() {
-    const games = catalog[activeSubject] || [];
+    const games = gamesForSubject();
     cardColors = buildCardColors(games.length, getHubGridCols());
-    grid.innerHTML = games.map((game, index) => cardHtml(game, index)).join("");
+    if (grid) grid.innerHTML = games.map((game, index) => cardHtml(game, index)).join("");
+    grid?.querySelectorAll(".hub-game-card").forEach((card) => {
+      window.PleyiPremium?.decorateHubCard?.(card);
+    });
+    grid?.classList.toggle("hidden", games.length === 0 && activeSkillFilters.size > 0);
+    gridEmpty?.classList.toggle("hidden", games.length > 0 || activeSkillFilters.size === 0);
   }
 
   let gridResizeTimer;
@@ -135,62 +194,24 @@
       return;
     }
     const card = e.target.closest(".hub-game-card");
-    if (card) openPlaySetup(card);
+    if (card) launchGameFromHub(card);
   });
 
-  const playSetupModal = document.getElementById("playSetupModal");
-  const playSetupModalBox = playSetupModal?.querySelector(".modal-play-setup");
-  const playSetupForm = document.getElementById("playSetupForm");
-  const playSetupTopic = document.getElementById("playSetupTopic");
-  const playSetupLevel = document.getElementById("playSetupLevel");
-  const playSetupGameId = document.getElementById("playSetupGameId");
-  const playSetupGameTitle = document.getElementById("playSetupGameTitle");
-  const playSetupGameDesc = document.getElementById("playSetupGameDesc");
-
-  function populatePlaySetupTopics() {
-    if (!playSetupTopic || !window.GAME_CONTENT) return;
-    playSetupTopic.innerHTML = GAME_CONTENT.getTopics(activeSubject)
-      .map((t) => `<option value="${t.id}">${escapeHtml(t.label)}</option>`)
-      .join("");
-  }
-
-  function openPlaySetup(btn) {
-    const gameId = btn.dataset.gameId;
-    const title = btn.dataset.gameTitle;
-    const desc = btn.dataset.gameDesc;
-    const color = btn.dataset.gameColor;
-    if (!playSetupModal || !gameId) return;
-
-    applyModalSticker(playSetupModalBox, color);
-    playSetupGameId.value = gameId;
-    playSetupGameTitle.textContent = title;
-    playSetupGameDesc.textContent = desc || "";
-    populatePlaySetupTopics();
-    playSetupLevel.value = "medium";
-    playSetupModal.classList.remove("hidden");
-  }
-
-  function closePlaySetup() {
-    playSetupModal?.classList.add("hidden");
-  }
-
-  playSetupForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const gameId = playSetupGameId?.value;
-    const topic = playSetupTopic?.value || "all";
-    const level = playSetupLevel?.value;
-    const gameTitle = playSetupGameTitle?.textContent;
+  function launchGameFromHub(card) {
+    const gameId = card.dataset.gameId;
+    const gameTitle = card.dataset.gameTitle;
     if (!gameId || !window.GAME_CONTENT) return;
+    if (window.PleyiPremium?.ensurePremiumAccess && !window.PleyiPremium.ensurePremiumAccess(gameId)) return;
+    GAME_CONTENT.launchPlay({
+      subject: activeSubject,
+      gameId,
+      level: "medium",
+      topic: "all",
+      gameTitle,
+    });
+  }
 
-    GAME_CONTENT.launchPlay({ subject: activeSubject, gameId, level, topic, gameTitle });
-    closePlaySetup();
-    showToast("המשחק נפתח בחלון חדש");
-  });
-
-  document.getElementById("playSetupClose")?.addEventListener("click", closePlaySetup);
-  playSetupModal?.addEventListener("click", (e) => {
-    if (e.target.id === "playSetupModal") closePlaySetup();
-  });
+  /* play setup modal removed — games open on /play with full room-style chrome */
 
   const gameInfoModal = document.getElementById("gameInfoModal");
   const gameInfoModalBox = gameInfoModal?.querySelector(".modal-game-info");
@@ -199,8 +220,6 @@
   const gameInfoAbout = document.getElementById("gameInfoAbout");
   const gameInfoContent = document.getElementById("gameInfoContent");
   const gameInfoSkills = document.getElementById("gameInfoSkills");
-
-  const TAG_COLORS = ["pink", "teal", "purple", "orange", "lime", "blue", "green"];
 
   function openGameInfo(btn) {
     if (!gameInfoModal) return;
@@ -215,12 +234,7 @@
         .map((s) => s.trim())
         .filter(Boolean);
       gameInfoSkills.innerHTML = tags.length
-        ? tags
-            .map(
-              (tag, i) =>
-                `<span class="game-info-tag game-info-tag--${TAG_COLORS[i % TAG_COLORS.length]}">${escapeHtml(tag)}</span>`
-            )
-            .join("")
+        ? tags.map((tag) => skillTagHtml(tag)).join("")
         : `<span class="game-info-tag game-info-tag--muted">כללי</span>`;
     }
     gameInfoModal.classList.remove("hidden");
@@ -264,6 +278,8 @@
     tab.addEventListener("click", () => {
       activeSubject = tab.dataset.subject;
       tabs.forEach((t) => t.classList.toggle("active", t === tab));
+      activeSkillFilters.clear();
+      renderSkillFilters();
       renderGrid();
       updateCustomGameOptions();
     });
@@ -530,7 +546,9 @@
 
   window.GameAuth?.bindModals(showToast);
   window.GameAuth?.onUserChange(() => refreshLibrary());
+  document.addEventListener("premium-updated", () => renderGrid());
 
+  renderSkillFilters();
   renderGrid();
   updateCustomGameOptions();
   updatePreview();

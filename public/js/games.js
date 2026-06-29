@@ -172,7 +172,8 @@ const Games = {
         const cls = ["memory-card", isFlipped ? "is-flipped" : "", c.matched ? "is-matched" : ""]
           .filter(Boolean)
           .join(" ");
-        return `<button type="button" class="${cls}" data-id="${c.id}" ${!canFlip || c.matched || c.faceUp ? "disabled" : ""}>
+        const isDisabled = !canFlip || c.matched || c.faceUp;
+        return `<button type="button" class="${cls}" data-id="${c.id}"${isDisabled ? " disabled" : ""}>
           <span class="memory-card-inner">
             <span class="memory-card-side memory-card-back" aria-hidden="true">?</span>
             <span class="memory-card-side memory-card-front">${c.text}</span>
@@ -257,13 +258,15 @@ const Games = {
       [...root.querySelectorAll(".memory-card.is-flipped")].map((c) => c.dataset.id)
     );
 
-    root.querySelectorAll(".memory-card:not([disabled])").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        if (btn.classList.contains("is-flipped")) return;
-        animateFlip(btn, true);
-        root._memoryFlippedIds.add(btn.dataset.id);
-        ctx.sendAction("flip", { cardId: btn.dataset.id });
-      });
+    if (root._memoryClickBound) return;
+    root._memoryClickBound = true;
+    root.addEventListener("click", (e) => {
+      const btn = e.target.closest(".memory-card:not([disabled])");
+      if (!btn || !root.contains(btn)) return;
+      if (btn.classList.contains("is-flipped") || btn.classList.contains("is-flipping")) return;
+      animateFlip(btn, true);
+      root._memoryFlippedIds.add(btn.dataset.id);
+      ctx.sendAction("flip", { cardId: btn.dataset.id });
     });
   },
 

@@ -35,7 +35,7 @@
       <nav class="nav-links" id="navLinks">
         <a href="#home" class="nav-pill active">בית</a>
         <a href="#how" class="nav-pill">מי אנחנו</a>
-        <a href="#games" class="nav-pill">משחקים</a>
+        <a href="/games" class="nav-pill">משחקים</a>
         <a href="#contact" class="nav-pill">צור קשר</a>
       </nav>
       <div class="nav-actions">
@@ -58,7 +58,7 @@
   <nav class="mobile-nav" id="mobileNav">
     <a href="#home">בית</a>
     <a href="#how">מי אנחנו</a>
-    <a href="#games">משחקים</a>
+    <a href="/games">משחקים</a>
     <a href="#contact">צור קשר</a>
     <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
   </nav>
@@ -88,7 +88,7 @@
           <span class="line accent">דרך משחקים!</span>
         </h1>
         <div class="clean-hero-actions">
-          <a href="#games" class="btn btn-primary btn-candy font-cartoon">למשחקים</a>
+          <a href="/games" class="btn btn-primary btn-candy font-cartoon">למשחקים</a>
           <button type="button" class="btn btn-outline btn-candy font-cartoon" id="heroClassroomBtn">פתח חדר כיתה</button>
         </div>
       </div>
@@ -129,55 +129,12 @@
           </article>
         </div>
         <div class="clean-center-cta">
-          <button type="button" class="btn btn-primary btn-candy font-cartoon" id="howClassroomBtn">פתח חדר כיתה עכשיו</button>
+          <button type="button" class="btn btn-primary btn-candy font-cartoon how-classroom-btn" id="howClassroomBtn">פתח חדר כיתה עכשיו</button>
         </div>
       </div>
     </section>
 
-    <!-- 3. משחקים -->
-    <section id="games" class="clean-section clean-section--white scroll-section">
-      <div class="clean-section-shapes clean-section-shapes--white" aria-hidden="true">
-        <svg class="clean-memphis-zigzag clean-memphis-pos--g-zig" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10,60 L40,15 L70,60 L100,15 L130,60 L160,15 L190,60" fill="none" stroke="#B967FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--g1"></span>
-        <span class="clean-memphis-sticker clean-memphis-sticker--pink clean-memphis-pos--g2"></span>
-        <span class="clean-memphis-sticker clean-memphis-sticker--teal clean-memphis-pos--g3"></span>
-        <span class="clean-memphis-ring clean-memphis-ring--purple clean-memphis-pos--g-ring"></span>
-        <span class="clean-memphis-ring clean-memphis-ring--yellow clean-memphis-pos--g-ring-r"></span>
-      </div>
-      <div class="container">
-        <h2 class="clean-section-title font-cartoon">משחקים</h2>
-        <div class="clean-games-grid">
-          <a href="/games" class="clean-panel clean-panel--card clean-panel--solo">
-            <span class="clean-panel-card-inner">
-              <span class="clean-panel-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M5 21v-1a7 7 0 0 1 14 0v1" />
-                </svg>
-              </span>
-              <h3 class="font-cartoon">משחק לבד</h3>
-            </span>
-          </a>
-          <button type="button" class="clean-panel clean-panel--highlight clean-panel--card" id="gamesClassroomBtn">
-            <span class="clean-panel-card-inner">
-              <span class="clean-panel-icon" aria-hidden="true">
-                <svg viewBox="0 0 40 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="10" cy="8" r="4" />
-                  <path d="M3 21v-1a7 7 0 0 1 14 0v1" />
-                  <circle cx="30" cy="8" r="4" />
-                  <path d="M23 21v-1a7 7 0 0 1 14 0v1" />
-                </svg>
-              </span>
-              <h3 class="font-cartoon">משחק קבוצה</h3>
-            </span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. יצירת קשר -->
+    <!-- 3. יצירת קשר -->
     <section id="contact" class="clean-section clean-section--contact scroll-section">
       <div class="clean-section-shapes clean-section-shapes--contact" aria-hidden="true">
         <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--c1"></span>
@@ -364,9 +321,9 @@
     <div class="modal">
       <button class="modal-close" id="modalClose" type="button" aria-label="סגירה">×</button>
       <h2 class="font-cartoon" id="modalTitle">פתיחת חדר כיתה</h2>
-      <p class="modal-desc" id="modalDesc">הזינו את שם החדר — תקבלו קוד לשיתוף עם התלמידים</p>
+      <p class="modal-desc hidden" id="modalDesc"></p>
       <form id="joinForm">
-        <label>
+        <label class="join-modal-name-field">
           <span id="modalNameLabel">שם החדר</span>
           <input type="text" id="playerName" placeholder="למשל: אנגלית ז׳" required maxlength="24" />
         </label>
@@ -376,7 +333,7 @@
         </label>
         <p class="form-error hidden" id="formError"></p>
         <p class="modal-conn-hint hidden" id="socketConnHint"></p>
-        <button type="submit" class="btn btn-primary btn-full" id="formSubmit">פתח חדר</button>
+        <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon join-modal-submit" id="formSubmit">פתח חדר</button>
       </form>
     </div>
   </div>

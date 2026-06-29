@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/styles.css?v=28" />
   <link rel="stylesheet" href="/css/clean-site.css" />
   <link rel="stylesheet" href="/css/room-page.css?v=62" />
+  <link rel="stylesheet" href="/css/premium.css" />
 </head>
 <body class="clean-site in-room">
 
@@ -138,17 +139,17 @@
             <h2 id="roomGamesPanelTitle">בחירת משחק</h2>
             <button type="button" class="room-games-panel-close" id="closeGamesPanelBtn" aria-label="סגירה">×</button>
           </div>
-          <p class="room-lobby-hint" id="roomLobbyHint">שתפו קישור — ממתינים לאורחים</p>
-          <div class="room-game-picker" id="roomGamePicker">
-            <button type="button" class="room-game-btn" data-game="vocabulary-duel"><span class="room-game-btn-icon">⚔️</span><span class="room-game-btn-label">Duel מילים</span></button>
+          <div class="room-games-panel-body">
+            <div class="room-game-picker" id="roomGamePicker">
             <button type="button" class="room-game-btn" data-game="word-memory"><span class="room-game-btn-icon">🧠</span><span class="room-game-btn-label">זיכרון</span></button>
             <button type="button" class="room-game-btn" data-game="hangman"><span class="room-game-btn-icon">🎯</span><span class="room-game-btn-label">איש תלוי</span></button>
-            <button type="button" class="room-game-btn" data-game="sentence-scramble"><span class="room-game-btn-icon">📝</span><span class="room-game-btn-label">משפטים</span></button>
-            <button type="button" class="room-game-btn" data-game="spelling-bee"><span class="room-game-btn-icon">✏️</span><span class="room-game-btn-label">איות</span></button>
-            <button type="button" class="room-game-btn" data-game="word-runner"><span class="room-game-btn-icon">🏃</span><span class="room-game-btn-label">רץ וקופץ</span></button>
-            <button type="button" class="room-game-btn" data-game="spot-diff"><span class="room-game-btn-icon">🔍</span><span class="room-game-btn-label">מצא הבדל</span></button>
-            <button type="button" class="room-game-btn" data-game="candy-match"><span class="room-game-btn-icon">🍬</span><span class="room-game-btn-label">ממתקים</span></button>
+            <button type="button" class="room-game-btn" data-game="spot-diff"><span class="room-game-btn-icon">🔍</span><span class="room-game-btn-label">מצא הבדלים</span></button>
+            <button type="button" class="room-game-btn" data-game="tower-stack"><span class="room-game-btn-icon">🗼</span><span class="room-game-btn-label">מגדל קוביות</span></button>
             <button type="button" class="room-game-btn" data-game="word-shop"><span class="room-game-btn-icon">🏪</span><span class="room-game-btn-label">חנות</span></button>
+            </div>
+          </div>
+          <div class="room-games-panel-footer">
+            <a href="/games" class="room-games-library-btn btn-candy">לספריית המשחקים</a>
           </div>
         </div>
       </div>
@@ -165,13 +166,6 @@
               <span class="room-setting-toggle-label">תגובות</span>
               <span class="room-setting-toggle-switch">
                 <input type="checkbox" id="enableReactionsToggle" checked />
-                <span class="room-setting-toggle-ui" aria-hidden="true"></span>
-              </span>
-            </label>
-            <label class="room-setting-toggle" for="enableChatToggle">
-              <span class="room-setting-toggle-label">צ'אט כיתה</span>
-              <span class="room-setting-toggle-switch">
-                <input type="checkbox" id="enableChatToggle" checked />
                 <span class="room-setting-toggle-ui" aria-hidden="true"></span>
               </span>
             </label>
@@ -204,6 +198,30 @@
                 </span>
               </button>
             </div>
+            <div class="room-setting-game-group hidden" id="roomGameSettingsGroup">
+              <p class="room-setting-mode-heading">הגדרות משחק</p>
+              <div class="room-settings-list" id="roomGameSettingsList"></div>
+            </div>
+            <div class="room-setting-material-group">
+              <p class="room-setting-mode-heading">חומר לימודי</p>
+              <button type="button" class="room-setting-material-btn btn-candy" id="openMaterialPanelBtn">הוסף / ערוך חומר לימודי</button>
+              <button type="button" class="room-setting-material-clear hidden" id="clearMaterialBtn">הסר חומר לימודי</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="room-material-panel room-page-overlay room-manager-only hidden" id="roomMaterialPanel" role="dialog" aria-modal="true" aria-labelledby="roomMaterialPanelTitle">
+        <div class="room-material-panel-backdrop" id="roomMaterialPanelBackdrop"></div>
+        <div class="room-material-panel-sheet">
+          <div class="room-games-panel-header">
+            <h2 id="roomMaterialPanelTitle">חומר לימודי</h2>
+            <button type="button" class="room-games-panel-close" id="closeMaterialPanelBtn" aria-label="סגירה">×</button>
+          </div>
+          <textarea id="roomMaterialInput" class="room-material-textarea" rows="10" placeholder="apple=תפוח&#10;book=ספר&#10;happy=שמח&#10;&#10;למשפטים:&#10;I love English=אני אוהב אנגלית"></textarea>
+          <div class="room-material-actions">
+            <button type="button" class="btn btn-candy btn-full room-material-save-btn" id="saveMaterialBtn">שמור חומר לימודי</button>
+            <button type="button" class="btn btn-candy btn-full room-material-cancel-btn" id="cancelMaterialBtn">ביטול</button>
           </div>
         </div>
       </div>
@@ -262,11 +280,20 @@
 
   <div class="toast hidden" id="toast"></div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/premium.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/parse-content.js"></script>
+  <script src="/js/games-catalog.js"></script>
+  <script src="/js/play-settings.js"></script>
   <script src="/js/game-engine.js"></script>
   <script src="/js/games.js?v=18"></script>
   <script src="/js/share-links.js"></script>
   <script src="/js/room-idle-runner.js"></script>
-  <script src="/js/room-host.js?v=34"></script>
+  <script src="/js/room-host.js?v=35"></script>
 </body>
 </html>

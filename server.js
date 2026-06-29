@@ -7,6 +7,9 @@ const path = require("path");
 const bookingsLib = require("./lib/bookings");
 const miniGames = require("./lib/mini-games");
 const roomsLib = require("./lib/rooms");
+const { parseLearningContent, normalizeLearningContent } = require("./lib/parse-content");
+const { compatibleRoomGames } = require("./lib/room-games");
+const premiumLib = require("./lib/premium");
 
 const app = express();
 const server = http.createServer(app);
@@ -64,6 +67,41 @@ function getFirebaseConfig() {
 
 app.get("/api/firebase-config", (_req, res) => {
   res.json(getFirebaseConfig());
+});
+
+/* ── Premium subscription API ── */
+app.get("/api/premium/plans", (_req, res) => {
+  const bookingSettings = bookingsLib.getSettings();
+  res.json({
+    ok: true,
+    plans: premiumLib.PLANS,
+    premiumGames: premiumLib.PREMIUM_GAMES,
+    settings: {
+      bitPhone: bookingSettings.bitPhone,
+      bitPayName: bookingSettings.bitPayName,
+      currencySymbol: bookingSettings.currencySymbol || "₪",
+    },
+  });
+});
+
+app.get("/api/premium/status", (req, res) => {
+  const uid = String(req.query.uid || "").trim();
+  if (!uid) return res.status(400).json({ ok: false, error: "חסר מזהה משתמש" });
+  res.json({ ok: true, ...premiumLib.getStatus(uid) });
+});
+
+app.post("/api/premium/subscribe", (req, res) => {
+  try {
+    const { uid, email, planId, method } = req.body || {};
+    const record = premiumLib.activateSubscription(uid, email, planId, method);
+    res.json({
+      ok: true,
+      ...premiumLib.getStatus(uid),
+      paymentId: record.paymentId,
+    });
+  } catch (e) {
+    res.status(400).json({ ok: false, error: e.message });
+  }
 });
 
 /* ── Booking API ── */
@@ -268,10 +306,27 @@ function pickRandom(arr, n) {
   return shuffle(arr).slice(0, n);
 }
 
-function makeQuizQuestion(exclude = new Set()) {
-  const pool = VOCAB.filter((v) => !exclude.has(v.en));
+function getRoomLearningItems(room) {
+  if (room.learningMaterial?.trim()) {
+    const items = parseLearningContent(room.learningMaterial);
+    room.learningItems = items;
+    return items;
+  }
+  return room.learningItems || [];
+}
+
+function getRoomVocab(room) {
+  const items = getRoomLearningItems(room);
+  if (items.length) return items;
+  return VOCAB;
+}
+
+function makeQuizQuestion(vocab, exclude = new Set()) {
+  const pool = vocab.filter((v) => !exclude.has(v.en));
+  if (!pool.length) return makeQuizQuestion(vocab);
   const correct = pool[Math.floor(Math.random() * pool.length)];
-  const wrong = pickRandom(VOCAB.filter((v) => v.en !== correct.en), 3);
+  const wrongPool = vocab.filter((v) => v.en !== correct.en);
+  const wrong = pickRandom(wrongPool, Math.min(3, wrongPool.length));
   const options = shuffle([correct.he, ...wrong.map((w) => w.he)]);
   return {
     word: correct.en,
@@ -281,8 +336,9 @@ function makeQuizQuestion(exclude = new Set()) {
   };
 }
 
-function makeMemoryPairs() {
-  const items = pickRandom(VOCAB, 6);
+function makeMemoryPairs(vocab) {
+  const count = Math.min(6, vocab.length);
+  const items = pickRandom(vocab, count);
   const cards = [];
   items.forEach((item, i) => {
     cards.push({ id: `en-${i}`, pairId: i, text: item.en, type: "en" });
@@ -291,12 +347,22 @@ function makeMemoryPairs() {
   return shuffle(cards);
 }
 
-function makeHangmanWord() {
-  const item = VOCAB[Math.floor(Math.random() * VOCAB.length)];
+function makeHangmanWord(vocab) {
+  const item = vocab[Math.floor(Math.random() * vocab.length)];
   return { word: item.en.toUpperCase(), hint: item.hint, he: item.he };
 }
 
-function makeScramble() {
+function makeScramble(vocab) {
+  const sentences = vocab.filter((v) => String(v.en || "").includes(" "));
+  if (sentences.length) {
+    const s = sentences[Math.floor(Math.random() * sentences.length)];
+    const words = s.en.split(/\s+/).filter(Boolean);
+    return {
+      words: shuffle([...words]),
+      answer: words.join(" "),
+      he: s.he,
+    };
+  }
   const s = SENTENCES[Math.floor(Math.random() * SENTENCES.length)];
   return {
     words: shuffle([...s.words]),
@@ -305,12 +371,13 @@ function makeScramble() {
   };
 }
 
-function makeSpellingRound() {
-  const item = VOCAB[Math.floor(Math.random() * VOCAB.length)];
+function makeSpellingRound(vocab) {
+  const item = vocab[Math.floor(Math.random() * vocab.length)];
   return { word: item.en, hint: item.hint, he: item.he };
 }
 
 function resetGameState(room, gameId) {
+  const vocab = getRoomVocab(room);
   room.activeGame = gameId;
   room.gameState = { phase: "ready", round: 0 };
 
@@ -319,12 +386,12 @@ function resetGameState(room, gameId) {
       phase: "playing",
       round: 1,
       maxRounds: 8,
-      question: makeQuizQuestion(),
+      question: makeQuizQuestion(vocab),
       answers: {},
       roundWinner: null,
     };
   } else if (gameId === "word-memory") {
-    const cards = makeMemoryPairs();
+    const cards = makeMemoryPairs(vocab);
     room.gameState = {
       phase: "playing",
       cards: cards.map((c) => ({ ...c, matched: false, faceUp: false })),
@@ -333,7 +400,7 @@ function resetGameState(room, gameId) {
       pairsFound: { teacher: 0, student: 0 },
     };
   } else if (gameId === "hangman") {
-    const { word, hint, he } = makeHangmanWord();
+    const { word, hint, he } = makeHangmanWord(vocab);
     room.gameState = {
       phase: "playing",
       word,
@@ -346,7 +413,7 @@ function resetGameState(room, gameId) {
       lost: false,
     };
   } else if (gameId === "sentence-scramble") {
-    const s = makeScramble();
+    const s = makeScramble(vocab);
     room.gameState = {
       phase: "playing",
       round: 1,
@@ -364,20 +431,20 @@ function resetGameState(room, gameId) {
       phase: "playing",
       round: 1,
       maxRounds: 6,
-      current: makeSpellingRound(),
+      current: makeSpellingRound(vocab),
       submissions: {},
       submissionIds: {},
       roundWinner: null,
       roundWinnerId: null,
     };
   } else if (gameId === "spot-diff") {
-    room.gameState = miniGames.makeSpotDiffState(VOCAB);
+    room.gameState = miniGames.makeSpotDiffState(vocab);
   } else if (gameId === "word-runner") {
-    room.gameState = miniGames.makeRunnerState(VOCAB);
+    room.gameState = miniGames.makeRunnerState(vocab);
   } else if (gameId === "candy-match") {
-    room.gameState = miniGames.makeCandyState(VOCAB);
+    room.gameState = miniGames.makeCandyState(vocab);
   } else if (gameId === "word-shop") {
-    room.gameState = miniGames.makeShopState(VOCAB);
+    room.gameState = miniGames.makeShopState(vocab);
   }
 }
 
@@ -487,11 +554,24 @@ io.on("connection", (socket) => {
     io.to(`room:${code}`).emit("room:student-joined", { name: studentName, id: socket.id });
   });
 
-  socket.on("game:start", ({ gameId }, cb) => {
+  socket.on("game:start", ({ gameId, uid }, cb) => {
     const code = socket.data.roomCode;
     const room = getRoom(code);
     if (!room || !roomsLib.isManager(room, socket.id)) {
       return cb?.({ ok: false, error: "רק המורה יכול להתחיל משחק" });
+    }
+    if (premiumLib.isPremiumGame(gameId)) {
+      const premium = uid ? premiumLib.getStatus(uid) : { isPremium: false };
+      if (!premium.isPremium) {
+        return cb?.({ ok: false, error: "משחק פרימיום — נדרש מנוי פעיל" });
+      }
+    }
+    const items = getRoomLearningItems(room);
+    if (items.length) {
+      const allowed = compatibleRoomGames(items);
+      if (!allowed.includes(gameId)) {
+        return cb?.({ ok: false, error: "משחק זה לא מתאים לחומר הלימודי שהוגדר" });
+      }
     }
     resetGameState(room, gameId);
     room.scores = { teacher: 0 };
@@ -532,13 +612,14 @@ io.on("connection", (socket) => {
 
     if (room.activeGame === "vocabulary-duel" && action === "next-round") {
       if (socket.data.role !== "teacher") return cb?.({ ok: false });
+      const vocab = getRoomVocab(room);
       if (state.round >= state.maxRounds) {
         state.phase = "finished";
         broadcastGame(code);
         return cb?.({ ok: true });
       }
       state.round++;
-      state.question = makeQuizQuestion();
+      state.question = makeQuizQuestion(vocab);
       state.answers = {};
       state.roundWinner = null;
       state.phase = "playing";
@@ -620,7 +701,8 @@ io.on("connection", (socket) => {
 
     if (room.activeGame === "hangman" && action === "new-word") {
       if (socket.data.role !== "teacher") return cb?.({ ok: false });
-      const { word, hint, he } = makeHangmanWord();
+      const vocab = getRoomVocab(room);
+      const { word, hint, he } = makeHangmanWord(vocab);
       Object.assign(state, {
         word,
         hint,
@@ -670,12 +752,13 @@ io.on("connection", (socket) => {
 
     if (room.activeGame === "sentence-scramble" && action === "next-round") {
       if (socket.data.role !== "teacher") return cb?.({ ok: false });
+      const vocab = getRoomVocab(room);
       if (state.round >= state.maxRounds) {
         state.phase = "finished";
         broadcastGame(code);
         return cb?.({ ok: true });
       }
-      const s = makeScramble();
+      const s = makeScramble(vocab);
       state.round++;
       state.scrambled = s.words;
       state.answer = s.answer;
@@ -724,13 +807,14 @@ io.on("connection", (socket) => {
 
     if (room.activeGame === "spelling-bee" && action === "next-round") {
       if (socket.data.role !== "teacher") return cb?.({ ok: false });
+      const vocab = getRoomVocab(room);
       if (state.round >= state.maxRounds) {
         state.phase = "finished";
         broadcastGame(code);
         return cb?.({ ok: true });
       }
       state.round++;
-      state.current = makeSpellingRound();
+      state.current = makeSpellingRound(vocab);
       state.submissions = {};
       state.submissionIds = {};
       state.roundWinner = null;
@@ -747,17 +831,18 @@ io.on("connection", (socket) => {
     let miniResult = null;
 
     const teacherOnly = room.studentsCanPlay !== true;
+    const vocab = getRoomVocab(room);
 
     if (room.activeGame === "spot-diff") {
-      miniResult = miniGames.handleSpotDiff(state, role, action, data, addScoreFn, VOCAB, teacherOnly);
+      miniResult = miniGames.handleSpotDiff(state, role, action, data, addScoreFn, vocab, teacherOnly);
       if (action === "next-round" && socket.data.role !== "teacher") return cb?.({ ok: false });
     } else if (room.activeGame === "word-runner") {
-      miniResult = miniGames.handleRunner(state, role, action, data, addScoreFn, VOCAB, teacherOnly);
+      miniResult = miniGames.handleRunner(state, role, action, data, addScoreFn, vocab, teacherOnly);
       if (action === "next-round" && socket.data.role !== "teacher") return cb?.({ ok: false });
     } else if (room.activeGame === "candy-match") {
-      miniResult = miniGames.handleCandy(state, role, action, data, addScoreFn, VOCAB, teacherOnly);
+      miniResult = miniGames.handleCandy(state, role, action, data, addScoreFn, vocab, teacherOnly);
     } else if (room.activeGame === "word-shop") {
-      miniResult = miniGames.handleShop(state, role, action, data, addScoreFn, VOCAB, teacherOnly);
+      miniResult = miniGames.handleShop(state, role, action, data, addScoreFn, vocab, teacherOnly);
       if (action === "next-round" && socket.data.role !== "teacher") return cb?.({ ok: false });
     }
 
@@ -890,6 +975,45 @@ io.on("connection", (socket) => {
       enableChat: room.enableChat !== false,
       enableGameSound: room.enableGameSound !== false,
       studentsCanPlay: room.studentsCanPlay === true,
+    });
+  });
+
+  socket.on("room:update-learning-material", ({ content }, cb) => {
+    const code = socket.data.roomCode;
+    const room = getRoom(code);
+    if (!room || !roomsLib.isManager(room, socket.id)) {
+      return cb?.({ ok: false, error: "אין הרשאה" });
+    }
+
+    const text = String(content || "").trim();
+    if (!text) {
+      room.learningMaterial = "";
+      room.learningItems = [];
+      emitRoom(code);
+      return cb?.({
+        ok: true,
+        learningMaterial: "",
+        learningItemCount: 0,
+        compatibleGames: compatibleRoomGames([]),
+      });
+    }
+
+    const { items, normalized } = normalizeLearningContent(text);
+    if (!items.length) {
+      return cb?.({
+        ok: false,
+        error: "לא הצלחנו לזהות פריטים — נסו להדביק זוגות מילים, למשל: apple=תפוח",
+      });
+    }
+
+    room.learningMaterial = normalized;
+    room.learningItems = items;
+    emitRoom(code);
+    cb?.({
+      ok: true,
+      learningMaterial: room.learningMaterial,
+      learningItemCount: items.length,
+      compatibleGames: compatibleRoomGames(items),
     });
   });
 

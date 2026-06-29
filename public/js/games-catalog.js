@@ -1,5 +1,32 @@
 /* Pleyi — catalog by subject */
 
+const SKILL_COLORS = {
+  "זיכרון": "pink",
+  "זוגות": "teal",
+  "מהירות": "orange",
+  "חידון": "purple",
+  "תרגום": "blue",
+  "אוצר מילים": "green",
+  "פרימיום": "lime",
+  "איות": "orange",
+  "חשיבה": "purple",
+  "כתיבה": "blue",
+  "קשב": "lime",
+  "השוואה": "teal",
+  "אסטרטגיה": "green",
+  "הבנה": "blue",
+  "דקדוק": "purple",
+  "משפטים": "pink",
+  "חשבון": "orange",
+  "אינטראקטיבי": "lime",
+  "היגיון": "green",
+  "פרשה": "pink",
+  "מילים": "purple",
+  "פסוקים": "teal",
+  "מושגים": "green",
+  "סיווג": "orange",
+};
+
 window.GAMES_CATALOG = {
   english: [
     { id: "tower-stack", title: "מגדל מילים", desc: "משחק arcade מלא — פיזיקה, חלקיקים, קוביות תלת-ממד וטיימר", icon: "🗼", color: "purple", tags: ["פרימיום", "אוצר מילים"] },
@@ -62,6 +89,18 @@ window.GAMES_CATALOG = {
     };
   },
 
+  skillColor(tag) {
+    return SKILL_COLORS[tag] || "blue";
+  },
+
+  skillsForSubject(subject) {
+    const set = new Set();
+    for (const game of this[subject] || []) {
+      for (const tag of game.tags || []) set.add(tag);
+    }
+    return [...set].sort((a, b) => a.localeCompare(b, "he"));
+  },
+
   gameSummary(desc) {
     if (!desc) return "";
     const line = desc.split(/[—–]/)[0].trim();
@@ -74,6 +113,24 @@ window.GAMES_CATALOG = {
 
   allGamesList() {
     return this.allSubjects().flatMap((s) => this[s] || []);
+  },
+
+  compatibleRoomGames(items) {
+    const roomGames = [
+      "word-memory",
+      "hangman",
+      "spot-diff",
+      "tower-stack",
+      "word-shop",
+    ];
+    if (!items?.length) return roomGames;
+
+    const n = items.length;
+    const out = [];
+    if (n >= 2) out.push("word-memory");
+    if (n >= 1) out.push("hangman");
+    if (n >= 3) out.push("spot-diff", "tower-stack", "word-shop");
+    return out.filter((id) => roomGames.includes(id));
   },
 
   pickGameForContent(items, subject) {
@@ -90,6 +147,9 @@ window.GAMES_CATALOG = {
   },
 
   parseContent(text, subject) {
+    if (window.LEARNING_PARSE?.parseLearningContent) {
+      return window.LEARNING_PARSE.parseLearningContent(text, subject || "english");
+    }
     const lines = text
       .split(/\n/)
       .map((l) => l.trim())

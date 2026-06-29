@@ -764,6 +764,7 @@ const SoloGames = {
     let flipped = [];
     let lock = false;
     let cards = [];
+    let started = false;
 
     const build = () => {
       const items = D.pick(6);
@@ -773,69 +774,89 @@ const SoloGames = {
           { id: `h${i}`, pair: i, text: it.he, face: false, matched: false },
         ])
       );
+      flipped = [];
+      lock = false;
+    };
+
+    const cardHtml = (c) => {
+      const cls = ["memory-solo-card", c.face || c.matched ? "face" : "", c.matched ? "matched" : ""]
+        .filter(Boolean)
+        .join(" ");
+      return `<button type="button" class="${cls}" data-id="${c.id}">${c.face || c.matched ? c.text : "?"}</button>`;
+    };
+
+    const renderGrid = () => {
+      const grid = root.querySelector("#memGrid");
+      const scoreEl = root.querySelector("#memScore");
+      if (scoreEl) scoreEl.textContent = String(score);
+      if (!grid) return;
+      grid.innerHTML = cards.map(cardHtml).join("");
     };
 
     const render = () => {
       const allMatched = cards.every((c) => c.matched);
-      root.innerHTML = `
-        <div class="solo-game-wrap">
-          <div class="solo-hud"><span>התאימו זוגות</span><span>ניקוד: <strong>${score}</strong></span></div>
-          <div class="memory-solo-grid" id="memGrid"></div>
-          ${allMatched ? `<div class="solo-msg ok">כל הזוגות! ניקוד: ${score}<br><button class="solo-play-again" onclick="location.reload()">שחק שוב</button></div>` : ""}
-        </div>`;
+      if (!started) {
+        started = true;
+        root.innerHTML = `
+          <div class="solo-game-wrap">
+            <div class="solo-hud"><span>התאימו זוגות</span><span>ניקוד: <strong id="memScore">${score}</strong></span></div>
+            <div class="memory-solo-grid" id="memGrid"></div>
+          </div>`;
+      }
 
       if (allMatched) {
+        root.querySelector(".solo-game-wrap")?.insertAdjacentHTML(
+          "beforeend",
+          `<div class="solo-msg ok">כל הזוגות! ניקוד: ${score}<br><button class="solo-play-again" onclick="location.reload()">שחק שוב</button></div>`
+        );
         ui.onGameOver(score, "סיום");
         return;
       }
 
-      document.getElementById("memGrid").innerHTML = cards
-        .map((c) => {
-          const cls = ["memory-solo-card", c.face || c.matched ? "face" : "", c.matched ? "matched" : ""]
-            .filter(Boolean)
-            .join(" ");
-          return `<button type="button" class="${cls}" data-id="${c.id}" ${c.matched || c.face ? "" : ""}>${c.face || c.matched ? c.text : "?"}</button>`;
-        })
-        .join("");
+      renderGrid();
+    };
 
-      root.querySelectorAll(".memory-solo-card:not(.matched)").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          if (lock) return;
-          const card = cards.find((c) => c.id === btn.dataset.id);
-          if (!card || card.face || card.matched) return;
-          card.face = true;
-          flipped.push(card);
-          if (flipped.length === 2) {
-            lock = true;
-            const [a, b] = flipped;
-            if (a.pair === b.pair) {
-              a.matched = true;
-              b.matched = true;
-              score += 15;
-              ui.setScore(score);
-              flipped = [];
-              lock = false;
-              render();
-            } else {
-              setTimeout(() => {
-                a.face = false;
-                b.face = false;
-                flipped = [];
-                lock = false;
-                render();
-              }, 700);
-            }
-          } else render();
-        });
-      });
+    const onCardClick = (e) => {
+      const btn = e.target.closest(".memory-solo-card");
+      if (!btn || !root.contains(btn) || lock) return;
+      const card = cards.find((c) => c.id === btn.dataset.id);
+      if (!card || card.face || card.matched) return;
+
+      card.face = true;
+      btn.classList.add("face");
+      btn.textContent = card.text;
+      flipped.push(card);
+
+      if (flipped.length === 2) {
+        lock = true;
+        const [a, b] = flipped;
+        if (a.pair === b.pair) {
+          a.matched = true;
+          b.matched = true;
+          score += 15;
+          ui.setScore(score);
+          flipped = [];
+          lock = false;
+          render();
+        } else {
+          setTimeout(() => {
+            a.face = false;
+            b.face = false;
+            flipped = [];
+            lock = false;
+            renderGrid();
+          }, 700);
+        }
+      }
     };
 
     root.innerHTML = `<div class="solo-game-wrap">${SoloGames.overlayHtml("זיכרון מילים", "הפכו קלפים ומצאו זוגות en ↔ he", "mem")}</div>`;
+    root.addEventListener("click", onCardClick);
     SoloGames.bindStartRetry("mem", () => {
       build();
       render();
     });
-    return () => {};
+    return () => root.removeEventListener("click", onCardClick);
   },
 
   /* ── Hangman ── */

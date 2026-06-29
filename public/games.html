@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/css/games-hub.css" />
+  <link rel="stylesheet" href="/css/premium.css" />
   <link rel="stylesheet" href="/css/legal.css" />
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -84,9 +85,23 @@
       <button type="button" class="hub-tab" data-subject="science" role="tab">מדעים</button>
     </div>
 
+    <section class="hub-skill-filters hidden" id="hubSkillFilters" aria-label="סינון לפי מיומנות">
+      <h2 class="hub-skill-filters-label font-cartoon">סינון לפי מיומנות</h2>
+      <div class="hub-skill-filters-panel">
+        <div class="hub-skill-filters-list" id="hubSkillFiltersList"></div>
+        <button type="button" class="hub-skill-filters-clear hidden" id="hubSkillFiltersClear">הצג הכל</button>
+      </div>
+    </section>
+
+    <p class="hub-grid-empty hidden" id="hubGridEmpty" role="status">אין משחקים עם המיומנויות שנבחרו</p>
+
     <div class="hub-grid cards cols-3" id="gamesGrid"></div>
 
-    <button type="button" class="hub-custom-cta-card pitch-card sticker-card sticker-yellow" id="openCustomModalBtn">
+    <button type="button" class="hub-custom-cta-card" id="openCustomModalBtn">
+      <span class="hub-custom-confetti" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </span>
       <h2 class="hub-custom-cta-title font-cartoon">התאמה אישית</h2>
       <p class="hub-custom-cta-text">הדביקו את תוכן השיעור — המערכת תיצור משחק מותאם</p>
     </button>
@@ -115,33 +130,29 @@
       <h2 class="font-cartoon modal-custom-title">התאמה אישית</h2>
       <p class="modal-desc">הדביקו את תוכן השיעור — המערכת תיצור משחק מותאם מהנתונים שלכם</p>
       <form class="hub-custom-form" id="customGameForm">
-        <div class="hub-custom-row">
-          <label>
-            <span>שם המשחק (אופציונלי)</span>
-            <input type="text" id="customTitle" placeholder="למשל: אוצר מילים — יחידה 3" maxlength="80" />
-          </label>
-          <label>
-            <span>נושא</span>
-            <select id="customSubject">
-              <option value="english">אנגלית — מילה = תרגום</option>
-              <option value="tanakh">תנ״ך — מילה = פירוש</option>
-              <option value="math">מתמטיקה — תרגיל = תשובה</option>
-              <option value="science">מדעים — מושג = הגדרה</option>
-            </select>
-          </label>
+        <div class="hub-custom-field">
+          <h3 class="hub-custom-field-title">שם המשחק</h3>
+          <input type="text" id="customTitle" placeholder="למשל: אוצר מילים — יחידה 3" maxlength="80" />
         </div>
-        <div class="hub-custom-row">
-          <label>
-            <span>סוג משחק</span>
-            <select id="customGamePick">
-              <option value="auto">בחירה אוטומטית (מומלץ)</option>
-            </select>
-          </label>
+        <div class="hub-custom-field">
+          <h3 class="hub-custom-field-title">נושא</h3>
+          <select id="customSubject">
+            <option value="english">אנגלית — מילה = תרגום</option>
+            <option value="tanakh">תנ״ך — מילה = פירוש</option>
+            <option value="math">מתמטיקה — תרגיל = תשובה</option>
+            <option value="science">מדעים — מושג = הגדרה</option>
+          </select>
         </div>
-        <label>
-          <span>תוכן השיעור</span>
-          <textarea id="customContent" rows="8" placeholder="שורה לכל פריט, למשל:&#10;apple=תפוח&#10;book=ספר&#10;happy=שמח&#10;&#10;או במתמטיקה:&#10;5+3=8&#10;12-4=8"></textarea>
-        </label>
+        <div class="hub-custom-field">
+          <h3 class="hub-custom-field-title">סוג משחק</h3>
+          <select id="customGamePick">
+            <option value="auto">בחירה אוטומטית (מומלץ)</option>
+          </select>
+        </div>
+        <div class="hub-custom-field hub-custom-field--content">
+          <h3 class="hub-custom-field-title">תוכן השיעור</h3>
+          <textarea id="customContent" rows="5" placeholder="שורה לכל פריט, למשל:&#10;apple=תפוח&#10;book=ספר&#10;happy=שמח&#10;&#10;או במתמטיקה:&#10;5+3=8&#10;12-4=8"></textarea>
+        </div>
         <div class="hub-custom-actions">
           <button type="button" class="btn btn-outline btn-candy" id="customExampleBtn">טען דוגמה</button>
           <button type="button" class="btn btn-outline btn-candy hidden" id="customSaveBtn">שמור לחשבון</button>
@@ -186,31 +197,6 @@
     </div>
   </div>
 
-  <!-- Play setup -->
-  <div class="modal-overlay hidden" id="playSetupModal">
-    <div class="modal modal-play-setup">
-      <button class="modal-close" id="playSetupClose" type="button" aria-label="סגירה">×</button>
-      <h2 class="font-cartoon play-setup-title" id="playSetupGameTitle">משחק</h2>
-      <p class="modal-desc" id="playSetupGameDesc"></p>
-      <form id="playSetupForm">
-        <input type="hidden" id="playSetupGameId" value="" />
-        <label>
-          <span>נושא</span>
-          <select id="playSetupTopic" required></select>
-        </label>
-        <label>
-          <span>רמה</span>
-          <select id="playSetupLevel" required>
-            <option value="easy">קל — בסיסי</option>
-            <option value="medium">בינוני</option>
-            <option value="hard">קשה — מתקדם</option>
-          </select>
-        </label>
-        <button type="submit" class="btn btn-primary btn-candy btn-full">שחק עכשיו</button>
-      </form>
-    </div>
-  </div>
-
   <!-- Login -->
   <div class="modal-overlay hidden" id="loginModal">
     <div class="modal modal-login">
@@ -249,6 +235,8 @@
   <script src="/js/firebase-app.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/user-data.js"></script>
+  <script src="/js/premium.js"></script>
+  <script src="/js/parse-content.js"></script>
   <script src="/js/games-catalog.js"></script>
   <script src="/js/game-content.js"></script>
   <script src="/js/games-hub.js"></script>

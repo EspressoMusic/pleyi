@@ -136,10 +136,15 @@ function openModal(mode) {
   roomLog("open modal", mode);
   $("#modalTitle").textContent =
     mode === "teacher" ? "פתיחת חדר כיתה" : "הצטרפות לחדר";
-  $("#modalDesc").textContent =
-    mode === "teacher"
-      ? "הזינו את שם החדר — תקבלו קוד לשיתוף עם התלמידים"
-      : "הזינו קוד חדר ושם — או השתמשו בדף /join מהטלפון";
+  const descEl = $("#modalDesc");
+  if (mode === "teacher") {
+    descEl.textContent = "";
+    descEl.classList.add("hidden");
+  } else {
+    descEl.textContent =
+      "הזינו קוד חדר ושם — או השתמשו בדף /join מהטלפון";
+    descEl.classList.remove("hidden");
+  }
   $("#modalNameLabel").textContent = mode === "teacher" ? "שם החדר" : "השם שלך";
   $("#playerName").placeholder = mode === "teacher" ? "למשל: אנגלית ז׳" : "למשל: דנה";
   $("#formSubmit").textContent = mode === "teacher" ? "פתח חדר" : "הצטרף";
@@ -449,7 +454,6 @@ function bindOpenRoomFlow() {
     "openClassroomBtn",
     "heroClassroomBtn",
     "howClassroomBtn",
-    "gamesClassroomBtn",
     "mobileClassroomBtn",
     "dashStartLessonBtn",
   ];

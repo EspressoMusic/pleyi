@@ -128,4 +128,23 @@ window.UserData = {
       minute: "2-digit",
     });
   },
+
+  async syncPremiumStatus({ isPremium, premiumUntil, plan } = {}) {
+    const uid = this._uid();
+    const db = this._db();
+    if (!uid || !db) return { ok: false };
+
+    await db.collection("users").doc(uid).set(
+      {
+        premium: {
+          isPremium: !!isPremium,
+          premiumUntil: premiumUntil || null,
+          plan: plan || null,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        },
+      },
+      { merge: true }
+    );
+    return { ok: true };
+  },
 };

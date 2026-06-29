@@ -212,6 +212,11 @@
   }
 
   function launchPlay({ subject, gameId, level, topic, gameTitle }) {
+    if (window.PleyiPremium?.isPremiumGame?.(gameId) && !window.PleyiPremium.canPlayGame(gameId)) {
+      window.PleyiPremium.openModal(gameId);
+      return;
+    }
+
     const vocab = getPool(subject, level, topic || "all");
     const subjects = window.GAMES_CATALOG?.subjects || {};
     const subjectLabel = subjects[subject] || subject;
@@ -230,7 +235,14 @@
         isPreset: true,
       })
     );
-    window.open(`/play/${gameId}`, "_blank", "noopener");
+    let roomQ = "";
+    try {
+      const host = JSON.parse(sessionStorage.getItem("gameclass-host") || "null");
+      if (host?.code) roomQ = `?room=${encodeURIComponent(host.code)}`;
+    } catch {
+      /* ignore */
+    }
+    window.location.assign(`/play/${gameId}${roomQ}`);
   }
 
   window.GAME_CONTENT = {
