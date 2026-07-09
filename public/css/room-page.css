@@ -871,6 +871,49 @@ body.room-has-error .room-page-overlay {
   opacity: 0.85;
 }
 
+.room-material-ai-hint {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink);
+  opacity: 0.82;
+}
+
+.btn-ai {
+  width: min(100%, 300px);
+  margin: 0 auto 12px;
+  padding: 11px 18px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  background: linear-gradient(135deg, #e9d5ff 0%, #c4b5fd 45%, #a78bfa 100%);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  display: block;
+}
+
+.btn-ai:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.btn-ai:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.btn-ai:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
+.btn-ai.hidden {
+  display: none;
+}
+
 .room-material-actions {
   display: flex;
   flex-direction: column;

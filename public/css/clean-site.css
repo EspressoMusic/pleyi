@@ -631,14 +631,7 @@ body.clean-site .mobile-nav-cta::after {
   font-size: clamp(26px, 4.2vw, 36px);
   min-height: clamp(84px, 13vw, 104px);
   border-radius: 999px;
-  background: linear-gradient(
-    135deg,
-    #fff9d0 0%,
-    #ffd700 28%,
-    #ffcc00 52%,
-    #ffe566 78%,
-    #fff8c4 100%
-  ) !important;
+  background: var(--memyellow) !important;
   color: var(--ink) !important;
   box-shadow: var(--shadow-candy);
 }

@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const http = require("http");
 const fs = require("fs");
@@ -10,6 +12,7 @@ const roomsLib = require("./lib/rooms");
 const { parseLearningContent, normalizeLearningContent } = require("./lib/parse-content");
 const { compatibleRoomGames } = require("./lib/room-games");
 const premiumLib = require("./lib/premium");
+const aiLesson = require("./lib/ai-lesson");
 
 const app = express();
 const server = http.createServer(app);
@@ -99,6 +102,25 @@ app.post("/api/premium/subscribe", (req, res) => {
       ...premiumLib.getStatus(uid),
       paymentId: record.paymentId,
     });
+  } catch (e) {
+    res.status(400).json({ ok: false, error: e.message });
+  }
+});
+
+/* ── AI lesson → game content ── */
+app.get("/api/ai/status", (_req, res) => {
+  res.json({
+    ok: true,
+    configured: aiLesson.isConfigured(),
+    provider: aiLesson.getProvider(),
+  });
+});
+
+app.post("/api/ai/generate-game", async (req, res) => {
+  try {
+    const { lessonText, subject } = req.body || {};
+    const result = await aiLesson.generateGameFromLesson({ lessonText, subject });
+    res.json({ ok: true, ...result });
   } catch (e) {
     res.status(400).json({ ok: false, error: e.message });
   }

@@ -71,7 +71,9 @@
         <h2 id="playMaterialPanelTitle">חומר לימודי</h2>
         <button type="button" class="room-games-panel-close" id="closePlayMaterialBtn" aria-label="סגירה">×</button>
       </div>
-      <textarea id="playMaterialInput" class="room-material-textarea" rows="10" placeholder="apple=תפוח&#10;book=ספר&#10;happy=שמח"></textarea>
+      <p class="room-material-ai-hint">הדביקו טקסט מהשיעור — AI יהפוך אותו לזוגות למשחק</p>
+      <textarea id="playMaterialInput" class="room-material-textarea" rows="10" placeholder="הדביקו תוכן שיעור או זוגות מוכנים:&#10;apple=תפוח&#10;book=ספר"></textarea>
+      <button type="button" class="btn btn-ai btn-candy btn-full hidden" id="playAiGenerateBtn" data-ai-generate>✨ צור עם AI</button>
       <div class="room-material-actions">
         <button type="button" class="btn btn-candy btn-full room-material-save-btn" id="playSaveMaterialBtn">שמור חומר לימודי</button>
         <button type="button" class="btn btn-candy btn-full room-material-cancel-btn" id="playCancelMaterialBtn">ביטול</button>
@@ -100,6 +102,7 @@
   <script src="/js/vocab-data.js"></script>
   <script src="/js/math-data.js"></script>
   <script src="/js/parse-content.js"></script>
+  <script src="/js/ai-lesson.js"></script>
   <script src="/js/games-catalog.js"></script>
   <script src="/js/game-content.js"></script>
   <script src="/js/game-engine.js"></script>

@@ -18,6 +18,11 @@
   const customGamePick = document.getElementById("customGamePick");
   const customPreview = document.getElementById("customPreview");
   const customSaveBtn = document.getElementById("customSaveBtn");
+  const customAdvancedToggle = document.getElementById("customAdvancedToggle");
+  const customAdvancedPanel = document.getElementById("customAdvancedPanel");
+  const customFileInput = document.getElementById("customFileInput");
+  const customFileBtn = document.getElementById("customFileBtn");
+  const customFileName = document.getElementById("customFileName");
   const userLibrary = document.getElementById("userLibrary");
   const savedGamesList = document.getElementById("savedGamesList");
   const playHistoryList = document.getElementById("playHistoryList");
@@ -249,10 +254,25 @@
     if (e.target.id === "gameInfoModal") closeGameInfo();
   });
 
-  function openCustomModal() {
+  function setAdvancedOpen(open) {
+    customAdvancedPanel?.classList.toggle("hidden", !open);
+    if (customAdvancedToggle) {
+      customAdvancedToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      customAdvancedToggle.textContent = open ? "הסתר מתקדם" : "מתקדם";
+    }
+  }
+
+  function resetFileInput() {
+    if (customFileInput) customFileInput.value = "";
+    if (customFileName) customFileName.textContent = "";
+  }
+
+  function openCustomModal({ advanced = false } = {}) {
     if (customSubject) customSubject.value = activeSubject;
     updateCustomGameOptions();
     updatePreview();
+    setAdvancedOpen(advanced);
+    resetFileInput();
     customModal?.classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }
@@ -260,9 +280,41 @@
   function closeCustomModal() {
     customModal?.classList.add("hidden");
     document.body.style.overflow = "";
+    setAdvancedOpen(false);
+    resetFileInput();
   }
 
-  document.getElementById("openCustomModalBtn")?.addEventListener("click", openCustomModal);
+  document.getElementById("openCustomModalBtn")?.addEventListener("click", () => openCustomModal());
+
+  customAdvancedToggle?.addEventListener("click", () => {
+    const isOpen = customAdvancedPanel && !customAdvancedPanel.classList.contains("hidden");
+    setAdvancedOpen(!isOpen);
+  });
+
+  customFileBtn?.addEventListener("click", () => customFileInput?.click());
+
+  customFileInput?.addEventListener("change", async () => {
+    const file = customFileInput.files?.[0];
+    if (!file) return;
+    if (file.size > 1024 * 1024) {
+      showToast("הקובץ גדול מדי (מקסימום 1MB)");
+      resetFileInput();
+      return;
+    }
+    try {
+      customContent.value = await file.text();
+      if (customFileName) customFileName.textContent = file.name;
+      updatePreview();
+    } catch {
+      showToast("לא ניתן לקרוא את הקובץ");
+      resetFileInput();
+    }
+  });
+
+  customContent?.addEventListener("input", () => {
+    if (customFileInput?.value) resetFileInput();
+    updatePreview();
+  });
   document.getElementById("customModalClose")?.addEventListener("click", closeCustomModal);
   customModal?.addEventListener("click", (e) => {
     if (e.target.id === "customGameModal") closeCustomModal();
@@ -320,7 +372,6 @@
     updateCustomGameOptions();
     updatePreview();
   });
-  customContent?.addEventListener("input", updatePreview);
   customTitle?.addEventListener("input", updatePreview);
   customGamePick?.addEventListener("change", updatePreview);
 
@@ -411,6 +462,23 @@
     updatePreview();
   });
 
+  window.AI_LESSON?.bindGenerateButton(
+    document.getElementById("customAiGenerateBtn"),
+    () => ({ text: customContent?.value || "", subject: customSubject?.value || "english" }),
+    {
+      onToast: showToast,
+      onSuccess: (result) => {
+        if (customContent) customContent.value = result.normalized;
+        if (customTitle && result.title) customTitle.value = result.title;
+        if (customGamePick && result.gameId) {
+          const hasOption = [...customGamePick.options].some((o) => o.value === result.gameId);
+          customGamePick.value = hasOption ? result.gameId : "auto";
+        }
+        updatePreview();
+      },
+    }
+  );
+
   function renderSavedGames(games) {
     if (!savedGamesList) return;
     if (!games.length) {
@@ -462,7 +530,7 @@
         updateCustomGameOptions();
         customGamePick.value = game.gameId;
         updatePreview();
-        openCustomModal();
+        openCustomModal({ advanced: true });
         showToast("עריכת משחק — שמרו כדי לעדכן");
       });
     });

@@ -128,37 +128,49 @@
     <div class="modal modal-custom-game">
       <button class="modal-close" id="customModalClose" type="button" aria-label="סגירה">×</button>
       <h2 class="font-cartoon modal-custom-title">התאמה אישית</h2>
-      <p class="modal-desc">הדביקו את תוכן השיעור — המערכת תיצור משחק מותאם מהנתונים שלכם</p>
+      <p class="modal-desc">הדביקו תוכן שיעור או העלו קובץ — והמערכת תיצור משחק</p>
       <form class="hub-custom-form" id="customGameForm">
-        <div class="hub-custom-field">
-          <h3 class="hub-custom-field-title">שם המשחק</h3>
-          <input type="text" id="customTitle" placeholder="למשל: אוצר מילים — יחידה 3" maxlength="80" />
+        <div class="hub-custom-simple">
+          <textarea id="customContent" rows="8" placeholder="הדביקו כאן את תוכן השיעור — רשימת מילים, משפטים, או זוגות מוכנים:&#10;&#10;apple — תפוח&#10;book — ספר&#10;I love English — אני אוהב אנגלית"></textarea>
+          <div class="hub-custom-divider" aria-hidden="true"><span>או</span></div>
+          <div class="hub-custom-upload-wrap">
+            <input type="file" id="customFileInput" accept=".txt,.csv,.md,text/plain" hidden />
+            <button type="button" class="btn btn-outline btn-candy hub-custom-upload-btn" id="customFileBtn">📄 העלאת קובץ</button>
+            <span class="hub-custom-file-name" id="customFileName"></span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon hub-custom-create-btn">יצירת משחק</button>
         </div>
-        <div class="hub-custom-field">
-          <h3 class="hub-custom-field-title">נושא</h3>
-          <select id="customSubject">
-            <option value="english">אנגלית — מילה = תרגום</option>
-            <option value="tanakh">תנ״ך — מילה = פירוש</option>
-            <option value="math">מתמטיקה — תרגיל = תשובה</option>
-            <option value="science">מדעים — מושג = הגדרה</option>
-          </select>
+
+        <button type="button" class="hub-custom-advanced-toggle" id="customAdvancedToggle" aria-expanded="false" aria-controls="customAdvancedPanel">מתקדם</button>
+
+        <div class="hub-custom-advanced hidden" id="customAdvancedPanel">
+          <h3 class="hub-custom-advanced-heading font-cartoon">הגדרות מתקדמות</h3>
+          <div class="hub-custom-field">
+            <h3 class="hub-custom-field-title">שם המשחק</h3>
+            <input type="text" id="customTitle" placeholder="למשל: אוצר מילים — יחידה 3" maxlength="80" />
+          </div>
+          <div class="hub-custom-field">
+            <h3 class="hub-custom-field-title">נושא</h3>
+            <select id="customSubject">
+              <option value="english">אנגלית — מילה = תרגום</option>
+              <option value="tanakh">תנ״ך — מילה = פירוש</option>
+              <option value="math">מתמטיקה — תרגיל = תשובה</option>
+              <option value="science">מדעים — מושג = הגדרה</option>
+            </select>
+          </div>
+          <div class="hub-custom-field">
+            <h3 class="hub-custom-field-title">סוג משחק</h3>
+            <select id="customGamePick">
+              <option value="auto">בחירה אוטומטית (מומלץ)</option>
+            </select>
+          </div>
+          <div class="hub-custom-actions">
+            <button type="button" class="btn btn-ai btn-candy hidden" id="customAiGenerateBtn" data-ai-generate>✨ צור עם AI</button>
+            <button type="button" class="btn btn-outline btn-candy" id="customExampleBtn">טען דוגמה</button>
+            <button type="button" class="btn btn-outline btn-candy hidden" id="customSaveBtn">שמור לחשבון</button>
+          </div>
+          <div class="hub-preview" id="customPreview"></div>
         </div>
-        <div class="hub-custom-field">
-          <h3 class="hub-custom-field-title">סוג משחק</h3>
-          <select id="customGamePick">
-            <option value="auto">בחירה אוטומטית (מומלץ)</option>
-          </select>
-        </div>
-        <div class="hub-custom-field hub-custom-field--content">
-          <h3 class="hub-custom-field-title">תוכן השיעור</h3>
-          <textarea id="customContent" rows="5" placeholder="שורה לכל פריט, למשל:&#10;apple=תפוח&#10;book=ספר&#10;happy=שמח&#10;&#10;או במתמטיקה:&#10;5+3=8&#10;12-4=8"></textarea>
-        </div>
-        <div class="hub-custom-actions">
-          <button type="button" class="btn btn-outline btn-candy" id="customExampleBtn">טען דוגמה</button>
-          <button type="button" class="btn btn-outline btn-candy hidden" id="customSaveBtn">שמור לחשבון</button>
-          <button type="submit" class="btn btn-primary btn-candy font-cartoon">צור משחק ושחק</button>
-        </div>
-        <div class="hub-preview" id="customPreview"></div>
       </form>
     </div>
   </div>
@@ -237,6 +249,7 @@
   <script src="/js/user-data.js"></script>
   <script src="/js/premium.js"></script>
   <script src="/js/parse-content.js"></script>
+  <script src="/js/ai-lesson.js"></script>
   <script src="/js/games-catalog.js"></script>
   <script src="/js/game-content.js"></script>
   <script src="/js/games-hub.js"></script>

@@ -814,6 +814,19 @@ $("#roomMaterialPanelBackdrop")?.addEventListener("click", closeMaterialPanel);
 $("#saveMaterialBtn")?.addEventListener("click", () => {
   saveLearningMaterial($("#roomMaterialInput")?.value || "");
 });
+
+window.AI_LESSON?.bindGenerateButton(
+  $("#roomAiGenerateBtn"),
+  () => ({ text: $("#roomMaterialInput")?.value || "", subject: "english" }),
+  {
+    onToast: showToast,
+    onSuccess: (result) => {
+      const input = $("#roomMaterialInput");
+      if (input) input.value = result.normalized;
+    },
+  }
+);
+
 $("#clearMaterialBtn")?.addEventListener("click", () => {
   if (!confirm("להסיר את החומר הלימודי? המשחקים יחזרו למילון ברירת המחדל.")) return;
   saveLearningMaterial("");

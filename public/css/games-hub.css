@@ -603,6 +603,102 @@
   background: transparent;
 }
 
+.hub-custom-simple {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hub-custom-simple textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: clamp(160px, 28vh, 220px);
+  padding: 16px 18px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  line-height: 1.6;
+  border: 3px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-sticker);
+  resize: vertical;
+}
+
+.hub-custom-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.hub-custom-divider::before,
+.hub-custom-divider::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: var(--line-strong);
+}
+
+.hub-custom-upload-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.hub-custom-upload-btn {
+  margin: 0;
+}
+
+.hub-custom-file-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+.hub-custom-create-btn {
+  margin-top: 4px;
+  font-size: clamp(17px, 2.5vw, 20px);
+  padding: 16px 24px;
+}
+
+.hub-custom-advanced-toggle {
+  display: block;
+  width: 100%;
+  margin: 16px 0 0;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hub-custom-advanced-toggle:hover {
+  opacity: 0.8;
+}
+
+.hub-custom-advanced {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 3px solid var(--line-strong);
+}
+
+.hub-custom-advanced-heading {
+  margin: 0 0 14px;
+  font-size: 1.15rem;
+  text-align: center;
+  color: var(--ink);
+}
+
 .hub-custom {
   margin-top: 20px;
 }
@@ -710,8 +806,49 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  align-items: center;
   justify-content: flex-end;
-  margin-bottom: 16px;
+  margin: 8px 0 16px;
+}
+
+.hub-custom-actions .btn-ai {
+  width: auto;
+  margin: 0;
+}
+
+.room-material-ai-hint {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink);
+  opacity: 0.82;
+}
+
+.btn-ai {
+  padding: 11px 18px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  background: linear-gradient(135deg, #e9d5ff 0%, #c4b5fd 45%, #a78bfa 100%);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+}
+
+.btn-ai:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.btn-ai:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
+.btn-ai.hidden {
+  display: none;
 }
 
 .hub-preview {
