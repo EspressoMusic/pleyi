@@ -411,6 +411,9 @@
     PREMIUM_GAMES,
     init,
     refresh: fetchStatus,
+    getStatus() {
+      return { ...status };
+    },
     hasPremium,
     isPremiumGame,
     canPlayGame,

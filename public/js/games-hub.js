@@ -23,13 +23,17 @@
   const customInputBox = document.getElementById("customInputBox");
   const customCreateBtn = document.getElementById("customCreateBtn");
   const customGameQuota = document.getElementById("customGameQuota");
-  const libraryGameQuota = document.getElementById("libraryGameQuota");
   const userLibrary = document.getElementById("userLibrary");
-  const savedGamesList = document.getElementById("savedGamesList");
-  const playHistoryList = document.getElementById("playHistoryList");
-  const savedGamesPanel = document.getElementById("savedGamesPanel");
-  const playHistoryPanel = document.getElementById("playHistoryPanel");
-  const libraryTabs = document.querySelectorAll(".hub-library-tab");
+  const teacherRoomName = document.getElementById("teacherRoomName");
+  const teacherRoomAvatar = document.getElementById("teacherRoomAvatar");
+  const teacherRoomSub = document.getElementById("teacherRoomSub");
+  const teacherFavoritesList = document.getElementById("teacherFavoritesList");
+  const teacherCreatedList = document.getElementById("teacherCreatedList");
+  const teacherRecentList = document.getElementById("teacherRecentList");
+  const teacherLessonsList = document.getElementById("teacherLessonsList");
+  const teacherFavoritesCount = document.getElementById("teacherFavoritesCount");
+  const teacherCreatedCount = document.getElementById("teacherCreatedCount");
+  const teacherRecentCount = document.getElementById("teacherRecentCount");
 
   const DISABLED_SUBJECTS = new Set(["lifeskills", "science"]);
 
@@ -53,7 +57,7 @@
       subject: "math",
       gameId: "math-blitz",
       items: Array(20),
-      starred: false,
+      starred: true,
       createdAt: Date.now() - 3 * 86400000,
     },
     {
@@ -93,25 +97,123 @@
     },
   ];
 
+  const FREE_LESSON_PACKS = [
+    {
+      id: "en-animals",
+      subject: "english",
+      topic: "animals",
+      level: "easy",
+      title: "חיות באנגלית",
+      desc: "מילים בסיסיות על חיות מחמד וברייה",
+      icon: "🐾",
+      gameId: "word-memory",
+    },
+    {
+      id: "en-food",
+      subject: "english",
+      topic: "food",
+      level: "easy",
+      title: "אוכל ושתייה",
+      desc: "תפוח, מים ומילים יומיומיות באנגלית",
+      icon: "🍎",
+      gameId: "vocabulary-duel",
+    },
+    {
+      id: "en-school",
+      subject: "english",
+      topic: "school",
+      level: "easy",
+      title: "בית ספר",
+      desc: "מורה, תלמיד, ספר ומילות כיתה",
+      icon: "🏫",
+      gameId: "word-memory",
+    },
+    {
+      id: "en-family",
+      subject: "english",
+      topic: "family",
+      level: "medium",
+      title: "משפחה וחברים",
+      desc: "מילים על קשרים ויחסים חברתיים",
+      icon: "👨‍👩‍👧",
+      gameId: "vocabulary-duel",
+    },
+    {
+      id: "math-add",
+      subject: "math",
+      topic: "addition",
+      level: "easy",
+      title: "חיבור בסיסי",
+      desc: "תרגילי חיבור לכיתות א׳–ב׳",
+      icon: "➕",
+      gameId: "math-duel",
+    },
+    {
+      id: "math-mult",
+      subject: "math",
+      topic: "multiplication",
+      level: "medium",
+      title: "לוח הכפל",
+      desc: "תרגילי כפל בקצב מהיר",
+      icon: "✖️",
+      gameId: "math-blitz",
+    },
+    {
+      id: "math-sub",
+      subject: "math",
+      topic: "subtraction",
+      level: "easy",
+      title: "חיסור",
+      desc: "תרגילי חיסור מדורגים",
+      icon: "➖",
+      gameId: "math-duel",
+    },
+    {
+      id: "en-actions",
+      subject: "english",
+      topic: "actions",
+      level: "medium",
+      title: "פעלים ותארים",
+      desc: "run, happy, big ומילים דומות",
+      icon: "🏃",
+      gameId: "tower-stack",
+    },
+  ];
+
+  function applyPreviewNav(user) {
+    document.getElementById("authLoginBtn")?.classList.add("hidden");
+    document.getElementById("mobileLoginBtn")?.classList.add("hidden");
+    document.getElementById("authUserMenu")?.classList.remove("hidden");
+    const userName = document.getElementById("authUserName");
+    if (userName) userName.textContent = user.name;
+    const userPhoto = document.getElementById("authUserPhoto");
+    const userInitial = document.getElementById("authUserInitial");
+    if (userPhoto && userInitial) {
+      userPhoto.removeAttribute("src");
+      userPhoto.classList.add("hidden");
+      userInitial.textContent = (user.name || "?").charAt(0).toUpperCase();
+      userInitial.classList.remove("hidden");
+    }
+  }
+
   function showTeacherDesignPreview() {
     const previewUser = {
       name: "מורה לדוגמה",
       photoURL: null,
       email: "teacher@preview.local",
     };
-    const applyPreviewUser = () => window.GameAuth?.setDevPreviewUser?.(previewUser);
+    const applyPreviewUser = () => {
+      window.GameAuth?.setDevPreviewUser?.(previewUser);
+      applyPreviewNav(previewUser);
+    };
     applyPreviewUser();
     requestAnimationFrame(() => {
       applyPreviewUser();
-      setTimeout(applyPreviewUser, 200);
+      setTimeout(applyPreviewUser, 250);
+      setTimeout(applyPreviewUser, 800);
     });
     userLibrary?.classList.remove("hidden");
-    if (libraryGameQuota) {
-      libraryGameQuota.innerHTML =
-        'משחקים שיצרתם נשמרים אוטומטית. נותרו <strong>3</strong> מתוך 5 יצירות השבוע · סמנו ★ כדי להציג ראשונים.';
-    }
-    renderSavedGames(PREVIEW_SAVED_GAMES);
-    renderPlayHistory(PREVIEW_PLAY_HISTORY);
+    renderTeacherRoom(PREVIEW_SAVED_GAMES, PREVIEW_PLAY_HISTORY, previewUser);
     requestAnimationFrame(() => scrollToMyGames());
   }
 
@@ -534,23 +636,303 @@
     }
   }
 
-  async function updateLibraryQuotaDisplay() {
-    if (!libraryGameQuota || !window.GameAuth?.getUser()) return;
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function formatPremiumDate(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function lessonPackContent(pack) {
+    const pool = window.GAME_CONTENT?.getPool?.(pack.subject, pack.level, pack.topic) || [];
+    return pool.map((item) => `${item.en} — ${item.he}`).join("\n");
+  }
+
+  function lessonPackItems(pack) {
+    return window.GAME_CONTENT?.getPool?.(pack.subject, pack.level, pack.topic) || [];
+  }
+
+  function updateTeacherHeader(user) {
+    const name = user?.name || "מורה";
+    if (teacherRoomName) teacherRoomName.textContent = name;
+    if (!teacherRoomAvatar) return;
+
+    if (user?.photoURL) {
+      teacherRoomAvatar.innerHTML = `<img src="${escapeHtml(user.photoURL)}" alt="" width="52" height="52" referrerpolicy="no-referrer" />`;
+      return;
+    }
+
+    teacherRoomAvatar.textContent = name.charAt(0).toUpperCase();
+  }
+
+  async function renderTeacherSubscription() {
+    if (!teacherRoomSub) return;
+
+    const premium = window.PleyiPremium?.hasPremium?.();
+    if (premium) {
+      const until = formatPremiumDate(window.PleyiPremium?.getStatus?.()?.premiumUntil);
+      teacherRoomSub.className = "teacher-room-sub is-premium";
+      teacherRoomSub.innerHTML = `
+        <div>
+          <p class="teacher-room-sub-label">מצב מנוי</p>
+          <p class="teacher-room-sub-title">פרימיום פעיל</p>
+          ${until ? `<p class="teacher-room-sub-meta">בתוקף עד ${escapeHtml(until)}</p>` : ""}
+        </div>
+        <a href="/premium" class="teacher-room-sub-action">ניהול מנוי</a>`;
+      return;
+    }
 
     try {
       const quota = await UserData.getCustomGameQuota();
-      if (quota.isPremium) {
-        libraryGameQuota.textContent =
-          "משחקים שיצרתם נשמרים אוטומטית. סמנו ★ כדי להציג ראשונים.";
-        return;
-      }
-
-      libraryGameQuota.innerHTML = quota.allowed
-        ? `משחקים שיצרתם נשמרים אוטומטית. נותרו <strong>${quota.remaining}</strong> מתוך ${quota.limit} יצירות השבוע · סמנו ★ כדי להציג ראשונים.`
-        : `הגעתם למכסה — ${quota.limit} משחקים מותאמים בשבוע. <a href="/premium">שדרגו לפרימיום</a> ליצירה ללא הגבלה. סמנו ★ כדי להציג ראשונים.`;
+      teacherRoomSub.className = "teacher-room-sub";
+      teacherRoomSub.innerHTML = quota.allowed
+        ? `<div>
+            <p class="teacher-room-sub-label">מצב מנוי</p>
+            <p class="teacher-room-sub-title">תוכנית חינמית</p>
+            <p class="teacher-room-sub-meta">נותרו ${quota.remaining} מתוך ${quota.limit} יצירות השבוע</p>
+          </div>
+          <a href="/premium" class="teacher-room-sub-action">שדרוג לפרימיום</a>`
+        : `<div>
+            <p class="teacher-room-sub-label">מצב מנוי</p>
+            <p class="teacher-room-sub-title">הגעתם למכסה השבועית</p>
+            <p class="teacher-room-sub-meta">${quota.limit} משחקים מותאמים בשבוע בחינם</p>
+          </div>
+          <a href="/premium" class="teacher-room-sub-action">שדרוג לפרימיום</a>`;
     } catch {
-      libraryGameQuota.textContent =
-        "משחקים שיצרתם נשמרים אוטומטית. סמנו ★ כדי להציג ראשונים.";
+      teacherRoomSub.className = "teacher-room-sub";
+      teacherRoomSub.innerHTML = `
+        <div>
+          <p class="teacher-room-sub-label">מצב מנוי</p>
+          <p class="teacher-room-sub-title">תוכנית חינמית</p>
+        </div>
+        <a href="/premium" class="teacher-room-sub-action">שדרוג לפרימיום</a>`;
+    }
+  }
+
+  function renderTeacherGameRows(listEl, games, { showStar = true, showEdit = true, showDelete = true } = {}) {
+    if (!listEl) return;
+    if (!games.length) {
+      listEl.innerHTML = '<p class="teacher-empty">אין פריטים להצגה כרגע.</p>';
+      return;
+    }
+
+    listEl.innerHTML = games
+      .map(
+        (g) => `
+      <article class="teacher-game-row${g.starred ? " is-starred" : ""}">
+        ${
+          showStar
+            ? `<button type="button" class="teacher-game-star${g.starred ? " is-active" : ""}" data-star-saved="${g.id}" aria-label="${g.starred ? "הסר ממועדפים" : "הוסף למועדפים"}" aria-pressed="${g.starred ? "true" : "false"}">${g.starred ? "★" : "☆"}</button>`
+            : ""
+        }
+        <div class="teacher-game-info">
+          <h4 class="font-cartoon">${escapeHtml(g.title)}</h4>
+          <p>${subjectLabel(g.subject)} · ${gameName(g.gameId)} · ${g.items?.length || 0} פריטים</p>
+          <time>${UserData.formatDate(g.updatedAt || g.createdAt)}</time>
+        </div>
+        <div class="teacher-game-actions">
+          <button type="button" class="teacher-btn teacher-btn-play" data-play-saved="${g.id}">שחק</button>
+          ${showEdit ? `<button type="button" class="teacher-btn teacher-btn-ghost" data-edit-saved="${g.id}">ערוך</button>` : ""}
+          ${showDelete ? `<button type="button" class="teacher-btn teacher-btn-ghost teacher-btn-danger" data-delete-saved="${g.id}" aria-label="מחק">🗑</button>` : ""}
+        </div>
+      </article>`
+      )
+      .join("");
+
+    bindTeacherSavedGameActions(listEl, games, { showStar, showEdit, showDelete });
+  }
+
+  function bindTeacherSavedGameActions(listEl, games, { showStar, showEdit, showDelete }) {
+    listEl.querySelectorAll("[data-play-saved]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const game = games.find((x) => x.id === btn.dataset.playSaved);
+        if (!game) return;
+        UserData.launchGame({
+          subject: game.subject,
+          gameId: game.gameId,
+          items: game.items,
+          title: game.title,
+          savedGameId: game.id,
+        });
+      });
+    });
+
+    if (showEdit) {
+      listEl.querySelectorAll("[data-edit-saved]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const game = games.find((x) => x.id === btn.dataset.editSaved);
+          if (!game) return;
+          editingSavedId = game.id;
+          customTitle.value = game.title || "";
+          customSubject.value = game.subject;
+          customContent.value = game.content || "";
+          updateCustomGameOptions();
+          customGamePick.value = game.gameId;
+          updatePreview();
+          openCustomModal({ advanced: true });
+          showToast("עריכת משחק — שמרו כדי לעדכן");
+        });
+      });
+    }
+
+    if (showStar) {
+      listEl.querySelectorAll("[data-star-saved]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const res = await UserData.toggleSavedGameStar(btn.dataset.starSaved);
+          if (!res.ok) {
+            showToast(res.error || "לא ניתן לעדכן מועדפים");
+            return;
+          }
+          await refreshLibrary();
+        });
+      });
+    }
+
+    if (showDelete) {
+      listEl.querySelectorAll("[data-delete-saved]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("למחוק את המשחק השמור?")) return;
+          await UserData.deleteSavedGame(btn.dataset.deleteSaved);
+          if (editingSavedId === btn.dataset.deleteSaved) editingSavedId = null;
+          await refreshLibrary();
+          showToast("המשחק נמחק");
+        });
+      });
+    }
+  }
+
+  function renderTeacherHistory(entries) {
+    if (!teacherRecentList) return;
+    if (!entries.length) {
+      teacherRecentList.innerHTML =
+        '<p class="teacher-empty">עדיין אין היסטוריה. שחקו משחק — הניקוד יישמר כאן.</p>';
+      return;
+    }
+
+    teacherRecentList.innerHTML = entries
+      .map(
+        (e) => `
+      <article class="teacher-game-row">
+        <div class="teacher-game-info">
+          <h4 class="font-cartoon">${escapeHtml(e.gameTitle)}${e.isCustom ? " (מותאם)" : ""}</h4>
+          <p>ניקוד: <strong>${e.score ?? 0}</strong>${e.reason ? ` · ${escapeHtml(e.reason)}` : ""}</p>
+          <time>${UserData.formatDate(e.playedAt)}</time>
+        </div>
+        <div class="teacher-game-actions">
+          <a href="/play/${e.gameId}" class="teacher-btn teacher-btn-ghost">שחק שוב</a>
+        </div>
+      </article>`
+      )
+      .join("");
+  }
+
+  function renderTeacherLessonPacks() {
+    if (!teacherLessonsList) return;
+
+    teacherLessonsList.innerHTML = FREE_LESSON_PACKS.map(
+      (pack) => `
+      <article class="teacher-lesson-card">
+        <span class="teacher-lesson-icon" aria-hidden="true">${pack.icon}</span>
+        <h4 class="font-cartoon">${escapeHtml(pack.title)}</h4>
+        <p>${escapeHtml(pack.desc)}</p>
+        <span class="teacher-lesson-meta">${escapeHtml(subjectLabel(pack.subject))} · ${lessonPackItems(pack).length} פריטים</span>
+        <div class="teacher-lesson-actions">
+          <button type="button" class="teacher-btn teacher-btn-play" data-lesson-use="${pack.id}">צור משחק</button>
+          <button type="button" class="teacher-btn teacher-btn-ghost" data-lesson-play="${pack.id}">שחק</button>
+        </div>
+      </article>`
+    ).join("");
+
+    teacherLessonsList.querySelectorAll("[data-lesson-use]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const pack = FREE_LESSON_PACKS.find((p) => p.id === btn.dataset.lessonUse);
+        if (!pack) return;
+        editingSavedId = null;
+        customSubject.value = pack.subject;
+        customTitle.value = pack.title;
+        customContent.value = lessonPackContent(pack);
+        updateCustomGameOptions();
+        customGamePick.value = pack.gameId;
+        updatePreview();
+        openCustomModal({ advanced: true });
+        showToast("מערך שיעור נטען — ערכו ושמרו");
+      });
+    });
+
+    teacherLessonsList.querySelectorAll("[data-lesson-play]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const pack = FREE_LESSON_PACKS.find((p) => p.id === btn.dataset.lessonPlay);
+        if (!pack) return;
+        window.GAME_CONTENT?.launchPlay?.({
+          subject: pack.subject,
+          gameId: pack.gameId,
+          level: pack.level,
+          topic: pack.topic,
+          gameTitle: pack.title,
+        });
+      });
+    });
+  }
+
+  async function renderTeacherRoom(saved, history, userOverride) {
+    const user = userOverride || window.GameAuth?.getUser();
+    if (!user) return;
+
+    updateTeacherHeader(user);
+    await renderTeacherSubscription();
+
+    const favorites = saved.filter((g) => g.starred);
+    if (teacherFavoritesCount) teacherFavoritesCount.textContent = String(favorites.length);
+    if (teacherCreatedCount) teacherCreatedCount.textContent = String(saved.length);
+    if (teacherRecentCount) teacherRecentCount.textContent = String(history.length);
+
+    renderTeacherGameRows(teacherFavoritesList, favorites, { showStar: true, showEdit: true, showDelete: false });
+    if (!favorites.length && teacherFavoritesList) {
+      teacherFavoritesList.innerHTML =
+        '<p class="teacher-empty">אין עדיין מועדפים. סמנו ★ במשחק שיצרתם.</p>';
+    }
+
+    if (!saved.length && teacherCreatedList) {
+      teacherCreatedList.innerHTML =
+        '<p class="teacher-empty">עדיין לא יצרתם משחקים. צרו משחק מותאם — הוא יישמר כאן.</p>';
+    } else {
+      renderTeacherGameRows(teacherCreatedList, saved);
+    }
+
+    renderTeacherHistory(history);
+    renderTeacherLessonPacks();
+  }
+
+  async function refreshLibrary() {
+    if (TEACHER_PREVIEW) return;
+
+    if (!window.GameAuth?.getUser()) {
+      userLibrary?.classList.add("hidden");
+      return;
+    }
+
+    userLibrary?.classList.remove("hidden");
+
+    try {
+      const [saved, history] = await Promise.all([
+        UserData.getSavedGames(),
+        UserData.getPlayHistory(),
+      ]);
+      await renderTeacherRoom(saved, history);
+    } catch (err) {
+      console.error(err);
+      if (teacherCreatedList) {
+        teacherCreatedList.innerHTML =
+          '<p class="teacher-empty">לא הצלחנו לטעון נתונים. ודאו ש-Firestore מוגדר.</p>';
+      }
     }
   }
 
@@ -639,152 +1021,6 @@
     }
   );
 
-  function renderSavedGames(games) {
-    if (!savedGamesList) return;
-    if (!games.length) {
-      savedGamesList.innerHTML =
-        '<p class="hub-library-empty">עדיין לא יצרתם משחקים. צרו משחק מותאם — הוא יישמר אוטומטית כאן.</p>';
-      return;
-    }
-
-    savedGamesList.innerHTML = games
-      .map(
-        (g) => `
-      <article class="hub-library-item sticker-card sticker-white${g.starred ? " is-starred" : ""}">
-        <button type="button" class="hub-library-star${g.starred ? " is-active" : ""}" data-star-saved="${g.id}" aria-label="${g.starred ? "הסר כוכב" : "סמן כוכב"}" aria-pressed="${g.starred ? "true" : "false"}">${g.starred ? "★" : "☆"}</button>
-        <div class="hub-library-item-body">
-          <h3 class="font-cartoon">${escapeHtml(g.title)}</h3>
-          <p>${subjectLabel(g.subject)} · ${gameName(g.gameId)} · ${g.items?.length || 0} פריטים</p>
-          <time>${UserData.formatDate(g.updatedAt || g.createdAt)}</time>
-        </div>
-        <div class="hub-library-item-actions">
-          <button type="button" class="btn btn-primary btn-candy btn-sm" data-play-saved="${g.id}">▶ שחק</button>
-          <button type="button" class="btn btn-outline btn-candy btn-sm" data-edit-saved="${g.id}">✏️ ערוך</button>
-          <button type="button" class="btn btn-outline btn-candy btn-sm hub-btn-danger" data-delete-saved="${g.id}">🗑</button>
-        </div>
-      </article>`
-      )
-      .join("");
-
-    savedGamesList.querySelectorAll("[data-play-saved]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const game = games.find((x) => x.id === btn.dataset.playSaved);
-        if (!game) return;
-        UserData.launchGame({
-          subject: game.subject,
-          gameId: game.gameId,
-          items: game.items,
-          title: game.title,
-          savedGameId: game.id,
-        });
-      });
-    });
-
-    savedGamesList.querySelectorAll("[data-edit-saved]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const game = games.find((x) => x.id === btn.dataset.editSaved);
-        if (!game) return;
-        editingSavedId = game.id;
-        customTitle.value = game.title || "";
-        customSubject.value = game.subject;
-        customContent.value = game.content || "";
-        updateCustomGameOptions();
-        customGamePick.value = game.gameId;
-        updatePreview();
-        openCustomModal({ advanced: true });
-        showToast("עריכת משחק — שמרו כדי לעדכן");
-      });
-    });
-
-    savedGamesList.querySelectorAll("[data-star-saved]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const res = await UserData.toggleSavedGameStar(btn.dataset.starSaved);
-        if (!res.ok) {
-          showToast(res.error || "לא ניתן לעדכן כוכב");
-          return;
-        }
-        await refreshLibrary();
-      });
-    });
-
-    savedGamesList.querySelectorAll("[data-delete-saved]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        if (!confirm("למחוק את המשחק השמור?")) return;
-        await UserData.deleteSavedGame(btn.dataset.deleteSaved);
-        if (editingSavedId === btn.dataset.deleteSaved) editingSavedId = null;
-        await refreshLibrary();
-        showToast("המשחק נמחק");
-      });
-    });
-  }
-
-  function renderPlayHistory(entries) {
-    if (!playHistoryList) return;
-    if (!entries.length) {
-      playHistoryList.innerHTML =
-        '<p class="hub-library-empty">עדיין אין היסטוריה. שחקו משחק — הניקוד יישמר כאן.</p>';
-      return;
-    }
-
-    playHistoryList.innerHTML = entries
-      .map(
-        (e) => `
-      <article class="hub-library-item sticker-card sticker-white">
-        <div class="hub-library-item-body">
-          <h3 class="font-cartoon">${escapeHtml(e.gameTitle)}${e.isCustom ? " (מותאם)" : ""}</h3>
-          <p>ניקוד: <strong>${e.score ?? 0}</strong>${e.reason ? ` · ${escapeHtml(e.reason)}` : ""}</p>
-          <time>${UserData.formatDate(e.playedAt)}</time>
-        </div>
-        <div class="hub-library-item-actions">
-          <a href="/play/${e.gameId}" target="_blank" rel="noopener" class="btn btn-outline btn-candy btn-sm">שחק שוב</a>
-        </div>
-      </article>`
-      )
-      .join("");
-  }
-
-  function escapeHtml(str) {
-    return String(str || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  }
-
-  async function refreshLibrary() {
-    if (TEACHER_PREVIEW) return;
-
-    if (!window.GameAuth?.getUser()) {
-      userLibrary?.classList.add("hidden");
-      return;
-    }
-
-    userLibrary?.classList.remove("hidden");
-
-    try {
-      const [saved, history] = await Promise.all([
-        UserData.getSavedGames(),
-        UserData.getPlayHistory(),
-      ]);
-      renderSavedGames(saved);
-      renderPlayHistory(history);
-      await updateLibraryQuotaDisplay();
-    } catch (err) {
-      console.error(err);
-      savedGamesList.innerHTML =
-        '<p class="hub-library-empty">לא הצלחנו לטעון נתונים. ודאו ש-Firestore מוגדר.</p>';
-    }
-  }
-
-  libraryTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      libraryTabs.forEach((t) => t.classList.toggle("active", t === tab));
-      const isSaved = tab.dataset.lib === "saved";
-      savedGamesPanel?.classList.toggle("hidden", !isSaved);
-      playHistoryPanel?.classList.toggle("hidden", isSaved);
-    });
-  });
-
   async function resumePendingCreate() {
     const raw = sessionStorage.getItem("pleyi-pending-create");
     if (!raw || !window.GameAuth?.getUser()) return;
@@ -810,15 +1046,17 @@
 
   function scrollToMyGames() {
     document.getElementById("myGames")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    libraryTabs.forEach((t) => t.classList.toggle("active", t.dataset.lib === "saved"));
-    savedGamesPanel?.classList.remove("hidden");
-    playHistoryPanel?.classList.add("hidden");
   }
 
   document.getElementById("navMyGamesLink")?.addEventListener("click", (e) => {
     e.preventDefault();
     window.GameAuth?._closeUserDropdown?.();
     scrollToMyGames();
+  });
+
+  document.getElementById("teacherRoomLogout")?.addEventListener("click", async () => {
+    await window.GameAuth?.logout?.();
+    showToast("התנתקת בהצלחה");
   });
 
   window.GameAuth?.bindModals(showToast);
@@ -832,21 +1070,23 @@
     }
   });
 
-  } else if (window.location.hash === "#myGames" && window.GameAuth?.getUser()) {
+  if (window.location.hash === "#myGames" && (window.GameAuth?.getUser() || TEACHER_PREVIEW)) {
     scrollToMyGames();
   }
 
   window.addEventListener("hashchange", () => {
-    if (TEACHER_PREVIEW) {
-      if (window.location.hash === "#myGames") scrollToMyGames();
-      return;
+    if (window.location.hash === "#myGames" && (window.GameAuth?.getUser() || TEACHER_PREVIEW)) {
+      scrollToMyGames();
     }
-    if (window.location.hash === "#myGames" && window.GameAuth?.getUser()) scrollToMyGames();
   });
+
   document.addEventListener("premium-updated", () => {
     renderGrid();
     updateCustomQuotaDisplay();
-    updateLibraryQuotaDisplay();
+    if (window.GameAuth?.getUser() || TEACHER_PREVIEW) {
+      refreshLibrary();
+      if (TEACHER_PREVIEW) showTeacherDesignPreview();
+    }
   });
 
   applyDisabledSubjects();

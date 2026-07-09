@@ -176,7 +176,7 @@ body.in-room .logo-text.font-brand {
 /* כותרות סקשן — מסגרת עבה סביב האותיות והסימנים, בלי צל */
 .clean-section-title.font-cartoon,
 body.clean-site h2.font-cartoon,
-.hub-body :is(.hub-title, .hub-library-header h2, .hub-custom-header h2, .hub-skill-filters-label).font-cartoon {
+.hub-body :is(.hub-title, .teacher-room-name, .hub-custom-header h2, .hub-skill-filters-label).font-cartoon {
   paint-order: stroke fill;
   -webkit-text-stroke: clamp(6px, 1vw, 10px) var(--ink);
   -webkit-text-stroke-color: var(--ink);

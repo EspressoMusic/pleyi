@@ -47,7 +47,7 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
-            <a href="#myGames" class="nav-user-link" id="navMyGamesLink" role="menuitem">משחקים שיצרתי</a>
+            <a href="#myGames" class="nav-user-link" id="navMyGamesLink" role="menuitem">חדר המורה</a>
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
           </div>
         </div>
@@ -88,20 +88,65 @@
       <p class="hub-custom-cta-text">הדביקו את תוכן השיעור — המערכת תיצור משחק מותאם</p>
     </button>
 
-    <section class="hub-library hidden" id="userLibrary">
-      <header class="hub-library-header" id="myGames">
-        <h2 class="font-cartoon">המשחקים שלי</h2>
-        <p class="hub-library-sub" id="libraryGameQuota">משחקים שיצרתם נשמרים אוטומטית. סמנו ★ כדי להציג ראשונים.</p>
-        <div class="hub-library-tabs" role="tablist">
-          <button type="button" class="hub-library-tab active" data-lib="saved" role="tab">משחקים שיצרתי</button>
-          <button type="button" class="hub-library-tab" data-lib="history" role="tab">משחקים ששיחקתי</button>
+    <section class="teacher-room hidden" id="userLibrary" aria-labelledby="myGames">
+      <div class="teacher-room-shell sticker-card sticker-white" id="myGames">
+        <header class="teacher-room-top">
+          <div class="teacher-room-identity">
+            <div class="teacher-room-avatar" id="teacherRoomAvatar" aria-hidden="true"></div>
+            <div>
+              <p class="teacher-room-kicker">חדר המורה</p>
+              <h2 class="teacher-room-name font-cartoon" id="teacherRoomName">שלום</h2>
+            </div>
+          </div>
+          <button type="button" class="teacher-room-logout" id="teacherRoomLogout">התנתקות</button>
+        </header>
+
+        <div class="teacher-room-sub" id="teacherRoomSub" aria-live="polite"></div>
+
+        <nav class="teacher-room-nav" aria-label="אזורים בחדר המורה">
+          <a href="#teacherFavorites" class="teacher-room-nav-link">מועדפים</a>
+          <a href="#teacherCreated" class="teacher-room-nav-link">שיצרתי</a>
+          <a href="#teacherRecent" class="teacher-room-nav-link">שיחקתי לאחרונה</a>
+          <a href="#teacherLessons" class="teacher-room-nav-link">מערכי שיעור</a>
+        </nav>
+
+        <div class="teacher-room-sections">
+          <section class="teacher-room-section" id="teacherFavorites" aria-labelledby="teacherFavoritesTitle">
+            <div class="teacher-room-section-head">
+              <h3 class="teacher-room-section-title font-cartoon" id="teacherFavoritesTitle">מועדפים</h3>
+              <span class="teacher-room-count" id="teacherFavoritesCount"></span>
+            </div>
+            <p class="teacher-room-section-hint">משחקים שסימנתם ב-★ לגישה מהירה</p>
+            <div class="teacher-room-list" id="teacherFavoritesList"></div>
+          </section>
+
+          <section class="teacher-room-section" id="teacherCreated" aria-labelledby="teacherCreatedTitle">
+            <div class="teacher-room-section-head">
+              <h3 class="teacher-room-section-title font-cartoon" id="teacherCreatedTitle">משחקים שיצרתי</h3>
+              <span class="teacher-room-count" id="teacherCreatedCount"></span>
+            </div>
+            <p class="teacher-room-section-hint">משחקים מותאמים שנשמרו מהתאמה אישית</p>
+            <div class="teacher-room-list" id="teacherCreatedList"></div>
+          </section>
+
+          <section class="teacher-room-section" id="teacherRecent" aria-labelledby="teacherRecentTitle">
+            <div class="teacher-room-section-head">
+              <h3 class="teacher-room-section-title font-cartoon" id="teacherRecentTitle">שיחקתי לאחרונה</h3>
+              <span class="teacher-room-count" id="teacherRecentCount"></span>
+            </div>
+            <p class="teacher-room-section-hint">היסטוריית משחקים וניקוד אחרון</p>
+            <div class="teacher-room-list" id="teacherRecentList"></div>
+          </section>
+
+          <section class="teacher-room-section teacher-room-section--lessons" id="teacherLessons" aria-labelledby="teacherLessonsTitle">
+            <div class="teacher-room-section-head">
+              <h3 class="teacher-room-section-title font-cartoon" id="teacherLessonsTitle">מערכי שיעור חינמיים</h3>
+              <span class="teacher-room-badge-free">חינם</span>
+            </div>
+            <p class="teacher-room-section-hint">תוכן מוכן מבית Pleyi — לחצו כדי ליצור משחק או לשחק מיד</p>
+            <div class="teacher-lesson-grid" id="teacherLessonsList"></div>
+          </section>
         </div>
-      </header>
-      <div class="hub-library-panel" id="savedGamesPanel">
-        <div class="hub-library-list" id="savedGamesList"></div>
-      </div>
-      <div class="hub-library-panel hidden" id="playHistoryPanel">
-        <div class="hub-library-list" id="playHistoryList"></div>
       </div>
     </section>
   </main>
