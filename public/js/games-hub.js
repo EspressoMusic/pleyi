@@ -94,10 +94,16 @@
   ];
 
   function showTeacherDesignPreview() {
-    window.GameAuth?.setDevPreviewUser?.({
+    const previewUser = {
       name: "מורה לדוגמה",
       photoURL: null,
       email: "teacher@preview.local",
+    };
+    const applyPreviewUser = () => window.GameAuth?.setDevPreviewUser?.(previewUser);
+    applyPreviewUser();
+    requestAnimationFrame(() => {
+      applyPreviewUser();
+      setTimeout(applyPreviewUser, 200);
     });
     userLibrary?.classList.remove("hidden");
     if (libraryGameQuota) {
@@ -826,8 +832,6 @@
     }
   });
 
-  if (TEACHER_PREVIEW) {
-    showTeacherDesignPreview();
   } else if (window.location.hash === "#myGames" && window.GameAuth?.getUser()) {
     scrollToMyGames();
   }
@@ -852,4 +856,5 @@
   updatePreview();
   refreshLibrary();
   if (!TEACHER_PREVIEW && window.GameAuth?.getUser()) resumePendingCreate();
+  if (TEACHER_PREVIEW) showTeacherDesignPreview();
 })();
