@@ -376,7 +376,7 @@ body.clean-site .mobile-nav-cta::after {
   background: #fff;
   border: 3px solid var(--ink);
   border-radius: 18px;
-  padding: 20px 22px;
+  padding: 24px 26px;
   box-shadow: 5px 5px 0 var(--ink);
   animation-play-state: paused;
 }
@@ -555,9 +555,10 @@ body.clean-site .mobile-nav-cta::after {
 
 .how-timeline-body h3 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: clamp(1.4rem, 3.2vw, 1.85rem);
   color: var(--electric);
   font-weight: 800;
+  line-height: 1.35;
   -webkit-text-stroke: 0;
   text-shadow: none;
   paint-order: normal;
@@ -1069,11 +1070,11 @@ body.in-room {
   }
 
   .how-timeline-body {
-    padding: 16px 16px;
+    padding: 18px 18px;
   }
 
   .how-timeline-body h3 {
-    font-size: 0.95rem;
+    font-size: clamp(1.2rem, 4.5vw, 1.45rem);
     line-height: 1.35;
   }
 

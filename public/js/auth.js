@@ -67,16 +67,27 @@ window.GameAuth = {
     }
 
     FirebaseApp.auth.onAuthStateChanged(async (fbUser) => {
-      this._user = this._mapUser(fbUser);
+      if (fbUser) {
+        this._user = this._mapUser(fbUser);
+      } else if (!this._isTeacherPreview()) {
+        this._user = null;
+      }
       if (fbUser) await this._syncProfile(fbUser);
       this._ready = true;
       this.updateNav();
+
+      if (redirectWelcome && fbUser) {
+        document.getElementById("loginModal")?.classList.add("hidden");
+        if (/^\/games\/?$/.test(window.location.pathname)) {
+          window.location.hash = "myGames";
+        }
+      }
+
       this._notify();
 
       if (redirectWelcome && fbUser && this._toastFn) {
         this._toastFn(`שלום, ${redirectWelcome}!`);
         redirectWelcome = null;
-        document.getElementById("loginModal")?.classList.add("hidden");
       }
 
       if (redirectError) {
@@ -93,6 +104,21 @@ window.GameAuth = {
 
   isConfigured() {
     return FirebaseApp.configured;
+  },
+
+  setDevPreviewUser(user) {
+    if (!user) return;
+    this._user = user;
+    this._ready = true;
+    this.updateNav();
+    this._notify();
+  },
+
+  _isTeacherPreview() {
+    return (
+      location.hostname === "localhost" &&
+      new URLSearchParams(location.search).get("preview") === "teacher"
+    );
   },
 
   async signInWithGoogle() {

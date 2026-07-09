@@ -33,6 +33,10 @@ app.get("/room", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "room.html"));
 });
 
+app.get("/premium", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "premium.html"));
+});
+
 app.get("/play/:gameId", (req, res) => {
   const valid = [
     "word-runner", "spot-diff", "candy-match", "word-shop",
@@ -79,6 +83,7 @@ app.get("/api/premium/plans", (_req, res) => {
     ok: true,
     plans: premiumLib.PLANS,
     premiumGames: premiumLib.PREMIUM_GAMES,
+    freeWeeklyCustomGames: premiumLib.FREE_WEEKLY_CUSTOM_GAMES,
     settings: {
       bitPhone: bookingSettings.bitPhone,
       bitPayName: bookingSettings.bitPayName,

@@ -45,10 +45,15 @@
 
 .hub-premium-lock {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 16px;
+  right: 16px;
+  left: auto;
   z-index: 2;
-  font-size: 1.35rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  filter: grayscale(1);
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .premium-modal {
@@ -74,14 +79,16 @@
 .premium-modal-sheet {
   position: relative;
   z-index: 1;
-  width: min(440px, 94vw);
+  width: min(380px, 94vw);
   max-height: min(92vh, 720px);
   overflow: auto;
-  padding: clamp(22px, 4vw, 28px);
-  background: var(--memyellow);
+  padding: clamp(24px, 4vw, 32px) clamp(20px, 4vw, 28px);
+  background: var(--mempurple);
   border: 4px solid var(--ink);
   border-radius: calc(var(--radius) + 4px);
   box-shadow: var(--shadow-candy);
+  text-align: center;
+  color: var(--ink);
 }
 
 .premium-modal-close {
@@ -103,38 +110,75 @@
 }
 
 .premium-modal-title {
-  margin: 0 0 6px;
+  margin: 0 0 12px;
   font-size: clamp(1.35rem, 4vw, 1.75rem);
   font-weight: 900;
   text-align: center;
   color: var(--ink);
 }
 
+.premium-modal-lock {
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
 .premium-modal-desc {
-  margin: 0 0 18px;
-  font-size: 15px;
+  margin: 0 0 22px;
+  font-size: 16px;
   font-weight: 700;
-  line-height: 1.5;
+  line-height: 1.55;
   text-align: center;
   color: var(--ink);
-  opacity: 0.88;
+  opacity: 1;
 }
 
-.premium-modal-games {
-  display: flex;
-  flex-wrap: wrap;
+.premium-modal-desc strong {
+  font-weight: 900;
+}
+
+.premium-modal-cta {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 18px;
+  text-decoration: none;
+  margin-top: 4px;
 }
 
-.premium-modal-game-pill {
-  padding: 6px 12px;
-  font-size: 13px;
-  font-weight: 800;
-  background: var(--white);
-  border: 2px solid var(--ink);
-  border-radius: 999px;
+.premium-page-body {
+  min-height: 100vh;
+}
+
+.premium-page-main {
+  position: relative;
+  z-index: 1;
+  padding: 108px 20px 72px;
+  max-width: 520px;
+}
+
+.premium-page-card {
+  padding: clamp(24px, 4vw, 32px);
+  background: var(--memyellow);
+  border: 4px solid var(--ink);
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: var(--shadow-candy);
+}
+
+.premium-page-title {
+  margin: 0 0 10px;
+  font-size: clamp(1.6rem, 5vw, 2rem);
+  text-align: center;
+  color: var(--ink);
+}
+
+.premium-page-lead {
+  margin: 0 0 20px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.55;
+  text-align: center;
+  color: var(--ink);
+  opacity: 0.9;
 }
 
 .premium-plans {
@@ -302,6 +346,7 @@
 .premium-success {
   text-align: center;
   padding: 8px 0;
+  color: var(--ink);
 }
 
 .premium-success h3 {

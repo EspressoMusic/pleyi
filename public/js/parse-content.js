@@ -126,7 +126,7 @@
       return false;
     }
 
-    if (subject === "tanakh" || subject === "science") {
+    if (subject === "lifeskills" || subject === "science") {
       if (leftHe && rightHe) return !isSkippedLabel(left) && !isSkippedLabel(right);
       return (leftEn && rightHe) || (rightEn && leftHe);
     }
@@ -144,7 +144,7 @@
 
     if (leftHe && rightEn && !leftEn) return { en: right, he: left };
     if (rightHe && leftEn && !rightEn) return { en: left, he: right };
-    if (subject === "tanakh" || subject === "science") {
+    if (subject === "lifeskills" || subject === "science") {
       if (leftHe && rightHe && !leftEn && !rightEn) return { en: left, he: right };
     }
     return { en: left, he: right };
@@ -152,7 +152,7 @@
 
   function itemHint(en, subject) {
     if (subject === "math") return "פתרו את התרגיל";
-    if (subject === "tanakh") return `מה פירוש ${en}?`;
+    if (subject === "lifeskills") return `מה המשמעות של ${en}?`;
     if (subject === "science") return `מה ההגדרה של ${en}?`;
     if (String(en).includes(" ")) return `סדרו: ${en}`;
     return `What is ${en}?`;
@@ -160,7 +160,7 @@
 
   function itemEmoji(subject) {
     if (subject === "math") return "🔢";
-    if (subject === "tanakh") return "📖";
+    if (subject === "lifeskills") return "🌱";
     if (subject === "science") return "🔬";
     return "📖";
   }

@@ -146,12 +146,9 @@
       if (!window.PleyiPremium.hasPremium()) {
         root.innerHTML = `
           <div class="play-premium-gate">
-            <p>המשחק <strong>${displayTitle}</strong> זמין במנוי פרימיום.</p>
-            <button type="button" id="playPremiumUnlockBtn">פתחו פרימיום</button>
+            <p>המשחק <strong>${displayTitle}</strong> זמין למנויי פרימיום.</p>
+            <a class="btn btn-primary btn-candy font-cartoon" href="/premium?game=${encodeURIComponent(gameId)}">להרשמת מנוי</a>
           </div>`;
-        document.getElementById("playPremiumUnlockBtn")?.addEventListener("click", () => {
-          window.PleyiPremium.openModal(gameId);
-        });
         window.PleyiPremium.openModal(gameId);
         return;
       }

@@ -679,6 +679,27 @@ button { font-family: inherit; }
   word-break: break-word;
 }
 
+.nav-user-link {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: inherit;
+  text-align: center;
+  text-decoration: none;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: var(--shadow-sticker);
+}
+
+.nav-user-link:hover {
+  transform: translateY(-1px);
+}
+
 .nav-user-logout {
   width: 100%;
   padding: 10px 14px;

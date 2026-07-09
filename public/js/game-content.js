@@ -52,23 +52,23 @@
     { en: "90 − 45", he: "45", hint: "חיסור", emoji: "➖", level: 3, topic: "subtraction" },
   ];
 
-  const tanakh = [
-    { en: "בראשית", he: "בתחילת", hint: "מה פירוש בראשית?", emoji: "📖", level: 1, topic: "bereshit" },
-    { en: "שמים", he: "רקיע", hint: "מה פירוש שמים?", emoji: "📖", level: 1, topic: "bereshit" },
-    { en: "ארץ", he: "יבשה", hint: "מה פירוש ארץ?", emoji: "📖", level: 1, topic: "bereshit" },
-    { en: "אור", he: "יום", hint: "מה נברא ביום ראשון?", emoji: "📖", level: 1, topic: "bereshit" },
-    { en: "מים", he: "ים", hint: "מה נברא ביום שני?", emoji: "📖", level: 1, topic: "bereshit" },
-    { en: "שמש", he: "מאור הגדול", hint: "מה פירוש שמש?", emoji: "📖", level: 2, topic: "bereshit" },
-    { en: "ירח", he: "מאור הקטן", hint: "מה פירוש ירח?", emoji: "📖", level: 2, topic: "bereshit" },
-    { en: "אדם", he: "האדם הראשון", hint: "מי נברא ביום שישי?", emoji: "📖", level: 2, topic: "bereshit" },
-    { en: "חוה", he: "אשת אדם", hint: "מי אשת אדם?", emoji: "📖", level: 2, topic: "bereshit" },
-    { en: "גן עדן", he: "גן הנעים", hint: "איפה גרו אדם וחוה?", emoji: "📖", level: 2, topic: "bereshit" },
-    { en: "נח", he: "צדיק", hint: "מי בנה תיבה?", emoji: "📖", level: 2, topic: "noach" },
-    { en: "תיבה", he: "ספינה", hint: "מה בנה נח?", emoji: "📖", level: 2, topic: "noach" },
-    { en: "קין", he: "בנו הבכור של אדם", hint: "בנו הבכור של אדם", emoji: "📖", level: 3, topic: "bereshit" },
-    { en: "הבל", he: "אח קין", hint: "אחיו של קין", emoji: "📖", level: 3, topic: "bereshit" },
-    { en: "מבול", he: "גשם רב", hint: "מה קרה בימי נח?", emoji: "📖", level: 3, topic: "noach" },
-    { en: "קשת", he: "סימן הברית", hint: "מה הראה ה׳ אחרי המבול?", emoji: "📖", level: 3, topic: "noach" },
+  const lifeskills = [
+    { en: "האזנה פעילה", he: "להקשיב תוך הבנת הדובר", hint: "מה זה האזנה פעילה?", emoji: "🌱", level: 1, topic: "communication" },
+    { en: "תקשורת בלתי מילולית", he: "שפת גוף ומבט", hint: "איך מעבירים מסר בלי מילים?", emoji: "🌱", level: 1, topic: "communication" },
+    { en: "אמפתיה", he: "הבנת רגשות האחר", hint: "מה זה אמפתיה?", emoji: "🌱", level: 1, topic: "emotions" },
+    { en: "כבוד הדדי", he: "התייחסות מכבדת לאחרים", hint: "מה זה כבוד הדדי?", emoji: "🌱", level: 1, topic: "social" },
+    { en: "בטיחות בדרכים", he: "חצייה בצומת ושימוש במעבר חצייה", hint: "איך חוצים כביש בבטחה?", emoji: "🌱", level: 1, topic: "safety" },
+    { en: "תזונה מאוזנת", he: "ארוחה עם ירקות, חלבונים ופחמימות", hint: "מהי ארוחה בריאה?", emoji: "🌱", level: 1, topic: "health" },
+    { en: "תקציב", he: "תוכנית לניהול הכנסות והוצאות", hint: "מה זה תקציב?", emoji: "🌱", level: 2, topic: "money" },
+    { en: "חיסכון", he: "הפרשת כסף לעתיד", hint: "מה זה חיסכון?", emoji: "🌱", level: 2, topic: "money" },
+    { en: "ניהול זמן", he: "תכנון משימות לפי סדר עדיפויות", hint: "איך מנהלים זמן?", emoji: "🌱", level: 2, topic: "planning" },
+    { en: "קבלת החלטות", he: "בחירה מושכלת בין אפשרויות", hint: "מה זה קבלת החלטות?", emoji: "🌱", level: 2, topic: "thinking" },
+    { en: "פתרון בעיות", he: "זיהוי בעיה וחיפוש פתרון", hint: "איך פותרים בעיה?", emoji: "🌱", level: 2, topic: "thinking" },
+    { en: "עבודת צוות", he: "שיתוף פעולה להשגת מטרה משותפת", hint: "מה זה עבודת צוות?", emoji: "🌱", level: 2, topic: "social" },
+    { en: "ויסות רגשות", he: "ניהול תגובות רגשיות", hint: "מה זה ויסות רגשות?", emoji: "🌱", level: 3, topic: "emotions" },
+    { en: "התמודדות עם לחץ", he: "שימוש בטכניקות הרגעה", hint: "איך מתמודדים עם לחץ?", emoji: "🌱", level: 3, topic: "emotions" },
+    { en: "צרכנות נבונה", he: "השוואת מחירים לפני קנייה", hint: "מה זה צרכנות נבונה?", emoji: "🌱", level: 3, topic: "money" },
+    { en: "בטיחות באינטרנט", he: "שמירה על פרטיות וזהירות ברשת", hint: "איך נשארים בטוחים ברשת?", emoji: "🌱", level: 3, topic: "safety" },
   ];
 
   const science = [
@@ -108,10 +108,16 @@
       { id: "division", label: "חילוק" },
       { id: "advanced", label: "מתקדם — שברים ואחוזים" },
     ],
-    tanakh: [
-      { id: "all", label: "הכל — מילים מעורבות" },
-      { id: "bereshit", label: "בראשית" },
-      { id: "noach", label: "נח והמבול" },
+    lifeskills: [
+      { id: "all", label: "הכל — מושגים מעורבים" },
+      { id: "communication", label: "תקשורת" },
+      { id: "emotions", label: "רגשות והתמודדות" },
+      { id: "social", label: "חברה ושיתוף פעולה" },
+      { id: "money", label: "כסף וכלכלה" },
+      { id: "health", label: "בריאות ותזונה" },
+      { id: "safety", label: "בטיחות" },
+      { id: "planning", label: "תכנון וניהול זמן" },
+      { id: "thinking", label: "חשיבה ופתרון בעיות" },
     ],
     science: [
       { id: "all", label: "הכל — מושגים מעורבים" },
@@ -139,7 +145,7 @@
     { id: "hard", label: "קשה — מתקדם", max: 3 },
   ];
 
-  const DATASETS = { english, math, tanakh, science };
+  const DATASETS = { english, math, lifeskills, science };
 
   function shuffle(arr) {
     const a = [...arr];

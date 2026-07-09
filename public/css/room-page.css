@@ -176,7 +176,7 @@ body.in-room .visually-hidden {
   display: flex;
   flex-direction: column;
   padding: clamp(24px, 4vw, 32px);
-  background: var(--memyellow);
+  background: #6ee06a;
   border: 4px solid var(--ink);
   border-radius: calc(var(--radius) + 4px);
   box-shadow: var(--shadow-candy);
@@ -265,8 +265,9 @@ body.in-room .visually-hidden {
   font-size: clamp(15px, 2.8vw, 18px);
   font-weight: 900;
   color: var(--ink) !important;
+  border: 3px solid var(--ink);
   border-radius: 999px;
-  background: #6ee06a !important;
+  background: var(--memyellow) !important;
   box-shadow: 5px 6px 0 0 rgba(26, 10, 46, 0.95) !important;
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
@@ -540,12 +541,18 @@ body.room-has-error .room-page-overlay {
   pointer-events: none;
 }
 
+.play-body .room-top-strip-actions {
+  grid-template-columns: repeat(3, 1fr);
+  width: min(420px, 58vw);
+}
+
 .room-top-strip-actions > * {
   pointer-events: auto;
 }
 
 .room-stat-pill--games-btn,
-.room-stat-pill--settings-btn {
+.room-stat-pill--settings-btn,
+.room-stat-pill--exit-btn {
   position: relative;
   z-index: 1;
   font-family: inherit;
@@ -573,7 +580,8 @@ body.room-has-error .room-page-overlay {
 }
 
 .room-stat-pill--games-btn::before,
-.room-stat-pill--settings-btn::before {
+.room-stat-pill--settings-btn::before,
+.room-stat-pill--exit-btn::before {
   content: "";
   position: absolute;
   top: 0;
@@ -589,7 +597,8 @@ body.room-has-error .room-page-overlay {
 }
 
 .room-stat-pill--games-btn::after,
-.room-stat-pill--settings-btn::after {
+.room-stat-pill--settings-btn::after,
+.room-stat-pill--exit-btn::after {
   content: "";
   position: absolute;
   top: 3px;
@@ -623,6 +632,24 @@ body.room-has-error .room-page-overlay {
   transform: translate(-1px, -1px);
 }
 
+.room-stat-pill--exit-btn {
+  color: #fff;
+}
+
+.room-stat-pill--exit-btn::before {
+  background: #e04040;
+}
+
+.room-stat-pill--exit-btn:hover,
+.room-stat-pill--exit-btn:focus-visible {
+  transform: translate(-1px, -1px);
+}
+
+.room-stat-pill--exit-btn:hover::before,
+.room-stat-pill--exit-btn:focus-visible::before {
+  background: #c62828;
+}
+
 .room-stat-pill--settings-btn:hover,
 .room-stat-pill--settings-btn[aria-expanded="true"],
 .room-stat-pill--settings-btn:focus-visible {
@@ -636,17 +663,20 @@ body.room-has-error .room-page-overlay {
 }
 
 .room-stat-pill--games-btn:active,
-.room-stat-pill--settings-btn:active {
+.room-stat-pill--settings-btn:active,
+.room-stat-pill--exit-btn:active {
   transform: translate(1px, 1px);
 }
 
 .room-stat-pill--games-btn:active::before,
-.room-stat-pill--settings-btn:active::before {
+.room-stat-pill--settings-btn:active::before,
+.room-stat-pill--exit-btn:active::before {
   transform: translate(1px, 1px);
 }
 
 .room-stat-pill--games-btn:focus-visible,
-.room-stat-pill--settings-btn:focus-visible {
+.room-stat-pill--settings-btn:focus-visible,
+.room-stat-pill--exit-btn:focus-visible {
   outline: 3px solid var(--electric);
   outline-offset: 2px;
 }
@@ -1123,7 +1153,8 @@ body.in-room .scroll-progress {
 }
 
 button.room-stat-pill.room-stat-pill--games-btn,
-button.room-stat-pill.room-stat-pill--settings-btn {
+button.room-stat-pill.room-stat-pill--settings-btn,
+button.room-stat-pill.room-stat-pill--exit-btn {
   border: none;
   border-radius: 0;
   box-shadow: none;

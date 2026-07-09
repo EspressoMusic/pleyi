@@ -18,32 +18,14 @@
 <body class="hub-body memphis-body">
 
   <div class="memphis-bg hub-memphis-bg" aria-hidden="true">
-    <div class="memphis-parallax" data-parallax="0.06">
-      <svg class="memphis-svg memphis-svg-slow" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="120" cy="80" r="40" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
-        <polygon points="520,40 580,120 460,120" fill="#FF9ECF" stroke="#1a0a2e" stroke-width="4"/>
-        <rect x="640" y="380" width="72" height="72" rx="12" fill="#5CE1E6" stroke="#1a0a2e" stroke-width="4" transform="rotate(18 676 416)"/>
-        <circle cx="80" cy="480" r="28" fill="#B388FF" stroke="#1a0a2e" stroke-width="4"/>
-      </svg>
-    </div>
-    <div class="memphis-parallax memphis-parallax-right" data-parallax="0.04">
-      <svg class="memphis-svg memphis-svg-mid" viewBox="0 0 600 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="300,60 360,180 240,180" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
-        <circle cx="480" cy="320" r="52" fill="#FF9ECF" stroke="#1a0a2e" stroke-width="4"/>
-        <rect x="40" y="200" width="90" height="90" rx="16" fill="#5CE1E6" stroke="#1a0a2e" stroke-width="4" transform="rotate(-12 85 245)"/>
-      </svg>
-    </div>
-    <div class="memphis-parallax memphis-parallax-bottom" data-parallax="0.03">
-      <svg class="memphis-svg memphis-svg-fast" viewBox="0 0 700 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="600" cy="80" r="36" fill="#B388FF" stroke="#1a0a2e" stroke-width="4"/>
-        <polygon points="120,120 200,240 40,240" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
-      </svg>
-    </div>
     <span class="hub-memphis-sticker hub-memphis-sticker--purple"></span>
     <span class="hub-memphis-sticker hub-memphis-sticker--yellow"></span>
     <span class="hub-memphis-sticker hub-memphis-sticker--pink"></span>
     <span class="hub-memphis-sticker hub-memphis-sticker--teal"></span>
-    <span class="hub-memphis-ring"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--orange"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--lime"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--mint"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--coral"></span>
   </div>
 
   <header class="navbar scrolled" id="navbar">
@@ -65,6 +47,7 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
+            <a href="#myGames" class="nav-user-link" id="navMyGamesLink" role="menuitem">משחקים שיצרתי</a>
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
           </div>
         </div>
@@ -80,16 +63,15 @@
 
     <div class="hub-tabs" role="tablist">
       <button type="button" class="hub-tab active" data-subject="english" role="tab">אנגלית</button>
-      <button type="button" class="hub-tab" data-subject="tanakh" role="tab">תנ״ך</button>
+      <button type="button" class="hub-tab" data-subject="lifeskills" role="tab" disabled aria-disabled="true" title="בקרוב">כישורי חיים</button>
       <button type="button" class="hub-tab" data-subject="math" role="tab">מתמטיקה</button>
-      <button type="button" class="hub-tab" data-subject="science" role="tab">מדעים</button>
+      <button type="button" class="hub-tab" data-subject="science" role="tab" disabled aria-disabled="true" title="בקרוב">מדעים</button>
     </div>
 
     <section class="hub-skill-filters hidden" id="hubSkillFilters" aria-label="סינון לפי מיומנות">
       <h2 class="hub-skill-filters-label font-cartoon">סינון לפי מיומנות</h2>
       <div class="hub-skill-filters-panel">
         <div class="hub-skill-filters-list" id="hubSkillFiltersList"></div>
-        <button type="button" class="hub-skill-filters-clear hidden" id="hubSkillFiltersClear">הצג הכל</button>
       </div>
     </section>
 
@@ -107,8 +89,9 @@
     </button>
 
     <section class="hub-library hidden" id="userLibrary">
-      <header class="hub-library-header">
-        <h2 class="font-cartoon">האזור שלי</h2>
+      <header class="hub-library-header" id="myGames">
+        <h2 class="font-cartoon">המשחקים שלי</h2>
+        <p class="hub-library-sub" id="libraryGameQuota">משחקים שיצרתם נשמרים אוטומטית. סמנו ★ כדי להציג ראשונים.</p>
         <div class="hub-library-tabs" role="tablist">
           <button type="button" class="hub-library-tab active" data-lib="saved" role="tab">משחקים שיצרתי</button>
           <button type="button" class="hub-library-tab" data-lib="history" role="tab">משחקים ששיחקתי</button>
@@ -128,20 +111,21 @@
     <div class="modal modal-custom-game">
       <button class="modal-close" id="customModalClose" type="button" aria-label="סגירה">×</button>
       <h2 class="font-cartoon modal-custom-title">התאמה אישית</h2>
-      <p class="modal-desc">הדביקו תוכן שיעור או העלו קובץ — והמערכת תיצור משחק</p>
       <form class="hub-custom-form" id="customGameForm">
         <div class="hub-custom-simple">
-          <textarea id="customContent" rows="8" placeholder="הדביקו כאן את תוכן השיעור — רשימת מילים, משפטים, או זוגות מוכנים:&#10;&#10;apple — תפוח&#10;book — ספר&#10;I love English — אני אוהב אנגלית"></textarea>
-          <div class="hub-custom-divider" aria-hidden="true"><span>או</span></div>
-          <div class="hub-custom-upload-wrap">
+          <div class="hub-custom-input-box" id="customInputBox">
+            <textarea id="customContent" placeholder="הדביקו כאן את תוכן השיעור…&#10;&#10;apple — תפוח&#10;book — ספר"></textarea>
             <input type="file" id="customFileInput" accept=".txt,.csv,.md,text/plain" hidden />
-            <button type="button" class="btn btn-outline btn-candy hub-custom-upload-btn" id="customFileBtn">📄 העלאת קובץ</button>
+            <button type="button" class="hub-custom-attach-btn" id="customFileBtn" aria-label="העלאת קובץ">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
             <span class="hub-custom-file-name" id="customFileName"></span>
           </div>
-          <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon hub-custom-create-btn">יצירת משחק</button>
+          <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon hub-custom-create-btn" id="customCreateBtn">יצירת משחק</button>
+          <p class="hub-custom-quota hidden" id="customGameQuota" aria-live="polite"></p>
         </div>
-
-        <button type="button" class="hub-custom-advanced-toggle" id="customAdvancedToggle" aria-expanded="false" aria-controls="customAdvancedPanel">מתקדם</button>
 
         <div class="hub-custom-advanced hidden" id="customAdvancedPanel">
           <h3 class="hub-custom-advanced-heading font-cartoon">הגדרות מתקדמות</h3>
@@ -153,9 +137,9 @@
             <h3 class="hub-custom-field-title">נושא</h3>
             <select id="customSubject">
               <option value="english">אנגלית — מילה = תרגום</option>
-              <option value="tanakh">תנ״ך — מילה = פירוש</option>
+              <option value="lifeskills" disabled>כישורי חיים — מושג = הסבר (בקרוב)</option>
               <option value="math">מתמטיקה — תרגיל = תשובה</option>
-              <option value="science">מדעים — מושג = הגדרה</option>
+              <option value="science" disabled>מדעים — מושג = הגדרה (בקרוב)</option>
             </select>
           </div>
           <div class="hub-custom-field">
@@ -167,7 +151,6 @@
           <div class="hub-custom-actions">
             <button type="button" class="btn btn-ai btn-candy hidden" id="customAiGenerateBtn" data-ai-generate>✨ צור עם AI</button>
             <button type="button" class="btn btn-outline btn-candy" id="customExampleBtn">טען דוגמה</button>
-            <button type="button" class="btn btn-outline btn-candy hidden" id="customSaveBtn">שמור לחשבון</button>
           </div>
           <div class="hub-preview" id="customPreview"></div>
         </div>

@@ -1,5 +1,12 @@
 /* Pleyi — catalog by subject */
 
+const FILTER_SKILLS = {
+  english: ["אוצר מילים", "תרגום", "זיכרון", "חידון", "מהירות"],
+  math: ["חשבון", "זיכרון", "חידון", "מהירות"],
+  lifeskills: ["מיומנויות", "זיכרון", "חידון", "הבנה"],
+  science: ["מושגים", "זיכרון", "חידון", "מהירות"],
+};
+
 const SKILL_COLORS = {
   "זיכרון": "pink",
   "זוגות": "teal",
@@ -20,61 +27,64 @@ const SKILL_COLORS = {
   "חשבון": "orange",
   "אינטראקטיבי": "lime",
   "היגיון": "green",
-  "פרשה": "pink",
-  "מילים": "purple",
-  "פסוקים": "teal",
+  "מיומנויות": "teal",
+  "תקשורת": "blue",
+  "רגשות": "pink",
+  "כלכלה": "orange",
+  "בריאות": "green",
+  "בטיחות": "purple",
   "מושגים": "green",
   "סיווג": "orange",
 };
 
 window.GAMES_CATALOG = {
   english: [
-    { id: "tower-stack", title: "מגדל מילים", desc: "משחק arcade מלא — פיזיקה, חלקיקים, קוביות תלת-ממד וטיימר", icon: "🗼", color: "purple", tags: ["פרימיום", "אוצר מילים"] },
-    { id: "word-runner", title: "רץ וקופץ", desc: "מסלול תלת-ממדי — רדפו מילים נכונות בקצב מהיר", icon: "🏃", color: "teal", tags: ["פרימיום", "מהירות"] },
+    { id: "tower-stack", title: "מגדל מילים", desc: "משחק arcade מלא — פיזיקה, חלקיקים, קוביות תלת-ממד וטיימר", icon: "🗼", color: "purple", tags: ["אוצר מילים", "מהירות"] },
+    { id: "word-runner", title: "רץ וקופץ", desc: "מסלול תלת-ממדי — רדפו מילים נכונות בקצב מהיר", icon: "🏃", color: "teal", tags: ["מהירות", "אוצר מילים"] },
     { id: "vocabulary-duel", title: "Duel מילים", desc: "מה התרגום? ענו מהר על 10 שאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"] },
-    { id: "word-memory", title: "זיכרון מילים", desc: "התאימו זוגות en ↔ he", icon: "🧠", color: "pink", tags: ["זיכרון", "זוגות"] },
-    { id: "hangman", title: "איש תלוי", desc: "נחשו את המילה לפני שנגמרו הניסיונות", icon: "🎯", color: "purple", tags: ["איות", "חשיבה"] },
-    { id: "spot-diff", title: "מצא את ההבדלים", desc: "מצאו את הפריט השונה בין שני הלוחות", icon: "🔍", color: "yellow", tags: ["קשב", "השוואה"] },
-    { id: "word-shop", title: "חנות קטנה", desc: "שרתו לקוחות — מצאו את המוצר הנכון בזמן", icon: "🏪", color: "teal", tags: ["הבנה", "מהירות"] },
-    { id: "sentence-scramble", title: "בניית משפט", desc: "סדרו מילים למשפט שלם באנגלית", icon: "📝", color: "purple", tags: ["דקדוק", "משפטים"] },
+    { id: "word-memory", title: "זיכרון מילים", desc: "התאימו זוגות en ↔ he", icon: "🧠", color: "pink", tags: ["זיכרון", "תרגום"] },
+    { id: "hangman", title: "איש תלוי", desc: "נחשו את המילה לפני שנגמרו הניסיונות", icon: "🎯", color: "purple", tags: ["אוצר מילים", "חידון"] },
+    { id: "spot-diff", title: "מצא את ההבדלים", desc: "מצאו את הפריט השונה בין שני הלוחות", icon: "🔍", color: "yellow", tags: ["זיכרון", "חידון"] },
+    { id: "word-shop", title: "חנות קטנה", desc: "שרתו לקוחות — מצאו את המוצר הנכון בזמן", icon: "🏪", color: "teal", tags: ["אוצר מילים", "מהירות"] },
+    { id: "sentence-scramble", title: "בניית משפט", desc: "סדרו מילים למשפט שלם באנגלית", icon: "📝", color: "purple", tags: ["תרגום"] },
   ],
   math: [
-    { id: "math-blitz", title: "ברק מתמטי", desc: "ארקייד canvas מלא — טיימר, חלקיקים, ואתגר מהירות", icon: "⚡", color: "yellow", tags: ["פרימיום", "חשבון"] },
+    { id: "math-blitz", title: "ברק מתמטי", desc: "ארקייד canvas מלא — טיימר, חלקיקים, ואתגר מהירות", icon: "⚡", color: "yellow", tags: ["חשבון", "מהירות"] },
     { id: "math-duel", title: "Duel מתמטי", desc: "מה התוצאה? ענו על 10 תרגילים", icon: "🔢", color: "teal", tags: ["חידון", "חשבון"] },
     { id: "math-memory", title: "זיכרון מספרים", desc: "התאימו תרגיל לתוצאה", icon: "🧩", color: "pink", tags: ["זיכרון", "חשבון"] },
-    { id: "math-tower", title: "מגדל מספרים", desc: "קוביות עם תרגילים ותוצאות — בנו מגדל", icon: "🏗️", color: "purple", tags: ["חשבון", "אינטראקטיבי"] },
+    { id: "math-tower", title: "מגדל מספרים", desc: "קוביות עם תרגילים ותוצאות — בנו מגדל", icon: "🏗️", color: "purple", tags: ["חשבון"] },
     { id: "math-runner", title: "רץ ומחשב", desc: "רדפו אחרי התשובה הנכונה בנתיבים", icon: "🎮", color: "teal", tags: ["מהירות", "חשבון"] },
-    { id: "math-shop", title: "חנות מתמטית", desc: "מצאו את המוצר עם המחיר הנכון", icon: "🛒", color: "yellow", tags: ["חשבון", "היגיון"] },
+    { id: "math-shop", title: "חנות מתמטית", desc: "מצאו את המוצר עם המחיר הנכון", icon: "🛒", color: "yellow", tags: ["חשבון"] },
   ],
 
-  tanakh: [
-    { id: "vocabulary-duel", title: "Duel מילים", desc: "מה הפירוש? ענו מהר על שאלות מהפרשה", icon: "", color: "yellow", tags: ["חידון", "אוצר מילים"] },
-    { id: "word-memory", title: "זיכרון מילים", desc: "התאימו מילה בפרשה לפירוש שלה", icon: "", color: "pink", tags: ["זיכרון", "פרשה"] },
-    { id: "hangman", title: "נחשו את המילה", desc: "נחשו מילה מהפרשה לפני שנגמרו הניסיונות", icon: "", color: "purple", tags: ["מילים", "חשיבה"] },
-    { id: "sentence-scramble", title: "סדר פסוק", desc: "סדרו מילים לפסוק שלם", icon: "", color: "teal", tags: ["פסוקים", "הבנה"] },
-    { id: "tower-stack", title: "מגדל מילים", desc: "בנו מגדל — בחרו את התרגום הנכון", icon: "", color: "purple", tags: ["אוצר מילים", "מהירות"] },
-    { id: "spot-diff", title: "מצא את ההבדל", desc: "מצאו את המילה או הרעיון השונה", icon: "", color: "yellow", tags: ["קשב", "השוואה"] },
+  lifeskills: [
+    { id: "vocabulary-duel", title: "Duel מיומנויות", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"] },
+    { id: "word-memory", title: "זיכרון מיומנויות", desc: "התאימו מושג להסבר שלו", icon: "", color: "pink", tags: ["זיכרון", "הבנה"] },
+    { id: "hangman", title: "נחשו את המושג", desc: "נחשו מושג מכישורי חיים לפני שנגמרו הניסיונות", icon: "", color: "purple", tags: ["מיומנויות", "חידון"] },
+    { id: "sentence-scramble", title: "סדר משפט", desc: "סדרו מילים למשפט שלם על מיומנות חיים", icon: "", color: "teal", tags: ["הבנה", "מיומנויות"] },
+    { id: "tower-stack", title: "מגדל מיומנויות", desc: "בנו מגדל — בחרו את ההסבר הנכון", icon: "", color: "purple", tags: ["מיומנויות", "מהירות"] },
+    { id: "spot-diff", title: "מצא את ההבדל", desc: "מצאו את המושג או הרעיון השונה", icon: "", color: "yellow", tags: ["הבנה", "זיכרון"] },
   ],
 
   science: [
     { id: "vocabulary-duel", title: "Duel מושגים", desc: "מה ההגדרה? ענו על מושגים מדעיים", icon: "", color: "yellow", tags: ["חידון", "מושגים"] },
     { id: "word-memory", title: "זיכרון מושגים", desc: "התאימו מושג להגדרה", icon: "", color: "pink", tags: ["זיכרון", "מושגים"] },
-    { id: "math-blitz", title: "ברק מדעי", desc: "חישובים ונוסחאות בקצב מהיר", icon: "", color: "yellow", tags: ["חשבון", "מהירות"] },
-    { id: "spot-diff", title: "השוואת תופעות", desc: "מצאו את ההבדל בין שני מצבים", icon: "", color: "teal", tags: ["קשב", "השוואה"] },
+    { id: "math-blitz", title: "ברק מדעי", desc: "חישובים ונוסחאות בקצב מהיר", icon: "", color: "yellow", tags: ["מהירות", "מושגים"] },
+    { id: "spot-diff", title: "השוואת תופעות", desc: "מצאו את ההבדל בין שני מצבים", icon: "", color: "teal", tags: ["מושגים", "זיכרון"] },
     { id: "word-runner", title: "רץ למושג", desc: "רדפו אחרי התשובה הנכונה בנתיב", icon: "", color: "teal", tags: ["מהירות", "מושגים"] },
-    { id: "candy-match", title: "התאמת קטגוריות", desc: "התאימו פריטים מאותה קטגוריה מדעית", icon: "", color: "pink", tags: ["סיווג", "חשיבה"] },
+    { id: "candy-match", title: "התאמת קטגוריות", desc: "התאימו פריטים מאותה קטגוריה מדעית", icon: "", color: "pink", tags: ["מושגים", "זיכרון"] },
   ],
 
   subjects: {
     english: "אנגלית",
-    tanakh: "תנ״ך",
+    lifeskills: "כישורי חיים",
     math: "מתמטיקה",
     science: "מדעים",
   },
 
   subjectContent: {
     english: "אוצר מילים באנגלית — מילים, תרגום והגייה",
-    tanakh: "מילים ומושגים מפרשות התנ״ך",
+    lifeskills: "מושגים ומיומנויות לחיים ביומיום — תקשורת, כסף, בריאות ועוד",
     math: "תרגילי חשבון, פעולות ופתרון בעיות",
     science: "מושגים מדעיים, הגדרות ומונחים",
   },
@@ -92,11 +102,13 @@ window.GAMES_CATALOG = {
   },
 
   skillsForSubject(subject) {
-    const set = new Set();
+    const available = new Set();
     for (const game of this[subject] || []) {
-      for (const tag of game.tags || []) set.add(tag);
+      for (const tag of game.tags || []) available.add(tag);
     }
-    return [...set].sort((a, b) => a.localeCompare(b, "he"));
+    const preferred = FILTER_SKILLS[subject] || [];
+    const filtered = preferred.filter((skill) => available.has(skill));
+    return filtered.length ? filtered : [...available].sort((a, b) => a.localeCompare(b, "he"));
   },
 
   gameSummary(desc) {
@@ -106,7 +118,7 @@ window.GAMES_CATALOG = {
   },
 
   allSubjects() {
-    return ["english", "tanakh", "math", "science"];
+    return ["english", "lifeskills", "math", "science"];
   },
 
   allGamesList() {
@@ -161,8 +173,8 @@ window.GAMES_CATALOG = {
       if (!a || !b) continue;
       if (subject === "math") {
         items.push({ en: a, he: b, hint: "פתרו את התרגיל", emoji: "🔢" });
-      } else if (subject === "tanakh") {
-        items.push({ en: a, he: b, hint: `מה פירוש ${a}?`, emoji: "📖" });
+      } else if (subject === "lifeskills") {
+        items.push({ en: a, he: b, hint: `מה המשמעות של ${a}?`, emoji: "🌱" });
       } else if (subject === "science") {
         items.push({ en: a, he: b, hint: `מה ההגדרה של ${a}?`, emoji: "🔬" });
       } else {

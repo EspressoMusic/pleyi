@@ -115,7 +115,7 @@
 
     let gameLabel = window.SoloGames?.names?.[gameId];
     if (!gameLabel && window.GAMES_CATALOG) {
-      for (const key of ["english", "math", "tanakh", "science"]) {
+      for (const key of ["english", "lifeskills", "math", "science"]) {
         const found = window.GAMES_CATALOG[key]?.find((g) => g.id === gameId);
         if (found) {
           gameLabel = found.title;
@@ -231,7 +231,6 @@
           </span>
         </label>
         <div class="room-setting-game-group hidden" id="playGameSettingsGroup">
-          <p class="room-setting-mode-heading">הגדרות משחק</p>
           <div class="room-settings-list" id="playGameSettingsList"></div>
         </div>
         <div class="room-setting-material-group">
@@ -284,6 +283,12 @@
     }
 
     gamesBtn?.addEventListener("click", openGamesPanel);
+
+    document.getElementById("playExitBtn")?.addEventListener("click", () => {
+      const dest = roomCode ? `/room?code=${encodeURIComponent(roomCode)}` : "/games";
+      window.location.href = dest;
+    });
+
     document.getElementById("closePlayGamesBtn")?.addEventListener("click", closeGamesPanel);
     document.getElementById("playGamesPanelBackdrop")?.addEventListener("click", closeGamesPanel);
 

@@ -8,7 +8,6 @@
   const gridEmpty = document.getElementById("hubGridEmpty");
   const skillFilters = document.getElementById("hubSkillFilters");
   const skillFiltersList = document.getElementById("hubSkillFiltersList");
-  const skillFiltersClear = document.getElementById("hubSkillFiltersClear");
   const tabs = document.querySelectorAll(".hub-tab");
   const customForm = document.getElementById("customGameForm");
   const customModal = document.getElementById("customGameModal");
@@ -17,12 +16,14 @@
   const customTitle = document.getElementById("customTitle");
   const customGamePick = document.getElementById("customGamePick");
   const customPreview = document.getElementById("customPreview");
-  const customSaveBtn = document.getElementById("customSaveBtn");
-  const customAdvancedToggle = document.getElementById("customAdvancedToggle");
   const customAdvancedPanel = document.getElementById("customAdvancedPanel");
   const customFileInput = document.getElementById("customFileInput");
   const customFileBtn = document.getElementById("customFileBtn");
   const customFileName = document.getElementById("customFileName");
+  const customInputBox = document.getElementById("customInputBox");
+  const customCreateBtn = document.getElementById("customCreateBtn");
+  const customGameQuota = document.getElementById("customGameQuota");
+  const libraryGameQuota = document.getElementById("libraryGameQuota");
   const userLibrary = document.getElementById("userLibrary");
   const savedGamesList = document.getElementById("savedGamesList");
   const playHistoryList = document.getElementById("playHistoryList");
@@ -30,9 +31,103 @@
   const playHistoryPanel = document.getElementById("playHistoryPanel");
   const libraryTabs = document.querySelectorAll(".hub-library-tab");
 
+  const DISABLED_SUBJECTS = new Set(["lifeskills", "science"]);
+
+  const TEACHER_PREVIEW =
+    location.hostname === "localhost" &&
+    new URLSearchParams(location.search).get("preview") === "teacher";
+
+  const PREVIEW_SAVED_GAMES = [
+    {
+      id: "preview-1",
+      title: "אוצר מילים — יחידה 3",
+      subject: "english",
+      gameId: "word-memory",
+      items: Array(12),
+      starred: true,
+      updatedAt: Date.now() - 86400000,
+    },
+    {
+      id: "preview-2",
+      title: "חיבור וחיסור — כיתה ג׳",
+      subject: "math",
+      gameId: "math-blitz",
+      items: Array(20),
+      starred: false,
+      createdAt: Date.now() - 3 * 86400000,
+    },
+    {
+      id: "preview-3",
+      title: "מילות שאלה באנגלית",
+      subject: "english",
+      gameId: "vocabulary-duel",
+      items: Array(8),
+      starred: false,
+      updatedAt: Date.now() - 7 * 86400000,
+    },
+  ];
+
+  const PREVIEW_PLAY_HISTORY = [
+    {
+      gameTitle: "מגדל מילים",
+      gameId: "tower-stack",
+      score: 840,
+      isCustom: false,
+      playedAt: Date.now() - 3600000,
+    },
+    {
+      gameTitle: "אוצר מילים — יחידה 3",
+      gameId: "word-memory",
+      score: 12,
+      isCustom: true,
+      reason: "12/12",
+      playedAt: Date.now() - 2 * 86400000,
+    },
+    {
+      gameTitle: "ברק מתמטי",
+      gameId: "math-blitz",
+      score: 7,
+      isCustom: false,
+      reason: "7/10",
+      playedAt: Date.now() - 5 * 86400000,
+    },
+  ];
+
+  function showTeacherDesignPreview() {
+    window.GameAuth?.setDevPreviewUser?.({
+      name: "מורה לדוגמה",
+      photoURL: null,
+      email: "teacher@preview.local",
+    });
+    userLibrary?.classList.remove("hidden");
+    if (libraryGameQuota) {
+      libraryGameQuota.innerHTML =
+        'משחקים שיצרתם נשמרים אוטומטית. נותרו <strong>3</strong> מתוך 5 יצירות השבוע · סמנו ★ כדי להציג ראשונים.';
+    }
+    renderSavedGames(PREVIEW_SAVED_GAMES);
+    renderPlayHistory(PREVIEW_PLAY_HISTORY);
+    requestAnimationFrame(() => scrollToMyGames());
+  }
+
+  function applyDisabledSubjects() {
+    tabs.forEach((tab) => {
+      const subject = tab.dataset.subject;
+      if (!DISABLED_SUBJECTS.has(subject)) return;
+      tab.disabled = true;
+      tab.setAttribute("aria-disabled", "true");
+      tab.classList.add("is-disabled");
+      tab.title = "בקרוב";
+    });
+
+    customSubject?.querySelectorAll("option").forEach((opt) => {
+      if (DISABLED_SUBJECTS.has(opt.value)) opt.disabled = true;
+    });
+  }
+
   let activeSubject = "english";
   let editingSavedId = null;
-  const activeSkillFilters = new Set();
+  let pendingCreateAfterLogin = false;
+  let activeSkillFilter = null;
 
   function showToast(msg) {
     const t = document.getElementById("toast");
@@ -112,10 +207,23 @@
     return `<span class="${base}">${escapeHtml(tag)}</span>`;
   }
 
+  function sortLockedGamesLast(games) {
+    const isLocked = (game) =>
+      window.PleyiPremium?.isPremiumGame?.(game.id) && !window.PleyiPremium?.hasPremium?.();
+    return [...games].sort((a, b) => {
+      const aLocked = isLocked(a);
+      const bLocked = isLocked(b);
+      if (aLocked !== bLocked) return aLocked ? 1 : -1;
+      return 0;
+    });
+  }
+
   function gamesForSubject() {
     const games = catalog[activeSubject] || [];
-    if (!activeSkillFilters.size) return games;
-    return games.filter((game) => (game.tags || []).some((tag) => activeSkillFilters.has(tag)));
+    const filtered = activeSkillFilter
+      ? games.filter((game) => (game.tags || []).includes(activeSkillFilter))
+      : games;
+    return sortLockedGamesLast(filtered);
   }
 
   function renderSkillFilters() {
@@ -124,33 +232,22 @@
     if (!skills.length) {
       skillFilters.classList.add("hidden");
       skillFiltersList.innerHTML = "";
-      skillFiltersClear?.classList.add("hidden");
       return;
     }
     skillFilters.classList.remove("hidden");
     skillFiltersList.innerHTML = skills
-      .map((tag) => skillTagHtml(tag, { filterBtn: true, active: activeSkillFilters.has(tag) }))
+      .map((tag) => skillTagHtml(tag, { filterBtn: true, active: activeSkillFilter === tag }))
       .join("");
-    skillFiltersClear?.classList.toggle("hidden", activeSkillFilters.size === 0);
-  }
-
-  function clearSkillFilters() {
-    activeSkillFilters.clear();
-    renderSkillFilters();
-    renderGrid();
   }
 
   skillFiltersList?.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-skill]");
     if (!btn) return;
     const skill = btn.dataset.skill;
-    if (activeSkillFilters.has(skill)) activeSkillFilters.delete(skill);
-    else activeSkillFilters.add(skill);
+    activeSkillFilter = activeSkillFilter === skill ? null : skill;
     renderSkillFilters();
     renderGrid();
   });
-
-  skillFiltersClear?.addEventListener("click", clearSkillFilters);
 
   function cardHtml(game, index) {
     const color = cardColorForIndex(index);
@@ -181,8 +278,8 @@
     grid?.querySelectorAll(".hub-game-card").forEach((card) => {
       window.PleyiPremium?.decorateHubCard?.(card);
     });
-    grid?.classList.toggle("hidden", games.length === 0 && activeSkillFilters.size > 0);
-    gridEmpty?.classList.toggle("hidden", games.length > 0 || activeSkillFilters.size === 0);
+    grid?.classList.toggle("hidden", games.length === 0 && !!activeSkillFilter);
+    gridEmpty?.classList.toggle("hidden", games.length > 0 || !activeSkillFilter);
   }
 
   let gridResizeTimer;
@@ -256,10 +353,6 @@
 
   function setAdvancedOpen(open) {
     customAdvancedPanel?.classList.toggle("hidden", !open);
-    if (customAdvancedToggle) {
-      customAdvancedToggle.setAttribute("aria-expanded", open ? "true" : "false");
-      customAdvancedToggle.textContent = open ? "הסתר מתקדם" : "מתקדם";
-    }
   }
 
   function resetFileInput() {
@@ -275,6 +368,7 @@
     resetFileInput();
     customModal?.classList.remove("hidden");
     document.body.style.overflow = "hidden";
+    updateCustomQuotaDisplay();
   }
 
   function closeCustomModal() {
@@ -286,15 +380,9 @@
 
   document.getElementById("openCustomModalBtn")?.addEventListener("click", () => openCustomModal());
 
-  customAdvancedToggle?.addEventListener("click", () => {
-    const isOpen = customAdvancedPanel && !customAdvancedPanel.classList.contains("hidden");
-    setAdvancedOpen(!isOpen);
-  });
-
   customFileBtn?.addEventListener("click", () => customFileInput?.click());
 
-  customFileInput?.addEventListener("change", async () => {
-    const file = customFileInput.files?.[0];
+  async function loadCustomFile(file) {
     if (!file) return;
     if (file.size > 1024 * 1024) {
       showToast("הקובץ גדול מדי (מקסימום 1MB)");
@@ -304,11 +392,36 @@
     try {
       customContent.value = await file.text();
       if (customFileName) customFileName.textContent = file.name;
+      if (customFileInput) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        customFileInput.files = dt.files;
+      }
       updatePreview();
     } catch {
       showToast("לא ניתן לקרוא את הקובץ");
       resetFileInput();
     }
+  }
+
+  customFileInput?.addEventListener("change", async () => {
+    await loadCustomFile(customFileInput.files?.[0]);
+  });
+
+  customInputBox?.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    customInputBox.classList.add("is-dragover");
+  });
+
+  customInputBox?.addEventListener("dragleave", () => {
+    customInputBox.classList.remove("is-dragover");
+  });
+
+  customInputBox?.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    customInputBox.classList.remove("is-dragover");
+    const file = e.dataTransfer?.files?.[0];
+    if (file) await loadCustomFile(file);
   });
 
   customContent?.addEventListener("input", () => {
@@ -328,9 +441,10 @@
 
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
+      if (tab.disabled || DISABLED_SUBJECTS.has(tab.dataset.subject)) return;
       activeSubject = tab.dataset.subject;
       tabs.forEach((t) => t.classList.toggle("active", t === tab));
-      activeSkillFilters.clear();
+      activeSkillFilter = null;
       renderSkillFilters();
       renderGrid();
       updateCustomGameOptions();
@@ -369,82 +483,122 @@
   }
 
   customSubject?.addEventListener("change", () => {
+    if (DISABLED_SUBJECTS.has(customSubject.value)) {
+      customSubject.value = activeSubject;
+      return;
+    }
     updateCustomGameOptions();
     updatePreview();
   });
   customTitle?.addEventListener("input", updatePreview);
   customGamePick?.addEventListener("change", updatePreview);
 
-  async function saveToAccount({ launch = false } = {}) {
+  async function updateCustomQuotaDisplay() {
+    if (!customGameQuota) return;
+
+    if (!window.GameAuth?.getUser()) {
+      customGameQuota.classList.add("hidden");
+      customGameQuota.textContent = "";
+      customCreateBtn?.removeAttribute("disabled");
+      return;
+    }
+
+    try {
+      const quota = await UserData.getCustomGameQuota();
+      if (quota.isPremium) {
+        customGameQuota.classList.add("hidden");
+        customGameQuota.textContent = "";
+        customCreateBtn?.removeAttribute("disabled");
+        return;
+      }
+
+      customGameQuota.classList.remove("hidden");
+      if (quota.allowed) {
+        customGameQuota.classList.remove("is-limit");
+        customGameQuota.innerHTML = `נותרו <strong>${quota.remaining}</strong> מתוך ${quota.limit} משחקים מותאמים השבוע (גרסה חינמית).`;
+        if (!editingSavedId) customCreateBtn?.removeAttribute("disabled");
+      } else {
+        customGameQuota.classList.add("is-limit");
+        customGameQuota.innerHTML = `הגעתם למכסה השבועית (${quota.limit} משחקים). <a href="/premium">שדרגו לפרימיום</a> ליצירה ללא הגבלה.`;
+        if (!editingSavedId) customCreateBtn?.setAttribute("disabled", "disabled");
+      }
+    } catch {
+      customGameQuota.classList.add("hidden");
+      customCreateBtn?.removeAttribute("disabled");
+    }
+  }
+
+  async function updateLibraryQuotaDisplay() {
+    if (!libraryGameQuota || !window.GameAuth?.getUser()) return;
+
+    try {
+      const quota = await UserData.getCustomGameQuota();
+      if (quota.isPremium) {
+        libraryGameQuota.textContent =
+          "משחקים שיצרתם נשמרים אוטומטית. סמנו ★ כדי להציג ראשונים.";
+        return;
+      }
+
+      libraryGameQuota.innerHTML = quota.allowed
+        ? `משחקים שיצרתם נשמרים אוטומטית. נותרו <strong>${quota.remaining}</strong> מתוך ${quota.limit} יצירות השבוע · סמנו ★ כדי להציג ראשונים.`
+        : `הגעתם למכסה — ${quota.limit} משחקים מותאמים בשבוע. <a href="/premium">שדרגו לפרימיום</a> ליצירה ללא הגבלה. סמנו ★ כדי להציג ראשונים.`;
+    } catch {
+      libraryGameQuota.textContent =
+        "משחקים שיצרתם נשמרים אוטומטית. סמנו ★ כדי להציג ראשונים.";
+    }
+  }
+
+  async function persistAndLaunchGame({ launch = true } = {}) {
     const { subject, items, gameId, title, content } = getFormData();
     if (items.length < 2) {
-      showToast("הזינו לפחות 2 שורות");
+      showToast("הזינו לפחות 2 שורות (מילה=תרגום או תרגיל=תשובה)");
       return null;
     }
+
     if (!window.GameAuth?.getUser()) {
-      showToast("התחברו כדי לשמור");
+      pendingCreateAfterLogin = true;
+      sessionStorage.setItem(
+        "pleyi-pending-create",
+        JSON.stringify({ subject, items, gameId, title, content, editingSavedId })
+      );
+      showToast("התחברו — המשחק יישמר אוטומטית");
       document.getElementById("loginModal")?.classList.remove("hidden");
       return null;
     }
 
-    let savedId = editingSavedId;
+    let savedGameId = editingSavedId;
     const isUpdate = !!editingSavedId;
-    const payload = { title, subject, gameId, content, items };
 
     if (editingSavedId) {
-      await UserData.updateCustomGame(editingSavedId, payload);
+      await UserData.updateCustomGame(editingSavedId, { title, subject, gameId, content, items });
     } else {
-      const res = await UserData.saveCustomGame(payload);
+      const res = await UserData.saveCustomGame({ title, subject, gameId, content, items });
       if (!res.ok) {
         showToast(res.error || "שגיאה בשמירה");
+        if (res.limitReached) updateCustomQuotaDisplay();
         return null;
       }
-      savedId = res.id;
-      editingSavedId = savedId;
+      savedGameId = res.id;
+      editingSavedId = res.id;
     }
 
     await refreshLibrary();
-    showToast(isUpdate ? "המשחק עודכן!" : "המשחק נשמר!");
+    updateCustomQuotaDisplay();
 
     if (launch) {
-      UserData.launchGame({ subject, gameId, items, title, savedGameId: savedId });
+      UserData.launchGame({ subject, gameId, items, title, savedGameId });
+      closeCustomModal();
+      showToast(isUpdate ? "המשחק עודכן, נשמר ונפתח" : "המשחק נשמר ונפתח");
+    } else {
+      showToast(isUpdate ? "המשחק עודכן ונשמר" : "המשחק נשמר אוטומטית");
     }
-    return savedId;
-  }
 
-  customSaveBtn?.addEventListener("click", () => saveToAccount({ launch: false }));
+    return savedGameId;
+  }
 
   customForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const { subject, items, gameId, title, content } = getFormData();
-    if (items.length < 2) {
-      showToast("הזינו לפחות 2 שורות (מילה=תרגום או תרגיל=תשובה)");
-      return;
-    }
-
-    let savedGameId = editingSavedId;
-    if (window.GameAuth?.getUser()) {
-      if (editingSavedId) {
-        await UserData.updateCustomGame(editingSavedId, { title, subject, gameId, content, items });
-      } else {
-        const res = await UserData.saveCustomGame({ title, subject, gameId, content, items });
-        if (res.ok) {
-          savedGameId = res.id;
-          editingSavedId = res.id;
-        }
-      }
-      await refreshLibrary();
-    }
-
-    UserData.launchGame({
-      subject,
-      gameId,
-      items,
-      title,
-      savedGameId: savedGameId || null,
-    });
-    closeCustomModal();
-    showToast("המשחק נפתח בחלון חדש");
+    await persistAndLaunchGame({ launch: true });
   });
 
   document.getElementById("customExampleBtn")?.addEventListener("click", () => {
@@ -452,8 +606,8 @@
     const subject = customSubject.value;
     if (subject === "math") {
       customContent.value = `5+3=8\n12-4=8\n6×7=42\n56÷8=7\n9+6=15\n20-7=13`;
-    } else if (subject === "tanakh") {
-      customContent.value = `בראשית=בתחילת\nשמים=רקיע\nארץ=יבשה\nאור=יום\nמים=ים`;
+    } else if (subject === "lifeskills") {
+      customContent.value = `אמפתיה=הבנת רגשות האחר\nתקציב=תוכנית לניהול כסף\nהאזנה פעילה=להקשיב תוך הבנת הדובר\nניהול זמן=תכנון משימות לפי סדר עדיפויות\nבטיחות באינטרנט=שמירה על פרטיות ברשת`;
     } else if (subject === "science") {
       customContent.value = `H2O=מים\nO2=חמצן\nCO2=פחמן דו-חמצני\nאטום=יחידת החומר\nמולקולה=שני אטומים ומעלה`;
     } else {
@@ -483,14 +637,15 @@
     if (!savedGamesList) return;
     if (!games.length) {
       savedGamesList.innerHTML =
-        '<p class="hub-library-empty">עדיין לא שמרתם משחקים. צרו משחק מותאם למטה ולחצו «שמור לחשבון».</p>';
+        '<p class="hub-library-empty">עדיין לא יצרתם משחקים. צרו משחק מותאם — הוא יישמר אוטומטית כאן.</p>';
       return;
     }
 
     savedGamesList.innerHTML = games
       .map(
         (g) => `
-      <article class="hub-library-item sticker-card sticker-white">
+      <article class="hub-library-item sticker-card sticker-white${g.starred ? " is-starred" : ""}">
+        <button type="button" class="hub-library-star${g.starred ? " is-active" : ""}" data-star-saved="${g.id}" aria-label="${g.starred ? "הסר כוכב" : "סמן כוכב"}" aria-pressed="${g.starred ? "true" : "false"}">${g.starred ? "★" : "☆"}</button>
         <div class="hub-library-item-body">
           <h3 class="font-cartoon">${escapeHtml(g.title)}</h3>
           <p>${subjectLabel(g.subject)} · ${gameName(g.gameId)} · ${g.items?.length || 0} פריטים</p>
@@ -532,6 +687,17 @@
         updatePreview();
         openCustomModal({ advanced: true });
         showToast("עריכת משחק — שמרו כדי לעדכן");
+      });
+    });
+
+    savedGamesList.querySelectorAll("[data-star-saved]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const res = await UserData.toggleSavedGameStar(btn.dataset.starSaved);
+        if (!res.ok) {
+          showToast(res.error || "לא ניתן לעדכן כוכב");
+          return;
+        }
+        await refreshLibrary();
       });
     });
 
@@ -580,14 +746,14 @@
   }
 
   async function refreshLibrary() {
+    if (TEACHER_PREVIEW) return;
+
     if (!window.GameAuth?.getUser()) {
       userLibrary?.classList.add("hidden");
-      customSaveBtn?.classList.add("hidden");
       return;
     }
 
     userLibrary?.classList.remove("hidden");
-    customSaveBtn?.classList.remove("hidden");
 
     try {
       const [saved, history] = await Promise.all([
@@ -596,6 +762,7 @@
       ]);
       renderSavedGames(saved);
       renderPlayHistory(history);
+      await updateLibraryQuotaDisplay();
     } catch (err) {
       console.error(err);
       savedGamesList.innerHTML =
@@ -612,13 +779,77 @@
     });
   });
 
-  window.GameAuth?.bindModals(showToast);
-  window.GameAuth?.onUserChange(() => refreshLibrary());
-  document.addEventListener("premium-updated", () => renderGrid());
+  async function resumePendingCreate() {
+    const raw = sessionStorage.getItem("pleyi-pending-create");
+    if (!raw || !window.GameAuth?.getUser()) return;
 
+    sessionStorage.removeItem("pleyi-pending-create");
+    pendingCreateAfterLogin = false;
+
+    try {
+      const pending = JSON.parse(raw);
+      if (customSubject) customSubject.value = pending.subject || activeSubject;
+      if (customTitle) customTitle.value = pending.title || "";
+      if (customContent) customContent.value = pending.content || "";
+      editingSavedId = pending.editingSavedId || null;
+      updateCustomGameOptions();
+      if (customGamePick && pending.gameId) customGamePick.value = pending.gameId;
+      updatePreview();
+      openCustomModal({ advanced: !!pending.title });
+      await persistAndLaunchGame({ launch: true });
+    } catch {
+      /* ignore bad pending payload */
+    }
+  }
+
+  function scrollToMyGames() {
+    document.getElementById("myGames")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    libraryTabs.forEach((t) => t.classList.toggle("active", t.dataset.lib === "saved"));
+    savedGamesPanel?.classList.remove("hidden");
+    playHistoryPanel?.classList.add("hidden");
+  }
+
+  document.getElementById("navMyGamesLink")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.GameAuth?._closeUserDropdown?.();
+    scrollToMyGames();
+  });
+
+  window.GameAuth?.bindModals(showToast);
+  window.GameAuth?.onUserChange(async (user) => {
+    if (TEACHER_PREVIEW) return;
+    await refreshLibrary();
+    updateCustomQuotaDisplay();
+    if (user) {
+      if (window.location.hash === "#myGames") scrollToMyGames();
+      await resumePendingCreate();
+    }
+  });
+
+  if (TEACHER_PREVIEW) {
+    showTeacherDesignPreview();
+  } else if (window.location.hash === "#myGames" && window.GameAuth?.getUser()) {
+    scrollToMyGames();
+  }
+
+  window.addEventListener("hashchange", () => {
+    if (TEACHER_PREVIEW) {
+      if (window.location.hash === "#myGames") scrollToMyGames();
+      return;
+    }
+    if (window.location.hash === "#myGames" && window.GameAuth?.getUser()) scrollToMyGames();
+  });
+  document.addEventListener("premium-updated", () => {
+    renderGrid();
+    updateCustomQuotaDisplay();
+    updateLibraryQuotaDisplay();
+  });
+
+  applyDisabledSubjects();
   renderSkillFilters();
   renderGrid();
   updateCustomGameOptions();
   updatePreview();
   refreshLibrary();
+  if (!TEACHER_PREVIEW && window.GameAuth?.getUser()) resumePendingCreate();
 })();

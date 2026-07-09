@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0066FF" />
+  <title>מנוי פרימיום — Pleyi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/css/games-hub.css" />
+  <link rel="stylesheet" href="/css/premium.css" />
+</head>
+<body class="hub-body memphis-body premium-page-body">
+
+  <header class="navbar scrolled">
+    <div class="container nav-inner">
+      <a href="/" class="logo">
+        <img src="/images/pleyi-logo.png" alt="" class="logo-mark" width="48" height="48" decoding="async" />
+        <span class="logo-text font-brand">Pleyi</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/" class="nav-pill">בית</a>
+        <a href="/games" class="nav-pill">משחקים</a>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="nav-auth-btn" id="authLoginBtn">התחברות</button>
+        <div class="nav-user hidden" id="authUserMenu">
+          <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
+            <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            <span class="nav-user-initial hidden" id="authUserInitial" aria-hidden="true"></span>
+          </button>
+          <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
+            <p class="nav-user-name" id="authUserName"></p>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="premium-page-main container">
+    <div class="premium-page-card" id="premiumSignupRoot"></div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/user-data.js"></script>
+  <script src="/js/premium.js"></script>
+</body>
+</html>

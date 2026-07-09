@@ -121,6 +121,16 @@
     });
   }
 
+  function gameDisplayName(gameId) {
+    if (gameId === "hangman") return "איש תלוי";
+    if (gameId === "word-shop") return "חנות קטנה";
+    return "משחק זה";
+  }
+
+  function subscribeUrl(gameId) {
+    return gameId ? `/premium?game=${encodeURIComponent(gameId)}` : "/premium";
+  }
+
   function planButtonsHtml() {
     const list = plans || {
       monthly: { id: "monthly", label: "חודשי", price: 39, badge: "גמיש" },
@@ -142,13 +152,7 @@
     const body = document.getElementById("premiumModalBody");
     if (!body) return;
 
-    const user = window.GameAuth?.getUser();
-    const gameName =
-      pendingGameId === "hangman"
-        ? "איש תלוי"
-        : pendingGameId === "word-shop"
-          ? "חנות קטנה"
-          : "משחקי פרימיום";
+    const gameName = gameDisplayName(pendingGameId);
 
     if (hasPremium()) {
       body.innerHTML = `
@@ -159,17 +163,66 @@
       return;
     }
 
+    body.innerHTML = `
+      <div class="premium-modal-lock" aria-hidden="true">🔒</div>
+      <h2 class="premium-modal-title" id="premiumModalTitle">משחק פרימיום</h2>
+      <p class="premium-modal-desc">המשחק <strong>${escapeHtml(gameName)}</strong> זמין למנויי פרימיום.</p>
+      <a class="premium-modal-cta btn btn-primary btn-candy btn-full font-cartoon" href="${escapeHtml(subscribeUrl(pendingGameId))}">להרשמת מנוי</a>`;
+  }
+
+  function bindSignupPageEvents() {
+    const root = document.getElementById("premiumSignupRoot");
+    if (!root) return;
+
+    root.querySelectorAll(".premium-plan-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectedPlan = btn.dataset.plan || "yearly";
+        renderSignupPage();
+      });
+    });
+
+    root.querySelectorAll(".premium-pay-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        payMethod = tab.dataset.pay || "card";
+        renderSignupPage();
+      });
+    });
+
+    document.getElementById("premiumLoginBtn")?.addEventListener("click", async () => {
+      const res = await window.GameAuth?.signInWithGoogle?.();
+      if (res?.error) showError(res.error);
+      else renderSignupPage();
+    });
+
+    document.getElementById("premiumSubmitBtn")?.addEventListener("click", subscribe);
+  }
+
+  function renderSignupPage() {
+    const root = document.getElementById("premiumSignupRoot");
+    if (!root) return;
+
+    const user = window.GameAuth?.getUser();
+    const returnGame = new URLSearchParams(window.location.search).get("game");
+    const gameName = gameDisplayName(returnGame);
+
+    if (hasPremium()) {
+      root.innerHTML = `
+        <div class="premium-success">
+          <h2 class="premium-page-title font-cartoon">מנוי פרימיום</h2>
+          <h3>יש לכם מנוי פעיל ✨</h3>
+          <p>בתוקף עד ${escapeHtml(formatDate(status.premiumUntil))}</p>
+          <a href="/games" class="premium-modal-cta btn btn-primary btn-candy btn-full font-cartoon">חזרה למשחקים</a>
+        </div>`;
+      return;
+    }
+
     const bitPhone = settings?.bitPhone || "0586122187";
     const bitName = settings?.bitPayName || "Pleyi";
     const plan = (plans && plans[selectedPlan]) || { price: selectedPlan === "yearly" ? 299 : 39 };
 
-    body.innerHTML = `
-      <h2 class="premium-modal-title" id="premiumModalTitle">מנוי פרימיום</h2>
-      <p class="premium-modal-desc">${escapeHtml(gameName)} ומשחקים נוספים — לשחקנים ולמורים עם מנוי פעיל.</p>
-      <div class="premium-modal-games">
-        <span class="premium-modal-game-pill">🎯 איש תלוי</span>
-        <span class="premium-modal-game-pill">🏪 חנות קטנה</span>
-      </div>
+    root.innerHTML = `
+      <h1 class="premium-page-title font-cartoon">מנוי פרימיום</h1>
+      <p class="premium-page-lead">${returnGame ? `פתחו את <strong>${escapeHtml(gameName)}</strong> ומשחקים נוספים עם מנוי פעיל.` : "גישה למשחקי פרימיום — לשחקנים ולמורים."}</p>
       ${
         user
           ? ""
@@ -196,26 +249,7 @@
       <p class="premium-error hidden" id="premiumError"></p>
       <button type="button" class="premium-submit-btn" id="premiumSubmitBtn"${user ? "" : " disabled"}>שלמו וקבלו פרימיום</button>`;
 
-    body.querySelectorAll(".premium-plan-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        selectedPlan = btn.dataset.plan || "yearly";
-        renderModalBody();
-      });
-    });
-
-    body.querySelectorAll(".premium-pay-tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        payMethod = tab.dataset.pay || "card";
-        renderModalBody();
-      });
-    });
-
-    document.getElementById("premiumLoginBtn")?.addEventListener("click", async () => {
-      const res = await window.GameAuth?.signInWithGoogle?.();
-      if (res?.error) showError(res.error);
-    });
-
-    document.getElementById("premiumSubmitBtn")?.addEventListener("click", subscribe);
+    bindSignupPageEvents();
   }
 
   function showError(msg) {
@@ -287,8 +321,12 @@
       }
 
       notifyUpdate();
-      renderModalBody();
-      setTimeout(closeModal, 1800);
+      if (document.getElementById("premiumSignupRoot")) {
+        renderSignupPage();
+      } else {
+        renderModalBody();
+        setTimeout(closeModal, 1800);
+      }
     } catch {
       showError("שגיאת רשת — נסו שוב");
     } finally {
@@ -328,7 +366,7 @@
       lock.remove();
     }
     const playBtn = card.querySelector(".hub-game-play-btn");
-    if (playBtn) playBtn.textContent = locked ? "פתחו פרימיום" : "שחק עכשיו";
+    if (playBtn) playBtn.textContent = "שחק עכשיו";
   }
 
   function updateRoomGameButtons() {
@@ -361,9 +399,11 @@
         status = { isPremium: false, premiumUntil: null, plan: null };
         sessionStorage.removeItem(CACHE_KEY);
       }
+      if (document.getElementById("premiumSignupRoot")) renderSignupPage();
       notifyUpdate();
     });
     if (window.GameAuth?.getUser()) await fetchStatus();
+    if (document.getElementById("premiumSignupRoot")) renderSignupPage();
     notifyUpdate();
   }
 
