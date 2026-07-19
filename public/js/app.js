@@ -736,6 +736,11 @@ bindPlayModeModal();
 bindSoloContentModal();
 
 GameAuth?.bindModals(showToast);
+GameAuth?.onUserChange?.((user) => {
+  if (user && !GameAuth.isDevPreviewUser?.()) {
+    window.location.href = "/my-room";
+  }
+});
 document.getElementById("mobileLoginBtn")?.addEventListener("click", () => {
   document.getElementById("loginModal")?.classList.remove("hidden");
   $("#menuToggle")?.classList.remove("open");
