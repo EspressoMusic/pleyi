@@ -13,10 +13,17 @@ const { parseLearningContent, normalizeLearningContent } = require("./lib/parse-
 const { compatibleRoomGames } = require("./lib/room-games");
 const premiumLib = require("./lib/premium");
 const aiLesson = require("./lib/ai-lesson");
+const { extractText } = require("./lib/extract-text");
+const multer = require("multer");
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
+const materialUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024 },
+});
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -103,19 +110,19 @@ app.get("/api/premium/plans", (_req, res) => {
   });
 });
 
-app.get("/api/premium/status", (req, res) => {
+app.get("/api/premium/status", async (req, res) => {
   const uid = String(req.query.uid || "").trim();
   if (!uid) return res.status(400).json({ ok: false, error: "חסר מזהה משתמש" });
-  res.json({ ok: true, ...premiumLib.getStatus(uid) });
+  res.json({ ok: true, ...(await premiumLib.getStatus(uid)) });
 });
 
-app.post("/api/premium/subscribe", (req, res) => {
+app.post("/api/premium/subscribe", async (req, res) => {
   try {
     const { uid, email, planId, method } = req.body || {};
-    const record = premiumLib.activateSubscription(uid, email, planId, method);
+    const record = await premiumLib.activateSubscription(uid, email, planId, method);
     res.json({
       ok: true,
-      ...premiumLib.getStatus(uid),
+      ...(await premiumLib.getStatus(uid)),
       paymentId: record.paymentId,
     });
   } catch (e) {
@@ -140,6 +147,24 @@ app.post("/api/ai/generate-game", async (req, res) => {
   } catch (e) {
     res.status(400).json({ ok: false, error: e.message });
   }
+});
+
+app.post("/api/extract-text", (req, res) => {
+  materialUpload.single("file")(req, res, async (err) => {
+    if (err) {
+      const msg = err.code === "LIMIT_FILE_SIZE" ? "הקובץ גדול מדי (מקסימום 8MB)" : err.message;
+      return res.status(400).json({ ok: false, error: msg });
+    }
+    if (!req.file) {
+      return res.status(400).json({ ok: false, error: "לא צורף קובץ" });
+    }
+    try {
+      const text = await extractText({ buffer: req.file.buffer, originalname: req.file.originalname });
+      res.json({ ok: true, text });
+    } catch (e) {
+      res.status(400).json({ ok: false, error: e.message });
+    }
+  });
 });
 
 app.post("/api/lesson-plans/generate", async (req, res) => {
@@ -612,14 +637,14 @@ io.on("connection", (socket) => {
     io.to(`room:${code}`).emit("room:student-joined", { name: studentName, id: socket.id });
   });
 
-  socket.on("game:start", ({ gameId, uid }, cb) => {
+  socket.on("game:start", async ({ gameId, uid }, cb) => {
     const code = socket.data.roomCode;
     const room = getRoom(code);
     if (!room || !roomsLib.isManager(room, socket.id)) {
       return cb?.({ ok: false, error: "רק המורה יכול להתחיל משחק" });
     }
     if (premiumLib.isPremiumGame(gameId)) {
-      const premium = uid ? premiumLib.getStatus(uid) : { isPremium: false };
+      const premium = uid ? await premiumLib.getStatus(uid) : { isPremium: false };
       if (!premium.isPremium) {
         return cb?.({ ok: false, error: "משחק פרימיום — נדרש מנוי פעיל" });
       }

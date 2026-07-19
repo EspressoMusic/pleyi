@@ -4,3 +4,5 @@ node_modules/
 .DS_Store
 data/bookings.json
 data/firebase.json
+data/firebase-service-account.json
+data/premium-subscriptions.json

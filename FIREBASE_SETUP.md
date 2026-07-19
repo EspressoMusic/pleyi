@@ -47,6 +47,20 @@ FIREBASE_MESSAGING_SENDER_ID=
 FIREBASE_APP_ID=
 ```
 
+## 4b. Server-side Firestore access (premium subscriptions)
+
+Subscription/premium status (`lib/premium.js`) is written from the server, not
+the browser, so it needs its own credential — the public web config above
+doesn't grant server access.
+
+1. **Project settings → Service accounts → Generate new private key** (downloads a JSON file)
+2. Locally: save it as `data/firebase-service-account.json` (already gitignored)
+3. In production (Render, etc.): set env var `FIREBASE_SERVICE_ACCOUNT` to the full JSON contents, on one line
+
+Without this credential, premium status falls back to a local JSON file
+(`data/premium-subscriptions.json`) — fine for local dev, but it resets on every
+deploy/restart on platforms without a persistent disk (e.g. Render's free tier).
+
 ## 5. Test locally
 
 ```bash

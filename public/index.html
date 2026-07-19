@@ -338,7 +338,7 @@
           </label>
           <div class="join-material-box" id="joinMaterialBox">
             <textarea id="joinMaterialInput" rows="6" data-i18n-placeholder="modal.materialPh" placeholder="הדביקו כאן את תוכן השיעור…&#10;&#10;apple — תפוח&#10;book — ספר"></textarea>
-            <input type="file" id="joinMaterialFile" accept=".txt,.csv,.md,text/plain" hidden />
+            <input type="file" id="joinMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
             <button type="button" class="join-material-attach" id="joinMaterialFileBtn" data-i18n-aria="modal.attachFile" aria-label="העלאת קובץ">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
@@ -365,7 +365,7 @@
       <p class="modal-desc solo-content-lead" data-i18n="solo.lead">הדביקו תוכן לימודי — ניצור ממנו משחק לתרגול יחיד</p>
       <div class="join-material-box" id="soloMaterialBox">
         <textarea id="soloMaterialInput" rows="8" data-i18n-placeholder="modal.materialPh" placeholder="הדביקו כאן את תוכן השיעור…&#10;&#10;apple — תפוח&#10;book — ספר"></textarea>
-        <input type="file" id="soloMaterialFile" accept=".txt,.csv,.md,text/plain" hidden />
+        <input type="file" id="soloMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
         <button type="button" class="join-material-attach" id="soloMaterialFileBtn" data-i18n-aria="modal.attachFile" aria-label="העלאת קובץ">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
@@ -388,6 +388,7 @@
   <script src="js/auth.js"></script>
   <script src="/js/parse-content.js"></script>
   <script src="/js/games-catalog.js"></script>
+  <script src="/js/file-extract.js"></script>
   <script src="js/games.js"></script>
   <script src="js/booking.js"></script>
   <script src="js/teacher-dashboard.js"></script>

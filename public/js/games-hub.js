@@ -492,13 +492,9 @@
 
   async function loadCustomFile(file) {
     if (!file) return;
-    if (file.size > 1024 * 1024) {
-      showToast("הקובץ גדול מדי (מקסימום 1MB)");
-      resetFileInput();
-      return;
-    }
+    if (customFileName) customFileName.textContent = `טוען ${file.name}…`;
     try {
-      customContent.value = await file.text();
+      customContent.value = await window.extractMaterialText(file);
       if (customFileName) customFileName.textContent = file.name;
       if (customFileInput) {
         const dt = new DataTransfer();
@@ -506,8 +502,8 @@
         customFileInput.files = dt.files;
       }
       updatePreview();
-    } catch {
-      showToast("לא ניתן לקרוא את הקובץ");
+    } catch (e) {
+      showToast(e.message || "לא ניתן לקרוא את הקובץ");
       resetFileInput();
     }
   }

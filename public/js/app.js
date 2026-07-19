@@ -230,13 +230,9 @@ async function loadMaterialFile(prefix, file) {
   const fileName = document.getElementById(`${prefix}MaterialFileName`);
   const box = document.getElementById(`${prefix}MaterialBox`);
   if (!file || !textarea) return;
-  if (file.size > 1024 * 1024) {
-    showToast("הקובץ גדול מדי (מקסימום 1MB)");
-    resetMaterialFileUI(prefix);
-    return;
-  }
+  if (fileName) fileName.textContent = `טוען ${file.name}…`;
   try {
-    textarea.value = await file.text();
+    textarea.value = await window.extractMaterialText(file);
     if (fileName) fileName.textContent = file.name;
     if (fileInput) {
       const dt = new DataTransfer();
@@ -244,8 +240,8 @@ async function loadMaterialFile(prefix, file) {
       fileInput.files = dt.files;
     }
     box?.classList.remove("is-dragover");
-  } catch {
-    showToast("לא ניתן לקרוא את הקובץ");
+  } catch (e) {
+    showToast(e.message || "לא ניתן לקרוא את הקובץ");
     resetMaterialFileUI(prefix);
   }
 }
@@ -739,7 +735,6 @@ bindOpenRoomFlow();
 bindPlayModeModal();
 bindSoloContentModal();
 
-initContactExtras();
 GameAuth?.bindModals(showToast);
 document.getElementById("mobileLoginBtn")?.addEventListener("click", () => {
   document.getElementById("loginModal")?.classList.remove("hidden");
