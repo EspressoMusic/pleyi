@@ -125,8 +125,8 @@ window.GameAuth = {
 
       if (redirectWelcome && fbUser) {
         document.getElementById("loginModal")?.classList.add("hidden");
-        if (!/^\/games\/?$/.test(window.location.pathname)) {
-          window.location.href = "/games";
+        if (!/^\/my-room\/?$/.test(window.location.pathname)) {
+          window.location.href = "/my-room";
         }
       }
 
