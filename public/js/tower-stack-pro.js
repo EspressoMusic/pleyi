@@ -71,6 +71,8 @@ window.TowerStackPro = {
     let trails = [];
 
     const BLOCK_H = 62;
+    const CUBE_DEPTH = 16;
+    const BLOCK_GAP = 8;
     const EN_COLOR = {
       front: "#3B82F6",
       frontLight: "#60A5FA",
@@ -95,13 +97,47 @@ window.TowerStackPro = {
       canvas.width = Math.round(rect.width * devicePixelRatio);
       canvas.height = Math.round(rect.height * devicePixelRatio);
       ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      syncFallingPosition();
     };
 
     const cw = () => canvas.getBoundingClientRect().width;
     const ch = () => canvas.getBoundingClientRect().height;
     const blockW = () => Math.min(300, cw() * 0.74);
     const groundY = () => ch() - 56;
-    const towerTopY = () => groundY() - tower.length * BLOCK_H;
+    const blockYForIndex = (idx) => {
+      const base = groundY() - (idx + 1) * BLOCK_H;
+      return idx > 0 ? base - idx * (CUBE_DEPTH + BLOCK_GAP) : base;
+    };
+    const nextBlockTargetY = () => blockYForIndex(tower.length);
+
+    const getCameraFocusY = () => {
+      const cubeTop = CUBE_DEPTH + 8;
+      if (falling) {
+        const blockY = phase === "he-judge" ? nextBlockTargetY() : Math.min(falling.y, nextBlockTargetY());
+        return blockY - cubeTop;
+      }
+      if (resolveAnim?.block) {
+        const b = resolveAnim.block;
+        const blockY = resolveAnim.type === "stack" ? b.targetY : b.y;
+        return blockY - cubeTop;
+      }
+      if (tower.length) return blockYForIndex(tower.length - 1) - cubeTop;
+      return groundY() - BLOCK_H;
+    };
+
+    const syncCamera = (instant = false) => {
+      const h = ch();
+      const focusY = getCameraFocusY();
+      const desiredScreenY = Math.max(96, h * 0.28);
+      cameraTarget = Math.max(0, desiredScreenY - focusY);
+      if (instant) cameraY = cameraTarget;
+    };
+
+    const syncFallingPosition = () => {
+      if (!falling) return;
+      falling.targetY = nextBlockTargetY();
+      if (phase === "he-judge") falling.y = falling.targetY;
+    };
 
     const initClouds = () => {
       clouds = Array.from({ length: 8 }, (_, i) => ({
@@ -142,7 +178,7 @@ window.TowerStackPro = {
       emoji: emoji || "",
       x: cw() / 2,
       y: -BLOCK_H - 40,
-      targetY: towerTopY() - BLOCK_H,
+      targetY: nextBlockTargetY(),
       vy: 0,
       w: blockW(),
       h: BLOCK_H,
@@ -170,7 +206,7 @@ window.TowerStackPro = {
       document.getElementById("tsProEnWord").textContent = currentWord.en;
       GE.sfxWhoosh();
       falling = makeBlock("he", displayHe, "", HE_COLOR);
-      falling.targetY = towerTopY() - BLOCK_H;
+      falling.targetY = nextBlockTargetY();
       trails = [];
     };
 
@@ -181,7 +217,6 @@ window.TowerStackPro = {
     const beginJudge = () => {
       phase = "he-judge";
       trails = [];
-      falling.y = falling.targetY;
       falling.vy = 0;
       syncTimerSetting();
       judgeLeft = judgeTime;
@@ -192,6 +227,11 @@ window.TowerStackPro = {
       } else {
         document.getElementById("tsProTimer").classList.add("hidden");
       }
+      requestAnimationFrame(() => {
+        resize();
+        syncFallingPosition();
+        syncCamera(true);
+      });
     };
 
     const endGame = () => {
@@ -207,6 +247,7 @@ window.TowerStackPro = {
 
     const resolveAnswer = (playerSaysCorrect) => {
       if (phase !== "he-judge") return;
+      syncFallingPosition();
       document.getElementById("tsProControls").classList.add("hidden");
       document.getElementById("tsProTimer").classList.add("hidden");
 
@@ -296,8 +337,9 @@ window.TowerStackPro = {
       GE.drawCloudLayer(ctx, cloudsFar);
       GE.drawCloudLayer(ctx, clouds);
 
-      cameraTarget = Math.max(0, tower.length * BLOCK_H - h * 0.42);
-      cameraY += (cameraTarget - cameraY) * 0.06;
+      syncCamera();
+      const camEase = phase === "he-judge" ? 0.14 : 0.08;
+      cameraY += (cameraTarget - cameraY) * camEase;
 
       ctx.save();
       ctx.translate(0, cameraY);
@@ -308,7 +350,7 @@ window.TowerStackPro = {
       GE.drawGround(ctx, w, groundY(), bw);
 
       tower.forEach((block, idx) => {
-        const by = groundY() - (idx + 1) * BLOCK_H;
+        const by = blockYForIndex(idx);
         GE.drawCube(ctx, { ...block, x: w / 2 + swayX * (idx / Math.max(tower.length, 1)), y: by, w: bw, h: BLOCK_H });
       });
 
@@ -321,9 +363,10 @@ window.TowerStackPro = {
       }
 
       if (falling) {
+        const baseY = phase === "he-judge" ? nextBlockTargetY() : falling.y;
         const hover = phase === "he-judge" ? Math.sin(time * 0.006) * 4 : 0;
         const glow = false;
-        GE.drawCube(ctx, { ...falling, y: falling.y + hover, w: bw, h: BLOCK_H, glow });
+        GE.drawCube(ctx, { ...falling, y: baseY + hover, w: bw, h: BLOCK_H, glow });
       }
 
       if (resolveAnim) {
@@ -375,7 +418,7 @@ window.TowerStackPro = {
       if (falling && (phase === "en-fall" || phase === "he-fall")) {
         falling.vy += 0.65 * (dt / 16);
         falling.y += falling.vy * (dt / 16);
-        falling.targetY = towerTopY() - BLOCK_H;
+        falling.targetY = nextBlockTargetY();
         if (phase === "en-fall" || phase === "he-fall") {
           trails.unshift({ ...falling, alpha: 0.18 });
           if (trails.length > 3) trails.pop();

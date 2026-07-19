@@ -153,7 +153,7 @@ window.MathBlitzPro = {
       }
 
       ctx.fillStyle = "rgba(255,255,255,0.12)";
-      ctx.font = "800 16px Heebo,sans-serif";
+      ctx.font = "800 16px Google Sans,sans-serif";
       ctx.textAlign = "left";
       ctx.fillText(`❤️`.repeat(lives) + `🖤`.repeat(3 - lives), 20, 36);
       ctx.textAlign = "right";
@@ -167,7 +167,7 @@ window.MathBlitzPro = {
         ctx.fillStyle = "#FFE135";
         ctx.strokeStyle = "#1a0a2e";
         ctx.lineWidth = 6;
-        ctx.font = `900 ${Math.min(56, w / (question.word.length * 0.45))}px Heebo,sans-serif`;
+        ctx.font = `900 ${Math.min(56, w / (question.word.length * 0.45))}px Google Sans,sans-serif`;
         ctx.textAlign = "center";
         ctx.strokeText(question.word, 0, 0);
         ctx.fillText(question.word, 0, 0);
@@ -186,7 +186,7 @@ window.MathBlitzPro = {
         ctx.arc(cx, cy, ringR, -Math.PI / 2, -Math.PI / 2 + (timeLeft / maxTime) * Math.PI * 2);
         ctx.stroke();
         ctx.fillStyle = "#fff";
-        ctx.font = "900 22px Heebo,sans-serif";
+        ctx.font = "900 22px Google Sans,sans-serif";
         ctx.textAlign = "center";
         ctx.fillText(String(Math.ceil(timeLeft)), cx, cy + 8);
       }
@@ -209,7 +209,7 @@ window.MathBlitzPro = {
         ctx.fill();
         ctx.stroke();
         ctx.fillStyle = "#1a0a2e";
-        ctx.font = "900 26px Heebo,sans-serif";
+        ctx.font = "900 26px Google Sans,sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(b.text, 0, 0);

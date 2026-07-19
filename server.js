@@ -29,6 +29,14 @@ app.get("/games", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "games.html"));
 });
 
+app.get("/my-room", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "my-room.html"));
+});
+
+app.get("/lesson-plans", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "lesson-plans.html"));
+});
+
 app.get("/room", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "room.html"));
 });
@@ -84,6 +92,9 @@ app.get("/api/premium/plans", (_req, res) => {
     plans: premiumLib.PLANS,
     premiumGames: premiumLib.PREMIUM_GAMES,
     freeWeeklyCustomGames: premiumLib.FREE_WEEKLY_CUSTOM_GAMES,
+    creditsByPlan: premiumLib.CREDITS_BY_PLAN,
+    defaultCredits: premiumLib.DEFAULT_CREDITS,
+    aiGameCreditCost: premiumLib.AI_GAME_CREDIT_COST,
     settings: {
       bitPhone: bookingSettings.bitPhone,
       bitPayName: bookingSettings.bitPayName,
@@ -126,6 +137,16 @@ app.post("/api/ai/generate-game", async (req, res) => {
     const { lessonText, subject } = req.body || {};
     const result = await aiLesson.generateGameFromLesson({ lessonText, subject });
     res.json({ ok: true, ...result });
+  } catch (e) {
+    res.status(400).json({ ok: false, error: e.message });
+  }
+});
+
+app.post("/api/lesson-plans/generate", async (req, res) => {
+  try {
+    const { topic, material, durationMinutes, gradeLevel } = req.body || {};
+    const result = await aiLesson.generateLessonPlan({ topic, material, durationMinutes, gradeLevel });
+    res.json({ ok: true, plan: result });
   } catch (e) {
     res.status(400).json({ ok: false, error: e.message });
   }
@@ -507,10 +528,20 @@ io.on("connection", (socket) => {
     cb?.({ ok: true, bookings: bookingsLib.getTeacherBookings() });
   });
 
-  socket.on("room:create", ({ name }, cb) => {
+  socket.on("room:create", ({ name, learningMaterial }, cb) => {
     const code = generateCode();
     const teacherToken = crypto.randomBytes(16).toString("hex");
     const room = roomsLib.createRoom(code, socket.id, name, teacherToken);
+
+    const text = String(learningMaterial || "").trim();
+    if (text) {
+      const { items, normalized } = normalizeLearningContent(text);
+      if (items.length) {
+        room.learningMaterial = normalized;
+        room.learningItems = items;
+      }
+    }
+
     rooms.set(code, room);
     socket.data.roomCode = code;
     socket.data.role = "teacher";

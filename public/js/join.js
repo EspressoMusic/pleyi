@@ -1,6 +1,7 @@
 /* Student mobile join page */
 
 (function () {
+  const STUDENT_NAME_KEY = "pleyi-student-name";
   const socket = io();
   const state = {
     role: "student",
@@ -199,15 +200,47 @@
 
   const params = new URLSearchParams(location.search);
   const preCode = params.get("code") || params.get("join");
-  if (preCode && /^\d{6}$/.test(preCode)) $("joinCode").value = preCode;
+  const joinCodeInput = $("joinCode");
+  const joinNameInput = $("joinName");
+
+  if (preCode && /^\d{6}$/.test(preCode) && joinCodeInput) {
+    joinCodeInput.value = preCode;
+    $("joinQrHint")?.classList.remove("hidden");
+  }
+
+  const savedName = localStorage.getItem(STUDENT_NAME_KEY);
+  if (savedName && joinNameInput && !joinNameInput.value) {
+    joinNameInput.value = savedName;
+  }
+
+  if (joinNameInput) {
+    joinNameInput.addEventListener("focus", () => {
+      setTimeout(() => joinNameInput.scrollIntoView({ block: "center", behavior: "smooth" }), 280);
+    });
+  }
+
+  if (joinCodeInput) {
+    joinCodeInput.addEventListener("focus", () => {
+      setTimeout(() => joinCodeInput.scrollIntoView({ block: "center", behavior: "smooth" }), 280);
+    });
+  }
+
+  if (preCode && /^\d{6}$/.test(preCode) && joinNameInput) {
+    requestAnimationFrame(() => {
+      if (!joinNameInput.value.trim()) joinNameInput.focus();
+      else $("joinForm")?.querySelector(".join-submit")?.focus();
+    });
+  }
 
   $("joinForm").addEventListener("submit", (e) => {
     e.preventDefault();
     $("joinError").classList.add("hidden");
-    const code = $("joinCode").value.trim();
-    const name = $("joinName").value.trim();
+    const code = joinCodeInput.value.trim();
+    const name = joinNameInput.value.trim();
     if (!/^\d{6}$/.test(code)) return showError("קוד חדר חייב להיות 6 ספרות");
     if (!name) return showError("נא להזין שם");
+
+    localStorage.setItem(STUDENT_NAME_KEY, name);
 
     socket.emit("room:join", { code, name }, (res) => {
       if (res?.ok) enterRoom(res);

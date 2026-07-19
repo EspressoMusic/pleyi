@@ -1,51 +1,61 @@
+@import url("css/fonts.css");
+
 /* Pleyi — Memphis / Sticker Pop style */
 
 :root {
-  --electric: #0066FF;
-  --mempink: #FF9ECF;
+  --font-sans: "Google Sans", system-ui, sans-serif;
+  --electric: #00C9B7;
+  --mempink: #B8FFF5;
   --memyellow: #FFE135;
-  --mempurple: #B967FF;
-  --memlime: #D4FF00;
-  --memorange: #FF6B35;
+  --mempurple: #009E8E;
+  --memlime: #FFE135;
+  --memorange: #FFD700;
   --memteal: #00E5CC;
-  --ink: #1a0a2e;
+  --ink: #000000;
   --white: #ffffff;
-  --clean-bg-how: #6BE0AB;
-  --clean-bg-panel: #e2e4e8;
-  --clean-bg-cream: #FFF6E8;
-  --game-stage-bg-color: #b8c0cc;
+  --clean-bg-how: #B8FFF5;
+  --clean-bg-contact: #52C7BE;
+  --clean-bg-panel: #ffffff;
+  --clean-bg-cream: #FFFFF0;
+  --game-stage-bg-color: #E0FBF8;
+  --shape-tq-pale: rgba(170, 250, 240, 0.82);
+  --shape-tq-soft: rgba(120, 230, 218, 0.78);
+  --shape-tq-mid: rgba(70, 210, 198, 0.74);
+  --shape-tq-deep: rgba(45, 185, 175, 0.72);
+  --shape-tq-accent: rgba(0, 201, 183, 0.68);
+  --shape-tq-line: rgba(0, 130, 118, 0.42);
 
   --bg-deep: var(--electric);
   --bg-1: var(--mempink);
   --bg-2: var(--memyellow);
-  --accent-1: var(--mempurple);
-  --accent-2: var(--memteal);
-  --accent-3: var(--memorange);
+  --accent-1: var(--memteal);
+  --accent-2: var(--memyellow);
+  --accent-3: var(--memyellow);
   --text: var(--ink);
   --heading: var(--ink);
-  --muted: rgba(26, 10, 46, 0.72);
-  --body: rgba(26, 10, 46, 0.85);
-  --line: rgba(26, 10, 46, 0.35);
-  --line-strong: rgba(26, 10, 46, 0.55);
+  --muted: rgba(0, 0, 0, 0.72);
+  --body: rgba(0, 0, 0, 0.85);
+  --line: rgba(0, 0, 0, 0.35);
+  --line-strong: rgba(0, 0, 0, 0.55);
   --nav-scrolled-bg: rgba(255, 255, 255, 0.92);
-  --nav-shadow: rgba(26, 10, 46, 0.25);
+  --nav-shadow: rgba(0, 0, 0, 0.25);
   --card-bg: var(--white);
   --step-bg: rgba(255, 255, 255, 0.88);
   --loader-bg: var(--electric);
   --mobile-nav-bg: rgba(255, 255, 255, 0.98);
   --hero-accent: var(--memyellow);
-  --btn-bg: var(--mempurple);
-  --glow-purple: rgba(185, 103, 255, 0.3);
-  --glow-blue: rgba(0, 102, 255, 0.2);
+  --btn-bg: var(--memyellow);
+  --glow-purple: rgba(0, 201, 183, 0.3);
+  --glow-blue: rgba(0, 229, 204, 0.2);
   --radius: 24px;
   --container: 1180px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --success: #6bbf8a;
+  --success: #00C9B7;
   --danger: #e07070;
-  --teacher-color: var(--mempurple);
-  --student-color: var(--memteal);
-  --shadow-candy: 8px 10px 0 0 rgba(26, 10, 46, 0.95);
-  --shadow-sticker: 6px 8px 0 0 rgba(26, 10, 46, 0.85);
+  --teacher-color: var(--memteal);
+  --student-color: var(--memyellow);
+  --shadow-candy: 8px 10px 0 0 rgba(0, 0, 0, 0.95);
+  --shadow-sticker: 6px 8px 0 0 rgba(0, 0, 0, 0.85);
 }
 
 html[data-theme="light"] {
@@ -71,7 +81,7 @@ html { scroll-behavior: smooth; }
 html, body { margin: 0; padding: 0; }
 
 body {
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 18px;
   color: var(--text);
@@ -90,7 +100,7 @@ body {
 }
 
 .font-cartoon {
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 900;
   letter-spacing: -0.02em;
   line-height: 1.05;
@@ -98,7 +108,7 @@ body {
 
 /* ── Pleyi brand wordmark — playful Latin game font ── */
 .font-brand {
-  font-family: "Fredoka", "Heebo", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 600;
   letter-spacing: 0.06em;
   line-height: 1;
@@ -138,11 +148,11 @@ body {
 
 .navbar.scrolled .logo-text.font-brand,
 body.in-room .logo-text.font-brand {
-  -webkit-text-fill-color: var(--mempurple);
-  color: var(--mempurple);
+  -webkit-text-fill-color: var(--memyellow);
+  color: var(--memyellow);
   -webkit-text-stroke: 6px var(--ink);
   -webkit-text-stroke-color: var(--ink);
-  text-shadow: 4px 4px 0 rgba(26, 10, 46, 0.22);
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.22);
 }
 
 @keyframes brand-float {
@@ -191,9 +201,11 @@ body.clean-site h2.font-cartoon,
 }
 
 .how-timeline-body h3 {
-  -webkit-text-stroke: 0;
-  text-shadow: none;
   paint-order: normal;
+  -webkit-text-stroke: 0;
+  -webkit-text-fill-color: var(--ink);
+  color: var(--ink);
+  text-shadow: none;
 }
 
 .hero-title.font-cartoon .line {
@@ -334,19 +346,19 @@ h3.font-cartoon { color: var(--electric); }
 .sticker-card {
   border: 4px solid var(--ink) !important;
   box-shadow: var(--shadow-candy);
-  rotate: -1deg;
+  rotate: 0deg;
   transition: transform 0.2s var(--ease), box-shadow 0.2s;
 }
 
 .benefit-cards .pitch-card:nth-child(1) {
-  rotate: -1deg;
+  rotate: 0deg;
 }
 
-.benefit-cards .pitch-card:nth-child(2) { rotate: 2deg; }
-.benefit-cards .pitch-card:nth-child(3) { rotate: -2deg; }
+.benefit-cards .pitch-card:nth-child(2) { rotate: 0deg; }
+.benefit-cards .pitch-card:nth-child(3) { rotate: 0deg; }
 
-.sticker-card:nth-child(odd) { rotate: -3deg; }
-.sticker-card:nth-child(even) { rotate: 2deg; }
+.sticker-card:nth-child(odd) { rotate: 0deg; }
+.sticker-card:nth-child(even) { rotate: 0deg; }
 
 .sticker-card:hover {
   rotate: 0deg;
@@ -366,7 +378,7 @@ h3.font-cartoon { color: var(--electric); }
   border-radius: var(--radius);
   padding: 16px 22px;
   box-shadow: var(--shadow-candy);
-  rotate: 2deg;
+  rotate: 0deg;
   font-weight: 800;
 }
 
@@ -394,7 +406,7 @@ h3.font-cartoon { color: var(--electric); }
   border: 4px solid var(--ink);
   border-radius: var(--radius);
   box-shadow: var(--shadow-candy);
-  rotate: 2deg;
+  rotate: 0deg;
 }
 
 .section-wave {
@@ -412,8 +424,7 @@ h3.font-cartoon { color: var(--electric); }
   font-size: clamp(16px, 2vw, 20px);
   margin-bottom: 20px;
   box-shadow: var(--shadow-candy);
-  rotate: -2deg;
-  animation: memphis-float 5.5s ease-in-out infinite;
+  rotate: 0deg;
 }
 
 .btn-candy {
@@ -431,8 +442,10 @@ h3.font-cartoon { color: var(--electric); }
   flex-shrink: 0;
   padding: 28px 44px;
   font-size: clamp(20px, 4vw, 28px);
-  background: var(--white);
+  background: var(--memyellow);
   color: var(--ink);
+  border: 4px solid var(--ink);
+  box-shadow: var(--shadow-candy);
 }
 
 /* ── Scroll decor & parallax ── */
@@ -596,14 +609,14 @@ button { font-family: inherit; }
 .nav-auth-btn {
   padding: 8px 16px;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 900;
   font-family: inherit;
-  border: 3px solid var(--ink);
+  border: 4px solid var(--ink);
   border-radius: 999px;
-  background: var(--white);
+  background: var(--memyellow);
   color: var(--ink);
   cursor: pointer;
-  box-shadow: var(--shadow-sticker);
+  box-shadow: var(--shadow-candy);
   transition: transform 0.12s;
 }
 
@@ -611,7 +624,7 @@ button { font-family: inherit; }
 
 #authLoginBtn,
 .mobile-nav-auth {
-  background: var(--mempink);
+  background: var(--memyellow);
 }
 
 .nav-auth-btn--primary { background: var(--memyellow); }
@@ -792,7 +805,7 @@ button { font-family: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  rotate: -2deg;
+  rotate: 0deg;
   text-decoration: none;
   color: inherit;
   padding: 4px 14px 4px 8px;
@@ -861,7 +874,7 @@ button { font-family: inherit; }
   text-shadow: none;
 }
 
-.nav-links { display: none; gap: 10px; rotate: 1deg; }
+.nav-links { display: none; gap: 10px; rotate: 0deg; }
 
 @media (min-width: 900px) {
   .nav-links { display: flex; }
@@ -879,6 +892,30 @@ button { font-family: inherit; }
   box-shadow: var(--shadow-sticker);
   transition: transform 0.15s ease, background 0.15s ease;
   white-space: nowrap;
+}
+
+.nav-beta-tag {
+  display: inline-block;
+  margin-inline-start: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--ink);
+  background: var(--memyellow);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  vertical-align: middle;
+  letter-spacing: 0.02em;
+}
+
+.nav-pill--beta {
+  padding-inline-end: 10px;
+}
+
+.mobile-nav .nav-beta-tag {
+  margin-inline-start: 8px;
+  font-size: 11px;
 }
 
 .nav-pill:hover,
@@ -1471,12 +1508,12 @@ a.pitch-card {
 
 .step-card:nth-child(1) {
   background: var(--mempink);
-  rotate: -2deg;
+  rotate: 0deg;
 }
 
 .step-card:nth-child(2) {
   background: var(--memteal);
-  rotate: 3deg;
+  rotate: 0deg;
 }
 
 @media (min-width: 768px) {
@@ -1486,7 +1523,7 @@ a.pitch-card {
 .step-card:nth-child(3) {
   background: var(--mempurple);
   color: var(--white);
-  rotate: -1deg;
+  rotate: 0deg;
 }
 
 .step-card:nth-child(3) h3,
@@ -1546,11 +1583,11 @@ a.pitch-card {
 }
 
 .btn-outline {
-  background: var(--white);
+  background: var(--memyellow);
   border: 4px solid var(--ink);
   color: var(--ink);
-  box-shadow: var(--shadow-sticker);
-  font-weight: 800;
+  box-shadow: var(--shadow-candy);
+  font-weight: 900;
 }
 
 .btn-sm { padding: 8px 16px; font-size: 14px; }
@@ -1562,11 +1599,11 @@ a.pitch-card {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: var(--white);
+  background: var(--memyellow);
   color: var(--ink);
-  border: 3px solid var(--ink);
-  font-weight: 800;
-  box-shadow: var(--shadow-sticker);
+  border: 4px solid var(--ink);
+  font-weight: 900;
+  box-shadow: var(--shadow-candy);
 }
 
 .btn-google:hover { transform: translateY(-2px); }
@@ -2559,7 +2596,7 @@ body.in-room .hangman-game .letter-btn {
   font-size: clamp(2.75rem, 9vw, 5rem);
   font-weight: 900;
   letter-spacing: 0.18em;
-  font-family: "Heebo", system-ui, monospace, sans-serif;
+  font-family: var(--font-sans), monospace, sans-serif;
   color: var(--ink, #1a0a2e);
   -webkit-text-fill-color: var(--ink, #1a0a2e);
 }
@@ -3112,8 +3149,8 @@ body.in-room .game-actions .btn {
   justify-content: center;
   gap: 28px;
   padding: 44px 24px 32px;
-  --modal-fill: var(--white);
-  background: var(--white) !important;
+  --modal-fill: var(--memteal);
+  background: var(--memteal) !important;
   text-align: center;
 }
 
@@ -3151,8 +3188,8 @@ body.in-room .game-actions .btn {
 }
 
 .modal-overlay > .modal {
-  --modal-fill: var(--bg-1);
-  background: var(--modal-fill);
+  --modal-fill: var(--memteal);
+  background: var(--memteal) !important;
   border: 3px solid color-mix(in srgb, var(--modal-fill) 62%, var(--ink));
   border-radius: var(--radius);
   padding: 32px;
@@ -3166,8 +3203,8 @@ body.in-room .game-actions .btn {
 
 .modal-custom-game,
 .modal-login {
-  --modal-fill: var(--white);
-  background: var(--white) !important;
+  --modal-fill: var(--memteal);
+  background: var(--memteal) !important;
 }
 
 .modal {
@@ -3208,14 +3245,20 @@ body.in-room .game-actions .btn {
   color: var(--heading);
 }
 
-#joinModal .modal h2.font-cartoon {
+#joinModal .modal h2.font-cartoon,
+#soloContentModal .modal h2.font-cartoon,
+#playModeModal .modal h2.font-cartoon {
   text-align: center;
   width: 100%;
   margin: 0 0 12px;
   padding-top: 4px;
-  font-size: clamp(1.65rem, 5vw, 2rem);
-  -webkit-text-fill-color: var(--memyellow);
-  color: var(--memyellow);
+  font-size: clamp(1.75rem, 5.5vw, 2.25rem);
+  font-weight: 900;
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
+  paint-order: normal;
   pointer-events: none;
 }
 
@@ -3232,6 +3275,107 @@ body.in-room .game-actions .btn {
   font-weight: 800;
   padding: 20px 28px;
   min-height: 64px;
+}
+
+#joinModal.join-modal--teacher .modal,
+#soloContentModal .modal {
+  max-width: min(520px, 94vw);
+}
+
+.join-material-group {
+  margin: 16px 0 8px;
+}
+
+.join-material-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.join-material-label > span:first-child {
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--ink);
+  text-align: center;
+}
+
+.join-material-hint,
+.solo-content-lead {
+  font-size: clamp(16px, 3.5vw, 19px);
+  font-weight: 800;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.45;
+}
+
+.join-material-box {
+  position: relative;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  overflow: hidden;
+}
+
+.join-material-box textarea {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  padding: 14px 14px 58px;
+  border: none;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.join-material-box textarea:focus {
+  outline: none;
+}
+
+.join-material-box.is-dragover {
+  box-shadow: 0 0 0 3px var(--memteal);
+}
+
+.join-material-attach {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--memyellow);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  z-index: 1;
+}
+
+.join-material-attach:hover {
+  transform: translate(-1px, -1px);
+}
+
+.join-material-file-name {
+  display: block;
+  padding: 0 14px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.join-material-file-name:empty {
+  display: none;
+  padding: 0;
+}
+
+#soloContentModal .join-modal-submit {
+  margin-top: 16px;
 }
 
 .modal-desc {
@@ -3997,17 +4141,22 @@ body.in-room .game-actions .btn {
   margin-inline: auto;
   text-align: center;
   padding: 28px 24px 32px;
-  background: var(--memyellow);
+  background: var(--mempurple);
   border: 4px solid var(--ink);
   border-radius: var(--radius);
   box-shadow: var(--shadow-candy);
-  rotate: -1deg;
+  rotate: 0deg;
 }
 
 .site-qr-title {
   margin: 0 0 8px;
   font-size: clamp(24px, 4vw, 32px);
-  color: var(--ink);
+}
+
+.site-qr-title.font-cartoon,
+h3.site-qr-title.font-cartoon {
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
 }
 
 .site-qr-lead {
@@ -4085,7 +4234,7 @@ body.in-room .game-actions .btn {
 .footer-tagline {
   font-size: clamp(2rem, 6vw, 3.5rem);
   color: var(--ink);
-  rotate: 1deg;
+  rotate: 0deg;
   text-shadow: 4px 4px 0 var(--white);
   margin: 0;
 }
@@ -4100,7 +4249,7 @@ body.in-room .game-actions .btn {
   border-radius: var(--radius);
   padding: 16px 24px;
   box-shadow: var(--shadow-sticker);
-  rotate: -1deg;
+  rotate: 0deg;
 }
 
 .section-yellow .footer-copy {
@@ -4595,7 +4744,7 @@ body.in-room .game-panel:has(.spot-diff-game) {
 }
 
 input, textarea, select {
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 700;
 }
 
@@ -4604,10 +4753,163 @@ input, textarea, select {
 .letter-btn,
 .memory-card,
 .candy-tile {
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-weight: 800;
 }
 
 .mobile-nav a {
   font-weight: 900;
+}
+
+/* Straight alignment — no tilted buttons, cards, or content blocks */
+.logo,
+.nav-links,
+.nav-pill,
+.nav-links a,
+.nav-auth-btn,
+.nav-cta,
+.mobile-nav a,
+.mobile-nav-auth,
+.btn,
+.btn-candy,
+.btn-outline,
+.btn-primary,
+.btn-google,
+.sticker-card,
+.pitch-card,
+.benefit-cards .pitch-card,
+.step-card,
+.sticker-box,
+.hero-badge,
+.hero-sticker-card,
+.site-qr,
+.site-qr-box,
+.site-qr-copy,
+.site-qr-title,
+.footer-tagline,
+.footer-copy,
+.footer-inner,
+.site-footer,
+.contact-form,
+.contact-info,
+.whatsapp-btn,
+.how-timeline-step,
+.how-timeline-body,
+.how-timeline-marker,
+.how-classroom-btn,
+.clean-center-cta,
+.game-btn,
+.game-picker,
+.hub-tab,
+.hub-game-card,
+.hub-skill-filters-panel,
+.hub-skill-filter,
+.hub-custom-form,
+.hub-custom-card,
+.hub-grid-empty,
+.modal,
+.modal-play-mode,
+.play-mode-choice,
+.join-card,
+.join-brand-wrap,
+.join-header,
+.room-share-card,
+.room-students-card,
+.room-chat-card,
+.guest-room-panel,
+.room-tile,
+.lp-card,
+.premium-plan,
+.premium-card,
+.site-legal-nav a,
+.nav-user-dropdown,
+.teacher-room-panel,
+.hub-back,
+.lp-back {
+  rotate: 0deg !important;
+}
+
+.hero-badge,
+.sticker-card,
+.hero-sticker-card {
+  --mem-rotate: 0deg;
+}
+
+/* Hide noisy confetti only — background shapes stay subtle via page CSS */
+.marker-confetti,
+.hub-custom-confetti {
+  display: none !important;
+}
+
+/* Hide decorative background shapes site-wide */
+.memphis-bg,
+.hub-memphis-bg,
+.lp-memphis-bg,
+.room-memphis-bg,
+.clean-section-shapes,
+.clean-memphis-layer,
+.clean-memphis-sticker,
+.clean-memphis-ring,
+.clean-memphis-zigzag,
+.clean-memphis-svg,
+.hub-memphis-sticker,
+.room-memphis-sticker,
+.lp-shape,
+.memphis-sticker {
+  display: none !important;
+}
+
+.clean-memphis-sticker,
+.hub-memphis-sticker,
+.lp-shape,
+.room-memphis-sticker,
+.clean-memphis-ring {
+  border: 3px solid var(--shape-tq-line) !important;
+  box-shadow: none !important;
+}
+
+.clean-memphis-sticker--purple,
+.hub-memphis-sticker--purple,
+.lp-shape--1,
+.room-memphis-sticker--purple { background: var(--shape-tq-deep) !important; }
+
+.clean-memphis-sticker--yellow,
+.hub-memphis-sticker--yellow,
+.lp-shape--2,
+.room-memphis-sticker--yellow { background: var(--shape-tq-soft) !important; }
+
+.clean-memphis-sticker--pink,
+.hub-memphis-sticker--pink,
+.room-memphis-sticker--pink { background: var(--shape-tq-pale) !important; }
+
+.clean-memphis-sticker--orange,
+.hub-memphis-sticker--orange { background: var(--shape-tq-accent) !important; }
+
+.clean-memphis-sticker--lime,
+.hub-memphis-sticker--lime,
+.room-memphis-sticker--lime { background: var(--shape-tq-mid) !important; }
+
+.clean-memphis-sticker--teal,
+.hub-memphis-sticker--teal,
+.lp-shape--3 { background: var(--shape-tq-mid) !important; }
+
+.hub-memphis-sticker--mint { background: var(--shape-tq-pale) !important; }
+
+.hub-memphis-sticker--coral { background: var(--shape-tq-deep) !important; }
+
+.clean-memphis-ring--purple { border-color: var(--shape-tq-deep) !important; }
+
+.clean-memphis-ring--yellow { border-color: var(--shape-tq-soft) !important; }
+
+body.clean-site .clean-memphis-svg circle {
+  stroke: none !important;
+}
+
+body.clean-site .clean-memphis-svg circle:nth-child(1) { fill: var(--shape-tq-soft) !important; }
+
+body.clean-site .clean-memphis-svg circle:nth-child(2) { fill: var(--shape-tq-pale) !important; }
+
+body.clean-site .clean-memphis-zigzag path {
+  stroke: var(--shape-tq-accent) !important;
+  stroke-width: 3;
 }

@@ -2,7 +2,7 @@
 
 .legal-page {
   min-height: 100vh;
-  background: #f4f7ff;
+  background: #E0FBF8;
   padding: 100px 20px 48px;
 }
 
@@ -131,15 +131,5 @@
 }
 
 .site-footer-mini .footer-copy {
-  display: inline-block;
-  margin: 12px auto 0;
-  padding: 12px 28px;
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--ink);
-  background: var(--memyellow);
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  box-shadow: var(--shadow-sticker);
-  rotate: 0deg;
+  display: none;
 }

@@ -607,32 +607,19 @@
     if (!window.GameAuth?.getUser()) {
       customGameQuota.classList.add("hidden");
       customGameQuota.textContent = "";
-      customCreateBtn?.removeAttribute("disabled");
       return;
     }
 
     try {
-      const quota = await UserData.getCustomGameQuota();
-      if (quota.isPremium) {
-        customGameQuota.classList.add("hidden");
-        customGameQuota.textContent = "";
-        customCreateBtn?.removeAttribute("disabled");
-        return;
-      }
-
+      const { balance, allowance } = await UserData.getCredits();
       customGameQuota.classList.remove("hidden");
-      if (quota.allowed) {
-        customGameQuota.classList.remove("is-limit");
-        customGameQuota.innerHTML = `נותרו <strong>${quota.remaining}</strong> מתוך ${quota.limit} משחקים מותאמים השבוע (גרסה חינמית).`;
-        if (!editingSavedId) customCreateBtn?.removeAttribute("disabled");
-      } else {
-        customGameQuota.classList.add("is-limit");
-        customGameQuota.innerHTML = `הגעתם למכסה השבועית (${quota.limit} משחקים). <a href="/premium">שדרגו לפרימיום</a> ליצירה ללא הגבלה.`;
-        if (!editingSavedId) customCreateBtn?.setAttribute("disabled", "disabled");
-      }
+      const low = balance < UserData.AI_GAME_CREDIT_COST;
+      customGameQuota.classList.toggle("is-limit", low);
+      customGameQuota.innerHTML = low
+        ? `אין קרדיטים ליצירה עם AI. <a href="/premium">שדרגו מנוי</a> לקבלת קרדיטים נוספים.`
+        : `יצירה עם AI: <strong>${balance}</strong> קרדיטים נותרו (מתוך ${allowance}).`;
     } catch {
       customGameQuota.classList.add("hidden");
-      customCreateBtn?.removeAttribute("disabled");
     }
   }
 
@@ -676,6 +663,14 @@
   async function renderTeacherSubscription() {
     if (!teacherRoomSub) return;
 
+    let creditsMeta = "";
+    try {
+      const { balance, allowance } = await UserData.getCredits();
+      creditsMeta = `<p class="teacher-room-sub-meta">${balance} קרדיטים נותרו (מתוך ${allowance})</p>`;
+    } catch {
+      /* ignore */
+    }
+
     const premium = window.PleyiPremium?.hasPremium?.();
     if (premium) {
       const until = formatPremiumDate(window.PleyiPremium?.getStatus?.()?.premiumUntil);
@@ -685,27 +680,21 @@
           <p class="teacher-room-sub-label">מצב מנוי</p>
           <p class="teacher-room-sub-title">פרימיום פעיל</p>
           ${until ? `<p class="teacher-room-sub-meta">בתוקף עד ${escapeHtml(until)}</p>` : ""}
+          ${creditsMeta}
         </div>
         <a href="/premium" class="teacher-room-sub-action">ניהול מנוי</a>`;
       return;
     }
 
     try {
-      const quota = await UserData.getCustomGameQuota();
       teacherRoomSub.className = "teacher-room-sub";
-      teacherRoomSub.innerHTML = quota.allowed
-        ? `<div>
-            <p class="teacher-room-sub-label">מצב מנוי</p>
-            <p class="teacher-room-sub-title">תוכנית חינמית</p>
-            <p class="teacher-room-sub-meta">נותרו ${quota.remaining} מתוך ${quota.limit} יצירות השבוע</p>
-          </div>
-          <a href="/premium" class="teacher-room-sub-action">שדרוג לפרימיום</a>`
-        : `<div>
-            <p class="teacher-room-sub-label">מצב מנוי</p>
-            <p class="teacher-room-sub-title">הגעתם למכסה השבועית</p>
-            <p class="teacher-room-sub-meta">${quota.limit} משחקים מותאמים בשבוע בחינם</p>
-          </div>
-          <a href="/premium" class="teacher-room-sub-action">שדרוג לפרימיום</a>`;
+      teacherRoomSub.innerHTML = `
+        <div>
+          <p class="teacher-room-sub-label">מצב מנוי</p>
+          <p class="teacher-room-sub-title">תוכנית חינמית</p>
+          ${creditsMeta || `<p class="teacher-room-sub-meta">${UserData.DEFAULT_CREDITS} קרדיטים ליצירת משחק עם AI</p>`}
+        </div>
+        <a href="/premium" class="teacher-room-sub-action">שדרוג לפרימיום</a>`;
     } catch {
       teacherRoomSub.className = "teacher-room-sub";
       teacherRoomSub.innerHTML = `
@@ -1085,8 +1074,14 @@
     updateCustomQuotaDisplay();
     if (window.GameAuth?.getUser() || TEACHER_PREVIEW) {
       refreshLibrary();
+      renderTeacherSubscription();
       if (TEACHER_PREVIEW) showTeacherDesignPreview();
     }
+  });
+
+  document.addEventListener("credits-updated", () => {
+    renderTeacherSubscription();
+    updateCustomQuotaDisplay();
   });
 
   applyDisabledSubjects();
@@ -1097,4 +1092,28 @@
   refreshLibrary();
   if (!TEACHER_PREVIEW && window.GameAuth?.getUser()) resumePendingCreate();
   if (TEACHER_PREVIEW) showTeacherDesignPreview();
+
+  if (sessionStorage.getItem("pleyi-open-custom") === "1") {
+    sessionStorage.removeItem("pleyi-open-custom");
+    openCustomModal();
+  }
+
+  const editRaw = sessionStorage.getItem("pleyi-edit-game");
+  if (editRaw) {
+    sessionStorage.removeItem("pleyi-edit-game");
+    try {
+      const game = JSON.parse(editRaw);
+      editingSavedId = game.id;
+      if (customTitle) customTitle.value = game.title || "";
+      if (customSubject) customSubject.value = game.subject || activeSubject;
+      if (customContent) customContent.value = game.content || "";
+      updateCustomGameOptions();
+      if (customGamePick && game.gameId) customGamePick.value = game.gameId;
+      updatePreview();
+      openCustomModal({ advanced: true });
+      showToast("עריכת משחק — שמרו כדי לעדכן");
+    } catch {
+      /* ignore bad payload */
+    }
+  }
 })();

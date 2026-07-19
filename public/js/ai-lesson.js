@@ -17,6 +17,16 @@
   }
 
   async function generate({ lessonText, subject = "english" }) {
+    if (window.UserData?.canSpendCredits) {
+      const allowed = await UserData.canSpendCredits(UserData.AI_GAME_CREDIT_COST);
+      if (!allowed) {
+        const { balance } = await UserData.getCredits();
+        throw new Error(
+          `אין מספיק קרדיטים (נדרש ${UserData.AI_GAME_CREDIT_COST}, נותרו ${balance}).`
+        );
+      }
+    }
+
     const res = await fetch("/api/ai/generate-game", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -26,6 +36,14 @@
     if (!res.ok || !data.ok) {
       throw new Error(data.error || "שגיאה ביצירת המשחק");
     }
+
+    if (window.UserData?.spendCredits) {
+      const spent = await UserData.spendCredits(UserData.AI_GAME_CREDIT_COST);
+      if (!spent.ok) {
+        console.warn("AI succeeded but credit spend failed:", spent.error);
+      }
+    }
+
     return data;
   }
 

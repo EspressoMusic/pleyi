@@ -458,19 +458,30 @@ function updateRoomUI(room) {
 }
 
 function renderGame() {
-  const waitMsg = $("#roomIdleWaitMsg");
+  const idlePickBtn = $("#roomIdlePickBtn");
+  const guestMsg = $("#roomIdleGuestMsg");
   const zoomStage = $("#roomZoomStage");
-  if (!state.activeGame || !state.gameState) {
+  const idle = !state.activeGame || !state.gameState;
+  document.body.classList.toggle("room-idle", idle);
+
+  if (idle) {
     $("#gamePanel")?.classList.add("hidden");
     zoomStage?.classList.remove("hidden");
     document.querySelector(".room-host-body")?.classList.remove("room-host-body--in-game");
-    waitMsg?.classList.remove("hidden");
+    if (state.isManager) {
+      idlePickBtn?.classList.remove("hidden");
+      guestMsg?.classList.add("hidden");
+    } else {
+      idlePickBtn?.classList.add("hidden");
+      guestMsg?.classList.remove("hidden");
+    }
     if (typeof RoomIdleRunner !== "undefined") RoomIdleRunner.start();
     updateGameNameButton();
     return;
   }
 
-  waitMsg?.classList.add("hidden");
+  idlePickBtn?.classList.add("hidden");
+  guestMsg?.classList.add("hidden");
   document.querySelector(".room-host-body")?.classList.add("room-host-body--in-game");
 
   if (typeof RoomIdleRunner !== "undefined") RoomIdleRunner.stop();
@@ -671,18 +682,22 @@ function openGamesPanel() {
   closeSettingsPanel();
   const panel = $("#roomGamesPanel");
   const btn = $("#openGamesPanelBtn");
+  const idlePickBtn = $("#roomIdlePickBtn");
   if (!panel) return;
   window.PleyiPremium?.updateRoomGameButtons?.();
   panel.classList.remove("hidden");
   btn?.setAttribute("aria-expanded", "true");
+  idlePickBtn?.setAttribute("aria-expanded", "true");
 }
 
 function closeGamesPanel() {
   const panel = $("#roomGamesPanel");
   const btn = $("#openGamesPanelBtn");
+  const idlePickBtn = $("#roomIdlePickBtn");
   if (!panel) return;
   panel.classList.add("hidden");
   btn?.setAttribute("aria-expanded", "false");
+  idlePickBtn?.setAttribute("aria-expanded", "false");
 }
 
 function openSettingsPanel() {
@@ -800,6 +815,7 @@ $("#closeSharePanelBtn")?.addEventListener("click", closeSharePanel);
 $("#roomSharePanelBackdrop")?.addEventListener("click", closeSharePanel);
 
 $("#openGamesPanelBtn")?.addEventListener("click", openGamesPanel);
+$("#roomIdlePickBtn")?.addEventListener("click", openGamesPanel);
 $("#closeGamesPanelBtn")?.addEventListener("click", closeGamesPanel);
 $("#roomGamesPanelBackdrop")?.addEventListener("click", closeGamesPanel);
 
@@ -814,18 +830,6 @@ $("#roomMaterialPanelBackdrop")?.addEventListener("click", closeMaterialPanel);
 $("#saveMaterialBtn")?.addEventListener("click", () => {
   saveLearningMaterial($("#roomMaterialInput")?.value || "");
 });
-
-window.AI_LESSON?.bindGenerateButton(
-  $("#roomAiGenerateBtn"),
-  () => ({ text: $("#roomMaterialInput")?.value || "", subject: "english" }),
-  {
-    onToast: showToast,
-    onSuccess: (result) => {
-      const input = $("#roomMaterialInput");
-      if (input) input.value = result.normalized;
-    },
-  }
-);
 
 $("#clearMaterialBtn")?.addEventListener("click", () => {
   if (!confirm("להסיר את החומר הלימודי? המשחקים יחזרו למילון ברירת המחדל.")) return;

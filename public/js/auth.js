@@ -5,9 +5,46 @@ window.GameAuth = {
   _listeners: [],
   _ready: false,
   _toastFn: null,
+  _devPreviewActive: false,
 
   getUser() {
     return this._user;
+  },
+
+  isDevHost() {
+    const host = location.hostname;
+    return host === "localhost" || host === "127.0.0.1";
+  },
+
+  getDevPreviewUser() {
+    return {
+      uid: "dev-preview",
+      name: "מורה לדוגמה",
+      email: "dev@preview.local",
+      photoURL: null,
+    };
+  },
+
+  signInDevPreview({ redirect = false } = {}) {
+    if (!this.isDevHost()) return false;
+
+    this._devPreviewActive = true;
+    sessionStorage.setItem("pleyi-dev-preview", "1");
+    sessionStorage.setItem("pleyi-guest-preview", "1");
+    this.setDevPreviewUser(this.getDevPreviewUser());
+    document.getElementById("loginModal")?.classList.add("hidden");
+
+    if (redirect && !/^\/games\/?$/.test(window.location.pathname)) {
+      window.location.href = "/games";
+      return true;
+    }
+
+    if (this._toastFn) this._toastFn("נכנסת לחדר בפיתוח");
+    return true;
+  },
+
+  isDevPreviewUser() {
+    return this._devPreviewActive || this._user?.uid === "dev-preview";
   },
 
   onUserChange(fn) {
@@ -46,6 +83,11 @@ window.GameAuth = {
   },
 
   async init() {
+    if (this.isDevHost() && sessionStorage.getItem("pleyi-dev-preview") === "1") {
+      this._devPreviewActive = true;
+      this.setDevPreviewUser(this.getDevPreviewUser());
+    }
+
     const ok = await FirebaseApp.ready;
     if (!ok) {
       this._ready = true;
@@ -69,17 +111,22 @@ window.GameAuth = {
     FirebaseApp.auth.onAuthStateChanged(async (fbUser) => {
       if (fbUser) {
         this._user = this._mapUser(fbUser);
-      } else if (!this._isTeacherPreview()) {
+        this._devPreviewActive = false;
+        sessionStorage.removeItem("pleyi-dev-preview");
+      } else if (!this._isTeacherPreview() && !this._devPreviewActive) {
         this._user = null;
       }
       if (fbUser) await this._syncProfile(fbUser);
+      if (fbUser && window.UserData?.ensureCreditsInitialized) {
+        window.UserData.ensureCreditsInitialized().catch(() => {});
+      }
       this._ready = true;
       this.updateNav();
 
       if (redirectWelcome && fbUser) {
         document.getElementById("loginModal")?.classList.add("hidden");
-        if (/^\/games\/?$/.test(window.location.pathname)) {
-          window.location.hash = "myGames";
+        if (!/^\/games\/?$/.test(window.location.pathname)) {
+          window.location.href = "/games";
         }
       }
 
@@ -150,6 +197,15 @@ window.GameAuth = {
   },
 
   async logout() {
+    if (this._devPreviewActive) {
+      this._devPreviewActive = false;
+      sessionStorage.removeItem("pleyi-dev-preview");
+      sessionStorage.removeItem("pleyi-guest-preview");
+      this._user = null;
+      this.updateNav();
+      this._notify();
+      return;
+    }
     if (FirebaseApp.auth) await FirebaseApp.auth.signOut();
     this._user = null;
     this.updateNav();
@@ -210,14 +266,26 @@ window.GameAuth = {
     avatarBtn.setAttribute("aria-expanded", open ? "true" : "false");
   },
 
+  handleLoginClick({ redirect = true } = {}) {
+    if (this.isDevHost()) {
+      return this.signInDevPreview({ redirect });
+    }
+    document.getElementById("loginModal")?.classList.remove("hidden");
+    return false;
+  },
+
   bindModals(showToast) {
     const toast = showToast || ((m) => alert(m));
     this._toastFn = toast;
     const open = (id) => document.getElementById(id)?.classList.remove("hidden");
     const close = (id) => document.getElementById(id)?.classList.add("hidden");
 
-    document.getElementById("authLoginBtn")?.addEventListener("click", () => open("loginModal"));
-    document.getElementById("mobileLoginBtn")?.addEventListener("click", () => open("loginModal"));
+    document.getElementById("authLoginBtn")?.addEventListener("click", () => {
+      this.handleLoginClick({ redirect: true });
+    });
+    document.getElementById("mobileLoginBtn")?.addEventListener("click", () => {
+      this.handleLoginClick({ redirect: true });
+    });
 
     document.getElementById("authLogoutBtn")?.addEventListener("click", async () => {
       this._closeUserDropdown();
@@ -239,6 +307,11 @@ window.GameAuth = {
     document.getElementById("loginClose")?.addEventListener("click", () => close("loginModal"));
 
     document.getElementById("googleSignInBtn")?.addEventListener("click", async () => {
+      if (this.isDevHost()) {
+        this.signInDevPreview({ redirect: true });
+        return;
+      }
+
       const err = document.getElementById("loginError");
       const btn = document.getElementById("googleSignInBtn");
       if (btn) {

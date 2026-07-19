@@ -1,0 +1,660 @@
+/* Site-wide minimal visual mode — gray + turquoise */
+
+:root {
+  --min-bg: #f0f2f4;
+  --min-surface: #ffffff;
+  --min-text: #374151;
+  --min-text-strong: #1f2937;
+  --min-muted: #6b7280;
+  --min-border: #e5e7eb;
+  --min-accent: #0d9488;
+  --min-accent-hover: #0f766e;
+  --min-accent-soft: #ccfbf1;
+  --min-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --min-shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --min-radius: 10px;
+}
+
+/* Toggle button — visible in both modes */
+
+.visual-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--min-text);
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  border-radius: var(--min-radius);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.visual-mode-btn:hover {
+  border-color: #cbd5e1;
+  background: #f9fafb;
+}
+
+.visual-mode-btn.is-active {
+  color: var(--min-accent-hover);
+  border-color: var(--min-accent);
+  background: var(--min-accent-soft);
+}
+
+.visual-mode-btn__icon {
+  display: flex;
+  line-height: 0;
+}
+
+.visual-mode-btn--fixed {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top, 0px));
+  left: max(12px, env(safe-area-inset-left, 0px));
+  z-index: 9999;
+  box-shadow: var(--min-shadow-md);
+}
+
+#mobileNav .visual-mode-btn {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 12px;
+  padding: 14px;
+  font-size: 16px;
+}
+
+/* ── Minimal mode overrides ── */
+
+html[data-visual="minimal"] {
+  color-scheme: light;
+}
+
+html[data-visual="minimal"] body {
+  background: var(--min-bg) !important;
+  color: var(--min-text);
+  font-weight: 500;
+}
+
+html[data-visual="minimal"] .font-cartoon,
+html[data-visual="minimal"] .font-brand {
+  font-family: var(--font-sans) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
+  paint-order: normal !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html[data-visual="minimal"] .hero-title.font-cartoon,
+html[data-visual="minimal"] .hero-title.font-cartoon .line,
+html[data-visual="minimal"] .hero-title.font-cartoon .line.accent,
+html[data-visual="minimal"] .clean-section-title.font-cartoon,
+html[data-visual="minimal"] body.clean-site h2.font-cartoon {
+  color: var(--min-text-strong) !important;
+  -webkit-text-fill-color: var(--min-text-strong) !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
+}
+
+html[data-visual="minimal"] .hero-title.font-cartoon .line.accent {
+  color: var(--min-accent) !important;
+  -webkit-text-fill-color: var(--min-accent) !important;
+}
+
+html[data-visual="minimal"] .logo-mark,
+html[data-visual="minimal"] .loader-brand .logo-mark {
+  display: none;
+}
+
+html[data-visual="minimal"] .logo,
+html[data-visual="minimal"] .join-brand-wrap {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  rotate: none;
+  padding: 0;
+  gap: 0;
+}
+
+html[data-visual="minimal"] .logo-text.font-brand,
+html[data-visual="minimal"] .loader-logo.font-brand,
+html[data-visual="minimal"] .join-brand.font-brand {
+  color: var(--min-text-strong) !important;
+  -webkit-text-fill-color: var(--min-text-strong) !important;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem) !important;
+}
+
+/* Hide decorative shapes */
+
+html[data-visual="minimal"] .memphis-bg,
+html[data-visual="minimal"] .hub-memphis-bg,
+html[data-visual="minimal"] .lp-memphis-bg,
+html[data-visual="minimal"] .room-memphis-bg,
+html[data-visual="minimal"] .clean-section-shapes,
+html[data-visual="minimal"] .clean-memphis-sticker,
+html[data-visual="minimal"] .clean-memphis-ring,
+html[data-visual="minimal"] .clean-memphis-zigzag,
+html[data-visual="minimal"] .clean-memphis-layer,
+html[data-visual="minimal"] .hero-shapes,
+html[data-visual="minimal"] .blob,
+html[data-visual="minimal"] .section-wave,
+html[data-visual="minimal"] .marker-confetti {
+  display: none !important;
+}
+
+html[data-visual="minimal"] .scroll-progress {
+  height: 2px;
+  background: var(--min-accent);
+}
+
+/* Navigation */
+
+html[data-visual="minimal"] .navbar {
+  background: var(--min-surface);
+  border-bottom: 1px solid var(--min-border);
+  box-shadow: none;
+  padding: 14px 0;
+}
+
+html[data-visual="minimal"] .navbar.scrolled {
+  background: var(--min-surface);
+  box-shadow: var(--min-shadow);
+}
+
+html[data-visual="minimal"] .nav-pill,
+html[data-visual="minimal"] .nav-links a,
+html[data-visual="minimal"] .nav-auth-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none !important;
+  font-weight: 600;
+  color: var(--min-muted);
+  border-radius: var(--min-radius);
+}
+
+html[data-visual="minimal"] .nav-pill:hover,
+html[data-visual="minimal"] .nav-links a:hover,
+html[data-visual="minimal"] .nav-auth-btn:hover {
+  color: var(--min-text-strong);
+  background: #f3f4f6;
+}
+
+html[data-visual="minimal"] .nav-pill.active,
+html[data-visual="minimal"] .nav-links a.active {
+  color: var(--min-accent-hover);
+  background: var(--min-accent-soft);
+  border-color: transparent;
+}
+
+html[data-visual="minimal"] .nav-auth-btn {
+  border-color: var(--min-border);
+  color: var(--min-text-strong);
+}
+
+html[data-visual="minimal"] .nav-beta-tag {
+  background: var(--min-accent-soft);
+  color: var(--min-accent-hover);
+  border: none;
+  box-shadow: none;
+}
+
+html[data-visual="minimal"] .menu-toggle span {
+  background: var(--min-text-strong);
+}
+
+html[data-visual="minimal"] .mobile-nav {
+  background: var(--min-surface);
+  border-top: 1px solid var(--min-border);
+  box-shadow: var(--min-shadow-md);
+}
+
+html[data-visual="minimal"] .mobile-nav a,
+html[data-visual="minimal"] .mobile-nav-auth {
+  color: var(--min-text);
+  box-shadow: none;
+  border: 1px solid var(--min-border);
+  background: transparent;
+}
+
+/* Hero & sections */
+
+html[data-visual="minimal"] .nav-auth-btn,
+html[data-visual="minimal"] #authLoginBtn,
+html[data-visual="minimal"] .mobile-nav-auth {
+  background: var(--min-surface) !important;
+  border: 1px solid var(--min-border) !important;
+  box-shadow: none !important;
+  color: var(--min-text-strong) !important;
+  font-weight: 600 !important;
+}
+
+html[data-visual="minimal"] .clean-section--hero {
+  background: var(--min-surface) !important;
+  min-height: auto;
+  padding: 100px 0 64px;
+  border-bottom: 1px solid var(--min-border);
+}
+
+html[data-visual="minimal"] .clean-hero-sub {
+  color: var(--min-muted);
+}
+
+html[data-visual="minimal"] .clean-section--soft,
+html[data-visual="minimal"] .clean-section--white,
+html[data-visual="minimal"] #games.clean-section--white,
+html[data-visual="minimal"] .clean-section--contact,
+html[data-visual="minimal"] .section-yellow {
+  background: var(--min-bg) !important;
+}
+
+html[data-visual="minimal"] .clean-section {
+  padding: 64px 0;
+}
+
+html[data-visual="minimal"] .clean-section-title,
+html[data-visual="minimal"] h1.font-cartoon,
+html[data-visual="minimal"] h2.font-cartoon {
+  color: var(--min-text-strong);
+}
+
+html[data-visual="minimal"] .clean-section-lead,
+html[data-visual="minimal"] .hero-title {
+  color: var(--min-text);
+}
+
+html[data-visual="minimal"] .hero-title.font-cartoon {
+  color: var(--min-text-strong);
+}
+
+/* Buttons */
+
+html[data-visual="minimal"] .btn,
+html[data-visual="minimal"] .btn-candy,
+html[data-visual="minimal"] .btn-primary,
+html[data-visual="minimal"] .how-classroom-btn {
+  background: var(--min-surface) !important;
+  color: var(--min-text-strong) !important;
+  border: 1px solid var(--min-border) !important;
+  box-shadow: var(--min-shadow) !important;
+  border-radius: var(--min-radius) !important;
+  font-weight: 600 !important;
+  animation: none !important;
+}
+
+html[data-visual="minimal"] .btn-primary,
+html[data-visual="minimal"] .how-classroom-btn,
+html[data-visual="minimal"] .clean-hero-actions .btn:first-child {
+  background: var(--min-accent) !important;
+  color: #fff !important;
+  border-color: var(--min-accent) !important;
+}
+
+html[data-visual="minimal"] .btn:hover,
+html[data-visual="minimal"] .btn-primary:hover {
+  filter: none;
+  transform: none;
+  background: #f9fafb !important;
+}
+
+html[data-visual="minimal"] .btn-primary:hover,
+html[data-visual="minimal"] .how-classroom-btn:hover {
+  background: var(--min-accent-hover) !important;
+  border-color: var(--min-accent-hover) !important;
+}
+
+html[data-visual="minimal"] .btn:active {
+  transform: none;
+  box-shadow: var(--min-shadow) !important;
+}
+
+/* Cards & panels */
+
+html[data-visual="minimal"] .clean-panel,
+html[data-visual="minimal"] .how-timeline-body,
+html[data-visual="minimal"] .clean-step,
+html[data-visual="minimal"] .modal,
+html[data-visual="minimal"] .contact-form {
+  background: var(--min-surface) !important;
+  border: 1px solid var(--min-border) !important;
+  box-shadow: var(--min-shadow) !important;
+  border-radius: var(--min-radius) !important;
+}
+
+html[data-visual="minimal"] .clean-panel--highlight,
+html[data-visual="minimal"] .clean-panel--solo,
+html[data-visual="minimal"] .clean-contact .contact-form {
+  background: var(--min-surface) !important;
+  color: var(--min-text) !important;
+}
+
+html[data-visual="minimal"] .clean-panel--highlight h3,
+html[data-visual="minimal"] .clean-panel-icon {
+  color: var(--min-accent) !important;
+}
+
+html[data-visual="minimal"] .clean-panel--card h3,
+html[data-visual="minimal"] .clean-step h3,
+html[data-visual="minimal"] .modal h2,
+html[data-visual="minimal"] h3.font-cartoon {
+  color: var(--min-text-strong) !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+html[data-visual="minimal"] .contact-form,
+html[data-visual="minimal"] .clean-contact .contact-form label span {
+  -webkit-text-stroke: 0 !important;
+  color: var(--min-text) !important;
+  -webkit-text-fill-color: var(--min-text) !important;
+}
+
+html[data-visual="minimal"] .clean-panel--card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--min-shadow-md) !important;
+  border-color: #cbd5e1 !important;
+}
+
+html[data-visual="minimal"] .how-timeline-marker {
+  background: var(--min-accent);
+  border: 2px solid var(--min-surface);
+  box-shadow: var(--min-shadow);
+  animation: none !important;
+}
+
+html[data-visual="minimal"] .how-timeline-step:not(:last-child)::after {
+  display: none;
+}
+
+html[data-visual="minimal"] .how-timeline-body {
+  animation: none !important;
+}
+
+html[data-visual="minimal"] .how-timeline-body h3 {
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
+}
+
+/* Games hub */
+
+html[data-visual="minimal"] .hub-body,
+html[data-visual="minimal"] .lp-body {
+  background: var(--min-bg);
+}
+
+html[data-visual="minimal"] .hub-back,
+html[data-visual="minimal"] .lp-back {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  box-shadow: none;
+  color: var(--min-muted);
+  font-weight: 600;
+  border-radius: var(--min-radius);
+}
+
+html[data-visual="minimal"] .hub-back:hover,
+html[data-visual="minimal"] .lp-back:hover {
+  background: #f9fafb;
+  color: var(--min-text-strong);
+}
+
+html[data-visual="minimal"] .hub-tab,
+html[data-visual="minimal"] .hub-skill-filter {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  box-shadow: none;
+  font-weight: 600;
+  color: var(--min-muted);
+  border-radius: var(--min-radius);
+}
+
+html[data-visual="minimal"] .hub-tab.active,
+html[data-visual="minimal"] .hub-skill-filter.is-active {
+  background: var(--min-accent-soft);
+  border-color: var(--min-accent);
+  color: var(--min-accent-hover);
+}
+
+html[data-visual="minimal"] .hub-game-card,
+html[data-visual="minimal"] .hub-custom-card,
+html[data-visual="minimal"] .teacher-room-card {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  box-shadow: var(--min-shadow);
+  border-radius: var(--min-radius);
+}
+
+html[data-visual="minimal"] .hub-game-card:hover,
+html[data-visual="minimal"] .hub-custom-card:hover {
+  box-shadow: var(--min-shadow-md);
+  transform: translateY(-2px);
+}
+
+html[data-visual="minimal"] .hub-game-play-btn,
+html[data-visual="minimal"] .hub-create-btn,
+html[data-visual="minimal"] .teacher-room-open {
+  background: var(--min-accent) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+html[data-visual="minimal"] .hub-kicker,
+html[data-visual="minimal"] .lp-kicker,
+html[data-visual="minimal"] .hero-badge {
+  background: var(--min-accent-soft);
+  color: var(--min-accent-hover);
+  border: 1px solid var(--min-accent);
+  box-shadow: none;
+}
+
+html[data-visual="minimal"] .hub-title,
+html[data-visual="minimal"] .lp-hero h1 {
+  color: var(--min-text-strong);
+}
+
+/* Lesson plans */
+
+html[data-visual="minimal"] .lp-card,
+html[data-visual="minimal"] .lp-output,
+html[data-visual="minimal"] .lp-form-wrap {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  box-shadow: var(--min-shadow);
+  border-radius: var(--min-radius);
+}
+
+html[data-visual="minimal"] .lp-submit {
+  background: var(--min-accent) !important;
+  border-color: var(--min-accent) !important;
+  box-shadow: none !important;
+}
+
+/* Join page */
+
+html[data-visual="minimal"] .join-body {
+  background: var(--min-bg);
+}
+
+html[data-visual="minimal"] .join-back {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  color: var(--min-muted);
+  border-radius: var(--min-radius);
+}
+
+html[data-visual="minimal"] .join-brand.font-brand {
+  color: var(--min-text-strong) !important;
+}
+
+html[data-visual="minimal"] .join-card,
+html[data-visual="minimal"] .join-room-card {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  box-shadow: var(--min-shadow-md);
+  border-radius: var(--min-radius);
+}
+
+html[data-visual="minimal"] .join-submit {
+  background: var(--min-accent);
+  border: none;
+  box-shadow: none;
+  border-radius: var(--min-radius);
+}
+
+/* My room — turquoise accents */
+
+html[data-visual="minimal"] .my-room-body {
+  background: var(--min-bg);
+}
+
+html[data-visual="minimal"] .room-nav {
+  border-bottom-color: var(--min-border);
+}
+
+html[data-visual="minimal"] .room-btn--primary,
+html[data-visual="minimal"] .room-list-play {
+  background: var(--min-accent);
+  border-color: var(--min-accent);
+}
+
+html[data-visual="minimal"] .room-btn--primary:hover,
+html[data-visual="minimal"] .room-list-play:hover {
+  background: var(--min-accent-hover);
+  border-color: var(--min-accent-hover);
+}
+
+html[data-visual="minimal"] .room-tile:hover {
+  border-color: var(--min-accent);
+}
+
+html[data-visual="minimal"] .room-tile-count {
+  color: var(--min-accent-hover);
+}
+
+/* Room / play chrome */
+
+html[data-visual="minimal"] body.in-room,
+html[data-visual="minimal"] .play-body {
+  background: var(--min-bg);
+}
+
+html[data-visual="minimal"] .room-stat-pill,
+html[data-visual="minimal"] .guest-stat-pill {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  box-shadow: none;
+  color: var(--min-text);
+  font-weight: 600;
+}
+
+html[data-visual="minimal"] .room-stat-pill--games-btn,
+html[data-visual="minimal"] .room-nav-share-btn {
+  background: var(--min-accent-soft);
+  border-color: var(--min-accent);
+  color: var(--min-accent-hover);
+}
+
+html[data-visual="minimal"] .room-games-panel-sheet,
+html[data-visual="minimal"] .room-share-panel-sheet {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  box-shadow: var(--min-shadow-md);
+}
+
+html[data-visual="minimal"] .room-game-picker-item {
+  border: 1px solid var(--min-border);
+  box-shadow: none;
+  background: var(--min-surface);
+}
+
+html[data-visual="minimal"] .room-game-picker-item.is-selected {
+  border-color: var(--min-accent);
+  background: var(--min-accent-soft);
+}
+
+/* Footer */
+
+html[data-visual="minimal"] .site-footer,
+html[data-visual="minimal"] .site-footer-mini {
+  background: var(--min-surface);
+  border-top: 1px solid var(--min-border);
+  color: var(--min-muted);
+  box-shadow: none;
+}
+
+html[data-visual="minimal"] .site-footer a,
+html[data-visual="minimal"] .site-footer-mini a {
+  color: var(--min-muted);
+}
+
+html[data-visual="minimal"] .site-footer a:hover,
+html[data-visual="minimal"] .site-footer-mini a:hover {
+  color: var(--min-accent);
+}
+
+html[data-visual="minimal"] .whatsapp-btn {
+  background: var(--min-surface);
+  border: 1px solid var(--min-border);
+  box-shadow: var(--min-shadow);
+}
+
+html[data-visual="minimal"] .whatsapp-icon {
+  background: var(--min-accent-soft);
+  border: none;
+}
+
+/* Modals & forms */
+
+html[data-visual="minimal"] .modal-overlay {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+html[data-visual="minimal"] input,
+html[data-visual="minimal"] textarea,
+html[data-visual="minimal"] select {
+  border: 1px solid var(--min-border) !important;
+  box-shadow: none !important;
+  border-radius: var(--min-radius) !important;
+}
+
+html[data-visual="minimal"] input:focus,
+html[data-visual="minimal"] textarea:focus {
+  outline: 2px solid var(--min-accent-soft);
+  border-color: var(--min-accent) !important;
+}
+
+/* Loader */
+
+html[data-visual="minimal"] .loader {
+  background: var(--min-bg);
+}
+
+html[data-visual="minimal"] .loader-bar {
+  background: var(--min-accent);
+}
+
+/* Reduce motion extras in minimal */
+
+html[data-visual="minimal"] .how-timeline-marker,
+html[data-visual="minimal"] .how-timeline-body,
+html[data-visual="minimal"] .clean-memphis-sticker,
+html[data-visual="minimal"] .hub-memphis-sticker {
+  animation: none !important;
+}
+
+@media (max-width: 768px) {
+  .visual-mode-btn__label {
+    display: none;
+  }
+
+  .visual-mode-btn {
+    padding: 8px 10px;
+  }
+
+  html[data-visual="minimal"] .nav-actions .visual-mode-btn {
+    order: -1;
+  }
+}

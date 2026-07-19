@@ -7,6 +7,7 @@
   let status = { isPremium: false, premiumUntil: null, plan: null };
   let plans = null;
   let settings = null;
+  let creditsByPlan = { free: 10, monthly: 50, yearly: 120 };
   let selectedPlan = "yearly";
   let payMethod = "card";
   let pendingGameId = null;
@@ -53,6 +54,7 @@
     if (data.ok) {
       plans = data.plans;
       settings = data.settings || null;
+      if (data.creditsByPlan) creditsByPlan = data.creditsByPlan;
     }
   }
 
@@ -143,6 +145,7 @@
         <span class="premium-plan-badge">${escapeHtml(p.badge || "")}</span>
         <span class="premium-plan-label">${escapeHtml(p.label)}</span>
         <span class="premium-plan-price">₪${p.price}</span>
+        <span class="premium-plan-credits">${creditsByPlan[p.id] || creditsByPlan.free || 10} קרדיטים</span>
       </button>`
       )
       .join("");
@@ -222,7 +225,7 @@
 
     root.innerHTML = `
       <h1 class="premium-page-title font-cartoon">מנוי פרימיום</h1>
-      <p class="premium-page-lead">${returnGame ? `פתחו את <strong>${escapeHtml(gameName)}</strong> ומשחקים נוספים עם מנוי פעיל.` : "גישה למשחקי פרימיום — לשחקנים ולמורים."}</p>
+      <p class="premium-page-lead">${returnGame ? `פתחו את <strong>${escapeHtml(gameName)}</strong> ומשחקים נוספים עם מנוי פעיל.` : "גישה למשחקי פרימיום וקרדיטים ליצירת משחקים עם AI."}</p>
       ${
         user
           ? ""
@@ -318,6 +321,10 @@
 
       if (window.UserData?.syncPremiumStatus) {
         window.UserData.syncPremiumStatus(status).catch(() => {});
+      }
+
+      if (window.UserData?.grantPlanCredits) {
+        await UserData.grantPlanCredits(data.plan || selectedPlan);
       }
 
       notifyUpdate();

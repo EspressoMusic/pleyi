@@ -264,7 +264,7 @@ const SoloGames = {
         ctx.stroke();
         ctx.shadowBlur = 0;
         ctx.fillStyle = "#1a0a2e";
-        ctx.font = `900 ${Math.max(11, bh * 0.38)}px Heebo, sans-serif`;
+        ctx.font = `900 ${Math.max(11, bh * 0.38)}px Google Sans, sans-serif`;
         ctx.textAlign = "center";
         ctx.fillText(wd.text, x, wd.y + bh * 0.62);
       });

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>מערכי שיעור — Pleyi</title>
+  <meta name="description" content="יצירת מערך שיעור קצר ומסודר מכל נושא או חומר — בטא"/>
+  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="stylesheet" href="/css/lesson-plans.css"/>
+  <link rel="stylesheet" href="/css/legal.css"/>
+  <link rel="stylesheet" href="/css/accessibility.css" />
+</head>
+<body class="lp-body memphis-body">
+
+  <div class="memphis-bg lp-memphis-bg" aria-hidden="true">
+    <span class="lp-shape lp-shape--1"></span>
+    <span class="lp-shape lp-shape--2"></span>
+    <span class="lp-shape lp-shape--3"></span>
+  </div>
+
+  <header class="navbar scrolled" id="navbar">
+    <div class="container nav-inner">
+      <a href="/" class="logo">
+        <img src="/images/pleyi-logo.png" alt="" class="logo-mark" width="48" height="48" decoding="async" />
+        <span class="logo-text font-brand">Pleyi</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/" class="nav-pill">בית</a>
+        <a href="/lesson-plans" class="nav-pill nav-pill--beta active">מערכי שיעור <span class="nav-beta-tag">בטא</span></a>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle data-i18n="lang.switch" aria-label="English">EN</button>
+        <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
+        <div class="nav-user hidden" id="authUserMenu">
+          <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
+            <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            <span class="nav-user-initial hidden" id="authUserInitial" aria-hidden="true"></span>
+          </button>
+          <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
+            <p class="nav-user-name" id="authUserName"></p>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
+          </div>
+        </div>
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="תפריט" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="ניווט ראשי">
+    <a href="/">בית</a>
+    <a href="/lesson-plans" class="active">מערכי שיעור</a>
+    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
+  </nav>
+
+  <main class="lp-main container">
+    <a href="/" class="lp-back">← חזרה לדף הבית</a>
+
+    <header class="lp-hero">
+      <p class="lp-kicker">בטא <span aria-hidden="true">✦</span> מערכי שיעור</p>
+      <h1 class="font-cartoon">מערך שיעור בדקות</h1>
+      <p class="lp-lead">הזינו נושא וחומר — נארגן לכם מערך קצר, ברור ומסודר. בהמשך יתחבר AI לשיפור אוטומטי.</p>
+    </header>
+
+    <div class="lp-layout">
+      <section class="lp-form-card sticker-card sticker-white" aria-labelledby="lpFormTitle">
+        <h2 id="lpFormTitle" class="font-cartoon">יצירת מערך</h2>
+        <form id="lpForm" class="lp-form">
+          <label class="lp-field">
+            <span>נושא השיעור</span>
+            <input type="text" id="lpTopic" maxlength="120" placeholder="למשל: Present Simple" required />
+          </label>
+
+          <div class="lp-field-row">
+            <label class="lp-field">
+              <span>כיתה</span>
+              <select id="lpGrade">
+                <option value="">כללי</option>
+                <option value="א–ג">א–ג</option>
+                <option value="ד–ו">ד–ו</option>
+                <option value="ז–ט">ז–ט</option>
+                <option value="י–יב">י–יב</option>
+              </select>
+            </label>
+            <label class="lp-field">
+              <span>משך (דקות)</span>
+              <select id="lpDuration">
+                <option value="30">30</option>
+                <option value="45" selected>45</option>
+                <option value="60">60</option>
+                <option value="90">90</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="lp-field">
+            <span>חומר / תוכן לשיעור</span>
+            <textarea id="lpMaterial" rows="8" maxlength="8000" placeholder="הדביקו טקסט מהספר, מילים חדשות, נקודות עיקריות…&#10;&#10;למשל:&#10;I am / You are / He is&#10;שימוש ב-present simple לתיאור שגרה" required></textarea>
+          </label>
+
+          <p class="lp-error hidden" id="lpError" role="alert"></p>
+          <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon" id="lpSubmit">צור מערך שיעור</button>
+        </form>
+      </section>
+
+      <section class="lp-result-wrap hidden" id="lpResultWrap" aria-live="polite">
+        <div class="lp-result-card sticker-card sticker-white">
+          <div class="lp-result-head">
+            <div>
+              <p class="lp-result-kicker" id="lpResultSource">טיוטה</p>
+              <h2 class="lp-result-title font-cartoon" id="lpResultTitle">מערך שיעור</h2>
+              <p class="lp-result-meta" id="lpResultMeta"></p>
+            </div>
+            <div class="lp-result-actions">
+              <button type="button" class="lp-btn-ghost" id="lpCopyBtn">העתקה</button>
+              <button type="button" class="lp-btn-ghost" id="lpNewBtn">מערך חדש</button>
+            </div>
+          </div>
+
+          <p class="lp-goal" id="lpGoal"></p>
+
+          <ol class="lp-sections" id="lpSections"></ol>
+
+          <div class="lp-extra hidden" id="lpMaterialsWrap">
+            <h3>חומרים נדרשים</h3>
+            <ul id="lpMaterials"></ul>
+          </div>
+
+          <div class="lp-extra hidden" id="lpTipsWrap">
+            <h3>טיפים</h3>
+            <ul id="lpTips"></ul>
+          </div>
+
+          <a href="/games" class="btn btn-outline btn-candy btn-full lp-games-link">למשחקים — חיזוק בכיתה</a>
+        </div>
+      </section>
+
+      <aside class="lp-empty-state" id="lpEmptyState">
+        <div class="lp-empty-card">
+          <span class="lp-empty-icon" aria-hidden="true">📋</span>
+          <p>מערך השיעור יופיע כאן — קצר, מסודר ומוכן לעריכה.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal modal-login">
+      <button class="modal-close" id="loginClose" type="button">×</button>
+      <h2>התחברות</h2>
+      <button type="button" id="googleSignInBtn" class="btn btn-google btn-full">
+        <span class="btn-google-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+        </span>
+        התחברות עם Google
+      </button>
+      <p class="form-error hidden" id="loginError"></p>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <footer class="site-footer-mini">
+    <nav class="site-legal-nav" aria-label="מידע משפטי">
+      <a href="/legal/terms.html">תקנון</a>
+      <a href="/legal/privacy.html">פרטיות</a>
+      <a href="/legal/cookies.html">עוגיות</a>
+      <a href="/legal/accessibility.html">נגישות</a>
+    </nav>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/lesson-plans.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/hub-nav.js"></script>
+  <script src="/js/cookie-consent.js"></script>
+</body>
+</html>

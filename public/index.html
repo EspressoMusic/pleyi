@@ -3,15 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0066FF" />
+  <meta name="theme-color" content="#00C9B7" />
   <title>Pleyi — לימוד דרך משחקים</title>
-  <meta name="description" content="משחקי למידה למורים — פתחו חדר כיתה, התלמידים מצטרפים מהטלפון, ושחקו יחד בזמן אמת." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="css/clean-site.css" />
-  <link rel="stylesheet" href="css/legal.css" />
+  <meta name="description" content="משחקי למידה למורים — פתחו חדר כיתה, התלמידים מצטרפים מהטלפון, ושחקו יחד בזמן אמת."/>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="css/clean-site.css?v=3"/>
+  <link rel="stylesheet" href="css/legal.css"/>
   <link rel="stylesheet" href="css/accessibility.css" />
 </head>
 <body class="clean-site">
@@ -33,13 +30,13 @@
         <span class="logo-text font-brand">Pleyi</span>
       </a>
       <nav class="nav-links" id="navLinks">
-        <a href="#home" class="nav-pill active">בית</a>
-        <a href="#how" class="nav-pill">מי אנחנו</a>
-        <a href="/games" class="nav-pill">משחקים</a>
-        <a href="#contact" class="nav-pill">צור קשר</a>
+        <a href="#home" class="nav-pill active" data-i18n="nav.home">בית</a>
+        <a href="#how" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
+        <a href="#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
       </nav>
       <div class="nav-actions">
-        <button type="button" class="nav-auth-btn" id="authLoginBtn">התחברות</button>
+        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle data-i18n="lang.switch" aria-label="English">EN</button>
+        <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
         <div class="nav-user hidden" id="authUserMenu">
           <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
             <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
@@ -47,20 +44,19 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
-            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem" data-i18n="nav.logout">יציאה</button>
           </div>
         </div>
-        <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+        <button class="menu-toggle" id="menuToggle" data-i18n-aria="nav.menu" aria-label="תפריט"><span></span><span></span><span></span></button>
       </div>
     </div>
   </header>
 
   <nav class="mobile-nav" id="mobileNav">
-    <a href="#home">בית</a>
-    <a href="#how">מי אנחנו</a>
-    <a href="/games">משחקים</a>
-    <a href="#contact">צור קשר</a>
-    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
+    <a href="#home" data-i18n="nav.home">בית</a>
+    <a href="#how" data-i18n="nav.about">מי אנחנו</a>
+    <a href="#contact" data-i18n="nav.contact">צור קשר</a>
+    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
   </nav>
 
   <!-- Landing — 4 sections -->
@@ -71,12 +67,12 @@
       <div class="clean-section-shapes clean-section-shapes--hero" aria-hidden="true">
         <div class="clean-memphis-layer clean-memphis-layer--svg">
           <svg class="clean-memphis-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="55" cy="545" r="34" fill="#D4FF00" stroke="#1a0a2e" stroke-width="4"/>
-            <circle cx="745" cy="555" r="36" fill="#FFE135" stroke="#1a0a2e" stroke-width="4"/>
+            <circle cx="55" cy="545" r="34" fill="#FFE135" stroke="#000" stroke-width="4"/>
+            <circle cx="745" cy="555" r="36" fill="#00E5CC" stroke="#000" stroke-width="4"/>
           </svg>
         </div>
         <svg class="clean-memphis-zigzag clean-memphis-pos--h-zig" viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10,80 L35,35 L60,80 L85,35 L110,80 L135,35" fill="none" stroke="#FF9ECF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10,80 L35,35 L60,80 L85,35 L110,80 L135,35" fill="none" stroke="#00E5CC" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span class="clean-memphis-sticker clean-memphis-sticker--purple clean-memphis-pos--h1"></span>
         <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--h2"></span>
@@ -84,12 +80,11 @@
       </div>
       <div class="container clean-hero-inner">
         <h1 class="hero-title font-cartoon">
-          <span class="line">לומדים את השיעור</span>
-          <span class="line accent">דרך משחקים!</span>
+          <span class="line" data-i18n="hero.title1">לומדים את השיעור</span>
+          <span class="line accent" data-i18n="hero.title2">דרך משחקים!</span>
         </h1>
         <div class="clean-hero-actions">
-          <a href="/games" class="btn btn-primary btn-candy font-cartoon">למשחקים</a>
-          <button type="button" class="btn btn-outline btn-candy font-cartoon" id="heroClassroomBtn">פתח חדר כיתה</button>
+          <button type="button" class="btn btn-primary btn-candy font-cartoon" id="heroPlayNowBtn" data-i18n="hero.playNow">שחק עכשיו</button>
         </div>
       </div>
     </section>
@@ -102,18 +97,18 @@
         <span class="clean-memphis-sticker clean-memphis-sticker--purple clean-memphis-pos--s3"></span>
       </div>
       <div class="container">
-        <h2 class="clean-section-title font-cartoon">איך זה עובד?</h2>
+        <h2 class="clean-section-title font-cartoon" data-i18n="how.titleShort">איך זה עובד?</h2>
         <div class="how-timeline" id="howTimeline">
           <article class="how-timeline-step">
             <div class="how-timeline-marker"><span>1</span></div>
             <div class="how-timeline-body">
-              <h3>המורה פותח חדר</h3>
+              <h3 data-i18n="how.step1">המורה פותח חדר</h3>
             </div>
           </article>
           <article class="how-timeline-step">
             <div class="how-timeline-marker"><span>2</span></div>
             <div class="how-timeline-body">
-              <h3>תלמידים מצטרפים מהטלפון</h3>
+              <h3 data-i18n="how.step2">תלמידים מצטרפים מהטלפון</h3>
             </div>
           </article>
           <article class="how-timeline-step">
@@ -124,12 +119,12 @@
               </span>
             </div>
             <div class="how-timeline-body">
-              <h3>משחקים יחד בזמן אמת</h3>
+              <h3 data-i18n="how.step3">משחקים יחד בזמן אמת</h3>
             </div>
           </article>
         </div>
         <div class="clean-center-cta">
-          <button type="button" class="btn btn-primary btn-candy font-cartoon how-classroom-btn" id="howClassroomBtn">פתח חדר כיתה עכשיו</button>
+          <button type="button" class="btn btn-primary btn-candy font-cartoon how-classroom-btn" id="howClassroomBtn" data-i18n="how.cta">פתח חדר כיתה עכשיו</button>
         </div>
       </div>
     </section>
@@ -142,30 +137,26 @@
         <span class="clean-memphis-sticker clean-memphis-sticker--lime clean-memphis-pos--c3"></span>
       </div>
       <div class="container">
-        <h2 class="clean-section-title font-cartoon">צור קשר</h2>
+        <h2 class="clean-section-title font-cartoon" data-i18n="contact.title">צור קשר</h2>
         <div class="clean-contact">
-          <form class="contact-form" id="contactForm">
-            <label><span>שם</span><input name="name" required placeholder="שם המורה / המוסד" /></label>
-            <label><span>אימייל</span><input name="email" type="email" required placeholder="you@email.com" dir="ltr" /></label>
-            <label><span>הודעה</span><textarea name="message" rows="4" required placeholder="ספרו על הכיתה ואיך תרצו לשלב משחקים..."></textarea></label>
-            <button type="submit" class="btn btn-primary btn-full">שליחה</button>
-          </form>
-          <div class="contact-info">
-            <a href="https://wa.me/972586122187" id="whatsappBtn" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
+          <div class="contact-info contact-info--simple">
+            <a href="https://wa.me/972586122187" id="whatsappBtn" class="whatsapp-btn contact-channel-btn" target="_blank" rel="noopener noreferrer">
               <span class="whatsapp-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="56" height="56" fill="currentColor">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
               </span>
-              <span class="whatsapp-label">פנו בוואטסאפ</span>
+              <span class="whatsapp-label" data-i18n="contact.whatsapp">פנו בוואטסאפ</span>
             </a>
-            <div class="site-qr">
-              <h3 class="site-qr-title font-cartoon">QR לאתר</h3>
-              <div class="site-qr-box">
-                <img id="siteQrCode" width="240" height="240" alt="QR code לאתר Pleyi" />
-              </div>
-              <button type="button" class="btn btn-outline site-qr-copy" id="copySiteUrlBtn">העתק קישור</button>
-            </div>
+            <a href="mailto:shilohdhd1@gmail.com" class="email-btn contact-channel-btn" id="contactEmailBtn">
+              <span class="email-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="56" height="56" fill="currentColor" aria-hidden="true">
+                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z"/>
+                </svg>
+              </span>
+              <span class="email-label">פנו במייל</span>
+              <span class="email-address" dir="ltr">shilohdhd1@gmail.com</span>
+            </a>
           </div>
         </div>
       </div>
@@ -173,8 +164,7 @@
 
     <footer class="site-footer section-yellow">
       <div class="container footer-inner">
-        <p class="footer-tagline font-cartoon">לימוד במשחקים — בכל שיעור!</p>
-        <p class="footer-copy">© Pleyi — משחקי למידה למורים</p>
+        <p class="footer-tagline font-cartoon" data-i18n="footer.tagline">לימוד במשחקים — בכל שיעור!</p>
         <nav class="site-legal-nav" aria-label="מידע משפטי">
           <a href="/legal/terms.html">תקנון</a>
           <a href="/legal/privacy.html">פרטיות</a>
@@ -299,7 +289,7 @@
   <div class="modal-overlay hidden" id="loginModal">
     <div class="modal modal-login">
       <button class="modal-close" id="loginClose" type="button">×</button>
-      <h2>התחברות</h2>
+      <h2 data-i18n="auth.loginTitle">התחברות</h2>
       <button type="button" id="googleSignInBtn" class="btn btn-google btn-full">
         <span class="btn-google-icon" aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -309,30 +299,82 @@
             <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
           </svg>
         </span>
-        התחברות עם Google
+        <span data-i18n="auth.google">התחברות עם Google</span>
       </button>
       <p class="form-error hidden" id="loginError"></p>
     </div>
   </div>
 
+  <div class="modal-overlay hidden" id="playModeModal" aria-hidden="true">
+    <div class="modal modal-play-mode" role="dialog" aria-labelledby="playModeTitle" aria-modal="true">
+      <button class="modal-close" id="playModeClose" type="button" aria-label="סגירה">×</button>
+      <div id="playModeChoose">
+        <h2 class="font-cartoon" id="playModeTitle" data-i18n="play.mode.title">איך תרצו לשחק?</h2>
+        <div class="play-mode-choices">
+          <button type="button" class="play-mode-choice" id="playModeGroupBtn">
+            <span class="play-mode-choice-label" data-i18n="play.mode.group">משחק קבוצתי</span>
+          </button>
+          <button type="button" class="play-mode-choice play-mode-choice--solo" id="playModeSoloBtn">
+            <span class="play-mode-choice-label" data-i18n="play.mode.solo">משחק יחיד</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay hidden" id="joinModal">
-    <div class="modal">
+    <div class="modal" id="joinModalBox">
       <button class="modal-close" id="modalClose" type="button" aria-label="סגירה">×</button>
       <h2 class="font-cartoon" id="modalTitle">פתיחת חדר כיתה</h2>
       <p class="modal-desc hidden" id="modalDesc"></p>
       <form id="joinForm">
-        <label class="join-modal-name-field">
-          <span id="modalNameLabel">שם החדר</span>
-          <input type="text" id="playerName" placeholder="למשל: אנגלית ז׳" required maxlength="24" />
+        <label class="join-modal-name-field" id="joinNameField">
+          <span id="modalNameLabel">שם</span>
+          <input type="text" id="playerName" placeholder="השם שלך" maxlength="24" />
         </label>
+        <div class="join-material-group hidden" id="joinMaterialGroup">
+          <label class="join-material-label">
+            <span class="join-material-hint" data-i18n="modal.materialHint">הדביקו את התוכן הלימודי או צרפו קובץ</span>
+          </label>
+          <div class="join-material-box" id="joinMaterialBox">
+            <textarea id="joinMaterialInput" rows="6" data-i18n-placeholder="modal.materialPh" placeholder="הדביקו כאן את תוכן השיעור…&#10;&#10;apple — תפוח&#10;book — ספר"></textarea>
+            <input type="file" id="joinMaterialFile" accept=".txt,.csv,.md,text/plain" hidden />
+            <button type="button" class="join-material-attach" id="joinMaterialFileBtn" data-i18n-aria="modal.attachFile" aria-label="העלאת קובץ">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <span class="join-material-file-name" id="joinMaterialFileName"></span>
+          </div>
+        </div>
         <label id="codeField" class="hidden">
-          <span>קוד חדר (6 ספרות)</span>
+          <span data-i18n="modal.roomCode">קוד חדר (6 ספרות)</span>
           <input type="text" id="roomCodeInput" placeholder="123456" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" />
         </label>
         <p class="form-error hidden" id="formError"></p>
         <p class="modal-conn-hint hidden" id="socketConnHint"></p>
         <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon join-modal-submit" id="formSubmit">פתח חדר</button>
       </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="soloContentModal" aria-hidden="true">
+    <div class="modal modal-lg" role="dialog" aria-labelledby="soloContentTitle" aria-modal="true">
+      <button class="modal-close" id="soloContentClose" type="button" data-i18n-aria="modal.close" aria-label="סגירה">×</button>
+      <h2 class="font-cartoon" id="soloContentTitle" data-i18n="solo.title">הכנת שיעור</h2>
+      <p class="modal-desc solo-content-lead" data-i18n="solo.lead">הדביקו תוכן לימודי — ניצור ממנו משחק לתרגול יחיד</p>
+      <div class="join-material-box" id="soloMaterialBox">
+        <textarea id="soloMaterialInput" rows="8" data-i18n-placeholder="modal.materialPh" placeholder="הדביקו כאן את תוכן השיעור…&#10;&#10;apple — תפוח&#10;book — ספר"></textarea>
+        <input type="file" id="soloMaterialFile" accept=".txt,.csv,.md,text/plain" hidden />
+        <button type="button" class="join-material-attach" id="soloMaterialFileBtn" data-i18n-aria="modal.attachFile" aria-label="העלאת קובץ">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="join-material-file-name" id="soloMaterialFileName"></span>
+      </div>
+      <p class="form-error hidden" id="soloContentError"></p>
+      <button type="button" class="btn btn-primary btn-candy btn-full font-cartoon join-modal-submit" id="soloLaunchBtn" data-i18n="solo.launch">התחל משחק</button>
     </div>
   </div>
 
@@ -344,11 +386,14 @@
   <script src="/js/firebase-app.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/auth.js"></script>
+  <script src="/js/parse-content.js"></script>
+  <script src="/js/games-catalog.js"></script>
   <script src="js/games.js"></script>
   <script src="js/booking.js"></script>
   <script src="js/teacher-dashboard.js"></script>
   <script src="js/scroll-animations.js"></script>
-  <script src="/js/app.js?v=5"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/app.js?v=6"></script>
   <script src="js/cookie-consent.js"></script>
 </body>
 </html>

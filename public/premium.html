@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0066FF" />
-  <title>מנוי פרימיום — Pleyi</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/css/games-hub.css" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>מנוי פרימיום — Pleyi</title>  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="stylesheet" href="/css/games-hub.css"/>
   <link rel="stylesheet" href="/css/premium.css" />
+  <link rel="stylesheet" href="/css/credits.css" />
 </head>
 <body class="hub-body memphis-body premium-page-body">
 
@@ -22,7 +19,6 @@
       </a>
       <nav class="nav-links">
         <a href="/" class="nav-pill">בית</a>
-        <a href="/games" class="nav-pill">משחקים</a>
       </nav>
       <div class="nav-actions">
         <button type="button" class="nav-auth-btn" id="authLoginBtn">התחברות</button>
@@ -36,9 +32,15 @@
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
           </div>
         </div>
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="תפריט" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>
       </div>
     </div>
   </header>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="ניווט ראשי">
+    <a href="/" class="active">בית</a>
+    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
+  </nav>
 
   <main class="premium-page-main container">
     <div class="premium-page-card" id="premiumSignupRoot"></div>
@@ -50,6 +52,8 @@
   <script src="/js/firebase-app.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/user-data.js"></script>
+  <script src="/js/credits.js"></script>
   <script src="/js/premium.js"></script>
+  <script src="/js/hub-nav.js"></script>
 </body>
 </html>

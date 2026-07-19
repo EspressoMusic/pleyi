@@ -6,7 +6,7 @@ html:has(body.in-room) {
 }
 
 body.in-room.clean-site {
-  background: #f4f7ff;
+  background: #E0FBF8;
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
@@ -529,21 +529,20 @@ body.room-has-error .room-page-overlay {
 }
 
 .room-top-strip-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
   gap: 8px;
-  margin-right: auto;
+  margin-inline-start: auto;
   position: relative;
   z-index: 2;
   flex-shrink: 0;
-  width: min(280px, 68vw);
+  width: auto;
   pointer-events: none;
 }
 
 .play-body .room-top-strip-actions {
-  grid-template-columns: repeat(3, 1fr);
-  width: min(420px, 58vw);
+  width: auto;
 }
 
 .room-top-strip-actions > * {
@@ -571,8 +570,9 @@ body.room-has-error .room-page-overlay {
   justify-content: center;
   align-self: stretch;
   min-height: 47px;
-  min-width: 0;
-  width: 100%;
+  min-width: 88px;
+  width: auto;
+  flex: 0 0 auto;
   overflow: visible;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -625,7 +625,7 @@ body.room-has-error .room-page-overlay {
 .room-stat-pill--games-btn:hover::before,
 .room-stat-pill--games-btn[aria-expanded="true"]::before,
 .room-stat-pill--games-btn:focus-visible::before {
-  background: var(--memlime);
+  background: var(--memteal);
 }
 
 .room-stat-pill--games-btn[aria-expanded="true"] {
@@ -1047,9 +1047,10 @@ body.in-room .scroll-progress {
 
 .room-memphis-sticker {
   position: absolute;
-  border: 4px solid var(--ink);
+  border: 3px solid var(--shape-tq-line);
   border-radius: 50%;
-  opacity: 0.55;
+  opacity: 0.88;
+  box-shadow: none;
 }
 
 .room-memphis-sticker--yellow {
@@ -1059,7 +1060,7 @@ body.in-room .scroll-progress {
   left: 3%;
   bottom: auto;
   right: auto;
-  background: var(--memyellow);
+  background: var(--shape-tq-soft);
   transform: rotate(-12deg);
 }
 
@@ -1070,7 +1071,7 @@ body.in-room .scroll-progress {
   right: 3%;
   left: auto;
   bottom: auto;
-  background: var(--mempink);
+  background: var(--shape-tq-pale);
   border-radius: 20px;
   transform: rotate(18deg);
 }
@@ -1082,7 +1083,7 @@ body.in-room .scroll-progress {
   left: 3%;
   top: auto;
   right: auto;
-  background: var(--mempurple);
+  background: var(--shape-tq-deep);
   transform: rotate(8deg);
 }
 
@@ -1093,7 +1094,7 @@ body.in-room .scroll-progress {
   right: 3%;
   left: auto;
   top: auto;
-  background: var(--memlime);
+  background: var(--shape-tq-mid);
   border-radius: 30% 70% 55% 45%;
 }
 
@@ -1150,6 +1151,14 @@ body.in-room .scroll-progress {
   border: 3px solid var(--ink);
   border-radius: 999px;
   box-shadow: 4px 4px 0 var(--ink);
+  transition: background 0.12s ease, transform 0.1s ease;
+}
+
+.room-top-strip-stats .room-stat-pill:hover,
+.room-top-strip-stats .room-stat-pill:focus-visible,
+.room-top-strip-stats a.room-stat-pill:hover,
+.room-top-strip-stats a.room-stat-pill:focus-visible {
+  background: var(--memteal);
 }
 
 button.room-stat-pill.room-stat-pill--games-btn,
@@ -1217,6 +1226,52 @@ button.room-stat-pill.room-stat-pill--exit-btn {
 
 .room-idle-wait-msg.hidden {
   display: none !important;
+}
+
+.room-idle-pick-btn {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  width: auto;
+  min-width: min(380px, 90vw);
+  min-height: 72px;
+  padding: 18px 52px 22px 48px;
+  animation: room-idle-wait-pulse 2.6s ease-in-out infinite;
+}
+
+button.room-idle-pick-btn.room-stat-pill--games-btn {
+  font-size: clamp(1.75rem, 6.5vw, 2.35rem);
+  font-weight: 900;
+  padding: 20px 56px 24px 52px;
+  min-height: 80px;
+}
+
+.room-idle-pick-btn.hidden {
+  display: none !important;
+}
+
+.room-idle-pick-btn:hover,
+.room-idle-pick-btn:focus-visible,
+.room-idle-pick-btn[aria-expanded="true"] {
+  transform: translate(calc(-50% - 1px), calc(-50% - 1px));
+}
+
+.room-idle-pick-btn:active {
+  transform: translate(calc(-50% + 1px), calc(-50% + 1px));
+}
+
+body.in-room.room-idle.is-room-manager #openGamesPanelBtn {
+  display: none;
+}
+
+body.in-room.room-idle.is-room-manager .room-top-strip {
+  justify-content: flex-end;
+}
+
+body.in-room.room-idle.is-room-manager .room-top-strip-actions {
+  margin-inline-start: 0;
 }
 
 @keyframes room-idle-wait-pulse {

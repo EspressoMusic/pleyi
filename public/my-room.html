@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>החדר שלי — Pleyi</title>
+  <meta name="description" content="המשחקים שלך — מועדפים, משחקים שיצרת ושיחקת לאחרונה"/>
+  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="stylesheet" href="/css/games-hub.css"/>
+  <link rel="stylesheet" href="/css/my-room.css"/>
+  <link rel="stylesheet" href="/css/credits.css"/>
+  <link rel="stylesheet" href="/css/legal.css"/>
+  <link rel="stylesheet" href="/css/accessibility.css" />
+</head>
+<body class="hub-body memphis-body my-room-body">
+
+  <div class="memphis-bg hub-memphis-bg" aria-hidden="true">
+    <span class="hub-memphis-sticker hub-memphis-sticker--purple"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--yellow"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--pink"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--teal"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--orange"></span>
+    <span class="hub-memphis-sticker hub-memphis-sticker--lime"></span>
+  </div>
+
+  <header class="navbar scrolled" id="navbar">
+    <div class="container nav-inner">
+      <a href="/" class="logo">
+        <img src="/images/pleyi-logo.png" alt="" class="logo-mark" width="48" height="48" decoding="async" />
+        <span class="logo-text font-brand">Pleyi</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/" class="nav-pill">בית</a>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle data-i18n="lang.switch" aria-label="English">EN</button>
+        <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
+        <div class="nav-user hidden" id="authUserMenu">
+          <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
+            <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            <span class="nav-user-initial hidden" id="authUserInitial" aria-hidden="true"></span>
+          </button>
+          <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
+            <p class="nav-user-name" id="authUserName"></p>
+            <a href="/games" class="nav-user-link" role="menuitem">ספריית משחקים</a>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
+          </div>
+        </div>
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="תפריט" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="ניווט ראשי">
+    <a href="/">בית</a>
+    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
+  </nav>
+
+  <main class="hub-main container">
+
+    <!-- Guest -->
+    <section class="room-guest" id="myRoomGuest">
+      <a href="/" class="hub-back hub-back--home">← בית</a>
+      <div class="room-guest-card sticker-card sticker-white">
+        <span class="room-guest-icon" aria-hidden="true">🏠</span>
+        <p class="hero-badge">החדר שלי</p>
+        <h1 class="font-cartoon room-guest-title">ברוכים הבאים</h1>
+        <p class="room-guest-lead">המשחקים שאהבת, יצרת ושיחקת — במקום אחד.</p>
+        <p class="room-guest-dev hidden" id="guestDevHint">מצב פיתוח — כניסה עם נתוני דוגמה</p>
+        <button type="button" class="btn btn-primary btn-candy font-cartoon hidden" id="guestPreviewBtn">כניסה לדוגמה</button>
+        <button type="button" class="btn btn-outline btn-candy" id="guestLoginBtn">התחברות</button>
+        <a href="/games" class="room-guest-link">לספריית המשחקים</a>
+      </div>
+    </section>
+
+    <!-- Logged in -->
+    <section class="room-content hidden" id="myRoomContent">
+      <button type="button" class="room-calendar-icon" id="roomCalendarBtn" disabled aria-label="יומן — בקרוב" title="יומן — בקרוב">
+        <span aria-hidden="true">📅</span>
+      </button>
+
+      <header class="room-hero">
+        <h1 class="hub-title font-cartoon" id="myRoomName">שלום!</h1>
+      </header>
+
+      <div class="room-menu" id="roomTiles">
+        <button type="button" class="room-menu-row sticker-card sticker-yellow" data-section="favorites">
+          <span class="room-menu-label">משחקים שאהבתי</span>
+        </button>
+        <button type="button" class="room-menu-row sticker-card sticker-teal" data-section="created">
+          <span class="room-menu-label">משחקים שיצרתי</span>
+        </button>
+        <button type="button" class="room-menu-row sticker-card sticker-orange" data-section="recent">
+          <span class="room-menu-label">שיחקתי לאחרונה</span>
+        </button>
+      </div>
+
+      <p class="room-foot-link">
+        <a href="/games" class="btn btn-primary btn-candy font-cartoon room-create-btn" id="myRoomCreateBtn">+ יצירת משחק חדש</a>
+      </p>
+    </section>
+  </main>
+
+  <!-- Calendar modal -->
+  <div class="modal-overlay hidden" id="calendarModal" role="dialog" aria-modal="true" aria-labelledby="calendarModalTitle">
+    <div class="modal modal-calendar sticker-card sticker-teal">
+      <button type="button" class="modal-close" id="calendarModalClose" aria-label="סגירה">×</button>
+      <header class="cal-header">
+        <h2 class="font-cartoon" id="calendarModalTitle">יומן משחקים</h2>
+        <p class="cal-credits-remain" id="calCreditsRemain">10 קרדיטים נותרו</p>
+      </header>
+      <div class="cal-legend">
+        <span><span class="cal-dot cal-dot--played"></span> שוחק</span>
+        <span><span class="cal-dot cal-dot--planned"></span> מתוכנן</span>
+      </div>
+      <div class="cal-nav">
+        <button type="button" class="cal-nav-btn" id="calPrevMonth" aria-label="חודש קודם">‹</button>
+        <p class="cal-month-label font-cartoon" id="calMonthLabel"></p>
+        <button type="button" class="cal-nav-btn" id="calNextMonth" aria-label="חודש הבא">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <aside class="cal-day-panel" id="calDayPanel">
+        <h3 class="cal-day-title font-cartoon" id="calDayTitle"></h3>
+        <div id="calDayList"></div>
+        <form class="cal-plan-form" id="calPlanForm">
+          <p class="cal-plan-label">תכנון משחק ליום זה</p>
+          <input type="text" id="calPlanTitle" class="cal-plan-input" placeholder="שם המשחק / השיעור" required maxlength="80" />
+          <input type="text" id="calPlanNotes" class="cal-plan-input" placeholder="הערות (אופציונלי)" maxlength="120" />
+          <button type="submit" class="btn btn-primary btn-candy btn-sm">+ הוסף ליומן</button>
+        </form>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Library bottom sheet -->
+  <div class="room-sheet-overlay hidden" id="roomModal" role="dialog" aria-modal="true" aria-labelledby="roomModalTitle">
+    <div class="room-sheet-backdrop" id="roomModalBackdrop"></div>
+    <div class="room-sheet sticker-card sticker-teal">
+      <button type="button" class="room-sheet-close" id="roomModalClose" aria-label="סגירה">×</button>
+      <div class="room-sheet-handle" aria-hidden="true"></div>
+      <h2 class="font-cartoon room-sheet-title" id="roomModalTitle">משחקים</h2>
+      <div class="room-modal-list" id="roomModalList"></div>
+    </div>
+  </div>
+
+  <!-- Login -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal modal-login">
+      <button class="modal-close" id="loginClose" type="button">×</button>
+      <h2>התחברות</h2>
+      <button type="button" id="googleSignInBtn" class="btn btn-google btn-full">
+        <span class="btn-google-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+        </span>
+        התחברות עם Google
+      </button>
+      <p class="form-error hidden" id="loginError"></p>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <footer class="site-footer-mini">
+    <nav class="site-legal-nav" aria-label="מידע משפטי">
+      <a href="/legal/terms.html">תקנון</a>
+      <a href="/legal/privacy.html">פרטיות</a>
+      <a href="/legal/cookies.html">עוגיות</a>
+      <a href="/legal/accessibility.html">נגישות</a>
+    </nav>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/user-data.js"></script>
+  <script src="/js/credits.js"></script>
+  <script src="/js/premium.js"></script>
+  <script src="/js/games-catalog.js"></script>
+  <script src="/js/my-room.js"></script>
+  <script src="/js/my-room-calendar.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/hub-nav.js"></script>
+  <script src="/js/cookie-consent.js"></script>
+</body>
+</html>

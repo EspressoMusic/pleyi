@@ -15,7 +15,12 @@ const I18n = {
       "nav.contact": "צור קשר",
       "nav.openRoom": "פתחו חדר",
       "nav.menu": "תפריט",
+      "nav.about": "מי אנחנו",
+      "nav.login": "התחברות",
+      "nav.myRoom": "החדר שלי",
+      "nav.logout": "יציאה",
       "lang.switch": "EN",
+      "lang.label": "English",
       "hero.badge": "משחקים × למידה × כיתה!",
       "hero.title1": "לומדים את השיעור",
       "hero.title2": "דרך משחקים!",
@@ -23,6 +28,12 @@ const I18n = {
         "פלטפורמת משחקי למידה למורים — הדגימו בכיתה, שחקו בזמן אמת עם התלמידים, או שלחו קישור לתרגול עצמי.",
       "hero.ctaRoom": "פתחו חדר שיעור",
       "hero.ctaGames": "למשחקים",
+      "hero.playNow": "שחק עכשיו",
+      "how.titleShort": "איך זה עובד?",
+      "how.step1": "המורה פותח חדר",
+      "how.step2": "תלמידים מצטרפים מהטלפון",
+      "how.step3": "משחקים יחד בזמן אמת",
+      "how.cta": "פתח חדר כיתה עכשיו",
       "how.title": "איך זה עובד — למורים ולכיתה",
       "how.lead": "משחקים שמוכנים לשילוב במערך השיעור — לא צריך לבנות מאפס, רק לבחור ולהתחיל.",
       "how.s1.title": "בחרו משחק ליעד",
@@ -67,7 +78,7 @@ const I18n = {
       "contact.namePh": "שם המורה / המוסד",
       "contact.email": "אימייל",
       "contact.message": "הודעה",
-      "contact.messagePh": "ספרו על הכיתה, המקצוע, ואיך תרצו לשלב משחקים...",
+      "contact.messagePh": "ספרו על הכיתה ואיך תרצו לשלב משחקים...",
       "contact.send": "שליחה",
       "contact.emailLabel": "אימייל",
       "contact.whatsapp": "פנו בוואטסאפ",
@@ -76,7 +87,34 @@ const I18n = {
       "contact.qrAlt": "QR code לאתר Pleyi",
       "contact.copyLink": "העתק קישור",
       "footer.tagline": "לימוד במשחקים — בכל שיעור!",
-      "footer.copy": "© Pleyi — פלטפורמת משחקי למידה למורים",
+      "footer.copy": "© Pleyi — משחקי למידה למורים",
+      "modal.openRoom.title": "פתיחת חדר כיתה",
+      "modal.joinRoom.title": "הצטרפות לחדר",
+      "modal.roomName": "שם החדר",
+      "modal.roomNamePh": "למשל: אנגלית ז׳",
+      "modal.joinDesc": "הזינו קוד חדר ושם — או השתמשו בדף /join מהטלפון",
+      "modal.openBtn": "פתח חדר",
+      "modal.joinBtn": "הצטרף",
+      "modal.materialHint": "הדביקו את התוכן הלימודי או צרפו קובץ",
+      "modal.materialPh": "הדביקו כאן את תוכן השיעור…\n\napple — תפוח\nbook — ספר",
+      "modal.attachFile": "העלאת קובץ",
+      "modal.close": "סגירה",
+      "solo.title": "הכנת שיעור",
+      "solo.lead": "הדביקו תוכן לימודי — ניצור ממנו משחק לתרגול יחיד",
+      "solo.launch": "התחל משחק",
+      "auth.loginTitle": "התחברות",
+      "auth.google": "התחברות עם Google",
+      "play.mode.title": "איך תרצו לשחק?",
+      "play.mode.group": "משחק קבוצתי",
+      "play.mode.solo": "משחק יחיד",
+      "play.mode.back": "→ חזרה",
+      "play.mode.groupTitle": "משחק קבוצתי",
+      "play.mode.groupLead": "מורה פותח חדר, תלמידים מצטרפים מהטלפון",
+      "play.mode.openRoom": "פתח חדר כיתה",
+      "play.mode.joinGame": "הצטרפות למשחק",
+      "play.mode.iTeacher": "אני מורה",
+      "play.mode.iStudent": "אני תלמיד/ה",
+      "hub.backHome": "← בית",
       "modal.teacher.title": "יצירת חדר — מורה",
       "modal.teacher.desc": "הזינו את שם החדר — תקבלו קוד לשיתוף עם התלמידים",
       "modal.student.title": "הצטרפות — תלמיד",
@@ -106,14 +144,25 @@ const I18n = {
       "nav.contact": "Contact",
       "nav.openRoom": "Open room",
       "nav.menu": "Menu",
+      "nav.about": "About",
+      "nav.login": "Log in",
+      "nav.myRoom": "My room",
+      "nav.logout": "Log out",
       "lang.switch": "עב",
+      "lang.label": "עברית",
       "hero.badge": "Games × Learning × Class!",
-      "hero.title1": "Learn through games",
-      "hero.title2": "Built into your lesson!",
+      "hero.title1": "Learn your lesson",
+      "hero.title2": "Through games!",
       "hero.lead":
         "A game-based learning platform for teachers — demo in class, play live with students, or send a link for solo practice.",
       "hero.ctaRoom": "Open lesson room",
       "hero.ctaGames": "Browse games",
+      "hero.playNow": "Play now",
+      "how.titleShort": "How does it work?",
+      "how.step1": "Teacher opens a room",
+      "how.step2": "Students join from their phone",
+      "how.step3": "Play together live",
+      "how.cta": "Open a classroom now",
       "how.title": "How it works — for teachers & class",
       "how.lead": "Games ready to slot into your lesson — no build-from-scratch, just pick and play.",
       "how.s1.title": "Pick a game for your goal",
@@ -167,7 +216,34 @@ const I18n = {
       "contact.qrAlt": "QR code for Pleyi site",
       "contact.copyLink": "Copy link",
       "footer.tagline": "Learning through games — every lesson!",
-      "footer.copy": "© Pleyi — game-based learning for teachers",
+      "footer.copy": "© Pleyi — learning games for teachers",
+      "modal.openRoom.title": "Open classroom",
+      "modal.joinRoom.title": "Join room",
+      "modal.roomName": "Room name",
+      "modal.roomNamePh": "e.g. English grade 7",
+      "modal.joinDesc": "Enter room code and name — or use /join on your phone",
+      "modal.openBtn": "Open room",
+      "modal.joinBtn": "Join",
+      "modal.materialHint": "Paste learning content or attach a file",
+      "modal.materialPh": "Paste lesson content here…\n\napple — apple\nbook — book",
+      "modal.attachFile": "Upload file",
+      "modal.close": "Close",
+      "solo.title": "Prepare lesson",
+      "solo.lead": "Paste learning content — we'll turn it into a solo practice game",
+      "solo.launch": "Start game",
+      "auth.loginTitle": "Log in",
+      "auth.google": "Sign in with Google",
+      "play.mode.title": "How would you like to play?",
+      "play.mode.group": "Group game",
+      "play.mode.solo": "Solo game",
+      "play.mode.back": "← Back",
+      "play.mode.groupTitle": "Group game",
+      "play.mode.groupLead": "Teacher opens a room, students join from their phone",
+      "play.mode.openRoom": "Open classroom",
+      "play.mode.joinGame": "Join game",
+      "play.mode.iTeacher": "I'm a teacher",
+      "play.mode.iStudent": "I'm a student",
+      "hub.backHome": "← Home",
       "modal.teacher.title": "Create room — teacher",
       "modal.teacher.desc": "Enter your name to create a new lesson room",
       "modal.student.title": "Join — student",
@@ -193,9 +269,15 @@ const I18n = {
   },
 
   setLang(lang) {
-    this.lang = "he";
-    document.documentElement.lang = "he";
-    document.documentElement.dir = "rtl";
+    this.lang = lang === "en" ? "en" : "he";
+    try {
+      localStorage.setItem("pleyi-lang", this.lang);
+    } catch {
+      /* ignore */
+    }
+
+    document.documentElement.lang = this.lang;
+    document.documentElement.dir = this.lang === "en" ? "ltr" : "rtl";
 
     document.querySelectorAll("[data-i18n]").forEach((el) => {
       const key = el.getAttribute("data-i18n");
@@ -212,15 +294,48 @@ const I18n = {
       if (key) el.alt = this.t(key);
     });
 
-    const title = this.t("meta.title");
-    document.title = title;
+    document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-aria");
+      if (key) el.setAttribute("aria-label", this.t(key));
+    });
+
+    document.querySelectorAll("[data-lang-toggle]").forEach((btn) => {
+      btn.textContent = this.t("lang.switch");
+      btn.setAttribute("aria-label", this.t("lang.label"));
+    });
+
+    document.title = this.t("meta.title");
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.content = this.t("meta.description");
+
+    window.dispatchEvent(new CustomEvent("gameclass:lang", { detail: { lang: this.lang } }));
+  },
+
+  toggle() {
+    this.setLang(this.lang === "he" ? "en" : "he");
   },
 
   init() {
-    this.setLang("he");
+    let saved = "he";
+    try {
+      saved = localStorage.getItem("pleyi-lang") || "he";
+    } catch {
+      /* ignore */
+    }
+    this.setLang(saved);
+
+    if (!this._bound) {
+      this._bound = true;
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("[data-lang-toggle]")) {
+          e.preventDefault();
+          this.toggle();
+        }
+      });
+    }
   },
 };
+
+window.I18n = I18n;
 
 document.addEventListener("DOMContentLoaded", () => I18n.init());

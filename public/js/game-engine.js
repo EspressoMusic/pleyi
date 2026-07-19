@@ -244,7 +244,7 @@ window.GameEngine = {
       ctx.fillText(emoji, x, dy + h * 0.32);
     }
     const fontSize = Math.min(h * 0.38, Math.max(14, w / (text.length * 0.52)));
-    ctx.font = `900 ${fontSize}px Heebo, sans-serif`;
+    ctx.font = `900 ${fontSize}px Google Sans, sans-serif`;
     ctx.direction = kind === "en" ? "ltr" : "rtl";
     ctx.fillText(text, x, dy + h * (emoji ? 0.64 : 0.52));
     ctx.direction = "inherit";
@@ -286,7 +286,7 @@ window.GameEngine = {
   drawPopups(ctx, popups) {
     popups.forEach((p) => {
       ctx.globalAlpha = Math.min(1, p.life);
-      ctx.font = "900 28px Heebo, sans-serif";
+      ctx.font = "900 28px Google Sans, sans-serif";
       ctx.textAlign = "center";
       ctx.fillStyle = p.color;
       ctx.strokeStyle = "#1a0a2e";

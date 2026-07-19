@@ -135,22 +135,26 @@ function openModal(mode) {
   state.modalMode = mode;
   roomLog("open modal", mode);
   $("#modalTitle").textContent =
-    mode === "teacher" ? "פתיחת חדר כיתה" : "הצטרפות לחדר";
+    mode === "teacher" ? t("modal.openRoom.title") : t("modal.joinRoom.title");
   const descEl = $("#modalDesc");
   if (mode === "teacher") {
     descEl.textContent = "";
     descEl.classList.add("hidden");
   } else {
-    descEl.textContent =
-      "הזינו קוד חדר ושם — או השתמשו בדף /join מהטלפון";
+    descEl.textContent = t("modal.joinDesc");
     descEl.classList.remove("hidden");
   }
-  $("#modalNameLabel").textContent = mode === "teacher" ? "שם החדר" : "השם שלך";
-  $("#playerName").placeholder = mode === "teacher" ? "למשל: אנגלית ז׳" : "למשל: דנה";
-  $("#formSubmit").textContent = mode === "teacher" ? "פתח חדר" : "הצטרף";
+  $("#modalNameLabel").textContent = mode === "teacher" ? t("modal.roomName") : t("modal.yourName");
+  $("#playerName").placeholder = mode === "teacher" ? t("modal.roomNamePh") : t("modal.namePh");
+  $("#joinNameField")?.classList.toggle("hidden", mode === "teacher");
+  $("#playerName").required = mode !== "teacher";
+  $("#formSubmit").textContent = mode === "teacher" ? t("modal.openBtn") : t("modal.joinBtn");
   $("#codeField").classList.toggle("hidden", mode === "teacher");
+  $("#joinMaterialGroup")?.classList.toggle("hidden", mode !== "teacher");
+  $("#joinModal")?.classList.toggle("join-modal--teacher", mode === "teacher");
   $("#formError").classList.add("hidden");
   $("#joinForm").reset();
+  resetMaterialFileUI("join");
   $("#joinModal").classList.remove("hidden");
   const connHint = document.getElementById("socketConnHint");
   if (connHint) {
@@ -159,7 +163,10 @@ function openModal(mode) {
       : "מתחבר לשרת… אם זה נתקע, ודאו שהשרת רץ (npm start).";
     connHint.classList.toggle("hidden", socket.connected);
   }
-  setTimeout(() => $("#playerName").focus(), 100);
+  setTimeout(() => {
+    if (mode === "teacher") $("#joinMaterialInput")?.focus();
+    else $("#playerName")?.focus();
+  }, 100);
 }
 
 function closeModal() {
@@ -169,6 +176,167 @@ function closeModal() {
     submitBtn.disabled = false;
     submitBtn.textContent = state.modalMode === "teacher" ? "פתח חדר" : "הצטרף";
   }
+}
+
+function openPlayModeModal() {
+  const modal = $("#playModeModal");
+  if (!modal) return;
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden", "false");
+  setTimeout(() => $("#playModeGroupBtn")?.focus(), 100);
+}
+
+function closePlayModeModal() {
+  const modal = $("#playModeModal");
+  if (!modal) return;
+  modal.classList.add("hidden");
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function bindPlayModeModal() {
+  $("#heroPlayNowBtn")?.addEventListener("click", openPlayModeModal);
+  $("#playModeClose")?.addEventListener("click", closePlayModeModal);
+  $("#playModeModal")?.addEventListener("click", (e) => {
+    if (e.target === $("#playModeModal")) closePlayModeModal();
+  });
+  $("#playModeGroupBtn")?.addEventListener("click", () => {
+    closePlayModeModal();
+    openModal("teacher");
+  });
+  $("#playModeSoloBtn")?.addEventListener("click", () => {
+    closePlayModeModal();
+    openSoloContentModal();
+  });
+}
+
+function parseMaterialText(text, subject = "english") {
+  const catalog = window.GAMES_CATALOG;
+  if (!catalog?.parseContent) return { items: [] };
+  const parsed = catalog.parseContent(String(text || "").trim(), subject);
+  const items = Array.isArray(parsed) ? parsed : parsed?.items || [];
+  return { items };
+}
+
+function resetMaterialFileUI(prefix) {
+  const fileInput = document.getElementById(`${prefix}MaterialFile`);
+  const fileName = document.getElementById(`${prefix}MaterialFileName`);
+  if (fileInput) fileInput.value = "";
+  if (fileName) fileName.textContent = "";
+}
+
+async function loadMaterialFile(prefix, file) {
+  const textarea = document.getElementById(`${prefix}MaterialInput`);
+  const fileInput = document.getElementById(`${prefix}MaterialFile`);
+  const fileName = document.getElementById(`${prefix}MaterialFileName`);
+  const box = document.getElementById(`${prefix}MaterialBox`);
+  if (!file || !textarea) return;
+  if (file.size > 1024 * 1024) {
+    showToast("הקובץ גדול מדי (מקסימום 1MB)");
+    resetMaterialFileUI(prefix);
+    return;
+  }
+  try {
+    textarea.value = await file.text();
+    if (fileName) fileName.textContent = file.name;
+    if (fileInput) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInput.files = dt.files;
+    }
+    box?.classList.remove("is-dragover");
+  } catch {
+    showToast("לא ניתן לקרוא את הקובץ");
+    resetMaterialFileUI(prefix);
+  }
+}
+
+function bindMaterialUpload(prefix) {
+  const box = document.getElementById(`${prefix}MaterialBox`);
+  const textarea = document.getElementById(`${prefix}MaterialInput`);
+  const fileInput = document.getElementById(`${prefix}MaterialFile`);
+  const fileBtn = document.getElementById(`${prefix}MaterialFileBtn`);
+  if (!box || !textarea) return;
+
+  fileBtn?.addEventListener("click", () => fileInput?.click());
+  fileInput?.addEventListener("change", () => loadMaterialFile(prefix, fileInput.files?.[0]));
+  textarea.addEventListener("input", () => {
+    if (fileInput?.value) resetMaterialFileUI(prefix);
+  });
+  box.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    box.classList.add("is-dragover");
+  });
+  box.addEventListener("dragleave", () => box.classList.remove("is-dragover"));
+  box.addEventListener("drop", (e) => {
+    e.preventDefault();
+    box.classList.remove("is-dragover");
+    const file = e.dataTransfer?.files?.[0];
+    if (file) loadMaterialFile(prefix, file);
+  });
+}
+
+function launchSoloFromMaterial(text) {
+  const { items } = parseMaterialText(text);
+  if (items.length < 2) {
+    return { ok: false, error: "הזינו לפחות 2 פריטים (מילה=תרגום או תרגיל=תשובה)" };
+  }
+  const catalog = window.GAMES_CATALOG;
+  const subject = "english";
+  const gameId = catalog.pickGameForContent(items, subject);
+  sessionStorage.setItem(
+    "gameclass-custom",
+    JSON.stringify({
+      subject,
+      gameId,
+      vocab: items,
+      title: "שיעור מותאם",
+      savedGameId: null,
+    })
+  );
+  sessionStorage.setItem("gameclass-play-material", text.trim());
+  window.location.href = `/play/${gameId}`;
+  return { ok: true };
+}
+
+function openSoloContentModal() {
+  const modal = $("#soloContentModal");
+  if (!modal) return;
+  $("#soloMaterialInput").value = "";
+  resetMaterialFileUI("solo");
+  $("#soloContentError")?.classList.add("hidden");
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden", "false");
+  setTimeout(() => $("#soloMaterialInput")?.focus(), 100);
+}
+
+function closeSoloContentModal() {
+  const modal = $("#soloContentModal");
+  if (!modal) return;
+  modal.classList.add("hidden");
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function bindSoloContentModal() {
+  bindMaterialUpload("solo");
+  bindMaterialUpload("join");
+  $("#soloContentClose")?.addEventListener("click", closeSoloContentModal);
+  $("#soloContentModal")?.addEventListener("click", (e) => {
+    if (e.target === $("#soloContentModal")) closeSoloContentModal();
+  });
+  $("#soloLaunchBtn")?.addEventListener("click", () => {
+    const err = $("#soloContentError");
+    const text = $("#soloMaterialInput")?.value || "";
+    err?.classList.add("hidden");
+    const result = launchSoloFromMaterial(text);
+    if (!result.ok) {
+      if (err) {
+        err.textContent = result.error;
+        err.classList.remove("hidden");
+      } else {
+        showToast(result.error);
+      }
+    }
+  });
 }
 
 function updateRoomUI(room) {
@@ -452,7 +620,6 @@ $$("#mobileNav a").forEach((a) =>
 function bindOpenRoomFlow() {
   const openRoomBtnIds = [
     "openClassroomBtn",
-    "heroClassroomBtn",
     "howClassroomBtn",
     "mobileClassroomBtn",
     "dashStartLessonBtn",
@@ -494,7 +661,10 @@ async function handleJoinFormSubmit(e) {
   e.preventDefault();
   roomLog("form submit", { mode: state.modalMode });
 
-  const name = $("#playerName").value.trim();
+  const name =
+    state.modalMode === "teacher"
+      ? window.GameAuth?.getUser()?.name || "חדר כיתה"
+      : $("#playerName").value.trim();
   const err = $("#formError");
   const submitBtn = $("#formSubmit");
   err.classList.add("hidden");
@@ -514,8 +684,20 @@ async function handleJoinFormSubmit(e) {
 
   try {
     if (state.modalMode === "teacher") {
-      roomLog("room:create sending…", { name });
-      const res = await emitAck("room:create", { name });
+      const materialText = $("#joinMaterialInput")?.value?.trim() || "";
+      if (materialText) {
+        const { items } = parseMaterialText(materialText);
+        if (items.length < 1) {
+          err.textContent = "לא זוהו פריטים בתוכן — נסו: apple=תפוח";
+          err.classList.remove("hidden");
+          return;
+        }
+      }
+      roomLog("room:create sending…", { name, hasMaterial: !!materialText });
+      const res = await emitAck("room:create", {
+        name,
+        learningMaterial: materialText || undefined,
+      });
       roomLog("room:create response", res);
 
       if (res?.ok && res?.code) {
@@ -554,6 +736,8 @@ function openTeacherRoom() {
 }
 
 bindOpenRoomFlow();
+bindPlayModeModal();
+bindSoloContentModal();
 
 initContactExtras();
 GameAuth?.bindModals(showToast);
@@ -568,7 +752,16 @@ $("#joinModal")?.addEventListener("click", (e) => {
   if (e.target === $("#joinModal")) closeModal();
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !$("#joinModal")?.classList.contains("hidden")) closeModal();
+  if (e.key !== "Escape") return;
+  if (!$("#playModeModal")?.classList.contains("hidden")) {
+    closePlayModeModal();
+    return;
+  }
+  if (!$("#soloContentModal")?.classList.contains("hidden")) {
+    closeSoloContentModal();
+    return;
+  }
+  if (!$("#joinModal")?.classList.contains("hidden")) closeModal();
 });
 
 socket.on("connect", () => {
@@ -669,11 +862,6 @@ document.getElementById("gamePreviewModal")?.addEventListener("click", (e) => {
   }
 })();
 
-$("#contactForm")?.addEventListener("submit", (e) => {
-  e.preventDefault();
-  showToast(t("toast.contactSent"));
-  e.target.reset();
-});
 
 function formatWhatsAppPhone(phone) {
   const digits = String(phone || "").replace(/\D/g, "");
@@ -686,20 +874,6 @@ function formatWhatsAppPhone(phone) {
 let contactWaNum = formatWhatsAppPhone("0586122187");
 
 function initContactExtras() {
-  const siteUrl = `${window.location.origin}${window.location.pathname.replace(/\/$/, "") || ""}`;
-  const qrImg = document.getElementById("siteQrCode");
-  if (qrImg) {
-    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(siteUrl)}`;
-  }
-
-  const copyBtn = document.getElementById("copySiteUrlBtn");
-  if (copyBtn && !copyBtn.dataset.bound) {
-    copyBtn.dataset.bound = "1";
-    copyBtn.addEventListener("click", () => {
-      navigator.clipboard?.writeText(siteUrl).then(() => showToast(t("toast.linkCopied")));
-    });
-  }
-
   updateWhatsAppLink();
 
   fetch("/api/booking/settings")

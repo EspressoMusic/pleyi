@@ -335,20 +335,6 @@
       syncMaterialSummary();
     });
 
-    window.AI_LESSON?.bindGenerateButton(
-      document.getElementById("playAiGenerateBtn"),
-      () => ({
-        text: materialInput?.value || "",
-        subject: (window.PlaySession?.getMeta() || {}).subject || "english",
-      }),
-      {
-        onToast: showToast,
-        onSuccess: (result) => {
-          if (materialInput) materialInput.value = result.normalized;
-        },
-      }
-    );
-
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
       if (!materialPanel?.classList.contains("hidden")) closeMaterialPanel();

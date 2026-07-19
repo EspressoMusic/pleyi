@@ -3,13 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0066FF" />
-  <title>חדר כיתה — Pleyi</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Heebo:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=28" />
-  <link rel="stylesheet" href="/css/clean-site.css" />
-  <link rel="stylesheet" href="/css/room-page.css?v=62" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>חדר כיתה — Pleyi</title>  <link rel="stylesheet" href="/styles.css?v=28"/>
+  <link rel="stylesheet" href="/css/clean-site.css"/>
+  <link rel="stylesheet" href="/css/room-page.css?v=62"/>
   <link rel="stylesheet" href="/css/premium.css" />
 </head>
 <body class="clean-site in-room">
@@ -74,7 +71,8 @@
                     <div class="room-idle-runner-track" aria-hidden="true"></div>
                     <div class="room-idle-runner-player" aria-hidden="true">🏃</div>
                   </div>
-                  <p class="room-idle-wait-msg" id="roomIdleWaitMsg">לחצו על שם המשחק בסרגל לבחירה</p>
+                  <button type="button" class="room-idle-pick-btn room-stat-pill room-stat-pill--games-btn room-manager-only hidden" id="roomIdlePickBtn" aria-expanded="false" aria-controls="roomGamesPanel">בחרו משחק</button>
+                  <p class="room-idle-wait-msg hidden" id="roomIdleGuestMsg">ממתינים לבחירת משחק…</p>
                 </div>
                 <aside class="room-stage-chat hidden" id="roomStageChat" aria-label="צ'אט כיתה">
                   <div class="room-stage-chat-head">
@@ -220,9 +218,8 @@
           </div>
           <p class="room-material-ai-hint">הדביקו טקסט מהשיעור — AI יהפוך אותו לזוגות למשחק</p>
           <textarea id="roomMaterialInput" class="room-material-textarea" rows="10" placeholder="הדביקו תוכן שיעור או זוגות מוכנים:&#10;apple=תפוח&#10;book=ספר"></textarea>
-          <button type="button" class="btn btn-ai btn-candy btn-full hidden" id="roomAiGenerateBtn" data-ai-generate>✨ צור עם AI</button>
           <div class="room-material-actions">
-            <button type="button" class="btn btn-candy btn-full room-material-save-btn" id="saveMaterialBtn">שמור חומר לימודי</button>
+            <button type="button" class="btn btn-candy btn-full room-material-save-btn" id="saveMaterialBtn">הכנת שיעור</button>
             <button type="button" class="btn btn-candy btn-full room-material-cancel-btn" id="cancelMaterialBtn">ביטול</button>
           </div>
         </div>
