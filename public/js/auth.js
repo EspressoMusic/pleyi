@@ -176,8 +176,8 @@ window.GameAuth = {
     try {
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
-      await FirebaseApp.auth.signInWithRedirect(provider);
-      return { ok: true, redirecting: true };
+      const result = await FirebaseApp.auth.signInWithPopup(provider);
+      return { ok: true, user: result.user };
     } catch (err) {
       return { ok: false, error: this._authError(err) };
     }
@@ -316,7 +316,7 @@ window.GameAuth = {
       const btn = document.getElementById("googleSignInBtn");
       if (btn) {
         btn.disabled = true;
-        btn.textContent = "מעביר ל-Google…";
+        btn.textContent = "מתחבר…";
       }
       err?.classList.add("hidden");
 
@@ -330,6 +330,12 @@ window.GameAuth = {
           err.textContent = res.error;
           err.classList.remove("hidden");
         }
+        return;
+      }
+
+      close("loginModal");
+      if (!/^\/my-room\/?$/.test(window.location.pathname)) {
+        window.location.href = "/my-room";
       }
     });
 
