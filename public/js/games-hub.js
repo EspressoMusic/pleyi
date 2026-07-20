@@ -921,7 +921,82 @@
     }
   }
 
+  function setCreateBtnBusy(busy, label) {
+    if (!customCreateBtn) return;
+    if (busy) {
+      customCreateBtn.dataset.idleLabel = customCreateBtn.dataset.idleLabel || customCreateBtn.textContent;
+      customCreateBtn.disabled = true;
+      customCreateBtn.setAttribute("aria-busy", "true");
+      customCreateBtn.textContent = label || "יוצר משחק עם AI…";
+    } else {
+      customCreateBtn.disabled = false;
+      customCreateBtn.removeAttribute("aria-busy");
+      customCreateBtn.textContent = customCreateBtn.dataset.idleLabel || "יצירת משחק";
+    }
+  }
+
+  // Content that doesn't already look like word=translation / exercise=answer
+  // pairs (e.g. a pasted article or an uploaded file) is handed to the AI so it
+  // can understand it and build a matching game, instead of just failing.
+  async function ensureGameContentReady() {
+    const raw = customContent.value.trim();
+    if (!raw) {
+      showToast("הדביקו תוכן שיעור או העלו קובץ");
+      return false;
+    }
+
+    const subject = customSubject.value;
+    const items = catalog.parseContent(raw, subject);
+    if (items.length >= 2) return true;
+
+    if (!window.GameAuth?.getUser()) {
+      pendingCreateAfterLogin = true;
+      sessionStorage.setItem(
+        "pleyi-pending-create",
+        JSON.stringify({
+          subject,
+          content: raw,
+          title: customTitle?.value.trim() || "",
+          needsAi: true,
+          editingSavedId,
+        })
+      );
+      showToast("התחברו — וניצור לכם משחק מהתוכן עם AI");
+      document.getElementById("loginModal")?.classList.remove("hidden");
+      return false;
+    }
+
+    const status = await window.AI_LESSON?.checkStatus();
+    if (!status?.configured) {
+      showToast("הזינו לפחות 2 שורות (מילה=תרגום או תרגיל=תשובה)");
+      return false;
+    }
+
+    setCreateBtnBusy(true);
+    try {
+      const result = await window.AI_LESSON.generate({ lessonText: raw, subject });
+      customContent.value = result.normalized;
+      if (result.title && !customTitle.value.trim()) customTitle.value = result.title;
+      updateCustomGameOptions();
+      if (result.gameId) {
+        const hasOption = [...customGamePick.options].some((o) => o.value === result.gameId);
+        customGamePick.value = hasOption ? result.gameId : "auto";
+      }
+      updatePreview();
+      showToast(`ה-AI זיהה ${result.itemCount} פריטים ובנה משחק מתאים`);
+      return true;
+    } catch (e) {
+      showToast(e.message || "שגיאה ביצירת המשחק עם AI");
+      return false;
+    } finally {
+      setCreateBtnBusy(false);
+    }
+  }
+
   async function persistAndLaunchGame({ launch = true } = {}) {
+    const ready = await ensureGameContentReady();
+    if (!ready) return null;
+
     const { subject, items, gameId, title, content } = getFormData();
     if (items.length < 2) {
       showToast("הזינו לפחות 2 שורות (מילה=תרגום או תרגיל=תשובה)");
