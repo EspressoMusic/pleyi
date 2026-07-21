@@ -16,22 +16,14 @@
   <div class="scroll-progress" id="scrollProgress"></div>
 
   <div class="loader" id="loader">
-    <div class="loader-brand">
-      <img src="images/pleyi-logo.png" alt="" class="logo-mark logo-mark--loader" width="80" height="80" decoding="async" />
-      <div class="loader-logo font-brand">Pleyi</div>
-    </div>
     <div class="loader-bar"></div>
   </div>
 
   <header class="navbar" id="navbar">
     <div class="container nav-inner">
-      <a href="#home" class="logo" id="logoHome">
-        <img src="images/pleyi-logo.png" alt="" class="logo-mark" width="48" height="48" decoding="async" />
-        <span class="logo-text font-brand">Pleyi</span>
-      </a>
       <nav class="nav-links" id="navLinks">
         <a href="#home" class="nav-pill active" data-i18n="nav.home">בית</a>
-        <a href="#how" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
+        <a href="#about" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
         <a href="#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
       </nav>
       <div class="nav-actions">
@@ -54,7 +46,7 @@
 
   <nav class="mobile-nav" id="mobileNav">
     <a href="#home" data-i18n="nav.home">בית</a>
-    <a href="#how" data-i18n="nav.about">מי אנחנו</a>
+    <a href="#about" data-i18n="nav.about">מי אנחנו</a>
     <a href="#contact" data-i18n="nav.contact">צור קשר</a>
     <button type="button" class="mobile-nav-auth" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
   </nav>
@@ -89,7 +81,37 @@
       </div>
     </section>
 
-    <!-- 2. הסבר -->
+    <!-- 2. מי אנחנו -->
+    <section id="about" class="clean-section clean-section--about scroll-section">
+      <div class="clean-section-shapes clean-section-shapes--white" aria-hidden="true">
+        <span class="clean-memphis-sticker clean-memphis-sticker--orange clean-memphis-pos--g1"></span>
+        <span class="clean-memphis-sticker clean-memphis-sticker--teal clean-memphis-pos--g2"></span>
+        <span class="clean-memphis-sticker clean-memphis-sticker--pink clean-memphis-pos--g3"></span>
+      </div>
+      <div class="container about-wrap">
+        <h2 class="clean-section-title font-cartoon" data-i18n="about.title">מי אנחנו</h2>
+        <p class="about-lead" data-i18n="about.lead">הופכים תוכן שיעור למשחק תוך שניות — כדי שתוכלו להתמקד בהוראה.</p>
+        <div class="about-cards">
+          <article class="about-card">
+            <div class="about-card-icon about-card-icon--teal" data-i18n="about.c1.icon" aria-hidden="true">⚡</div>
+            <h3 class="about-card-title font-cartoon" data-i18n="about.c1.title">מהיר ופשוט</h3>
+            <p class="about-card-text" data-i18n="about.c1.text">מדביקים תוכן — משחק מוכן לכיתה.</p>
+          </article>
+          <article class="about-card">
+            <div class="about-card-icon about-card-icon--yellow" data-i18n="about.c2.icon" aria-hidden="true">🎯</div>
+            <h3 class="about-card-title font-cartoon" data-i18n="about.c2.title">בלי טכנולוגיה</h3>
+            <p class="about-card-text" data-i18n="about.c2.text">קישור או קוד — והתלמידים מצטרפים מהטלפון.</p>
+          </article>
+          <article class="about-card">
+            <div class="about-card-icon about-card-icon--pink" data-i18n="about.c3.icon" aria-hidden="true">🎉</div>
+            <h3 class="about-card-title font-cartoon" data-i18n="about.c3.title">שיעור חי</h3>
+            <p class="about-card-text" data-i18n="about.c3.text">תחרות, משחק — ולמידה שנשארת.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. הסבר -->
     <section id="how" class="clean-section clean-section--soft scroll-section">
       <div class="clean-section-shapes clean-section-shapes--soft" aria-hidden="true">
         <span class="clean-memphis-sticker clean-memphis-sticker--pink clean-memphis-pos--s1"></span>
@@ -129,7 +151,7 @@
       </div>
     </section>
 
-    <!-- 3. יצירת קשר -->
+    <!-- 4. יצירת קשר -->
     <section id="contact" class="clean-section clean-section--contact scroll-section">
       <div class="clean-section-shapes clean-section-shapes--contact" aria-hidden="true">
         <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--c1"></span>

@@ -5,10 +5,6 @@
   if (!catalog) return;
 
   const grid = document.getElementById("gamesGrid");
-  const gridEmpty = document.getElementById("hubGridEmpty");
-  const skillFilters = document.getElementById("hubSkillFilters");
-  const skillFiltersList = document.getElementById("hubSkillFiltersList");
-  const tabs = document.querySelectorAll(".hub-tab");
   const customForm = document.getElementById("customGameForm");
   const customModal = document.getElementById("customGameModal");
   const customSubject = document.getElementById("customSubject");
@@ -218,15 +214,6 @@
   }
 
   function applyDisabledSubjects() {
-    tabs.forEach((tab) => {
-      const subject = tab.dataset.subject;
-      if (!DISABLED_SUBJECTS.has(subject)) return;
-      tab.disabled = true;
-      tab.setAttribute("aria-disabled", "true");
-      tab.classList.add("is-disabled");
-      tab.title = "בקרוב";
-    });
-
     customSubject?.querySelectorAll("option").forEach((opt) => {
       if (DISABLED_SUBJECTS.has(opt.value)) opt.disabled = true;
     });
@@ -235,7 +222,6 @@
   let activeSubject = "english";
   let editingSavedId = null;
   let pendingCreateAfterLogin = false;
-  let activeSkillFilter = null;
 
   function showToast(msg) {
     const t = document.getElementById("toast");
@@ -326,54 +312,57 @@
     });
   }
 
-  function gamesForSubject() {
-    const games = catalog[activeSubject] || [];
-    const filtered = activeSkillFilter
-      ? games.filter((game) => (game.tags || []).includes(activeSkillFilter))
-      : games;
-    return sortLockedGamesLast(filtered);
-  }
-
-  function renderSkillFilters() {
-    if (!skillFilters || !skillFiltersList) return;
-    const skills = catalog.skillsForSubject(activeSubject);
-    if (!skills.length) {
-      skillFilters.classList.add("hidden");
-      skillFiltersList.innerHTML = "";
-      return;
+  function allHubGames() {
+    const subjects = catalog.allSubjects?.() || ["english", "math"];
+    const games = [];
+    for (const subject of subjects) {
+      if (DISABLED_SUBJECTS.has(subject)) continue;
+      for (const game of catalog[subject] || []) {
+        games.push({ ...game, _subject: subject });
+      }
     }
-    skillFilters.classList.remove("hidden");
-    skillFiltersList.innerHTML = skills
-      .map((tag) => skillTagHtml(tag, { filterBtn: true, active: activeSkillFilter === tag }))
-      .join("");
+    return sortLockedGamesLast(games);
   }
 
-  skillFiltersList?.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-skill]");
-    if (!btn) return;
-    const skill = btn.dataset.skill;
-    activeSkillFilter = activeSkillFilter === skill ? null : skill;
-    renderSkillFilters();
-    renderGrid();
-  });
+  function gamesForSubject() {
+    return allHubGames();
+  }
+
+  function gameThumbHtml(game) {
+    const icon = catalog.gameIcon ? catalog.gameIcon(game) : game.icon || "🎮";
+    if (game.image) {
+      return `
+        <div class="hub-game-thumb">
+          <img src="${escapeHtml(game.image)}" alt="" class="hub-game-thumb-img" loading="lazy" decoding="async"
+            onerror="this.hidden=true;this.nextElementSibling.hidden=false" />
+          <span class="hub-game-thumb-fallback" hidden aria-hidden="true">${icon}</span>
+        </div>`;
+    }
+    return `
+        <div class="hub-game-thumb">
+          <span class="hub-game-thumb-fallback" aria-hidden="true">${icon}</span>
+        </div>`;
+  }
 
   function cardHtml(game, index) {
     const color = cardColorForIndex(index);
     const sticker = `sticker-${color}`;
-    const meta = catalog.gameMeta(game, activeSubject);
+    const subject = game._subject || activeSubject;
+    const meta = catalog.gameMeta(game, subject);
     const skillsText = meta.skills.join(" · ");
     const summary = gameSummary(game.desc);
     return `
-      <article class="hub-game-card pitch-card sticker-card ${sticker}" data-game-id="${game.id}" data-game-title="${escapeHtml(game.title)}" data-game-desc="${escapeHtml(summary)}" data-game-color="${color}">
+      <article class="hub-game-card pitch-card sticker-card ${sticker}" data-game-id="${game.id}" data-game-subject="${subject}" data-game-title="${escapeHtml(game.title)}" data-game-desc="${escapeHtml(summary)}" data-game-color="${color}">
         <button type="button" class="hub-game-info-btn" aria-label="מידע על ${escapeHtml(game.title)}"
           data-game-color="${color}"
-          data-info-icon="${escapeHtml(game.icon || "🎮")}"
+          data-info-icon="${escapeHtml(catalog.gameIcon ? catalog.gameIcon(game) : game.icon || "🎮")}"
           data-info-title="${escapeHtml(game.title)}"
           data-info-about="${escapeHtml(meta.about)}"
           data-info-content="${escapeHtml(meta.content)}"
           data-info-skills="${escapeHtml(skillsText)}">
           <span aria-hidden="true">i</span>
         </button>
+        ${gameThumbHtml(game)}
         <h3 class="hub-game-title font-cartoon">${game.title}</h3>
         <button type="button" class="hub-game-play-btn btn btn-primary btn-candy btn-full">שחק עכשיו</button>
       </article>`;
@@ -386,8 +375,6 @@
     grid?.querySelectorAll(".hub-game-card").forEach((card) => {
       window.PleyiPremium?.decorateHubCard?.(card);
     });
-    grid?.classList.toggle("hidden", games.length === 0 && !!activeSkillFilter);
-    gridEmpty?.classList.toggle("hidden", games.length > 0 || !activeSkillFilter);
   }
 
   let gridResizeTimer;
@@ -410,10 +397,11 @@
   function launchGameFromHub(card) {
     const gameId = card.dataset.gameId;
     const gameTitle = card.dataset.gameTitle;
+    const subject = card.dataset.gameSubject || activeSubject;
     if (!gameId || !window.GAME_CONTENT) return;
     if (window.PleyiPremium?.ensurePremiumAccess && !window.PleyiPremium.ensurePremiumAccess(gameId)) return;
     GAME_CONTENT.launchPlay({
-      subject: activeSubject,
+      subject,
       gameId,
       level: "medium",
       topic: "all",
@@ -541,18 +529,6 @@
     if (e.key === "Escape" && customModal && !customModal.classList.contains("hidden")) {
       closeCustomModal();
     }
-  });
-
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      if (tab.disabled || DISABLED_SUBJECTS.has(tab.dataset.subject)) return;
-      activeSubject = tab.dataset.subject;
-      tabs.forEach((t) => t.classList.toggle("active", t === tab));
-      activeSkillFilter = null;
-      renderSkillFilters();
-      renderGrid();
-      updateCustomGameOptions();
-    });
   });
 
   function updateCustomGameOptions() {
@@ -1105,19 +1081,8 @@
   }
 
   function scrollToMyGames() {
-    document.getElementById("myGames")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    location.href = "/my-room";
   }
-
-  document.getElementById("navMyGamesLink")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    window.GameAuth?._closeUserDropdown?.();
-    scrollToMyGames();
-  });
-
-  document.getElementById("teacherRoomLogout")?.addEventListener("click", async () => {
-    await window.GameAuth?.logout?.();
-    showToast("התנתקת בהצלחה");
-  });
 
   window.GameAuth?.bindModals(showToast);
   window.GameAuth?.onUserChange(async (user) => {
@@ -1125,18 +1090,7 @@
     await refreshLibrary();
     updateCustomQuotaDisplay();
     if (user) {
-      if (window.location.hash === "#myGames") scrollToMyGames();
       await resumePendingCreate();
-    }
-  });
-
-  if (window.location.hash === "#myGames" && (window.GameAuth?.getUser() || TEACHER_PREVIEW)) {
-    scrollToMyGames();
-  }
-
-  window.addEventListener("hashchange", () => {
-    if (window.location.hash === "#myGames" && (window.GameAuth?.getUser() || TEACHER_PREVIEW)) {
-      scrollToMyGames();
     }
   });
 
@@ -1156,7 +1110,6 @@
   });
 
   applyDisabledSubjects();
-  renderSkillFilters();
   renderGrid();
   updateCustomGameOptions();
   updatePreview();

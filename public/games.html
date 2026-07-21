@@ -28,10 +28,6 @@
 
   <header class="navbar scrolled" id="navbar">
     <div class="container nav-inner">
-      <a href="/" class="logo">
-        <img src="/images/pleyi-logo.png" alt="" class="logo-mark" width="48" height="48" decoding="async" />
-        <span class="logo-text font-brand">Pleyi</span>
-      </a>
       <nav class="nav-links">
         <a href="/" class="nav-pill" data-i18n="nav.home">בית</a>
       </nav>
@@ -45,7 +41,7 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
-            <a href="#myGames" class="nav-user-link" id="navMyGamesLink" role="menuitem">חדר המורה</a>
+            <a href="/my-room" class="nav-user-link" role="menuitem">חדר המורה</a>
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
           </div>
         </div>
@@ -61,99 +57,8 @@
 
   <main class="hub-main container">
     <a href="/" class="hub-back hub-back--home" data-i18n="hub.backHome">← בית</a>
-    <header class="hub-hero">
-      <p class="hero-badge">ספריית משחקים</p>
-      <h1 class="hub-title font-cartoon">בחרו נושא — שחקו מיד</h1>
-    </header>
-
-    <div class="hub-tabs" role="tablist">
-      <button type="button" class="hub-tab active" data-subject="english" role="tab">אנגלית</button>
-      <button type="button" class="hub-tab" data-subject="lifeskills" role="tab" disabled aria-disabled="true" title="בקרוב">כישורי חיים</button>
-      <button type="button" class="hub-tab" data-subject="math" role="tab">מתמטיקה</button>
-      <button type="button" class="hub-tab" data-subject="science" role="tab" disabled aria-disabled="true" title="בקרוב">מדעים</button>
-    </div>
-
-    <section class="hub-skill-filters hidden" id="hubSkillFilters" aria-label="סינון לפי מיומנות">
-      <h2 class="hub-skill-filters-label font-cartoon">סינון לפי מיומנות</h2>
-      <div class="hub-skill-filters-panel">
-        <div class="hub-skill-filters-list" id="hubSkillFiltersList"></div>
-      </div>
-    </section>
-
-    <p class="hub-grid-empty hidden" id="hubGridEmpty" role="status">אין משחקים עם המיומנויות שנבחרו</p>
 
     <div class="hub-grid cards cols-3" id="gamesGrid"></div>
-
-    <button type="button" class="hub-custom-cta-card" id="openCustomModalBtn">
-      <span class="hub-custom-confetti" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span><span></span>
-      </span>
-      <h2 class="hub-custom-cta-title font-cartoon">התאמה אישית</h2>
-      <p class="hub-custom-cta-text">הדביקו את תוכן השיעור — המערכת תיצור משחק מותאם</p>
-    </button>
-
-    <section class="teacher-room hidden" id="userLibrary" aria-labelledby="myGames">
-      <div class="teacher-room-shell sticker-card sticker-white" id="myGames">
-        <header class="teacher-room-top">
-          <div class="teacher-room-identity">
-            <div class="teacher-room-avatar" id="teacherRoomAvatar" aria-hidden="true"></div>
-            <div>
-              <p class="teacher-room-kicker">חדר המורה</p>
-              <h2 class="teacher-room-name font-cartoon" id="teacherRoomName">שלום</h2>
-            </div>
-          </div>
-          <button type="button" class="teacher-room-logout" id="teacherRoomLogout">התנתקות</button>
-        </header>
-
-        <div class="teacher-room-sub" id="teacherRoomSub" aria-live="polite"></div>
-
-        <nav class="teacher-room-nav" aria-label="אזורים בחדר המורה">
-          <a href="#teacherFavorites" class="teacher-room-nav-link">מועדפים</a>
-          <a href="#teacherCreated" class="teacher-room-nav-link">שיצרתי</a>
-          <a href="#teacherRecent" class="teacher-room-nav-link">שיחקתי לאחרונה</a>
-          <a href="#teacherLessons" class="teacher-room-nav-link">מערכי שיעור</a>
-        </nav>
-
-        <div class="teacher-room-sections">
-          <section class="teacher-room-section" id="teacherFavorites" aria-labelledby="teacherFavoritesTitle">
-            <div class="teacher-room-section-head">
-              <h3 class="teacher-room-section-title font-cartoon" id="teacherFavoritesTitle">מועדפים</h3>
-              <span class="teacher-room-count" id="teacherFavoritesCount"></span>
-            </div>
-            <p class="teacher-room-section-hint">משחקים שסימנתם ב-★ לגישה מהירה</p>
-            <div class="teacher-room-list" id="teacherFavoritesList"></div>
-          </section>
-
-          <section class="teacher-room-section" id="teacherCreated" aria-labelledby="teacherCreatedTitle">
-            <div class="teacher-room-section-head">
-              <h3 class="teacher-room-section-title font-cartoon" id="teacherCreatedTitle">משחקים שיצרתי</h3>
-              <span class="teacher-room-count" id="teacherCreatedCount"></span>
-            </div>
-            <p class="teacher-room-section-hint">משחקים מותאמים שנשמרו מהתאמה אישית</p>
-            <div class="teacher-room-list" id="teacherCreatedList"></div>
-          </section>
-
-          <section class="teacher-room-section" id="teacherRecent" aria-labelledby="teacherRecentTitle">
-            <div class="teacher-room-section-head">
-              <h3 class="teacher-room-section-title font-cartoon" id="teacherRecentTitle">שיחקתי לאחרונה</h3>
-              <span class="teacher-room-count" id="teacherRecentCount"></span>
-            </div>
-            <p class="teacher-room-section-hint">היסטוריית משחקים וניקוד אחרון</p>
-            <div class="teacher-room-list" id="teacherRecentList"></div>
-          </section>
-
-          <section class="teacher-room-section teacher-room-section--lessons" id="teacherLessons" aria-labelledby="teacherLessonsTitle">
-            <div class="teacher-room-section-head">
-              <h3 class="teacher-room-section-title font-cartoon" id="teacherLessonsTitle">מערכי שיעור חינמיים</h3>
-              <span class="teacher-room-badge-free">חינם</span>
-            </div>
-            <p class="teacher-room-section-hint">תוכן מוכן מבית Pleyi — לחצו כדי ליצור משחק או לשחק מיד</p>
-            <div class="teacher-lesson-grid" id="teacherLessonsList"></div>
-          </section>
-        </div>
-      </div>
-    </section>
   </main>
 
   <!-- Custom game builder -->

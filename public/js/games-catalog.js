@@ -117,6 +117,16 @@ window.GAMES_CATALOG = {
     return line.endsWith(".") ? line : `${line}.`;
   },
 
+  gameIcon(game) {
+    if (game?.icon) return game.icon;
+    const match = this.allGamesList().find((g) => g.id === game?.id && g.icon);
+    return match?.icon || "🎮";
+  },
+
+  gameThumbUrl(game) {
+    return game?.image || `/images/games/${game.id}.png`;
+  },
+
   allSubjects() {
     return ["english", "lifeskills", "math", "science"];
   },

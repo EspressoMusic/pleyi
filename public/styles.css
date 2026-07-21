@@ -599,6 +599,16 @@ button { font-family: inherit; }
   gap: 12px;
 }
 
+.nav-inner:not(:has(.logo)) {
+  justify-content: flex-end;
+}
+
+@media (min-width: 900px) {
+  .nav-inner:not(:has(.logo)) {
+    justify-content: space-between;
+  }
+}
+
 .nav-actions {
   display: flex;
   align-items: center;
@@ -675,7 +685,7 @@ button { font-family: inherit; }
   top: calc(100% + 10px);
   inset-inline-end: 0;
   min-width: 180px;
-  background: var(--white);
+  background: var(--memyellow);
   border: 3px solid var(--ink);
   border-radius: 16px;
   padding: 12px;
