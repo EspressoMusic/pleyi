@@ -34,8 +34,8 @@ window.GameAuth = {
     this.setDevPreviewUser(this.getDevPreviewUser());
     document.getElementById("loginModal")?.classList.add("hidden");
 
-    if (redirect && !/^\/games\/?$/.test(window.location.pathname)) {
-      window.location.href = "/games";
+    if (redirect && !/^\/room\/?/.test(window.location.pathname)) {
+      window.location.href = "/room";
       return true;
     }
 

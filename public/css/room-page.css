@@ -176,7 +176,7 @@ body.in-room .visually-hidden {
   display: flex;
   flex-direction: column;
   padding: clamp(24px, 4vw, 32px);
-  background: #6ee06a;
+  background: var(--memteal);
   border: 4px solid var(--ink);
   border-radius: calc(var(--radius) + 4px);
   box-shadow: var(--shadow-candy);

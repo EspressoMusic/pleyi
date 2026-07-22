@@ -68,7 +68,6 @@
       "vocabulary-duel",
       "hangman",
       "spot-diff",
-      "word-shop",
     ]);
 
     if (roomCode) {
@@ -106,7 +105,7 @@
         </button>
         ${
           canMulti
-            ? `<p class="room-setting-mode-hint">נוצר קוד חדר אוטומטית — תלמידים מצטרפים עם הקוד.</p>`
+            ? ""
             : `<p class="room-setting-mode-hint">משחק זה לא זמין במצב רב משתתפים.</p>`
         }
       </div>`;
@@ -257,7 +256,6 @@
         { id: "hangman", title: "איש תלוי", icon: "🎯" },
         { id: "spot-diff", title: "מצא הבדלים", icon: "🔍" },
         { id: "tower-stack", title: "מגדל קוביות", icon: "🗼" },
-        { id: "word-shop", title: "חנות", icon: "🏪" },
       ];
       const catalogGames = window.GAMES_CATALOG?.[subject] || [];
       const games = pickerGames.map((pick) => {
@@ -298,14 +296,6 @@
       });
     }
 
-    function syncMaterialSummary() {
-      const meta = window.PlaySession?.getMeta() || {};
-      const clearBtn = document.getElementById("playClearMaterialBtn");
-      const text = readMaterial();
-      const count = parseMaterialCount(text, meta.subject || "english");
-      clearBtn?.classList.toggle("hidden", count === 0);
-    }
-
     function renderSettingsPanel() {
       if (!settingsList) return;
 
@@ -320,15 +310,9 @@
         </label>
         <div class="room-setting-game-group hidden" id="playGameSettingsGroup">
           <div class="room-settings-list" id="playGameSettingsList"></div>
-        </div>
-        <div class="room-setting-material-group">
-          <p class="room-setting-mode-heading">חומר לימודי</p>
-          <button type="button" class="room-setting-material-btn btn-candy" id="openPlayMaterialBtn">הוסף / ערוך חומר לימודי</button>
-          <button type="button" class="room-setting-material-clear hidden" id="playClearMaterialBtn">הסר חומר לימודי</button>
         </div>`;
 
       renderGameToggles(gameId, document.getElementById("playGameSettingsList"));
-      syncMaterialSummary();
 
       document.getElementById("playEnableGameSoundToggle")?.addEventListener("change", (e) => {
         saveSoundEnabled(e.target.checked);
@@ -338,20 +322,6 @@
       document.getElementById("playSwitchMultiplayerBtn")?.addEventListener("click", () => {
         closeSettings();
         switchToMultiplayer(gameId);
-      });
-
-      document.getElementById("openPlayMaterialBtn")?.addEventListener("click", () => {
-        closeSettings();
-        if (materialInput) materialInput.value = readMaterial();
-        materialPanel?.classList.remove("hidden");
-      });
-
-      document.getElementById("playClearMaterialBtn")?.addEventListener("click", () => {
-        if (!confirm("להסיר את החומר הלימודי? המשחקים יחזרו למילון ברירת המחדל.")) return;
-        saveMaterial("");
-        window.PlaySession?.updateContent({ usePreset: true });
-        syncMaterialSummary();
-        showToast("החומר הוסר");
       });
     }
 
@@ -378,7 +348,7 @@
     gamesBtn?.addEventListener("click", openGamesPanel);
 
     document.getElementById("playExitBtn")?.addEventListener("click", () => {
-      const dest = roomCode ? `/room?code=${encodeURIComponent(roomCode)}` : "/games";
+      const dest = roomCode ? `/room?code=${encodeURIComponent(roomCode)}` : "/";
       window.location.href = dest;
     });
 
@@ -403,7 +373,6 @@
         window.PlaySession?.updateContent({ usePreset: true });
         showToast("החומר הוסר");
         closeMaterialPanel();
-        syncMaterialSummary();
         return;
       }
 
@@ -425,7 +394,6 @@
       window.PlaySession?.updateContent({ useMaterial: true });
       showToast(`נשמרו ${items.length} פריטים`);
       closeMaterialPanel();
-      syncMaterialSummary();
     });
 
     document.addEventListener("keydown", (e) => {
@@ -437,7 +405,6 @@
 
     window.addEventListener("play-content-updated", () => {
       renderGamePicker();
-      syncMaterialSummary();
     });
 
     document.addEventListener("premium-updated", () => {

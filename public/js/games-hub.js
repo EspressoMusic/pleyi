@@ -31,7 +31,7 @@
   const teacherCreatedCount = document.getElementById("teacherCreatedCount");
   const teacherRecentCount = document.getElementById("teacherRecentCount");
 
-  const DISABLED_SUBJECTS = new Set(["lifeskills", "science"]);
+  const DISABLED_SUBJECTS = new Set(["lifeskills", "science", "math"]);
 
   const TEACHER_PREVIEW =
     location.hostname === "localhost" &&

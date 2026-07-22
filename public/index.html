@@ -7,7 +7,7 @@
   <title>Pleyi — לימוד דרך משחקים</title>
   <meta name="description" content="משחקי למידה למורים — פתחו חדר כיתה, התלמידים מצטרפים מהטלפון, ושחקו יחד בזמן אמת."/>
   <link rel="stylesheet" href="styles.css"/>
-  <link rel="stylesheet" href="css/clean-site.css?v=3"/>
+  <link rel="stylesheet" href="css/clean-site.css?v=27"/>
   <link rel="stylesheet" href="css/legal.css"/>
   <link rel="stylesheet" href="css/accessibility.css" />
 </head>
@@ -56,20 +56,6 @@
 
     <!-- 1. ראשי -->
     <section class="clean-section clean-section--hero scroll-section" id="home">
-      <div class="clean-section-shapes clean-section-shapes--hero" aria-hidden="true">
-        <div class="clean-memphis-layer clean-memphis-layer--svg">
-          <svg class="clean-memphis-svg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="55" cy="545" r="34" fill="#FFE135" stroke="#000" stroke-width="4"/>
-            <circle cx="745" cy="555" r="36" fill="#00E5CC" stroke="#000" stroke-width="4"/>
-          </svg>
-        </div>
-        <svg class="clean-memphis-zigzag clean-memphis-pos--h-zig" viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10,80 L35,35 L60,80 L85,35 L110,80 L135,35" fill="none" stroke="#00E5CC" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="clean-memphis-sticker clean-memphis-sticker--purple clean-memphis-pos--h1"></span>
-        <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--h2"></span>
-        <span class="clean-memphis-sticker clean-memphis-sticker--orange clean-memphis-pos--h3"></span>
-      </div>
       <div class="container clean-hero-inner">
         <h1 class="hero-title font-cartoon">
           <span class="line" data-i18n="hero.title1">לומדים את השיעור</span>
@@ -90,23 +76,36 @@
       </div>
       <div class="container about-wrap">
         <h2 class="clean-section-title font-cartoon" data-i18n="about.title">מי אנחנו</h2>
-        <p class="about-lead" data-i18n="about.lead">הופכים תוכן שיעור למשחק תוך שניות — כדי שתוכלו להתמקד בהוראה.</p>
-        <div class="about-cards">
-          <article class="about-card">
-            <div class="about-card-icon about-card-icon--teal" data-i18n="about.c1.icon" aria-hidden="true">⚡</div>
-            <h3 class="about-card-title font-cartoon" data-i18n="about.c1.title">מהיר ופשוט</h3>
-            <p class="about-card-text" data-i18n="about.c1.text">מדביקים תוכן — משחק מוכן לכיתה.</p>
-          </article>
-          <article class="about-card">
-            <div class="about-card-icon about-card-icon--yellow" data-i18n="about.c2.icon" aria-hidden="true">🎯</div>
-            <h3 class="about-card-title font-cartoon" data-i18n="about.c2.title">בלי טכנולוגיה</h3>
-            <p class="about-card-text" data-i18n="about.c2.text">קישור או קוד — והתלמידים מצטרפים מהטלפון.</p>
-          </article>
-          <article class="about-card">
-            <div class="about-card-icon about-card-icon--pink" data-i18n="about.c3.icon" aria-hidden="true">🎉</div>
-            <h3 class="about-card-title font-cartoon" data-i18n="about.c3.title">שיעור חי</h3>
-            <p class="about-card-text" data-i18n="about.c3.text">תחרות, משחק — ולמידה שנשארת.</p>
-          </article>
+        <p class="about-lead" data-i18n="about.lead">הופכים תוכן שיעור למשחק תוך שניות — כדי שתוכלו להתמקד בהוראה, ולא לוותר על שיעור חוויתי.</p>
+        <div class="about-orbit-scene">
+          <ul class="about-orbit-sr">
+            <li data-i18n="about.c1.title">מהיר ופשוט</li>
+            <li data-i18n="about.c2.title">בלי טכנולוגיה</li>
+            <li data-i18n="about.c3.title">שיעור חי</li>
+          </ul>
+          <div class="about-orbit-ring about-orbit-ring--1" aria-hidden="true">
+            <div class="about-orbit-sat-wrap">
+              <span class="about-orbit-sat about-orbit-sat--teal" data-i18n="about.c1.title">מהיר ופשוט</span>
+            </div>
+          </div>
+          <div class="about-orbit-ring about-orbit-ring--2" aria-hidden="true">
+            <div class="about-orbit-sat-wrap">
+              <span class="about-orbit-sat about-orbit-sat--yellow" data-i18n="about.c2.title">בלי טכנולוגיה</span>
+            </div>
+          </div>
+          <div class="about-orbit-ring about-orbit-ring--3" aria-hidden="true">
+            <div class="about-orbit-sat-wrap">
+              <span class="about-orbit-sat about-orbit-sat--pink" data-i18n="about.c3.title">שיעור חי</span>
+            </div>
+          </div>
+          <div class="about-orbit-earth">
+            <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="44" cy="44" r="38" fill="#6ecff5" stroke="#000" stroke-width="4"/>
+              <ellipse cx="44" cy="44" rx="38" ry="14" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="2"/>
+              <ellipse cx="44" cy="44" rx="14" ry="38" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="2"/>
+            </svg>
+            <span class="about-orbit-earth-label font-cartoon" data-i18n="about.earthLabel">השיעור</span>
+          </div>
         </div>
       </div>
     </section>
@@ -186,7 +185,9 @@
 
     <footer class="site-footer section-yellow">
       <div class="container footer-inner">
-        <p class="footer-tagline font-cartoon" data-i18n="footer.tagline">לימוד במשחקים — בכל שיעור!</p>
+        <p class="footer-tagline font-cartoon">
+          <span data-i18n="footer.taglineLead">לימוד במשחקים — </span><span class="footer-tagline-accent" data-i18n="footer.taglineAccent">בכל שיעור!</span>
+        </p>
         <nav class="site-legal-nav" aria-label="מידע משפטי">
           <a href="/legal/terms.html">תקנון</a>
           <a href="/legal/privacy.html">פרטיות</a>
@@ -249,13 +250,10 @@
         <h3 class="lobby-heading font-cartoon">בחרו משחק לכיתה</h3>
         <p class="lobby-hint" id="lobbyHint">שתפו QR — התלמידים יצטרפו מהטלפון</p>
         <div class="game-picker" id="gamePicker">
-          <button type="button" class="game-btn" data-game="vocabulary-duel">⚔️ Duel מילים</button>
+          <button type="button" class="game-btn" data-game="vocabulary-duel">⚔️ טריוויה</button>
           <button type="button" class="game-btn" data-game="word-memory">🧠 זיכרון</button>
           <button type="button" class="game-btn" data-game="hangman">🎯 איש תלוי</button>
-          <button type="button" class="game-btn" data-game="sentence-scramble">📝 משפטים</button>
-          <button type="button" class="game-btn" data-game="word-runner">🏃 רץ וקופץ</button>
           <button type="button" class="game-btn" data-game="spot-diff">🔍 מצא הבדל</button>
-          <button type="button" class="game-btn" data-game="word-shop">🏪 חנות</button>
         </div>
       </div>
 

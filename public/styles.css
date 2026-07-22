@@ -228,6 +228,14 @@ body.clean-site h2.font-cartoon,
 .room-title.font-cartoon { color: var(--electric); }
 .play-title.font-cartoon { color: var(--memyellow); }
 .footer-tagline.font-cartoon { color: var(--white); }
+
+.footer-tagline-accent {
+  color: var(--electric);
+  -webkit-text-fill-color: var(--electric);
+  paint-order: stroke fill;
+  -webkit-text-stroke: clamp(6px, 1vw, 11px) var(--ink);
+  -webkit-text-stroke-color: var(--ink);
+}
 .join-card h1 { color: var(--electric); }
 .join-room-top h2.font-cartoon { color: var(--electric); }
 .modal h2 { color: var(--electric); }
@@ -1080,7 +1088,7 @@ button { font-family: inherit; }
 .mobile-nav-auth {
   margin: 8px 20px;
   padding: 14px;
-  font-size: 17px;
+  font-size: 22px;
   font-weight: 900;
   font-family: inherit;
   border: 4px solid var(--ink);
@@ -4851,7 +4859,7 @@ input, textarea, select {
   display: none !important;
 }
 
-/* Hide decorative background shapes site-wide */
+/* Hide decorative background shapes site-wide (hero panel keeps its shapes) */
 .memphis-bg,
 .hub-memphis-bg,
 .lp-memphis-bg,

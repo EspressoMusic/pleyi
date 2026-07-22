@@ -40,22 +40,12 @@ const SKILL_COLORS = {
 window.GAMES_CATALOG = {
   english: [
     { id: "tower-stack", title: "מגדל מילים", desc: "משחק arcade מלא — פיזיקה, חלקיקים, קוביות תלת-ממד וטיימר", icon: "🗼", color: "purple", tags: ["אוצר מילים", "מהירות"] },
-    { id: "word-runner", title: "רץ וקופץ", desc: "מסלול תלת-ממדי — רדפו מילים נכונות בקצב מהיר", icon: "🏃", color: "teal", tags: ["מהירות", "אוצר מילים"] },
-    { id: "vocabulary-duel", title: "Duel מילים", desc: "מה התרגום? ענו מהר על השאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"] },
+    { id: "vocabulary-duel", title: "טריוויה", desc: "מה התרגום? ענו מהר על השאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"] },
     { id: "word-memory", title: "זיכרון מילים", desc: "התאימו זוגות en ↔ he", icon: "🧠", color: "pink", tags: ["זיכרון", "תרגום"] },
     { id: "hangman", title: "איש תלוי", desc: "נחשו את המילה לפני שנגמרו הניסיונות", icon: "🎯", color: "purple", tags: ["אוצר מילים", "חידון"] },
     { id: "spot-diff", title: "מצא את ההבדלים", desc: "מצאו את הפריט השונה בין שני הלוחות", icon: "🔍", color: "yellow", tags: ["זיכרון", "חידון"] },
-    { id: "word-shop", title: "חנות קטנה", desc: "שרתו לקוחות — מצאו את המוצר הנכון בזמן", icon: "🏪", color: "teal", tags: ["אוצר מילים", "מהירות"] },
-    { id: "sentence-scramble", title: "בניית משפט", desc: "סדרו מילים למשפט שלם באנגלית", icon: "📝", color: "purple", tags: ["תרגום"] },
   ],
-  math: [
-    { id: "math-blitz", title: "ברק מתמטי", desc: "ארקייד canvas מלא — טיימר, חלקיקים, ואתגר מהירות", icon: "⚡", color: "yellow", tags: ["חשבון", "מהירות"] },
-    { id: "math-duel", title: "Duel מתמטי", desc: "מה התוצאה? ענו על 10 תרגילים", icon: "🔢", color: "teal", tags: ["חידון", "חשבון"] },
-    { id: "math-memory", title: "זיכרון מספרים", desc: "התאימו תרגיל לתוצאה", icon: "🧩", color: "pink", tags: ["זיכרון", "חשבון"] },
-    { id: "math-tower", title: "מגדל מספרים", desc: "קוביות עם תרגילים ותוצאות — בנו מגדל", icon: "🏗️", color: "purple", tags: ["חשבון"] },
-    { id: "math-runner", title: "רץ ומחשב", desc: "רדפו אחרי התשובה הנכונה בנתיבים", icon: "🎮", color: "teal", tags: ["מהירות", "חשבון"] },
-    { id: "math-shop", title: "חנות מתמטית", desc: "מצאו את המוצר עם המחיר הנכון", icon: "🛒", color: "yellow", tags: ["חשבון"] },
-  ],
+  math: [],
 
   lifeskills: [
     { id: "vocabulary-duel", title: "Duel מיומנויות", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"] },
@@ -141,7 +131,6 @@ window.GAMES_CATALOG = {
       "hangman",
       "spot-diff",
       "tower-stack",
-      "word-shop",
     ];
     if (!items?.length) return roomGames;
 
@@ -149,17 +138,13 @@ window.GAMES_CATALOG = {
     const out = [];
     if (n >= 2) out.push("word-memory");
     if (n >= 1) out.push("hangman");
-    if (n >= 3) out.push("spot-diff", "tower-stack", "word-shop");
+    if (n >= 3) out.push("spot-diff", "tower-stack");
     return out.filter((id) => roomGames.includes(id));
   },
 
   pickGameForContent(items, subject) {
     const n = items.length;
-    if (subject === "math") {
-      if (n >= 6) return "math-memory";
-      if (n >= 4) return "math-duel";
-      return "math-blitz";
-    }
+    if (subject === "math") return null;
     if (n >= 6) return "word-memory";
     if (n >= 4) return "vocabulary-duel";
     if (n >= 3) return "tower-stack";

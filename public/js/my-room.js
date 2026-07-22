@@ -137,7 +137,7 @@
   function emptyMessage(section) {
     const messages = {
       favorites: "אין עדיין מועדפים.",
-      created: 'עדיין לא יצרת משחקים. <a href="/games">צור משחק חדש</a>',
+      created: 'עדיין לא יצרת משחקים. <a href="/room?create=1">פתחו חדר חדש</a>',
       recent: "עדיין אין היסטוריה.",
     };
     return messages[section] || "";
@@ -376,7 +376,7 @@
   document.getElementById("myRoomCreateBtn")?.addEventListener("click", (e) => {
     e.preventDefault();
     sessionStorage.setItem("pleyi-open-custom", "1");
-    window.location.href = "/games";
+    window.location.href = "/room?create=1";
   });
 
   window.GameAuth?.bindModals(showToast);

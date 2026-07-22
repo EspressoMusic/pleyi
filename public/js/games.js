@@ -1,7 +1,7 @@
 /* Game renderers — each returns HTML and binds events */
 
 const GAME_NAMES = {
-  "vocabulary-duel": "Duel מילים",
+  "vocabulary-duel": "טריוויה",
   "word-memory": "זיכרון מילים",
   hangman: "איש תלוי",
   "sentence-scramble": "בניית משפט",

@@ -97,14 +97,6 @@ body.clean-site .mobile-nav-cta::after {
   overflow: visible;
 }
 
-.clean-section-shapes--hero {
-  opacity: 0.78;
-  top: var(--clean-nav-clear);
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
-}
 .clean-section-shapes--soft { opacity: 0.68; }
 .clean-section-shapes--white { opacity: 0.7; }
 .clean-section-shapes--contact { opacity: 0.66; }
@@ -220,7 +212,7 @@ body.clean-site .mobile-nav-cta::after {
 
 .clean-section--hero {
   padding: 120px 0 80px;
-  background: var(--electric);
+  background: linear-gradient(165deg, #45e0d0 0%, #00c9b7 48%, #00ad9e 100%);
   min-height: 70vh;
   display: flex;
   align-items: center;
@@ -242,7 +234,12 @@ body.clean-site .mobile-nav-cta::after {
 
 .clean-hero-inner .hero-title .line {
   display: block;
-  white-space: nowrap;
+}
+
+@media (min-width: 769px) {
+  .clean-hero-inner .hero-title .line {
+    white-space: nowrap;
+  }
 }
 
 .clean-hero-sub {
@@ -268,7 +265,7 @@ body.clean-site .mobile-nav-cta::after {
 }
 
 .clean-section--soft {
-  background: var(--clean-bg-how);
+  background: linear-gradient(165deg, #d2fff8 0%, #b8fff5 48%, #9aefe4 100%);
 }
 
 .clean-section--white {
@@ -284,7 +281,7 @@ body.clean-site .mobile-nav-cta::after {
 }
 
 .clean-section--contact {
-  background: var(--clean-bg-contact);
+  background: linear-gradient(165deg, #6fd4cb 0%, #52c7be 48%, #3db3aa 100%);
 }
 
 .clean-section-title {
@@ -314,11 +311,18 @@ body.clean-site .mobile-nav-cta::after {
 
 /* About */
 .clean-section--about {
-  background: linear-gradient(180deg, #f4fffd 0%, #fff9f0 100%);
+  background: linear-gradient(165deg, #9de8df 0%, #6fd9ce 48%, #4ec4b8 100%);
+  overflow: visible;
 }
 
 .about-wrap {
   max-width: 960px;
+}
+
+#about .clean-section-title,
+#how .clean-section-title,
+#contact .clean-section-title {
+  font-size: clamp(2.25rem, 6vw, 3.25rem);
 }
 
 #about .clean-section-title {
@@ -327,86 +331,210 @@ body.clean-site .mobile-nav-cta::after {
 
 .about-lead {
   text-align: center;
-  max-width: 34rem;
-  margin: 0 auto clamp(28px, 5vw, 40px);
-  font-size: clamp(1.05rem, 2.4vw, 1.2rem);
+  max-width: 36rem;
+  margin: 0 auto clamp(20px, 4vw, 28px);
+  font-size: clamp(1.2rem, 3.6vw, 1.5rem);
   font-weight: 700;
   line-height: 1.55;
   color: var(--body);
 }
 
-.about-cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 2.5vw, 22px);
+.about-orbit-scene {
+  --orbit-size: min(340px, 92vw);
+  position: relative;
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+  margin: 0 auto clamp(8px, 3vw, 16px);
+  overflow: visible;
 }
 
-.about-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 12px;
-  padding: clamp(22px, 3.5vw, 28px) clamp(18px, 3vw, 24px);
-  background: #fff;
-  border: 3px solid var(--ink);
-  border-radius: 22px;
-  box-shadow: 5px 5px 0 var(--ink);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+.about-orbit-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.about-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 7px 8px 0 var(--ink);
+.about-orbit-earth {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 96px;
+  height: 96px;
+  transform: translate(-50%, -50%);
+  animation: about-earth-pulse 4s ease-in-out infinite;
 }
 
-.about-card-icon {
+.about-orbit-earth svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.about-orbit-earth-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--white);
+  -webkit-text-fill-color: var(--white);
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3px var(--ink);
+  -webkit-text-stroke-color: var(--ink);
+  text-shadow: none;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.about-orbit-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 2px dashed rgba(0, 0, 0, 0.14);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: about-orbit-spin linear infinite;
+}
+
+.about-orbit-ring--1 {
+  width: 58%;
+  height: 58%;
+  animation-duration: 11s;
+}
+
+.about-orbit-ring--2 {
+  width: 78%;
+  height: 78%;
+  animation-duration: 15s;
+  animation-direction: reverse;
+}
+
+.about-orbit-ring--3 {
+  width: 98%;
+  height: 98%;
+  animation-duration: 19s;
+  animation-delay: -6s;
+}
+
+.about-orbit-sat-wrap {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  animation: about-orbit-counter linear infinite;
+}
+
+.about-orbit-ring--1 .about-orbit-sat-wrap {
+  animation-duration: 11s;
+}
+
+.about-orbit-ring--2 .about-orbit-sat-wrap {
+  animation-duration: 15s;
+  animation-direction: reverse;
+}
+
+.about-orbit-ring--3 .about-orbit-sat-wrap {
+  animation-duration: 19s;
+  animation-delay: -6s;
+}
+
+.about-orbit-sat {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
+  min-width: 88px;
+  max-width: 118px;
+  padding: 8px 12px;
   border: 3px solid var(--ink);
-  font-size: 1.65rem;
-  line-height: 1;
-  box-shadow: 3px 3px 0 var(--ink);
-}
-
-.about-card-icon--teal {
-  background: #b8fff5;
-}
-
-.about-card-icon--yellow {
-  background: #fff3a8;
-}
-
-.about-card-icon--pink {
-  background: #ffd6e8;
-}
-
-.about-card-title {
-  margin: 0;
-  font-size: clamp(1.15rem, 2.8vw, 1.35rem);
-  color: #008f84;
-  -webkit-text-fill-color: #008f84;
-  -webkit-text-stroke: 0;
-  text-shadow: none;
+  border-radius: 999px;
+  font-size: clamp(0.68rem, 2.6vw, 0.82rem);
+  font-weight: 900;
   line-height: 1.2;
+  text-align: center;
+  box-shadow: 3px 3px 0 var(--ink);
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
 }
 
-.about-card-text {
-  margin: 0;
-  font-size: clamp(0.92rem, 2vw, 1rem);
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--muted);
+@keyframes about-orbit-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
-@media (max-width: 780px) {
-  .about-cards {
-    grid-template-columns: 1fr;
-    max-width: 360px;
-    margin-inline: auto;
+@keyframes about-orbit-counter {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.about-orbit-sat--teal {
+  background: #b8fff5;
+  color: var(--ink);
+}
+
+.about-orbit-sat--yellow {
+  background: #fff3a8;
+  color: var(--ink);
+}
+
+.about-orbit-sat--pink {
+  background: #ffd6e8;
+  color: var(--ink);
+}
+
+@keyframes about-earth-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-orbit-ring,
+  .about-orbit-sat-wrap,
+  .about-orbit-earth {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-orbit-scene {
+    --orbit-size: min(320px, 94vw);
+  }
+
+  .about-orbit-sat {
+    min-width: 78px;
+    max-width: 104px;
+    padding: 7px 10px;
+    font-size: clamp(0.62rem, 2.8vw, 0.76rem);
+  }
+
+  .about-orbit-earth {
+    width: 88px;
+    height: 88px;
   }
 }
 
@@ -709,9 +837,11 @@ body.clean-site .mobile-nav-cta::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(28px, 4.5vw, 38px) clamp(56px, 9vw, 88px);
-  font-size: clamp(26px, 4.2vw, 36px);
-  min-height: clamp(84px, 13vw, 104px);
+  width: auto;
+  max-width: min(420px, 92vw);
+  padding: clamp(22px, 3.5vw, 30px) clamp(36px, 6vw, 52px);
+  font-size: clamp(22px, 3.6vw, 30px);
+  min-height: clamp(72px, 11vw, 88px);
   border-radius: 999px;
   background: var(--memyellow) !important;
   color: var(--ink) !important;
@@ -1100,11 +1230,15 @@ body.in-room {
     min-height: auto;
   }
 
-  .clean-section-shapes--hero,
   .clean-section-shapes--soft,
   .clean-section-shapes--white,
   .clean-section-shapes--contact {
     opacity: 0.58;
+  }
+
+  .clean-hero-inner {
+    width: 100%;
+    padding-inline: clamp(8px, 3vw, 20px);
   }
 
   .clean-hero-inner .hero-title {
@@ -1112,12 +1246,15 @@ body.in-room {
   }
 
   .clean-hero-inner .hero-title.font-cartoon {
-    font-size: clamp(2.25rem, 11vw, 4rem);
-    line-height: 1.08;
+    font-size: clamp(1.85rem, 8.5vw, 3.25rem);
+    line-height: 1.15;
+    max-width: 100%;
   }
 
   .clean-hero-inner .hero-title .line {
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    -webkit-text-stroke-width: clamp(4px, 1.4vw, 7px);
   }
 
   .clean-hero-actions {
@@ -1135,12 +1272,17 @@ body.in-room {
     min-height: 56px;
   }
 
+  #about .clean-section-title,
+  #how .clean-section-title,
+  #contact .clean-section-title {
+    font-size: clamp(2.1rem, 8vw, 2.85rem);
+  }
+
   #how .clean-section-title,
   #games .clean-section-title,
   #contact .clean-section-title {
     margin-bottom: 52px;
     padding-bottom: 10px;
-    font-size: clamp(1.5rem, 6vw, 2rem);
   }
 
   .how-timeline-step {
@@ -1164,11 +1306,12 @@ body.in-room {
   }
 
   .how-classroom-btn {
-    width: 100%;
-    max-width: min(480px, 100%);
-    padding: 22px 32px;
-    font-size: clamp(20px, 5vw, 26px);
-    min-height: 72px;
+    width: auto;
+    max-width: min(340px, 92vw);
+    padding: 18px 28px;
+    font-size: clamp(18px, 4.5vw, 22px);
+    min-height: 64px;
+    margin-inline-start: 16px;
   }
 
   .clean-panel--card {
@@ -1220,7 +1363,7 @@ body.in-room {
   }
 
   body.clean-site .mobile-nav-auth {
-    font-size: 18px;
+    font-size: clamp(20px, 5vw, 24px);
     padding: 16px;
     min-height: 52px;
   }
@@ -1228,11 +1371,7 @@ body.in-room {
 
 @media (max-width: 380px) {
   .clean-hero-inner .hero-title.font-cartoon {
-    font-size: clamp(2rem, 10vw, 3.25rem);
-  }
-
-  .clean-hero-inner .hero-title .line {
-    white-space: normal;
+    font-size: clamp(1.65rem, 8vw, 2.75rem);
   }
 
   .clean-hero-actions .btn {

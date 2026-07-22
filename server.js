@@ -33,7 +33,7 @@ app.get("/join", (_req, res) => {
 });
 
 app.get("/games", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "games.html"));
+  res.redirect(302, "/room");
 });
 
 app.get("/my-room", (_req, res) => {

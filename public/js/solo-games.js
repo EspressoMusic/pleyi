@@ -6,7 +6,7 @@ const SoloGames = {
     "spot-diff": "מצא את ההבדלים",
     "candy-match": "ממתקים Match 3",
     "word-shop": "חנות קטנה",
-    "vocabulary-duel": "Duel מילים",
+    "vocabulary-duel": "טריוויה",
     "word-memory": "זיכרון מילים",
     hangman: "איש תלוי",
     "sentence-scramble": "בניית משפט",
@@ -767,8 +767,19 @@ const SoloGames = {
             <div class="solo-quiz-word">${question.word}</div>
           </div>
           <div class="solo-options solo-options--vd" id="vdOpts"></div>
-          <div id="vdMsg"></div>
+          <div class="vd-feedback hidden" id="vdFeedback" aria-live="polite"></div>
         </div>`;
+
+      const showFeedback = (ok) => {
+        const fb = document.getElementById("vdFeedback");
+        if (!fb) return;
+        fb.className = `vd-feedback vd-feedback--${ok ? "ok" : "bad"}`;
+        fb.textContent = ok ? "כל הכבוד!" : "לא נורא... פעם הבאה";
+        if (ok) {
+          window.GameEngine?.launchConfetti?.();
+          window.GameEngine?.sfxCorrect?.();
+        }
+      };
 
       document.getElementById("vdOpts").innerHTML = question.options
         .map(
@@ -798,7 +809,8 @@ const SoloGames = {
             score += 10;
             ui.setScore(score);
           }
-          setTimeout(showQ, 700);
+          showFeedback(ok);
+          setTimeout(showQ, ok ? 1400 : 1200);
         });
       });
 
@@ -812,9 +824,8 @@ const SoloGames = {
             answered = true;
             clearQTimer();
             reveal(null);
-            const msg = document.getElementById("vdMsg");
-            if (msg) msg.innerHTML = `<div class="solo-msg bad">הזמן נגמר!</div>`;
-            setTimeout(showQ, 800);
+            showFeedback(false);
+            setTimeout(showQ, 1200);
           }
         }, 1000);
       }
@@ -1176,10 +1187,7 @@ const SoloGames = {
     const renderHint = () => {
       const el = document.getElementById("hmHint");
       if (!el || !currentItem) return;
-      el.innerHTML = `
-        <span class="hangman-solo-hint-badge">רמז</span>
-        <span class="hangman-solo-hint-he font-cartoon">${escapeHtml(currentItem.he)}</span>
-        ${currentItem.hint ? `<span class="hangman-solo-hint-en">${escapeHtml(currentItem.hint)}</span>` : ""}`;
+      el.innerHTML = `<span class="hangman-solo-hint-he font-cartoon">${escapeHtml(currentItem.he)}</span>`;
     };
 
     const showResult = (type, message) => {

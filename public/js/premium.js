@@ -216,7 +216,7 @@
           <h2 class="premium-page-title">מנוי פרימיום</h2>
           <h3>המנוי שלכם פעיל</h3>
           <p>בתוקף עד ${escapeHtml(formatDate(status.premiumUntil))}</p>
-          <a href="/games" class="premium-modal-cta">חזרה למשחקים</a>
+          <a href="/room" class="premium-modal-cta">חזרה לחדר</a>
         </div>`;
       return;
     }
