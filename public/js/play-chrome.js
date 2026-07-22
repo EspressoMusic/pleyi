@@ -61,6 +61,72 @@
     return catalog.parseContent(text, subject || "english").length;
   }
 
+  function renderPlayModeSection(gameId, roomCode) {
+    const roomGames = new Set([
+      "word-memory",
+      "tower-stack",
+      "vocabulary-duel",
+      "hangman",
+      "spot-diff",
+      "word-shop",
+    ]);
+
+    if (roomCode) {
+      return `
+        <div class="room-setting-mode-group">
+          <p class="room-setting-mode-heading">שיטת משחק</p>
+          <button type="button" class="room-setting-mode-card is-selected" aria-pressed="true">
+            <span class="room-setting-mode-card-body">
+              <span class="room-setting-toggle-label">משחק רב משתתפים — חדר פעיל</span>
+              <span class="room-setting-mode-badge" aria-hidden="true">✓</span>
+            </span>
+          </button>
+          <p class="room-setting-mode-hint">הגדרות משחק משותף (תלמידים משחקים / צופים) נמצאות בהגדרות החדר.</p>
+          <a href="/room?code=${encodeURIComponent(roomCode)}" class="room-setting-material-btn btn-candy">חזרה לחדר</a>
+        </div>`;
+    }
+
+    const canMulti = roomGames.has(gameId);
+    return `
+      <div class="room-setting-mode-group">
+        <p class="room-setting-mode-heading">שיטת משחק</p>
+        <button type="button" class="room-setting-mode-card is-selected" aria-pressed="true">
+          <span class="room-setting-mode-card-body">
+            <span class="room-setting-toggle-label">משחק יחיד</span>
+            <span class="room-setting-mode-badge" aria-hidden="true">✓</span>
+          </span>
+        </button>
+        <button type="button" class="room-setting-mode-card${canMulti ? "" : " is-disabled"}" id="playSwitchMultiplayerBtn" ${
+      canMulti ? "" : "disabled"
+    } aria-pressed="false">
+          <span class="room-setting-mode-card-body">
+            <span class="room-setting-toggle-label">משחק רב משתתפים</span>
+            <span class="room-setting-mode-badge" aria-hidden="true">✓</span>
+          </span>
+        </button>
+        ${
+          canMulti
+            ? `<p class="room-setting-mode-hint">נוצר קוד חדר אוטומטית — תלמידים מצטרפים עם הקוד.</p>`
+            : `<p class="room-setting-mode-hint">משחק זה לא זמין במצב רב משתתפים.</p>`
+        }
+      </div>`;
+  }
+
+  function switchToMultiplayer(gameId) {
+    const meta = window.PlaySession?.getMeta() || {};
+    const material = readMaterial();
+    sessionStorage.setItem(
+      "gameclass-pending-room-game",
+      JSON.stringify({
+        gameId,
+        subject: meta.subject || "english",
+        material,
+        savedAt: Date.now(),
+      })
+    );
+    window.location.href = "/room?create=1";
+  }
+
   function renderGameToggles(gameId, container) {
     const schema = window.PlaySettings?.schema(gameId) || [];
     const group = document.getElementById("playGameSettingsGroup");
@@ -73,8 +139,22 @@
     group?.classList.remove("hidden");
     const values = window.PlaySettings.get(gameId);
     container.innerHTML = schema
-      .map(
-        (def) => `
+      .map((def) => {
+        if (def.type === "select") {
+          const val = values[def.key] ?? def.default;
+          const opts = (def.options || [])
+            .map(
+              (o) =>
+                `<option value="${o.value}"${String(o.value) === String(val) ? " selected" : ""}>${escapeHtml(o.label)}</option>`
+            )
+            .join("");
+          return `
+      <label class="play-settings-field" for="playSetting_${def.key}">
+        <span>${escapeHtml(def.label)}</span>
+        <select id="playSetting_${def.key}" data-setting-key="${def.key}">${opts}</select>
+      </label>`;
+        }
+        return `
       <label class="room-setting-toggle" for="playSetting_${def.key}">
         <span class="room-setting-toggle-label">${escapeHtml(def.label)}</span>
         <span class="room-setting-toggle-switch">
@@ -83,13 +163,20 @@
         } />
           <span class="room-setting-toggle-ui" aria-hidden="true"></span>
         </span>
-      </label>`
-      )
+      </label>`;
+      })
       .join("");
 
     container.querySelectorAll("input[data-setting-key]").forEach((input) => {
       input.addEventListener("change", () => {
         window.PlaySettings.set(gameId, input.dataset.settingKey, input.checked);
+        showToast("הגדרות המשחק עודכנו");
+      });
+    });
+
+    container.querySelectorAll("select[data-setting-key]").forEach((select) => {
+      select.addEventListener("change", () => {
+        window.PlaySettings.set(gameId, select.dataset.settingKey, select.value);
         showToast("הגדרות המשחק עודכנו");
       });
     });
@@ -223,6 +310,7 @@
       if (!settingsList) return;
 
       settingsList.innerHTML = `
+        ${renderPlayModeSection(gameId, roomCode)}
         <label class="room-setting-toggle" for="playEnableGameSoundToggle">
           <span class="room-setting-toggle-label">קול במשחק</span>
           <span class="room-setting-toggle-switch">
@@ -245,6 +333,11 @@
       document.getElementById("playEnableGameSoundToggle")?.addEventListener("change", (e) => {
         saveSoundEnabled(e.target.checked);
         showToast("ההגדרות עודכנו");
+      });
+
+      document.getElementById("playSwitchMultiplayerBtn")?.addEventListener("click", () => {
+        closeSettings();
+        switchToMultiplayer(gameId);
       });
 
       document.getElementById("openPlayMaterialBtn")?.addEventListener("click", () => {

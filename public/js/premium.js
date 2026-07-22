@@ -1,7 +1,7 @@
-/* Premium games — hangman + word-shop */
+/* Premium games — word-shop */
 
 (function () {
-  const PREMIUM_GAMES = new Set(["hangman", "word-shop"]);
+  const PREMIUM_GAMES = new Set(["word-shop"]);
   const CACHE_KEY = "pleyi-premium-cache";
 
   let status = { isPremium: false, premiumUntil: null, plan: null };
@@ -160,17 +160,18 @@
     if (hasPremium()) {
       body.innerHTML = `
         <div class="premium-success">
-          <h3>יש לכם מנוי פרימיום פעיל ✨</h3>
+          <div class="premium-modal-icon" aria-hidden="true">✓</div>
+          <h3>מנוי פרימיום פעיל</h3>
           <p>בתוקף עד ${escapeHtml(formatDate(status.premiumUntil))}</p>
         </div>`;
       return;
     }
 
     body.innerHTML = `
-      <div class="premium-modal-lock" aria-hidden="true">🔒</div>
+      <div class="premium-modal-icon" aria-hidden="true">🔒</div>
       <h2 class="premium-modal-title" id="premiumModalTitle">משחק פרימיום</h2>
       <p class="premium-modal-desc">המשחק <strong>${escapeHtml(gameName)}</strong> זמין למנויי פרימיום.</p>
-      <a class="premium-modal-cta btn btn-primary btn-candy btn-full font-cartoon" href="${escapeHtml(subscribeUrl(pendingGameId))}">להרשמת מנוי</a>`;
+      <a class="premium-modal-cta" href="${escapeHtml(subscribeUrl(pendingGameId))}">להרשמת מנוי</a>`;
   }
 
   function bindSignupPageEvents() {
@@ -211,10 +212,11 @@
     if (hasPremium()) {
       root.innerHTML = `
         <div class="premium-success">
-          <h2 class="premium-page-title font-cartoon">מנוי פרימיום</h2>
-          <h3>יש לכם מנוי פעיל ✨</h3>
+          <div class="premium-modal-icon" aria-hidden="true">✓</div>
+          <h2 class="premium-page-title">מנוי פרימיום</h2>
+          <h3>המנוי שלכם פעיל</h3>
           <p>בתוקף עד ${escapeHtml(formatDate(status.premiumUntil))}</p>
-          <a href="/games" class="premium-modal-cta btn btn-primary btn-candy btn-full font-cartoon">חזרה למשחקים</a>
+          <a href="/games" class="premium-modal-cta">חזרה למשחקים</a>
         </div>`;
       return;
     }
@@ -224,8 +226,11 @@
     const plan = (plans && plans[selectedPlan]) || { price: selectedPlan === "yearly" ? 299 : 39 };
 
     root.innerHTML = `
-      <h1 class="premium-page-title font-cartoon">מנוי פרימיום</h1>
-      <p class="premium-page-lead">${returnGame ? `פתחו את <strong>${escapeHtml(gameName)}</strong> ומשחקים נוספים עם מנוי פעיל.` : "גישה למשחקי פרימיום וקרדיטים ליצירת משחקים עם AI."}</p>
+      <header class="premium-page-header">
+        <span class="premium-page-badge">פרימיום</span>
+        <h1 class="premium-page-title">מנוי פרימיום</h1>
+        <p class="premium-page-lead">${returnGame ? `פתחו את <strong>${escapeHtml(gameName)}</strong> ומשחקים נוספים עם מנוי פעיל.` : "גישה למשחקי פרימיום וקרדיטים ליצירת משחקים עם AI."}</p>
+      </header>
       ${
         user
           ? ""

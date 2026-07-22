@@ -41,7 +41,7 @@ window.GAMES_CATALOG = {
   english: [
     { id: "tower-stack", title: "מגדל מילים", desc: "משחק arcade מלא — פיזיקה, חלקיקים, קוביות תלת-ממד וטיימר", icon: "🗼", color: "purple", tags: ["אוצר מילים", "מהירות"] },
     { id: "word-runner", title: "רץ וקופץ", desc: "מסלול תלת-ממדי — רדפו מילים נכונות בקצב מהיר", icon: "🏃", color: "teal", tags: ["מהירות", "אוצר מילים"] },
-    { id: "vocabulary-duel", title: "Duel מילים", desc: "מה התרגום? ענו מהר על 10 שאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"] },
+    { id: "vocabulary-duel", title: "Duel מילים", desc: "מה התרגום? ענו מהר על השאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"] },
     { id: "word-memory", title: "זיכרון מילים", desc: "התאימו זוגות en ↔ he", icon: "🧠", color: "pink", tags: ["זיכרון", "תרגום"] },
     { id: "hangman", title: "איש תלוי", desc: "נחשו את המילה לפני שנגמרו הניסיונות", icon: "🎯", color: "purple", tags: ["אוצר מילים", "חידון"] },
     { id: "spot-diff", title: "מצא את ההבדלים", desc: "מצאו את הפריט השונה בין שני הלוחות", icon: "🔍", color: "yellow", tags: ["זיכרון", "חידון"] },

@@ -732,6 +732,32 @@ function openTeacherRoom() {
 }
 
 bindOpenRoomFlow();
+
+(function handleOpenRoomFromPlay() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("openRoom") !== "1") return;
+
+  let pending = null;
+  try {
+    pending = JSON.parse(sessionStorage.getItem("gameclass-pending-room-game") || "null");
+  } catch {
+    /* ignore */
+  }
+
+  if (pending?.gameId) {
+    window.location.replace("/room?create=1");
+    return;
+  }
+
+  params.delete("openRoom");
+  const clean = params.toString();
+  history.replaceState(null, "", clean ? `/?${clean}` : "/");
+
+  openModal("teacher");
+  if (pending?.material && $("#joinMaterialInput")) {
+    $("#joinMaterialInput").value = pending.material;
+  }
+})();
 bindPlayModeModal();
 bindSoloContentModal();
 

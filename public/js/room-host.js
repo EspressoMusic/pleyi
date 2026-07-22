@@ -536,21 +536,113 @@ function enterRoom(data) {
   showRoom();
   updateRoomUI(data);
   renderGame();
+  tryStartPendingRoomGame();
+}
+
+function tryStartPendingRoomGame() {
+  try {
+    const raw = sessionStorage.getItem("gameclass-pending-room-game");
+    if (!raw) return;
+    const pending = JSON.parse(raw);
+    if (Date.now() - (pending.savedAt || 0) > 600000) {
+      sessionStorage.removeItem("gameclass-pending-room-game");
+      return;
+    }
+    sessionStorage.removeItem("gameclass-pending-room-game");
+    if (!pending.gameId || !socket) return;
+    socket.emit("game:start", { gameId: pending.gameId }, (res) => {
+      if (res?.ok) showToast("המשחק התחיל בחדר!");
+      else showToast(res?.error || "לא ניתן להתחיל את המשחק");
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
+(function showCreateLoadingHint() {
+  if (new URLSearchParams(window.location.search).get("create") === "1") {
+    const p = document.querySelector("#roomLoading p");
+    if (p) p.textContent = "יוצר חדר…";
+  }
+})();
+
+async function autoCreateRoomFromPlay() {
+  let pending = null;
+  try {
+    pending = JSON.parse(sessionStorage.getItem("gameclass-pending-room-game") || "null");
+  } catch {
+    /* ignore */
+  }
+
+  let material = String(pending?.material || "").trim();
+  if (!material) {
+    try {
+      material = String(sessionStorage.getItem("gameclass-play-material") || "").trim();
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const gameId = pending?.gameId || "";
+  let gameLabel = gameId;
+  if (gameId && window.GAMES_CATALOG) {
+    for (const key of ["english", "lifeskills", "math", "science"]) {
+      const found = window.GAMES_CATALOG[key]?.find((g) => g.id === gameId);
+      if (found) {
+        gameLabel = found.title;
+        break;
+      }
+    }
+  }
+  const roomName = window.GameAuth?.getUser()?.name || (gameLabel ? `משחק ${gameLabel}` : "חדר משחק");
+
+  try {
+    const res = await emitAck("room:create", {
+      name: roomName,
+      learningMaterial: material || undefined,
+    });
+
+    if (!res?.ok || !res?.code) {
+      showRoomError(res?.error || "לא ניתן ליצור חדר");
+      return;
+    }
+
+    sessionStorage.setItem(
+      HOST_KEY,
+      JSON.stringify({
+        code: res.code,
+        token: res.teacherToken || "",
+        title: res.roomTitle || res.teacherName || roomName,
+      })
+    );
+
+    enterRoom({ ...res, role: "teacher" });
+    showToast(`חדר נוצר! קוד: ${res.code}`);
+  } catch (err) {
+    showRoomError(err.message || "שגיאה ביצירת חדר");
+  }
 }
 
 let joinStarted = false;
 
 async function connectToRoom() {
   if (joinStarted || !socket) return;
-  joinStarted = true;
 
+  const params = new URLSearchParams(window.location.search);
   const host = readHostSession();
+
   if (!host?.code || !host?.token) {
+    if (params.get("create") === "1") {
+      joinStarted = true;
+      await autoCreateRoomFromPlay();
+      joinStarted = false;
+      return;
+    }
     showRoomError("לא נמצא חדר — חזרו לדף הבית ולחצו «פתח חדר כיתה»");
-    joinStarted = false;
     return;
   }
 
+  joinStarted = true;
   for (let attempt = 0; attempt < 4; attempt++) {
     try {
       const res = await emitAck("room:host-rejoin", { code: host.code, token: host.token });

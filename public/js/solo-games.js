@@ -53,9 +53,10 @@ const SoloGames = {
     return fn.call(this, root, ui);
   },
 
-  overlayHtml(title, desc, btnId, btnText = "התחל!") {
+  overlayHtml(title, desc, btnId, btnText = "התחל!", extraClass = "") {
+    const overlayCls = ["solo-overlay", extraClass].filter(Boolean).join(" ");
     return `
-      <div class="solo-overlay" id="${btnId}Overlay">
+      <div class="${overlayCls}" id="${btnId}Overlay">
         <h2 class="font-cartoon">${title}</h2>
         <p>${desc}</p>
         <button type="button" class="btn btn-primary btn-candy solo-play-again" id="${btnId}Start">${btnText}</button>
@@ -713,36 +714,86 @@ const SoloGames = {
     let score = 0;
     let q = 0;
     const total = 10;
+    let timer = null;
+    let timeLeft = 0;
+    const QUESTION_TIME = 30;
+
+    const timerEnabled = () => !window.PlaySettings?.get("vocabulary-duel")?.disableTimer;
+
+    const clearQTimer = () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    const syncPlayHud = (qNum, seconds, showTimer) => {
+      const qPill = document.getElementById("playQuestionPill");
+      const qEl = document.getElementById("playQuestionNum");
+      const tPill = document.getElementById("playTimerPill");
+      const tEl = document.getElementById("playTimerNum");
+      if (qPill && qEl) {
+        qPill.classList.remove("hidden");
+        qEl.textContent = `${qNum}/${total}`;
+      }
+      if (tPill && tEl) {
+        tPill.classList.toggle("hidden", !showTimer);
+        if (showTimer) tEl.textContent = String(seconds);
+      }
+    };
+
+    const hidePlayHud = () => {
+      document.getElementById("playQuestionPill")?.classList.add("hidden");
+      document.getElementById("playTimerPill")?.classList.add("hidden");
+    };
 
     const showQ = () => {
+      clearQTimer();
       if (q >= total) {
+        hidePlayHud();
         root.innerHTML = `<div class="solo-msg ok">סיום! ניקוד: ${score}<br><button class="solo-play-again" onclick="location.reload()">שחק שוב</button></div>`;
         ui.onGameOver(score, "סיום");
         return;
       }
       const question = D.quizQuestion();
       q++;
+      const showTimer = timerEnabled();
+      syncPlayHud(q, QUESTION_TIME, showTimer);
+
       root.innerHTML = `
-        <div class="solo-game-wrap">
-          <div class="solo-hud"><span>שאלה ${q}/${total}</span><span>ניקוד: <strong>${score}</strong></span></div>
-          <p style="font-weight:800;text-align:center">מה התרגום?</p>
-          <div class="solo-quiz-word">${question.word}</div>
-          <p style="text-align:center;font-weight:700;color:var(--muted)">${question.hint}</p>
-          <div class="solo-options" id="vdOpts"></div>
+        <div class="solo-game-wrap solo-game-wrap--vd">
+          <p class="vd-prompt">מה התרגום?</p>
+          <div class="vd-word-box">
+            <div class="solo-quiz-word">${question.word}</div>
+          </div>
+          <div class="solo-options solo-options--vd" id="vdOpts"></div>
+          <div id="vdMsg"></div>
         </div>`;
 
       document.getElementById("vdOpts").innerHTML = question.options
-        .map((opt) => `<button type="button" class="solo-option" data-a="${opt}">${opt}</button>`)
+        .map(
+          (opt, i) =>
+            `<button type="button" class="solo-option solo-option--c${i}" data-a="${opt}"><span class="solo-option-num">${i + 1}</span><span class="solo-option-text">${opt}</span></button>`
+        )
         .join("");
+
+      let answered = false;
+
+      const reveal = (picked) => {
+        root.querySelectorAll(".solo-option").forEach((b) => {
+          b.disabled = true;
+          if (b.dataset.a === question.correct) b.classList.add("correct");
+          else if (b === picked) b.classList.add("wrong");
+        });
+      };
 
       root.querySelectorAll(".solo-option").forEach((btn) => {
         btn.addEventListener("click", () => {
+          if (answered) return;
+          answered = true;
+          clearQTimer();
           const ok = btn.dataset.a === question.correct;
-          root.querySelectorAll(".solo-option").forEach((b) => {
-            b.disabled = true;
-            if (b.dataset.a === question.correct) b.classList.add("correct");
-            else if (b === btn) b.classList.add("wrong");
-          });
+          reveal(btn);
           if (ok) {
             score += 10;
             ui.setScore(score);
@@ -750,11 +801,41 @@ const SoloGames = {
           setTimeout(showQ, 700);
         });
       });
+
+      if (showTimer) {
+        timeLeft = QUESTION_TIME;
+        timer = setInterval(() => {
+          timeLeft--;
+          const tEl = document.getElementById("playTimerNum");
+          if (tEl) tEl.textContent = String(timeLeft);
+          if (timeLeft <= 0 && !answered) {
+            answered = true;
+            clearQTimer();
+            reveal(null);
+            const msg = document.getElementById("vdMsg");
+            if (msg) msg.innerHTML = `<div class="solo-msg bad">הזמן נגמר!</div>`;
+            setTimeout(showQ, 800);
+          }
+        }, 1000);
+      }
     };
 
-    root.innerHTML = `<div class="solo-game-wrap">${SoloGames.overlayHtml("Duel מילים", "ענו על 10 שאלות — מה התרגום של המילה?", "vd")}</div>`;
+    const onSettings = (e) => {
+      if (e.detail?.gameId !== "vocabulary-duel" || e.detail?.key !== "disableTimer") return;
+      if (e.detail.value) {
+        clearQTimer();
+        document.getElementById("playTimerPill")?.classList.add("hidden");
+      }
+    };
+    window.addEventListener("play-settings-change", onSettings);
+
+    root.innerHTML = `<div class="solo-game-wrap">${SoloGames.overlayHtml("טריוויה", "ענו על השאלות — מה התרגום של המילה?", "vd")}</div>`;
     SoloGames.bindStartRetry("vd", showQ);
-    return () => {};
+    return () => {
+      clearQTimer();
+      hidePlayHud();
+      window.removeEventListener("play-settings-change", onSettings);
+    };
   },
 
   /* ── Memory ── */
@@ -766,31 +847,111 @@ const SoloGames = {
     let cards = [];
     let started = false;
 
+    const pairCount = () => {
+      const wanted = window.PlaySettings?.get("word-memory")?.pairCount || 6;
+      const max = Math.max(2, D.VOCAB?.length || 6);
+      return Math.min(wanted, max);
+    };
+
+    const gridLayout = (count) => {
+      if (count <= 6) return { cols: 3, rows: 2 };
+      if (count <= 8) return { cols: 4, rows: 2 };
+      if (count <= 9) return { cols: 3, rows: 3 };
+      return { cols: 4, rows: 3 };
+    };
+
+    const applyGridLayout = () => {
+      const { cols, rows } = gridLayout(pairCount());
+      root.querySelectorAll(".memory-solo-grid").forEach((grid) => {
+        grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+        grid.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
+      });
+    };
+
+    const resetGame = () => {
+      score = 0;
+      ui.setScore(0);
+      build();
+      root.querySelector(".solo-msg")?.remove();
+      if (started) {
+        renderGrid();
+        applyGridLayout();
+      }
+    };
+
     const build = () => {
-      const items = D.pick(6);
-      cards = D.shuffle(
-        items.flatMap((it, i) => [
-          { id: `e${i}`, pair: i, text: it.en, face: false, matched: false },
-          { id: `h${i}`, pair: i, text: it.he, face: false, matched: false },
-        ])
+      const items = D.pick(pairCount());
+      const enCards = D.shuffle(
+        items.map((it, i) => ({ id: `e${i}`, pair: i, text: it.en, group: "a", face: false, matched: false }))
       );
+      const heCards = D.shuffle(
+        items.map((it, i) => ({ id: `h${i}`, pair: i, text: it.he, group: "b", face: false, matched: false }))
+      );
+      cards = [...enCards, ...heCards];
       flipped = [];
       lock = false;
     };
 
+    const FLIP_MS = 280;
+
+    const animateFlip = (btn, flipped) => {
+      if (!btn) return;
+      btn.classList.add("is-flipping");
+      btn.classList.toggle("is-flipped", flipped);
+      setTimeout(() => btn.classList.remove("is-flipping"), FLIP_MS + 30);
+    };
+
+    const escapeHtml = (str) =>
+      String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+    const fitMemoryCardTexts = () => {
+      root.querySelectorAll(".memory-solo-card-front").forEach((front) => {
+        const textEl = front.querySelector(".memory-solo-card-text");
+        if (!textEl || !front.clientWidth) return;
+        textEl.style.fontSize = "";
+        textEl.style.whiteSpace = "nowrap";
+        textEl.style.lineHeight = "1.15";
+        let size = parseFloat(getComputedStyle(textEl).fontSize) || 18;
+        const maxW = front.clientWidth - 10;
+        const maxH = front.clientHeight - 10;
+        let guard = 0;
+        while (guard < 48 && (textEl.scrollWidth > maxW || textEl.scrollHeight > maxH) && size > 8) {
+          size -= 1;
+          textEl.style.fontSize = `${size}px`;
+          guard += 1;
+        }
+        if (textEl.scrollWidth > maxW || textEl.scrollHeight > maxH) {
+          textEl.style.whiteSpace = "normal";
+          while (guard < 64 && textEl.scrollHeight > maxH && size > 8) {
+            size -= 1;
+            textEl.style.fontSize = `${size}px`;
+            guard += 1;
+          }
+        }
+      });
+    };
+
     const cardHtml = (c) => {
-      const cls = ["memory-solo-card", c.face || c.matched ? "face" : "", c.matched ? "matched" : ""]
+      const cls = ["memory-solo-card", c.face || c.matched ? "is-flipped" : "", c.matched ? "matched" : ""]
         .filter(Boolean)
         .join(" ");
-      return `<button type="button" class="${cls}" data-id="${c.id}">${c.face || c.matched ? c.text : "?"}</button>`;
+      const dir = c.group === "a" ? "ltr" : "rtl";
+      return `<button type="button" class="${cls}" data-id="${c.id}"${c.matched ? " disabled" : ""}>
+        <span class="memory-solo-card-front" dir="${dir}"><span class="memory-solo-card-text">${escapeHtml(c.text)}</span></span>
+        <span class="memory-solo-card-back" aria-hidden="true">?</span>
+      </button>`;
     };
 
     const renderGrid = () => {
-      const grid = root.querySelector("#memGrid");
-      const scoreEl = root.querySelector("#memScore");
-      if (scoreEl) scoreEl.textContent = String(score);
-      if (!grid) return;
-      grid.innerHTML = cards.map(cardHtml).join("");
+      const gridA = root.querySelector("#memGridA");
+      const gridB = root.querySelector("#memGridB");
+      if (gridA) gridA.innerHTML = cards.filter((c) => c.group === "a").map(cardHtml).join("");
+      if (gridB) gridB.innerHTML = cards.filter((c) => c.group === "b").map(cardHtml).join("");
+      requestAnimationFrame(fitMemoryCardTexts);
     };
 
     const render = () => {
@@ -799,8 +960,14 @@ const SoloGames = {
         started = true;
         root.innerHTML = `
           <div class="solo-game-wrap">
-            <div class="solo-hud"><span>התאימו זוגות</span><span>ניקוד: <strong id="memScore">${score}</strong></span></div>
-            <div class="memory-solo-grid" id="memGrid"></div>
+            <div class="memory-solo-board">
+              <div class="memory-solo-group memory-solo-group--a">
+                <div class="memory-solo-grid" id="memGridA"></div>
+              </div>
+              <div class="memory-solo-group memory-solo-group--b">
+                <div class="memory-solo-grid" id="memGridB"></div>
+              </div>
+            </div>
           </div>`;
       }
 
@@ -814,17 +981,18 @@ const SoloGames = {
       }
 
       renderGrid();
+      applyGridLayout();
     };
 
     const onCardClick = (e) => {
-      const btn = e.target.closest(".memory-solo-card");
+      const btn = e.target.closest(".memory-solo-card:not([disabled])");
       if (!btn || !root.contains(btn) || lock) return;
+      if (btn.classList.contains("is-flipped") || btn.classList.contains("is-flipping")) return;
       const card = cards.find((c) => c.id === btn.dataset.id);
       if (!card || card.face || card.matched) return;
 
       card.face = true;
-      btn.classList.add("face");
-      btn.textContent = card.text;
+      animateFlip(btn, true);
       flipped.push(card);
 
       if (flipped.length === 2) {
@@ -835,28 +1003,55 @@ const SoloGames = {
           b.matched = true;
           score += 15;
           ui.setScore(score);
+          const btnA = root.querySelector(`.memory-solo-card[data-id="${a.id}"]`);
+          const btnB = root.querySelector(`.memory-solo-card[data-id="${b.id}"]`);
+          btnA?.classList.add("matched", "is-match-pop");
+          btnB?.classList.add("matched", "is-match-pop");
+          btnA?.setAttribute("disabled", "");
+          btnB?.setAttribute("disabled", "");
           flipped = [];
           lock = false;
-          render();
+          if (cards.every((c) => c.matched)) {
+            setTimeout(() => {
+              root.querySelector(".solo-game-wrap")?.insertAdjacentHTML(
+                "beforeend",
+                `<div class="solo-msg ok">כל הזוגות! ניקוד: ${score}<br><button class="solo-play-again" onclick="location.reload()">שחק שוב</button></div>`
+              );
+              ui.onGameOver(score, "סיום");
+            }, 450);
+          }
         } else {
           setTimeout(() => {
-            a.face = false;
-            b.face = false;
-            flipped = [];
-            lock = false;
-            renderGrid();
-          }, 700);
+            const btnA = root.querySelector(`.memory-solo-card[data-id="${a.id}"]`);
+            const btnB = root.querySelector(`.memory-solo-card[data-id="${b.id}"]`);
+            animateFlip(btnA, false);
+            animateFlip(btnB, false);
+            setTimeout(() => {
+              a.face = false;
+              b.face = false;
+              flipped = [];
+              lock = false;
+            }, FLIP_MS);
+          }, 620);
         }
       }
     };
 
-    root.innerHTML = `<div class="solo-game-wrap">${SoloGames.overlayHtml("זיכרון מילים", "הפכו קלפים ומצאו זוגות en ↔ he", "mem")}</div>`;
+    root.innerHTML = `<div class="solo-game-wrap">${SoloGames.overlayHtml("זיכרון מילים", "הפכו קלפים ומצאו זוגות", "mem")}</div>`;
     root.addEventListener("click", onCardClick);
+    const onSettings = (e) => {
+      if (e.detail?.gameId !== "word-memory" || e.detail?.key !== "pairCount") return;
+      resetGame();
+    };
+    window.addEventListener("play-settings-change", onSettings);
     SoloGames.bindStartRetry("mem", () => {
       build();
       render();
     });
-    return () => root.removeEventListener("click", onCardClick);
+    return () => {
+      root.removeEventListener("click", onCardClick);
+      window.removeEventListener("play-settings-change", onSettings);
+    };
   },
 
   /* ── Hangman ── */
@@ -867,64 +1062,220 @@ const SoloGames = {
     let guessed = [];
     let wrong = 0;
     const maxWrong = 7;
+    let currentItem = null;
 
-    const newWord = () => {
-      const item = D.one();
-      word = item.en.toUpperCase();
-      guessed = [];
-      wrong = 0;
-      render(item);
+    const escapeHtml = (s) =>
+      String(s || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    const hangmanSvg = () => `
+      <svg class="hangman-solo-svg" viewBox="0 0 200 220" aria-hidden="true">
+        <g class="hm-gallows" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round">
+          <line x1="20" y1="210" x2="120" y2="210"/>
+          <line x1="50" y1="210" x2="50" y2="24"/>
+          <line x1="50" y1="24" x2="130" y2="24"/>
+          <line x1="130" y1="24" x2="130" y2="52"/>
+        </g>
+        <circle class="hm-part" data-step="1" cx="130" cy="68" r="16" stroke="currentColor" stroke-width="4" fill="none"/>
+        <line class="hm-part" data-step="2" x1="130" y1="84" x2="130" y2="138" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <line class="hm-part" data-step="3" x1="130" y1="98" x2="98" y2="118" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <line class="hm-part" data-step="4" x1="130" y1="98" x2="162" y2="118" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <line class="hm-part" data-step="5" x1="130" y1="138" x2="104" y2="178" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <line class="hm-part" data-step="6" x1="130" y1="138" x2="156" y2="178" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      </svg>`;
+
+    const buildShell = () => {
+      root.innerHTML = `
+        <div class="solo-game-wrap hangman-solo-wrap">
+          ${SoloGames.overlayHtml("איש תלוי", "נחשו אותיות", "hm")}
+          <div class="hangman-solo hidden" id="hmStage" aria-live="polite">
+            <div class="hangman-solo-card">
+              <div class="hangman-solo-hint" id="hmHint"></div>
+              <div class="hangman-solo-body">
+                <div class="hangman-solo-figure-wrap">
+                  ${hangmanSvg()}
+                  <div class="hangman-solo-lives" id="hmLives" aria-label="ניסיונות שנותרו"></div>
+                </div>
+                <div class="hangman-solo-slots" id="hmSlots" dir="ltr"></div>
+              </div>
+              <div class="hangman-solo-letters" id="hmLetters" dir="ltr"></div>
+              <div class="hangman-solo-result hidden" id="hmResult"></div>
+            </div>
+          </div>
+        </div>`;
     };
 
-    const render = (item) => {
-      const display = [...word].map((ch) => (guessed.includes(ch) ? ch : "_")).join(" ");
-      const won = [...word.replace(/ /g, "")].every((ch) => guessed.includes(ch));
-      const lost = wrong >= maxWrong;
+    const renderLives = () => {
+      const el = document.getElementById("hmLives");
+      if (!el) return;
+      el.innerHTML = Array.from({ length: maxWrong }, (_, i) => {
+        const lost = i < wrong;
+        return `<span class="hangman-solo-life${lost ? " is-lost" : ""}"></span>`;
+      }).join("");
+    };
 
-      root.innerHTML = `
-        <div class="solo-game-wrap">
-          <div class="solo-hud"><span>טעויות: ${wrong}/${maxWrong}</span><span>ניקוד: <strong>${score}</strong></span></div>
-          <p style="text-align:center;font-weight:800">${item?.hint || ""} · ${item?.he || ""}</p>
-          <div class="hangman-solo-display">${display}</div>
-          <div class="hangman-solo-letters" id="hmLetters"></div>
-          ${won ? `<div class="solo-msg ok">ניצחון!</div>` : ""}
-          ${lost ? `<div class="solo-msg bad">המילה: ${word}</div>` : ""}
-        </div>`;
-
-      if (won || lost) {
-        if (won) {
-          score += 20;
-          ui.setScore(score);
+    const updateFigure = (animateLast = false) => {
+      root.querySelectorAll(".hm-part").forEach((part) => {
+        const step = Number(part.dataset.step);
+        const visible = step <= wrong;
+        part.classList.toggle("is-visible", visible);
+        if (animateLast && visible && step === wrong) {
+          part.classList.add("is-new");
+          part.addEventListener("animationend", () => part.classList.remove("is-new"), { once: true });
         }
-        setTimeout(newWord, won ? 1200 : 1800);
-        return;
-      }
-
-      document.getElementById("hmLetters").innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
-        .map(
-          (L) =>
-            `<button type="button" class="${guessed.includes(L) ? "used" : ""}" data-l="${L}" ${guessed.includes(L) ? "disabled" : ""}>${L}</button>`
-        )
-        .join("");
-
-      root.querySelectorAll("#hmLetters button:not([disabled])").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const L = btn.dataset.l;
-          guessed.push(L);
-          if (!word.includes(L)) wrong++;
-          render(item);
-        });
       });
     };
 
-    root.innerHTML = `<div class="solo-game-wrap">${SoloGames.overlayHtml("איש תלוי", "נחשו אותיות — לפני שנג зак!", "hm")}</div>`;
-    SoloGames.bindStartRetry("hm", () => {
-      const item = D.one();
-      word = item.en.toUpperCase();
+    const renderSlots = (revealLetter = null) => {
+      const el = document.getElementById("hmSlots");
+      if (!el) return;
+      el.innerHTML = [...word]
+        .map((ch) => {
+          if (ch === " ") return `<span class="hangman-slot is-space"></span>`;
+          const show = guessed.includes(ch);
+          const justRevealed = revealLetter === ch && show;
+          return `<span class="hangman-slot${show ? " is-revealed" : ""}${justRevealed ? " is-pop" : ""}">
+            <span class="hangman-slot-letter">${show ? escapeHtml(ch) : ""}</span>
+          </span>`;
+        })
+        .join("");
+      if (revealLetter) {
+        el.querySelectorAll(".hangman-slot.is-pop").forEach((slot) => {
+          slot.addEventListener("animationend", () => slot.classList.remove("is-pop"), { once: true });
+        });
+      }
+    };
+
+    const renderKeyboard = (clickedLetter = null, wasCorrect = null) => {
+      const el = document.getElementById("hmLetters");
+      if (!el) return;
+      el.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+        .map((L) => {
+          const used = guessed.includes(L);
+          let cls = "hangman-key";
+          if (used) cls += wasCorrect === true && L === clickedLetter ? " is-correct" : " is-used";
+          if (used && wasCorrect === false && L === clickedLetter) cls += " is-wrong";
+          return `<button type="button" class="${cls}" data-l="${L}" ${used ? "disabled" : ""}>${L}</button>`;
+        })
+        .join("");
+
+      el.querySelectorAll("button:not([disabled])").forEach((btn) => {
+        btn.addEventListener("click", () => onGuess(btn.dataset.l));
+      });
+
+      if (clickedLetter) {
+        const btn = el.querySelector(`[data-l="${clickedLetter}"]`);
+        if (btn) {
+          btn.addEventListener("animationend", () => btn.classList.remove("is-wrong", "is-correct"), { once: true });
+        }
+      }
+    };
+
+    const renderHint = () => {
+      const el = document.getElementById("hmHint");
+      if (!el || !currentItem) return;
+      el.innerHTML = `
+        <span class="hangman-solo-hint-badge">רמז</span>
+        <span class="hangman-solo-hint-he font-cartoon">${escapeHtml(currentItem.he)}</span>
+        ${currentItem.hint ? `<span class="hangman-solo-hint-en">${escapeHtml(currentItem.hint)}</span>` : ""}`;
+    };
+
+    const showResult = (type, message) => {
+      const el = document.getElementById("hmResult");
+      if (!el) return;
+      el.className = `hangman-solo-result is-${type}`;
+      el.textContent = message;
+      el.classList.remove("hidden");
+    };
+
+    const hideResult = () => {
+      document.getElementById("hmResult")?.classList.add("hidden");
+    };
+
+    const isWon = () => [...word.replace(/ /g, "")].every((ch) => guessed.includes(ch));
+    const isLost = () => wrong >= maxWrong;
+
+    const onGuess = (letter) => {
+      if (!letter || guessed.includes(letter) || isWon() || isLost()) return;
+      guessed.push(letter);
+      const correct = word.includes(letter);
+      if (!correct) wrong++;
+
+      renderSlots(correct ? letter : null);
+      renderLives();
+      updateFigure(!correct);
+      renderKeyboard(letter, correct);
+
+      if (!correct) {
+        document.getElementById("hmStage")?.classList.add("is-shake");
+        document.getElementById("hmStage")?.addEventListener(
+          "animationend",
+          () => document.getElementById("hmStage")?.classList.remove("is-shake"),
+          { once: true }
+        );
+      }
+
+      if (isWon()) {
+        score += 20;
+        ui.setScore(score);
+        document.getElementById("hmStage")?.classList.add("is-win");
+        showResult("win", "כל הכבוד! 🎉");
+        setTimeout(() => beginWord(true), 1400);
+        return;
+      }
+
+      if (isLost()) {
+        const el = document.getElementById("hmSlots");
+        if (el) {
+          el.innerHTML = [...word]
+            .map((ch) => {
+              if (ch === " ") return `<span class="hangman-slot is-space"></span>`;
+              const show = guessed.includes(ch);
+              return `<span class="hangman-slot is-revealed${show ? "" : " is-missed"}">
+                <span class="hangman-slot-letter">${escapeHtml(ch)}</span>
+              </span>`;
+            })
+            .join("");
+        }
+        showResult("lose", `המילה: ${word}`);
+        setTimeout(() => beginWord(true), 2200);
+      }
+    };
+
+    const beginWord = (animated) => {
+      hideResult();
+      document.getElementById("hmStage")?.classList.remove("is-win", "is-word-enter");
+      currentItem = D.one();
+      word = currentItem.en.toUpperCase();
       guessed = [];
       wrong = 0;
-      render(item);
+
+      renderHint();
+      renderLives();
+      updateFigure(false);
+      renderSlots();
+      renderKeyboard();
+
+      const stage = document.getElementById("hmStage");
+      if (animated && stage) {
+        void stage.offsetWidth;
+        stage.classList.add("is-word-enter");
+        stage.querySelectorAll(".hangman-slot:not(.is-space)").forEach((slot, i) => {
+          slot.style.animationDelay = `${i * 45}ms`;
+        });
+        stage.addEventListener("animationend", () => stage.classList.remove("is-word-enter"), { once: true });
+      }
+    };
+
+    buildShell();
+
+    SoloGames.bindStartRetry("hm", () => {
+      document.getElementById("hmStage")?.classList.remove("hidden");
+      beginWord(true);
     });
+
     return () => {};
   },
 

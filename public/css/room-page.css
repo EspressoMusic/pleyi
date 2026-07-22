@@ -806,6 +806,25 @@ body.room-has-error .room-page-overlay {
   opacity: 1;
 }
 
+.room-setting-mode-card.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.room-setting-mode-card.is-disabled .room-setting-mode-card-body:hover {
+  transform: none;
+}
+
+.room-setting-mode-hint {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink);
+  opacity: 0.82;
+  text-align: center;
+}
+
 .room-setting-material-group {
   display: flex;
   flex-direction: column;

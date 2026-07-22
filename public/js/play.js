@@ -79,6 +79,8 @@
     cleanup?.();
     root.innerHTML = "";
     scoreEl.textContent = "0";
+    document.getElementById("playQuestionPill")?.classList.add("hidden");
+    document.getElementById("playTimerPill")?.classList.add("hidden");
     applyGameData();
     cleanup = SoloGames.mount(gameId, root, ui);
   }
@@ -147,7 +149,7 @@
         root.innerHTML = `
           <div class="play-premium-gate">
             <p>המשחק <strong>${displayTitle}</strong> זמין למנויי פרימיום.</p>
-            <a class="btn btn-primary btn-candy font-cartoon" href="/premium?game=${encodeURIComponent(gameId)}">להרשמת מנוי</a>
+            <a href="/premium?game=${encodeURIComponent(gameId)}">להרשמת מנוי</a>
           </div>`;
         window.PleyiPremium.openModal(gameId);
         return;
