@@ -34,17 +34,38 @@ window.GameAuth = {
     this.setDevPreviewUser(this.getDevPreviewUser());
     document.getElementById("loginModal")?.classList.add("hidden");
 
-    if (redirect && !/^\/room\/?/.test(window.location.pathname)) {
-      window.location.href = "/room";
+    if (this._consumeLoginNext()) {
+      if (this._toastFn) this._toastFn("התחברת בהצלחה");
       return true;
     }
 
-    if (this._toastFn) this._toastFn("נכנסת לחדר בפיתוח");
+    if (this._toastFn) this._toastFn("התחברת בהצלחה");
     return true;
   },
 
   isDevPreviewUser() {
     return this._devPreviewActive || this._user?.uid === "dev-preview";
+  },
+
+  _saveLoginNext(path) {
+    if (path && String(path).startsWith("/") && !String(path).startsWith("//")) {
+      sessionStorage.setItem("pleyi-login-next", path);
+    }
+  },
+
+  _consumeLoginNext() {
+    const next = sessionStorage.getItem("pleyi-login-next");
+    if (!next || !next.startsWith("/") || next.startsWith("//")) return false;
+    sessionStorage.removeItem("pleyi-login-next");
+    if (window.location.pathname + window.location.search !== next) {
+      window.location.href = next;
+    }
+    return true;
+  },
+
+  openLoginModal(nextPath) {
+    if (nextPath) this._saveLoginNext(nextPath);
+    document.getElementById("loginModal")?.classList.remove("hidden");
   },
 
   onUserChange(fn) {
@@ -92,6 +113,7 @@ window.GameAuth = {
     if (!ok) {
       this._ready = true;
       this.updateNav();
+      this._notify();
       return;
     }
 
@@ -125,8 +147,8 @@ window.GameAuth = {
 
       if (redirectWelcome && fbUser) {
         document.getElementById("loginModal")?.classList.add("hidden");
-        if (!/^\/my-room\/?$/.test(window.location.pathname)) {
-          window.location.href = "/my-room";
+        if (!this._consumeLoginNext()) {
+          /* stay on current page */
         }
       }
 
@@ -334,8 +356,8 @@ window.GameAuth = {
       }
 
       close("loginModal");
-      if (!/^\/my-room\/?$/.test(window.location.pathname)) {
-        window.location.href = "/my-room";
+      if (!this._consumeLoginNext()) {
+        /* stay on current page */
       }
     });
 

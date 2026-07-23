@@ -7,7 +7,7 @@
   <title>Pleyi — לימוד דרך משחקים</title>
   <meta name="description" content="משחקי למידה למורים — פתחו חדר כיתה, התלמידים מצטרפים מהטלפון, ושחקו יחד בזמן אמת."/>
   <link rel="stylesheet" href="styles.css"/>
-  <link rel="stylesheet" href="css/clean-site.css?v=27"/>
+  <link rel="stylesheet" href="css/clean-site.css?v=30"/>
   <link rel="stylesheet" href="css/legal.css"/>
   <link rel="stylesheet" href="css/accessibility.css" />
 </head>
@@ -27,7 +27,6 @@
         <a href="#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
       </nav>
       <div class="nav-actions">
-        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle data-i18n="lang.switch" aria-label="English">EN</button>
         <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
         <div class="nav-user hidden" id="authUserMenu">
           <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
@@ -36,6 +35,7 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
+            <a href="/my-room" class="nav-user-link" role="menuitem" data-i18n="nav.myRoom">החדר שלי</a>
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem" data-i18n="nav.logout">יציאה</button>
           </div>
         </div>

@@ -762,11 +762,22 @@ bindPlayModeModal();
 bindSoloContentModal();
 
 GameAuth?.bindModals(showToast);
-GameAuth?.onUserChange?.((user) => {
-  if (user && !GameAuth.isDevPreviewUser?.()) {
-    window.location.href = "/my-room";
+
+(function initLoginReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const next = params.get("next");
+  if (next?.startsWith("/") && !next.startsWith("//")) {
+    GameAuth?._saveLoginNext(next);
   }
-});
+  if (params.get("login") === "1") {
+    GameAuth?.openLoginModal(next || null);
+    params.delete("login");
+    if (next) params.delete("next");
+    const clean = params.toString();
+    history.replaceState(null, "", clean ? `/?${clean}` : "/");
+  }
+})();
+
 document.getElementById("mobileLoginBtn")?.addEventListener("click", () => {
   document.getElementById("loginModal")?.classList.remove("hidden");
   $("#menuToggle")?.classList.remove("open");

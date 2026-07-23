@@ -2,7 +2,6 @@
 
 (function () {
   const catalog = window.GAMES_CATALOG;
-  const guestSection = document.getElementById("myRoomGuest");
   const contentSection = document.getElementById("myRoomContent");
   const myRoomName = document.getElementById("myRoomName");
   const roomModal = document.getElementById("roomModal");
@@ -283,37 +282,38 @@
         ...e,
         dateKey: UserData.dateKeyFromTimestamp(e.playedAt),
       }));
+      window.MyRoomCalendar?.setHistory(window.__myRoomPlayHistory);
       return;
     }
 
     try {
       [savedGames, playHistory] = await Promise.all([
         UserData.getSavedGames(),
-        UserData.getPlayHistory(),
+        UserData.getPlayHistory(120),
       ]);
-      window.__myRoomPlayHistory = playHistory;
+      window.__myRoomPlayHistory = playHistory.map((e) => ({
+        ...e,
+        dateKey: UserData.dateKeyFromTimestamp(e.playedAt),
+      }));
+      window.MyRoomCalendar?.setHistory(window.__myRoomPlayHistory);
     } catch (err) {
       console.error(err);
       showToast("לא הצלחנו לטעון נתונים");
     }
   }
 
-  function showGuest() {
-    guestSection?.classList.remove("hidden");
-    contentSection?.classList.add("hidden");
-  }
-
   function showRoom(user) {
-    guestSection?.classList.add("hidden");
     contentSection?.classList.remove("hidden");
     updateHeader(user);
     loadData();
   }
 
-  function setupGuestDevMode() {
-    if (!isGuestPreviewAllowed()) return;
-    document.getElementById("guestDevHint")?.classList.remove("hidden");
-    document.getElementById("guestPreviewBtn")?.classList.remove("hidden");
+  function redirectToLogin() {
+    if (window.GameAuth?.openLoginModal) {
+      window.GameAuth.openLoginModal("/my-room");
+      return;
+    }
+    window.location.replace("/?login=1&next=%2Fmy-room");
   }
 
   function enterGuestPreview() {
@@ -325,7 +325,6 @@
     }
     showRoom(GUEST_PREVIEW_USER);
   }
-
   function updateGuestNav(user) {
     document.getElementById("authLoginBtn")?.classList.add("hidden");
     document.getElementById("authUserMenu")?.classList.remove("hidden");
@@ -363,16 +362,6 @@
     showRoom(previewUser);
   }
 
-  document.getElementById("guestPreviewBtn")?.addEventListener("click", enterGuestPreview);
-
-  document.getElementById("guestLoginBtn")?.addEventListener("click", () => {
-    if (window.GameAuth?.isDevHost?.()) {
-      enterGuestPreview();
-      return;
-    }
-    document.getElementById("loginModal")?.classList.remove("hidden");
-  });
-
   document.getElementById("myRoomCreateBtn")?.addEventListener("click", (e) => {
     e.preventDefault();
     sessionStorage.setItem("pleyi-open-custom", "1");
@@ -380,16 +369,6 @@
   });
 
   window.GameAuth?.bindModals(showToast);
-  window.GameAuth?.onUserChange((user) => {
-    if (PREVIEW) return;
-    if (user) showRoom(user);
-    else {
-      clearGuestPreview();
-      showGuest();
-    }
-  });
-
-  setupGuestDevMode();
 
   const autoGuest =
     isGuestPreviewAllowed() &&
@@ -397,8 +376,27 @@
       sessionStorage.getItem("pleyi-guest-preview") === "1" ||
       sessionStorage.getItem("pleyi-dev-preview") === "1");
 
+  function handleAuthState(user) {
+    if (PREVIEW) return;
+    if (!window.GameAuth?._ready) return;
+    if (user) {
+      showRoom(user);
+      return;
+    }
+    if (autoGuest) {
+      enterGuestPreview();
+      return;
+    }
+    if (window.GameAuth?.isDevHost?.()) {
+      enterGuestPreview();
+      return;
+    }
+    clearGuestPreview();
+    redirectToLogin();
+  }
+
+  window.GameAuth?.onUserChange(handleAuthState);
+
   if (PREVIEW) applyPreviewUser();
-  else if (autoGuest) enterGuestPreview();
   else if (window.GameAuth?.getUser()) showRoom(window.GameAuth.getUser());
-  else showGuest();
 })();

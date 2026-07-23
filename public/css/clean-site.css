@@ -317,6 +317,7 @@ body.clean-site .mobile-nav-cta::after {
 
 .about-wrap {
   max-width: 960px;
+  overflow: visible;
 }
 
 #about .clean-section-title,
@@ -340,12 +341,18 @@ body.clean-site .mobile-nav-cta::after {
 }
 
 .about-orbit-scene {
-  --orbit-size: min(340px, 92vw);
+  /* גודל המסלול המקורי + שוליים חיצוניים לכפתורים */
+  --orbit-pad: 62px;
+  --orbit-core: 340px;
+  --scene-size: calc(var(--orbit-core) + 2 * var(--orbit-pad));
   position: relative;
-  width: var(--orbit-size);
-  height: var(--orbit-size);
+  width: var(--scene-size);
+  height: var(--scene-size);
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vw - 32px);
   margin: 0 auto clamp(8px, 3vw, 16px);
   overflow: visible;
+  box-sizing: border-box;
 }
 
 .about-orbit-sr {
@@ -408,21 +415,21 @@ body.clean-site .mobile-nav-cta::after {
 }
 
 .about-orbit-ring--1 {
-  width: 58%;
-  height: 58%;
+  width: calc(var(--orbit-core) * 0.58);
+  height: calc(var(--orbit-core) * 0.58);
   animation-duration: 11s;
 }
 
 .about-orbit-ring--2 {
-  width: 78%;
-  height: 78%;
+  width: calc(var(--orbit-core) * 0.78);
+  height: calc(var(--orbit-core) * 0.78);
   animation-duration: 15s;
   animation-direction: reverse;
 }
 
 .about-orbit-ring--3 {
-  width: 98%;
-  height: 98%;
+  width: calc(var(--orbit-core) * 0.98);
+  height: calc(var(--orbit-core) * 0.98);
   animation-duration: 19s;
   animation-delay: -6s;
 }
@@ -522,7 +529,12 @@ body.clean-site .mobile-nav-cta::after {
 
 @media (max-width: 768px) {
   .about-orbit-scene {
-    --orbit-size: min(320px, 94vw);
+    --orbit-pad: clamp(50px, 13vw, 58px);
+    /* גודל מקורי עד 320px, מוקטן רק כדי להישאר בתוך המסך */
+    --orbit-core: min(320px, calc(100vw - 32px - 2 * var(--orbit-pad)));
+    --scene-size: calc(var(--orbit-core) + 2 * var(--orbit-pad));
+    width: var(--scene-size);
+    height: var(--scene-size);
   }
 
   .about-orbit-sat {

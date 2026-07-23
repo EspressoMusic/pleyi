@@ -15,9 +15,8 @@
     badge.id = "navCreditsBadge";
     badge.innerHTML = `
       <span class="nav-credits-icon" aria-hidden="true">◆</span>
-      <span class="nav-credits-count" id="navCreditsCount">0</span>
-      <span class="nav-credits-label">קרדיטים</span>`;
-    badge.title = "קרדיטים ליצירת משחק עם AI";
+      <span class="nav-credits-count" id="navCreditsCount">0</span>`;
+    badge.setAttribute("aria-label", "קרדיטים ליצירת משחק עם AI");
 
     const userMenu = document.getElementById("authUserMenu");
     if (userMenu) navActions.insertBefore(badge, userMenu);
@@ -40,6 +39,7 @@
     badge.classList.remove("hidden");
     countEl.textContent = String(balance ?? 0);
     badge.title = `קרדיטים ליצירת משחק עם AI — ${balance ?? 0} מתוך ${allowance ?? UserData.DEFAULT_CREDITS}`;
+    badge.setAttribute("aria-label", `${balance ?? 0} קרדיטים ליצירת משחק עם AI`);
     badge.classList.toggle("is-low", (balance ?? 0) <= 2);
   }
 

@@ -76,7 +76,11 @@ html:not([data-theme="light"]) {
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  background: var(--electric);
+}
 
 html, body { margin: 0; padding: 0; }
 
@@ -3172,10 +3176,17 @@ body.in-room .game-actions .btn {
   text-align: center;
 }
 
-#loginModal .modal h2 {
+#loginModal .modal h2,
+.modal-login h2 {
   margin: 0;
   width: 100%;
   text-align: center;
+  paint-order: normal;
+  -webkit-text-stroke: 0;
+  -webkit-text-fill-color: var(--ink);
+  color: var(--ink);
+  text-shadow: none;
+  font-weight: 800;
 }
 
 #loginModal .modal-close {

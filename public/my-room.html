@@ -30,7 +30,6 @@
         <a href="/" class="nav-pill">בית</a>
       </nav>
       <div class="nav-actions">
-        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle data-i18n="lang.switch" aria-label="English">EN</button>
         <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
         <div class="nav-user hidden" id="authUserMenu">
           <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
@@ -39,6 +38,7 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
+            <a href="/my-room" class="nav-user-link" role="menuitem" data-i18n="nav.myRoom">החדר שלי</a>
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
           </div>
         </div>
@@ -54,29 +54,23 @@
 
   <main class="hub-main container">
 
-    <!-- Guest -->
-    <section class="room-guest" id="myRoomGuest">
-      <a href="/" class="hub-back hub-back--home">← בית</a>
-      <div class="room-guest-card sticker-card sticker-white">
-        <span class="room-guest-icon" aria-hidden="true">🏠</span>
-        <p class="hero-badge">החדר שלי</p>
-        <h1 class="font-cartoon room-guest-title">ברוכים הבאים</h1>
-        <p class="room-guest-lead">המשחקים שאהבת, יצרת ושיחקת — במקום אחד.</p>
-        <p class="room-guest-dev hidden" id="guestDevHint">מצב פיתוח — כניסה עם נתוני דוגמה</p>
-        <button type="button" class="btn btn-primary btn-candy font-cartoon hidden" id="guestPreviewBtn">כניסה לדוגמה</button>
-        <button type="button" class="btn btn-outline btn-candy" id="guestLoginBtn">התחברות</button>
-      </div>
-    </section>
-
-    <!-- Logged in -->
     <section class="room-content hidden" id="myRoomContent">
-      <button type="button" class="room-calendar-icon" id="roomCalendarBtn" disabled aria-label="יומן — בקרוב" title="יומן — בקרוב">
-        <span aria-hidden="true">📅</span>
-      </button>
-
       <header class="room-hero">
         <h1 class="hub-title font-cartoon" id="myRoomName">שלום!</h1>
       </header>
+
+      <section class="room-calendar" id="roomCalendar" aria-label="יומן שיעורים">
+        <div class="room-cal-head">
+          <button type="button" class="room-cal-nav" id="roomCalPrev" aria-label="חודש קודם">‹</button>
+          <p class="room-cal-month" id="roomCalMonth"></p>
+          <button type="button" class="room-cal-nav" id="roomCalNext" aria-label="חודש הבא">›</button>
+        </div>
+        <div class="room-cal-grid" id="roomCalGrid" role="grid" aria-labelledby="roomCalMonth"></div>
+        <div class="room-cal-day" id="roomCalDay" hidden>
+          <p class="room-cal-day-label" id="roomCalDayLabel"></p>
+          <ul class="room-cal-day-list" id="roomCalDayList"></ul>
+        </div>
+      </section>
 
       <div class="room-menu" id="roomTiles">
         <button type="button" class="room-menu-row sticker-card sticker-yellow" data-section="favorites">
@@ -95,37 +89,6 @@
       </p>
     </section>
   </main>
-
-  <!-- Calendar modal -->
-  <div class="modal-overlay hidden" id="calendarModal" role="dialog" aria-modal="true" aria-labelledby="calendarModalTitle">
-    <div class="modal modal-calendar sticker-card sticker-teal">
-      <button type="button" class="modal-close" id="calendarModalClose" aria-label="סגירה">×</button>
-      <header class="cal-header">
-        <h2 class="font-cartoon" id="calendarModalTitle">יומן משחקים</h2>
-        <p class="cal-credits-remain" id="calCreditsRemain">10 קרדיטים נותרו</p>
-      </header>
-      <div class="cal-legend">
-        <span><span class="cal-dot cal-dot--played"></span> שוחק</span>
-        <span><span class="cal-dot cal-dot--planned"></span> מתוכנן</span>
-      </div>
-      <div class="cal-nav">
-        <button type="button" class="cal-nav-btn" id="calPrevMonth" aria-label="חודש קודם">‹</button>
-        <p class="cal-month-label font-cartoon" id="calMonthLabel"></p>
-        <button type="button" class="cal-nav-btn" id="calNextMonth" aria-label="חודש הבא">›</button>
-      </div>
-      <div class="cal-grid" id="calGrid"></div>
-      <aside class="cal-day-panel" id="calDayPanel">
-        <h3 class="cal-day-title font-cartoon" id="calDayTitle"></h3>
-        <div id="calDayList"></div>
-        <form class="cal-plan-form" id="calPlanForm">
-          <p class="cal-plan-label">תכנון משחק ליום זה</p>
-          <input type="text" id="calPlanTitle" class="cal-plan-input" placeholder="שם המשחק / השיעור" required maxlength="80" />
-          <input type="text" id="calPlanNotes" class="cal-plan-input" placeholder="הערות (אופציונלי)" maxlength="120" />
-          <button type="submit" class="btn btn-primary btn-candy btn-sm">+ הוסף ליומן</button>
-        </form>
-      </aside>
-    </div>
-  </div>
 
   <!-- Library bottom sheet -->
   <div class="room-sheet-overlay hidden" id="roomModal" role="dialog" aria-modal="true" aria-labelledby="roomModalTitle">
