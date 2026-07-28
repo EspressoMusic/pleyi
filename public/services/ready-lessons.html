@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>שיעורים מוכנים — Pleyi</title>
+  <meta name="description" content="ספריית שיעורי אנגלית מוכנים עם מערך שיעור פשוט — מוכן להצגה על הלוח כמו מצגת."/>
+  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=42"/>
+  <link rel="stylesheet" href="/css/service-landing.css"/>
+  <link rel="stylesheet" href="/css/legal.css"/>
+  <link rel="stylesheet" href="/css/accessibility.css" />
+</head>
+<body class="clean-site">
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <div class="loader" id="loader"><div class="loader-bar"></div></div>
+
+  <header class="navbar scrolled" id="navbar">
+    <div class="container nav-inner">
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-pill">בית</a>
+        <div class="nav-services">
+          <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false">שירותים</button>
+          <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
+            <a href="/services/ready-lessons" class="nav-services-link active" role="menuitem">שיעורים</a>
+            <a href="/services/worksheets" class="nav-services-link" role="menuitem">דפי עבודה</a>
+            <a href="/services/game-builder" class="nav-services-link" role="menuitem">יצירת משחק</a>
+          </div>
+        </div>
+        <a href="/#about" class="nav-pill">מי אנחנו</a>
+        <a href="/#contact" class="nav-pill">צור קשר</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="/" class="nav-auth-btn">← דף הבית</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="/">בית</a>
+    <div class="mobile-nav-services">
+      <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel">שירותים</button>
+      <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
+        <a href="/services/ready-lessons" role="menuitem">שיעורים</a>
+        <a href="/services/worksheets" role="menuitem">דפי עבודה</a>
+        <a href="/services/game-builder" role="menuitem">יצירת משחק</a>
+      </div>
+    </div>
+    <a href="/#about">מי אנחנו</a>
+    <a href="/#contact">צור קשר</a>
+  </nav>
+
+  <main>
+    <section class="clean-section clean-section--hero scroll-section" id="home">
+      <div class="container clean-hero-inner">
+        <span class="svc-hero-badge">ספריית שיעורים</span>
+        <h1 class="hero-title font-cartoon">
+          <span class="line">שיעורי אנגלית</span>
+          <span class="line accent">מוכנים לכיתה!</span>
+        </h1>
+        <div class="clean-hero-actions">
+          <a href="#library" class="btn btn-primary btn-candy font-cartoon">גלו את הספרייה</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--about scroll-section" id="about">
+      <div class="clean-section-shapes clean-section-shapes--white" aria-hidden="true">
+        <span class="clean-memphis-sticker clean-memphis-sticker--teal clean-memphis-pos--g1"></span>
+        <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--g2"></span>
+        <span class="clean-memphis-sticker clean-memphis-sticker--pink clean-memphis-pos--g3"></span>
+      </div>
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">ספרייה שלמה בכף היד</h2>
+        <p class="svc-section-lead">שיעורי אנגלית מוכנים עם מערך ברור — כל שיעור בנוי כמו מצגת, כך שאפשר להציג אותו על הלוח בקליק אחד.</p>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--soft scroll-section" id="library">
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">שיעורים מוכנים</h2>
+        <p class="svc-section-lead">בחרו שיעור, הציגו על הלוח, והתחילו ללמד.</p>
+        <div class="svc-lesson-grid">
+          <article class="svc-lesson-card">
+            <div class="svc-lesson-preview svc-lesson-preview--teal font-cartoon">🦁 Animals</div>
+            <div class="svc-lesson-body">
+              <h3 class="font-cartoon">Animals in English</h3>
+              <ul class="svc-lesson-meta"><li>כיתות א–ג</li><li>45 דק׳</li><li>מילים + משחק</li></ul>
+              <p>חימום, אוצר מילים, פעילות וסיכום — מוכן כמו מצגת.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-preview" data-lesson="animals" data-lesson-name="Animals in English">הצג על הלוח</button>
+            </div>
+          </article>
+          <article class="svc-lesson-card">
+            <div class="svc-lesson-preview svc-lesson-preview--yellow font-cartoon">🎨 Colors</div>
+            <div class="svc-lesson-body">
+              <h3 class="font-cartoon">Colors &amp; Shapes</h3>
+              <ul class="svc-lesson-meta"><li>כיתות א–ד</li><li>40 דק׳</li><li>צבעים וצורות</li></ul>
+              <p>שקופיות מסודרות, דוגמאות ויזואליות ותרגול מובנה.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-preview" data-lesson="colors" data-lesson-name="Colors &amp; Shapes">הצג על הלוח</button>
+            </div>
+          </article>
+          <article class="svc-lesson-card">
+            <div class="svc-lesson-preview svc-lesson-preview--pink font-cartoon">👨‍👩‍👧 Family</div>
+            <div class="svc-lesson-body">
+              <h3 class="font-cartoon">My Family</h3>
+              <ul class="svc-lesson-meta"><li>כיתות ב–ד</li><li>45 דק׳</li><li>דף עבודה</li></ul>
+              <p>מערך שיעור קל לעיון — מושלם להצגה בכיתה.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-preview" data-lesson="family" data-lesson-name="My Family">הצג על הלוח</button>
+            </div>
+          </article>
+          <article class="svc-lesson-card">
+            <div class="svc-lesson-preview svc-lesson-preview--orange font-cartoon">🍎 Food</div>
+            <div class="svc-lesson-body">
+              <h3 class="font-cartoon">Food &amp; Drinks</h3>
+              <ul class="svc-lesson-meta"><li>כיתות ג–ה</li><li>45 דק׳</li><li>משחק סיום</li></ul>
+              <p>מילים, תרגול ומשחק — הכל באותו מערך פשוט.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-preview" data-lesson="food" data-lesson-name="Food &amp; Drinks">הצג על הלוח</button>
+            </div>
+          </article>
+        </div>
+        <div class="clean-center-cta" style="margin-top:28px">
+          <a href="/lesson-plans" class="btn btn-primary btn-candy font-cartoon">צרו מערך שיעור משלכם</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--white scroll-section" id="how">
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">איך זה עובד?</h2>
+        <div class="how-timeline">
+          <article class="how-timeline-step">
+            <div class="how-timeline-marker"><span>1</span></div>
+            <div class="how-timeline-body"><h3>בוחרים שיעור מהספרייה</h3></div>
+          </article>
+          <article class="how-timeline-step">
+            <div class="how-timeline-marker"><span>2</span></div>
+            <div class="how-timeline-body"><h3>פותחים הצגה על הלוח</h3></div>
+          </article>
+          <article class="how-timeline-step">
+            <div class="how-timeline-marker how-timeline-marker--final"><span>3</span></div>
+            <div class="how-timeline-body"><h3>מלמדים — פשוט וברור</h3></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer section-yellow">
+      <div class="container footer-inner">
+        <p class="footer-tagline font-cartoon"><span>לימוד במשחקים — </span><span class="footer-tagline-accent">בכל שיעור!</span></p>
+        <nav class="site-legal-nav" aria-label="מידע משפטי">
+          <a href="/legal/terms.html">תקנון</a>
+          <a href="/legal/privacy.html">פרטיות</a>
+          <a href="/legal/cookies.html">עוגיות</a>
+          <a href="/legal/accessibility.html">נגישות</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+
+  <div class="modal-overlay hidden svc-preview-modal" id="lessonPreviewModal" aria-hidden="true">
+    <div class="modal modal-lg" role="dialog" aria-labelledby="lessonPreviewTitle" aria-modal="true">
+      <button class="modal-close" id="lessonPreviewClose" type="button" aria-label="סגירה">×</button>
+      <h2 class="font-cartoon" id="lessonPreviewTitle">תצוגת שיעור</h2>
+      <div class="svc-slide-view">
+        <h3 class="font-cartoon" id="lessonSlideTitle"></h3>
+        <p id="lessonSlideBody"></p>
+      </div>
+      <div class="svc-slide-dots" id="lessonSlideDots"></div>
+      <div class="svc-slide-nav">
+        <button type="button" class="btn btn-outline btn-candy" id="lessonSlidePrev">→ הקודם</button>
+        <button type="button" class="btn btn-primary btn-candy" id="lessonSlideNext">הבא ←</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/ambient-bg.js"></script>
+  <script src="/js/service-landing.js"></script>
+</body>
+</html>

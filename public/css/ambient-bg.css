@@ -1,0 +1,124 @@
+/* Ambient background — turquoise particles + layered side waves */
+
+:root {
+  --ambient-site-bg: #62ebe0;
+}
+
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  background: transparent;
+}
+
+body.clean-site {
+  isolation: isolate;
+}
+
+body.clean-site > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader) {
+  position: relative;
+  z-index: 1;
+}
+
+body.clean-site > .scroll-progress,
+body.clean-site > .loader,
+body.clean-site > main,
+body.clean-site > footer,
+body.clean-site > .site-footer,
+body.clean-site > .auth-modal-overlay {
+  position: relative;
+  z-index: 1;
+}
+
+body.clean-site > .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+}
+
+body.clean-site > .mobile-nav {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+}
+
+/* Layered side waves — full height */
+.ambient-bg__side {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(72px, 11vw, 148px);
+  overflow: hidden;
+}
+
+.ambient-bg__side--left {
+  left: 0;
+}
+
+.ambient-bg__side--right {
+  right: 0;
+}
+
+.ambient-bg__side svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ambient-bg__side--right svg {
+  transform: scaleX(-1);
+}
+
+/* Falling turquoise dots */
+.ambient-bg__particles {
+  position: absolute;
+  inset: 0;
+}
+
+.ambient-bg__dot {
+  position: absolute;
+  top: -8vh;
+  width: var(--dot-size, 4px);
+  height: var(--dot-size, 4px);
+  border-radius: 50%;
+  background: var(--dot-color, rgba(0, 110, 100, 0.78));
+  opacity: 0;
+  box-shadow: 0 0 calc(var(--dot-size, 4px) * 1.8) var(--dot-glow, rgba(0, 95, 86, 0.3));
+  animation: ambient-fall linear infinite;
+}
+
+@keyframes ambient-fall {
+  0% {
+    transform: translate3d(0, -8vh, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--dot-opacity, 0.35);
+  }
+  92% {
+    opacity: var(--dot-opacity, 0.35);
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), 112vh, 0);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .ambient-bg__side {
+    width: clamp(48px, 14vw, 72px);
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-bg__dot {
+    animation: none;
+    top: auto;
+    opacity: var(--dot-opacity, 0.28);
+  }
+}

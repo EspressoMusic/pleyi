@@ -7,7 +7,7 @@
   <title>Pleyi — לימוד דרך משחקים</title>
   <meta name="description" content="משחקי למידה למורים — פתחו חדר כיתה, התלמידים מצטרפים מהטלפון, ושחקו יחד בזמן אמת."/>
   <link rel="stylesheet" href="styles.css"/>
-  <link rel="stylesheet" href="css/clean-site.css?v=30"/>
+  <link rel="stylesheet" href="css/clean-site.css?v=42"/>
   <link rel="stylesheet" href="css/legal.css"/>
   <link rel="stylesheet" href="css/accessibility.css" />
 </head>
@@ -23,6 +23,14 @@
     <div class="container nav-inner">
       <nav class="nav-links" id="navLinks">
         <a href="#home" class="nav-pill active" data-i18n="nav.home">בית</a>
+        <div class="nav-services">
+          <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false" data-i18n="nav.services">שירותים</button>
+          <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
+            <a href="/services/ready-lessons" class="nav-services-link" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+            <a href="/services/worksheets" class="nav-services-link" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+            <a href="/services/game-builder" class="nav-services-link" role="menuitem" data-i18n="services.gameBuilder">יצירת משחק</a>
+          </div>
+        </div>
         <a href="#about" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
         <a href="#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
       </nav>
@@ -46,6 +54,14 @@
 
   <nav class="mobile-nav" id="mobileNav">
     <a href="#home" data-i18n="nav.home">בית</a>
+    <div class="mobile-nav-services">
+      <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel" data-i18n="nav.services">שירותים</button>
+      <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
+        <a href="/services/ready-lessons" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+        <a href="/services/worksheets" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+        <a href="/services/game-builder" role="menuitem" data-i18n="services.gameBuilder">יצירת משחק</a>
+      </div>
+    </div>
     <a href="#about" data-i18n="nav.about">מי אנחנו</a>
     <a href="#contact" data-i18n="nav.contact">צור קשר</a>
     <button type="button" class="mobile-nav-auth" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
@@ -76,7 +92,7 @@
       </div>
       <div class="container about-wrap">
         <h2 class="clean-section-title font-cartoon" data-i18n="about.title">מי אנחנו</h2>
-        <p class="about-lead" data-i18n="about.lead">הופכים תוכן שיעור למשחק תוך שניות — כדי שתוכלו להתמקד בהוראה, ולא לוותר על שיעור חוויתי.</p>
+        <p class="about-lead" data-i18n="about.lead">הופכים למידה לחוויה משחקית — עם כלים חכמים למורים, מעקב התקדמות בכיתה, ומשחקים משותפים להורים ולילדים בבית.</p>
         <div class="about-orbit-scene">
           <ul class="about-orbit-sr">
             <li data-i18n="about.c1.title">מהיר ופשוט</li>
@@ -123,13 +139,13 @@
           <article class="how-timeline-step">
             <div class="how-timeline-marker"><span>1</span></div>
             <div class="how-timeline-body">
-              <h3 data-i18n="how.step1">המורה פותח חדר</h3>
+              <h3 data-i18n="how.step1">מעלים קובץ או תוכן לימודי</h3>
             </div>
           </article>
           <article class="how-timeline-step">
             <div class="how-timeline-marker"><span>2</span></div>
             <div class="how-timeline-body">
-              <h3 data-i18n="how.step2">תלמידים מצטרפים מהטלפון</h3>
+              <h3 data-i18n="how.step2">המערכת בונה משחק</h3>
             </div>
           </article>
           <article class="how-timeline-step">
@@ -140,12 +156,12 @@
               </span>
             </div>
             <div class="how-timeline-body">
-              <h3 data-i18n="how.step3">משחקים יחד בזמן אמת</h3>
+              <h3 data-i18n="how.step3">המורה מציג את המשחק בשיעור</h3>
             </div>
           </article>
         </div>
         <div class="clean-center-cta">
-          <button type="button" class="btn btn-primary btn-candy font-cartoon how-classroom-btn" id="howClassroomBtn" data-i18n="how.cta">פתח חדר כיתה עכשיו</button>
+          <button type="button" class="btn btn-primary btn-candy font-cartoon how-classroom-btn" id="howClassroomBtn" data-i18n="how.cta">צור משחק עכשיו</button>
         </div>
       </div>
     </section>
@@ -379,10 +395,9 @@
   </div>
 
   <div class="modal-overlay hidden" id="soloContentModal" aria-hidden="true">
-    <div class="modal modal-lg" role="dialog" aria-labelledby="soloContentTitle" aria-modal="true">
+    <div class="modal modal-lg" role="dialog" aria-labelledby="soloContentLead" aria-modal="true">
       <button class="modal-close" id="soloContentClose" type="button" data-i18n-aria="modal.close" aria-label="סגירה">×</button>
-      <h2 class="font-cartoon" id="soloContentTitle" data-i18n="solo.title">הכנת שיעור</h2>
-      <p class="modal-desc solo-content-lead" data-i18n="solo.lead">הדביקו תוכן לימודי — ניצור ממנו משחק לתרגול יחיד</p>
+      <p class="solo-content-lead font-cartoon" id="soloContentLead" data-i18n="solo.lead">הדביקו תוכן לימודי המערכת תיצור משחק</p>
       <div class="join-material-box" id="soloMaterialBox">
         <textarea id="soloMaterialInput" rows="8" data-i18n-placeholder="modal.materialPh" placeholder="הדביקו כאן את תוכן השיעור…&#10;&#10;apple — תפוח&#10;book — ספר"></textarea>
         <input type="file" id="soloMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
@@ -393,6 +408,13 @@
         </button>
         <span class="join-material-file-name" id="soloMaterialFileName"></span>
       </div>
+      <label class="solo-game-pick" for="soloGamePick">
+        <span>סוג משחק</span>
+        <select id="soloGamePick">
+          <option value="auto">בחירה אוטומטית (מומלץ)</option>
+        </select>
+      </label>
+      <div class="create-game-preview hidden" id="soloPreview" aria-live="polite"></div>
       <p class="form-error hidden" id="soloContentError"></p>
       <button type="button" class="btn btn-primary btn-candy btn-full font-cartoon join-modal-submit" id="soloLaunchBtn" data-i18n="solo.launch">התחל משחק</button>
     </div>
@@ -409,12 +431,16 @@
   <script src="/js/parse-content.js"></script>
   <script src="/js/games-catalog.js"></script>
   <script src="/js/file-extract.js"></script>
+  <script src="/js/user-data.js"></script>
+  <script src="/js/ai-lesson.js"></script>
+  <script src="/js/create-game-flow.js"></script>
   <script src="js/games.js"></script>
   <script src="js/booking.js"></script>
   <script src="js/teacher-dashboard.js"></script>
+  <script src="/js/ambient-bg.js"></script>
   <script src="js/scroll-animations.js"></script>
   <script src="/js/i18n.js"></script>
-  <script src="/js/app.js?v=6"></script>
+  <script src="/js/app.js?v=8"></script>
   <script src="js/cookie-consent.js"></script>
 </body>
 </html>

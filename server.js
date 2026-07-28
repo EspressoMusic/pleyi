@@ -26,6 +26,14 @@ const materialUpload = multer({
 });
 
 app.use(express.json());
+
+const servicePages = ["ready-lessons", "worksheets", "family", "game-builder"];
+servicePages.forEach((slug) => {
+  app.get(`/services/${slug}`, (_req, res) => {
+    res.sendFile(path.join(__dirname, "public", "services", `${slug}.html`));
+  });
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/join", (_req, res) => {

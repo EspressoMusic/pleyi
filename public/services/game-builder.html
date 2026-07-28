@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>מערכת יצירת משחק — Pleyi</title>
+  <meta name="description" content="מעלים תוכן לימודי — המערכת יוצרת משחק. פשוט, מהיר, מוכן לכיתה."/>
+  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=42"/>
+  <link rel="stylesheet" href="/css/service-landing.css"/>
+  <link rel="stylesheet" href="/css/legal.css"/>
+  <link rel="stylesheet" href="/css/accessibility.css" />
+</head>
+<body class="clean-site service-panel">
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <div class="loader" id="loader"><div class="loader-bar"></div></div>
+
+  <header class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-pill">בית</a>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="nav-auth-btn" id="authLoginBtn">התחברות</button>
+        <div class="nav-user hidden" id="authUserMenu">
+          <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
+            <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            <span class="nav-user-initial hidden" id="authUserInitial" aria-hidden="true"></span>
+          </button>
+          <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
+            <p class="nav-user-name" id="authUserName"></p>
+            <a href="/my-room" class="nav-user-link" role="menuitem">החדר שלי</a>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
+          </div>
+        </div>
+        <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="/">בית</a>
+    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
+  </nav>
+
+  <main>
+    <section class="clean-section clean-section--hero scroll-section">
+      <div class="container clean-hero-inner">
+        <h1 class="hero-title font-cartoon">
+          <span class="line">מעלים תוכן</span>
+          <span class="line accent">מקבלים משחק!</span>
+        </h1>
+        <div class="clean-hero-actions">
+          <a href="#create" class="btn btn-primary btn-candy font-cartoon">צור משחק עכשיו</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--soft scroll-section" id="create">
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">צרו משחק עכשיו</h2>
+        <p class="svc-section-lead">הדביקו תוכן לימודי — המערכת תיצור משחק</p>
+        <div class="svc-create-box">
+          <form id="svcCreateForm">
+            <div class="join-material-box" id="svcMaterialBox">
+              <textarea id="svcMaterialInput" rows="8" placeholder="הדביקו כאן את תוכן השיעור…&#10;&#10;apple — תפוח&#10;book — ספר"></textarea>
+              <input type="file" id="svcMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
+              <button type="button" class="join-material-attach" id="svcMaterialFileBtn" aria-label="העלאת קובץ">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <span class="join-material-file-name" id="svcMaterialFileName"></span>
+            </div>
+            <label class="solo-game-pick" for="svcGamePick">
+              <span>סוג משחק</span>
+              <select id="svcGamePick">
+                <option value="auto">בחירה אוטומטית (מומלץ)</option>
+              </select>
+            </label>
+            <div class="create-game-preview hidden" id="svcPreview" aria-live="polite"></div>
+            <p class="form-error hidden" id="svcCreateError"></p>
+            <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon" id="svcCreateBtn">התחל משחק</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer section-yellow">
+      <div class="container footer-inner">
+        <p class="footer-tagline font-cartoon"><span>לימוד במשחקים — </span><span class="footer-tagline-accent">בכל שיעור!</span></p>
+        <nav class="site-legal-nav" aria-label="מידע משפטי">
+          <a href="/legal/terms.html">תקנון</a>
+          <a href="/legal/privacy.html">פרטיות</a>
+          <a href="/legal/cookies.html">עוגיות</a>
+          <a href="/legal/accessibility.html">נגישות</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal modal-login">
+      <button class="modal-close" id="loginClose" type="button">×</button>
+      <h2>התחברות</h2>
+      <button type="button" id="googleSignInBtn" class="btn btn-google btn-full">
+        <span class="btn-google-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+        </span>
+        התחברות עם Google
+      </button>
+      <p class="form-error hidden" id="loginError"></p>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/js/parse-content.js"></script>
+  <script src="/js/games-catalog.js"></script>
+  <script src="/js/file-extract.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/user-data.js"></script>
+  <script src="/js/ai-lesson.js"></script>
+  <script src="/js/create-game-flow.js"></script>
+  <script src="/js/ambient-bg.js"></script>
+  <script src="/js/service-landing.js"></script>
+</body>
+</html>

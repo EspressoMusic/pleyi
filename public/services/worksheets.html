@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>דפי עבודה ויצירה — Pleyi</title>
+  <meta name="description" content="משחקים, דפי צביעה ודפי עבודה — קטגוריות מסודרות לכיתה ולבית."/>
+  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=42"/>
+  <link rel="stylesheet" href="/css/service-landing.css"/>
+  <link rel="stylesheet" href="/css/legal.css"/>
+  <link rel="stylesheet" href="/css/accessibility.css" />
+</head>
+<body class="clean-site service-panel">
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <div class="loader" id="loader"><div class="loader-bar"></div></div>
+
+  <header class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-pill">בית</a>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="nav-auth-btn" id="authLoginBtn">התחברות</button>
+        <div class="nav-user hidden" id="authUserMenu">
+          <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
+            <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            <span class="nav-user-initial hidden" id="authUserInitial" aria-hidden="true"></span>
+          </button>
+          <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
+            <p class="nav-user-name" id="authUserName"></p>
+            <a href="/my-room" class="nav-user-link" role="menuitem">החדר שלי</a>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
+          </div>
+        </div>
+        <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="/">בית</a>
+    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
+  </nav>
+
+  <main>
+    <section class="clean-section clean-section--hero scroll-section">
+      <div class="container clean-hero-inner">
+        <span class="svc-hero-badge">יצירה ותרגול</span>
+        <h1 class="hero-title font-cartoon">
+          <span class="line">דפי עבודה</span>
+          <span class="line accent">צביעה ומשחקים!</span>
+        </h1>
+        <div class="clean-hero-actions">
+          <a href="#categories" class="btn btn-primary btn-candy font-cartoon">גלו קטגוריות</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--about scroll-section">
+      <div class="clean-section-shapes clean-section-shapes--white" aria-hidden="true">
+        <span class="clean-memphis-sticker clean-memphis-sticker--orange clean-memphis-pos--g1"></span>
+        <span class="clean-memphis-sticker clean-memphis-sticker--teal clean-memphis-pos--g2"></span>
+      </div>
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">הכל במקום אחד</h2>
+        <p class="svc-section-lead">משחקים, דפי צביעה ודפי עבודה — מסודרים בקטגוריות, מוכנים להדפסה או לשימוש בכיתה ובבית.</p>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--soft scroll-section" id="categories">
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">קטגוריות</h2>
+        <div class="svc-categories" role="tablist">
+          <button type="button" class="svc-category-btn active" data-category="games" role="tab">🎮 משחקים</button>
+          <button type="button" class="svc-category-btn" data-category="coloring" role="tab">🖍️ דפי צביעה</button>
+          <button type="button" class="svc-category-btn" data-category="worksheets" role="tab">📝 דפי עבודה</button>
+        </div>
+
+        <div class="svc-panel" data-category="games">
+          <div class="svc-grid">
+            <article class="svc-card sticker-teal">
+              <span class="svc-card-icon">🧠</span>
+              <h3 class="font-cartoon">זיכרון מילים</h3>
+              <p>התאמת מילים באנגלית לתרגום — משחק מהיר לכיתה.</p>
+              <a href="/room" class="btn btn-primary btn-candy font-cartoon">שחקו</a>
+            </article>
+            <article class="svc-card sticker-yellow">
+              <span class="svc-card-icon">🎯</span>
+              <h3 class="font-cartoon">איש תלוי</h3>
+              <p>נחשו את המילה — חימום מושלם לתחילת שיעור.</p>
+              <a href="/room" class="btn btn-primary btn-candy font-cartoon">שחקו</a>
+            </article>
+            <article class="svc-card sticker-pink">
+              <span class="svc-card-icon">⚔️</span>
+              <h3 class="font-cartoon">טריוויה</h3>
+              <p>תחרות קבוצתית — מי יודע יותר מילים?</p>
+              <a href="/room" class="btn btn-primary btn-candy font-cartoon">שחקו</a>
+            </article>
+            <article class="svc-card sticker-orange">
+              <span class="svc-card-icon">🔍</span>
+              <h3 class="font-cartoon">מצא את ההבדל</h3>
+              <p>משחק תצפית — מפתח קשב ואוצר מילים.</p>
+              <a href="/room" class="btn btn-primary btn-candy font-cartoon">שחקו</a>
+            </article>
+          </div>
+        </div>
+
+        <div class="svc-panel hidden" data-category="coloring">
+          <div class="svc-grid">
+            <article class="svc-card">
+              <span class="svc-card-icon">🦁</span>
+              <h3 class="font-cartoon">חיות באנגלית</h3>
+              <p>דף צביעה עם שמות חיות — cat, dog, bird.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>בקרוב</button>
+            </article>
+            <article class="svc-card">
+              <span class="svc-card-icon">🌈</span>
+              <h3 class="font-cartoon">צבעים</h3>
+              <p>צביעה + כתיבת שם הצבע באנגלית.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>בקרוב</button>
+            </article>
+            <article class="svc-card">
+              <span class="svc-card-icon">🔤</span>
+              <h3 class="font-cartoon">אותיות A–Z</h3>
+              <p>דף לכל אות — צביעה ותרגול כתיבה.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>בקרוב</button>
+            </article>
+            <article class="svc-card">
+              <span class="svc-card-icon">🍎</span>
+              <h3 class="font-cartoon">פירות וירקות</h3>
+              <p>למידה דרך צביעה — apple, banana, carrot.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>בקרוב</button>
+            </article>
+          </div>
+        </div>
+
+        <div class="svc-panel hidden" data-category="worksheets">
+          <div class="svc-grid">
+            <article class="svc-card">
+              <span class="svc-card-icon">✏️</span>
+              <h3 class="font-cartoon">התאמת מילים</h3>
+              <p>חברו מילה באנגלית לתרגום בעברית.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>בקרוב</button>
+            </article>
+            <article class="svc-card">
+              <span class="svc-card-icon">📋</span>
+              <h3 class="font-cartoon">מילים חדשות</h3>
+              <p>רשימת מילים + משפטים לדוגמה.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>בקרוב</button>
+            </article>
+            <article class="svc-card">
+              <span class="svc-card-icon">🧩</span>
+              <h3 class="font-cartoon">השלמת משפטים</h3>
+              <p>תרגול Present Simple — דף להדפסה.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>בקרוב</button>
+            </article>
+            <article class="svc-card">
+              <span class="svc-card-icon">⭐</span>
+              <h3 class="font-cartoon">דף סיכום שיעור</h3>
+              <p>סיכום + שאלות חזרה — מוכן לשיעור הבא.</p>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>בקרוב</button>
+            </article>
+          </div>
+        </div>
+
+        <div class="clean-center-cta" style="margin-top:28px">
+          <a href="/services/game-builder" class="btn btn-primary btn-candy font-cartoon">צרו חומר משלכם</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--white scroll-section">
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">איך זה עובד?</h2>
+        <div class="how-timeline">
+          <article class="how-timeline-step">
+            <div class="how-timeline-marker"><span>1</span></div>
+            <div class="how-timeline-body"><h3>בוחרים קטגוריה</h3></div>
+          </article>
+          <article class="how-timeline-step">
+            <div class="how-timeline-marker"><span>2</span></div>
+            <div class="how-timeline-body"><h3>מורידים או משחקים</h3></div>
+          </article>
+          <article class="how-timeline-step">
+            <div class="how-timeline-marker how-timeline-marker--final"><span>3</span></div>
+            <div class="how-timeline-body"><h3>לומדים בכיתה או בבית</h3></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer section-yellow">
+      <div class="container footer-inner">
+        <p class="footer-tagline font-cartoon"><span>לימוד במשחקים — </span><span class="footer-tagline-accent">בכל שיעור!</span></p>
+        <nav class="site-legal-nav" aria-label="מידע משפטי">
+          <a href="/legal/terms.html">תקנון</a>
+          <a href="/legal/privacy.html">פרטיות</a>
+          <a href="/legal/cookies.html">עוגיות</a>
+          <a href="/legal/accessibility.html">נגישות</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal modal-login">
+      <button class="modal-close" id="loginClose" type="button">×</button>
+      <h2>התחברות</h2>
+      <button type="button" id="googleSignInBtn" class="btn btn-google btn-full">
+        <span class="btn-google-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+        </span>
+        התחברות עם Google
+      </button>
+      <p class="form-error hidden" id="loginError"></p>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/user-data.js"></script>
+  <script src="/js/ambient-bg.js"></script>
+  <script src="/js/service-landing.js"></script>
+</body>
+</html>

@@ -48,6 +48,8 @@
   }
 
   function updateActiveNavFromScroll() {
+    const servicesDropdown = document.getElementById("navServicesDropdown");
+    if (servicesDropdown && !servicesDropdown.classList.contains("hidden")) return;
     if (!sectionEls.length) return;
     const offset = (document.getElementById("navbar")?.offsetHeight || 80) + 32;
     const scrollPos = window.scrollY + offset;

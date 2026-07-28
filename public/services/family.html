@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>משחקים להורים והילדים — Pleyi</title>
+  <meta name="description" content="הורה יוצר משחק, משתף עם הילד — ולומדים יחד בבית בזמן איכות."/>
+  <link rel="stylesheet" href="/styles.css"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=42"/>
+  <link rel="stylesheet" href="/css/service-landing.css"/>
+  <link rel="stylesheet" href="/css/legal.css"/>
+  <link rel="stylesheet" href="/css/accessibility.css" />
+</head>
+<body class="clean-site">
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <div class="loader" id="loader"><div class="loader-bar"></div></div>
+
+  <header class="navbar scrolled" id="navbar">
+    <div class="container nav-inner">
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-pill">בית</a>
+        <div class="nav-services">
+          <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false">שירותים</button>
+          <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
+            <a href="/services/ready-lessons" class="nav-services-link" role="menuitem">שיעורים</a>
+            <a href="/services/worksheets" class="nav-services-link" role="menuitem">דפי עבודה</a>
+            <a href="/services/game-builder" class="nav-services-link" role="menuitem">יצירת משחק</a>
+          </div>
+        </div>
+        <a href="/#about" class="nav-pill">מי אנחנו</a>
+        <a href="/#contact" class="nav-pill">צור קשר</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="/" class="nav-auth-btn">← דף הבית</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="/">בית</a>
+    <div class="mobile-nav-services">
+      <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel">שירותים</button>
+      <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
+        <a href="/services/ready-lessons" role="menuitem">שיעורים</a>
+        <a href="/services/worksheets" role="menuitem">דפי עבודה</a>
+        <a href="/services/game-builder" role="menuitem">יצירת משחק</a>
+      </div>
+    </div>
+    <a href="/#about">מי אנחנו</a>
+    <a href="/#contact">צור קשר</a>
+  </nav>
+
+  <main>
+    <section class="clean-section clean-section--hero scroll-section">
+      <div class="container clean-hero-inner">
+        <span class="svc-hero-badge">זמן איכות בבית</span>
+        <h1 class="hero-title font-cartoon">
+          <span class="line">לומדים ביחד</span>
+          <span class="line accent">הורים וילדים!</span>
+        </h1>
+        <div class="clean-hero-actions">
+          <a href="/services/game-builder" class="btn btn-primary btn-candy font-cartoon">צרו משחק משפחתי</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--about scroll-section">
+      <div class="clean-section-shapes clean-section-shapes--white" aria-hidden="true">
+        <span class="clean-memphis-sticker clean-memphis-sticker--pink clean-memphis-pos--g1"></span>
+        <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--g2"></span>
+      </div>
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">משחקים שמחברים</h2>
+        <p class="svc-section-lead">ההורה יוצר משחק מהחומר של הילד, שולח קישור — ושניכם משחקים יחד. למידה, כיף וזמן איכות באותו מקום.</p>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--soft scroll-section" id="how">
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">איך זה עובד?</h2>
+        <div class="svc-family-steps">
+          <article class="svc-family-step sticker-teal">
+            <span class="svc-family-step-num">1</span>
+            <h3 class="font-cartoon">ההורה יוצר משחק</h3>
+            <p>מדביקים מילים מהשיעור או מהבית — המערכת בונה משחק.</p>
+          </article>
+          <article class="svc-family-step sticker-yellow">
+            <span class="svc-family-step-num">2</span>
+            <h3 class="font-cartoon">שולחים קישור לילד</h3>
+            <p>קישור או קוד — הילד נכנס מהטלפון או מהמחשב.</p>
+          </article>
+          <article class="svc-family-step sticker-pink">
+            <span class="svc-family-step-num">3</span>
+            <h3 class="font-cartoon">משחקים יחד</h3>
+            <p>שניים על אותו משחק — לומדים, צוחקים ומתקדמים.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="clean-section clean-section--white scroll-section">
+      <div class="container">
+        <h2 class="clean-section-title font-cartoon">למה זה מתאים למשפחה?</h2>
+        <ul class="about-services">
+          <li class="about-service-card sticker-teal">
+            <h3 class="font-cartoon">זמן איכות</h3>
+            <p>פעילות משותפת במקום מסך נפרד לכל אחד.</p>
+          </li>
+          <li class="about-service-card sticker-yellow">
+            <h3 class="font-cartoon">למידה בכיף</h3>
+            <p>הילד מתרגל בלי להרגיש שזה "שיעורי בית".</p>
+          </li>
+          <li class="about-service-card sticker-pink">
+            <h3 class="font-cartoon">פשוט להורים</h3>
+            <p>בלי להכין חומרים — רק להדביק ולשחק.</p>
+          </li>
+          <li class="about-service-card sticker-orange">
+            <h3 class="font-cartoon">מעקב התקדמות</h3>
+            <p>רואים מה הילד שולט בו ומה כדאי לחזור עליו.</p>
+          </li>
+        </ul>
+        <div class="clean-center-cta">
+          <a href="/services/game-builder" class="btn btn-primary btn-candy font-cartoon">התחילו לשחק יחד</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer section-yellow">
+      <div class="container footer-inner">
+        <p class="footer-tagline font-cartoon"><span>לימוד במשחקים — </span><span class="footer-tagline-accent">בכל שיעור!</span></p>
+        <nav class="site-legal-nav" aria-label="מידע משפטי">
+          <a href="/legal/terms.html">תקנון</a>
+          <a href="/legal/privacy.html">פרטיות</a>
+          <a href="/legal/cookies.html">עוגיות</a>
+          <a href="/legal/accessibility.html">נגישות</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+
+  <script src="/js/ambient-bg.js"></script>
+  <script src="/js/service-landing.js"></script>
+</body>
+</html>

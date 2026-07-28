@@ -635,7 +635,7 @@ button { font-family: inherit; }
   font-family: inherit;
   border: 4px solid var(--ink);
   border-radius: 999px;
-  background: var(--memyellow);
+  background: var(--white);
   color: var(--ink);
   cursor: pointer;
   box-shadow: var(--shadow-candy);
@@ -646,7 +646,7 @@ button { font-family: inherit; }
 
 #authLoginBtn,
 .mobile-nav-auth {
-  background: var(--memyellow);
+  background: var(--white);
 }
 
 .nav-auth-btn--primary { background: var(--memyellow); }
@@ -726,7 +726,7 @@ button { font-family: inherit; }
   text-decoration: none;
   border: 3px solid var(--ink);
   border-radius: 999px;
-  background: var(--memyellow);
+  background: var(--memteal);
   color: var(--ink);
   box-shadow: var(--shadow-sticker);
 }
@@ -743,13 +743,16 @@ button { font-family: inherit; }
   font-family: inherit;
   border: 3px solid var(--ink);
   border-radius: 999px;
-  background: var(--mempink);
+  background: #ff5757;
   color: var(--ink);
   cursor: pointer;
   box-shadow: var(--shadow-sticker);
 }
 
-.nav-user-logout:hover { transform: translateY(-1px); }
+.nav-user-logout:hover {
+  transform: translateY(-1px);
+  background: #ff3d3d;
+}
 
 .games-hub-cta {
   text-align: center;
@@ -903,7 +906,9 @@ button { font-family: inherit; }
 }
 
 .nav-pill,
-.nav-links a {
+.nav-links a,
+button.nav-pill,
+.nav-services-btn {
   font-size: 14px;
   font-weight: 800;
   padding: 8px 16px;
@@ -914,6 +919,23 @@ button { font-family: inherit; }
   box-shadow: var(--shadow-sticker);
   transition: transform 0.15s ease, background 0.15s ease;
   white-space: nowrap;
+}
+
+button.nav-pill,
+.nav-services-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.2;
+  box-sizing: border-box;
+  width: auto;
+  min-height: 0;
 }
 
 .nav-beta-tag {
@@ -941,23 +963,31 @@ button { font-family: inherit; }
 }
 
 .nav-pill:hover,
-.nav-links a:hover {
+.nav-links a:hover,
+button.nav-pill:hover,
+.nav-services-btn:hover {
   background: var(--memyellow);
   transform: scale(1.04);
 }
 
 .nav-pill.active,
-.nav-links a.active {
+.nav-links a.active,
+button.nav-pill.active,
+.nav-services-btn.active {
   background: var(--memyellow);
 }
 
 .navbar.scrolled .nav-pill,
-.navbar.scrolled .nav-links a {
+.navbar.scrolled .nav-links a,
+.navbar.scrolled button.nav-pill,
+.navbar.scrolled .nav-services-btn {
   background: var(--white);
 }
 
 .navbar.scrolled .nav-pill.active,
-.navbar.scrolled .nav-links a.active {
+.navbar.scrolled .nav-links a.active,
+.navbar.scrolled button.nav-pill.active,
+.navbar.scrolled .nav-services-btn.active {
   background: var(--memyellow);
 }
 
@@ -3329,13 +3359,72 @@ body.in-room .game-actions .btn {
   text-align: center;
 }
 
-.join-material-hint,
-.solo-content-lead {
+.join-material-hint {
   font-size: clamp(16px, 3.5vw, 19px);
   font-weight: 800;
   color: var(--ink);
   text-align: center;
   line-height: 1.45;
+}
+
+.solo-content-lead {
+  font-size: clamp(22px, 4.5vw, 32px);
+  font-weight: 800;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.35;
+  margin: 0 0 24px;
+}
+
+.solo-game-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.solo-game-pick span {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.solo-game-pick select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: inherit;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+}
+
+.create-game-preview {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #e8faf8;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.create-game-preview.hidden {
+  display: none;
+}
+
+.create-game-preview-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.create-game-preview-list li {
+  padding: 4px 0;
+  border-top: 1px dashed rgba(0, 0, 0, 0.12);
 }
 
 .join-material-box {

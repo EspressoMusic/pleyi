@@ -193,8 +193,85 @@ function closePlayModeModal() {
   modal.setAttribute("aria-hidden", "true");
 }
 
+function bindNavServices() {
+  const btn = $("#navServicesBtn");
+  const dropdown = $("#navServicesDropdown");
+  if (!btn || !dropdown) return;
+
+  const clearDesktopNavActive = () => {
+    $$(".nav-links a.active").forEach((a) => a.classList.remove("active"));
+  };
+
+  const restoreDesktopNavActive = () => {
+    window.dispatchEvent(new Event("scroll"));
+  };
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = dropdown.classList.toggle("hidden") === false;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) clearDesktopNavActive();
+    else restoreDesktopNavActive();
+  });
+
+  document.addEventListener("click", () => {
+    const wasOpen = !dropdown.classList.contains("hidden");
+    dropdown.classList.add("hidden");
+    btn.setAttribute("aria-expanded", "false");
+    if (wasOpen) restoreDesktopNavActive();
+  });
+
+  dropdown.addEventListener("click", (e) => e.stopPropagation());
+
+  dropdown.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      dropdown.classList.add("hidden");
+      btn.setAttribute("aria-expanded", "false");
+      $("#menuToggle")?.classList.remove("open");
+      $("#mobileNav")?.classList.remove("open");
+    });
+  });
+}
+
+function bindMobileNavServices() {
+  const btn = $("#mobileServicesBtn");
+  const panel = $("#mobileServicesPanel");
+  if (!btn || !panel) return;
+
+  const clearMobileNavActive = () => {
+    $$("#mobileNav a.active").forEach((a) => a.classList.remove("active"));
+  };
+
+  const restoreMobileNavActive = () => {
+    window.dispatchEvent(new Event("scroll"));
+  };
+
+  btn.addEventListener("click", () => {
+    const open = panel.classList.toggle("hidden") === false;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) clearMobileNavActive();
+    else restoreMobileNavActive();
+  });
+
+  panel.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      panel.classList.add("hidden");
+      btn.setAttribute("aria-expanded", "false");
+      $("#menuToggle")?.classList.remove("open");
+      $("#mobileNav")?.classList.remove("open");
+    });
+  });
+}
+
+function closeMobileNavServices() {
+  const wasOpen = !$("#mobileServicesPanel")?.classList.contains("hidden");
+  $("#mobileServicesPanel")?.classList.add("hidden");
+  $("#mobileServicesBtn")?.setAttribute("aria-expanded", "false");
+  if (wasOpen) window.dispatchEvent(new Event("scroll"));
+}
+
 function bindPlayModeModal() {
-  $("#heroPlayNowBtn")?.addEventListener("click", openPlayModeModal);
+  $("#heroPlayNowBtn")?.addEventListener("click", openSoloContentModal);
   $("#playModeClose")?.addEventListener("click", closePlayModeModal);
   $("#playModeModal")?.addEventListener("click", (e) => {
     if (e.target === $("#playModeModal")) closePlayModeModal();
@@ -240,6 +317,7 @@ async function loadMaterialFile(prefix, file) {
       fileInput.files = dt.files;
     }
     box?.classList.remove("is-dragover");
+    updateSoloPreview?.();
   } catch (e) {
     showToast(e.message || "לא ניתן לקרוא את הקובץ");
     resetMaterialFileUI(prefix);
@@ -271,27 +349,25 @@ function bindMaterialUpload(prefix) {
   });
 }
 
-function launchSoloFromMaterial(text) {
-  const { items } = parseMaterialText(text);
+function launchSoloFromMaterial(text, gamePick = "auto") {
+  const items = window.CreateGameFlow?.parseItems(text, "english") || parseMaterialText(text).items;
   if (items.length < 2) {
     return { ok: false, error: "הזינו לפחות 2 פריטים (מילה=תרגום או תרגיל=תשובה)" };
   }
-  const catalog = window.GAMES_CATALOG;
-  const subject = "english";
-  const gameId = catalog.pickGameForContent(items, subject);
-  sessionStorage.setItem(
-    "gameclass-custom",
-    JSON.stringify({
-      subject,
-      gameId,
-      vocab: items,
-      title: "שיעור מותאם",
-      savedGameId: null,
-    })
-  );
-  sessionStorage.setItem("gameclass-play-material", text.trim());
-  window.location.href = `/play/${gameId}`;
-  return { ok: true };
+  return window.CreateGameFlow.launchGame({
+    text,
+    items,
+    subject: "english",
+    gamePick,
+  });
+}
+
+function updateSoloPreview() {
+  const text = $("#soloMaterialInput")?.value || "";
+  const gamePick = $("#soloGamePick")?.value || "auto";
+  const items = window.CreateGameFlow?.parseItems(text, "english") || [];
+  const gameId = window.CreateGameFlow?.resolveGameId(items, gamePick, "english");
+  window.CreateGameFlow?.updatePreview($("#soloPreview"), items, gameId);
 }
 
 function openSoloContentModal() {
@@ -300,6 +376,8 @@ function openSoloContentModal() {
   $("#soloMaterialInput").value = "";
   resetMaterialFileUI("solo");
   $("#soloContentError")?.classList.add("hidden");
+  window.CreateGameFlow?.populateGamePick($("#soloGamePick"), "english");
+  updateSoloPreview();
   modal.classList.remove("hidden");
   modal.setAttribute("aria-hidden", "false");
   setTimeout(() => $("#soloMaterialInput")?.focus(), 100);
@@ -315,21 +393,57 @@ function closeSoloContentModal() {
 function bindSoloContentModal() {
   bindMaterialUpload("solo");
   bindMaterialUpload("join");
+  window.CreateGameFlow?.populateGamePick($("#soloGamePick"), "english");
+  $("#soloMaterialInput")?.addEventListener("input", updateSoloPreview);
+  $("#soloGamePick")?.addEventListener("change", updateSoloPreview);
   $("#soloContentClose")?.addEventListener("click", closeSoloContentModal);
   $("#soloContentModal")?.addEventListener("click", (e) => {
     if (e.target === $("#soloContentModal")) closeSoloContentModal();
   });
-  $("#soloLaunchBtn")?.addEventListener("click", () => {
+  $("#soloLaunchBtn")?.addEventListener("click", async () => {
     const err = $("#soloContentError");
-    const text = $("#soloMaterialInput")?.value || "";
+    const btn = $("#soloLaunchBtn");
+    const gamePick = $("#soloGamePick")?.value || "auto";
+    let text = $("#soloMaterialInput")?.value || "";
     err?.classList.add("hidden");
-    const result = launchSoloFromMaterial(text);
-    if (!result.ok) {
-      if (err) {
-        err.textContent = result.error;
-        err.classList.remove("hidden");
-      } else {
-        showToast(result.error);
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "מעבד…";
+    }
+
+    try {
+      const ready = await window.CreateGameFlow.ensureContent(text, "english");
+      if (!ready.ok) {
+        if (ready.needsLogin) {
+          GameAuth?.openLoginModal(window.location.pathname + window.location.search);
+        }
+        if (err) {
+          err.textContent = ready.error;
+          err.classList.remove("hidden");
+        } else {
+          showToast(ready.error);
+        }
+        return;
+      }
+
+      text = ready.text;
+      if (ready.text !== $("#soloMaterialInput")?.value) {
+        $("#soloMaterialInput").value = ready.text;
+        updateSoloPreview();
+      }
+
+      window.CreateGameFlow.launchGame({
+        text,
+        items: ready.items,
+        subject: "english",
+        gamePick,
+        aiGameId: ready.aiGameId,
+      });
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "התחל משחק";
       }
     }
   });
@@ -589,6 +703,29 @@ window.addEventListener("load", () => {
 });
 
 /* Nav scroll */
+function syncNavClearance() {
+  const nav = document.getElementById("navbar");
+  if (!nav || !document.body.classList.contains("clean-site")) return;
+  const topInset = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("padding-top")) || 0;
+  const safeTop = Number.isFinite(topInset) ? topInset : 0;
+  document.body.style.setProperty("--clean-nav-clear", `${nav.offsetHeight + safeTop}px`);
+}
+
+syncNavClearance();
+requestAnimationFrame(syncNavClearance);
+window.addEventListener("resize", syncNavClearance, { passive: true });
+window.addEventListener("load", syncNavClearance);
+
+document.querySelectorAll('a[href="#home"]').forEach((link) => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.querySelectorAll(".nav-links a, .mobile-nav a").forEach((a) => {
+      a.classList.toggle("active", a.getAttribute("href") === "#home");
+    });
+  });
+});
+
 window.addEventListener(
   "scroll",
   () => {
@@ -605,11 +742,13 @@ window.addEventListener(
 $("#menuToggle")?.addEventListener("click", () => {
   $("#menuToggle").classList.toggle("open");
   $("#mobileNav").classList.toggle("open");
+  if (!$("#mobileNav")?.classList.contains("open")) closeMobileNavServices();
 });
 $$("#mobileNav a").forEach((a) =>
   a.addEventListener("click", () => {
     $("#menuToggle")?.classList.remove("open");
     $("#mobileNav")?.classList.remove("open");
+    closeMobileNavServices();
   })
 );
 
@@ -626,6 +765,10 @@ function bindOpenRoomFlow() {
     if (!btn || btn.dataset.roomBound) return;
     btn.dataset.roomBound = "1";
     btn.addEventListener("click", () => {
+      if (id === "howClassroomBtn") {
+        openSoloContentModal();
+        return;
+      }
       roomLog("clicked open room (open modal)");
       openModal("teacher");
       if (id === "mobileClassroomBtn") {
@@ -759,6 +902,8 @@ bindOpenRoomFlow();
   }
 })();
 bindPlayModeModal();
+bindNavServices();
+bindMobileNavServices();
 bindSoloContentModal();
 
 GameAuth?.bindModals(showToast);
