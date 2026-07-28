@@ -209,9 +209,27 @@
     };
   }
 
+  // A real word=translation / exercise=answer list is made almost entirely of
+  // pair lines. A pasted article or an uploaded worksheet is mostly prose,
+  // instructions, and questions — a couple of lines may accidentally parse as
+  // a "pair" (e.g. "שאלה 1: What is your name?"), but that's noise, not
+  // content. Require most lines to be real pairs before treating the text as
+  // ready to use as-is, otherwise it should go through the AI.
+  function looksLikeReadyPairs(text, subject = "english") {
+    const lines = String(text || "")
+      .split(/\n/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+    if (lines.length < 2) return false;
+    const items = parseLearningContent(text, subject);
+    if (items.length < 2) return false;
+    return items.length / lines.length >= 0.6;
+  }
+
   window.LEARNING_PARSE = {
     parseLearningContent,
     formatLearningContent,
     normalizeLearningContent,
+    looksLikeReadyPairs,
   };
 })();

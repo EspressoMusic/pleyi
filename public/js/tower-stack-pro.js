@@ -193,7 +193,7 @@ window.TowerStackPro = {
       document.getElementById("tsProTimer").classList.add("hidden");
       document.getElementById("tsProWordBar").classList.add("hidden");
       GE.sfxWhoosh();
-      falling = makeBlock("en", currentWord.en, currentWord.emoji, EN_COLOR);
+      falling = makeBlock("en", currentWord.en, "", EN_COLOR);
       trails = [];
     };
 

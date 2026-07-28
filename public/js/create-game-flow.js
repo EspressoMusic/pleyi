@@ -50,7 +50,10 @@
     }
 
     let items = parseItems(trimmed, subject);
-    if (items.length >= 2) {
+    const ready = window.LEARNING_PARSE?.looksLikeReadyPairs
+      ? window.LEARNING_PARSE.looksLikeReadyPairs(trimmed, subject)
+      : items.length >= 2;
+    if (ready) {
       return { ok: true, text: trimmed, items };
     }
 
@@ -64,11 +67,15 @@
     }
 
     if (!window.GameAuth?.getUser()) {
-      return {
-        ok: false,
-        error: "לניתוח קובץ חופשי נדרשת התחברות — ה-AI יחלץ מושגים מהחומר.",
-        needsLogin: true,
-      };
+      if (window.GameAuth?.isDevHost?.()) {
+        window.GameAuth.signInDevPreview();
+      } else {
+        return {
+          ok: false,
+          error: "לניתוח קובץ חופשי נדרשת התחברות — ה-AI יחלץ מושגים מהחומר.",
+          needsLogin: true,
+        };
+      }
     }
 
     try {

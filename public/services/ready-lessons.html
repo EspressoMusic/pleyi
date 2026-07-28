@@ -7,7 +7,7 @@
   <title>שיעורים מוכנים — Pleyi</title>
   <meta name="description" content="ספריית שיעורי אנגלית מוכנים עם מערך שיעור פשוט — מוכן להצגה על הלוח כמו מצגת."/>
   <link rel="stylesheet" href="/styles.css"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=42"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=45"/>
   <link rel="stylesheet" href="/css/service-landing.css"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
@@ -33,7 +33,6 @@
         <a href="/#contact" class="nav-pill">צור קשר</a>
       </nav>
       <div class="nav-actions">
-        <a href="/" class="nav-auth-btn">← דף הבית</a>
         <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
       </div>
     </div>
@@ -56,7 +55,6 @@
   <main>
     <section class="clean-section clean-section--hero scroll-section" id="home">
       <div class="container clean-hero-inner">
-        <span class="svc-hero-badge">ספריית שיעורים</span>
         <h1 class="hero-title font-cartoon">
           <span class="line">שיעורי אנגלית</span>
           <span class="line accent">מוכנים לכיתה!</span>
@@ -64,18 +62,6 @@
         <div class="clean-hero-actions">
           <a href="#library" class="btn btn-primary btn-candy font-cartoon">גלו את הספרייה</a>
         </div>
-      </div>
-    </section>
-
-    <section class="clean-section clean-section--about scroll-section" id="about">
-      <div class="clean-section-shapes clean-section-shapes--white" aria-hidden="true">
-        <span class="clean-memphis-sticker clean-memphis-sticker--teal clean-memphis-pos--g1"></span>
-        <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--g2"></span>
-        <span class="clean-memphis-sticker clean-memphis-sticker--pink clean-memphis-pos--g3"></span>
-      </div>
-      <div class="container">
-        <h2 class="clean-section-title font-cartoon">ספרייה שלמה בכף היד</h2>
-        <p class="svc-section-lead">שיעורי אנגלית מוכנים עם מערך ברור — כל שיעור בנוי כמו מצגת, כך שאפשר להציג אותו על הלוח בקליק אחד.</p>
       </div>
     </section>
 
@@ -121,53 +107,52 @@
             </div>
           </article>
         </div>
-        <div class="clean-center-cta" style="margin-top:28px">
-          <a href="/lesson-plans" class="btn btn-primary btn-candy font-cartoon">צרו מערך שיעור משלכם</a>
-        </div>
       </div>
     </section>
 
-    <section class="clean-section clean-section--white scroll-section" id="how">
-      <div class="container">
-        <h2 class="clean-section-title font-cartoon">איך זה עובד?</h2>
-        <div class="how-timeline">
-          <article class="how-timeline-step">
-            <div class="how-timeline-marker"><span>1</span></div>
-            <div class="how-timeline-body"><h3>בוחרים שיעור מהספרייה</h3></div>
-          </article>
-          <article class="how-timeline-step">
-            <div class="how-timeline-marker"><span>2</span></div>
-            <div class="how-timeline-body"><h3>פותחים הצגה על הלוח</h3></div>
-          </article>
-          <article class="how-timeline-step">
-            <div class="how-timeline-marker how-timeline-marker--final"><span>3</span></div>
-            <div class="how-timeline-body"><h3>מלמדים — פשוט וברור</h3></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <footer class="site-footer section-yellow">
-      <div class="container footer-inner">
-        <p class="footer-tagline font-cartoon"><span>לימוד במשחקים — </span><span class="footer-tagline-accent">בכל שיעור!</span></p>
-        <nav class="site-legal-nav" aria-label="מידע משפטי">
-          <a href="/legal/terms.html">תקנון</a>
-          <a href="/legal/privacy.html">פרטיות</a>
-          <a href="/legal/cookies.html">עוגיות</a>
-          <a href="/legal/accessibility.html">נגישות</a>
-        </nav>
-      </div>
-    </footer>
   </main>
 
-  <div class="modal-overlay hidden svc-preview-modal" id="lessonPreviewModal" aria-hidden="true">
-    <div class="modal modal-lg" role="dialog" aria-labelledby="lessonPreviewTitle" aria-modal="true">
-      <button class="modal-close" id="lessonPreviewClose" type="button" aria-label="סגירה">×</button>
-      <h2 class="font-cartoon" id="lessonPreviewTitle">תצוגת שיעור</h2>
-      <div class="svc-slide-view">
+  <footer class="site-footer section-yellow">
+    <div class="container footer-inner">
+      <p class="footer-tagline font-cartoon"><span>לימוד במשחקים — </span><span class="footer-tagline-accent">בכל שיעור!</span></p>
+      <nav class="site-legal-nav" aria-label="מידע משפטי">
+        <a href="/legal/terms.html">תקנון</a>
+        <a href="/legal/privacy.html">פרטיות</a>
+        <a href="/legal/cookies.html">עוגיות</a>
+        <a href="/legal/accessibility.html">נגישות</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="modal-overlay hidden" id="lessonConfirmModal" aria-hidden="true">
+    <div class="modal modal-login" role="dialog" aria-labelledby="lessonConfirmTitle" aria-modal="true">
+      <button class="modal-close" id="lessonConfirmClose" type="button" aria-label="סגירה">×</button>
+      <h2 class="font-cartoon" id="lessonConfirmTitle">לפתוח את השיעור?</h2>
+      <p id="lessonConfirmBody"></p>
+      <div class="svc-confirm-actions">
+        <button type="button" class="btn btn-outline btn-candy font-cartoon" id="lessonConfirmCancel">ביטול</button>
+        <button type="button" class="btn btn-primary btn-candy font-cartoon" id="lessonConfirmOpen">פתחו את השיעור</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="lessonFullscreenModal" aria-hidden="true">
+    <div class="modal modal-fullscreen" role="dialog" aria-labelledby="lessonFullscreenTitle" aria-modal="true">
+      <button class="modal-close" id="lessonFullscreenClose" type="button" aria-label="סגירה">×</button>
+      <h2 class="font-cartoon" id="lessonFullscreenTitle">תצוגת שיעור</h2>
+
+      <div class="svc-slide-view" id="lessonSlideView">
         <h3 class="font-cartoon" id="lessonSlideTitle"></h3>
         <p id="lessonSlideBody"></p>
       </div>
+
+      <div class="svc-lesson-game hidden" id="lessonGameView">
+        <span class="svc-lesson-game-icon" aria-hidden="true">🎮</span>
+        <h3 class="font-cartoon">זמן למשחק!</h3>
+        <p>תרגלו את המילים מהשיעור עם משחק התאמה מהיר.</p>
+        <button type="button" class="btn btn-primary btn-candy font-cartoon" id="lessonPlayGameBtn">שחקו עכשיו</button>
+      </div>
+
       <div class="svc-slide-dots" id="lessonSlideDots"></div>
       <div class="svc-slide-nav">
         <button type="button" class="btn btn-outline btn-candy" id="lessonSlidePrev">→ הקודם</button>
@@ -176,7 +161,10 @@
     </div>
   </div>
 
+  <script src="/js/games-catalog.js"></script>
+  <script src="/js/create-game-flow.js"></script>
   <script src="/js/ambient-bg.js"></script>
+  <script src="/js/scroll-animations.js"></script>
   <script src="/js/service-landing.js"></script>
 </body>
 </html>

@@ -118,94 +118,179 @@ function bindCategoryTabs() {
 }
 
 const LESSON_SLIDES = {
-  animals: [
-    { title: "Animals in English", body: "שיעור מוכן לכיתות א–ג · 45 דקות" },
-    { title: "New words", body: "cat — חתול\n dog — כלב\n bird — ציפור\n fish — דג" },
-    { title: "Let's play!", body: "משחק זיכרון + דף צביעה — הכל מוכן לשיעור" },
-  ],
-  colors: [
-    { title: "Colors & Shapes", body: "שיעור מוכן לכיתות א–ד · 40 דקות" },
-    { title: "Colors", body: "red — אדום\n blue — כחול\n green — ירוק\n yellow — צהוב" },
-    { title: "Shapes", body: "circle — עיגול\n square — ריבוע\n triangle — משולש" },
-  ],
-  family: [
-    { title: "My Family", body: "שיעור מוכן לכיתות ב–ד · 45 דקות" },
-    { title: "Family words", body: "mother — אמא\n father — אבא\n sister — אחות\n brother — אח" },
-    { title: "Activity", body: "דף עבודה + משחק התאמה — מוכן להצגה על הלוח" },
-  ],
-  food: [
-    { title: "Food & Drinks", body: "שיעור מוכן לכיתות ג–ה · 45 דקות" },
-    { title: "Vocabulary", body: "apple — תפוח\n water — מים\n bread — לחם\n milk — חלב" },
-    { title: "Wrap up", body: "חימום, תרגול ומשחק סיום — מערך מלא כמו מצגת" },
-  ],
+  animals: {
+    vocab: [
+      { en: "cat", he: "חתול" },
+      { en: "dog", he: "כלב" },
+      { en: "bird", he: "ציפור" },
+      { en: "fish", he: "דג" },
+    ],
+    slides: [
+      { title: "Animals in English", body: "שיעור מוכן לכיתות א–ג · 45 דקות" },
+      { title: "New words", body: "cat — חתול\n dog — כלב\n bird — ציפור\n fish — דג" },
+      { title: "Let's play!", body: "משחק זיכרון + דף צביעה — הכל מוכן לשיעור" },
+    ],
+  },
+  colors: {
+    vocab: [
+      { en: "red", he: "אדום" },
+      { en: "blue", he: "כחול" },
+      { en: "green", he: "ירוק" },
+      { en: "yellow", he: "צהוב" },
+    ],
+    slides: [
+      { title: "Colors & Shapes", body: "שיעור מוכן לכיתות א–ד · 40 דקות" },
+      { title: "Colors", body: "red — אדום\n blue — כחול\n green — ירוק\n yellow — צהוב" },
+      { title: "Shapes", body: "circle — עיגול\n square — ריבוע\n triangle — משולש" },
+    ],
+  },
+  family: {
+    vocab: [
+      { en: "mother", he: "אמא" },
+      { en: "father", he: "אבא" },
+      { en: "sister", he: "אחות" },
+      { en: "brother", he: "אח" },
+    ],
+    slides: [
+      { title: "My Family", body: "שיעור מוכן לכיתות ב–ד · 45 דקות" },
+      { title: "Family words", body: "mother — אמא\n father — אבא\n sister — אחות\n brother — אח" },
+      { title: "Activity", body: "דף עבודה + משחק התאמה — מוכן להצגה על הלוח" },
+    ],
+  },
+  food: {
+    vocab: [
+      { en: "apple", he: "תפוח" },
+      { en: "water", he: "מים" },
+      { en: "bread", he: "לחם" },
+      { en: "milk", he: "חלב" },
+    ],
+    slides: [
+      { title: "Food & Drinks", body: "שיעור מוכן לכיתות ג–ה · 45 דקות" },
+      { title: "Vocabulary", body: "apple — תפוח\n water — מים\n bread — לחם\n milk — חלב" },
+      { title: "Wrap up", body: "חימום, תרגול ומשחק סיום — מערך מלא כמו מצגת" },
+    ],
+  },
 };
 
-function bindLessonPreview() {
-  const modal = $("#lessonPreviewModal");
-  const titleEl = $("#lessonPreviewTitle");
+function bindLessonFlow() {
+  const confirmModal = $("#lessonConfirmModal");
+  const confirmBody = $("#lessonConfirmBody");
+  const confirmOpenBtn = $("#lessonConfirmOpen");
+  const confirmCancelBtn = $("#lessonConfirmCancel");
+  const confirmCloseBtn = $("#lessonConfirmClose");
+
+  const fsModal = $("#lessonFullscreenModal");
+  const fsTitle = $("#lessonFullscreenTitle");
+  const slideView = $("#lessonSlideView");
   const slideTitle = $("#lessonSlideTitle");
   const slideBody = $("#lessonSlideBody");
+  const gameView = $("#lessonGameView");
   const dotsWrap = $("#lessonSlideDots");
   const prevBtn = $("#lessonSlidePrev");
   const nextBtn = $("#lessonSlideNext");
-  if (!modal || !slideTitle || !slideBody) return;
+  const playGameBtn = $("#lessonPlayGameBtn");
+  const fsCloseBtn = $("#lessonFullscreenClose");
+  if (!confirmModal || !fsModal || !slideTitle || !slideBody) return;
 
+  let currentLessonId = null;
+  let currentLessonName = "";
   let slides = [];
-  let index = 0;
+  let vocab = [];
+  let index = 0; // 0..slides.length-1 = content slides, slides.length = game step
 
-  function renderSlide() {
-    const slide = slides[index];
-    if (!slide) return;
-    slideTitle.textContent = slide.title;
-    slideBody.textContent = slide.body;
-    if (titleEl) titleEl.textContent = slide.title;
-    $$(".svc-slide-dot").forEach((dot, i) => dot.classList.toggle("active", i === index));
-    if (prevBtn) prevBtn.disabled = index === 0;
-    if (nextBtn) nextBtn.disabled = index === slides.length - 1;
-  }
-
-  function openPreview(lessonId, lessonName) {
-    slides = LESSON_SLIDES[lessonId] || [];
-    index = 0;
-    if (titleEl) titleEl.textContent = lessonName || "";
-    if (dotsWrap) {
-      dotsWrap.innerHTML = slides.map((_, i) => `<button type="button" class="svc-slide-dot${i === 0 ? " active" : ""}" data-i="${i}" aria-label="שקופית ${i + 1}"></button>`).join("");
-      $$(".svc-slide-dot", dotsWrap).forEach((dot) => {
-        dot.addEventListener("click", () => {
-          index = Number(dot.dataset.i);
-          renderSlide();
-        });
+  function renderDots() {
+    if (!dotsWrap) return;
+    const total = slides.length + 1;
+    dotsWrap.innerHTML = Array.from(
+      { length: total },
+      (_, i) => `<button type="button" class="svc-slide-dot${i === index ? " active" : ""}" data-i="${i}" aria-label="שקופית ${i + 1}"></button>`
+    ).join("");
+    $$(".svc-slide-dot", dotsWrap).forEach((dot) => {
+      dot.addEventListener("click", () => {
+        index = Number(dot.dataset.i);
+        renderStep();
       });
-    }
-    renderSlide();
-    modal.classList.remove("hidden");
-    modal.setAttribute("aria-hidden", "false");
+    });
   }
 
-  function closePreview() {
-    modal.classList.add("hidden");
-    modal.setAttribute("aria-hidden", "true");
+  function renderStep() {
+    const onGameStep = index >= slides.length;
+    slideView?.classList.toggle("hidden", onGameStep);
+    gameView?.classList.toggle("hidden", !onGameStep);
+
+    if (!onGameStep) {
+      const slide = slides[index];
+      slideTitle.textContent = slide.title;
+      slideBody.textContent = slide.body;
+    }
+
+    $$(".svc-slide-dot", dotsWrap).forEach((dot, i) => dot.classList.toggle("active", i === index));
+    if (prevBtn) prevBtn.disabled = index === 0;
+    if (nextBtn) nextBtn.disabled = onGameStep;
+  }
+
+  function openConfirm(lessonId, lessonName) {
+    currentLessonId = lessonId;
+    currentLessonName = lessonName || "";
+    if (confirmBody) confirmBody.textContent = `לפתוח את השיעור "${currentLessonName}" ולהציג אותו על הלוח?`;
+    confirmModal.classList.remove("hidden");
+    confirmModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeConfirm() {
+    confirmModal.classList.add("hidden");
+    confirmModal.setAttribute("aria-hidden", "true");
+  }
+
+  function openFullscreen() {
+    const data = LESSON_SLIDES[currentLessonId];
+    slides = data?.slides || [];
+    vocab = data?.vocab || [];
+    index = 0;
+    if (fsTitle) fsTitle.textContent = currentLessonName;
+    renderDots();
+    renderStep();
+    fsModal.classList.remove("hidden");
+    fsModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeFullscreen() {
+    fsModal.classList.add("hidden");
+    fsModal.setAttribute("aria-hidden", "true");
   }
 
   $$(".js-lesson-preview").forEach((btn) => {
-    btn.addEventListener("click", () => openPreview(btn.dataset.lesson, btn.dataset.lessonName));
+    btn.addEventListener("click", () => openConfirm(btn.dataset.lesson, btn.dataset.lessonName));
   });
 
-  $("#lessonPreviewClose")?.addEventListener("click", closePreview);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closePreview();
+  confirmOpenBtn?.addEventListener("click", () => {
+    closeConfirm();
+    openFullscreen();
   });
+  confirmCancelBtn?.addEventListener("click", closeConfirm);
+  confirmCloseBtn?.addEventListener("click", closeConfirm);
+  confirmModal.addEventListener("click", (e) => {
+    if (e.target === confirmModal) closeConfirm();
+  });
+
+  fsCloseBtn?.addEventListener("click", closeFullscreen);
   prevBtn?.addEventListener("click", () => {
     if (index > 0) {
       index -= 1;
-      renderSlide();
+      renderStep();
     }
   });
   nextBtn?.addEventListener("click", () => {
-    if (index < slides.length - 1) {
+    if (index < slides.length) {
       index += 1;
-      renderSlide();
+      renderStep();
     }
+  });
+
+  playGameBtn?.addEventListener("click", () => {
+    if (!vocab.length) return;
+    const text = vocab.map((v) => `${v.en}=${v.he}`).join("\n");
+    window.CreateGameFlow?.launchGame({ text, items: vocab, subject: "english", gamePick: "word-memory" });
   });
 }
 
@@ -345,7 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
   bindAuth();
   bindScrollProgress();
   bindCategoryTabs();
-  bindLessonPreview();
+  bindLessonFlow();
   bindCreateGameForm();
   hideLoader();
 });

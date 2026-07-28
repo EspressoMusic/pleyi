@@ -152,10 +152,28 @@ const I18n = {
       "toast.contactSent": "ההודעה נשלחה! נחזור אליכם בהקדם",
       "toast.linkCopied": "הקישור הועתק!",
       "toast.codeCopied": "הקוד הועתק!",
+      "toast.emailCopied": "הכתובת הועתקה!",
       "toast.waText": "שלום! מעוניין/ת לשמוע על Pleyi למורים 🙂",
       "play.back": "← חזרה לאתר",
       "play.score": "ניקוד",
       "play.meta": "משחקי למידה — תרגול עצמי או שילוב בשיעור עם המורה",
+      "myRoom.greeting": "שלום! {name}",
+      "myRoom.defaultUser": "משתמש",
+      "myRoom.favorites": "משחקים שאהבתי",
+      "myRoom.created": "משחקים שיצרתי",
+      "myRoom.recent": "שיחקתי לאחרונה",
+      "myRoom.openRoom": "+ פתיחת חדר",
+      "myRoom.empty.favorites": "אין עדיין מועדפים.",
+      "myRoom.empty.createdText": "עדיין לא יצרת משחקים.",
+      "myRoom.empty.createdLink": "פתחו חדר חדש",
+      "myRoom.empty.recent": "עדיין אין היסטוריה.",
+      "myRoom.play": "שחק",
+      "myRoom.favAria": "מועדפים",
+      "myRoom.deleteAria": "מחק",
+      "myRoom.confirmDelete": "למחוק את המשחק?",
+      "myRoom.deleted": "נמחק",
+      "myRoom.loadError": "לא הצלחנו לטעון נתונים",
+      "myRoom.updateError": "לא ניתן לעדכן",
     },
     en: {
       "meta.title": "Pleyi — Learn Through Games for Teachers",
@@ -305,10 +323,28 @@ const I18n = {
       "toast.contactSent": "Message sent! We’ll get back to you soon",
       "toast.linkCopied": "Link copied!",
       "toast.codeCopied": "Code copied!",
+      "toast.emailCopied": "Email address copied!",
       "toast.waText": "Hi! I’d like to learn about Pleyi for teachers 🙂",
       "play.back": "← Back to site",
       "play.score": "Score",
       "play.meta": "Learning games — solo practice or live lesson with your teacher",
+      "myRoom.greeting": "Hello! {name}",
+      "myRoom.defaultUser": "User",
+      "myRoom.favorites": "Games I loved",
+      "myRoom.created": "Games I created",
+      "myRoom.recent": "Recently played",
+      "myRoom.openRoom": "+ Open room",
+      "myRoom.empty.favorites": "No favorites yet.",
+      "myRoom.empty.createdText": "You haven’t created any games yet.",
+      "myRoom.empty.createdLink": "Open a new room",
+      "myRoom.empty.recent": "No history yet.",
+      "myRoom.play": "Play",
+      "myRoom.favAria": "Favorite",
+      "myRoom.deleteAria": "Delete",
+      "myRoom.confirmDelete": "Delete this game?",
+      "myRoom.deleted": "Deleted",
+      "myRoom.loadError": "Couldn’t load data",
+      "myRoom.updateError": "Couldn’t update",
     },
   },
 
@@ -363,14 +399,20 @@ const I18n = {
     this.setLang(this.lang === "he" ? "en" : "he");
   },
 
+  detectLang() {
+    const langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || "he"];
+    const isHebrew = langs.some((l) => /^he\b|^iw\b/i.test(l));
+    return isHebrew ? "he" : "en";
+  },
+
   init() {
-    let saved = "he";
+    let saved = null;
     try {
-      saved = localStorage.getItem("pleyi-lang") || "he";
+      saved = localStorage.getItem("pleyi-lang");
     } catch {
       /* ignore */
     }
-    this.setLang(saved);
+    this.setLang(saved || this.detectLang());
 
     if (!this._bound) {
       this._bound = true;

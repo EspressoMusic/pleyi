@@ -973,6 +973,10 @@ $("#copyJoinLinkBtn")?.addEventListener("click", () => {
   }
 });
 
+$("#contactEmailBtn")?.addEventListener("click", () => {
+  navigator.clipboard?.writeText("shilohdhd1@gmail.com").then(() => showToast(t("toast.emailCopied")));
+});
+
 $("#shareRoomBtn")?.addEventListener("click", async () => {
   const code = $("#roomCodeDisplay")?.textContent;
   if (!code || code === "------") return;

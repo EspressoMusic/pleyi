@@ -4,14 +4,11 @@
   const catalog = window.GAMES_CATALOG;
   const contentSection = document.getElementById("myRoomContent");
   const myRoomName = document.getElementById("myRoomName");
-  const roomModal = document.getElementById("roomModal");
-  const roomModalTitle = document.getElementById("roomModalTitle");
-  const roomModalList = document.getElementById("roomModalList");
 
-  const SECTIONS = {
-    favorites: { title: "משחקים שאהבתי" },
-    created: { title: "משחקים שיצרתי" },
-    recent: { title: "שיחקתי לאחרונה" },
+  const SECTION_CONTAINERS = {
+    favorites: document.getElementById("roomListFavorites"),
+    created: document.getElementById("roomListCreated"),
+    recent: document.getElementById("roomListRecent"),
   };
 
   const PREVIEW =
@@ -83,7 +80,6 @@
 
   let savedGames = [];
   let playHistory = [];
-  let openSection = null;
 
   function isGuestPreviewAllowed() {
     if (window.GameAuth?.isDevHost?.()) return true;
@@ -129,20 +125,27 @@
   }
 
   function updateHeader(user) {
-    const name = user?.name || "משתמש";
-    if (myRoomName) myRoomName.textContent = `שלום! ${name}`;
+    const name = user?.name || window.I18n?.t("myRoom.defaultUser") || "משתמש";
+    if (myRoomName) myRoomName.textContent = (window.I18n?.t("myRoom.greeting") || "שלום! {name}").replace("{name}", name);
   }
 
   function emptyMessage(section) {
+    if (section === "created") {
+      const text = window.I18n?.t("myRoom.empty.createdText") || "עדיין לא יצרת משחקים.";
+      const link = window.I18n?.t("myRoom.empty.createdLink") || "פתחו חדר חדש";
+      return `${text} <a href="/room?create=1">${link}</a>`;
+    }
     const messages = {
-      favorites: "אין עדיין מועדפים.",
-      created: 'עדיין לא יצרת משחקים. <a href="/room?create=1">פתחו חדר חדש</a>',
-      recent: "עדיין אין היסטוריה.",
+      favorites: window.I18n?.t("myRoom.empty.favorites") || "אין עדיין מועדפים.",
+      recent: window.I18n?.t("myRoom.empty.recent") || "עדיין אין היסטוריה.",
     };
     return messages[section] || "";
   }
 
   function savedRowHtml(g, { showStar = true, showDelete = false } = {}) {
+    const playLabel = window.I18n?.t("myRoom.play") || "שחק";
+    const favLabel = window.I18n?.t("myRoom.favAria") || "מועדפים";
+    const deleteLabel = window.I18n?.t("myRoom.deleteAria") || "מחק";
     return `
       <div class="room-list-row">
         <div class="room-list-info">
@@ -152,17 +155,19 @@
         <div class="room-list-actions">
           ${
             showStar
-              ? `<button type="button" class="room-list-star${g.starred ? " is-active" : ""}" data-star="${escapeHtml(g.id)}" aria-label="מועדפים">${g.starred ? "★" : "☆"}</button>`
+              ? `<button type="button" class="room-list-star${g.starred ? " is-active" : ""}" data-star="${escapeHtml(g.id)}" aria-label="${escapeHtml(favLabel)}">${g.starred ? "★" : "☆"}</button>`
               : ""
           }
-          <button type="button" class="room-list-play" data-play="${escapeHtml(g.id)}">שחק</button>
-          ${showDelete ? `<button type="button" class="room-list-delete" data-delete="${escapeHtml(g.id)}" aria-label="מחק">🗑</button>` : ""}
+          <button type="button" class="room-list-play" data-play="${escapeHtml(g.id)}">${escapeHtml(playLabel)}</button>
+          ${showDelete ? `<button type="button" class="room-list-delete" data-delete="${escapeHtml(g.id)}" aria-label="${escapeHtml(deleteLabel)}">🗑</button>` : ""}
         </div>
       </div>`;
   }
 
   function recentRowHtml(e) {
-    const meta = e.reason ? `ניקוד ${e.score} · ${escapeHtml(e.reason)}` : `ניקוד ${e.score ?? 0}`;
+    const playLabel = window.I18n?.t("myRoom.play") || "שחק";
+    const scoreLabel = window.I18n?.t("play.score") || "ניקוד";
+    const meta = e.reason ? `${scoreLabel} ${e.score} · ${escapeHtml(e.reason)}` : `${scoreLabel} ${e.score ?? 0}`;
     return `
       <div class="room-list-row">
         <div class="room-list-info">
@@ -170,7 +175,7 @@
           <p class="room-list-meta">${meta}</p>
         </div>
         <div class="room-list-actions">
-          <a href="/play/${escapeHtml(e.gameId)}" class="room-list-play">שחק</a>
+          <a href="/play/${escapeHtml(e.gameId)}" class="room-list-play">${escapeHtml(playLabel)}</a>
         </div>
       </div>`;
   }
@@ -181,27 +186,32 @@
     return { type: "recent", items: playHistory };
   }
 
-  function renderModal(section) {
+  function renderSection(section) {
+    const container = SECTION_CONTAINERS[section];
+    if (!container) return;
     const { type, items } = getSectionItems(section);
-    roomModalTitle.textContent = SECTIONS[section]?.title || "";
 
     if (!items.length) {
-      roomModalList.innerHTML = `<p class="room-list-empty">${emptyMessage(section)}</p>`;
+      container.innerHTML = `<p class="room-list-empty">${emptyMessage(section)}</p>`;
       return;
     }
 
     if (type === "saved") {
       const showDelete = section === "created";
-      roomModalList.innerHTML = items.map((g) => savedRowHtml(g, { showStar: true, showDelete })).join("");
+      container.innerHTML = items.map((g) => savedRowHtml(g, { showStar: true, showDelete })).join("");
     } else {
-      roomModalList.innerHTML = items.map(recentRowHtml).join("");
+      container.innerHTML = items.map(recentRowHtml).join("");
     }
 
-    bindModalActions();
+    bindSectionActions(container, section);
   }
 
-  function bindModalActions() {
-    roomModalList.querySelectorAll("[data-play]").forEach((btn) => {
+  function renderAllSections() {
+    Object.keys(SECTION_CONTAINERS).forEach(renderSection);
+  }
+
+  function bindSectionActions(container) {
+    container.querySelectorAll("[data-play]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const game = savedGames.find((x) => x.id === btn.dataset.play);
         if (!game) return;
@@ -215,64 +225,28 @@
       });
     });
 
-    roomModalList.querySelectorAll("[data-star]").forEach((btn) => {
+    container.querySelectorAll("[data-star]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const res = await UserData.toggleSavedGameStar(btn.dataset.star);
         if (!res.ok) {
-          showToast(res.error || "לא ניתן לעדכן");
+          showToast(res.error || window.I18n?.t("myRoom.updateError") || "לא ניתן לעדכן");
           return;
         }
         await loadData();
-        if (openSection) renderModal(openSection);
+        renderAllSections();
       });
     });
 
-    roomModalList.querySelectorAll("[data-delete]").forEach((btn) => {
+    container.querySelectorAll("[data-delete]").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!confirm("למחוק את המשחק?")) return;
+        if (!confirm(window.I18n?.t("myRoom.confirmDelete") || "למחוק את המשחק?")) return;
         await UserData.deleteSavedGame(btn.dataset.delete);
         await loadData();
-        if (openSection) renderModal(openSection);
-        showToast("נמחק");
+        renderAllSections();
+        showToast(window.I18n?.t("myRoom.deleted") || "נמחק");
       });
     });
   }
-
-  function openModal(section) {
-    openSection = section;
-    renderModal(section);
-    if (roomModal) roomModal.dataset.section = section;
-    roomModal?.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
-    requestAnimationFrame(() => {
-      roomModal?.classList.add("is-open");
-    });
-  }
-
-  function closeModal() {
-    openSection = null;
-    roomModal?.classList.remove("is-open");
-    document.body.style.overflow = "";
-    setTimeout(() => {
-      if (!roomModal?.classList.contains("is-open")) {
-        roomModal?.classList.add("hidden");
-        if (roomModal) delete roomModal.dataset.section;
-      }
-    }, 320);
-  }
-
-  document.querySelectorAll(".room-menu-row[data-section]").forEach((row) => {
-    row.addEventListener("click", () => openModal(row.dataset.section));
-  });
-
-  document.getElementById("roomModalClose")?.addEventListener("click", closeModal);
-  document.getElementById("roomModalBackdrop")?.addEventListener("click", closeModal);
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && roomModal?.classList.contains("is-open")) {
-      closeModal();
-    }
-  });
 
   async function loadData() {
     if (usePreviewData()) {
@@ -283,6 +257,7 @@
         dateKey: UserData.dateKeyFromTimestamp(e.playedAt),
       }));
       window.MyRoomCalendar?.setHistory(window.__myRoomPlayHistory);
+      renderAllSections();
       return;
     }
 
@@ -296,17 +271,27 @@
         dateKey: UserData.dateKeyFromTimestamp(e.playedAt),
       }));
       window.MyRoomCalendar?.setHistory(window.__myRoomPlayHistory);
+      renderAllSections();
     } catch (err) {
       console.error(err);
-      showToast("לא הצלחנו לטעון נתונים");
+      showToast(window.I18n?.t("myRoom.loadError") || "לא הצלחנו לטעון נתונים");
     }
   }
 
+  let currentUser = null;
+
   function showRoom(user) {
+    currentUser = user;
     contentSection?.classList.remove("hidden");
     updateHeader(user);
     loadData();
   }
+
+  window.addEventListener("gameclass:lang", () => {
+    if (!currentUser) return;
+    updateHeader(currentUser);
+    renderAllSections();
+  });
 
   function redirectToLogin() {
     if (window.GameAuth?.openLoginModal) {

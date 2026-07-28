@@ -7,7 +7,7 @@
   <title>Pleyi — לימוד דרך משחקים</title>
   <meta name="description" content="משחקי למידה למורים — פתחו חדר כיתה, התלמידים מצטרפים מהטלפון, ושחקו יחד בזמן אמת."/>
   <link rel="stylesheet" href="styles.css"/>
-  <link rel="stylesheet" href="css/clean-site.css?v=42"/>
+  <link rel="stylesheet" href="css/clean-site.css?v=45"/>
   <link rel="stylesheet" href="css/legal.css"/>
   <link rel="stylesheet" href="css/accessibility.css" />
 </head>
@@ -35,6 +35,7 @@
         <a href="#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
       </nav>
       <div class="nav-actions">
+        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle></button>
         <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
         <div class="nav-user hidden" id="authUserMenu">
           <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
@@ -64,6 +65,7 @@
     </div>
     <a href="#about" data-i18n="nav.about">מי אנחנו</a>
     <a href="#contact" data-i18n="nav.contact">צור קשר</a>
+    <button type="button" class="lang-toggle" data-lang-toggle></button>
     <button type="button" class="mobile-nav-auth" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
   </nav>
 
@@ -198,21 +200,21 @@
         </div>
       </div>
     </section>
-
-    <footer class="site-footer section-yellow">
-      <div class="container footer-inner">
-        <p class="footer-tagline font-cartoon">
-          <span data-i18n="footer.taglineLead">לימוד במשחקים — </span><span class="footer-tagline-accent" data-i18n="footer.taglineAccent">בכל שיעור!</span>
-        </p>
-        <nav class="site-legal-nav" aria-label="מידע משפטי">
-          <a href="/legal/terms.html">תקנון</a>
-          <a href="/legal/privacy.html">פרטיות</a>
-          <a href="/legal/cookies.html">עוגיות</a>
-          <a href="/legal/accessibility.html">נגישות</a>
-        </nav>
-      </div>
-    </footer>
   </main>
+
+  <footer class="site-footer section-yellow">
+    <div class="container footer-inner">
+      <p class="footer-tagline font-cartoon">
+        <span data-i18n="footer.taglineLead">לימוד במשחקים — </span><span class="footer-tagline-accent" data-i18n="footer.taglineAccent">בכל שיעור!</span>
+      </p>
+      <nav class="site-legal-nav" aria-label="מידע משפטי">
+        <a href="/legal/terms.html">תקנון</a>
+        <a href="/legal/privacy.html">פרטיות</a>
+        <a href="/legal/cookies.html">עוגיות</a>
+        <a href="/legal/accessibility.html">נגישות</a>
+      </nav>
+    </div>
+  </footer>
 
   <!-- Lobby / Room (teacher) -->
   <div id="roomView" class="room-view hidden" tabindex="-1" aria-label="חדר כיתה">

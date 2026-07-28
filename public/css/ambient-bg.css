@@ -17,7 +17,7 @@ body.clean-site {
   isolation: isolate;
 }
 
-body.clean-site > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader) {
+body.clean-site > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader):not(footer):not(.site-footer) {
   position: relative;
   z-index: 1;
 }
@@ -25,11 +25,16 @@ body.clean-site > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-pr
 body.clean-site > .scroll-progress,
 body.clean-site > .loader,
 body.clean-site > main,
-body.clean-site > footer,
-body.clean-site > .site-footer,
 body.clean-site > .auth-modal-overlay {
   position: relative;
   z-index: 1;
+}
+
+/* Footer sits above the fixed side-wave overlay (z-index: 2) instead of behind it */
+body.clean-site > footer,
+body.clean-site > .site-footer {
+  position: relative;
+  z-index: 3;
 }
 
 body.clean-site > .navbar {

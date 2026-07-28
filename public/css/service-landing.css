@@ -1,5 +1,13 @@
 /* Service landing pages — extends clean-site */
 
+/* .clean-section's flat 72px top padding doesn't account for the fixed
+   navbar's real height, so the first section after the hero can render
+   under the pinned nav pills once scrolled into view. Use the same
+   dynamic clearance the homepage hero uses. */
+body.clean-site .clean-section {
+  padding-top: max(72px, calc(var(--clean-nav-clear) + 24px));
+}
+
 .svc-hero-badge {
   display: inline-block;
   margin-bottom: 12px;
@@ -99,6 +107,49 @@
 
 .svc-panel.hidden {
   display: none;
+}
+
+.svc-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 18px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.svc-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+
+.svc-tile-image {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sticker);
+}
+
+.svc-tile-image--teal { background: var(--memteal); }
+.svc-tile-image--yellow { background: var(--memyellow); }
+.svc-tile-image--pink { background: var(--mempink); }
+.svc-tile-image--orange { background: #ffd4a3; }
+
+.svc-tile h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.svc-tile .btn {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
 }
 
 .svc-lesson-grid {
@@ -226,12 +277,16 @@
   padding: 24px;
   border: 3px solid var(--ink);
   border-radius: 20px;
-  background: var(--white);
+  background: var(--memteal);
   box-shadow: var(--shadow-candy);
 }
 
 #create.clean-section--soft {
   background: var(--clean-panel-about, #8ef0e8);
+}
+
+#create .clean-section-title {
+  margin-bottom: 40px;
 }
 
 #create .svc-section-lead {
@@ -243,8 +298,64 @@
   margin-bottom: 16px;
 }
 
-.svc-preview-modal .modal {
-  max-width: 640px;
+.svc-confirm-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.svc-confirm-actions .btn {
+  flex: 1;
+}
+
+.modal-fullscreen {
+  width: 96vw;
+  height: 92vh;
+  max-width: 96vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.modal-fullscreen .svc-slide-view {
+  flex: 1;
+  min-height: 0;
+}
+
+.svc-lesson-game {
+  flex: 1;
+  min-height: 0;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  padding: 28px 24px;
+  background: linear-gradient(165deg, #fff7e0 0%, #fff 100%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.svc-lesson-game.hidden {
+  display: none;
+}
+
+.svc-lesson-game-icon {
+  font-size: 3rem;
+}
+
+.svc-lesson-game h3 {
+  margin: 0;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+}
+
+.svc-lesson-game p {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .svc-slide-view {

@@ -1,6 +1,6 @@
 /* Clean 4-section layout */
 
-@import url("ambient-bg.css?v=3");
+@import url("ambient-bg.css?v=4");
 
 body.clean-site {
   background: transparent;
@@ -22,6 +22,101 @@ html:has(body.clean-site) {
 
 body.clean-site .scroll-section.in-view::after {
   display: none;
+}
+
+/* Scroll-in reveal — content fades/slides up as each section enters view */
+body.clean-site .scroll-section .clean-section-title,
+body.clean-site .scroll-section .about-lead,
+body.clean-site .scroll-section .svc-section-lead,
+body.clean-site .scroll-section .svc-hero-badge,
+body.clean-site .scroll-section .clean-hero-actions,
+body.clean-site .scroll-section .about-service-card,
+body.clean-site .scroll-section .svc-family-step,
+body.clean-site .scroll-section .how-timeline-step,
+body.clean-site .scroll-section .svc-lesson-card,
+body.clean-site .scroll-section .contact-channel-btn,
+body.clean-site .scroll-section .clean-center-cta,
+body.clean-site .scroll-section .svc-create-box,
+body.clean-site .hero-title .line {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+body.clean-site .scroll-section .about-orbit-scene {
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+body.clean-site .scroll-section.in-view .clean-section-title,
+body.clean-site .scroll-section.in-view .about-lead,
+body.clean-site .scroll-section.in-view .svc-section-lead,
+body.clean-site .scroll-section.in-view .svc-hero-badge,
+body.clean-site .scroll-section.in-view .clean-hero-actions,
+body.clean-site .scroll-section.in-view .about-orbit-scene,
+body.clean-site .scroll-section.in-view .about-service-card,
+body.clean-site .scroll-section.in-view .svc-family-step,
+body.clean-site .scroll-section.in-view .how-timeline-step,
+body.clean-site .scroll-section.in-view .svc-lesson-card,
+body.clean-site .scroll-section.in-view .contact-channel-btn,
+body.clean-site .scroll-section.in-view .clean-center-cta,
+body.clean-site .scroll-section.in-view .svc-create-box,
+body.clean-site .scroll-section.in-view .hero-title .line {
+  opacity: 1;
+  transform: none;
+}
+
+body.clean-site .clean-hero-actions,
+body.clean-site .about-lead,
+body.clean-site .svc-section-lead {
+  transition-delay: 0.1s;
+}
+
+body.clean-site .about-orbit-scene {
+  transition-delay: 0.18s;
+}
+
+body.clean-site .about-service-card:nth-child(2),
+body.clean-site .svc-family-step:nth-child(2),
+body.clean-site .how-timeline-step:nth-child(2),
+body.clean-site .svc-lesson-card:nth-child(2),
+body.clean-site .contact-channel-btn:nth-child(2),
+body.clean-site .hero-title .line:nth-child(2) {
+  transition-delay: 0.12s;
+}
+
+body.clean-site .about-service-card:nth-child(3),
+body.clean-site .svc-family-step:nth-child(3),
+body.clean-site .how-timeline-step:nth-child(3),
+body.clean-site .svc-lesson-card:nth-child(3) {
+  transition-delay: 0.24s;
+}
+
+body.clean-site .about-service-card:nth-child(4),
+body.clean-site .svc-lesson-card:nth-child(4) {
+  transition-delay: 0.36s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.clean-site .scroll-section .clean-section-title,
+  body.clean-site .scroll-section .about-lead,
+  body.clean-site .scroll-section .svc-section-lead,
+  body.clean-site .scroll-section .svc-hero-badge,
+  body.clean-site .scroll-section .clean-hero-actions,
+  body.clean-site .scroll-section .about-orbit-scene,
+  body.clean-site .scroll-section .about-service-card,
+  body.clean-site .scroll-section .svc-family-step,
+  body.clean-site .scroll-section .how-timeline-step,
+  body.clean-site .scroll-section .svc-lesson-card,
+  body.clean-site .scroll-section .contact-channel-btn,
+  body.clean-site .scroll-section .clean-center-cta,
+  body.clean-site .scroll-section .svc-create-box,
+  body.clean-site .hero-title .line {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 body.clean-site .hero-shapes,
@@ -89,8 +184,8 @@ body.clean-site .site-footer.section-yellow .footer-tagline {
 }
 
 body.clean-site .site-footer.section-yellow .footer-tagline-accent {
-  color: var(--white);
-  -webkit-text-fill-color: var(--white);
+  color: #25d366;
+  -webkit-text-fill-color: #25d366;
 }
 
 body.clean-site .whatsapp-btn,
@@ -118,21 +213,9 @@ body.clean-site .site-footer.section-yellow::before {
   pointer-events: none;
 }
 
-body.clean-site .navbar:not(.scrolled) {
+body.clean-site .navbar {
   background: transparent;
-}
-
-body.clean-site .navbar.scrolled {
-  background: var(--nav-scrolled-bg);
-}
-
-body.clean-site.service-panel {
-  --nav-scrolled-bg: rgba(0, 122, 112, 0.82);
-}
-
-body.clean-site.service-panel .navbar.scrolled {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  box-shadow: none;
 }
 
 
@@ -510,12 +593,12 @@ body.clean-site .clean-hero-inner .hero-title {
 
 body.clean-site .clean-section-title.font-cartoon {
   paint-order: normal;
-  -webkit-text-stroke: 0;
-  -webkit-text-stroke-width: 0;
+  -webkit-text-stroke: 0.6px currentColor;
+  -webkit-text-stroke-width: 0.6px;
   -webkit-text-fill-color: currentColor;
   color: var(--ink);
   text-shadow: none;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: -0.01em;
 }
 
@@ -551,7 +634,7 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
 #about .clean-section-title,
 #how .clean-section-title,
 #contact .clean-section-title {
-  font-size: clamp(2.25rem, 6vw, 3.25rem);
+  font-size: clamp(2.5rem, 6.8vw, 3.75rem);
 }
 
 #about .clean-section-title {
@@ -1438,7 +1521,7 @@ button.clean-panel--card {
 }
 
 .email-address {
-  font-size: clamp(15px, 2.4vw, 18px);
+  font-size: clamp(18px, 3.2vw, 24px);
   font-weight: 800;
   opacity: 0.95;
   word-break: break-all;
@@ -1652,7 +1735,7 @@ body.in-room {
   #about .clean-section-title,
   #how .clean-section-title,
   #contact .clean-section-title {
-    font-size: clamp(2.1rem, 8vw, 2.85rem);
+    font-size: clamp(2.35rem, 9vw, 3.15rem);
   }
 
   #how .clean-section-title,

@@ -923,23 +923,30 @@
 
     const subject = customSubject.value;
     const items = catalog.parseContent(raw, subject);
-    if (items.length >= 2) return true;
+    const ready = window.LEARNING_PARSE?.looksLikeReadyPairs
+      ? window.LEARNING_PARSE.looksLikeReadyPairs(raw, subject)
+      : items.length >= 2;
+    if (ready) return true;
 
     if (!window.GameAuth?.getUser()) {
-      pendingCreateAfterLogin = true;
-      sessionStorage.setItem(
-        "pleyi-pending-create",
-        JSON.stringify({
-          subject,
-          content: raw,
-          title: customTitle?.value.trim() || "",
-          needsAi: true,
-          editingSavedId,
-        })
-      );
-      showToast("התחברו — וניצור לכם משחק מהתוכן עם AI");
-      document.getElementById("loginModal")?.classList.remove("hidden");
-      return false;
+      if (window.GameAuth?.isDevHost?.()) {
+        window.GameAuth.signInDevPreview();
+      } else {
+        pendingCreateAfterLogin = true;
+        sessionStorage.setItem(
+          "pleyi-pending-create",
+          JSON.stringify({
+            subject,
+            content: raw,
+            title: customTitle?.value.trim() || "",
+            needsAi: true,
+            editingSavedId,
+          })
+        );
+        showToast("התחברו — וניצור לכם משחק מהתוכן עם AI");
+        document.getElementById("loginModal")?.classList.remove("hidden");
+        return false;
+      }
     }
 
     const status = await window.AI_LESSON?.checkStatus();
@@ -980,14 +987,18 @@
     }
 
     if (!window.GameAuth?.getUser()) {
-      pendingCreateAfterLogin = true;
-      sessionStorage.setItem(
-        "pleyi-pending-create",
-        JSON.stringify({ subject, items, gameId, title, content, editingSavedId })
-      );
-      showToast("התחברו — המשחק יישמר אוטומטית");
-      document.getElementById("loginModal")?.classList.remove("hidden");
-      return null;
+      if (window.GameAuth?.isDevHost?.()) {
+        window.GameAuth.signInDevPreview();
+      } else {
+        pendingCreateAfterLogin = true;
+        sessionStorage.setItem(
+          "pleyi-pending-create",
+          JSON.stringify({ subject, items, gameId, title, content, editingSavedId })
+        );
+        showToast("התחברו — המשחק יישמר אוטומטית");
+        document.getElementById("loginModal")?.classList.remove("hidden");
+        return null;
+      }
     }
 
     let savedGameId = editingSavedId;

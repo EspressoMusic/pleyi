@@ -30,6 +30,7 @@
         <a href="/" class="nav-pill">בית</a>
       </nav>
       <div class="nav-actions">
+        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle></button>
         <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
         <div class="nav-user hidden" id="authUserMenu">
           <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
@@ -49,6 +50,7 @@
 
   <nav class="mobile-nav" id="mobileNav" aria-label="ניווט ראשי">
     <a href="/">בית</a>
+    <button type="button" class="lang-toggle" data-lang-toggle></button>
     <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
   </nav>
 
@@ -59,47 +61,26 @@
         <h1 class="hub-title font-cartoon" id="myRoomName">שלום!</h1>
       </header>
 
-      <section class="room-calendar" id="roomCalendar" aria-label="יומן שיעורים">
-        <div class="room-cal-head">
-          <button type="button" class="room-cal-nav" id="roomCalPrev" aria-label="חודש קודם">‹</button>
-          <p class="room-cal-month" id="roomCalMonth"></p>
-          <button type="button" class="room-cal-nav" id="roomCalNext" aria-label="חודש הבא">›</button>
-        </div>
-        <div class="room-cal-grid" id="roomCalGrid" role="grid" aria-labelledby="roomCalMonth"></div>
-        <div class="room-cal-day" id="roomCalDay" hidden>
-          <p class="room-cal-day-label" id="roomCalDayLabel"></p>
-          <ul class="room-cal-day-list" id="roomCalDayList"></ul>
-        </div>
+      <section class="room-list-section" id="roomSectionFavorites">
+        <h2 class="room-list-heading font-cartoon" data-i18n="myRoom.favorites">משחקים שאהבתי</h2>
+        <div class="room-inline-list" id="roomListFavorites"></div>
       </section>
 
-      <div class="room-menu" id="roomTiles">
-        <button type="button" class="room-menu-row sticker-card sticker-yellow" data-section="favorites">
-          <span class="room-menu-label">משחקים שאהבתי</span>
-        </button>
-        <button type="button" class="room-menu-row sticker-card sticker-teal" data-section="created">
-          <span class="room-menu-label">משחקים שיצרתי</span>
-        </button>
-        <button type="button" class="room-menu-row sticker-card sticker-orange" data-section="recent">
-          <span class="room-menu-label">שיחקתי לאחרונה</span>
-        </button>
-      </div>
+      <section class="room-list-section" id="roomSectionCreated">
+        <h2 class="room-list-heading font-cartoon" data-i18n="myRoom.created">משחקים שיצרתי</h2>
+        <div class="room-inline-list" id="roomListCreated"></div>
+      </section>
+
+      <section class="room-list-section" id="roomSectionRecent">
+        <h2 class="room-list-heading font-cartoon" data-i18n="myRoom.recent">שיחקתי לאחרונה</h2>
+        <div class="room-inline-list" id="roomListRecent"></div>
+      </section>
 
       <p class="room-foot-link">
-        <a href="/room?create=1" class="btn btn-primary btn-candy font-cartoon room-create-btn" id="myRoomCreateBtn">+ פתיחת חדר</a>
+        <a href="/room?create=1" class="btn btn-primary btn-candy font-cartoon room-create-btn" id="myRoomCreateBtn" data-i18n="myRoom.openRoom">+ פתיחת חדר</a>
       </p>
     </section>
   </main>
-
-  <!-- Library bottom sheet -->
-  <div class="room-sheet-overlay hidden" id="roomModal" role="dialog" aria-modal="true" aria-labelledby="roomModalTitle">
-    <div class="room-sheet-backdrop" id="roomModalBackdrop"></div>
-    <div class="room-sheet sticker-card sticker-teal">
-      <button type="button" class="room-sheet-close" id="roomModalClose" aria-label="סגירה">×</button>
-      <div class="room-sheet-handle" aria-hidden="true"></div>
-      <h2 class="font-cartoon room-sheet-title" id="roomModalTitle">משחקים</h2>
-      <div class="room-modal-list" id="roomModalList"></div>
-    </div>
-  </div>
 
   <!-- Login -->
   <div class="modal-overlay hidden" id="loginModal">
@@ -142,7 +123,6 @@
   <script src="/js/premium.js"></script>
   <script src="/js/games-catalog.js"></script>
   <script src="/js/my-room.js"></script>
-  <script src="/js/my-room-calendar.js"></script>
   <script src="/js/i18n.js"></script>
   <script src="/js/hub-nav.js"></script>
   <script src="/js/cookie-consent.js"></script>
