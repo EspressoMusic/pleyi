@@ -1,0 +1,248 @@
+/* Dark mode — site-wide overrides via data-theme="dark" */
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ambient-site-bg: #0f2220;
+  --electric: #1a3532;
+  --mempink: #152826;
+  --memyellow: #d4b800;
+  --mempurple: #00b8a8;
+  --memlime: #d4b800;
+  --memorange: #c9a800;
+  --memteal: #00c9b7;
+  --ink: #e8f5f3;
+  --white: #243836;
+  --clean-bg-how: #1a3532;
+  --clean-bg-contact: #152826;
+  --clean-bg-panel: #243836;
+  --clean-bg-cream: #1a2826;
+  --game-stage-bg-color: #1a2e2c;
+  --shape-tq-pale: rgba(0, 201, 183, 0.12);
+  --shape-tq-soft: rgba(0, 201, 183, 0.16);
+  --shape-tq-mid: rgba(0, 201, 183, 0.2);
+  --shape-tq-deep: rgba(0, 160, 145, 0.24);
+  --shape-tq-accent: rgba(0, 201, 183, 0.28);
+  --shape-tq-line: rgba(0, 201, 183, 0.35);
+
+  --bg-deep: #0f2220;
+  --bg-1: #152826;
+  --bg-2: #1a3532;
+  --text: #e8f5f3;
+  --heading: #ffffff;
+  --muted: rgba(232, 245, 243, 0.72);
+  --body: rgba(232, 245, 243, 0.88);
+  --line: rgba(232, 245, 243, 0.22);
+  --line-strong: rgba(232, 245, 243, 0.42);
+  --nav-scrolled-bg: rgba(15, 34, 32, 0.94);
+  --nav-shadow: rgba(0, 0, 0, 0.45);
+  --card-bg: #243836;
+  --step-bg: rgba(36, 56, 54, 0.92);
+  --loader-bg: #0f2220;
+  --mobile-nav-bg: rgba(15, 34, 32, 0.98);
+  --btn-bg: #d4b800;
+  --shadow-candy: 8px 10px 0 0 rgba(0, 0, 0, 0.55);
+  --shadow-sticker: 6px 8px 0 0 rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body.clean-site {
+  background: var(--ambient-site-bg);
+}
+
+html[data-theme="dark"] .ambient-bg {
+  background: var(--ambient-site-bg);
+}
+
+html[data-theme="dark"] .ambient-bg__dot {
+  --dot-color: rgba(0, 201, 183, 0.45);
+  --dot-glow: rgba(0, 201, 183, 0.2);
+  --dot-opacity: 0.28;
+}
+
+html[data-theme="dark"] .ambient-bg__side svg path {
+  fill: rgba(0, 201, 183, 0.14);
+}
+
+html[data-theme="dark"] body.clean-site {
+  --electric: #1a3532;
+  --clean-site-bg: #0f2220;
+  --clean-panel-hero: #0f2220;
+  --clean-panel-about: #152826;
+  --clean-panel-soft: #1a3532;
+  --clean-panel-contact: #152826;
+  --text-soft-turquoise: #e8f5f3;
+}
+
+html[data-theme="dark"] .nav-pill,
+html[data-theme="dark"] button.nav-pill,
+html[data-theme="dark"] .nav-auth-btn,
+html[data-theme="dark"] .lang-toggle,
+html[data-theme="dark"] .theme-toggle-btn {
+  background: var(--white);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+html[data-theme="dark"] .nav-pill.active,
+html[data-theme="dark"] button.nav-pill.active,
+html[data-theme="dark"] .nav-services-link.active {
+  background: var(--memteal);
+  color: #0f2220;
+}
+
+html[data-theme="dark"] .mobile-nav {
+  background: var(--mobile-nav-bg);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .mobile-nav a,
+html[data-theme="dark"] .mobile-nav-services-btn {
+  color: var(--text);
+}
+
+html[data-theme="dark"] .site-footer.section-yellow {
+  background: #3d3500;
+}
+
+html[data-theme="dark"] .site-footer.section-yellow::before {
+  background: #3d3500;
+}
+
+html[data-theme="dark"] .footer-tagline {
+  color: var(--ink);
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme="dark"] .footer-copy {
+  background: #243836;
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .modal,
+html[data-theme="dark"] .auth-modal-overlay .modal,
+html[data-theme="dark"] .modal-lg {
+  background: var(--clean-bg-panel);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .modal input,
+html[data-theme="dark"] .modal select,
+html[data-theme="dark"] .modal textarea,
+html[data-theme="dark"] .join-material-box textarea {
+  background: #1a2826;
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+html[data-theme="dark"] .about-service-card,
+html[data-theme="dark"] .how-timeline-step,
+html[data-theme="dark"] .contact-channel-btn {
+  background: var(--card-bg) !important;
+  color: var(--text);
+}
+
+html[data-theme="dark"] .about-service-card.sticker-yellow,
+html[data-theme="dark"] .how-timeline-step.sticker-yellow {
+  background: color-mix(in srgb, var(--memyellow) 35%, var(--card-bg)) !important;
+}
+
+html[data-theme="dark"] body.page-ready-lessons {
+  --lesson-turquoise: #00695c;
+  --lesson-card-ink: #e8f5f3;
+}
+
+html[data-theme="dark"] body.page-ready-lessons .svc-filter-bar {
+  background: #1a3532;
+}
+
+html[data-theme="dark"] body.page-ready-lessons .svc-filter-menu {
+  background: #243836;
+}
+
+html[data-theme="dark"] body.page-ready-lessons .svc-lesson-name,
+html[data-theme="dark"] body.page-ready-lessons .svc-lesson-part {
+  color: var(--lesson-card-ink);
+}
+
+html[data-theme="dark"] .lesson-player-shell {
+  background: #243836;
+  color: var(--text);
+}
+
+html[data-theme="dark"] .lesson-player-slide {
+  color: var(--text);
+}
+
+html[data-theme="dark"] .lp-game-btn {
+  background: #1a3532;
+  color: var(--text);
+}
+
+html[data-theme="dark"] .play-body,
+html[data-theme="dark"] .play-shell,
+html[data-theme="dark"] .play-main-block {
+  background: transparent;
+  color: var(--text);
+}
+
+html[data-theme="dark"] .room-stat-pill--games-btn::before,
+html[data-theme="dark"] .room-stat-pill--lesson-return::before,
+html[data-theme="dark"] .room-stat-pill--settings-btn::before {
+  background: #243836;
+  border-color: var(--ink);
+}
+
+html[data-theme="dark"] .room-stat-pill--games-btn,
+html[data-theme="dark"] .room-stat-pill--lesson-return,
+html[data-theme="dark"] .room-stat-pill--settings-btn {
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .room-games-panel-sheet,
+html[data-theme="dark"] .room-settings-panel-sheet,
+html[data-theme="dark"] .room-material-panel-sheet {
+  background: #243836;
+  color: var(--text);
+}
+
+html[data-theme="dark"] .hub-card,
+html[data-theme="dark"] .legal-content {
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+html[data-theme="dark"] .solo-overlay {
+  background: rgba(15, 34, 32, 0.94);
+}
+
+html[data-theme="dark"] .menu-toggle span {
+  background: var(--ink);
+}
+
+/* Theme toggle — show sun in dark mode, moon in light mode */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  min-width: 44px;
+}
+
+.theme-toggle-btn__sun,
+.theme-toggle-btn__moon {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.theme-toggle-btn__sun {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-toggle-btn__sun {
+  display: inline-flex;
+}
+
+html[data-theme="dark"] .theme-toggle-btn__moon {
+  display: none;
+}

@@ -47,11 +47,17 @@
     CLASS_MAP.textSize.forEach(function (c) { root.classList.remove(c); });
     if (state.textSize) root.classList.add("a11y-text-" + state.textSize);
 
-    ["highContrast", "darkMode", "reduceMotion", "readableFont", "underlineLinks",
+    ["highContrast", "reduceMotion", "readableFont", "underlineLinks",
       "letterSpacing", "focusStrong", "grayscale"].forEach(function (key) {
       var cls = CLASS_MAP[key];
       root.classList.toggle(cls, !!state[key]);
     });
+
+    if (window.PleyiTheme) {
+      state.darkMode = document.documentElement.getAttribute("data-theme") === "dark";
+    } else {
+      root.classList.toggle(CLASS_MAP.darkMode, !!state.darkMode);
+    }
   }
 
   var state = loadState();
@@ -197,6 +203,11 @@
         var key = btn.getAttribute("data-a11y");
         if (btn.hasAttribute("data-toggle")) {
           state[key] = !state[key];
+          if (key === "darkMode" && window.PleyiTheme) {
+            var wantDark = state.darkMode;
+            var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+            if (wantDark !== isDark) window.PleyiTheme.toggle();
+          }
         } else {
           state[key] = btn.getAttribute("data-value");
         }
@@ -209,6 +220,7 @@
     document.getElementById("a11yReset").addEventListener("click", function () {
       state = Object.assign({}, defaultState);
       saveState(state);
+      if (window.PleyiTheme) window.PleyiTheme.apply(window.PleyiTheme.LIGHT);
       applyState(state);
       syncButtons();
     });

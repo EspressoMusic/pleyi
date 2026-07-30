@@ -2,7 +2,7 @@
 
 .lp-body {
   min-height: 100vh;
-  background: var(--clean-bg-panel, #E0FBF8);
+  background: transparent;
   position: relative;
 }
 

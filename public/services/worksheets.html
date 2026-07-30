@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="he" dir="rtl" data-theme="light">
 <head>
+  <script src="/js/theme.js?v=1"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#00C9B7" />
@@ -8,11 +9,11 @@
   <meta name="description" content="משחקים, דפי צביעה ודפי עבודה — קטגוריות מסודרות לכיתה ולבית."/>
   <link rel="stylesheet" href="/styles.css"/>
   <link rel="stylesheet" href="/css/clean-site.css?v=45"/>
-  <link rel="stylesheet" href="/css/service-landing.css"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=18"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
-<body class="clean-site service-panel">
+<body class="clean-site page-worksheets">
 
   <div class="scroll-progress" id="scrollProgress"></div>
   <div class="loader" id="loader"><div class="loader-bar"></div></div>
@@ -57,72 +58,31 @@
 
     <section class="clean-section clean-section--soft scroll-section" id="categories">
       <div class="container">
-        <h2 class="clean-section-title font-cartoon">קטגוריות</h2>
-        <div class="svc-tile-grid">
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--teal" aria-hidden="true">🧠</div>
-            <h3 class="font-cartoon">זיכרון מילים</h3>
-            <a href="/room" class="btn btn-primary btn-candy font-cartoon">שחקו</a>
+        <div class="svc-tile-grid svc-tile-grid--coloring" id="worksheetGrid">
+          <article class="svc-tile svc-tile--coloring">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/d1.png" alt="דף צביעה 1" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/d1.png" download="d1.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
           </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--yellow" aria-hidden="true">🎯</div>
-            <h3 class="font-cartoon">איש תלוי</h3>
-            <a href="/room" class="btn btn-primary btn-candy font-cartoon">שחקו</a>
+          <article class="svc-tile svc-tile--coloring">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/d2.png" alt="דף צביעה 2" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/d2.png" download="d2.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
           </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--pink" aria-hidden="true">⚔️</div>
-            <h3 class="font-cartoon">טריוויה</h3>
-            <a href="/room" class="btn btn-primary btn-candy font-cartoon">שחקו</a>
+          <article class="svc-tile svc-tile--coloring">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/d3.png" alt="דף צביעה 3" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/d3.png" download="d3.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
           </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--orange" aria-hidden="true">🔍</div>
-            <h3 class="font-cartoon">מצא את ההבדל</h3>
-            <a href="/room" class="btn btn-primary btn-candy font-cartoon">שחקו</a>
+          <article class="svc-tile svc-tile--coloring">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/d4.png" alt="דף צביעה 4" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/d4.png" download="d4.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
           </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--teal" aria-hidden="true">🦁</div>
-            <h3 class="font-cartoon">חיות באנגלית</h3>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>הורדה (בקרוב)</button>
-          </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--yellow" aria-hidden="true">🌈</div>
-            <h3 class="font-cartoon">צבעים</h3>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>הורדה (בקרוב)</button>
-          </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--pink" aria-hidden="true">🔤</div>
-            <h3 class="font-cartoon">אותיות A–Z</h3>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>הורדה (בקרוב)</button>
-          </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--orange" aria-hidden="true">🍎</div>
-            <h3 class="font-cartoon">פירות וירקות</h3>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>הורדה (בקרוב)</button>
-          </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--teal" aria-hidden="true">✏️</div>
-            <h3 class="font-cartoon">התאמת מילים</h3>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>הורדה (בקרוב)</button>
-          </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--yellow" aria-hidden="true">📋</div>
-            <h3 class="font-cartoon">מילים חדשות</h3>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>הורדה (בקרוב)</button>
-          </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--pink" aria-hidden="true">🧩</div>
-            <h3 class="font-cartoon">השלמת משפטים</h3>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>הורדה (בקרוב)</button>
-          </article>
-          <article class="svc-tile">
-            <div class="svc-tile-image svc-tile-image--orange" aria-hidden="true">⭐</div>
-            <h3 class="font-cartoon">דף סיכום שיעור</h3>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon" disabled>הורדה (בקרוב)</button>
-          </article>
-        </div>
-
-        <div class="clean-center-cta" style="margin-top:28px">
-          <a href="/services/game-builder" class="btn btn-primary btn-candy font-cartoon">צרו חומר משלכם</a>
         </div>
       </div>
     </section>

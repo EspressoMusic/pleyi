@@ -1,6 +1,26 @@
 (function () {
   "use strict";
 
+  if (!window.PleyiTheme && !document.querySelector('script[src*="theme.js"]') && !document.body.classList.contains("page-ready-lessons")) {
+    var themeScript = document.createElement("script");
+    themeScript.src = "/js/theme.js?v=1";
+    (document.head || document.documentElement).appendChild(themeScript);
+  }
+
+  if (!document.querySelector('script[src*="ambient-bg"]') && !document.querySelector(".ambient-bg")) {
+    var ambientScript = document.createElement("script");
+    ambientScript.src = "/js/ambient-bg.js?v=2";
+    ambientScript.defer = true;
+    (document.head || document.documentElement).appendChild(ambientScript);
+  }
+
+  if (document.getElementById("navbar") && !document.querySelector('script[src*="nav-pin"]')) {
+    var navPinScript = document.createElement("script");
+    navPinScript.src = "/js/nav-pin.js?v=2";
+    navPinScript.defer = true;
+    (document.head || document.documentElement).appendChild(navPinScript);
+  }
+
   var STORAGE_KEY = "gameclass-cookies-v1";
 
   function acceptEssential() {

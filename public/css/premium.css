@@ -196,11 +196,11 @@
 
 .premium-page-body {
   min-height: 100vh;
-  background: var(--premium-bg) !important;
+  background: transparent !important;
 }
 
 .premium-page-body.hub-body:not(.my-room-body) {
-  background: var(--premium-bg) !important;
+  background: transparent !important;
 }
 
 .premium-page-body .navbar.scrolled {

@@ -6,7 +6,7 @@ html:has(body.in-room) {
 }
 
 body.in-room.clean-site {
-  background: #E0FBF8;
+  background: transparent;
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
@@ -550,6 +550,7 @@ body.room-has-error .room-page-overlay {
 }
 
 .room-stat-pill--games-btn,
+.room-stat-pill--lesson-return,
 .room-stat-pill--settings-btn,
 .room-stat-pill--exit-btn {
   position: relative;
@@ -580,6 +581,7 @@ body.room-has-error .room-page-overlay {
 }
 
 .room-stat-pill--games-btn::before,
+.room-stat-pill--lesson-return::before,
 .room-stat-pill--settings-btn::before,
 .room-stat-pill--exit-btn::before {
   content: "";
@@ -597,6 +599,7 @@ body.room-has-error .room-page-overlay {
 }
 
 .room-stat-pill--games-btn::after,
+.room-stat-pill--lesson-return::after,
 .room-stat-pill--settings-btn::after,
 .room-stat-pill--exit-btn::after {
   content: "";
@@ -632,6 +635,20 @@ body.room-has-error .room-page-overlay {
   transform: translate(-1px, -1px);
 }
 
+.room-stat-pill--lesson-return {
+  white-space: nowrap;
+}
+
+.room-stat-pill--lesson-return:hover,
+.room-stat-pill--lesson-return:focus-visible {
+  transform: translate(-1px, -1px);
+}
+
+.room-stat-pill--lesson-return:hover::before,
+.room-stat-pill--lesson-return:focus-visible::before {
+  background: var(--memteal);
+}
+
 .room-stat-pill--exit-btn {
   color: #fff;
 }
@@ -663,18 +680,21 @@ body.room-has-error .room-page-overlay {
 }
 
 .room-stat-pill--games-btn:active,
+.room-stat-pill--lesson-return:active,
 .room-stat-pill--settings-btn:active,
 .room-stat-pill--exit-btn:active {
   transform: translate(1px, 1px);
 }
 
 .room-stat-pill--games-btn:active::before,
+.room-stat-pill--lesson-return:active::before,
 .room-stat-pill--settings-btn:active::before,
 .room-stat-pill--exit-btn:active::before {
   transform: translate(1px, 1px);
 }
 
 .room-stat-pill--games-btn:focus-visible,
+.room-stat-pill--lesson-return:focus-visible,
 .room-stat-pill--settings-btn:focus-visible,
 .room-stat-pill--exit-btn:focus-visible {
   outline: 3px solid var(--electric);
@@ -1181,6 +1201,7 @@ body.in-room .scroll-progress {
 }
 
 button.room-stat-pill.room-stat-pill--games-btn,
+button.room-stat-pill.room-stat-pill--lesson-return,
 button.room-stat-pill.room-stat-pill--settings-btn,
 button.room-stat-pill.room-stat-pill--exit-btn {
   border: none;

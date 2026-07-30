@@ -7,10 +7,10 @@
 .ambient-bg {
   position: fixed;
   inset: 0;
-  z-index: 2;
+  z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background: transparent;
+  background: var(--ambient-site-bg, #62ebe0);
 }
 
 body.clean-site {
@@ -27,10 +27,14 @@ body.clean-site > .loader,
 body.clean-site > main,
 body.clean-site > .auth-modal-overlay {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
-/* Footer sits above the fixed side-wave overlay (z-index: 2) instead of behind it */
+body.clean-site > .scroll-progress,
+body.clean-site > .loader {
+  z-index: 350;
+}
+
 body.clean-site > footer,
 body.clean-site > .site-footer {
   position: relative;
@@ -38,11 +42,12 @@ body.clean-site > .site-footer {
 }
 
 body.clean-site > .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 300;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  transform: none !important;
 }
 
 body.clean-site > .mobile-nav {
@@ -51,7 +56,6 @@ body.clean-site > .mobile-nav {
   z-index: 150;
 }
 
-/* Layered side waves — full height */
 .ambient-bg__side {
   position: absolute;
   top: 0;
@@ -78,7 +82,6 @@ body.clean-site > .mobile-nav {
   transform: scaleX(-1);
 }
 
-/* Falling turquoise dots */
 .ambient-bg__particles {
   position: absolute;
   inset: 0;

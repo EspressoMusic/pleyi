@@ -181,6 +181,34 @@
     });
   }
 
+  const LESSON_RETURN_KEY = "gameclass-lesson-return";
+  const LESSON_RESTORE_KEY = "gameclass-lesson-restore";
+
+  function readLessonReturn() {
+    try {
+      const raw = sessionStorage.getItem(LESSON_RETURN_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function returnToLesson({ completeLesson = false } = {}) {
+    const lessonReturn = readLessonReturn();
+    if (!lessonReturn?.returnUrl) return false;
+
+    sessionStorage.setItem(
+      LESSON_RESTORE_KEY,
+      JSON.stringify({
+        lessonId: lessonReturn.lessonId,
+        slideIndex: completeLesson ? "end" : (lessonReturn.slideIndex ?? 0),
+      })
+    );
+    sessionStorage.removeItem(LESSON_RETURN_KEY);
+    window.location.href = lessonReturn.returnUrl;
+    return true;
+  }
+
   function initPlayChrome(gameId) {
     const params = new URLSearchParams(window.location.search);
     const roomCode = params.get("room") || readHostRoom()?.code || "";
@@ -347,7 +375,15 @@
 
     gamesBtn?.addEventListener("click", openGamesPanel);
 
+    const lessonReturnBtn = document.getElementById("playLessonReturnBtn");
+    const lessonReturn = readLessonReturn();
+    if (lessonReturnBtn && lessonReturn?.returnUrl && !roomCode) {
+      lessonReturnBtn.classList.remove("hidden");
+      lessonReturnBtn.addEventListener("click", () => returnToLesson());
+    }
+
     document.getElementById("playExitBtn")?.addEventListener("click", () => {
+      sessionStorage.removeItem(LESSON_RETURN_KEY);
       const dest = roomCode ? `/room?code=${encodeURIComponent(roomCode)}` : "/";
       window.location.href = dest;
     });
@@ -415,6 +451,7 @@
   }
 
   window.initPlayChrome = initPlayChrome;
+  window.returnToLessonFromGame = returnToLesson;
   window.playShowToast = showToast;
   window.playReadMaterial = readMaterial;
 })();

@@ -6,11 +6,11 @@
 }
 
 .hub-body:not(.my-room-body) {
-  background: #e0fbf8;
+  background: transparent;
 }
 
 .hub-body.my-room-body {
-  background: #d8f2ee;
+  background: transparent;
 }
 
 .hub-body .memphis-bg.hub-memphis-bg {

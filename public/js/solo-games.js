@@ -1068,6 +1068,7 @@ const SoloGames = {
   /* ── Hangman ── */
   mountHangman(root, ui) {
     const D = this._data();
+    const fromLesson = !!sessionStorage.getItem("gameclass-lesson-return");
     let score = 0;
     let word = "";
     let guessed = [];
@@ -1230,6 +1231,10 @@ const SoloGames = {
         ui.setScore(score);
         document.getElementById("hmStage")?.classList.add("is-win");
         showResult("win", "כל הכבוד! 🎉");
+        if (fromLesson) {
+          ui.onGameOver(score, "סיום");
+          return;
+        }
         setTimeout(() => beginWord(true), 1400);
         return;
       }
@@ -1248,6 +1253,10 @@ const SoloGames = {
             .join("");
         }
         showResult("lose", `המילה: ${word}`);
+        if (fromLesson) {
+          ui.onGameOver(score, "סיום");
+          return;
+        }
         setTimeout(() => beginWord(true), 2200);
       }
     };

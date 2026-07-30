@@ -90,15 +90,27 @@
       scoreEl.textContent = String(n);
     },
     onGameOver(score, reason) {
-      if (!window.UserData || !window.GameAuth?.getUser()) return;
-      UserData.recordPlay({
-        gameId,
-        gameTitle: displayTitle,
-        customGameId: customMeta?.savedGameId || null,
-        isCustom: !!customMeta?.vocab?.length && !customMeta?.isPreset,
-        score,
-        reason,
-      }).catch((err) => console.warn("history save failed", err));
+      if (window.UserData && window.GameAuth?.getUser()) {
+        UserData.recordPlay({
+          gameId,
+          gameTitle: displayTitle,
+          customGameId: customMeta?.savedGameId || null,
+          isCustom: !!customMeta?.vocab?.length && !customMeta?.isPreset,
+          score,
+          reason,
+        }).catch((err) => console.warn("history save failed", err));
+      }
+
+      if (!sessionStorage.getItem("gameclass-lesson-return")) return;
+
+      root.querySelectorAll(".solo-play-again").forEach((btn) => {
+        btn.textContent = "חוזרים לשיעור…";
+        btn.disabled = true;
+      });
+
+      setTimeout(() => {
+        window.returnToLessonFromGame?.({ completeLesson: true });
+      }, 2500);
     },
   };
 

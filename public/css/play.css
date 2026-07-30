@@ -6,7 +6,7 @@
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: #E0FBF8;
+  background: transparent;
   display: flex;
   flex-direction: column;
   color: var(--ink);

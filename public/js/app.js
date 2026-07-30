@@ -271,7 +271,6 @@ function closeMobileNavServices() {
 }
 
 function bindPlayModeModal() {
-  $("#heroPlayNowBtn")?.addEventListener("click", openSoloContentModal);
   $("#playModeClose")?.addEventListener("click", closePlayModeModal);
   $("#playModeModal")?.addEventListener("click", (e) => {
     if (e.target === $("#playModeModal")) closePlayModeModal();

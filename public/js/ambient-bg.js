@@ -63,8 +63,10 @@
   }
 
   function init() {
-    if (!document.body.classList.contains("clean-site")) return;
+    if (document.body.classList.contains("no-ambient-bg")) return;
     if (document.querySelector(".ambient-bg")) return;
+
+    document.documentElement.style.background = "#62ebe0";
 
     const wrap = document.createElement("div");
     wrap.className = "ambient-bg";
