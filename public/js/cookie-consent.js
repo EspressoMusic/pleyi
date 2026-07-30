@@ -21,6 +21,13 @@
     (document.head || document.documentElement).appendChild(navPinScript);
   }
 
+  if (!document.querySelector('script[src*="scroll-animations"]') && !document.body.classList.contains("play-body")) {
+    var scrollScript = document.createElement("script");
+    scrollScript.src = "/js/scroll-animations.js?v=2";
+    scrollScript.defer = true;
+    (document.head || document.documentElement).appendChild(scrollScript);
+  }
+
   var STORAGE_KEY = "gameclass-cookies-v1";
 
   function acceptEssential() {

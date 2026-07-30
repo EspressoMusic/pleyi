@@ -5,7 +5,6 @@
   var defaultState = {
     textSize: "",
     highContrast: false,
-    darkMode: false,
     reduceMotion: false,
     readableFont: false,
     underlineLinks: false,
@@ -33,7 +32,6 @@
   var CLASS_MAP = {
     textSize: ["a11y-text-md", "a11y-text-lg", "a11y-text-xl"],
     highContrast: "a11y-high-contrast",
-    darkMode: "a11y-dark-mode",
     reduceMotion: "a11y-reduce-motion",
     readableFont: "a11y-readable-font",
     underlineLinks: "a11y-underline-links",
@@ -53,11 +51,6 @@
       root.classList.toggle(cls, !!state[key]);
     });
 
-    if (window.PleyiTheme) {
-      state.darkMode = document.documentElement.getAttribute("data-theme") === "dark";
-    } else {
-      root.classList.toggle(CLASS_MAP.darkMode, !!state.darkMode);
-    }
   }
 
   var state = loadState();
@@ -127,7 +120,6 @@
           '<p class="a11y-group-title">תצוגה</p>' +
           '<div class="a11y-row">' +
             '<button type="button" class="a11y-btn" data-a11y="highContrast" data-toggle="true">ניגודיות גבוהה</button>' +
-            '<button type="button" class="a11y-btn" data-a11y="darkMode" data-toggle="true">מצב כהה</button>' +
             '<button type="button" class="a11y-btn" data-a11y="grayscale" data-toggle="true">גווני אפור</button>' +
             '<button type="button" class="a11y-btn" data-a11y="readableFont" data-toggle="true">גופן קריא</button>' +
           '</div>' +
@@ -203,11 +195,6 @@
         var key = btn.getAttribute("data-a11y");
         if (btn.hasAttribute("data-toggle")) {
           state[key] = !state[key];
-          if (key === "darkMode" && window.PleyiTheme) {
-            var wantDark = state.darkMode;
-            var isDark = document.documentElement.getAttribute("data-theme") === "dark";
-            if (wantDark !== isDark) window.PleyiTheme.toggle();
-          }
         } else {
           state[key] = btn.getAttribute("data-value");
         }
@@ -220,7 +207,6 @@
     document.getElementById("a11yReset").addEventListener("click", function () {
       state = Object.assign({}, defaultState);
       saveState(state);
-      if (window.PleyiTheme) window.PleyiTheme.apply(window.PleyiTheme.LIGHT);
       applyState(state);
       syncButtons();
     });

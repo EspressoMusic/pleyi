@@ -14,6 +14,75 @@
     return game?.title || gameId;
   }
 
+  const GAME_RULES = {
+    "word-memory": {
+      minItems: 2,
+      hint: "הדביקו מילים ותרגומים (שורה לכל זוג). כל פריט = זוג אחד במשחק.",
+      lengthLabel: (n) => `${n} זוגות`,
+    },
+    "vocabulary-duel": {
+      minItems: 4,
+      hint: "הדביקו לפחות 4 מילים עם תרגום. כל פריט = שאלה אחת בטריוויה.",
+      lengthLabel: (n) => `${n} שאלות`,
+    },
+    hangman: {
+      minItems: 1,
+      hint: "הדביקו מילים באנגלית עם תרגום. כל פריט = מילה אחת לניחוש.",
+      lengthLabel: (n) => `${n} מילים`,
+    },
+    "spot-diff": {
+      minItems: 6,
+      hint: "הדביקו לפחות 6 פריטים. כל פריט = סיבוב אחד במשחק.",
+      lengthLabel: (n) => `${n} סיבובים`,
+    },
+    "tower-stack": {
+      minItems: 3,
+      hint: "הדביקו מילים עם תרגום — התוכן שלכם יופיע על הקוביות במגדל.",
+      lengthLabel: (n) => `${n} מילים במאגר`,
+    },
+  };
+
+  function gameRules(gameId) {
+    return GAME_RULES[gameId] || {
+      minItems: 2,
+      hint: "הדביקו תוכן לימודי בפורמט: מילה=תרגום (שורה לכל פריט).",
+      lengthLabel: (n) => `${n} פריטים`,
+    };
+  }
+
+  function renderGamePicker(container, subject, selectedId, onSelect) {
+    if (!container) return;
+    const games = window.GAMES_CATALOG?.[subject] || window.GAMES_CATALOG?.english || [];
+    container.innerHTML = games
+      .map(
+        (g) => `
+        <button type="button" class="svc-game-pick-btn${selectedId === g.id ? " is-selected" : ""}" data-game-id="${g.id}">
+          <span class="svc-game-pick-icon" aria-hidden="true">${window.GAMES_CATALOG.gameIcon(g)}</span>
+          <span class="svc-game-pick-title">${g.title}</span>
+          <span class="svc-game-pick-desc">${g.desc || ""}</span>
+        </button>`
+      )
+      .join("");
+
+    container.querySelectorAll("[data-game-id]").forEach((btn) => {
+      btn.addEventListener("click", () => onSelect?.(btn.dataset.gameId));
+    });
+  }
+
+  function validateItemsForGame(gameId, items) {
+    const min = gameRules(gameId).minItems;
+    if (!items.length) {
+      return { ok: false, error: "הדביקו תוכן לימודי או העלו קובץ" };
+    }
+    if (items.length < min) {
+      return {
+        ok: false,
+        error: `למשחק ${gameTitle(gameId)} נדרשים לפחות ${min} פריטים (זוהו ${items.length})`,
+      };
+    }
+    return { ok: true };
+  }
+
   function populateGamePick(selectEl, subject = "english") {
     if (!selectEl) return;
     const games = window.GAMES_CATALOG?.[subject] || window.GAMES_CATALOG?.english || [];
@@ -29,14 +98,15 @@
 
   function updatePreview(previewEl, items, gameId) {
     if (!previewEl) return;
-    if (!items.length) {
+    if (!items.length || !gameId) {
       previewEl.classList.add("hidden");
       previewEl.innerHTML = "";
       return;
     }
+    const rules = gameRules(gameId);
     previewEl.classList.remove("hidden");
     previewEl.innerHTML = `
-      <p><strong>${items.length}</strong> פריטים זוהו · משחק: <strong>${gameTitle(gameId)}</strong></p>
+      <p><strong>${items.length}</strong> פריטים זוהו · אורך המשחק: <strong>${rules.lengthLabel(items.length)}</strong></p>
       <ul class="create-game-preview-list">${items
         .slice(0, 4)
         .map((it) => `<li dir="ltr"><span>${it.en}</span> → <span dir="rtl">${it.he}</span></li>`)
@@ -121,5 +191,9 @@
     ensureContent,
     launchGame,
     gameTitle,
+    gameRules,
+    renderGamePicker,
+    validateItemsForGame,
+    GAME_RULES,
   };
 })();

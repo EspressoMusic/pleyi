@@ -51,7 +51,6 @@ body.page-ready-lessons .svc-lesson-preview {
 
 body.page-ready-lessons .svc-lesson-card:hover .svc-lesson-preview {
   transform: scale(1.08);
-  box-shadow: 6px 6px 0 var(--ink);
   z-index: 2;
 }
 

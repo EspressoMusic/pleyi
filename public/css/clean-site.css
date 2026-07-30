@@ -4,7 +4,7 @@
 
 body.clean-site {
   background: transparent;
-  overflow-x: hidden;
+  overflow-x: clip;
   --clean-nav-clear: 56px;
   --electric: #62ebe0;
   --clean-site-bg: #62ebe0;
@@ -18,6 +18,11 @@ body.clean-site {
 
 html:has(body.clean-site) {
   background: #62ebe0;
+  overflow-x: clip;
+}
+
+body.clean-site > main {
+  overflow-x: clip;
 }
 
 body.clean-site .scroll-section.in-view::after {
@@ -34,13 +39,18 @@ body.clean-site .scroll-section .about-service-card,
 body.clean-site .scroll-section .svc-family-step,
 body.clean-site .scroll-section .how-timeline-step,
 body.clean-site .scroll-section .svc-lesson-card,
+body.clean-site .scroll-section .svc-tile,
+body.clean-site .scroll-section .svc-game-pick-btn,
+body.clean-site .scroll-section .svc-filter-bar,
 body.clean-site .scroll-section .contact-channel-btn,
 body.clean-site .scroll-section .clean-center-cta,
 body.clean-site .scroll-section .svc-create-box,
 body.clean-site .hero-title .line {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  transform: translateY(36px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.clean-site .scroll-section .about-orbit-scene {
@@ -59,6 +69,9 @@ body.clean-site .scroll-section.in-view .about-service-card,
 body.clean-site .scroll-section.in-view .svc-family-step,
 body.clean-site .scroll-section.in-view .how-timeline-step,
 body.clean-site .scroll-section.in-view .svc-lesson-card,
+body.clean-site .scroll-section.in-view .svc-tile,
+body.clean-site .scroll-section.in-view .svc-game-pick-btn,
+body.clean-site .scroll-section.in-view .svc-filter-bar,
 body.clean-site .scroll-section.in-view .contact-channel-btn,
 body.clean-site .scroll-section.in-view .clean-center-cta,
 body.clean-site .scroll-section.in-view .svc-create-box,
@@ -81,6 +94,8 @@ body.clean-site .about-service-card:nth-child(2),
 body.clean-site .svc-family-step:nth-child(2),
 body.clean-site .how-timeline-step:nth-child(2),
 body.clean-site .svc-lesson-card:nth-child(2),
+body.clean-site .svc-tile:nth-child(2),
+body.clean-site .svc-game-pick-btn:nth-child(2),
 body.clean-site .contact-channel-btn:nth-child(2),
 body.clean-site .hero-title .line:nth-child(2) {
   transition-delay: 0.12s;
@@ -89,13 +104,27 @@ body.clean-site .hero-title .line:nth-child(2) {
 body.clean-site .about-service-card:nth-child(3),
 body.clean-site .svc-family-step:nth-child(3),
 body.clean-site .how-timeline-step:nth-child(3),
-body.clean-site .svc-lesson-card:nth-child(3) {
+body.clean-site .svc-lesson-card:nth-child(3),
+body.clean-site .svc-tile:nth-child(3),
+body.clean-site .svc-game-pick-btn:nth-child(3) {
   transition-delay: 0.24s;
 }
 
 body.clean-site .about-service-card:nth-child(4),
-body.clean-site .svc-lesson-card:nth-child(4) {
+body.clean-site .svc-lesson-card:nth-child(4),
+body.clean-site .svc-tile:nth-child(4),
+body.clean-site .svc-game-pick-btn:nth-child(4) {
   transition-delay: 0.36s;
+}
+
+body.clean-site .svc-tile:nth-child(5),
+body.clean-site .svc-game-pick-btn:nth-child(5) {
+  transition-delay: 0.48s;
+}
+
+body.clean-site .svc-tile:nth-child(6),
+body.clean-site .svc-game-pick-btn:nth-child(6) {
+  transition-delay: 0.6s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -109,6 +138,9 @@ body.clean-site .svc-lesson-card:nth-child(4) {
   body.clean-site .scroll-section .svc-family-step,
   body.clean-site .scroll-section .how-timeline-step,
   body.clean-site .scroll-section .svc-lesson-card,
+  body.clean-site .scroll-section .svc-tile,
+  body.clean-site .scroll-section .svc-game-pick-btn,
+  body.clean-site .scroll-section .svc-filter-bar,
   body.clean-site .scroll-section .contact-channel-btn,
   body.clean-site .scroll-section .clean-center-cta,
   body.clean-site .scroll-section .svc-create-box,
@@ -209,6 +241,13 @@ body.clean-site .site-footer.section-yellow {
   background: var(--memyellow);
   border-block: 8px solid var(--ink);
   isolation: isolate;
+  position: relative;
+  left: calc(100vw - 100%);
+  width: 100vw;
+  max-width: 100vw;
+  margin-inline: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 body.clean-site .site-footer.section-yellow::before {
@@ -604,19 +643,20 @@ body.clean-site .clean-section--about {
 }
 
 body.clean-site .clean-section-title.font-cartoon {
-  paint-order: normal;
-  -webkit-text-stroke: 0.6px currentColor;
-  -webkit-text-stroke-width: 0.6px;
-  -webkit-text-fill-color: currentColor;
-  color: var(--ink);
+  paint-order: stroke fill;
+  -webkit-text-stroke: clamp(7px, 1.25vw, 14px) var(--ink);
+  -webkit-text-stroke-color: var(--ink);
+  -webkit-text-fill-color: var(--memyellow);
+  color: var(--memyellow);
   text-shadow: none;
   font-weight: 900;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
 }
 
 body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
-  color: var(--ink);
-  -webkit-text-fill-color: currentColor;
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
 }
 
 #how .clean-section-title {
@@ -702,8 +742,8 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
 
 .about-orbit-scene {
   /* גודל המסלול המקורי + שוליים חיצוניים לכפתורים */
-  --orbit-pad: 62px;
-  --orbit-core: 340px;
+  --orbit-pad: 72px;
+  --orbit-core: 420px;
   --scene-size: calc(var(--orbit-core) + 2 * var(--orbit-pad));
   position: relative;
   width: var(--scene-size);
@@ -732,8 +772,8 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
   top: 50%;
   left: 50%;
   z-index: 3;
-  width: 96px;
-  height: 96px;
+  width: 112px;
+  height: 112px;
   transform: translate(-50%, -50%);
   animation: about-earth-pulse 4s ease-in-out infinite;
 }
@@ -751,7 +791,7 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+  font-size: clamp(1.05rem, 3.4vw, 1.3rem);
   font-weight: 900;
   line-height: 1;
   color: var(--text-soft-turquoise);
@@ -824,12 +864,12 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
   display: grid;
   place-items: center;
   width: max-content;
-  min-width: 88px;
-  max-width: 118px;
-  padding: 8px 12px;
+  min-width: 100px;
+  max-width: 136px;
+  padding: 10px 14px;
   border: 3px solid var(--ink);
   border-radius: 999px;
-  font-size: clamp(0.68rem, 2.6vw, 0.82rem);
+  font-size: clamp(0.78rem, 2.8vw, 0.92rem);
   font-weight: 900;
   line-height: 1.2;
   text-align: center;
@@ -897,25 +937,25 @@ html[lang="en"] .about-orbit-sat--pink {
 
 @media (min-width: 769px) {
   .about-orbit-scene {
-    --orbit-pad: 76px;
-    --orbit-core: 420px;
+    --orbit-pad: 88px;
+    --orbit-core: 520px;
     margin-bottom: clamp(16px, 3vw, 28px);
   }
 
   .about-orbit-earth {
-    width: 112px;
-    height: 112px;
+    width: 132px;
+    height: 132px;
   }
 
   .about-orbit-earth-label {
-    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    font-size: clamp(1.2rem, 2.2vw, 1.45rem);
   }
 
   .about-orbit-sat {
-    min-width: 96px;
-    max-width: 132px;
-    padding: 10px 16px;
-    font-size: 0.92rem;
+    min-width: 112px;
+    max-width: 152px;
+    padding: 12px 18px;
+    font-size: 1.02rem;
   }
 
   html[lang="en"] .about-orbit-scene {
@@ -929,24 +969,24 @@ html[lang="en"] .about-orbit-sat--pink {
 
 @media (min-width: 1200px) {
   .about-orbit-scene {
-    --orbit-pad: 92px;
-    --orbit-core: 500px;
+    --orbit-pad: 104px;
+    --orbit-core: 620px;
   }
 
   .about-orbit-earth {
-    width: 128px;
-    height: 128px;
+    width: 148px;
+    height: 148px;
   }
 
   .about-orbit-earth-label {
-    font-size: 1.28rem;
+    font-size: 1.45rem;
   }
 
   .about-orbit-sat {
-    min-width: 108px;
-    max-width: 148px;
-    padding: 11px 18px;
-    font-size: 1rem;
+    min-width: 124px;
+    max-width: 168px;
+    padding: 12px 20px;
+    font-size: 1.1rem;
   }
 
   html[lang="en"] .about-orbit-scene {
@@ -968,19 +1008,19 @@ html[lang="en"] .about-orbit-sat--pink {
 
 @media (max-width: 768px) {
   .about-orbit-scene {
-    --orbit-pad: clamp(50px, 13vw, 58px);
-    /* גודל מקורי עד 320px, מוקטן רק כדי להישאר בתוך המסך */
-    --orbit-core: min(320px, calc(100vw - 32px - 2 * var(--orbit-pad)));
+    --orbit-pad: clamp(56px, 14vw, 64px);
+    /* גודל מקורי עד 380px, מוקטן רק כדי להישאר בתוך המסך */
+    --orbit-core: min(380px, calc(100vw - 32px - 2 * var(--orbit-pad)));
     --scene-size: calc(var(--orbit-core) + 2 * var(--orbit-pad));
     width: var(--scene-size);
     height: var(--scene-size);
   }
 
   .about-orbit-sat {
-    min-width: 78px;
-    max-width: 104px;
-    padding: 7px 10px;
-    font-size: clamp(0.62rem, 2.8vw, 0.76rem);
+    min-width: 88px;
+    max-width: 118px;
+    padding: 8px 12px;
+    font-size: clamp(0.72rem, 3vw, 0.84rem);
   }
 
   html[lang="en"] .about-orbit-scene {
@@ -997,8 +1037,8 @@ html[lang="en"] .about-orbit-sat--pink {
   }
 
   .about-orbit-earth {
-    width: 88px;
-    height: 88px;
+    width: 104px;
+    height: 104px;
   }
 }
 
@@ -1405,7 +1445,7 @@ button.clean-panel--card {
 
 .clean-panel--card:hover {
   transform: translateY(-4px);
-  box-shadow: 10px 10px 0 var(--ink);
+  box-shadow: var(--shadow-sticker);
 }
 
 .clean-panel--card:active {
@@ -1834,75 +1874,12 @@ body.in-room {
     padding: 8px 16px;
   }
 
-  body.clean-site .mobile-nav-services {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 320px;
-  }
-
   body.clean-site .mobile-nav-services-btn {
-    appearance: none;
-    -webkit-appearance: none;
-    margin: 0;
-    border: none;
-    background: transparent;
     font-size: clamp(20px, 5vw, 24px);
-    font-weight: 800;
-    font-family: inherit;
-    color: var(--ink);
-    cursor: pointer;
-    padding: 8px 16px;
-    line-height: 1.2;
-  }
-
-  body.clean-site .mobile-nav-services-btn[aria-expanded="true"] {
-    color: var(--ink);
-    background: var(--memyellow);
-    border: 3px solid var(--ink);
-    border-radius: 999px;
-    box-shadow: var(--shadow-sticker);
-  }
-
-  body.clean-site .mobile-nav-services-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
-    margin-top: 8px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  body.clean-site .mobile-nav-services-panel.hidden {
-    display: none;
   }
 
   body.clean-site .mobile-nav-services-panel a {
-    display: block;
-    padding: 4px 8px;
     font-size: clamp(16px, 4vw, 19px);
-    font-weight: 700;
-    text-align: center;
-    text-decoration: none;
-    color: var(--ink);
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    opacity: 0.88;
-  }
-
-  body.clean-site .mobile-nav-services-panel a:hover,
-  body.clean-site .mobile-nav-services-panel a:active {
-    background: transparent;
-    opacity: 1;
-    color: var(--ink);
   }
 
   .about-services {

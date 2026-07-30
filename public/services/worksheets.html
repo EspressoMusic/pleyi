@@ -8,8 +8,8 @@
   <title>דפי עבודה ויצירה — Pleyi</title>
   <meta name="description" content="משחקים, דפי צביעה ודפי עבודה — קטגוריות מסודרות לכיתה ולבית."/>
   <link rel="stylesheet" href="/styles.css"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=45"/>
-  <link rel="stylesheet" href="/css/service-landing.css?v=18"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=59"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=27"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -58,32 +58,47 @@
 
     <section class="clean-section clean-section--soft scroll-section" id="categories">
       <div class="container">
+        <div class="svc-filter-bar" id="worksheetFilters">
+          <div class="svc-filter-dropdown" data-filter-key="type">
+            <button type="button" class="svc-filter-trigger" id="filterTypeTrigger" aria-expanded="false">
+              <span class="svc-filter-trigger-label">סוג</span>
+              <span class="svc-filter-trigger-value" id="filterTypeValue">דפי צביעה</span>
+            </button>
+            <ul class="svc-filter-menu hidden" id="filterTypeMenu">
+              <li><button type="button" data-type="coloring" class="active">דפי צביעה</button></li>
+              <li><button type="button" data-type="activity">דפי פעילות</button></li>
+              <li><button type="button" data-type="reading">קטעי קריאה</button></li>
+            </ul>
+          </div>
+        </div>
+
         <div class="svc-tile-grid svc-tile-grid--coloring" id="worksheetGrid">
-          <article class="svc-tile svc-tile--coloring">
+          <article class="svc-tile svc-tile--coloring" data-category="coloring">
             <div class="svc-tile-image svc-tile-image--turquoise">
               <img src="/assets/worksheets/d1.png" alt="דף צביעה 1" width="400" height="400" loading="lazy" />
               <a href="/assets/worksheets/d1.png" download="d1.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
             </div>
           </article>
-          <article class="svc-tile svc-tile--coloring">
+          <article class="svc-tile svc-tile--coloring" data-category="coloring">
             <div class="svc-tile-image svc-tile-image--turquoise">
               <img src="/assets/worksheets/d2.png" alt="דף צביעה 2" width="400" height="400" loading="lazy" />
               <a href="/assets/worksheets/d2.png" download="d2.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
             </div>
           </article>
-          <article class="svc-tile svc-tile--coloring">
+          <article class="svc-tile svc-tile--coloring" data-category="coloring">
             <div class="svc-tile-image svc-tile-image--turquoise">
               <img src="/assets/worksheets/d3.png" alt="דף צביעה 3" width="400" height="400" loading="lazy" />
               <a href="/assets/worksheets/d3.png" download="d3.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
             </div>
           </article>
-          <article class="svc-tile svc-tile--coloring">
+          <article class="svc-tile svc-tile--coloring" data-category="coloring">
             <div class="svc-tile-image svc-tile-image--turquoise">
               <img src="/assets/worksheets/d4.png" alt="דף צביעה 4" width="400" height="400" loading="lazy" />
               <a href="/assets/worksheets/d4.png" download="d4.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
             </div>
           </article>
         </div>
+        <p class="svc-empty-state hidden" id="worksheetEmptyState">לא נמצאו פריטים בקטגוריה זו.</p>
       </div>
     </section>
   </main>
@@ -128,7 +143,9 @@
   <script src="/js/auth.js"></script>
   <script src="/js/user-data.js"></script>
   <script src="/js/ambient-bg.js"></script>
-  <script src="/js/scroll-animations.js"></script>
+  <script src="/js/scroll-animations.js?v=2"></script>
+  <script src="/js/worksheets.js?v=2"></script>
   <script src="/js/service-landing.js"></script>
+  <script src="/js/cookie-consent.js"></script>
 </body>
 </html>

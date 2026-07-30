@@ -1,5 +1,26 @@
 /* Solo playable games — full engines for /play/:gameId */
 
+function soloCustomMeta() {
+  try {
+    const raw = sessionStorage.getItem("gameclass-custom");
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function soloIsCustomContent() {
+  const meta = soloCustomMeta();
+  return !!(meta && !meta.isPreset && meta.vocab?.length);
+}
+
+function soloCustomVocabRounds(fallback) {
+  const meta = soloCustomMeta();
+  if (!meta || meta.isPreset || !meta.vocab?.length) return fallback;
+  return Math.max(2, meta.vocab.length);
+}
+
 const SoloGames = {
   names: {
     "word-runner": "רץ וקופץ",
@@ -413,7 +434,7 @@ const SoloGames = {
     const D = this._data();
     let round = 0;
     let score = 0;
-    const maxRounds = 10;
+    const maxRounds = soloCustomVocabRounds(10);
 
     const render = () => {
       const items = D.pick(6);
@@ -713,7 +734,7 @@ const SoloGames = {
     const D = this._data();
     let score = 0;
     let q = 0;
-    const total = 10;
+    const total = soloCustomVocabRounds(10);
     let timer = null;
     let timeLeft = 0;
     const QUESTION_TIME = 30;
@@ -859,8 +880,12 @@ const SoloGames = {
     let started = false;
 
     const pairCount = () => {
+      const vocabLen = D.VOCAB?.length || 0;
+      if (soloIsCustomContent()) {
+        return Math.max(2, vocabLen);
+      }
       const wanted = window.PlaySettings?.get("word-memory")?.pairCount || 6;
-      const max = Math.max(2, D.VOCAB?.length || 6);
+      const max = Math.max(2, vocabLen || 6);
       return Math.min(wanted, max);
     };
 
@@ -1231,6 +1256,10 @@ const SoloGames = {
         ui.setScore(score);
         document.getElementById("hmStage")?.classList.add("is-win");
         showResult("win", "כל הכבוד! 🎉");
+        if (soloIsCustomContent() && !wordQueue.length) {
+          finishAllWords(`סיימתם ${wordsDone} מילים! ניקוד: ${score}`);
+          return;
+        }
         if (fromLesson) {
           ui.onGameOver(score, "סיום");
           return;
@@ -1253,6 +1282,10 @@ const SoloGames = {
             .join("");
         }
         showResult("lose", `המילה: ${word}`);
+        if (soloIsCustomContent() && !wordQueue.length) {
+          finishAllWords(`סיום! ${wordsDone} מילים · ניקוד: ${score}`);
+          return;
+        }
         if (fromLesson) {
           ui.onGameOver(score, "סיום");
           return;
@@ -1261,10 +1294,27 @@ const SoloGames = {
       }
     };
 
+    let wordQueue = [];
+    let wordsDone = 0;
+
+    const finishAllWords = (message) => {
+      root.innerHTML = `<div class="solo-msg ok">${message}<br><button class="solo-play-again" onclick="location.reload()">שחק שוב</button></div>`;
+      ui.onGameOver(score, "סיום");
+    };
+
     const beginWord = (animated) => {
       hideResult();
       document.getElementById("hmStage")?.classList.remove("is-win", "is-word-enter");
-      currentItem = D.one();
+      if (soloIsCustomContent()) {
+        if (!wordQueue.length && !wordsDone) {
+          wordQueue = D.shuffle([...D.VOCAB]);
+        }
+        if (!wordQueue.length) return;
+        currentItem = wordQueue.shift();
+        wordsDone++;
+      } else {
+        currentItem = D.one();
+      }
       word = currentItem.en.toUpperCase();
       guessed = [];
       wrong = 0;

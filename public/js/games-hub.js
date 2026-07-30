@@ -375,6 +375,7 @@
     grid?.querySelectorAll(".hub-game-card").forEach((card) => {
       window.PleyiPremium?.decorateHubCard?.(card);
     });
+    if (grid) window.PleyiScrollAnimations?.refresh?.(grid);
   }
 
   let gridResizeTimer;

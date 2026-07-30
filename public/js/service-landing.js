@@ -119,21 +119,57 @@ function bindCategoryTabs() {
 
 function bindCreateGameForm() {
   const form = $("#svcCreateForm");
+  const stepPick = $("#svcCreateStepPick");
+  const stepContent = $("#svcCreateStepContent");
+  const pickGrid = $("#svcGamePickGrid");
   const textarea = $("#svcMaterialInput");
   const fileInput = $("#svcMaterialFile");
   const fileBtn = $("#svcMaterialFileBtn");
   const fileName = $("#svcMaterialFileName");
   const box = $("#svcMaterialBox");
   const err = $("#svcCreateError");
-  const gamePick = $("#svcGamePick");
-  if (!textarea) return;
+  const gamePickInput = $("#svcGamePick");
+  const selectedLabel = $("#svcSelectedGameLabel");
+  const contentHint = $("#svcContentHint");
+  const backBtn = $("#svcCreateBack");
+  if (!pickGrid) return;
 
-  window.CreateGameFlow?.populateGamePick(gamePick, "english");
+  let selectedGameId = "";
+
+  function showStepContent(gameId) {
+    selectedGameId = gameId;
+    if (gamePickInput) gamePickInput.value = gameId;
+    const rules = window.CreateGameFlow?.gameRules(gameId);
+    if (selectedLabel) {
+      selectedLabel.textContent = window.CreateGameFlow?.gameTitle(gameId) || gameId;
+    }
+    if (contentHint) {
+      contentHint.textContent = rules?.hint || "הדביקו תוכן לימודי או העלו קובץ.";
+    }
+    stepPick?.classList.add("hidden");
+    stepContent?.classList.remove("hidden");
+    err?.classList.add("hidden");
+    updatePreview();
+    setTimeout(() => textarea?.focus(), 120);
+  }
+
+  function showStepPick() {
+    selectedGameId = "";
+    if (gamePickInput) gamePickInput.value = "";
+    stepContent?.classList.add("hidden");
+    stepPick?.classList.remove("hidden");
+    err?.classList.add("hidden");
+  }
+
+  window.CreateGameFlow?.renderGamePicker(pickGrid, "english", "", (gameId) => {
+    showStepContent(gameId);
+  });
+
+  backBtn?.addEventListener("click", showStepPick);
 
   function updatePreview() {
-    const items = window.CreateGameFlow?.parseItems(textarea.value, "english") || [];
-    const gameId = window.CreateGameFlow?.resolveGameId(items, gamePick?.value || "auto", "english");
-    window.CreateGameFlow?.updatePreview($("#svcPreview"), items, gameId);
+    const items = window.CreateGameFlow?.parseItems(textarea?.value || "", "english") || [];
+    window.CreateGameFlow?.updatePreview($("#svcPreview"), items, selectedGameId);
   }
 
   async function loadFile(file) {
@@ -153,8 +189,7 @@ function bindCreateGameForm() {
 
   fileBtn?.addEventListener("click", () => fileInput?.click());
   fileInput?.addEventListener("change", () => loadFile(fileInput.files?.[0]));
-  textarea.addEventListener("input", updatePreview);
-  gamePick?.addEventListener("change", updatePreview);
+  textarea?.addEventListener("input", updatePreview);
   box?.addEventListener("dragover", (e) => {
     e.preventDefault();
     box.classList.add("is-dragover");
@@ -169,6 +204,16 @@ function bindCreateGameForm() {
   const submit = async (e) => {
     e?.preventDefault();
     err?.classList.add("hidden");
+
+    if (!selectedGameId) {
+      if (err) {
+        err.textContent = "בחרו סוג משחק לפני ההעלאה";
+        err.classList.remove("hidden");
+      }
+      showStepPick();
+      return;
+    }
+
     const btn = $("#svcCreateBtn");
     if (btn) {
       btn.disabled = true;
@@ -176,11 +221,20 @@ function bindCreateGameForm() {
     }
 
     try {
-      let text = textarea.value || "";
+      let text = textarea?.value || "";
       const ready = await window.CreateGameFlow.ensureContent(text, "english");
       if (!ready.ok) {
         if (err) {
           err.textContent = ready.error;
+          err.classList.remove("hidden");
+        }
+        return;
+      }
+
+      const valid = window.CreateGameFlow.validateItemsForGame(selectedGameId, ready.items);
+      if (!valid.ok) {
+        if (err) {
+          err.textContent = valid.error;
           err.classList.remove("hidden");
         }
         return;
@@ -193,7 +247,7 @@ function bindCreateGameForm() {
         text,
         items: ready.items,
         subject: "english",
-        gamePick: gamePick?.value || "auto",
+        gamePick: selectedGameId,
         aiGameId: ready.aiGameId,
       });
     } finally {
@@ -205,7 +259,6 @@ function bindCreateGameForm() {
   };
 
   form?.addEventListener("submit", submit);
-  updatePreview();
 }
 
 function syncNavClearance() {

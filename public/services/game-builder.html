@@ -61,28 +61,32 @@
 
     <section class="clean-section clean-section--soft scroll-section" id="create">
       <div class="container">
-        <h2 class="clean-section-title font-cartoon">צרו משחק עכשיו</h2>
         <div class="svc-create-box">
           <form id="svcCreateForm">
-            <div class="join-material-box" id="svcMaterialBox">
-              <textarea id="svcMaterialInput" rows="8" placeholder="הדביקו כאן את תוכן השיעור…&#10;&#10;apple — תפוח&#10;book — ספר"></textarea>
-              <input type="file" id="svcMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
-              <button type="button" class="join-material-attach" id="svcMaterialFileBtn" aria-label="העלאת קובץ">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-              <span class="join-material-file-name" id="svcMaterialFileName"></span>
+            <div class="svc-create-step" id="svcCreateStepPick">
+              <p class="svc-create-step-label font-cartoon">בחרו סוג משחק</p>
+              <div class="svc-game-pick-grid" id="svcGamePickGrid"></div>
             </div>
-            <label class="solo-game-pick" for="svcGamePick">
-              <span>סוג משחק</span>
-              <select id="svcGamePick">
-                <option value="auto">בחירה אוטומטית (מומלץ)</option>
-              </select>
-            </label>
-            <div class="create-game-preview hidden" id="svcPreview" aria-live="polite"></div>
-            <p class="form-error hidden" id="svcCreateError"></p>
-            <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon" id="svcCreateBtn">התחל משחק</button>
+
+            <div class="svc-create-step hidden" id="svcCreateStepContent">
+              <button type="button" class="svc-create-back" id="svcCreateBack" aria-label="חזרה לבחירת משחק">→ חזרה</button>
+              <p class="svc-create-selected-game font-cartoon" id="svcSelectedGameLabel"></p>
+              <p class="svc-create-content-hint" id="svcContentHint"></p>
+              <div class="join-material-box" id="svcMaterialBox">
+                <textarea id="svcMaterialInput" rows="8" placeholder="הדביקו כאן את תוכן השיעור…"></textarea>
+                <input type="file" id="svcMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
+                <button type="button" class="join-material-attach" id="svcMaterialFileBtn" aria-label="העלאת קובץ">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+                <span class="join-material-file-name" id="svcMaterialFileName"></span>
+              </div>
+              <div class="create-game-preview hidden" id="svcPreview" aria-live="polite"></div>
+              <p class="form-error hidden" id="svcCreateError"></p>
+              <button type="submit" class="btn btn-primary btn-candy btn-full font-cartoon" id="svcCreateBtn">התחל משחק</button>
+            </div>
+            <input type="hidden" id="svcGamePick" value="" />
           </form>
         </div>
       </div>
@@ -134,7 +138,8 @@
   <script src="/js/ai-lesson.js"></script>
   <script src="/js/create-game-flow.js"></script>
   <script src="/js/ambient-bg.js"></script>
-  <script src="/js/scroll-animations.js"></script>
+  <script src="/js/scroll-animations.js?v=2"></script>
   <script src="/js/service-landing.js"></script>
+  <script src="/js/cookie-consent.js"></script>
 </body>
 </html>
