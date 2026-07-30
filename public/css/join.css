@@ -486,6 +486,8 @@ html:has(.join-body) {
 .guest-participant--blue .guest-participant-avatar { background: #6eb5ff; }
 .guest-participant--purple .guest-participant-avatar { background: #c084fc; }
 
+.guest-participant--me .guest-participant-avatar { background: #ff9ecd; }
+
 .guest-participant-name {
   font-size: 11px;
   font-weight: 900;

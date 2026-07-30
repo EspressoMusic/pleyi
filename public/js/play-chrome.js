@@ -375,14 +375,14 @@
 
     gamesBtn?.addEventListener("click", openGamesPanel);
 
-    const lessonReturnBtn = document.getElementById("playLessonReturnBtn");
+    const playExitBtn = document.getElementById("playExitBtn");
     const lessonReturn = readLessonReturn();
-    if (lessonReturnBtn && lessonReturn?.returnUrl && !roomCode) {
-      lessonReturnBtn.classList.remove("hidden");
-      lessonReturnBtn.addEventListener("click", () => returnToLesson());
+    if (playExitBtn && lessonReturn?.returnUrl && !roomCode) {
+      playExitBtn.textContent = "חזרה לשיעור";
     }
 
-    document.getElementById("playExitBtn")?.addEventListener("click", () => {
+    playExitBtn?.addEventListener("click", () => {
+      if (!roomCode && returnToLesson()) return;
       sessionStorage.removeItem(LESSON_RETURN_KEY);
       const dest = roomCode ? `/room?code=${encodeURIComponent(roomCode)}` : "/";
       window.location.href = dest;

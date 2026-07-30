@@ -124,7 +124,10 @@ const Games = {
     }
     if (showResults) {
       const myOk = myAnswer === question.correct;
-      statusHtml += `<div class="${roundResultClass(myOk ? "teacher" : null)}"><h4>${myOk ? "נכון! ✓" : "לא נכון"}</h4><p>המילה: <strong dir="ltr">${question.word}</strong> = ${question.correct}</p></div>`;
+      const resultLine = question.custom
+        ? `התשובה הנכונה: <strong>${question.correct}</strong>`
+        : `המילה: <strong dir="ltr">${question.word}</strong> = ${question.correct}`;
+      statusHtml += `<div class="${roundResultClass(myOk ? "teacher" : null)}"><h4>${myOk ? "נכון! ✓" : "לא נכון"}</h4><p>${resultLine}</p></div>`;
     }
     if (phase === "finished") {
       const sc = ctx.scores || {};

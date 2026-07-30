@@ -17,17 +17,17 @@
   const GAME_RULES = {
     "word-memory": {
       minItems: 2,
-      hint: "הדביקו מילים ותרגומים (שורה לכל זוג). כל פריט = זוג אחד במשחק.",
+      hint: "הדביקו רשימת מילים ותרגומים — שורה לכל זוג (מילה=תרגום).",
       lengthLabel: (n) => `${n} זוגות`,
     },
     "vocabulary-duel": {
       minItems: 4,
-      hint: "הדביקו לפחות 4 מילים עם תרגום. כל פריט = שאלה אחת בטריוויה.",
+      hint: "הדביקו לפחות 4 מילים עם תרגום — כל פריט = שאלה אחת בטריוויה. אפשר גם להדביק שאלות מוכנות: שורת שאלה ואחריה 2-4 תשובות, שורה לכל תשובה, כשמסמנים את הנכונה בכוכבית (*) בתחילת/סוף השורה. הפרידו בין שאלות בשורה ריקה.",
       lengthLabel: (n) => `${n} שאלות`,
     },
     hangman: {
       minItems: 1,
-      hint: "הדביקו מילים באנגלית עם תרגום. כל פריט = מילה אחת לניחוש.",
+      hint: "הדביקו מילים באנגלית עם תרגום — כל מילה תהיה סבב ניחוש אחד.",
       lengthLabel: (n) => `${n} מילים`,
     },
     "spot-diff": {
@@ -37,10 +37,61 @@
     },
     "tower-stack": {
       minItems: 3,
-      hint: "הדביקו מילים עם תרגום — התוכן שלכם יופיע על הקוביות במגדל.",
+      hint: "הדביקו זוגות מילה ותרגום — במשחק תצטרכו לשפוט אם התרגום שמוצג נכון או שגוי.",
       lengthLabel: (n) => `${n} מילים במאגר`,
     },
   };
+
+  const LOCAL_GAMES_KEY = "pleyi-local-games";
+  const LOCAL_GAMES_MAX = 20;
+
+  function getLocalGames() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(LOCAL_GAMES_KEY) || "[]");
+      return Array.isArray(raw) ? raw : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveLocalGame({ title, subject, gameId, items }) {
+    const entry = {
+      id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      title,
+      subject,
+      gameId,
+      items,
+      createdAt: Date.now(),
+    };
+    const list = [entry, ...getLocalGames()].slice(0, LOCAL_GAMES_MAX);
+    localStorage.setItem(LOCAL_GAMES_KEY, JSON.stringify(list));
+    return entry;
+  }
+
+  function generatedTitle(gameId) {
+    const date = new Date().toLocaleDateString("he-IL");
+    return `${gameTitle(gameId)} — ${date}`;
+  }
+
+  async function persistCreatedGame({ subject, gameId, items, title, content }) {
+    const finalTitle = title || generatedTitle(gameId);
+    const user = window.GameAuth?.getUser?.();
+    if (user) {
+      const res = await window.UserData?.saveCustomGame({
+        title: finalTitle,
+        subject,
+        gameId,
+        content: content || "",
+        items,
+      });
+      if (!res?.ok) {
+        return { ok: false, local: false, quotaMessage: res?.error || null };
+      }
+      return { ok: true, local: false, savedGameId: res.id };
+    }
+    saveLocalGame({ title: finalTitle, subject, gameId, items });
+    return { ok: true, local: true };
+  }
 
   function gameRules(gameId) {
     return GAME_RULES[gameId] || {
@@ -57,7 +108,6 @@
       .map(
         (g) => `
         <button type="button" class="svc-game-pick-btn${selectedId === g.id ? " is-selected" : ""}" data-game-id="${g.id}">
-          <span class="svc-game-pick-icon" aria-hidden="true">${window.GAMES_CATALOG.gameIcon(g)}</span>
           <span class="svc-game-pick-title">${g.title}</span>
           <span class="svc-game-pick-desc">${g.desc || ""}</span>
         </button>`
@@ -195,5 +245,8 @@
     renderGamePicker,
     validateItemsForGame,
     GAME_RULES,
+    getLocalGames,
+    saveLocalGame,
+    persistCreatedGame,
   };
 })();

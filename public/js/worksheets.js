@@ -8,6 +8,10 @@
     coloring: "דפי צביעה",
     activity: "דפי פעילות",
     reading: "קטעי קריאה",
+    sudoku: "סודוקו",
+    crossword: "תשבץ",
+    numberColoring: "צביעה עם מספרים",
+    lineTracing: "שרטוט קווים",
   };
 
   function bindWorksheetFilters() {

@@ -121,6 +121,7 @@ function bindCreateGameForm() {
   const form = $("#svcCreateForm");
   const stepPick = $("#svcCreateStepPick");
   const stepContent = $("#svcCreateStepContent");
+  const pickToggle = $("#svcGamePickToggle");
   const pickGrid = $("#svcGamePickGrid");
   const textarea = $("#svcMaterialInput");
   const fileInput = $("#svcMaterialFile");
@@ -132,9 +133,24 @@ function bindCreateGameForm() {
   const selectedLabel = $("#svcSelectedGameLabel");
   const contentHint = $("#svcContentHint");
   const backBtn = $("#svcCreateBack");
+  const pairCountBox = $("#svcPairCount");
+  const pairCountBtns = $$(".svc-pair-count-btn", pairCountBox);
   if (!pickGrid) return;
 
   let selectedGameId = "";
+  let selectedPairCount = 6;
+
+  pickToggle?.addEventListener("click", () => {
+    const open = pickGrid.classList.toggle("hidden") === false;
+    pickToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  pairCountBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectedPairCount = Number(btn.dataset.pairs) || 6;
+      pairCountBtns.forEach((b) => b.classList.toggle("is-selected", b === btn));
+    });
+  });
 
   function showStepContent(gameId) {
     selectedGameId = gameId;
@@ -146,6 +162,7 @@ function bindCreateGameForm() {
     if (contentHint) {
       contentHint.textContent = rules?.hint || "הדביקו תוכן לימודי או העלו קובץ.";
     }
+    pairCountBox?.classList.toggle("hidden", gameId !== "word-memory");
     stepPick?.classList.add("hidden");
     stepContent?.classList.remove("hidden");
     err?.classList.add("hidden");
@@ -243,6 +260,23 @@ function bindCreateGameForm() {
       text = ready.text;
       textarea.value = text;
       updatePreview();
+
+      if (selectedGameId === "word-memory") {
+        sessionStorage.setItem("gameclass-custom-pair-count", String(selectedPairCount));
+      } else {
+        sessionStorage.removeItem("gameclass-custom-pair-count");
+      }
+
+      const saved = await window.CreateGameFlow.persistCreatedGame({
+        subject: "english",
+        gameId: selectedGameId,
+        items: ready.items,
+        content: text,
+      });
+      if (!saved.ok && saved.quotaMessage) {
+        showToast(saved.quotaMessage);
+      }
+
       window.CreateGameFlow.launchGame({
         text,
         items: ready.items,
@@ -261,15 +295,65 @@ function bindCreateGameForm() {
   form?.addEventListener("submit", submit);
 }
 
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function bindMyGamesSection() {
+  const section = $("#svcMyGames");
+  const list = $("#svcMyGamesList");
+  const loginBtn = $("#svcMyGamesLoginBtn");
+  if (!section || !list) return;
+
+  function render(user) {
+    if (user) {
+      section.classList.add("hidden");
+      return;
+    }
+    const games = window.CreateGameFlow?.getLocalGames() || [];
+    if (!games.length) {
+      section.classList.add("hidden");
+      return;
+    }
+    list.innerHTML = games
+      .map(
+        (g) => `
+        <div class="svc-my-games-row">
+          <span class="svc-my-games-row-title">${escapeHtml(g.title)}</span>
+          <button type="button" class="btn btn-outline btn-candy btn-sm svc-my-games-play" data-play="${escapeHtml(g.id)}">פתח</button>
+        </div>`
+      )
+      .join("");
+    section.classList.remove("hidden");
+
+    list.querySelectorAll("[data-play]").forEach((playBtn) => {
+      playBtn.addEventListener("click", () => {
+        const game = games.find((g) => g.id === playBtn.dataset.play);
+        if (!game) return;
+        window.CreateGameFlow?.launchGame({
+          text: "",
+          items: game.items,
+          subject: game.subject,
+          gamePick: game.gameId,
+        });
+      });
+    });
+  }
+
+  loginBtn?.addEventListener("click", () => {
+    window.GameAuth?.openLoginModal(window.location.pathname + window.location.search);
+  });
+
+  window.GameAuth?.onUserChange((user) => render(user));
+}
+
 function syncNavClearance() {
   const nav = document.getElementById("navbar");
   if (!nav || !document.body.classList.contains("clean-site")) return;
-  nav.style.setProperty("position", "fixed", "important");
-  nav.style.setProperty("top", "0", "important");
-  nav.style.setProperty("left", "0", "important");
-  nav.style.setProperty("right", "0", "important");
-  nav.style.setProperty("width", "100%", "important");
-  nav.style.setProperty("z-index", "300", "important");
   document.body.style.setProperty("--clean-nav-clear", `${nav.offsetHeight}px`);
 }
 
@@ -313,5 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
   bindScrollProgress();
   bindCategoryTabs();
   bindCreateGameForm();
+  bindMyGamesSection();
   hideLoader();
 });

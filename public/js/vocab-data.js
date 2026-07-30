@@ -60,6 +60,16 @@ window.VOCAB_DATA = {
 
   quizQuestion() {
     const correct = this.one();
+    if (correct.options?.length >= 2) {
+      return {
+        word: correct.en,
+        hint: correct.hint || "",
+        he: correct.he,
+        correct: correct.he,
+        options: this.shuffle([...correct.options]),
+        custom: true,
+      };
+    }
     const wrong = this.pick(3, [correct.en]);
     return {
       word: correct.en,

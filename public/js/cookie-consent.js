@@ -16,7 +16,7 @@
 
   if (document.getElementById("navbar") && !document.querySelector('script[src*="nav-pin"]')) {
     var navPinScript = document.createElement("script");
-    navPinScript.src = "/js/nav-pin.js?v=2";
+    navPinScript.src = "/js/nav-pin.js?v=3";
     navPinScript.defer = true;
     (document.head || document.documentElement).appendChild(navPinScript);
   }

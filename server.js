@@ -406,6 +406,17 @@ function makeQuizQuestion(vocab, exclude = new Set()) {
   const pool = vocab.filter((v) => !exclude.has(v.en));
   if (!pool.length) return makeQuizQuestion(vocab);
   const correct = pool[Math.floor(Math.random() * pool.length)];
+
+  if (correct.options?.length >= 2) {
+    return {
+      word: correct.en,
+      hint: correct.hint || "",
+      correct: correct.he,
+      options: shuffle([...correct.options]),
+      custom: true,
+    };
+  }
+
   const wrongPool = vocab.filter((v) => v.en !== correct.en);
   const wrong = pickRandom(wrongPool, Math.min(3, wrongPool.length));
   const options = shuffle([correct.he, ...wrong.map((w) => w.he)]);

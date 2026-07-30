@@ -517,6 +517,9 @@ body.page-worksheets .svc-tile-download:focus-visible {
   border-radius: 10px;
   background: var(--white);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  max-height: min(280px, 50vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .svc-filter-menu.hidden {
@@ -724,12 +727,37 @@ body.page-worksheets .svc-tile-download:focus-visible {
   margin-bottom: 16px;
 }
 
-.svc-create-step-label {
+.svc-game-pick-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
   margin: 0 0 18px;
-  font-size: 1.35rem;
+  padding: 16px;
+  font: inherit;
+  font-size: 1.2rem;
   font-weight: 900;
-  text-align: center;
   color: var(--ink);
+  text-align: center;
+  background: #fffef5;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  box-shadow: var(--shadow-candy);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+
+.svc-game-pick-toggle:hover {
+  transform: translateY(-2px);
+}
+
+.svc-game-pick-toggle-chevron {
+  transition: transform 0.15s;
+}
+
+.svc-game-pick-toggle[aria-expanded="true"] .svc-game-pick-toggle-chevron {
+  transform: rotate(180deg);
 }
 
 .svc-game-pick-grid {
@@ -758,11 +786,6 @@ body.page-worksheets .svc-tile-download:focus-visible {
 .svc-game-pick-btn.is-selected {
   background: var(--memyellow);
   transform: translateY(-2px);
-}
-
-.svc-game-pick-icon {
-  font-size: 1.8rem;
-  line-height: 1;
 }
 
 .svc-game-pick-title {
@@ -818,6 +841,110 @@ body.page-worksheets .svc-tile-download:focus-visible {
 
 .svc-create-step.hidden {
   display: none;
+}
+
+.svc-pair-count {
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+.svc-pair-count.hidden {
+  display: none;
+}
+
+.svc-pair-count-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.svc-pair-count-options {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.svc-pair-count-btn {
+  padding: 10px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fffef5;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s, background 0.12s;
+}
+
+.svc-pair-count-btn:hover {
+  transform: translateY(-2px);
+}
+
+.svc-pair-count-btn.is-selected {
+  background: var(--memyellow);
+}
+
+.svc-my-games {
+  max-width: 720px;
+  margin: 28px auto 0;
+  padding: 20px 24px;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: #fffef5;
+  box-shadow: var(--shadow-candy);
+}
+
+.svc-my-games.hidden {
+  display: none;
+}
+
+.svc-my-games-title {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-align: center;
+  color: var(--ink);
+}
+
+.svc-my-games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.svc-my-games-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.svc-my-games-row-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.svc-my-games-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+  color: color-mix(in srgb, var(--ink) 75%, transparent);
 }
 
 .svc-confirm-actions {

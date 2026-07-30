@@ -104,6 +104,121 @@
     return null;
   }
 
+  /* Multiple-choice question blocks — "question, then 2-8 answer lines" paragraphs,
+     used to auto-build trivia (vocabulary-duel) questions from pasted quiz text. */
+
+  const ANSWER_LINE_RE = /^(?:תשובה|נכון|answer|correct)\s*[:\-–]?\s*([A-Da-dא-ד1-4])\s*[.\)]?$/i;
+
+  const LETTER_TO_INDEX = {
+    a: 0, b: 1, c: 2, d: 3,
+    "א": 0, "ב": 1, "ג": 2, "ד": 3,
+    "1": 0, "2": 1, "3": 2, "4": 3,
+  };
+
+  function letterToIndex(ch) {
+    const key = String(ch || "").toLowerCase();
+    return key in LETTER_TO_INDEX ? LETTER_TO_INDEX[key] : null;
+  }
+
+  function stripOptionPrefix(text) {
+    return String(text || "")
+      .replace(/^[\s•·●◦▪▫\-–—]+/, "")
+      .replace(/^(?:[A-Za-z]|[א-ת])[\.\)\]:]\s*/, "")
+      .replace(/^\d+[\.\)\]:]\s*/, "")
+      .trim();
+  }
+
+  function extractCorrectMarker(line) {
+    let text = String(line || "").trim();
+    let isCorrect = false;
+
+    const trailingRe = /\s*(?:\(\s*(?:correct|נכון)\s*\)|[*✓✔])\s*$/i;
+    if (trailingRe.test(text)) {
+      isCorrect = true;
+      text = text.replace(trailingRe, "").trim();
+    }
+
+    const leadingRe = /^[*✓✔]\s*/;
+    if (leadingRe.test(text)) {
+      isCorrect = true;
+      text = text.replace(leadingRe, "").trim();
+    }
+
+    return { text, isCorrect };
+  }
+
+  function groupParagraphs(text) {
+    const rawLines = String(text || "").split(/\r?\n/);
+    const paragraphs = [];
+    let current = [];
+    for (const raw of rawLines) {
+      const trimmed = raw.trim();
+      if (!trimmed) {
+        if (current.length) paragraphs.push(current);
+        current = [];
+      } else {
+        current.push(trimmed);
+      }
+    }
+    if (current.length) paragraphs.push(current);
+    return paragraphs;
+  }
+
+  function matchingPairRatio(lines) {
+    if (!lines.length) return 0;
+    const matches = lines.filter((line) => !isHeaderLine(line) && splitPairLine(line)).length;
+    return matches / lines.length;
+  }
+
+  function isLikelyQuestionBlock(paragraph) {
+    if (paragraph.length < 3 || paragraph.length > 9) return false;
+    if (!/[?？]\s*$/.test(paragraph[0])) return false;
+    const longOptions = paragraph.slice(1).filter((l) => l.length > 60).length;
+    if (longOptions > 1) return false;
+    return matchingPairRatio(paragraph) < 0.5;
+  }
+
+  function buildQuestionItem(paragraphLines, subject) {
+    const question = stripLinePrefix(paragraphLines[0]);
+    if (!question) return null;
+
+    let answerFromLine = null;
+    const rawOptionLines = [];
+    for (const raw of paragraphLines.slice(1)) {
+      const m = raw.trim().match(ANSWER_LINE_RE);
+      if (m) {
+        answerFromLine = letterToIndex(m[1]);
+        continue;
+      }
+      rawOptionLines.push(raw);
+    }
+
+    const parsedOptions = rawOptionLines
+      .map((raw) => {
+        const { text: marked, isCorrect } = extractCorrectMarker(raw);
+        return { text: stripOptionPrefix(marked), isCorrect };
+      })
+      .filter((o) => o.text);
+
+    if (parsedOptions.length < 2 || parsedOptions.length > 8) return null;
+
+    let correctIndex = parsedOptions.findIndex((o) => o.isCorrect);
+    if (correctIndex === -1) {
+      correctIndex = answerFromLine != null && answerFromLine < parsedOptions.length ? answerFromLine : 0;
+    }
+
+    const correct = parsedOptions[correctIndex]?.text;
+    if (!correct) return null;
+
+    return {
+      en: question,
+      he: correct,
+      options: parsedOptions.map((o) => o.text),
+      hint: "",
+      emoji: itemEmoji(subject),
+    };
+  }
+
   function isValidLearningPair(left, right, subject) {
     if (!left || !right || left === right) return false;
     if (isSkippedLabel(left) || isSkippedLabel(right)) return false;
@@ -167,31 +282,42 @@
   }
 
   function parseLearningContent(text, subject = "english") {
-    const lines = String(text || "")
-      .split(/\n/)
-      .map((l) => l.trim())
-      .filter(Boolean);
+    const paragraphs = groupParagraphs(text);
     const items = [];
     const seen = new Set();
 
-    for (const line of lines) {
-      if (isHeaderLine(line)) continue;
-      const pair = splitPairLine(line);
-      if (!pair) continue;
-      const [left, right] = pair;
-      if (!isValidLearningPair(left, right, subject)) continue;
+    for (const paragraph of paragraphs) {
+      if (isLikelyQuestionBlock(paragraph)) {
+        const q = buildQuestionItem(paragraph, subject);
+        if (q) {
+          const key = `Q\0${q.en}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            items.push(q);
+          }
+          continue;
+        }
+      }
 
-      const { en, he } = assignPairSides(left, right, subject);
-      const key = `${en}\0${he}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
+      for (const line of paragraph) {
+        if (isHeaderLine(line)) continue;
+        const pair = splitPairLine(line);
+        if (!pair) continue;
+        const [left, right] = pair;
+        if (!isValidLearningPair(left, right, subject)) continue;
 
-      items.push({
-        en,
-        he,
-        hint: itemHint(en, subject),
-        emoji: itemEmoji(subject),
-      });
+        const { en, he } = assignPairSides(left, right, subject);
+        const key = `${en}\0${he}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+
+        items.push({
+          en,
+          he,
+          hint: itemHint(en, subject),
+          emoji: itemEmoji(subject),
+        });
+      }
     }
 
     return items;
@@ -215,15 +341,34 @@
   // a "pair" (e.g. "שאלה 1: What is your name?"), but that's noise, not
   // content. Require most lines to be real pairs before treating the text as
   // ready to use as-is, otherwise it should go through the AI.
+  // A question block collapses many lines into one item, so it can't be judged
+  // by the same per-line ratio as plain pairs — it counts as one matched unit
+  // out of one attempted unit when it parses successfully.
   function looksLikeReadyPairs(text, subject = "english") {
-    const lines = String(text || "")
-      .split(/\n/)
-      .map((l) => l.trim())
-      .filter(Boolean);
-    if (lines.length < 2) return false;
-    const items = parseLearningContent(text, subject);
-    if (items.length < 2) return false;
-    return items.length / lines.length >= 0.6;
+    const paragraphs = groupParagraphs(text);
+    if (!paragraphs.length) return false;
+
+    let totalUnits = 0;
+    let matchedUnits = 0;
+    let itemCount = 0;
+
+    for (const paragraph of paragraphs) {
+      if (isLikelyQuestionBlock(paragraph)) {
+        totalUnits += 1;
+        if (buildQuestionItem(paragraph, subject)) {
+          matchedUnits += 1;
+          itemCount += 1;
+        }
+        continue;
+      }
+      totalUnits += paragraph.length;
+      const matched = paragraph.filter((line) => !isHeaderLine(line) && splitPairLine(line)).length;
+      matchedUnits += matched;
+      itemCount += matched;
+    }
+
+    if (itemCount < 2) return false;
+    return matchedUnits / totalUnits >= 0.6;
   }
 
   window.LEARNING_PARSE = {

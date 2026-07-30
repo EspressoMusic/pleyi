@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#00C9B7" />
   <title>שיעורים מוכנים — Pleyi</title>
   <meta name="description" content="ספריית שיעורי אנגלית מוכנים עם מערך שיעור פשוט — מוכן להצגה על הלוח כמו מצגת."/>
-  <link rel="stylesheet" href="/styles.css?v=51"/>
-  <link rel="stylesheet" href="/css/ambient-bg.css?v=8"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=59"/>
-  <link rel="stylesheet" href="/css/lesson-player.css?v=25"/>
+  <link rel="stylesheet" href="/styles.css?v=55"/>
+  <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=63"/>
+  <link rel="stylesheet" href="/css/lesson-player.css?v=31"/>
   <link rel="stylesheet" href="/css/service-landing.css?v=27"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
@@ -58,8 +58,7 @@
     <section class="clean-section clean-section--hero scroll-section" id="home">
       <div class="container clean-hero-inner">
         <h1 class="hero-title font-cartoon svc-page-title">
-          <span class="line">שיעורי אנגלית</span>
-          <span class="line accent">מוכנים לכיתה!</span>
+          <span class="line accent">שיעורים מוכנים לכיתה!</span>
         </h1>
       </div>
     </section>
@@ -105,20 +104,61 @@
         <div class="svc-lesson-grid">
           <article class="svc-lesson-card" data-lesson="intro">
             <div class="svc-lesson-preview">
-              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-expanded="false">i</button>
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
               <div class="svc-lesson-title-wrap">
-                <span class="svc-lesson-name">הקדמה</span>
-                <span class="svc-lesson-part">חלק א</span>
+                <span class="svc-lesson-name">הקדמה לשפה האנגלית</span>
+                <span class="svc-lesson-part"></span>
               </div>
               <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="intro">הצג שיעור</button>
             </div>
-            <div class="svc-lesson-info-panel hidden">
-              <dl>
-                <dt>מקצוע</dt><dd>אנגלית</dd>
-                <dt>כיתות</dt><dd>כל הכיתות</dd>
-                <dt>משך</dt><dd>30 דק׳</dd>
-                <dt>תוכן</dt><dd>היכרות, מטרות השיעור וחימום קצר לפני הלמידה.</dd>
-              </dl>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="colors">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">צבעים</span>
+                <span class="svc-lesson-part"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="colors">הצג שיעור</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="numbers">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">מספרים</span>
+                <span class="svc-lesson-part"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="numbers">הצג שיעור</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="animals">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">בעלי חיים</span>
+                <span class="svc-lesson-part"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="animals">הצג שיעור</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="family">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">משפחה</span>
+                <span class="svc-lesson-part"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="family">הצג שיעור</button>
             </div>
           </article>
         </div>
@@ -140,21 +180,49 @@
     </div>
   </footer>
 
-  <div class="lesson-player hidden" id="lessonPlayer" role="dialog" aria-modal="true" aria-labelledby="lessonPlayerLessonTitle" aria-hidden="true">
+  <div class="modal-overlay hidden" id="lessonInfoModal">
+    <div class="modal modal-lesson-info">
+      <button class="modal-close" id="lessonInfoClose" type="button" aria-label="סגירה">×</button>
+      <header class="lesson-info-head">
+        <h2 class="font-cartoon lesson-info-title" id="lessonInfoTitle"></h2>
+        <span class="lesson-info-learned-badge hidden" id="lessonInfoLearnedBadge">נלמד</span>
+      </header>
+      <dl class="lesson-info-meta">
+        <div><dt>מקצוע</dt><dd id="lessonInfoSubject"></dd></div>
+        <div><dt>כיתות</dt><dd id="lessonInfoGrade"></dd></div>
+        <div><dt>משך</dt><dd id="lessonInfoDuration"></dd></div>
+      </dl>
+      <p class="lesson-info-summary" id="lessonInfoSummary"></p>
+      <div class="lesson-info-actions">
+        <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" id="lessonInfoOpenBtn">הצג שיעור</button>
+        <button type="button" class="lesson-info-share-btn" id="lessonInfoShareBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <path d="M8.6 10.5 15.4 6.5M8.6 13.5 15.4 17.5"/>
+          </svg>
+          <span id="lessonInfoShareLabel">שיתוף השיעור</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-player hidden" id="lessonPlayer" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="lesson-player-backdrop" id="lessonPlayerBackdrop"></div>
     <div class="lesson-player-shell">
       <header class="lesson-player-top">
-        <span class="lesson-player-progress" id="lessonPlayerProgress">1 / 1</span>
-        <h1 class="lesson-player-lesson-title" id="lessonPlayerLessonTitle"></h1>
+        <span class="lesson-player-progress" id="lessonPlayerProgress" dir="ltr">1 / 1</span>
         <div class="lesson-player-top-actions">
-          <button type="button" class="lesson-player-theme-btn" id="lessonPlayerTheme" aria-label="מעבר למצב כהה" aria-pressed="false" title="מצב כהה">
-            <svg class="lesson-player-theme-btn__sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-            </svg>
-            <svg class="lesson-player-theme-btn__moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M21 13.2A8.5 8.5 0 0 1 10.8 3 7 7 0 1 0 21 13.2z"/>
-            </svg>
-          </button>
+          <div class="lesson-player-bg-wrap">
+            <button type="button" class="lesson-player-bg-btn" id="lessonPlayerBg" aria-label="רקע לשקופיות" aria-expanded="false" title="רקע לשקופיות">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.4-.3-.4-.5-.9-.5-1.4 0-1.1.9-2 2-2h2.3A4.2 4.2 0 0 0 21.5 11c0-5-4.3-9-9.5-9Z"/>
+                <circle cx="7" cy="12" r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="8.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="14" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+              </svg>
+            </button>
+            <div class="lesson-player-bg-menu hidden" id="lessonPlayerBgMenu" role="menu"></div>
+          </div>
           <button type="button" class="lesson-player-expand" id="lessonPlayerExpand" aria-label="הגדל למסך מלא" aria-pressed="false" title="מסך מלא"></button>
           <button type="button" class="lesson-player-close" id="lessonPlayerClose" aria-label="סגירה">
             <svg class="lesson-player-close-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -179,9 +247,9 @@
   <script src="/js/games-catalog.js"></script>
   <script src="/js/create-game-flow.js"></script>
   <script src="/js/ambient-bg.js?v=2"></script>
-  <script src="/js/nav-pin.js?v=2"></script>
+  <script src="/js/nav-pin.js?v=3"></script>
   <script src="/js/scroll-animations.js?v=2"></script>
-  <script src="/js/ready-lessons.js?v=12"></script>
-  <script src="/js/cookie-consent.js"></script>
+  <script src="/js/ready-lessons.js?v=18"></script>
+  <script src="/js/cookie-consent.js?v=2"></script>
 </body>
 </html>

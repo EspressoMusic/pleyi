@@ -783,7 +783,7 @@ const SoloGames = {
 
       root.innerHTML = `
         <div class="solo-game-wrap solo-game-wrap--vd">
-          <p class="vd-prompt">מה התרגום?</p>
+          <p class="vd-prompt">${question.custom ? "בחרו את התשובה הנכונה" : "מה התרגום?"}</p>
           <div class="vd-word-box">
             <div class="solo-quiz-word">${question.word}</div>
           </div>
@@ -882,6 +882,8 @@ const SoloGames = {
     const pairCount = () => {
       const vocabLen = D.VOCAB?.length || 0;
       if (soloIsCustomContent()) {
+        const override = Number(sessionStorage.getItem("gameclass-custom-pair-count"));
+        if (override > 0) return Math.min(override, Math.max(2, vocabLen));
         return Math.max(2, vocabLen);
       }
       const wanted = window.PlaySettings?.get("word-memory")?.pairCount || 6;

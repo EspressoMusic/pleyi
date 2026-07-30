@@ -41,15 +41,6 @@ body.clean-site > .site-footer {
   z-index: 3;
 }
 
-body.clean-site > .navbar {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  z-index: 1000 !important;
-  transform: none !important;
-}
-
 body.clean-site > .mobile-nav {
   position: fixed;
   inset: 0;

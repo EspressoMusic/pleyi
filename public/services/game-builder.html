@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#00C9B7" />
   <title>מערכת יצירת משחק — Pleyi</title>
   <meta name="description" content="מעלים תוכן לימודי — המערכת יוצרת משחק. פשוט, מהיר, מוכן לכיתה."/>
-  <link rel="stylesheet" href="/styles.css"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=45"/>
-  <link rel="stylesheet" href="/css/service-landing.css"/>
+  <link rel="stylesheet" href="/styles.css?v=55"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=63"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=27"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -64,14 +64,24 @@
         <div class="svc-create-box">
           <form id="svcCreateForm">
             <div class="svc-create-step" id="svcCreateStepPick">
-              <p class="svc-create-step-label font-cartoon">בחרו סוג משחק</p>
-              <div class="svc-game-pick-grid" id="svcGamePickGrid"></div>
+              <button type="button" class="svc-game-pick-toggle font-cartoon" id="svcGamePickToggle" aria-expanded="false" aria-controls="svcGamePickGrid">
+                <span>בחרו סוג משחק</span>
+                <span class="svc-game-pick-toggle-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="svc-game-pick-grid hidden" id="svcGamePickGrid"></div>
             </div>
 
             <div class="svc-create-step hidden" id="svcCreateStepContent">
               <button type="button" class="svc-create-back" id="svcCreateBack" aria-label="חזרה לבחירת משחק">→ חזרה</button>
               <p class="svc-create-selected-game font-cartoon" id="svcSelectedGameLabel"></p>
               <p class="svc-create-content-hint" id="svcContentHint"></p>
+              <div class="svc-pair-count hidden" id="svcPairCount">
+                <span class="svc-pair-count-label">כמה קלפים במשחק?</span>
+                <div class="svc-pair-count-options">
+                  <button type="button" class="svc-pair-count-btn is-selected" data-pairs="6">6 זוגות (12 קלפים)</button>
+                  <button type="button" class="svc-pair-count-btn" data-pairs="8">8 זוגות (16 קלפים)</button>
+                </div>
+              </div>
               <div class="join-material-box" id="svcMaterialBox">
                 <textarea id="svcMaterialInput" rows="8" placeholder="הדביקו כאן את תוכן השיעור…"></textarea>
                 <input type="file" id="svcMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
@@ -88,6 +98,15 @@
             </div>
             <input type="hidden" id="svcGamePick" value="" />
           </form>
+        </div>
+
+        <div class="svc-my-games hidden" id="svcMyGames">
+          <h2 class="svc-my-games-title font-cartoon">המשחקים שיצרתי בדפדפן הזה</h2>
+          <div class="svc-my-games-list" id="svcMyGamesList"></div>
+          <div class="svc-my-games-note">
+            <span>המשחקים האלה נשמרים רק בדפדפן הזה. התחברו כדי לשמור אותם לצמיתות ולפתוח אותם מכל מכשיר.</span>
+            <button type="button" class="btn btn-outline btn-candy btn-sm" id="svcMyGamesLoginBtn">התחברות</button>
+          </div>
         </div>
       </div>
     </section>
@@ -139,7 +158,7 @@
   <script src="/js/create-game-flow.js"></script>
   <script src="/js/ambient-bg.js"></script>
   <script src="/js/scroll-animations.js?v=2"></script>
-  <script src="/js/service-landing.js"></script>
-  <script src="/js/cookie-consent.js"></script>
+  <script src="/js/service-landing.js?v=2"></script>
+  <script src="/js/cookie-consent.js?v=2"></script>
 </body>
 </html>
