@@ -6,11 +6,12 @@
   <meta name="theme-color" content="#00C9B7" />
   <title>שיעורים מוכנים — Pleyi</title>
   <meta name="description" content="ספריית שיעורי אנגלית מוכנים עם מערך שיעור פשוט — מוכן להצגה על הלוח כמו מצגת."/>
-  <link rel="stylesheet" href="/styles.css?v=55"/>
+  <link rel="stylesheet" href="/styles.css?v=56"/>
   <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=63"/>
-  <link rel="stylesheet" href="/css/lesson-player.css?v=31"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=70"/>
+  <link rel="stylesheet" href="/css/lesson-player.css?v=32"/>
   <link rel="stylesheet" href="/css/service-landing.css?v=27"/>
+  <link rel="stylesheet" href="/css/premium.css"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -76,6 +77,7 @@
               <li><button type="button" data-subject="all" class="active">הכל</button></li>
               <li><button type="button" data-subject="english">אנגלית</button></li>
               <li><button type="button" data-subject="math">חשבון</button></li>
+              <li><button type="button" data-subject="lifeskills">כישורי חיים</button></li>
             </ul>
           </div>
           <div class="svc-filter-divider" aria-hidden="true"></div>
@@ -161,6 +163,18 @@
               <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="family">הצג שיעור</button>
             </div>
           </article>
+
+          <article class="svc-lesson-card" data-lesson="health">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">נפלאות הבריאה</span>
+                <span class="svc-lesson-part"></span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="health">הצג שיעור</button>
+            </div>
+          </article>
         </div>
 
         <p class="svc-empty-state hidden" id="lessonEmptyState">לא נמצאו שיעורים לפי הסינון.</p>
@@ -185,6 +199,13 @@
       <button class="modal-close" id="lessonInfoClose" type="button" aria-label="סגירה">×</button>
       <header class="lesson-info-head">
         <h2 class="font-cartoon lesson-info-title" id="lessonInfoTitle"></h2>
+        <span class="lesson-info-premium-badge hidden" id="lessonInfoPremiumBadge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="11" width="14" height="9" rx="2"/>
+            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+          </svg>
+          <span>פרימיום</span>
+        </span>
         <span class="lesson-info-learned-badge hidden" id="lessonInfoLearnedBadge">נלמד</span>
       </header>
       <dl class="lesson-info-meta">
@@ -246,10 +267,18 @@
 
   <script src="/js/games-catalog.js"></script>
   <script src="/js/create-game-flow.js"></script>
-  <script src="/js/ambient-bg.js?v=2"></script>
+  <script src="/js/ambient-bg.js?v=3"></script>
   <script src="/js/nav-pin.js?v=3"></script>
-  <script src="/js/scroll-animations.js?v=2"></script>
-  <script src="/js/ready-lessons.js?v=18"></script>
+  <script src="/js/scroll-animations.js?v=3"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/user-data.js"></script>
+  <script src="/js/credits.js"></script>
+  <script src="/js/premium.js"></script>
+  <script src="/js/ready-lessons.js?v=19"></script>
   <script src="/js/cookie-consent.js?v=2"></script>
 </body>
 </html>

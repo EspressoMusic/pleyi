@@ -4,7 +4,7 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון" };
+  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים" };
 
   const LESSON_CATALOG = {
     intro: {
@@ -335,6 +335,7 @@
 
     animals: {
       id: "animals",
+      premium: true,
       name: "בעלי חיים",
       nameMain: "בעלי חיים",
       namePart: "",
@@ -424,6 +425,7 @@
 
     family: {
       id: "family",
+      premium: true,
       name: "משפחה",
       nameMain: "משפחה",
       namePart: "",
@@ -505,6 +507,109 @@
         },
       ],
     },
+    health: {
+      id: "health",
+      premium: true,
+      name: "נפלאות הבריאה",
+      nameMain: "נפלאות הבריאה",
+      namePart: "",
+      subject: "lifeskills",
+      grades: ["ag", "dv", "zh"],
+      topic: "health",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "מכירים מילים באנגלית על בריאות וגוף — איך לשמור על הבריאות שלנו, מבקרים אצל הרופא, ומתרגלים עם משפטים ומשחק.",
+      vocab: [
+        { en: "healthy", he: "בריא" },
+        { en: "doctor", he: "רופא" },
+        { en: "sleep", he: "לישון" },
+        { en: "exercise", he: "התעמלות" },
+        { en: "water", he: "מים" },
+        { en: "teeth", he: "שיניים" },
+        { en: "wash", he: "לשטוף" },
+        { en: "medicine", he: "תרופה" },
+        { en: "sick", he: "חולה" },
+        { en: "fruit", he: "פרי" },
+      ],
+      games: [
+        { id: "word-memory", label: "זיכרון מילים", icon: "🧠" },
+        { id: "vocabulary-duel", label: "טריוויה", icon: "⚔️" },
+      ],
+      slides: [
+        {
+          type: "content",
+          title: "למה בריאות חשובה?",
+          subtitle: "פתיחה",
+          body: "הגוף שלנו הוא כמו מכונה מדהימה — וכדי שהוא יעבוד טוב, צריך לדאוג לו.\n\nהיום נלמד מילים באנגלית שקשורות לבריאות ולגוף שלנו.",
+        },
+        {
+          type: "content",
+          title: "Health & Body",
+          subtitle: "אוצר מילים",
+          items: [
+            { en: "healthy", he: "בריא" },
+            { en: "doctor", he: "רופא" },
+            { en: "sleep", he: "לישון" },
+            { en: "exercise", he: "התעמלות" },
+            { en: "water", he: "מים" },
+            { en: "teeth", he: "שיניים" },
+            { en: "wash", he: "לשטוף" },
+            { en: "medicine", he: "תרופה" },
+            { en: "sick", he: "חולה" },
+            { en: "fruit", he: "פרי" },
+          ],
+        },
+        {
+          type: "content",
+          title: "איך אני מרגיש/ה?",
+          subtitle: "כלל דקדוקי",
+          body: "כדי לתאר איך אנחנו מרגישים אומרים: I feel healthy.\n\nכשלא מרגישים טוב אומרים: I feel sick.\n\nנסו: How do you feel today?",
+          say: [
+            { match: "I feel healthy.", speak: "I feel healthy.", explain: "אני מרגיש/ה בריא/ה" },
+            { match: "I feel sick.", speak: "I feel sick.", explain: "אני מרגיש/ה חולה" },
+          ],
+        },
+        {
+          type: "content",
+          title: "Let's Practice",
+          subtitle: "בואו נתרגל",
+          body: "I wash my hands.\nI eat fruit every day.\nI go to sleep early.",
+          say: [
+            { match: "I wash my hands.", speak: "I wash my hands.", explain: "אני שוטף/ת ידיים" },
+            { match: "I eat fruit every day.", speak: "I eat fruit every day.", explain: "אני אוכל/ת פרי כל יום" },
+            { match: "I go to sleep early.", speak: "I go to sleep early.", explain: "אני הולך/ת לישון מוקדם" },
+          ],
+        },
+        {
+          type: "content",
+          title: "איך שומרים על בריאות?",
+          subtitle: "שאלה ותשובה",
+          body: "כדי לשאול איך שומרים על בריאות אומרים: How do you stay healthy?\n\nהתשובה: I drink water and I exercise.\n\nנסו לענות בעצמכם!",
+          say: [
+            { match: "How do you stay healthy?", speak: "How do you stay healthy?", explain: "איך אתה שומר על הבריאות שלך?" },
+            { match: "I drink water and I exercise.", speak: "I drink water and I exercise.", explain: "אני שותה מים ומתעמל/ת" },
+          ],
+        },
+        {
+          type: "content",
+          title: "בריאות בחיים שלנו",
+          subtitle: "חיבור לחיים",
+          body: "כמה הרגלים קטנים ששומרים עלינו בריאים: לשטוף ידיים, לצחצח שיניים, לשתות מים, לישון מספיק ולבקר אצל הרופא כשצריך.",
+          say: [
+            { match: "wash", speak: "wash", explain: "לשטוף" },
+            { match: "sleep", speak: "sleep", explain: "לישון" },
+            { match: "doctor", speak: "doctor", explain: "רופא" },
+          ],
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+    },
   };
 
   const LESSON_TOPICS = {
@@ -535,6 +640,11 @@
         { id: "percentages", label: "אחוזים" },
         { id: "geometry", label: "גאומטריה" },
       ],
+    },
+    lifeskills: {
+      ag: [{ id: "health", label: "נפלאות הבריאה" }],
+      dv: [{ id: "health", label: "נפלאות הבריאה" }],
+      zh: [{ id: "health", label: "נפלאות הבריאה" }],
     },
   };
 
@@ -699,6 +809,7 @@
     $("#lessonInfoDuration").textContent = lesson.duration;
     $("#lessonInfoSummary").textContent = lesson.summary;
     $("#lessonInfoLearnedBadge")?.classList.toggle("hidden", !getLearnedLessons().includes(lessonId));
+    $("#lessonInfoPremiumBadge")?.classList.toggle("hidden", !lesson.premium || !!window.PleyiPremium?.hasPremium?.());
 
     const openBtn = $("#lessonInfoOpenBtn");
     if (openBtn) openBtn.dataset.lesson = lessonId;
@@ -1288,6 +1399,11 @@
     function open(lessonId) {
       lesson = LESSON_CATALOG[lessonId];
       if (!lesson) return;
+      if (lesson.premium && !window.PleyiPremium?.hasPremium?.()) {
+        window.PleyiPremium?.ensureLessonAccess?.(lessonId, lesson.nameMain || lesson.name);
+        lesson = null;
+        return;
+      }
       steps = lesson.slides || [];
       index = 0;
       renderDots();
@@ -1376,12 +1492,40 @@
     });
   }
 
+  const LOCK_ICON_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+
+  function updateLessonLocks() {
+    const unlocked = !!window.PleyiPremium?.hasPremium?.();
+    $$(".svc-lesson-card[data-lesson]").forEach((card) => {
+      const lesson = LESSON_CATALOG[card.dataset.lesson];
+      if (!lesson) return;
+      const locked = !!lesson.premium && !unlocked;
+      card.classList.toggle("is-premium-locked", locked);
+
+      let badge = $(".svc-lesson-premium-lock", card);
+      if (locked && !badge) {
+        $(".svc-lesson-preview", card)?.insertAdjacentHTML(
+          "afterbegin",
+          `<span class="svc-lesson-premium-lock" aria-hidden="true">${LOCK_ICON_SVG}<span>פרימיום</span></span>`
+        );
+      } else if (!locked && badge) {
+        badge.remove();
+      }
+
+      const openBtn = $(".js-lesson-open", card);
+      if (openBtn) openBtn.textContent = locked ? "פתיחה עם פרימיום" : "הצג שיעור";
+    });
+  }
+
   function init() {
     syncLessonCardTitles();
     bindLessonFilters();
     bindLessonInfoModal();
     bindLessonPlayer();
     applyLearnedBadges();
+    updateLessonLocks();
+    document.addEventListener("premium-updated", updateLessonLocks);
     tryOpenSharedLesson();
   }
 

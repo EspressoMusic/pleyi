@@ -10,8 +10,16 @@
   let creditsByPlan = { free: 10, monthly: 50, yearly: 120 };
   let selectedPlan = "yearly";
   let payMethod = "card";
-  let pendingGameId = null;
+  let pendingTarget = null;
   let modalBuilt = false;
+
+  function currentLang() {
+    try {
+      return localStorage.getItem("pleyi-lang") || document.documentElement.lang || "he";
+    } catch {
+      return document.documentElement.lang || "he";
+    }
+  }
 
   function escapeHtml(str) {
     return String(str || "")
@@ -48,6 +56,16 @@
     document.dispatchEvent(new CustomEvent("premium-updated"));
   }
 
+  // The server verifies this token itself — it never trusts a client-supplied
+  // uid for premium status/activation.
+  async function getIdToken() {
+    try {
+      return (await window.FirebaseApp?.auth?.currentUser?.getIdToken?.()) || null;
+    } catch {
+      return null;
+    }
+  }
+
   async function loadPlans() {
     const res = await fetch("/api/premium/plans");
     const data = await res.json();
@@ -70,7 +88,11 @@
     if (cached?.isPremium) status = cached;
 
     try {
-      const res = await fetch(`/api/premium/status?uid=${encodeURIComponent(user.uid)}`);
+      const idToken = await getIdToken();
+      if (!idToken) return status;
+      const res = await fetch("/api/premium/status", {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
       const data = await res.json();
       if (data.ok) {
         status = {
@@ -129,25 +151,56 @@
     return "משחק זה";
   }
 
-  function subscribeUrl(gameId) {
-    return gameId ? `/premium?game=${encodeURIComponent(gameId)}` : "/premium";
+  function lessonDisplayName(lessonId) {
+    const names = {
+      intro: "הקדמה לשפה האנגלית",
+      colors: "צבעים",
+      numbers: "מספרים",
+      animals: "בעלי חיים",
+      family: "משפחה",
+      health: "נפלאות הבריאה",
+    };
+    return names[lessonId] || "שיעור זה";
+  }
+
+  // Accepts either a bare gameId string (existing game call sites) or
+  // { kind: "lesson"|"game", id, name } so the same lock modal can front
+  // premium games and premium lessons.
+  function resolveTarget(target) {
+    if (target && typeof target === "object") {
+      return {
+        kind: target.kind || "game",
+        id: target.id,
+        name: target.name || (target.kind === "lesson" ? lessonDisplayName(target.id) : gameDisplayName(target.id)),
+      };
+    }
+    return { kind: "game", id: target, name: gameDisplayName(target) };
+  }
+
+  function subscribeUrl(target) {
+    const t = resolveTarget(target);
+    if (!t.id) return "/premium";
+    const key = t.kind === "lesson" ? "lesson" : "game";
+    return `/premium?${key}=${encodeURIComponent(t.id)}`;
   }
 
   function planButtonsHtml() {
     const list = plans || {
-      monthly: { id: "monthly", label: "חודשי", price: 39, badge: "גמיש" },
+      monthly: { id: "monthly", label: "חודשי", price: 29, priceUSD: 8.9, badge: "גמיש" },
       yearly: { id: "yearly", label: "שנתי", price: 299, badge: "חסכון" },
     };
+    const useUsd = currentLang() === "en";
     return Object.values(list)
-      .map(
-        (p) => `
+      .map((p) => {
+        const priceLabel = useUsd && p.priceUSD ? `$${p.priceUSD}` : `₪${p.price}`;
+        return `
       <button type="button" class="premium-plan-btn${p.id === selectedPlan ? " is-active" : ""}" data-plan="${escapeHtml(p.id)}">
         <span class="premium-plan-badge">${escapeHtml(p.badge || "")}</span>
         <span class="premium-plan-label">${escapeHtml(p.label)}</span>
-        <span class="premium-plan-price">₪${p.price}</span>
+        <span class="premium-plan-price">${priceLabel}</span>
         <span class="premium-plan-credits">${creditsByPlan[p.id] || creditsByPlan.free || 10} קרדיטים</span>
-      </button>`
-      )
+      </button>`;
+      })
       .join("");
   }
 
@@ -155,7 +208,7 @@
     const body = document.getElementById("premiumModalBody");
     if (!body) return;
 
-    const gameName = gameDisplayName(pendingGameId);
+    const target = resolveTarget(pendingTarget);
 
     if (hasPremium()) {
       body.innerHTML = `
@@ -167,11 +220,12 @@
       return;
     }
 
+    const isLesson = target.kind === "lesson";
     body.innerHTML = `
       <div class="premium-modal-icon" aria-hidden="true">🔒</div>
-      <h2 class="premium-modal-title" id="premiumModalTitle">משחק פרימיום</h2>
-      <p class="premium-modal-desc">המשחק <strong>${escapeHtml(gameName)}</strong> זמין למנויי פרימיום.</p>
-      <a class="premium-modal-cta" href="${escapeHtml(subscribeUrl(pendingGameId))}">להרשמת מנוי</a>`;
+      <h2 class="premium-modal-title" id="premiumModalTitle">${isLesson ? "שיעור פרימיום" : "משחק פרימיום"}</h2>
+      <p class="premium-modal-desc">${isLesson ? "השיעור" : "המשחק"} <strong>${escapeHtml(target.name)}</strong> זמין למנויי פרימיום.</p>
+      <a class="premium-modal-cta" href="${escapeHtml(subscribeUrl(target))}">להרשמת מנוי</a>`;
   }
 
   function bindSignupPageEvents() {
@@ -206,8 +260,10 @@
     if (!root) return;
 
     const user = window.GameAuth?.getUser();
-    const returnGame = new URLSearchParams(window.location.search).get("game");
-    const gameName = gameDisplayName(returnGame);
+    const params = new URLSearchParams(window.location.search);
+    const returnLesson = params.get("lesson");
+    const returnGame = params.get("game");
+    const target = returnLesson ? resolveTarget({ kind: "lesson", id: returnLesson }) : resolveTarget(returnGame);
 
     if (hasPremium()) {
       root.innerHTML = `
@@ -223,13 +279,15 @@
 
     const bitPhone = settings?.bitPhone || "0586122187";
     const bitName = settings?.bitPayName || "Pleyi";
-    const plan = (plans && plans[selectedPlan]) || { price: selectedPlan === "yearly" ? 299 : 39 };
+    const plan = (plans && plans[selectedPlan]) || { price: selectedPlan === "yearly" ? 299 : 29 };
+    const unlockPhrase = target.kind === "lesson" ? "ותכנים נוספים" : "ומשחקים נוספים";
+    const itemLabel = target.kind === "lesson" ? "השיעור" : "המשחק";
 
     root.innerHTML = `
       <header class="premium-page-header">
         <span class="premium-page-badge">פרימיום</span>
         <h1 class="premium-page-title">מנוי פרימיום</h1>
-        <p class="premium-page-lead">${returnGame ? `פתחו את <strong>${escapeHtml(gameName)}</strong> ומשחקים נוספים עם מנוי פעיל.` : "גישה למשחקי פרימיום וקרדיטים ליצירת משחקים עם AI."}</p>
+        <p class="premium-page-lead">${target.id ? `פתחו את ${itemLabel} <strong>${escapeHtml(target.name)}</strong> ${unlockPhrase} עם מנוי פעיל.` : "גישה למשחקי פרימיום וקרדיטים ליצירת משחקים עם AI."}</p>
       </header>
       ${
         user
@@ -267,16 +325,16 @@
     el.classList.remove("hidden");
   }
 
-  function openModal(gameId) {
+  function openModal(target) {
     ensureModal();
-    pendingGameId = gameId || pendingGameId;
+    pendingTarget = target || pendingTarget;
     renderModalBody();
     document.getElementById("premiumModal")?.classList.remove("hidden");
   }
 
   function closeModal() {
     document.getElementById("premiumModal")?.classList.add("hidden");
-    pendingGameId = null;
+    pendingTarget = null;
   }
 
   async function subscribe() {
@@ -301,11 +359,15 @@
     }
 
     try {
+      const idToken = await getIdToken();
+      if (!idToken) {
+        showError("יש להתחבר מחדש");
+        return;
+      }
       const res = await fetch("/api/premium/subscribe", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
         body: JSON.stringify({
-          uid: user.uid,
           email: user.email || "",
           planId: selectedPlan,
           method: payMethod,
@@ -352,6 +414,12 @@
   function ensurePremiumAccess(gameId) {
     if (canPlayGame(gameId)) return true;
     openModal(gameId);
+    return false;
+  }
+
+  function ensureLessonAccess(lessonId, lessonName) {
+    if (hasPremium()) return true;
+    openModal({ kind: "lesson", id: lessonId, name: lessonName });
     return false;
   }
 
@@ -430,6 +498,7 @@
     isPremiumGame,
     canPlayGame,
     ensurePremiumAccess,
+    ensureLessonAccess,
     openModal,
     closeModal,
     pickerButtonHtml,

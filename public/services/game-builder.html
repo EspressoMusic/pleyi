@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#00C9B7" />
   <title>מערכת יצירת משחק — Pleyi</title>
   <meta name="description" content="מעלים תוכן לימודי — המערכת יוצרת משחק. פשוט, מהיר, מוכן לכיתה."/>
-  <link rel="stylesheet" href="/styles.css?v=55"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=63"/>
-  <link rel="stylesheet" href="/css/service-landing.css?v=27"/>
+  <link rel="stylesheet" href="/styles.css?v=56"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=70"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=28"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -50,18 +50,52 @@
     <section class="clean-section clean-section--hero scroll-section">
       <div class="container clean-hero-inner">
         <h1 class="hero-title font-cartoon">
-          <span class="line">מעלים תוכן</span>
-          <span class="line accent">מקבלים משחק!</span>
+          <span class="line">משחקי</span>
+          <span class="line accent">לימוד!</span>
         </h1>
-        <div class="clean-hero-actions">
-          <a href="#create" class="btn btn-primary btn-candy font-cartoon">צור משחק עכשיו</a>
-        </div>
       </div>
     </section>
 
     <section class="clean-section clean-section--soft scroll-section" id="create">
       <div class="container">
-        <div class="svc-create-box">
+        <h2 class="clean-section-title font-cartoon">משחקים מוכנים</h2>
+
+        <div class="svc-filter-bar" id="gameFilters">
+          <div class="svc-filter-dropdown" data-filter-key="subject">
+            <button type="button" class="svc-filter-trigger" id="filterGameSubjectTrigger" aria-expanded="false">
+              <span class="svc-filter-trigger-label">נושא</span>
+              <span class="svc-filter-trigger-value" id="filterGameSubjectValue">הכל</span>
+            </button>
+            <ul class="svc-filter-menu hidden" id="filterGameSubjectMenu"></ul>
+          </div>
+          <div class="svc-filter-divider" aria-hidden="true"></div>
+          <div class="svc-filter-dropdown" data-filter-key="gameType">
+            <button type="button" class="svc-filter-trigger" id="filterGameTypeTrigger" aria-expanded="false">
+              <span class="svc-filter-trigger-label">סוג משחק</span>
+              <span class="svc-filter-trigger-value" id="filterGameTypeValue">הכל</span>
+            </button>
+            <ul class="svc-filter-menu hidden" id="filterGameTypeMenu"></ul>
+          </div>
+          <div class="svc-filter-divider" aria-hidden="true"></div>
+          <div class="svc-filter-dropdown" data-filter-key="level">
+            <button type="button" class="svc-filter-trigger" id="filterGameLevelTrigger" aria-expanded="false">
+              <span class="svc-filter-trigger-label">רמה</span>
+              <span class="svc-filter-trigger-value" id="filterGameLevelValue">הכל</span>
+            </button>
+            <ul class="svc-filter-menu hidden" id="filterGameLevelMenu"></ul>
+          </div>
+        </div>
+
+        <div class="svc-lesson-grid" id="readyGamesGrid"></div>
+        <p class="svc-lesson-empty hidden" id="readyGamesEmpty">לא נמצאו משחקים בסינון הזה.</p>
+
+        <div class="svc-custom-cta">
+          <button type="button" class="btn btn-outline btn-candy font-cartoon" id="toggleCustomCreateBtn" aria-expanded="false" aria-controls="svcCreateBox">
+            + יצירת משחק מותאם אישית
+          </button>
+        </div>
+
+        <div class="svc-create-box hidden" id="svcCreateBox">
           <form id="svcCreateForm">
             <div class="svc-create-step" id="svcCreateStepPick">
               <button type="button" class="svc-game-pick-toggle font-cartoon" id="svcGamePickToggle" aria-expanded="false" aria-controls="svcGamePickGrid">
@@ -72,7 +106,7 @@
             </div>
 
             <div class="svc-create-step hidden" id="svcCreateStepContent">
-              <button type="button" class="svc-create-back" id="svcCreateBack" aria-label="חזרה לבחירת משחק">→ חזרה</button>
+              <button type="button" class="svc-create-back-box font-cartoon" id="svcCreateBack">בחירת משחק אחר</button>
               <p class="svc-create-selected-game font-cartoon" id="svcSelectedGameLabel"></p>
               <p class="svc-create-content-hint" id="svcContentHint"></p>
               <div class="svc-pair-count hidden" id="svcPairCount">
@@ -82,15 +116,20 @@
                   <button type="button" class="svc-pair-count-btn" data-pairs="8">8 זוגות (16 קלפים)</button>
                 </div>
               </div>
-              <div class="join-material-box" id="svcMaterialBox">
-                <textarea id="svcMaterialInput" rows="8" placeholder="הדביקו כאן את תוכן השיעור…"></textarea>
-                <input type="file" id="svcMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
-                <button type="button" class="join-material-attach" id="svcMaterialFileBtn" aria-label="העלאת קובץ">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
+              <div class="svc-fields-box" id="svcMaterialBox">
+                <div class="svc-field-rows" id="svcFieldRows"></div>
+                <div class="svc-field-toolbar">
+                  <button type="button" class="svc-field-add font-cartoon" id="svcFieldAddBtn">
+                    <span class="svc-field-add-icon" aria-hidden="true">+</span>
+                    הוסיפו עוד
+                  </button>
+                  <button type="button" class="svc-field-upload" id="svcMaterialFileBtn">
+                    <span>או העלאת קובץ</span>
+                  </button>
+                  <input type="file" id="svcMaterialFile" accept=".txt,.csv,.md,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
+                </div>
                 <span class="join-material-file-name" id="svcMaterialFileName"></span>
+                <textarea id="svcMaterialInput" class="svc-fields-source" tabindex="-1" aria-hidden="true"></textarea>
               </div>
               <div class="create-game-preview hidden" id="svcPreview" aria-live="polite"></div>
               <p class="form-error hidden" id="svcCreateError"></p>
@@ -147,6 +186,7 @@
 
   <script src="/js/parse-content.js"></script>
   <script src="/js/games-catalog.js"></script>
+  <script src="/js/game-content.js"></script>
   <script src="/js/file-extract.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -156,9 +196,10 @@
   <script src="/js/user-data.js"></script>
   <script src="/js/ai-lesson.js"></script>
   <script src="/js/create-game-flow.js"></script>
-  <script src="/js/ambient-bg.js"></script>
-  <script src="/js/scroll-animations.js?v=2"></script>
-  <script src="/js/service-landing.js?v=2"></script>
+  <script src="/js/ambient-bg.js?v=3"></script>
+  <script src="/js/scroll-animations.js?v=3"></script>
+  <script src="/js/service-landing.js?v=3"></script>
+  <script src="/js/game-builder.js"></script>
   <script src="/js/cookie-consent.js?v=2"></script>
 </body>
 </html>

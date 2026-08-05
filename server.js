@@ -14,6 +14,7 @@ const { compatibleRoomGames } = require("./lib/room-games");
 const premiumLib = require("./lib/premium");
 const aiLesson = require("./lib/ai-lesson");
 const { extractText } = require("./lib/extract-text");
+const { verifyIdToken } = require("./lib/firebase-admin");
 const multer = require("multer");
 
 const app = express();
@@ -118,19 +119,33 @@ app.get("/api/premium/plans", (_req, res) => {
   });
 });
 
-app.get("/api/premium/status", async (req, res) => {
-  const uid = String(req.query.uid || "").trim();
-  if (!uid) return res.status(400).json({ ok: false, error: "חסר מזהה משתמש" });
-  res.json({ ok: true, ...(await premiumLib.getStatus(uid)) });
+// Premium status/activation act on a uid — never trust one supplied by the
+// client. Require a real Firebase ID token and use the uid it verifies to.
+function bearerToken(req) {
+  const header = req.headers.authorization || "";
+  return header.startsWith("Bearer ") ? header.slice(7).trim() : null;
+}
+
+async function requireAuth(req, res, next) {
+  const decoded = await verifyIdToken(bearerToken(req));
+  if (!decoded) return res.status(401).json({ ok: false, error: "יש להתחבר מחדש" });
+  req.uid = decoded.uid;
+  req.userEmail = decoded.email;
+  next();
+}
+
+app.get("/api/premium/status", requireAuth, async (req, res) => {
+  res.json({ ok: true, ...(await premiumLib.getStatus(req.uid)) });
 });
 
-app.post("/api/premium/subscribe", async (req, res) => {
+app.post("/api/premium/subscribe", requireAuth, async (req, res) => {
   try {
-    const { uid, email, planId, method } = req.body || {};
-    const record = await premiumLib.activateSubscription(uid, email, planId, method);
+    const { planId, method } = req.body || {};
+    const email = req.userEmail || req.body?.email || "";
+    const record = await premiumLib.activateSubscription(req.uid, email, planId, method);
     res.json({
       ok: true,
-      ...(await premiumLib.getStatus(uid)),
+      ...(await premiumLib.getStatus(req.uid)),
       paymentId: record.paymentId,
     });
   } catch (e) {
@@ -656,14 +671,15 @@ io.on("connection", (socket) => {
     io.to(`room:${code}`).emit("room:student-joined", { name: studentName, id: socket.id });
   });
 
-  socket.on("game:start", async ({ gameId, uid }, cb) => {
+  socket.on("game:start", async ({ gameId, idToken }, cb) => {
     const code = socket.data.roomCode;
     const room = getRoom(code);
     if (!room || !roomsLib.isManager(room, socket.id)) {
       return cb?.({ ok: false, error: "רק המורה יכול להתחיל משחק" });
     }
     if (premiumLib.isPremiumGame(gameId)) {
-      const premium = uid ? await premiumLib.getStatus(uid) : { isPremium: false };
+      const decoded = idToken ? await verifyIdToken(idToken) : null;
+      const premium = decoded ? await premiumLib.getStatus(decoded.uid) : { isPremium: false };
       if (!premium.isPremium) {
         return cb?.({ ok: false, error: "משחק פרימיום — נדרש מנוי פעיל" });
       }

@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#00C9B7" />
   <title>דפי עבודה ויצירה — Pleyi</title>
   <meta name="description" content="משחקים, דפי צביעה ודפי עבודה — קטגוריות מסודרות לכיתה ולבית."/>
-  <link rel="stylesheet" href="/styles.css?v=55"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=63"/>
-  <link rel="stylesheet" href="/css/service-landing.css?v=27"/>
+  <link rel="stylesheet" href="/styles.css?v=56"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=70"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=31"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -20,11 +20,8 @@
 
   <header class="navbar" id="navbar">
     <div class="container nav-inner">
-      <nav class="nav-links" id="navLinks">
-        <a href="/" class="nav-pill">בית</a>
-      </nav>
+      <a href="/" class="nav-pill nav-back-home">חזרה לבית</a>
       <div class="nav-actions">
-        <button type="button" class="nav-auth-btn" id="authLoginBtn">התחברות</button>
         <div class="nav-user hidden" id="authUserMenu">
           <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
             <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
@@ -42,15 +39,14 @@
   </header>
 
   <nav class="mobile-nav" id="mobileNav">
-    <a href="/">בית</a>
-    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
+    <a href="/">חזרה לבית</a>
   </nav>
 
   <main>
     <section class="clean-section clean-section--hero scroll-section">
       <div class="container clean-hero-inner">
         <h1 class="hero-title font-cartoon">
-          <span class="line">דפי עבודה</span>
+          <span class="line">דפי</span>
           <span class="line accent">צביעה ומשחקים!</span>
         </h1>
       </div>
@@ -260,6 +256,7 @@
         </div>
         <p class="svc-empty-state hidden" id="worksheetEmptyState">לא נמצאו פריטים בקטגוריה זו.</p>
       </div>
+      <div class="coloring-zoom-backdrop" id="coloringZoomBackdrop"></div>
     </section>
   </main>
 
@@ -302,10 +299,10 @@
   <script src="/js/firebase-app.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/user-data.js"></script>
-  <script src="/js/ambient-bg.js"></script>
-  <script src="/js/scroll-animations.js?v=2"></script>
-  <script src="/js/worksheets.js?v=2"></script>
-  <script src="/js/service-landing.js?v=2"></script>
+  <script src="/js/ambient-bg.js?v=3"></script>
+  <script src="/js/scroll-animations.js?v=3"></script>
+  <script src="/js/worksheets.js?v=7"></script>
+  <script src="/js/service-landing.js?v=3"></script>
   <script src="/js/cookie-consent.js?v=2"></script>
 </body>
 </html>

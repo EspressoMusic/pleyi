@@ -30,8 +30,24 @@
   const teacherFavoritesCount = document.getElementById("teacherFavoritesCount");
   const teacherCreatedCount = document.getElementById("teacherCreatedCount");
   const teacherRecentCount = document.getElementById("teacherRecentCount");
+  const hubSubjectFilters = document.getElementById("hubSubjectFilters");
+  const hubGameTypeFilters = document.getElementById("hubGameTypeFilters");
+  const hubLevelFilters = document.getElementById("hubLevelFilters");
 
-  const DISABLED_SUBJECTS = new Set(["lifeskills", "science", "math"]);
+  const DISABLED_SUBJECTS = new Set(["math"]);
+
+  const GAME_TYPE_LABELS = {
+    "tower-stack": "מגדל מילים",
+    "vocabulary-duel": "טריוויה",
+    "word-memory": "זיכרון",
+    hangman: "איש תלוי",
+    "spot-diff": "מצא את ההבדל",
+    "sentence-scramble": "סדר משפט",
+    "word-runner": "מרוץ מכשולים",
+    "candy-match": "התאמת ממתקים",
+    "word-shop": "חנות",
+    "math-blitz": "ברק מהיר",
+  };
 
   const TEACHER_PREVIEW =
     location.hostname === "localhost" &&
@@ -223,6 +239,70 @@
   let editingSavedId = null;
   let pendingCreateAfterLogin = false;
 
+  const hubFilters = { subject: "all", gameType: "all", level: "all" };
+
+  function availableFilterSubjects() {
+    return (catalog.allSubjects?.() || ["english", "math"]).filter(
+      (s) => !DISABLED_SUBJECTS.has(s) && (catalog[s] || []).length
+    );
+  }
+
+  function availableFilterGameTypes() {
+    const ids = new Set();
+    availableFilterSubjects().forEach((subject) => {
+      if (hubFilters.subject !== "all" && hubFilters.subject !== subject) return;
+      (catalog[subject] || []).forEach((g) => ids.add(g.id));
+    });
+    return [...ids];
+  }
+
+  function filterPillHtml(value, label, active) {
+    return `<button type="button" class="hub-skill-filter game-info-tag${active ? " is-active" : ""}" data-value="${escapeHtml(value)}" aria-pressed="${active}">${escapeHtml(label)}</button>`;
+  }
+
+  function renderFilterGroup(container, group, items, allLabel) {
+    if (!container) return;
+    const current = hubFilters[group];
+    const pills = [filterPillHtml("all", allLabel, current === "all")]
+      .concat(items.map(([value, label]) => filterPillHtml(value, label, current === value)))
+      .join("");
+    container.innerHTML = pills;
+    container.querySelectorAll("[data-value]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        hubFilters[group] = btn.dataset.value;
+        if (group === "subject") {
+          const validTypes = new Set(availableFilterGameTypes());
+          if (hubFilters.gameType !== "all" && !validTypes.has(hubFilters.gameType)) {
+            hubFilters.gameType = "all";
+          }
+        }
+        renderFilters();
+        renderGrid();
+      });
+    });
+  }
+
+  function renderFilters() {
+    renderFilterGroup(
+      hubSubjectFilters,
+      "subject",
+      availableFilterSubjects().map((s) => [s, subjectLabel(s)]),
+      "כל הנושאים"
+    );
+    renderFilterGroup(
+      hubGameTypeFilters,
+      "gameType",
+      availableFilterGameTypes().map((id) => [id, GAME_TYPE_LABELS[id] || id]),
+      "כל סוגי המשחקים"
+    );
+    renderFilterGroup(
+      hubLevelFilters,
+      "level",
+      Object.entries(catalog.levels || {}),
+      "כל הרמות"
+    );
+  }
+
   function showToast(msg) {
     const t = document.getElementById("toast");
     if (!t) return;
@@ -317,7 +397,10 @@
     const games = [];
     for (const subject of subjects) {
       if (DISABLED_SUBJECTS.has(subject)) continue;
+      if (hubFilters.subject !== "all" && hubFilters.subject !== subject) continue;
       for (const game of catalog[subject] || []) {
+        if (hubFilters.gameType !== "all" && game.id !== hubFilters.gameType) continue;
+        if (hubFilters.level !== "all" && (game.level || "medium") !== hubFilters.level) continue;
         games.push({ ...game, _subject: subject });
       }
     }
@@ -348,11 +431,12 @@
     const color = cardColorForIndex(index);
     const sticker = `sticker-${color}`;
     const subject = game._subject || activeSubject;
+    const level = game.level || "medium";
     const meta = catalog.gameMeta(game, subject);
     const skillsText = meta.skills.join(" · ");
     const summary = gameSummary(game.desc);
     return `
-      <article class="hub-game-card pitch-card sticker-card ${sticker}" data-game-id="${game.id}" data-game-subject="${subject}" data-game-title="${escapeHtml(game.title)}" data-game-desc="${escapeHtml(summary)}" data-game-color="${color}">
+      <article class="hub-game-card pitch-card sticker-card ${sticker}" data-game-id="${game.id}" data-game-subject="${subject}" data-game-title="${escapeHtml(game.title)}" data-game-desc="${escapeHtml(summary)}" data-game-color="${color}" data-game-level="${level}">
         <button type="button" class="hub-game-info-btn" aria-label="מידע על ${escapeHtml(game.title)}"
           data-game-color="${color}"
           data-info-icon="${escapeHtml(catalog.gameIcon ? catalog.gameIcon(game) : game.icon || "🎮")}"
@@ -362,6 +446,7 @@
           data-info-skills="${escapeHtml(skillsText)}">
           <span aria-hidden="true">i</span>
         </button>
+        <span class="hub-game-level hub-game-level--${level}">${escapeHtml(catalog.levelLabel ? catalog.levelLabel(level) : level)}</span>
         ${gameThumbHtml(game)}
         <h3 class="hub-game-title font-cartoon">${game.title}</h3>
         <button type="button" class="hub-game-play-btn btn btn-primary btn-candy btn-full">שחק עכשיו</button>
@@ -371,7 +456,13 @@
   function renderGrid() {
     const games = gamesForSubject();
     cardColors = buildCardColors(games.length, getHubGridCols());
-    if (grid) grid.innerHTML = games.map((game, index) => cardHtml(game, index)).join("");
+    if (grid) {
+      grid.innerHTML = games.length
+        ? games.map((game, index) => cardHtml(game, index)).join("")
+        : "";
+    }
+    const emptyState = document.getElementById("hubGridEmpty");
+    emptyState?.classList.toggle("hidden", games.length > 0);
     grid?.querySelectorAll(".hub-game-card").forEach((card) => {
       window.PleyiPremium?.decorateHubCard?.(card);
     });
@@ -395,16 +486,25 @@
     if (card) launchGameFromHub(card);
   });
 
+  document.getElementById("hubGridEmptyReset")?.addEventListener("click", () => {
+    hubFilters.subject = "all";
+    hubFilters.gameType = "all";
+    hubFilters.level = "all";
+    renderFilters();
+    renderGrid();
+  });
+
   function launchGameFromHub(card) {
     const gameId = card.dataset.gameId;
     const gameTitle = card.dataset.gameTitle;
     const subject = card.dataset.gameSubject || activeSubject;
+    const level = card.dataset.gameLevel || "medium";
     if (!gameId || !window.GAME_CONTENT) return;
     if (window.PleyiPremium?.ensurePremiumAccess && !window.PleyiPremium.ensurePremiumAccess(gameId)) return;
     GAME_CONTENT.launchPlay({
       subject,
       gameId,
-      level: "medium",
+      level,
       topic: "all",
       gameTitle,
     });
@@ -1122,6 +1222,7 @@
   });
 
   applyDisabledSubjects();
+  renderFilters();
   renderGrid();
   updateCustomGameOptions();
   updatePreview();

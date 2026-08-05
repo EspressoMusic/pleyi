@@ -39,44 +39,54 @@ const SKILL_COLORS = {
 
 window.GAMES_CATALOG = {
   english: [
-    { id: "tower-stack", title: "מגדל מילים", desc: "בנו מגדל מילים מהיר נגד השעון", icon: "🗼", color: "purple", tags: ["אוצר מילים", "מהירות"] },
-    { id: "vocabulary-duel", title: "טריוויה", desc: "מה התרגום? ענו מהר על השאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"] },
-    { id: "word-memory", title: "זיכרון מילים", desc: "התאימו כל מילה לתרגום שלה", icon: "🧠", color: "pink", tags: ["זיכרון", "תרגום"] },
-    { id: "hangman", title: "איש תלוי", desc: "נחשו את המילה לפני שנגמרו הניסיונות", icon: "🎯", color: "purple", tags: ["אוצר מילים", "חידון"] },
-    { id: "spot-diff", title: "מצא את ההבדלים", desc: "מצאו את הפריט השונה בין שני הלוחות", icon: "🔍", color: "yellow", tags: ["זיכרון", "חידון"] },
+    { id: "tower-stack", title: "מגדל מילים", desc: "בנו מגדל מילים מהיר נגד השעון", icon: "🗼", color: "purple", tags: ["אוצר מילים", "מהירות"], level: "hard" },
+    { id: "vocabulary-duel", title: "טריוויה", desc: "מה התרגום? ענו מהר על השאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"], level: "easy" },
+    { id: "word-memory", title: "זיכרון מילים", desc: "התאימו כל מילה לתרגום שלה", icon: "🧠", color: "pink", tags: ["זיכרון", "תרגום"], level: "easy" },
+    { id: "hangman", title: "איש תלוי", desc: "נחשו את המילה לפני שנגמרו הניסיונות", icon: "🎯", color: "purple", tags: ["אוצר מילים", "חידון"], level: "medium" },
+    { id: "spot-diff", title: "מצא את ההבדלים", desc: "מצאו את הפריט השונה בין שני הלוחות", icon: "🔍", color: "yellow", tags: ["זיכרון", "חידון"], level: "medium" },
   ],
   math: [],
 
   lifeskills: [
-    { id: "vocabulary-duel", title: "Duel מיומנויות", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"] },
-    { id: "word-memory", title: "זיכרון מיומנויות", desc: "התאימו מושג להסבר שלו", icon: "", color: "pink", tags: ["זיכרון", "הבנה"] },
-    { id: "hangman", title: "נחשו את המושג", desc: "נחשו מושג מכישורי חיים לפני שנגמרו הניסיונות", icon: "", color: "purple", tags: ["מיומנויות", "חידון"] },
-    { id: "sentence-scramble", title: "סדר משפט", desc: "סדרו מילים למשפט שלם על מיומנות חיים", icon: "", color: "teal", tags: ["הבנה", "מיומנויות"] },
-    { id: "tower-stack", title: "מגדל מיומנויות", desc: "בנו מגדל — בחרו את ההסבר הנכון", icon: "", color: "purple", tags: ["מיומנויות", "מהירות"] },
-    { id: "spot-diff", title: "מצא את ההבדל", desc: "מצאו את המושג או הרעיון השונה", icon: "", color: "yellow", tags: ["הבנה", "זיכרון"] },
+    { id: "vocabulary-duel", title: "Duel מיומנויות", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"], level: "easy" },
+    { id: "word-memory", title: "זיכרון מיומנויות", desc: "התאימו מושג להסבר שלו", icon: "", color: "pink", tags: ["זיכרון", "הבנה"], level: "easy" },
+    { id: "hangman", title: "נחשו את המושג", desc: "נחשו מושג מכישורי חיים לפני שנגמרו הניסיונות", icon: "", color: "purple", tags: ["מיומנויות", "חידון"], level: "medium" },
+    { id: "sentence-scramble", title: "סדר משפט", desc: "סדרו מילים למשפט שלם על מיומנות חיים", icon: "", color: "teal", tags: ["הבנה", "מיומנויות"], level: "hard" },
+    { id: "tower-stack", title: "מגדל מיומנויות", desc: "בנו מגדל — בחרו את ההסבר הנכון", icon: "", color: "purple", tags: ["מיומנויות", "מהירות"], level: "hard" },
+    { id: "spot-diff", title: "מצא את ההבדל", desc: "מצאו את המושג או הרעיון השונה", icon: "", color: "yellow", tags: ["הבנה", "זיכרון"], level: "medium" },
   ],
 
   science: [
-    { id: "vocabulary-duel", title: "Duel מושגים", desc: "מה ההגדרה? ענו על מושגים מדעיים", icon: "", color: "yellow", tags: ["חידון", "מושגים"] },
-    { id: "word-memory", title: "זיכרון מושגים", desc: "התאימו מושג להגדרה", icon: "", color: "pink", tags: ["זיכרון", "מושגים"] },
-    { id: "math-blitz", title: "ברק מדעי", desc: "חישובים ונוסחאות בקצב מהיר", icon: "", color: "yellow", tags: ["מהירות", "מושגים"] },
-    { id: "spot-diff", title: "השוואת תופעות", desc: "מצאו את ההבדל בין שני מצבים", icon: "", color: "teal", tags: ["מושגים", "זיכרון"] },
-    { id: "word-runner", title: "רץ למושג", desc: "רדפו אחרי התשובה הנכונה בנתיב", icon: "", color: "teal", tags: ["מהירות", "מושגים"] },
-    { id: "candy-match", title: "התאמת קטגוריות", desc: "התאימו פריטים מאותה קטגוריה מדעית", icon: "", color: "pink", tags: ["מושגים", "זיכרון"] },
+    { id: "vocabulary-duel", title: "Duel מושגים", desc: "מה ההגדרה? ענו על מושגים כלליים", icon: "", color: "yellow", tags: ["חידון", "מושגים"], level: "easy" },
+    { id: "word-memory", title: "זיכרון מושגים", desc: "התאימו מושג להגדרה", icon: "", color: "pink", tags: ["זיכרון", "מושגים"], level: "easy" },
+    { id: "math-blitz", title: "ברק ידע", desc: "עובדות ומושגים בקצב מהיר", icon: "", color: "yellow", tags: ["מהירות", "מושגים"], level: "hard" },
+    { id: "spot-diff", title: "השוואת תופעות", desc: "מצאו את ההבדל בין שני מצבים", icon: "", color: "teal", tags: ["מושגים", "זיכרון"], level: "medium" },
+    { id: "word-runner", title: "רץ למושג", desc: "רדפו אחרי התשובה הנכונה בנתיב", icon: "", color: "teal", tags: ["מהירות", "מושגים"], level: "medium" },
+    { id: "candy-match", title: "התאמת קטגוריות", desc: "התאימו פריטים מאותה קטגוריה", icon: "", color: "pink", tags: ["מושגים", "זיכרון"], level: "medium" },
   ],
 
   subjects: {
     english: "אנגלית",
     lifeskills: "כישורי חיים",
     math: "מתמטיקה",
-    science: "מדעים",
+    science: "ידע כללי",
   },
 
   subjectContent: {
     english: "אוצר מילים באנגלית — מילים, תרגום והגייה",
     lifeskills: "מושגים ומיומנויות לחיים ביומיום — תקשורת, כסף, בריאות ועוד",
     math: "תרגילי חשבון, פעולות ופתרון בעיות",
-    science: "מושגים מדעיים, הגדרות ומונחים",
+    science: "עובדות ומושגים כלליים — מדע, טבע ועולם",
+  },
+
+  levels: {
+    easy: "קל",
+    medium: "בינוני",
+    hard: "קשה",
+  },
+
+  levelLabel(level) {
+    return this.levels[level] || this.levels.medium;
   },
 
   gameMeta(game, subject) {

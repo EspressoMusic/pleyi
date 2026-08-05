@@ -8,6 +8,15 @@ function bindNavServices() {
   const dropdown = $("#navServicesDropdown");
   if (!btn || !dropdown) return;
 
+  const navbarEl = document.getElementById("navbar");
+
+  const positionDropdown = () => {
+    if (!navbarEl) return;
+    const navRect = navbarEl.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    dropdown.style.left = `${btnRect.left + btnRect.width / 2 - navRect.left}px`;
+  };
+
   const clearDesktopNavActive = () => {
     $$(".nav-links a.active").forEach((a) => a.classList.remove("active"));
   };
@@ -20,9 +29,21 @@ function bindNavServices() {
     e.stopPropagation();
     const open = dropdown.classList.toggle("hidden") === false;
     btn.setAttribute("aria-expanded", open ? "true" : "false");
-    if (open) clearDesktopNavActive();
-    else restoreDesktopNavActive();
+    if (open) {
+      positionDropdown();
+      clearDesktopNavActive();
+    } else {
+      restoreDesktopNavActive();
+    }
   });
+
+  window.addEventListener(
+    "resize",
+    () => {
+      if (!dropdown.classList.contains("hidden")) positionDropdown();
+    },
+    { passive: true }
+  );
 
   document.addEventListener("click", () => {
     const wasOpen = !dropdown.classList.contains("hidden");
@@ -124,6 +145,8 @@ function bindCreateGameForm() {
   const pickToggle = $("#svcGamePickToggle");
   const pickGrid = $("#svcGamePickGrid");
   const textarea = $("#svcMaterialInput");
+  const fieldRows = $("#svcFieldRows");
+  const addRowBtn = $("#svcFieldAddBtn");
   const fileInput = $("#svcMaterialFile");
   const fileBtn = $("#svcMaterialFileBtn");
   const fileName = $("#svcMaterialFileName");
@@ -152,6 +175,66 @@ function bindCreateGameForm() {
     });
   });
 
+  function updatePreview() {
+    const items = window.CreateGameFlow?.parseItems(textarea?.value || "", "english") || [];
+    window.CreateGameFlow?.updatePreview($("#svcPreview"), items, selectedGameId);
+  }
+
+  function syncTextareaFromRows() {
+    if (!textarea) return;
+    const lines = $$(".svc-field-row", fieldRows)
+      .map((row) => {
+        const left = row.querySelector(".svc-field-left")?.value.trim() || "";
+        const right = row.querySelector(".svc-field-right")?.value.trim() || "";
+        return left && right ? `${left}=${right}` : "";
+      })
+      .filter(Boolean);
+    textarea.value = lines.join("\n");
+    updatePreview();
+  }
+
+  function addFieldRow(leftVal = "", rightVal = "") {
+    if (!fieldRows) return null;
+    const fields = (window.CreateGameFlow?.gameRules(selectedGameId) || {}).fields || {
+      leftPh: "מילה",
+      rightPh: "תרגום",
+    };
+    const row = document.createElement("div");
+    row.className = "svc-field-row";
+    row.innerHTML = `
+      <input type="text" class="svc-field-left" placeholder="${escapeHtml(fields.leftPh || "")}" dir="ltr" value="${escapeHtml(leftVal)}" />
+      <span class="svc-field-row-arrow" aria-hidden="true">=</span>
+      <input type="text" class="svc-field-right" placeholder="${escapeHtml(fields.rightPh || "")}" dir="rtl" value="${escapeHtml(rightVal)}" />
+      <button type="button" class="svc-field-remove" aria-label="הסרת שורה">×</button>
+    `;
+    row.querySelector(".svc-field-left")?.addEventListener("input", syncTextareaFromRows);
+    row.querySelector(".svc-field-right")?.addEventListener("input", syncTextareaFromRows);
+    row.querySelector(".svc-field-remove")?.addEventListener("click", () => {
+      row.remove();
+      syncTextareaFromRows();
+    });
+    fieldRows.appendChild(row);
+    return row;
+  }
+
+  function renderFieldRows(gameId, prefillItems) {
+    if (!fieldRows) return;
+    fieldRows.innerHTML = "";
+    const rules = window.CreateGameFlow?.gameRules(gameId);
+    if (prefillItems && prefillItems.length) {
+      prefillItems.forEach((it) => addFieldRow(it.en, it.he));
+    } else {
+      const startCount = Math.max(rules?.minItems || 2, 3);
+      for (let i = 0; i < startCount; i++) addFieldRow();
+    }
+  }
+
+  addRowBtn?.addEventListener("click", () => {
+    addFieldRow();
+    const rows = $$(".svc-field-row", fieldRows);
+    rows[rows.length - 1]?.querySelector(".svc-field-left")?.focus();
+  });
+
   function showStepContent(gameId) {
     selectedGameId = gameId;
     if (gamePickInput) gamePickInput.value = gameId;
@@ -160,14 +243,16 @@ function bindCreateGameForm() {
       selectedLabel.textContent = window.CreateGameFlow?.gameTitle(gameId) || gameId;
     }
     if (contentHint) {
-      contentHint.textContent = rules?.hint || "הדביקו תוכן לימודי או העלו קובץ.";
+      contentHint.textContent = rules?.hint || "מלאו תוכן לימודי או העלו קובץ.";
     }
     pairCountBox?.classList.toggle("hidden", gameId !== "word-memory");
     stepPick?.classList.add("hidden");
     stepContent?.classList.remove("hidden");
     err?.classList.add("hidden");
-    updatePreview();
-    setTimeout(() => textarea?.focus(), 120);
+    if (fileName) fileName.textContent = "";
+    renderFieldRows(gameId);
+    syncTextareaFromRows();
+    setTimeout(() => $(".svc-field-left", fieldRows)?.focus(), 120);
   }
 
   function showStepPick() {
@@ -184,18 +269,20 @@ function bindCreateGameForm() {
 
   backBtn?.addEventListener("click", showStepPick);
 
-  function updatePreview() {
-    const items = window.CreateGameFlow?.parseItems(textarea?.value || "", "english") || [];
-    window.CreateGameFlow?.updatePreview($("#svcPreview"), items, selectedGameId);
-  }
-
   async function loadFile(file) {
     if (!file) return;
     if (fileName) fileName.textContent = `טוען ${file.name}…`;
     try {
-      textarea.value = await window.extractMaterialText(file);
+      const text = await window.extractMaterialText(file);
       if (fileName) fileName.textContent = file.name;
-      updatePreview();
+      const items = window.CreateGameFlow?.parseItems(text, "english") || [];
+      if (items.length) {
+        renderFieldRows(selectedGameId, items);
+        syncTextareaFromRows();
+      } else {
+        textarea.value = text;
+        updatePreview();
+      }
     } catch (e) {
       if (err) {
         err.textContent = e.message || "לא ניתן לקרוא את הקובץ";
@@ -206,7 +293,6 @@ function bindCreateGameForm() {
 
   fileBtn?.addEventListener("click", () => fileInput?.click());
   fileInput?.addEventListener("change", () => loadFile(fileInput.files?.[0]));
-  textarea?.addEventListener("input", updatePreview);
   box?.addEventListener("dragover", (e) => {
     e.preventDefault();
     box.classList.add("is-dragover");

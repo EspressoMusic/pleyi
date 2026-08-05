@@ -1,5 +1,17 @@
 /* Game renderers — each returns HTML and binds events */
 
+// All game/round content below (vocab words, hints, translations, room/player
+// names) originates from teacher-pasted "learning material" or free-text room
+// names — never trust it as HTML. Escape before interpolating into template
+// strings that get inserted via innerHTML.
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 const GAME_NAMES = {
   "vocabulary-duel": "טריוויה",
   "word-memory": "זיכרון מילים",
@@ -13,8 +25,8 @@ const GAME_NAMES = {
 };
 
 function roleLabel(role, room) {
-  if (role === "teacher") return room?.teacherName || "מורה";
-  return room?.studentName || "תלמיד";
+  if (role === "teacher") return escapeHtml(room?.teacherName || "מורה");
+  return escapeHtml(room?.studentName || "תלמיד");
 }
 
 function winnerText(winner, room) {
@@ -110,7 +122,7 @@ const Games = {
             if (opt === question.correct) cls += " correct";
             else if (myAnswer === opt) cls += " wrong";
           }
-          return `<button class="${cls}" data-answer="${opt}" ${myAnswer || showResults || !canPlayGame(ctx) ? "disabled" : ""}>${opt}</button>`;
+          return `<button class="${cls}" data-answer="${escapeHtml(opt)}" ${myAnswer || showResults || !canPlayGame(ctx) ? "disabled" : ""}>${escapeHtml(opt)}</button>`;
         }
       )
       .join("");
@@ -125,8 +137,8 @@ const Games = {
     if (showResults) {
       const myOk = myAnswer === question.correct;
       const resultLine = question.custom
-        ? `התשובה הנכונה: <strong>${question.correct}</strong>`
-        : `המילה: <strong dir="ltr">${question.word}</strong> = ${question.correct}`;
+        ? `התשובה הנכונה: <strong>${escapeHtml(question.correct)}</strong>`
+        : `המילה: <strong dir="ltr">${escapeHtml(question.word)}</strong> = ${escapeHtml(question.correct)}`;
       statusHtml += `<div class="${roundResultClass(myOk ? "teacher" : null)}"><h4>${myOk ? "נכון! ✓" : "לא נכון"}</h4><p>${resultLine}</p></div>`;
     }
     if (phase === "finished") {
@@ -143,8 +155,8 @@ const Games = {
 
     return `
       <div class="game-round-info">סיבוב ${round} מתוך ${maxRounds}</div>
-      <div class="game-question">${question.word}</div>
-      <div class="game-hint">${question.hint}</div>
+      <div class="game-question">${escapeHtml(question.word)}</div>
+      <div class="game-hint">${escapeHtml(question.hint)}</div>
       <div class="quiz-options">${optionsHtml}</div>
       ${statusHtml}
       ${nextBtn}
@@ -179,7 +191,7 @@ const Games = {
         return `<button type="button" class="${cls}" data-id="${c.id}"${isDisabled ? " disabled" : ""}>
           <span class="memory-card-inner">
             <span class="memory-card-side memory-card-back" aria-hidden="true">?</span>
-            <span class="memory-card-side memory-card-front">${c.text}</span>
+            <span class="memory-card-side memory-card-front">${escapeHtml(c.text)}</span>
           </span>
         </button>`;
       })
@@ -276,7 +288,7 @@ const Games = {
   renderHangman(state, ctx) {
     const { word, hint, he, guessed, wrongGuesses, maxWrong, won, lost, phase } = state;
     const display = [...word]
-      .map((ch) => (ch === " " ? " " : guessed.includes(ch) ? ch : "_"))
+      .map((ch) => (ch === " " ? " " : guessed.includes(ch) ? escapeHtml(ch) : "_"))
       .join(" ");
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
     const lettersHtml = letters
@@ -290,8 +302,8 @@ const Games = {
       .join("");
 
     let result = "";
-    if (won) result = `<div class="game-status win">כל הכבוד! המילה הייתה ${word}</div>`;
-    if (lost) result = `<div class="game-status" style="color:var(--danger)">המילה הייתה: ${word}</div>`;
+    if (won) result = `<div class="game-status win">כל הכבוד! המילה הייתה ${escapeHtml(word)}</div>`;
+    if (lost) result = `<div class="game-status" style="color:var(--danger)">המילה הייתה: ${escapeHtml(word)}</div>`;
 
     const newWordBtn =
       phase === "finished" && ctx?.role === "teacher"
@@ -302,7 +314,7 @@ const Games = {
       <div class="hangman-game">
         <p class="hangman-misses">טעויות: ${wrongGuesses}/${maxWrong}</p>
         <div class="hangman-display">${display}</div>
-        <p class="hangman-hint">${hint} · ${he}</p>
+        <p class="hangman-hint">${escapeHtml(hint)} · ${escapeHtml(he)}</p>
         <div class="hangman-letters">${lettersHtml}</div>
         ${result}
         ${newWordBtn}
@@ -327,7 +339,7 @@ const Games = {
     const showResults = phase === "round-end" || phase === "finished";
 
     const poolHtml = scrambled
-      .map((w, i) => `<button type="button" class="scramble-chip" data-word="${w}" data-idx="${i}">${w}</button>`)
+      .map((w, i) => `<button type="button" class="scramble-chip" data-word="${escapeHtml(w)}" data-idx="${i}">${escapeHtml(w)}</button>`)
       .join("");
 
     let status = "";
@@ -335,7 +347,7 @@ const Games = {
       status = `<div class="game-status waiting">שלחת! ממתינים לצד השני...</div>`;
     }
     if (showResults) {
-      status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p dir="ltr"><strong>${answer}</strong></p><p>${he}</p></div>`;
+      status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p dir="ltr"><strong>${escapeHtml(answer)}</strong></p><p>${escapeHtml(he)}</p></div>`;
     }
     if (phase === "finished") {
       status += `<div class="game-status win">סיום! ניקוד — מורה: ${ctx.scores.teacher} | תלמיד: ${ctx.scores.student}</div>`;
@@ -359,7 +371,7 @@ const Games = {
         </div>
       </div>`
         : !showResults && !canPlayGame(ctx)
-          ? `<div class="scramble-watch-pool">${scrambled.map((w) => `<span class="scramble-chip scramble-chip--static">${w}</span>`).join("")}</div>`
+          ? `<div class="scramble-watch-pool">${scrambled.map((w) => `<span class="scramble-chip scramble-chip--static">${escapeHtml(w)}</span>`).join("")}</div>`
           : "";
 
     const nextBtn =
@@ -374,7 +386,7 @@ const Games = {
           <span class="sentence-scramble-round-label font-cartoon">סיבוב</span>
           <span class="sentence-scramble-round-num font-cartoon">${round}/${maxRounds}</span>
         </div>
-        <p class="sentence-scramble-prompt">${he}</p>
+        <p class="sentence-scramble-prompt">${escapeHtml(he)}</p>
       </div>
       ${form}
       ${status}
@@ -399,7 +411,7 @@ const Games = {
         area.innerHTML = selected
           .map(
             (w, i) =>
-              `<button type="button" class="scramble-chip in-sentence" data-i="${i}">${w}</button>`
+              `<button type="button" class="scramble-chip in-sentence" data-i="${i}">${escapeHtml(w)}</button>`
           )
           .join("");
       }
@@ -407,7 +419,9 @@ const Games = {
         chip.addEventListener("click", () => {
           const idx = Number(chip.dataset.i);
           const word = selected.splice(idx, 1)[0];
-          pool.querySelector(`[data-word="${word}"][disabled]`)?.removeAttribute("disabled");
+          [...pool.querySelectorAll(".scramble-chip[disabled]")]
+            .find((el) => el.dataset.word === word)
+            ?.removeAttribute("disabled");
           renderArea();
         });
       });
@@ -447,7 +461,7 @@ const Games = {
     let form = "";
     if (!showResults && mySubmit === undefined && canPlayGame(ctx)) {
       form = `
-        <div class="game-hint">${current.hint} · ${current.he}</div>
+        <div class="game-hint">${escapeHtml(current.hint)} · ${escapeHtml(current.he)}</div>
         <input type="text" class="spelling-input" id="spellingInput" placeholder="Type the word..." autocomplete="off" autocapitalize="off" />
         <div class="game-actions"><button class="btn btn-primary" id="submitSpelling">שלח</button></div>`;
     }
@@ -457,7 +471,7 @@ const Games = {
       status = `<div class="game-status waiting">ממתינים לצד השני...</div>`;
     }
     if (showResults) {
-      status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p>המילה: <strong dir="ltr">${current.word}</strong></p></div>`;
+      status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p>המילה: <strong dir="ltr">${escapeHtml(current.word)}</strong></p></div>`;
     }
     if (phase === "finished") {
       status += `<div class="game-status win">סיום! ניקוד — מורה: ${ctx.scores.teacher} | תלמיד: ${ctx.scores.student}</div>`;
@@ -506,7 +520,7 @@ const Games = {
             if (showEnd && myPick === i && myPick !== state.diffIndex) cls += " wrong";
             return `<button type="button" class="${cls}" data-index="${i}" data-side="${side}" ${myPick !== undefined || showEnd || !canPlayGame(ctx) ? "disabled" : ""}>
               <span class="spot-emoji">${item.emoji}</span>
-              <span class="spot-word" dir="ltr">${item.en}</span>
+              <span class="spot-word" dir="ltr">${escapeHtml(item.en)}</span>
             </button>`;
           }
         )
@@ -566,13 +580,13 @@ const Games = {
     const opts = options
       .map(
         (opt) =>
-          `<button type="button" class="runner-lane-btn ${myPick === opt ? "picked" : ""}" data-choice="${opt}" ${myPick || showEnd || !canPlayGame(ctx) ? "disabled" : ""} dir="ltr">${opt}</button>`
+          `<button type="button" class="runner-lane-btn ${myPick === opt ? "picked" : ""}" data-choice="${escapeHtml(opt)}" ${myPick || showEnd || !canPlayGame(ctx) ? "disabled" : ""} dir="ltr">${escapeHtml(opt)}</button>`
       )
       .join("");
 
     let status = "";
     status += raceWaitStatus(clicks, ctx, phase);
-    if (showEnd) status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p dir="ltr">${obstacle.emoji} ${obstacle.word} = ${obstacle.hint}</p></div>`;
+    if (showEnd) status += `<div class="${roundResultClass(roundWinner)}"><h4>${winnerText(roundWinner, ctx.room)}</h4><p dir="ltr">${obstacle.emoji} ${escapeHtml(obstacle.word)} = ${escapeHtml(obstacle.hint)}</p></div>`;
     if (phase === "finished") status += `<div class="game-status win">מרathon סיים! מורה: ${distance.teacher}m | תלמיד: ${distance.student}m</div>`;
 
     const nextBtn =
@@ -586,9 +600,9 @@ const Games = {
         <div class="runner-sky"></div>
         <div class="runner-ground"></div>
         <div class="runner-player">🏃</div>
-        <div class="runner-obstacle">${obstacle.emoji}<span dir="ltr">${obstacle.word}</span></div>
+        <div class="runner-obstacle">${obstacle.emoji}<span dir="ltr">${escapeHtml(obstacle.word)}</span></div>
       </div>
-      <p class="game-hint">קפצו מעל המכשול — בחרו את המילה הנכונה (${obstacle.hint})</p>
+      <p class="game-hint">קפצו מעל המכשול — בחרו את המילה הנכונה (${escapeHtml(obstacle.hint)})</p>
       <div class="runner-lanes">${opts}</div>
       ${status}${nextBtn}
     `;
@@ -613,7 +627,7 @@ const Games = {
       .map(
         (t) =>
           `<button type="button" class="candy-tile ${colorClass(t.color)} ${selected === t.id ? "selected" : ""}" data-id="${t.id}" ${!isMyTurn || phase !== "playing" || !canPlayGame(ctx) ? "disabled" : ""}>
-            <span dir="ltr">${t.word}</span>
+            <span dir="ltr">${escapeHtml(t.word)}</span>
           </button>`
       )
       .join("");
@@ -653,9 +667,9 @@ const Games = {
     const items = shelf
       .map(
         (item) =>
-          `<button type="button" class="shop-item ${myPick === item.en ? "picked" : ""}" data-en="${item.en}" ${myPick || showEnd || !canPlayGame(ctx) ? "disabled" : ""}>
+          `<button type="button" class="shop-item ${myPick === item.en ? "picked" : ""}" data-en="${escapeHtml(item.en)}" ${myPick || showEnd || !canPlayGame(ctx) ? "disabled" : ""}>
             <span class="shop-emoji">${item.emoji}</span>
-            <span dir="ltr">${item.en}</span>
+            <span dir="ltr">${escapeHtml(item.en)}</span>
           </button>`
       )
       .join("");
@@ -674,8 +688,8 @@ const Games = {
       <div class="game-round-info">סיבוב ${round}/${maxRounds}</div>
       <div class="shop-customer">
         <span class="shop-customer-emoji">🧑</span>
-        <p class="shop-request" dir="ltr">${request}</p>
-        <p class="game-hint">${requestHe}</p>
+        <p class="shop-request" dir="ltr">${escapeHtml(request)}</p>
+        <p class="game-hint">${escapeHtml(requestHe)}</p>
       </div>
       <div class="shop-shelf">${items}</div>
       ${status}${nextBtn}

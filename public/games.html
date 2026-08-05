@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#00C9B7" />
   <title>משחקים — Pleyi</title>
   <meta name="description" content="ספריית משחקי למידה לפי נושאים — אנגלית, מתמטיקה, והתאמה אישית לתוכן השיעור"/>
-  <link rel="stylesheet" href="/styles.css?v=55"/>
+  <link rel="stylesheet" href="/styles.css?v=56"/>
   <link rel="stylesheet" href="/css/games-hub.css"/>
   <link rel="stylesheet" href="/css/premium.css"/>
   <link rel="stylesheet" href="/css/credits.css"/>
@@ -60,7 +60,41 @@
   <main class="hub-main container">
     <a href="/" class="hub-back hub-back--home" data-i18n="hub.backHome">← בית</a>
 
+    <div class="hub-filters" id="hubFilters">
+      <div class="hub-filters-row">
+        <div class="hub-filter-group">
+          <p class="hub-filter-group-label">נושא</p>
+          <div class="hub-skill-filters-panel">
+            <div class="hub-skill-filters-list" id="hubSubjectFilters"></div>
+          </div>
+        </div>
+        <div class="hub-filter-group">
+          <p class="hub-filter-group-label">סוג משחק</p>
+          <div class="hub-skill-filters-panel">
+            <div class="hub-skill-filters-list" id="hubGameTypeFilters"></div>
+          </div>
+        </div>
+        <div class="hub-filter-group">
+          <p class="hub-filter-group-label">רמה</p>
+          <div class="hub-skill-filters-panel">
+            <div class="hub-skill-filters-list" id="hubLevelFilters"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="hub-grid cards cols-3" id="gamesGrid"></div>
+    <div class="hub-grid-empty hidden" id="hubGridEmpty">
+      <p>לא נמצאו משחקים בסינון הזה.</p>
+      <button type="button" class="btn btn-outline btn-candy btn-sm" id="hubGridEmptyReset">איפוס סינון</button>
+    </div>
+
+    <div class="hub-create-cta">
+      <button type="button" class="btn btn-primary btn-candy font-cartoon hub-create-cta-btn" id="openCustomModalBtn">
+        <span class="hub-create-cta-icon" aria-hidden="true">+</span>
+        יצירת משחק מותאם אישית
+      </button>
+    </div>
   </main>
 
   <!-- Custom game builder -->
@@ -94,9 +128,9 @@
             <h3 class="hub-custom-field-title">נושא</h3>
             <select id="customSubject">
               <option value="english">אנגלית — מילה = תרגום</option>
-              <option value="lifeskills" disabled>כישורי חיים — מושג = הסבר (בקרוב)</option>
+              <option value="lifeskills">כישורי חיים — מושג = הסבר</option>
               <option value="math">מתמטיקה — תרגיל = תשובה</option>
-              <option value="science" disabled>מדעים — מושג = הגדרה (בקרוב)</option>
+              <option value="science">ידע כללי — מושג = הגדרה</option>
             </select>
           </div>
           <div class="hub-custom-field">

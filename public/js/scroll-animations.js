@@ -74,6 +74,7 @@
     { sel: ".premium-feature", type: "up", stagger: true },
     { sel: ".room-share-panel", type: "up" },
     { sel: ".room-games-panel .hub-game-card", type: "up", stagger: true },
+    { sel: ".svc-tile", type: "scale", stagger: true },
     { sel: "footer.site-footer", type: "up" },
     { sel: "footer.site-footer-mini", type: "up" },
   ];
@@ -217,6 +218,42 @@
     onScrollParallax();
   }
 
+  /* ── Back to top button ── */
+  function initBackToTop() {
+    if (document.body.classList.contains("play-body")) return;
+    if (document.getElementById("backToTopBtn")) return;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "backToTopBtn";
+    btn.className = "back-to-top-btn";
+    btn.setAttribute("aria-label", "חזרה לראש העמוד");
+    btn.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    document.body.appendChild(btn);
+
+    let ticking = false;
+    function updateVisibility() {
+      btn.classList.toggle("is-visible", window.scrollY > 500);
+      ticking = false;
+    }
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateVisibility);
+        }
+      },
+      { passive: true }
+    );
+    updateVisibility();
+
+    btn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
+    });
+  }
+
   /* ── Booking step dots ── */
   function initBookingProgress() {
     const bookingProgress = document.querySelector(".booking-progress");
@@ -270,6 +307,7 @@
     initActiveNav();
     initHowTimeline();
     initParallax();
+    initBackToTop();
     initBookingProgress();
     initMutationWatch();
   }

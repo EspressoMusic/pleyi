@@ -21,7 +21,6 @@
     <svg viewBox="0 0 140 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path fill="rgba(0,130,118,0.16)" d="M0,0 C72,95 18,210 88,340 C118,420 42,560 96,690 C124,770 54,900 0,1000 L0,0 Z"/>
       <path fill="rgba(0,110,100,0.26)" d="M0,0 C48,160 92,300 36,460 C-8,610 64,760 28,1000 L0,1000 L0,0 Z"/>
-      <path fill="rgba(0,95,86,0.36)" d="M0,0 C86,130 12,290 74,430 C108,530 34,680 82,830 C106,910 48,960 0,1000 L0,0 Z"/>
     </svg>`;
 
   function createDots(container) {

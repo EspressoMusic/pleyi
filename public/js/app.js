@@ -198,6 +198,15 @@ function bindNavServices() {
   const dropdown = $("#navServicesDropdown");
   if (!btn || !dropdown) return;
 
+  const navbarEl = document.getElementById("navbar");
+
+  const positionDropdown = () => {
+    if (!navbarEl) return;
+    const navRect = navbarEl.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    dropdown.style.left = `${btnRect.left + btnRect.width / 2 - navRect.left}px`;
+  };
+
   const clearDesktopNavActive = () => {
     $$(".nav-links a.active").forEach((a) => a.classList.remove("active"));
   };
@@ -206,27 +215,48 @@ function bindNavServices() {
     window.dispatchEvent(new Event("scroll"));
   };
 
+  let closeTimer = null;
+
+  const openDropdown = () => {
+    clearTimeout(closeTimer);
+    positionDropdown();
+    clearDesktopNavActive();
+    dropdown.classList.remove("hidden");
+    requestAnimationFrame(() => dropdown.classList.add("open"));
+    btn.setAttribute("aria-expanded", "true");
+  };
+
+  const closeDropdown = () => {
+    if (dropdown.classList.contains("hidden")) return;
+    const wasOpen = dropdown.classList.contains("open");
+    dropdown.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => dropdown.classList.add("hidden"), 240);
+    if (wasOpen) restoreDesktopNavActive();
+  };
+
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    const open = dropdown.classList.toggle("hidden") === false;
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
-    if (open) clearDesktopNavActive();
-    else restoreDesktopNavActive();
+    if (dropdown.classList.contains("open")) closeDropdown();
+    else openDropdown();
   });
 
-  document.addEventListener("click", () => {
-    const wasOpen = !dropdown.classList.contains("hidden");
-    dropdown.classList.add("hidden");
-    btn.setAttribute("aria-expanded", "false");
-    if (wasOpen) restoreDesktopNavActive();
-  });
+  window.addEventListener(
+    "resize",
+    () => {
+      if (dropdown.classList.contains("open")) positionDropdown();
+    },
+    { passive: true }
+  );
+
+  document.addEventListener("click", () => closeDropdown());
 
   dropdown.addEventListener("click", (e) => e.stopPropagation());
 
   dropdown.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
-      dropdown.classList.add("hidden");
-      btn.setAttribute("aria-expanded", "false");
+      closeDropdown();
       $("#menuToggle")?.classList.remove("open");
       $("#mobileNav")?.classList.remove("open");
     });
@@ -972,8 +1002,10 @@ $("#copyJoinLinkBtn")?.addEventListener("click", () => {
   }
 });
 
-$("#contactEmailBtn")?.addEventListener("click", () => {
+$("#contactEmailBtn")?.addEventListener("click", (e) => {
+  e.preventDefault();
   navigator.clipboard?.writeText("shilohdhd1@gmail.com").then(() => showToast(t("toast.emailCopied")));
+  window.open("https://mail.google.com/mail/?view=cm&fs=1&to=shilohdhd1@gmail.com", "_blank", "noopener,noreferrer");
 });
 
 $("#shareRoomBtn")?.addEventListener("click", async () => {

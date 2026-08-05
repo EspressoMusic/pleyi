@@ -1,5 +1,5 @@
 @import url("css/fonts.css");
-@import url("css/ambient-bg.css?v=8");
+@import url("css/ambient-bg.css?v=9");
 @import url("css/dark-theme.css?v=1");
 
 /* Pleyi — Memphis / Sticker Pop style */
@@ -94,7 +94,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body:not(.no-ambient-bg) > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader) {
+body:not(.no-ambient-bg) > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader):not(.back-to-top-btn):not(.premium-modal) {
   position: relative;
   z-index: 1;
 }
@@ -669,7 +669,10 @@ body.hub-body .navbar.scrolled {
 
 .nav-auth-btn:hover { transform: translateY(-2px); }
 
-#authLoginBtn,
+#authLoginBtn {
+  background: linear-gradient(135deg, #ff8fcb, #a78bfa);
+}
+
 .mobile-nav-auth {
   background: var(--white);
 }
@@ -797,6 +800,7 @@ body.hub-body .navbar.scrolled {
 }
 
 .lang-toggle {
+  display: none;
   padding: 10px 16px;
   min-width: 52px;
   border-radius: 999px;
@@ -1496,6 +1500,17 @@ button.nav-pill.active,
 
 .hero-title .accent {
   color: var(--hero-accent);
+}
+
+/* Homepage hero — "לומדים במשחקים!" reads as one line, not stacked words */
+#home .hero-title {
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 0.28em;
+}
+
+#home .hero-title .line {
+  display: inline-block;
 }
 
 .hero-cta {

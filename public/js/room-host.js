@@ -1074,13 +1074,15 @@ $("#roomHomeLink")?.addEventListener("click", (e) => {
 });
 
 $$(".room-game-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
     if (!state.isManager) return;
     const gameId = btn.dataset.game;
     if (!gameId || !socket) return;
     if (window.PleyiPremium?.ensurePremiumAccess && !window.PleyiPremium.ensurePremiumAccess(gameId)) return;
-    const uid = window.GameAuth?.getUser()?.uid || null;
-    socket.emit("game:start", { gameId, uid }, (res) => {
+    // The server verifies this token itself before trusting premium status —
+    // it never takes a client-supplied uid.
+    const idToken = await window.FirebaseApp?.auth?.currentUser?.getIdToken?.().catch(() => null);
+    socket.emit("game:start", { gameId, idToken }, (res) => {
       if (res?.ok) {
         closeGamesPanel();
         showToast("המשחק התחיל!");

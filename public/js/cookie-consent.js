@@ -9,7 +9,7 @@
 
   if (!document.querySelector('script[src*="ambient-bg"]') && !document.querySelector(".ambient-bg")) {
     var ambientScript = document.createElement("script");
-    ambientScript.src = "/js/ambient-bg.js?v=2";
+    ambientScript.src = "/js/ambient-bg.js?v=3";
     ambientScript.defer = true;
     (document.head || document.documentElement).appendChild(ambientScript);
   }

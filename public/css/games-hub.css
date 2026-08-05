@@ -317,6 +317,82 @@
   box-shadow: var(--shadow-sticker);
 }
 
+.hub-grid-empty p {
+  margin: 0 0 14px;
+}
+
+/* Filter bar — subject / game type / level */
+.hub-filters {
+  max-width: 920px;
+  margin: 0 auto clamp(28px, 5vw, 44px);
+}
+
+.hub-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(14px, 3vw, 24px);
+}
+
+.hub-filter-group {
+  flex: 1 1 220px;
+  min-width: 200px;
+  max-width: 320px;
+  text-align: center;
+}
+
+.hub-filter-group-label {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.hub-body:not(.my-room-body) .hub-filter-group-label {
+  color: var(--white);
+}
+
+/* Custom game CTA below the grid */
+.hub-create-cta {
+  display: flex;
+  justify-content: center;
+  margin: clamp(4px, 1.5vw, 16px) 0 clamp(40px, 6vw, 64px);
+}
+
+.hub-create-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 34px;
+  font-size: clamp(16px, 2.5vw, 19px);
+}
+
+.hub-create-cta-icon {
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* Level badge on game cards */
+.hub-game-level {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 5px 11px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  z-index: 2;
+}
+
+.hub-game-level--easy { background: var(--memlime); }
+.hub-game-level--medium { background: var(--memyellow); }
+.hub-game-level--hard { background: var(--mempink); }
+
 .hub-body .hub-grid.cards {
   gap: 28px;
   margin-top: clamp(8px, 2vw, 16px);

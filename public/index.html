@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#00C9B7" />
   <title>Pleyi — לימוד דרך משחקים</title>
   <meta name="description" content="משחקי למידה למורים — פתחו חדר כיתה, התלמידים מצטרפים מהטלפון, ושחקו יחד בזמן אמת."/>
-  <link rel="stylesheet" href="styles.css?v=55"/>
+  <link rel="stylesheet" href="styles.css?v=58"/>
   <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
-  <link rel="stylesheet" href="css/clean-site.css?v=63"/>
+  <link rel="stylesheet" href="css/clean-site.css?v=78"/>
   <link rel="stylesheet" href="css/legal.css"/>
   <link rel="stylesheet" href="css/accessibility.css" />
 </head>
@@ -27,11 +27,6 @@
         <a href="#home" class="nav-pill active" data-i18n="nav.home">בית</a>
         <div class="nav-services">
           <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false" data-i18n="nav.services">שירותים</button>
-          <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
-            <a href="/services/ready-lessons" class="nav-services-link" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
-            <a href="/services/worksheets" class="nav-services-link" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
-            <a href="/services/game-builder" class="nav-services-link" role="menuitem" data-i18n="services.gameBuilder">יצירת משחק</a>
-          </div>
         </div>
         <a href="#about" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
         <a href="#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
@@ -52,6 +47,11 @@
         </div>
         <button class="menu-toggle" id="menuToggle" data-i18n-aria="nav.menu" aria-label="תפריט"><span></span><span></span><span></span></button>
       </div>
+    </div>
+    <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
+      <a href="/services/ready-lessons" class="nav-services-link" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+      <a href="/services/worksheets" class="nav-services-link" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+      <a href="/services/game-builder" class="nav-services-link" role="menuitem" data-i18n="services.gameBuilder">יצירת משחק</a>
     </div>
   </header>
 
@@ -77,12 +77,14 @@
     <!-- 1. ראשי -->
     <section class="clean-section clean-section--hero scroll-section" id="home">
       <div class="container clean-hero-inner">
-        <h1 class="hero-title font-cartoon">
-          <span class="line" data-i18n="hero.title1">לומדים את השיעור</span>
-          <span class="line accent" data-i18n="hero.title2">דרך משחקים!</span>
-        </h1>
+        <div class="hero-top">
+          <h1 class="hero-title font-cartoon">
+            <span class="line" data-i18n="hero.title1">לומדים</span>
+            <span class="line accent" data-i18n="hero.title2">במשחקים!</span>
+          </h1>
+        </div>
         <div class="clean-hero-actions">
-          <a href="/services/game-builder" class="btn btn-primary btn-candy font-cartoon" data-i18n="hero.playNow">ליצירת משחק</a>
+          <a href="/services/ready-lessons" class="btn btn-primary btn-candy font-cartoon" data-i18n="hero.playNow">לספריית השיעורים</a>
         </div>
       </div>
     </section>
@@ -96,76 +98,68 @@
       </div>
       <div class="container about-wrap">
         <h2 class="clean-section-title font-cartoon" data-i18n="about.title">מי אנחנו</h2>
-        <p class="about-lead" data-i18n="about.lead">הופכים למידה לחוויה משחקית — עם כלים חכמים למורים, מעקב התקדמות בכיתה, ומשחקים משותפים להורים ולילדים בבית.</p>
-        <div class="about-orbit-scene">
-          <ul class="about-orbit-sr">
-            <li data-i18n="about.c1.title">מהיר ופשוט</li>
-            <li data-i18n="about.c2.title">בלי טכנולוגיה</li>
-            <li data-i18n="about.c3.title">שיעור חי</li>
-          </ul>
-          <div class="about-orbit-ring about-orbit-ring--1" aria-hidden="true">
-            <div class="about-orbit-sat-wrap">
-              <span class="about-orbit-sat about-orbit-sat--teal" data-i18n="about.c1.title">מהיר ופשוט</span>
-            </div>
-          </div>
-          <div class="about-orbit-ring about-orbit-ring--2" aria-hidden="true">
-            <div class="about-orbit-sat-wrap">
-              <span class="about-orbit-sat about-orbit-sat--yellow" data-i18n="about.c2.title">בלי טכנולוגיה</span>
-            </div>
-          </div>
-          <div class="about-orbit-ring about-orbit-ring--3" aria-hidden="true">
-            <div class="about-orbit-sat-wrap">
-              <span class="about-orbit-sat about-orbit-sat--pink" data-i18n="about.c3.title">שיעור חי</span>
-            </div>
-          </div>
-          <div class="about-orbit-earth">
-            <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="44" cy="44" r="38" fill="#6ecff5" stroke="#000" stroke-width="4"/>
-              <ellipse cx="44" cy="44" rx="38" ry="14" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="2"/>
-              <ellipse cx="44" cy="44" rx="14" ry="38" fill="none" stroke="rgba(0,0,0,0.18)" stroke-width="2"/>
-            </svg>
-            <span class="about-orbit-earth-label font-cartoon" data-i18n="about.earthLabel">השיעור</span>
-          </div>
-        </div>
-      </div>
-    </section>
+        <p class="about-lead" data-i18n="about.lead">הפתרון המושלם למורה ממלא מקום או לרגע שבו אין שיעור מוכן — ספריית שיעורים ומשחקים איכותיים, זמינה תמיד.</p>
+        <div class="about-demo-scene" aria-hidden="true">
+          <div class="about-demo-frame">
+            <span class="about-demo-dot about-demo-dot--a"></span>
+            <span class="about-demo-dot about-demo-dot--b"></span>
+            <span class="about-demo-dot about-demo-dot--c"></span>
 
-    <!-- 3. הסבר -->
-    <section id="how" class="clean-section clean-section--soft scroll-section">
-      <div class="clean-section-shapes clean-section-shapes--soft" aria-hidden="true">
-        <span class="clean-memphis-sticker clean-memphis-sticker--pink clean-memphis-pos--s1"></span>
-        <span class="clean-memphis-sticker clean-memphis-sticker--yellow clean-memphis-pos--s2"></span>
-        <span class="clean-memphis-sticker clean-memphis-sticker--purple clean-memphis-pos--s3"></span>
-      </div>
-      <div class="container">
-        <h2 class="clean-section-title font-cartoon" data-i18n="how.titleShort">איך זה עובד?</h2>
-        <div class="how-timeline" id="howTimeline">
-          <article class="how-timeline-step">
-            <div class="how-timeline-marker"><span>1</span></div>
-            <div class="how-timeline-body">
-              <h3 data-i18n="how.step1">בוחרים משחק</h3>
+            <div class="about-demo-loading">
+              <span class="about-demo-loading-track"><span class="about-demo-loading-fill"></span></span>
             </div>
-          </article>
-          <article class="how-timeline-step">
-            <div class="how-timeline-marker"><span>2</span></div>
-            <div class="how-timeline-body">
-              <h3 data-i18n="how.step2">מעלים את התוכן</h3>
+
+            <div class="about-demo-view about-demo-view--tile">
+              <div class="about-demo-tile about-demo-tile--english">
+                <span class="about-demo-tile-icon" aria-hidden="true">📖</span>
+                <span class="about-demo-tile-label font-cartoon" data-i18n="about.demo.lesson">שיעור אנגלית</span>
+              </div>
+              <div class="about-demo-tile about-demo-tile--lifeskills">
+                <span class="about-demo-tile-icon" aria-hidden="true">🌱</span>
+                <span class="about-demo-tile-label font-cartoon" data-i18n="about.demo.lifeskills">שיעור כישורי חיים</span>
+              </div>
+              <div class="about-demo-tile about-demo-tile--nature">
+                <span class="about-demo-tile-icon" aria-hidden="true">🌿</span>
+                <span class="about-demo-tile-label font-cartoon" data-i18n="about.demo.nature">שיעור טבע</span>
+              </div>
+              <div class="about-demo-tile about-demo-tile--math">
+                <span class="about-demo-tile-icon" aria-hidden="true">🔢</span>
+                <span class="about-demo-tile-label font-cartoon" data-i18n="about.demo.math">שיעור חשבון</span>
+              </div>
             </div>
-          </article>
-          <article class="how-timeline-step">
-            <div class="how-timeline-marker how-timeline-marker--final">
-              <span>3</span>
-              <span class="marker-confetti" aria-hidden="true">
-                <i></i><i></i><i></i><i></i><i></i><i></i>
-              </span>
+
+            <div class="about-demo-view about-demo-view--lesson">
+              <span class="about-demo-lesson-title" dir="ltr">Animals</span>
+              <div class="about-demo-lesson-row">
+                <span class="about-demo-nav-arrow about-demo-nav-arrow--prev" aria-hidden="true">→</span>
+                <div class="about-demo-slide-content">
+                  <p class="about-demo-slide-text" dir="ltr">The dog is big.</p>
+                  <p class="about-demo-slide-text" dir="ltr">The bird can fly.</p>
+                  <p class="about-demo-slide-text" dir="ltr">Fish live in water.</p>
+                </div>
+                <span class="about-demo-nav-arrow about-demo-nav-arrow--next" aria-hidden="true">←</span>
+              </div>
             </div>
-            <div class="how-timeline-body">
-              <h3 data-i18n="how.step3">מציגים את המשחק בכיתה</h3>
+
+            <div class="about-demo-view about-demo-view--game">
+              <div class="about-demo-quiz">
+                <span class="about-demo-quiz-question" dir="ltr">Apple</span>
+                <span class="about-demo-quiz-hint">מה התרגום?</span>
+                <div class="about-demo-quiz-options">
+                  <span class="about-demo-quiz-option about-demo-quiz-option--1">תפוח</span>
+                  <span class="about-demo-quiz-option about-demo-quiz-option--2">בננה</span>
+                  <span class="about-demo-quiz-option about-demo-quiz-option--3">ענבים</span>
+                  <span class="about-demo-quiz-option about-demo-quiz-option--4">תות</span>
+                </div>
+              </div>
             </div>
-          </article>
-        </div>
-        <div class="clean-center-cta">
-          <button type="button" class="btn btn-primary btn-candy font-cartoon how-classroom-btn" id="howClassroomBtn" data-i18n="how.cta">צור משחק עכשיו</button>
+
+            <div class="about-demo-cursor-pos">
+              <svg class="about-demo-cursor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 2 L5 19 L9 15.2 L12.3 21.6 L15.4 20.1 L12.1 13.7 L18 13.6 Z" fill="#fff" stroke="#000" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -441,10 +435,10 @@
   <script src="js/games.js"></script>
   <script src="js/booking.js"></script>
   <script src="js/teacher-dashboard.js"></script>
-  <script src="/js/ambient-bg.js"></script>
-  <script src="js/scroll-animations.js?v=2"></script>
+  <script src="/js/ambient-bg.js?v=3"></script>
+  <script src="js/scroll-animations.js?v=3"></script>
   <script src="/js/i18n.js"></script>
-  <script src="/js/app.js?v=8"></script>
+  <script src="/js/app.js?v=9"></script>
   <script src="js/cookie-consent.js?v=2"></script>
 </body>
 </html>

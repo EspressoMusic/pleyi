@@ -1,5 +1,17 @@
 /* Service landing pages — extends clean-site */
 
+/* Game-builder page: hero title on one line */
+body.service-panel .hero-title {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3em;
+}
+
+body.service-panel .clean-hero-inner .hero-title .line {
+  display: inline-block;
+}
+
 /* Ready-lessons page tweaks */
 
 /* Navbar must stay pinned — overrides any stale cached global rules */
@@ -41,11 +53,11 @@ body.page-ready-lessons .site-footer.section-yellow {
 }
 
 body.page-ready-lessons .svc-lessons-page {
-  padding-top: calc(var(--clean-nav-clear) + 20px);
+  padding-top: 20px;
 }
 
 body.page-ready-lessons .svc-page-title {
-  margin: 0 0 clamp(40px, 6vw, 56px);
+  margin: 0 0 clamp(24px, 4vw, 36px);
   text-align: center;
 }
 
@@ -75,17 +87,30 @@ body.page-ready-lessons .scroll-section.in-view .svc-lesson-card {
 }
 
 body.page-ready-lessons .svc-filter-bar {
-  --filter-inner-radius: 13px;
+  --filter-inner-radius: 15px;
+  max-width: 640px;
   border: 3px solid var(--ink);
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow: var(--shadow-sticker);
-  background: #effefa;
+  background: #cdf5ee;
   margin-bottom: clamp(44px, 7vw, 64px);
+}
+
+body.page-ready-lessons .svc-filter-trigger {
+  padding: 14px 18px;
+}
+
+body.page-ready-lessons .svc-filter-trigger-label {
+  font-size: 0.78rem;
+}
+
+body.page-ready-lessons .svc-filter-trigger-value {
+  font-size: 1.02rem;
 }
 
 body.page-ready-lessons .svc-filter-trigger:hover,
 body.page-ready-lessons .svc-filter-dropdown.is-open .svc-filter-trigger {
-  background: color-mix(in srgb, #effefa 55%, #c5f7f2 45%);
+  background: color-mix(in srgb, #cdf5ee 55%, #a9ecdf 45%);
 }
 
 body.page-ready-lessons .svc-filter-menu {
@@ -300,13 +325,13 @@ body.page-worksheets .svc-filter-dropdown {
 }
 
 body.page-worksheets .svc-filter-trigger-label {
-  font-size: 0.85rem;
+  font-size: 1rem;
   text-align: center;
   width: 100%;
 }
 
 body.page-worksheets .svc-filter-trigger-value {
-  font-size: 1.15rem;
+  font-size: 1.5rem;
   text-align: center;
   width: 100%;
 }
@@ -384,14 +409,20 @@ body.page-worksheets .svc-tile-image--turquoise img {
   box-sizing: border-box;
 }
 
-body.page-worksheets .svc-tile-download {
+body.page-worksheets .svc-tile-actions {
   flex-shrink: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
   width: 100%;
-  padding: 16px 20px;
+}
+
+body.page-worksheets .svc-tile-download,
+body.page-worksheets .svc-tile-print {
+  width: auto;
   min-height: 52px;
   border: 3px solid var(--ink);
   border-radius: 999px;
-  background: var(--memyellow);
   color: var(--ink);
   font-size: 16px;
   font-weight: 900;
@@ -405,28 +436,49 @@ body.page-worksheets .svc-tile-download {
   justify-content: center;
 }
 
-body.page-worksheets .svc-tile-download.btn-candy {
+body.page-worksheets .svc-tile-download {
+  flex: 2 1 auto;
+  min-width: 0;
+  padding: 16px 20px;
+  background: var(--memyellow);
+}
+
+body.page-worksheets .svc-tile-print {
+  flex: 0 0 auto;
+  padding: 16px 14px;
+  background: #4da6ff;
+  cursor: pointer;
+}
+
+body.page-worksheets .svc-tile-download.btn-candy,
+body.page-worksheets .svc-tile-print.btn-candy {
   box-shadow: none !important;
 }
 
-body.page-worksheets .svc-tile-download.btn-candy:active {
+body.page-worksheets .svc-tile-download.btn-candy:active,
+body.page-worksheets .svc-tile-print.btn-candy:active {
   transform: none;
   box-shadow: none !important;
 }
 
 body.page-worksheets .svc-tile-download:hover,
-body.page-worksheets .svc-tile-download:focus-visible {
+body.page-worksheets .svc-tile-download:focus-visible,
+body.page-worksheets .svc-tile-print:hover,
+body.page-worksheets .svc-tile-print:focus-visible {
   transform: scale(1.05);
   box-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body.page-worksheets .svc-tile-download {
+  body.page-worksheets .svc-tile-download,
+  body.page-worksheets .svc-tile-print {
     transition: none;
   }
 
   body.page-worksheets .svc-tile-download:hover,
-  body.page-worksheets .svc-tile-download:focus-visible {
+  body.page-worksheets .svc-tile-download:focus-visible,
+  body.page-worksheets .svc-tile-print:hover,
+  body.page-worksheets .svc-tile-print:focus-visible {
     transform: none;
   }
 }
@@ -440,6 +492,80 @@ body.page-worksheets .svc-tile-download:focus-visible {
 
   body.page-worksheets .svc-tile-image--turquoise {
     min-height: 300px;
+  }
+
+  body.page-worksheets .svc-tile-print {
+    padding: 16px 14px;
+  }
+}
+
+body.page-worksheets .svc-tile-image--turquoise img {
+  cursor: pointer;
+}
+
+#svcPrintArea {
+  display: none;
+}
+
+@media print {
+  body.is-printing-tile * {
+    visibility: hidden;
+  }
+
+  body.is-printing-tile #svcPrintArea,
+  body.is-printing-tile #svcPrintArea * {
+    visibility: visible;
+  }
+
+  body.is-printing-tile #svcPrintArea {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  body.is-printing-tile #svcPrintArea img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+body.page-worksheets .svc-tile-image--turquoise.is-zoomed {
+  position: fixed;
+  z-index: 1001;
+  transition:
+    top 0.35s cubic-bezier(0.34, 1.15, 0.64, 1),
+    left 0.35s cubic-bezier(0.34, 1.15, 0.64, 1),
+    width 0.35s cubic-bezier(0.34, 1.15, 0.64, 1),
+    height 0.35s cubic-bezier(0.34, 1.15, 0.64, 1),
+    transform 0.35s cubic-bezier(0.34, 1.15, 0.64, 1);
+  box-shadow: 0 24px 60px rgba(10, 24, 22, 0.4);
+}
+
+.coloring-zoom-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(12, 22, 20, 0);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.coloring-zoom-backdrop.is-visible {
+  background: rgba(12, 22, 20, 0.55);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-worksheets .svc-tile-image--turquoise.is-zoomed {
+    transition: none;
+  }
+
+  .coloring-zoom-backdrop {
+    transition: none;
   }
 }
 
@@ -710,6 +836,28 @@ body.page-worksheets .svc-tile-download:focus-visible {
   box-shadow: var(--shadow-candy);
 }
 
+#readyGamesGrid {
+  margin-bottom: 16px;
+}
+
+.svc-lesson-empty {
+  margin-bottom: 32px;
+}
+
+.svc-custom-cta {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 32px;
+}
+
+.svc-custom-cta .btn {
+  padding: 14px 28px;
+}
+
+.svc-custom-cta .btn.is-open {
+  background: var(--memteal);
+}
+
 #create.clean-section--soft {
   background: transparent !important;
 }
@@ -801,25 +949,32 @@ body.page-worksheets .svc-tile-download:focus-visible {
   color: color-mix(in srgb, var(--ink) 72%, transparent);
 }
 
-.svc-create-back {
+.svc-create-back-box {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   margin: 0 0 14px;
-  padding: 0;
-  border: none;
-  background: none;
+  padding: 10px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
   font: inherit;
-  font-size: 0.92rem;
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 900;
   color: var(--ink);
   cursor: pointer;
-  opacity: 0.85;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.12s, background 0.12s;
 }
 
-.svc-create-back:hover {
-  opacity: 1;
-  text-decoration: underline;
+.svc-create-back-box:hover {
+  background: var(--memteal);
+  transform: translateY(-2px);
+}
+
+.svc-create-back-box:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
 }
 
 .svc-create-selected-game {
@@ -886,6 +1041,163 @@ body.page-worksheets .svc-tile-download:focus-visible {
 
 .svc-pair-count-btn.is-selected {
   background: var(--memyellow);
+}
+
+.svc-fields-box {
+  position: relative;
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #fffef5;
+  transition: box-shadow 0.15s;
+}
+
+.svc-fields-box.is-dragover {
+  box-shadow: 0 0 0 3px var(--memteal);
+}
+
+.svc-fields-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.svc-field-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.svc-field-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.svc-field-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.94rem;
+  color: var(--ink);
+}
+
+.svc-field-row input::placeholder {
+  color: color-mix(in srgb, var(--ink) 38%, transparent);
+}
+
+.svc-field-row input:focus {
+  outline: none;
+  border-color: var(--electric);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--electric) 35%, transparent);
+}
+
+.svc-field-row-arrow {
+  flex-shrink: 0;
+  font-weight: 900;
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+}
+
+.svc-field-remove {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s, background 0.12s;
+}
+
+.svc-field-remove:hover {
+  background: var(--mempink);
+  transform: scale(1.08);
+}
+
+.svc-field-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.svc-field-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memlime);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.12s;
+}
+
+.svc-field-add:hover {
+  transform: translateY(-2px);
+}
+
+.svc-field-add-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.svc-field-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--ink) 75%, transparent);
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.svc-field-upload:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .svc-field-row input {
+    padding: 9px 10px;
+    font-size: 0.88rem;
+  }
+
+  .svc-field-toolbar {
+    justify-content: center;
+  }
 }
 
 .svc-my-games {
