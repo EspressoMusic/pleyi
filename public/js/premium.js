@@ -223,8 +223,8 @@
     const isLesson = target.kind === "lesson";
     body.innerHTML = `
       <div class="premium-modal-icon" aria-hidden="true">🔒</div>
-      <h2 class="premium-modal-title" id="premiumModalTitle">${isLesson ? "שיעור פרימיום" : "משחק פרימיום"}</h2>
-      <p class="premium-modal-desc">${isLesson ? "השיעור" : "המשחק"} <strong>${escapeHtml(target.name)}</strong> זמין למנויי פרימיום.</p>
+      <h2 class="premium-modal-title" id="premiumModalTitle">${isLesson ? "כדי להפעיל את השיעור צריך מנוי" : "משחק פרימיום"}</h2>
+      <p class="premium-modal-desc">${isLesson ? `השיעור <strong>${escapeHtml(target.name)}</strong> זמין למנויי פרימיום.` : `המשחק <strong>${escapeHtml(target.name)}</strong> זמין למנויי פרימיום.`}</p>
       <a class="premium-modal-cta" href="${escapeHtml(subscribeUrl(target))}">להרשמת מנוי</a>`;
   }
 

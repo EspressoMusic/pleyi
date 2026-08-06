@@ -139,76 +139,192 @@
   }
 
   function bindColoringZoom() {
-    const boxes = $$(".svc-tile-image--turquoise");
-    const backdrop = $("#coloringZoomBackdrop");
-    if (!boxes.length || !backdrop) return;
+    let backdrop = $("#coloringZoomBackdrop");
+    if (!backdrop) {
+      backdrop = document.createElement("div");
+      backdrop.id = "coloringZoomBackdrop";
+      backdrop.className = "coloring-zoom-backdrop";
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.appendChild(backdrop);
+    }
 
-    let active = null; // { box, article, homeRect }
+    const images = $$(".svc-tile-image--turquoise img");
+    if (!images.length) return;
 
-    function setRect(el, rect) {
-      el.style.top = rect.top + "px";
-      el.style.left = rect.left + "px";
-      el.style.width = rect.width + "px";
-      el.style.height = rect.height + "px";
+    let active = null;
+
+    function rectFromDomRect(r) {
+      return { top: r.top, left: r.left, width: r.width, height: r.height };
+    }
+
+    function applyRect(el, rect) {
       el.style.transform = "none";
+      el.style.right = "auto";
+      el.style.bottom = "auto";
+      el.style.top = `${rect.top}px`;
+      el.style.left = `${rect.left}px`;
+      el.style.width = `${rect.width}px`;
+      el.style.height = `${rect.height}px`;
     }
 
-    function closeZoom() {
-      if (!active) return;
-      const { box, article, homeRect } = active;
-      active = null;
-      backdrop.classList.remove("is-visible");
-      setRect(box, homeRect);
+    const ZOOM_MAX_WIDTH = 580;
 
-      const cleanup = () => {
-        box.classList.remove("is-zoomed");
-        box.style.cssText = "";
-        if (article) article.style.minHeight = "";
-        box.removeEventListener("transitionend", cleanup);
+    function endRectFromStart(startRect) {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const pad = 16;
+      const maxW = Math.min(vw * 0.88, ZOOM_MAX_WIDTH);
+      const maxH = vh * 0.82;
+      const scale = Math.min(maxW / startRect.width, maxH / startRect.height);
+      const width = startRect.width * scale;
+      const height = startRect.height * scale;
+      return {
+        top: Math.max(pad, (vh - height) / 2),
+        left: Math.max(pad, (vw - width) / 2),
+        width,
+        height,
       };
-      box.addEventListener("transitionend", cleanup);
     }
 
-    function openZoom(box) {
-      if (active && active.box === box) return;
-      if (active) closeZoom();
+    function teardownFlyout(flyout, container) {
+      flyout.remove();
+      container?.classList.remove("is-zoom-source-hidden");
+    }
 
-      const article = box.closest(".svc-tile");
-      const rect = box.getBoundingClientRect();
-      if (article) article.style.minHeight = rect.height + "px";
+    function closeZoom(animate = true) {
+      if (!active) return;
+      const { flyout, container, startRect } = active;
+      active = null;
 
-      setRect(box, rect);
-      box.classList.add("is-zoomed");
-      void box.offsetWidth; // force reflow so the start position is registered
+      backdrop.classList.remove("is-visible");
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("coloring-zoom-open");
 
-      backdrop.classList.add("is-visible");
+      if (!animate) {
+        teardownFlyout(flyout, container);
+        return;
+      }
 
-      requestAnimationFrame(() => {
-        const size = Math.min(window.innerWidth * 0.88, window.innerHeight * 0.82, 560);
-        box.style.top = "50%";
-        box.style.left = "50%";
-        box.style.width = size + "px";
-        box.style.height = size + "px";
-        box.style.transform = "translate(-50%, -50%)";
+      flyout.classList.remove("is-zoomed");
+      applyRect(flyout, startRect);
+
+      let finished = false;
+      const finish = (e) => {
+        if (finished || (e && e.target !== flyout)) return;
+        finished = true;
+        flyout.removeEventListener("transitionend", finish);
+        teardownFlyout(flyout, container);
+      };
+      flyout.addEventListener("transitionend", finish);
+      window.setTimeout(finish, 450);
+    }
+
+    function openZoom(img) {
+      if (active?.img === img) {
+        closeZoom();
+        return;
+      }
+      if (active) closeZoom(false);
+
+      const container = img.closest(".svc-tile-image--turquoise");
+      if (!container) return;
+
+      const startRect = rectFromDomRect(container.getBoundingClientRect());
+      const endRect = endRectFromStart(startRect);
+
+      const flyout = document.createElement("div");
+      flyout.className = "coloring-zoom-flyout";
+      flyout.setAttribute("role", "dialog");
+      flyout.setAttribute("aria-modal", "true");
+      flyout.setAttribute("aria-label", img.alt || "תצוגה מוגדלת");
+
+      const downloadLink = $(".svc-tile-download", container);
+
+      const inner = document.createElement("div");
+      inner.className =
+        "coloring-zoom-flyout-inner svc-tile-image svc-tile-image--turquoise";
+
+      const frame = document.createElement("div");
+      frame.className = "coloring-zoom-flyout-frame";
+
+      const clone = img.cloneNode(true);
+      clone.removeAttribute("loading");
+
+      const actions = document.createElement("div");
+      actions.className = "coloring-zoom-actions svc-tile-actions";
+
+      const download = document.createElement("a");
+      download.className = "btn svc-tile-download btn-candy font-cartoon";
+      download.textContent = "להורדה";
+      if (downloadLink) {
+        download.href = downloadLink.href;
+        download.download = downloadLink.download || "";
+      } else {
+        download.href = img.src;
+        download.download = "";
+      }
+
+      const printBtn = document.createElement("button");
+      printBtn.type = "button";
+      printBtn.className = "btn svc-tile-print btn-candy font-cartoon";
+      printBtn.textContent = "הדפסה";
+      printBtn.setAttribute("aria-label", `הדפסת ${img.alt || "דף"}`);
+      printBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        printWorksheetImage(img.src, img.alt);
       });
 
-      active = { box, article, homeRect: rect };
+      actions.appendChild(download);
+      actions.appendChild(printBtn);
+
+      const closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className = "coloring-zoom-close";
+      closeBtn.setAttribute("aria-label", "סגירה");
+      closeBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>';
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeZoom();
+      });
+
+      frame.appendChild(clone);
+      inner.appendChild(frame);
+      inner.appendChild(actions);
+      flyout.appendChild(inner);
+      flyout.appendChild(closeBtn);
+      document.body.appendChild(flyout);
+
+      applyRect(flyout, startRect);
+      container.classList.add("is-zoom-source-hidden");
+
+      void flyout.offsetWidth;
+
+      backdrop.classList.add("is-visible");
+      backdrop.setAttribute("aria-hidden", "false");
+      document.body.classList.add("coloring-zoom-open");
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          flyout.classList.add("is-zoomed");
+          applyRect(flyout, endRect);
+        });
+      });
+
+      active = { flyout, img, container, startRect };
+      closeBtn.focus();
     }
 
-    boxes.forEach((box) => {
-      const img = $("img", box);
-      img?.addEventListener("click", () => {
-        if (active?.box === box) {
-          closeZoom();
-        } else {
-          openZoom(box);
-        }
+    images.forEach((img) => {
+      img.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openZoom(img);
       });
     });
 
-    backdrop.addEventListener("click", closeZoom);
+    backdrop.addEventListener("click", () => closeZoom());
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeZoom();
+      if (e.key === "Escape" && active) closeZoom();
     });
   }
 

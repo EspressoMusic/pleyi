@@ -270,6 +270,19 @@ html[data-visual="minimal"] .hero-title.font-cartoon {
   color: var(--min-text-strong);
 }
 
+html[data-visual="minimal"] .hero-site-name.font-cartoon {
+  animation: none !important;
+}
+
+html[data-visual="minimal"] .hero-site-ch {
+  color: var(--min-text-strong) !important;
+  -webkit-text-fill-color: var(--min-text-strong) !important;
+  -webkit-text-stroke: 0 !important;
+  filter: none !important;
+  animation: none !important;
+  transform: none !important;
+}
+
 /* Buttons */
 
 html[data-visual="minimal"] .btn,

@@ -94,7 +94,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body:not(.no-ambient-bg) > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader):not(.back-to-top-btn):not(.premium-modal) {
+body:not(.no-ambient-bg) > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader):not(.back-to-top-btn):not(.premium-modal):not(.room-page-overlay) {
   position: relative;
   z-index: 1;
 }

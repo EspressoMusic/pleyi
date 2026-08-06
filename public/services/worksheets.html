@@ -8,19 +8,29 @@
   <title>דפי עבודה ויצירה — Pleyi</title>
   <meta name="description" content="משחקים, דפי צביעה ודפי עבודה — קטגוריות מסודרות לכיתה ולבית."/>
   <link rel="stylesheet" href="/styles.css?v=56"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=70"/>
-  <link rel="stylesheet" href="/css/service-landing.css?v=31"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=82"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=42"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
 <body class="clean-site page-worksheets">
 
+  <div class="scroll-progress" id="scrollProgress"></div>
   <div class="loader" id="loader"><div class="loader-bar"></div></div>
 
   <header class="navbar" id="navbar">
     <div class="container nav-inner">
-      <a href="/" class="nav-pill nav-back-home">חזרה לבית</a>
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-pill" data-i18n="nav.home">בית</a>
+        <div class="nav-services">
+          <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false" data-i18n="nav.services">שירותים</button>
+        </div>
+        <a href="/#about" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
+        <a href="/#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
+      </nav>
       <div class="nav-actions">
+        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle></button>
+        <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
         <div class="nav-user hidden" id="authUserMenu">
           <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
             <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
@@ -28,17 +38,34 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
-            <a href="/my-room" class="nav-user-link" role="menuitem">החדר שלי</a>
-            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
+            <a href="/my-room" class="nav-user-link" role="menuitem" data-i18n="nav.myRoom">החדר שלי</a>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem" data-i18n="nav.logout">יציאה</button>
           </div>
         </div>
-        <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+        <button class="menu-toggle" id="menuToggle" data-i18n-aria="nav.menu" aria-label="תפריט"><span></span><span></span><span></span></button>
       </div>
+    </div>
+    <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
+      <a href="/services/ready-lessons" class="nav-services-link" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+      <a href="/services/worksheets" class="nav-services-link active" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+      <a href="/services/game-builder" class="nav-services-link" role="menuitem" data-i18n="services.gameBuilder">יצירת משחק</a>
     </div>
   </header>
 
   <nav class="mobile-nav" id="mobileNav">
-    <a href="/">חזרה לבית</a>
+    <a href="/" data-i18n="nav.home">בית</a>
+    <div class="mobile-nav-services">
+      <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel" data-i18n="nav.services">שירותים</button>
+      <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
+        <a href="/services/ready-lessons" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+        <a href="/services/worksheets" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+        <a href="/services/game-builder" role="menuitem" data-i18n="services.gameBuilder">יצירת משחק</a>
+      </div>
+    </div>
+    <a href="/#about" data-i18n="nav.about">מי אנחנו</a>
+    <a href="/#contact" data-i18n="nav.contact">צור קשר</a>
+    <button type="button" class="lang-toggle" data-lang-toggle></button>
+    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
   </nav>
 
   <main>
@@ -255,7 +282,6 @@
         </div>
         <p class="svc-empty-state hidden" id="worksheetEmptyState">לא נמצאו פריטים בקטגוריה זו.</p>
       </div>
-      <div class="coloring-zoom-backdrop" id="coloringZoomBackdrop"></div>
     </section>
   </main>
 
@@ -296,11 +322,12 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-app.js"></script>
+  <script src="/js/i18n.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/user-data.js"></script>
   <script src="/js/ambient-bg.js?v=3"></script>
   <script src="/js/scroll-animations.js?v=3"></script>
-  <script src="/js/worksheets.js?v=7"></script>
+  <script src="/js/worksheets.js?v=14"></script>
   <script src="/js/service-landing.js?v=3"></script>
   <script src="/js/cookie-consent.js?v=2"></script>
 </body>

@@ -23,6 +23,7 @@ const I18n = {
       "lang.switch": "EN",
       "lang.label": "English",
       "hero.badge": "משחקים × למידה × כיתה!",
+      "hero.siteName": "פלייסקול",
       "hero.title1": "לומדים",
       "hero.title2": "במשחקים!",
       "hero.lead":
@@ -188,6 +189,7 @@ const I18n = {
       "lang.switch": "עב",
       "lang.label": "עברית",
       "hero.badge": "Games × Learning × Class!",
+      "hero.siteName": "Playschool",
       "hero.title1": "Learn",
       "hero.title2": "Through games!",
       "hero.lead":
@@ -340,6 +342,20 @@ const I18n = {
     return this.strings[this.lang]?.[key] ?? this.strings.he[key] ?? key;
   },
 
+  applyHeroSiteName(el) {
+    if (!el) return;
+    const text = this.t("hero.siteName");
+    const colors = ["#ff6b9d", "#ffe135", "#00e5cc", "#ff8fcb", "#ffd700", "#62ebe0", "#ff9a3c"];
+    el.setAttribute("aria-label", text);
+    el.innerHTML = [...text]
+      .map((ch, i) => {
+        const color = colors[i % colors.length];
+        const delay = (i * 0.14).toFixed(2);
+        return `<span class="hero-site-ch" style="--ch-color:${color};--ch-delay:${delay}s">${ch}</span>`;
+      })
+      .join("");
+  },
+
   setLang(lang) {
     this.lang = lang === "en" ? "en" : "he";
     try {
@@ -353,7 +369,12 @@ const I18n = {
 
     document.querySelectorAll("[data-i18n]").forEach((el) => {
       const key = el.getAttribute("data-i18n");
-      if (key) el.textContent = this.t(key);
+      if (!key) return;
+      if (key === "hero.siteName" && el.classList.contains("hero-site-name")) {
+        this.applyHeroSiteName(el);
+        return;
+      }
+      el.textContent = this.t(key);
     });
 
     document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {

@@ -5,6 +5,7 @@
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
   const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "נפלאות הבריאה", volcano: "הר געש" };
+  const LESSON_SHARE_PATH = "/services/ready-lessons.html";
 
   const STANDARD_LESSON_GAMES = [
     { id: "vocabulary-duel", label: "טריוויה", icon: "⚔️" },
@@ -536,7 +537,7 @@
           type: "content",
           title: "מילים חשובות",
           subtitle: "אוצר מושגים",
-          visual: "volcano-calm",
+          visual: "volcano-earth",
           body: "לוע — הפתח שבראש הר הגעש שממנו יוצאת הלבה.\n\nמאגמה — סלע נוזלי וחם מאוד שנמצא עמוק מתחת לאדמה. כשהיא יוצאת החוצה קוראים לה לבה.\n\nהתפרצות — הרגע שבו הר הגעש פולט לבה, עשן ואבנים.",
         },
         {
@@ -550,14 +551,14 @@
           type: "content",
           title: "כמה חם הלבה?",
           subtitle: "עובדה מרתקת",
-          visual: "volcano-erupting",
+          visual: "volcano-lava",
           body: "לבה יכולה להגיע לחום של יותר מ-1,000 מעלות צלזיוס — חם מספיק כדי להתיך מתכת!\n\nלמרות שהיא נראית איטית, לבה יכולה לזרום במהירות של עשרות קילומטרים בשעה במורד ההר.\n\nכשהיא מתקררת, הלבה הופכת לאט לאט לסלע קשה חדש.",
         },
         {
           type: "content",
           title: "פעיל, רדום או כבוי?",
           subtitle: "סוגי הרי געש",
-          visual: "volcano-erupting",
+          visual: "volcano-status",
           body: "הר געש פעיל הוא הר שהתפרץ לאחרונה או עלול להתפרץ שוב בקרוב.\n\nהר געש רדום לא התפרץ הרבה מאוד זמן, אבל עדיין יכול להתעורר יום אחד.\n\nהר געש כבוי כבר לא צפוי להתפרץ שוב לעולם.",
         },
         {
@@ -901,12 +902,19 @@
   }
 
   function syncFavBtnState(lessonId) {
-    const btn = $("#lessonInfoFavBtn");
-    if (!btn || btn.dataset.lesson !== lessonId) return;
+    if (!lessonId) return;
+    const modalBtn = $("#lessonInfoFavBtn");
+    if (modalBtn?.dataset.lesson !== lessonId) return;
     const active = favoriteLessonIds.has(lessonId);
-    btn.classList.toggle("is-active", active);
-    btn.setAttribute("aria-pressed", active ? "true" : "false");
-    btn.setAttribute("aria-label", active ? "הסרה משיעורים שאהבתי" : "הוספה לשיעורים שאהבתי");
+    const label = active ? "הסרת השיעור מהשמורים" : "שמירת השיעור";
+    modalBtn.classList.toggle("is-active", active);
+    modalBtn.setAttribute("aria-pressed", active ? "true" : "false");
+    modalBtn.setAttribute("aria-label", label);
+  }
+
+  function syncAllFavButtons() {
+    const lessonId = $("#lessonInfoFavBtn")?.dataset.lesson;
+    if (lessonId) syncFavBtnState(lessonId);
   }
 
   const FAV_CONFETTI_COLORS = ["#ff3b5c", "#ffd23f", "#4da6ff", "#7ee08c", "#c792ff"];
@@ -939,7 +947,7 @@
 
   async function toggleFavoriteLesson(lessonId, btn) {
     if (!window.GameAuth?.getUser()) {
-      showToast("התחברו כדי לשמור שיעורים שאהבתם");
+      showToast("התחברו כדי לשמור שיעורים");
       window.GameAuth?.handleLoginClick({ redirect: false });
       return;
     }
@@ -957,15 +965,26 @@
       favoriteLessonIds.delete(lessonId);
     }
     syncFavBtnState(lessonId);
-    showToast(res.favorited ? "נוסף לשיעורים שאהבתי" : "הוסר משיעורים שאהבתי");
+    showToast(res.favorited ? "השיעור נשמר" : "השיעור הוסר מהשמורים");
   }
 
-  const LESSON_SHARE_PATH = "/services/ready-lessons";
+  function isLessonLocked(lesson) {
+    return !!lesson?.premium && !window.PleyiPremium?.hasPremium?.();
+  }
+
+  function setLessonOpenButtonState(openBtn, lesson) {
+    if (!openBtn || !lesson) return;
+    const locked = isLessonLocked(lesson);
+    openBtn.hidden = locked;
+    if (!locked) openBtn.textContent = "פתיחה";
+  }
 
   function openLessonInfoModal(lessonId) {
     const lesson = LESSON_CATALOG[lessonId];
     const modal = $("#lessonInfoModal");
     if (!lesson || !modal) return;
+
+    modal.classList.remove("hidden");
 
     $("#lessonInfoTitle").textContent = lesson.nameMain || lesson.name;
     $("#lessonInfoSubject").textContent = SUBJECT_LABELS[lesson.subject] || lesson.subject;
@@ -976,7 +995,10 @@
     $("#lessonInfoPremiumBadge")?.classList.toggle("hidden", !lesson.premium || !!window.PleyiPremium?.hasPremium?.());
 
     const openBtn = $("#lessonInfoOpenBtn");
-    if (openBtn) openBtn.dataset.lesson = lessonId;
+    if (openBtn) {
+      openBtn.dataset.lesson = lessonId;
+      setLessonOpenButtonState(openBtn, lesson);
+    }
     const shareBtn = $("#lessonInfoShareBtn");
     if (shareBtn) shareBtn.dataset.lesson = lessonId;
     const shareLabel = $("#lessonInfoShareLabel");
@@ -990,8 +1012,6 @@
     const favBtn = $("#lessonInfoFavBtn");
     if (favBtn) favBtn.dataset.lesson = lessonId;
     syncFavBtnState(lessonId);
-
-    modal.classList.remove("hidden");
   }
 
   function closeLessonInfoModal() {
@@ -1037,6 +1057,26 @@
       toggle?.addEventListener("click", (e) => {
         e.stopPropagation();
         openLessonInfoModal(card.dataset.lesson);
+      });
+
+      const preview = $(".svc-lesson-preview", card);
+      preview?.addEventListener("click", (e) => {
+        if (e.target.closest(".svc-lesson-info-toggle")) {
+          e.preventDefault();
+          e.stopPropagation();
+          openLessonInfoModal(card.dataset.lesson);
+          return;
+        }
+        const lessonId = card.dataset.lesson;
+        const lesson = LESSON_CATALOG[lessonId];
+        if (!lesson) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (isLessonLocked(lesson)) {
+          window.PleyiPremium?.ensureLessonAccess?.(lessonId, lesson.nameMain || lesson.name);
+          return;
+        }
+        openLessonSlides?.(lessonId);
       });
     });
 
@@ -1449,13 +1489,6 @@
         e.stopPropagation();
         popElement(sayEl);
         openWordPopup(sayEl);
-        return;
-      }
-      const orbBtn = e.target.closest(".lp-slide-orb");
-      if (orbBtn) {
-        e.stopPropagation();
-        closeWordPopup();
-        popElement(orbBtn, orbBtn.classList.contains("lp-slide-orb--celebrate") ? "celebrate" : "pop");
       }
     });
 
@@ -1471,7 +1504,6 @@
             <h2 class="lp-slide-title">${slide.title}</h2>
           </div>
           <div class="lp-slide-body-wrap">
-            <p class="lp-slide-games-intro">בחרו משחק — התוכן יהיה מהמילים שלמדנו בשיעור.</p>
             <div class="lp-slide-games">
               <div class="lp-game-options">
                 ${games
@@ -1524,20 +1556,27 @@
         </div>`;
     }
 
-    function renderVolcanoOutputScene() {
+    function isHebrewLesson(lessonData) {
+      return lessonData?.subject !== "english";
+    }
+
+    function renderVolcanoOutputScene(hebrew = true) {
+      const labels = hebrew
+        ? { lava: "לבה", smoke: "עשן", ash: "אפר געשי" }
+        : { lava: "lava", smoke: "smoke", ash: "ash" };
       return `
         <div class="lp-volcano-scene lp-volcano-scene--output" aria-hidden="true">
           <div class="lp-volcano-output-badge lp-volcano-output-badge--lava">
             <span class="lp-volcano-output-drop"></span>
-            <em dir="ltr">lava</em>
+            <span class="lp-volcano-output-label">${labels.lava}</span>
           </div>
           <div class="lp-volcano-output-badge lp-volcano-output-badge--smoke">
             <span class="lp-volcano-output-puff"></span>
-            <em dir="ltr">smoke</em>
+            <span class="lp-volcano-output-label">${labels.smoke}</span>
           </div>
           <div class="lp-volcano-output-badge lp-volcano-output-badge--ash">
             <span class="lp-volcano-output-fleck"></span><span class="lp-volcano-output-fleck"></span><span class="lp-volcano-output-fleck"></span>
-            <em dir="ltr">ash</em>
+            <span class="lp-volcano-output-label">${labels.ash}</span>
           </div>
         </div>`;
     }
@@ -1556,16 +1595,83 @@
         </div>`;
     }
 
-    function renderVolcanoScene(variant) {
-      if (variant === "output") return renderVolcanoOutputScene();
+    function renderVolcanoEarthScene() {
+      return `
+        <div class="lp-volcano-scene lp-volcano-scene--earth" aria-hidden="true">
+          <div class="lp-volcano-earth-sky"></div>
+          <svg class="lp-volcano-earth-cut" viewBox="0 0 200 170" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="lpEarthCrust" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#8b6914"/>
+                <stop offset="100%" stop-color="#5c3d1e"/>
+              </linearGradient>
+              <radialGradient id="lpEarthMagma" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#fff4b0"/>
+                <stop offset="55%" stop-color="#ff7a2f"/>
+                <stop offset="100%" stop-color="#c41e0f"/>
+              </radialGradient>
+            </defs>
+            <rect fill="#7cb342" x="0" y="0" width="200" height="28"/>
+            <path fill="#5d4037" d="M78 28 L100 8 L122 28 Z"/>
+            <ellipse class="lp-volcano-earth-crater" fill="#ff6b35" cx="100" cy="12" rx="8" ry="4"/>
+            <rect fill="url(#lpEarthCrust)" x="0" y="28" width="200" height="52"/>
+            <rect class="lp-volcano-earth-magma" fill="url(#lpEarthMagma)" x="52" y="88" width="96" height="48" rx="18"/>
+            <path class="lp-volcano-earth-vent" fill="url(#lpEarthMagma)" d="M92 88 L100 28 L108 88 Z"/>
+            <rect fill="#4e342e" x="0" y="136" width="200" height="34"/>
+          </svg>
+        </div>`;
+    }
+
+    function renderVolcanoStatusScene() {
+      return `
+        <div class="lp-volcano-scene lp-volcano-scene--status" aria-hidden="true">
+          <div class="lp-volcano-status-sky"></div>
+          <div class="lp-volcano-status-grid">
+            <div class="lp-volcano-status-item lp-volcano-status-item--active">
+              <svg viewBox="0 0 60 70" aria-hidden="true">
+                <path fill="#4e342e" d="M8 68 L30 18 L52 68 Z"/>
+                <ellipse class="lp-volcano-status-glow" fill="#ff6b35" cx="30" cy="20" rx="7" ry="4"/>
+              </svg>
+              <div class="lp-volcano-status-smoke"><span></span><span></span></div>
+              <small>פעיל</small>
+            </div>
+            <div class="lp-volcano-status-item lp-volcano-status-item--dormant">
+              <svg viewBox="0 0 60 70" aria-hidden="true">
+                <path fill="#5d4037" d="M10 68 L30 24 L50 68 Z"/>
+                <ellipse fill="#8d6e63" cx="30" cy="26" rx="5" ry="3"/>
+              </svg>
+              <small>רדום</small>
+            </div>
+            <div class="lp-volcano-status-item lp-volcano-status-item--extinct">
+              <svg viewBox="0 0 60 70" aria-hidden="true">
+                <path fill="#9e9e9e" d="M12 68 L30 30 L48 68 Z"/>
+                <path fill="#bdbdbd" d="M22 68 L30 38 L38 68 Z"/>
+              </svg>
+              <small>כבוי</small>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function renderVolcanoScene(variant, { hebrew = true } = {}) {
+      if (variant === "output") return renderVolcanoOutputScene(hebrew);
       if (variant === "world") return renderVolcanoWorldScene();
-      const modifierClass = variant === "celebrate" ? " lp-volcano-scene--celebrate" : variant === "calm" ? " lp-volcano-scene--calm" : "";
+      if (variant === "earth") return renderVolcanoEarthScene();
+      if (variant === "status") return renderVolcanoStatusScene();
+      if (variant === "lava") return renderVolcanoMountainScene(" lp-volcano-scene--lava");
+      const modifierClass =
+        variant === "celebrate"
+          ? " lp-volcano-scene--celebrate"
+          : variant === "calm"
+            ? " lp-volcano-scene--calm"
+            : variant === "erupting"
+              ? ""
+              : "";
       return renderVolcanoMountainScene(modifierClass);
     }
 
     function renderContentSlide(slide) {
       let bodyHtml = "";
-      let hasInteractiveBody = false;
 
       if (slide.items?.length) {
         bodyHtml = `<ul class="lp-slide-list">${slide.items
@@ -1574,28 +1680,16 @@
               `<li><button type="button" class="lp-word" dir="ltr" data-en="${it.en}" data-he="${it.he}">${it.en}</button><span>${it.he}</span></li>`
           )
           .join("")}</ul>`;
-        hasInteractiveBody = true;
       } else if (slide.body) {
         bodyHtml = `<p class="lp-slide-body">${wrapSayableBody(slide.body, slide.say)}</p>`;
-        hasInteractiveBody = bodyHtml.includes("lp-say");
       }
 
       const visualHtml =
-        slide.visual && slide.visual.startsWith("volcano-") ? renderVolcanoScene(slide.visual.slice("volcano-".length)) : "";
-
-      const isClosing = slide.subtitle === "כל הכבוד!";
-      const orbHtml =
-        hasInteractiveBody || visualHtml
-          ? ""
-          : `<button type="button" class="lp-slide-orb${isClosing ? " lp-slide-orb--celebrate" : ""}" aria-label="קישוט">
-            <span class="lp-slide-orb-inner">
-              <span class="lp-slide-orb-ring"></span>
-              <span class="lp-slide-orb-core"></span>
-            </span>
-          </button>`;
+        slide.visual && slide.visual.startsWith("volcano-")
+          ? renderVolcanoScene(slide.visual.slice("volcano-".length), { hebrew: isHebrewLesson(lesson) })
+          : "";
 
       return `
-        ${orbHtml}
         <div class="lp-slide-inner${visualHtml ? " has-visual" : ""}">
           <div class="lp-slide-text-col">
             <div class="lp-slide-head">
@@ -1801,7 +1895,7 @@
       }
 
       const openBtn = $(".js-lesson-open", card);
-      if (openBtn) openBtn.textContent = locked ? "פתיחה עם פרימיום" : "הצג שיעור";
+      setLessonOpenButtonState(openBtn, lesson);
     });
   }
 
@@ -1818,9 +1912,9 @@
     window.GameAuth?.bindModals(showToast);
     window.GameAuth?.onUserChange(async () => {
       await refreshFavoriteLessons();
-      const favBtn = $("#lessonInfoFavBtn");
-      if (favBtn?.dataset.lesson) syncFavBtnState(favBtn.dataset.lesson);
+      syncAllFavButtons();
     });
+    refreshFavoriteLessons().then(syncAllFavButtons);
   }
 
   if (document.readyState === "loading") {

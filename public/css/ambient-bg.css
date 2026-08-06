@@ -17,7 +17,7 @@ body.clean-site {
   isolation: isolate;
 }
 
-body.clean-site > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader):not(footer):not(.site-footer):not(.back-to-top-btn):not(.premium-modal) {
+body.clean-site > :not(.ambient-bg):not(.navbar):not(.mobile-nav):not(.scroll-progress):not(.loader):not(footer):not(.site-footer):not(.back-to-top-btn):not(.premium-modal):not(.coloring-zoom-backdrop):not(.coloring-zoom-flyout):not(.modal-overlay) {
   position: relative;
   z-index: 1;
 }

@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="/styles.css?v=56"/>
   <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
   <link rel="stylesheet" href="/css/clean-site.css?v=70"/>
-  <link rel="stylesheet" href="/css/lesson-player.css?v=35"/>
+  <link rel="stylesheet" href="/css/lesson-player.css?v=53"/>
   <link rel="stylesheet" href="/css/service-landing.css?v=27"/>
   <link rel="stylesheet" href="/css/premium.css"/>
   <link rel="stylesheet" href="/css/legal.css"/>
@@ -23,36 +23,51 @@
   <header class="navbar scrolled" id="navbar">
     <div class="container nav-inner">
       <nav class="nav-links" id="navLinks">
-        <a href="/" class="nav-pill">בית</a>
+        <a href="/" class="nav-pill" data-i18n="nav.home">בית</a>
         <div class="nav-services">
-          <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false">שירותים</button>
-          <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
-            <a href="/services/ready-lessons" class="nav-services-link active" role="menuitem">שיעורים</a>
-            <a href="/services/worksheets" class="nav-services-link" role="menuitem">דפי עבודה</a>
-            <a href="/services/game-builder" class="nav-services-link" role="menuitem">יצירת משחק</a>
-          </div>
+          <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false" data-i18n="nav.services">שירותים</button>
         </div>
-        <a href="/#about" class="nav-pill">מי אנחנו</a>
-        <a href="/#contact" class="nav-pill">צור קשר</a>
+        <a href="/#about" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
+        <a href="/#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
       </nav>
       <div class="nav-actions">
-        <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
+        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle></button>
+        <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
+        <div class="nav-user hidden" id="authUserMenu">
+          <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
+            <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            <span class="nav-user-initial hidden" id="authUserInitial" aria-hidden="true"></span>
+          </button>
+          <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
+            <p class="nav-user-name" id="authUserName"></p>
+            <a href="/my-room" class="nav-user-link" role="menuitem" data-i18n="nav.myRoom">החדר שלי</a>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem" data-i18n="nav.logout">יציאה</button>
+          </div>
+        </div>
+        <button class="menu-toggle" id="menuToggle" data-i18n-aria="nav.menu" aria-label="תפריט"><span></span><span></span><span></span></button>
       </div>
+    </div>
+    <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
+      <a href="/services/ready-lessons" class="nav-services-link active" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+      <a href="/services/worksheets" class="nav-services-link" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+      <a href="/services/game-builder" class="nav-services-link" role="menuitem" data-i18n="services.gameBuilder">יצירת משחק</a>
     </div>
   </header>
 
   <nav class="mobile-nav" id="mobileNav">
-    <a href="/">בית</a>
+    <a href="/" data-i18n="nav.home">בית</a>
     <div class="mobile-nav-services">
-      <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel">שירותים</button>
+      <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel" data-i18n="nav.services">שירותים</button>
       <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
-        <a href="/services/ready-lessons" role="menuitem">שיעורים</a>
-        <a href="/services/worksheets" role="menuitem">דפי עבודה</a>
-        <a href="/services/game-builder" role="menuitem">יצירת משחק</a>
+        <a href="/services/ready-lessons" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+        <a href="/services/worksheets" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+        <a href="/services/game-builder" role="menuitem" data-i18n="services.gameBuilder">יצירת משחק</a>
       </div>
     </div>
-    <a href="/#about">מי אנחנו</a>
-    <a href="/#contact">צור קשר</a>
+    <a href="/#about" data-i18n="nav.about">מי אנחנו</a>
+    <a href="/#contact" data-i18n="nav.contact">צור קשר</a>
+    <button type="button" class="lang-toggle" data-lang-toggle></button>
+    <button type="button" class="mobile-nav-auth" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
   </nav>
 
   <main>
@@ -114,7 +129,7 @@
                 <span class="svc-lesson-name">הקדמה לשפה האנגלית</span>
                 <span class="svc-lesson-part"></span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="intro">הצג שיעור</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="intro">פתיחה</button>
             </div>
           </article>
 
@@ -126,7 +141,7 @@
                 <span class="svc-lesson-name">צבעים</span>
                 <span class="svc-lesson-part"></span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="colors">הצג שיעור</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="colors">פתיחה</button>
             </div>
           </article>
 
@@ -138,7 +153,7 @@
                 <span class="svc-lesson-name">מספרים</span>
                 <span class="svc-lesson-part"></span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="numbers">הצג שיעור</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="numbers">פתיחה</button>
             </div>
           </article>
 
@@ -150,7 +165,7 @@
                 <span class="svc-lesson-name">בעלי חיים</span>
                 <span class="svc-lesson-part"></span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="animals">הצג שיעור</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="animals">פתיחה</button>
             </div>
           </article>
 
@@ -162,20 +177,19 @@
                 <span class="svc-lesson-name">משפחה</span>
                 <span class="svc-lesson-part"></span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="family">הצג שיעור</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="family">פתיחה</button>
             </div>
           </article>
 
           <article class="svc-lesson-card" data-lesson="volcano">
             <div class="svc-lesson-preview">
               <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
-              <span class="svc-lesson-recommended-badge">מומלץ</span>
               <span class="svc-lesson-learned-badge hidden">נלמד</span>
               <div class="svc-lesson-title-wrap">
                 <span class="svc-lesson-name">הר געש</span>
                 <span class="svc-lesson-part"></span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="volcano">הצג שיעור</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="volcano">פתיחה</button>
             </div>
           </article>
 
@@ -187,7 +201,7 @@
                 <span class="svc-lesson-name">נפלאות הבריאה</span>
                 <span class="svc-lesson-part"></span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="health">הצג שיעור</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="health">פתיחה</button>
             </div>
           </article>
         </div>
@@ -213,7 +227,6 @@
     <div class="modal modal-lesson-info">
       <button class="modal-close" id="lessonInfoClose" type="button" aria-label="סגירה">×</button>
       <header class="lesson-info-head">
-        <h2 class="font-cartoon lesson-info-title" id="lessonInfoTitle"></h2>
         <span class="lesson-info-premium-badge hidden" id="lessonInfoPremiumBadge">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="5" y="11" width="14" height="9" rx="2"/>
@@ -221,6 +234,7 @@
           </svg>
           <span>פרימיום</span>
         </span>
+        <h2 class="font-cartoon lesson-info-title" id="lessonInfoTitle"></h2>
         <span class="lesson-info-learned-badge hidden" id="lessonInfoLearnedBadge">נלמד</span>
       </header>
       <p class="lesson-info-summary" id="lessonInfoSummary"></p>
@@ -230,7 +244,7 @@
         <div><dt>משך</dt><dd id="lessonInfoDuration"></dd></div>
       </dl>
       <div class="lesson-info-actions">
-        <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" id="lessonInfoOpenBtn">הצג שיעור</button>
+        <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" id="lessonInfoOpenBtn">פתיחה</button>
         <div class="lesson-info-share-wrap">
           <button type="button" class="lesson-info-share-btn" id="lessonInfoShareBtn" aria-haspopup="menu" aria-expanded="false">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -260,8 +274,8 @@
             </button>
           </div>
         </div>
-        <button type="button" class="lesson-info-fav-btn" id="lessonInfoFavBtn" aria-pressed="false" aria-label="הוספה לשיעורים שאהבתי">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21S3.9 15.9 2 11.9C.5 8.7 1.9 5 5.6 5c2 0 3.7 1.1 4.7 2.7C11.3 6.1 13 5 15 5c3.7 0 5.1 3.7 3.6 6.9C20.1 15.9 12 21 12 21z"/></svg>
+        <button type="button" class="lesson-info-fav-btn" id="lessonInfoFavBtn" aria-pressed="false" aria-label="שמירת השיעור">
+          <svg viewBox="-1 -1 26 26" aria-hidden="true"><path d="M6 3h12a2 2 0 0 1 2 2v16l-8-4-8 4V5a2 2 0 0 1 2-2z"/></svg>
         </button>
       </div>
     </div>
@@ -336,11 +350,12 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-app.js"></script>
+  <script src="/js/i18n.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/user-data.js"></script>
   <script src="/js/credits.js"></script>
   <script src="/js/premium.js"></script>
-  <script src="/js/ready-lessons.js?v=22"></script>
+  <script src="/js/ready-lessons.js?v=37"></script>
   <script src="/js/cookie-consent.js?v=2"></script>
 </body>
 </html>

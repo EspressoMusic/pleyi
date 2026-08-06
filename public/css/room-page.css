@@ -149,10 +149,12 @@ body.in-room .visually-hidden {
 .room-games-panel {
   position: fixed;
   inset: 0;
-  z-index: 800;
-  display: grid;
-  place-items: center;
-  padding: 20px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 24px);
+  box-sizing: border-box;
 }
 
 .room-games-panel.hidden {
@@ -303,12 +305,15 @@ body.in-room .visually-hidden {
 }
 
 .room-game-picker {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
   gap: 14px;
   overflow: visible;
   max-height: none;
   padding: 0 0 4px;
+  width: 100%;
   background: transparent;
   border: none;
   border-radius: 0;
@@ -326,7 +331,8 @@ body.in-room .visually-hidden {
 }
 
 .room-game-btn {
-  width: 100%;
+  width: min(148px, calc((100% - 3 * 14px) / 4));
+  flex: 0 0 auto;
   min-height: 108px;
   aspect-ratio: 1;
   display: flex;
@@ -704,10 +710,12 @@ body.room-has-error .room-page-overlay {
 .room-settings-panel {
   position: fixed;
   inset: 0;
-  z-index: 800;
-  display: grid;
-  place-items: center;
-  padding: 20px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 24px);
+  box-sizing: border-box;
 }
 
 .room-settings-panel.hidden {
@@ -724,13 +732,15 @@ body.room-has-error .room-page-overlay {
 .room-settings-panel-sheet {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 400px;
+  width: min(100%, 400px);
+  max-height: min(90vh, 720px);
+  overflow: auto;
   padding: 22px 18px;
   background: var(--memyellow);
   border: 4px solid var(--ink);
   border-radius: var(--radius);
   box-shadow: var(--shadow-candy);
+  flex: 0 0 auto;
 }
 
 .room-settings-list {
@@ -885,10 +895,12 @@ body.room-has-error .room-page-overlay {
 .room-material-panel {
   position: fixed;
   inset: 0;
-  z-index: 850;
-  display: grid;
-  place-items: center;
-  padding: 20px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 24px);
+  box-sizing: border-box;
 }
 
 .room-material-panel.hidden {
@@ -1051,8 +1063,8 @@ body.room-has-error .room-page-overlay {
 }
 
 @media (max-width: 768px) {
-  .room-game-picker {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .room-game-btn {
+    width: min(148px, calc((100% - 2 * 14px) / 3));
   }
 
   .room-game-area--chat-open .room-stage-chat {

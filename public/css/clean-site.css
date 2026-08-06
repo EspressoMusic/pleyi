@@ -1,6 +1,6 @@
 /* Clean 4-section layout */
 
-@import url("ambient-bg.css?v=6");
+@import url("ambient-bg.css?v=7");
 
 body.clean-site {
   background: transparent;
@@ -34,6 +34,7 @@ body.clean-site .scroll-section .clean-section-title,
 body.clean-site .scroll-section .about-lead,
 body.clean-site .scroll-section .svc-section-lead,
 body.clean-site .scroll-section .svc-hero-badge,
+body.clean-site .scroll-section .hero-site-name,
 body.clean-site .scroll-section .clean-hero-actions,
 body.clean-site .scroll-section .about-service-card,
 body.clean-site .scroll-section .svc-family-step,
@@ -62,6 +63,7 @@ body.clean-site .scroll-section.in-view .clean-section-title,
 body.clean-site .scroll-section.in-view .about-lead,
 body.clean-site .scroll-section.in-view .svc-section-lead,
 body.clean-site .scroll-section.in-view .svc-hero-badge,
+body.clean-site .scroll-section.in-view .hero-site-name,
 body.clean-site .scroll-section.in-view .clean-hero-actions,
 body.clean-site .scroll-section.in-view .about-demo-scene,
 body.clean-site .scroll-section.in-view .about-service-card,
@@ -125,6 +127,7 @@ body.clean-site .svc-game-pick-btn:nth-child(6) {
   body.clean-site .scroll-section .about-lead,
   body.clean-site .scroll-section .svc-section-lead,
   body.clean-site .scroll-section .svc-hero-badge,
+  body.clean-site .scroll-section .hero-site-name,
   body.clean-site .scroll-section .clean-hero-actions,
   body.clean-site .scroll-section .about-demo-scene,
   body.clean-site .scroll-section .about-service-card,
@@ -577,15 +580,56 @@ body.clean-site .clean-hero-inner .hero-title {
 
 .hero-top {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(10px, 2.5vw, 28px);
+  gap: clamp(6px, 1.5vw, 16px);
   margin-bottom: 40px;
 }
 
 .hero-top .hero-title {
   flex: 0 1 auto;
   min-width: 0;
+}
+
+#home .hero-site-name {
+  margin: 0;
+  padding: 0;
+  line-height: 0.95;
+  font-size: clamp(4.5rem, 18vw, 12rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  position: relative;
+  display: inline-block;
+}
+
+#home .hero-site-ch {
+  display: inline-block;
+  color: var(--ch-color);
+  -webkit-text-fill-color: var(--ch-color);
+  paint-order: stroke fill;
+  -webkit-text-stroke: clamp(9px, 1.8vw, 20px) var(--ink);
+  -webkit-text-stroke-color: var(--ink);
+  animation: hero-site-ch-bounce 2.6s ease-in-out infinite;
+  animation-delay: var(--ch-delay, 0s);
+}
+
+@keyframes hero-site-ch-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(clamp(-4px, -0.8vw, -10px)) scale(1.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #home .hero-site-ch {
+    animation: none;
+    transform: none;
+  }
 }
 
 .clean-hero-inner .hero-title.font-cartoon {
@@ -621,7 +665,7 @@ body.clean-site .clean-hero-inner .hero-title {
   z-index: 2;
 }
 
-body.clean-site .hero-title + .clean-hero-actions {
+body.clean-site .hero-top + .clean-hero-actions {
   margin-top: clamp(20px, 5vw, 40px);
 }
 
@@ -1804,9 +1848,16 @@ body.in-room {
   }
 
   .hero-top {
-    flex-direction: column;
     margin-bottom: 32px;
-    gap: 20px;
+    gap: 10px;
+  }
+
+  #home .hero-site-name {
+    font-size: clamp(3rem, 17vw, 5.75rem);
+  }
+
+  #home .hero-site-ch {
+    -webkit-text-stroke-width: clamp(6px, 2vw, 10px);
   }
 
   .clean-hero-inner .hero-title.font-cartoon {

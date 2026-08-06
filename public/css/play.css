@@ -130,7 +130,7 @@
   width: 100%;
 }
 
-.play-root .solo-game-wrap,
+.play-root .solo-game-wrap:not(.solo-game-wrap--vd),
 .play-root .ts-pro-wrap {
   flex: 1;
   display: flex;
@@ -564,11 +564,48 @@
   direction: ltr;
 }
 
+.play-root:has(.solo-game-wrap--vd) {
+  overflow: hidden;
+  padding: clamp(4px, 1vh, 8px) clamp(8px, 2vw, 12px);
+  display: flex;
+  flex-direction: column;
+}
+
+.play-body:has(.solo-game-wrap--vd) .site-footer-mini {
+  display: none;
+}
+
+.play-body:has(.solo-game-wrap--vd) .play-shell {
+  padding-bottom: 4px;
+}
+
+.play-body:has(.solo-game-wrap--vd) .play-top-strip {
+  padding-bottom: 4px;
+}
+
+.play-root .solo-game-wrap--vd {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: clamp(6px, 1.2vh, 10px);
+  flex: 1;
+  min-height: 0;
+  max-height: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+}
+
+.solo-game-wrap--vd .vd-prompt,
+.solo-game-wrap--vd .vd-word-box {
+  flex-shrink: 0;
+}
+
 .vd-prompt {
   font-weight: 900;
-  font-size: clamp(28px, 6vw, 44px);
+  font-size: clamp(20px, 4.2vw, 32px);
   text-align: center;
-  margin: 0 0 12px;
+  margin: 0;
   color: var(--ink);
 }
 
@@ -577,10 +614,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: min(280px, 85vw);
-  aspect-ratio: 1;
-  margin: 12px auto 12px;
-  padding: 20px;
+  width: min(210px, 52vw);
+  aspect-ratio: 5 / 4;
+  max-height: min(28vh, 180px);
+  margin: 0 auto;
+  padding: clamp(10px, 2vh, 16px);
   background: var(--white);
   border: 4px solid var(--ink);
   border-radius: var(--radius);
@@ -589,30 +627,23 @@
 
 .vd-word-box .solo-quiz-word {
   margin: 0;
-  font-size: clamp(32px, 8vw, 52px);
-}
-
-.solo-game-wrap--vd {
-  display: flex;
-  flex-direction: column;
-  min-height: min(100%, 520px);
-}
-
-.solo-game-wrap--vd .vd-prompt,
-.solo-game-wrap--vd .vd-word-box {
-  flex-shrink: 0;
+  font-size: clamp(24px, 6vw, 40px);
+  line-height: 1.1;
 }
 
 .solo-options { display: grid; gap: 10px; }
 
 .solo-options--vd {
   grid-template-columns: 1fr 1fr;
-  gap: clamp(16px, 3vw, 22px);
-  max-width: min(720px, 98vw);
-  margin: clamp(28px, 7vh, 56px) auto clamp(12px, 3vh, 28px);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(8px, 1.4vh, 12px);
+  max-width: min(680px, 98vw);
+  margin: 0 auto;
   width: 100%;
-  flex: 1;
-  align-content: end;
+  min-height: 0;
+  height: 100%;
+  align-content: stretch;
+  align-self: stretch;
 }
 
 .solo-options--vd .solo-option {
@@ -620,11 +651,56 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: clamp(104px, 18vh, 132px);
-  padding: clamp(24px, 4vw, 32px) clamp(20px, 3vw, 28px);
-  font-size: clamp(22px, 5vw, 30px);
-  border-radius: 999px;
+  gap: clamp(4px, 0.8vh, 6px);
+  min-height: 0;
+  height: 100%;
+  padding: clamp(8px, 1.6vh, 14px) clamp(10px, 2vw, 16px);
+  font-size: clamp(14px, 2.8vw, 18px);
+  border-radius: clamp(18px, 4vw, 28px);
+}
+
+.solo-options--vd .solo-option-num {
+  font-size: clamp(15px, 3vw, 20px);
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+.solo-options--vd .solo-option-text {
+  font-size: clamp(11px, 2.2vw, 15px);
+  line-height: 1.25;
+  max-width: 100%;
+  text-wrap: balance;
+}
+
+@media (max-height: 720px) {
+  .vd-prompt {
+    font-size: clamp(18px, 3.8vw, 26px);
+  }
+
+  .vd-word-box {
+    width: min(180px, 48vw);
+    max-height: min(22vh, 140px);
+    padding: clamp(8px, 1.5vh, 12px);
+  }
+
+  .vd-word-box .solo-quiz-word {
+    font-size: clamp(22px, 5.5vw, 34px);
+  }
+
+  .solo-options--vd {
+    gap: clamp(6px, 1vh, 10px);
+  }
+
+  .solo-options--vd .solo-option {
+    padding: clamp(6px, 1.2vh, 10px) clamp(8px, 1.8vw, 12px);
+  }
+
+  .solo-options--vd .solo-option-text {
+    font-size: clamp(10px, 2vw, 13px);
+    line-height: 1.2;
+  }
 }
 
 .solo-option-num {
@@ -662,7 +738,7 @@
 }
 
 .solo-options--vd .solo-option--c1 {
-  background: #3b82f6;
+  background: #2563eb;
   color: #fff;
 }
 
