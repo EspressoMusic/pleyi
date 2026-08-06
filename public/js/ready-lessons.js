@@ -5,7 +5,9 @@
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
   const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "נפלאות הבריאה", volcano: "הר געש" };
+  const ACTIVE_SUBJECTS = ["lifeskills", "health", "volcano"];
   const LESSON_SHARE_PATH = "/services/ready-lessons.html";
+  const LP_SPEAKER_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
 
   const STANDARD_LESSON_GAMES = [
     { id: "vocabulary-duel", label: "טריוויה", icon: "⚔️" },
@@ -515,65 +517,76 @@
       vocab: [
         { en: "הר געש", he: "הר מיוחד שיכול לפלוט אבנים לוהטות, עשן ולבה מתוך פנים כדור הארץ" },
         { en: "לבה", he: "סלע נוזלי ולוהט שיוצא מהר הגעש בזמן התפרצות" },
+        { en: "עשן", he: "ענן כבד שעולה מהלוע אל השמיים בזמן התפרצות" },
         { en: "מאגמה", he: "סלע נוזלי וחם מאוד שנמצא עמוק מתחת לאדמה" },
         { en: "לוע", he: "הפתח שבראש הר הגעש שממנו יוצאת הלבה" },
         { en: "התפרצות", he: "הרגע שבו הר הגעש פולט לבה, עשן ואבנים" },
         { en: "אפר געשי", he: "אבק ופירורי סלע קטנים שנפלטים מהר הגעש" },
         { en: "הר געש פעיל", he: "הר געש שהתפרץ לאחרונה ועלול להתפרץ שוב" },
         { en: "הר געש רדום", he: "הר געש שלא התפרץ הרבה זמן אבל עדיין עלול להתעורר" },
+        { en: "הר געש כבוי", he: "הר געש שלא צפוי להתפרץ שוב לעולם" },
         { en: "וולקנולוג", he: "מדען שחוקר הרי געש" },
+        { en: "וולקנולוגים", he: "מדענים שחוקרים הרי געש" },
         { en: "קרום כדור הארץ", he: "השכבה החיצונית והמוצקה שעליה אנחנו חיים" },
       ],
       games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
-          title: "מה זה הר געש?",
+          title: "מה זה **הר געש**?",
           subtitle: "פתיחה",
           visual: "volcano-calm",
-          body: "הר געש הוא הר מיוחד שיכול לפלוט אבנים לוהטות, עשן ולבה מתוך פנים כדור הארץ.\n\nהיום נכיר איך הוא בנוי, מה קורה בפנים שלו, ולמה הוא מתפרץ.",
+          body: "**הר געש** הוא הר מיוחד שיכול לפלוט אבנים לוהטות, עשן ולבה מתוך פנים כדור הארץ.\n\nהיום נכיר איך הוא בנוי, מה קורה בפנים שלו, ולמה הוא **מתפרץ**.",
         },
         {
           type: "content",
-          title: "מילים חשובות",
+          title: "**מילים חשובות**",
           subtitle: "אוצר מושגים",
           visual: "volcano-earth",
           body: "לוע — הפתח שבראש הר הגעש שממנו יוצאת הלבה.\n\nמאגמה — סלע נוזלי וחם מאוד שנמצא עמוק מתחת לאדמה. כשהיא יוצאת החוצה קוראים לה לבה.\n\nהתפרצות — הרגע שבו הר הגעש פולט לבה, עשן ואבנים.",
         },
         {
           type: "content",
-          title: "איך הר געש מתפרץ?",
+          title: "איך הר געש **מתפרץ**?",
           subtitle: "בפנים ההר",
           visual: "volcano-erupting",
-          body: "עמוק מתחת לאדמה יש מאגמה — סלע נוזלי וחם מאוד.\n\nכשהלחץ בפנים ההר גדל, המאגמה עולה דרך הלוע שבראש ההר.\n\nכשהיא יוצאת החוצה היא נקראת לבה, ויחד איתה יוצאים גם עשן ואפר געשי.",
+          body: "עמוק מתחת לאדמה יש **מאגמה** — סלע נוזלי וחם מאוד.\n\nכשהלחץ בפנים ההר גדל, המאגמה עולה דרך הלוע שבראש ההר.\n\nכשהיא יוצאת החוצה היא נקראת **לבה**, ויחד איתה יוצאים גם עשן ואפר געשי.",
         },
         {
           type: "content",
-          title: "כמה חם הלבה?",
+          title: "צפו: **הר געש** בפעולה",
+          subtitle: "סרטון קצר",
+          body: "סרטון קצר (3 דקות) שמראה איך **מאגמה** עולה, יוצאת מההר כ**לבה**, ובונה את צורת ההר.",
+          video: "https://www.youtube.com/watch?v=K7Oq9_DU1Mc",
+          videoTitle: "All About Volcanoes — SciShow Kids",
+        },
+        {
+          type: "content",
+          title: "כמה חם **הלבה**?",
           subtitle: "עובדה מרתקת",
           visual: "volcano-lava",
-          body: "לבה יכולה להגיע לחום של יותר מ-1,000 מעלות צלזיוס — חם מספיק כדי להתיך מתכת!\n\nלמרות שהיא נראית איטית, לבה יכולה לזרום במהירות של עשרות קילומטרים בשעה במורד ההר.\n\nכשהיא מתקררת, הלבה הופכת לאט לאט לסלע קשה חדש.",
+          body: "לבה יכולה להגיע לחום של יותר מ-**1,000 מעלות צלזיוס** — חם מספיק כדי להתיך מתכת!\n\nלמרות שהיא נראית איטית, לבה יכולה לזרום במהירות של עשרות קילומטרים בשעה במורד ההר.\n\nכשהיא מתקררת, הלבה הופכת לאט לאט לסלע קשה חדש.",
         },
         {
           type: "content",
-          title: "פעיל, רדום או כבוי?",
+          title: "**פעיל**, רדום או כבוי?",
           subtitle: "סוגי הרי געש",
           visual: "volcano-status",
-          body: "הר געש פעיל הוא הר שהתפרץ לאחרונה או עלול להתפרץ שוב בקרוב.\n\nהר געש רדום לא התפרץ הרבה מאוד זמן, אבל עדיין יכול להתעורר יום אחד.\n\nהר געש כבוי כבר לא צפוי להתפרץ שוב לעולם.",
+          body: "**הר געש פעיל** הוא הר שהתפרץ לאחרונה או עלול להתפרץ שוב בקרוב.\n\n**הר געש רדום** לא התפרץ הרבה מאוד זמן, אבל עדיין יכול להתעורר יום אחד.\n\n**הר געש כבוי** כבר לא צפוי להתפרץ שוב לעולם.",
         },
         {
           type: "content",
-          title: "מה יוצא מהר געש?",
+          title: "**מה יוצא** מהר געש?",
           subtitle: "שאלה ותשובה",
           visual: "volcano-output",
-          body: "מה יוצא מהר געש כשהוא מתפרץ?\n\nלבה — סלע נוזלי ולוהט שזורם במורד ההר.\n\nעשן — ענן כבד שעולה מהלוע אל השמיים.\n\nאפר געשי — אבק ופירורי סלע קטנטנים שיכולים לנסוע רחוק מאוד ברוח.",
+          body: "**מה יוצא** מהר געש כשהוא **מתפרץ**?\n\nלבה — סלע נוזלי ולוהט שזורם במורד ההר.\n\nעשן — ענן כבד שעולה מהלוע אל השמיים.\n\nאפר געשי — אבק ופירורי סלע קטנטנים שיכולים לנסוע רחוק מאוד ברוח.",
         },
         {
           type: "content",
-          title: "הרי געש בעולם האמיתי",
+          title: "הרי געש **בעולם האמיתי**",
           subtitle: "חיבור לחיים",
           visual: "volcano-world",
-          body: "יש אלפי הרי געש בעולם — חלקם על היבשה וחלקם עמוק בים.\n\nהר הגעש קילאווהה שבהוואי הוא אחד הפעילים ביותר בעולם, וממשיך להתפרץ במשך שנים רבות.\n\nמדענים שנקראים וולקנולוגים חוקרים הרי געש כדי לדעת מתי הם עלולים להתפרץ, ולשמור על אנשים שגרים בקרבתם בבטחה.",
+          body: "יש **אלפי הרי געש** בעולם — חלקם על היבשה וחלקם עמוק בים.\n\nהר הגעש קילאווהה שבהוואי הוא אחד הפעילים ביותר בעולם, וממשיך להתפרץ במשך שנים רבות.\n\nמדענים שנקראים **וולקנולוגים** חוקרים הרי געש כדי לדעת מתי הם עלולים להתפרץ, ולשמור על אנשים שגרים בקרבתם בבטחה.",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -588,94 +601,72 @@
 
     health: {
       id: "health",
-      premium: true,
       name: "נפלאות הבריאה",
-      nameMain: "נפלאות הבריאה",
-      namePart: "",
+      nameMain: "נפלאות",
+      namePart: "הבריאה",
       subject: "health",
       grades: ["ag", "dv", "zh"],
       topic: "health",
       gradeLabel: "כל הכיתות",
       duration: "25 דק'",
-      summary: "מכירים מילים באנגלית על בריאות וגוף — איך לשמור על הבריאות שלנו, מבקרים אצל הרופא, ומתרגלים עם משפטים ומשחק.",
+      summary: "מכירים את הגוף מקרוב — איך הוא עובד, איך שומרים עליו בריא, ומה עושים כשלא מרגישים טוב. עם משחק בסוף.",
       vocab: [
-        { en: "healthy", he: "בריא" },
-        { en: "doctor", he: "רופא" },
-        { en: "sleep", he: "לישון" },
-        { en: "exercise", he: "התעמלות" },
-        { en: "water", he: "מים" },
-        { en: "teeth", he: "שיניים" },
-        { en: "wash", he: "לשטוף" },
-        { en: "medicine", he: "תרופה" },
-        { en: "sick", he: "חולה" },
-        { en: "fruit", he: "פרי" },
+        { en: "בריאות", he: "מצב שבו הגוף שלנו חזק, פעיל ומרגיש טוב" },
+        { en: "לב", he: "איבר שדופק ושואב דם לכל חלקי הגוף" },
+        { en: "ריאות", he: "איברים שמכניסים חמצן לגוף ומוציאים אוויר משומש" },
+        { en: "מוח", he: "מרכז השליטה בגוף — חושב, זוכר ושולח הוראות" },
+        { en: "שיניים", he: "עוזרות ללעוס אוכל ושומרות על הפה בריא" },
+        { en: "מים", he: "חשובים לשתייה — הגוף צריך מים כדי לעבוד טוב" },
+        { en: "שינה", he: "מנוחה בלילה שמחזקת את הגוף והמוח" },
+        { en: "התעמלות", he: "תנועה ופעילות גופנית שמחזקות את השרירים והלב" },
+        { en: "רופא", he: "איש מקצוע שבודק את הגוף ועוזר כשאנחנו חולים" },
+        { en: "תרופה", he: "חומר שעוזר לגוף להתרפא כשאנחנו חולים" },
+        { en: "חיסון", he: "זריקה קטנה שמגינה על הגוף מפני מחלות" },
+        { en: "פרי", he: "אוכל בריא שמלא בוויטמינים ועוזר לגוף לגדול" },
       ],
       games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
-          title: "למה בריאות חשובה?",
+          title: "מה זה **נפלאות הבריאה**?",
           subtitle: "פתיחה",
-          body: "הגוף שלנו הוא כמו מכונה מדהימה — וכדי שהוא יעבוד טוב, צריך לדאוג לו.\n\nהיום נלמד מילים באנגלית שקשורות לבריאות ולגוף שלנו.",
+          body: "הגוף שלנו הוא **מכונה מדהימה** — לב שדופק, ריאות שנושמות, מוח שחושב, ועוד הרבה חלקים שעובדים יחד.\n\nהיום נכיר איך **שומרים על הגוף** בריא ולמה זה כל כך חשוב.",
         },
         {
           type: "content",
-          title: "Health & Body",
-          subtitle: "אוצר מילים",
-          items: [
-            { en: "healthy", he: "בריא" },
-            { en: "doctor", he: "רופא" },
-            { en: "sleep", he: "לישון" },
-            { en: "exercise", he: "התעמלות" },
-            { en: "water", he: "מים" },
-            { en: "teeth", he: "שיניים" },
-            { en: "wash", he: "לשטוף" },
-            { en: "medicine", he: "תרופה" },
-            { en: "sick", he: "חולה" },
-            { en: "fruit", he: "פרי" },
-          ],
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          body: "בריאות — מצב שבו הגוף חזק ומרגיש טוב.\n\nלב — דופק ושואב דם לכל הגוף.\n\nריאות — מכניסות חמצן ומוציאות אוויר משומש.\n\nמוח — מרכז השליטה: חושב, זוכר ושולח הוראות.",
         },
         {
           type: "content",
-          title: "איך אני מרגיש/ה?",
-          subtitle: "כלל דקדוקי",
-          body: "כדי לתאר איך אנחנו מרגישים אומרים: I feel healthy.\n\nכשלא מרגישים טוב אומרים: I feel sick.\n\nנסו: How do you feel today?",
-          say: [
-            { match: "I feel healthy.", speak: "I feel healthy.", explain: "אני מרגיש/ה בריא/ה" },
-            { match: "I feel sick.", speak: "I feel sick.", explain: "אני מרגיש/ה חולה" },
-          ],
+          title: "איך **הגוף** עובד?",
+          subtitle: "בפנים הגוף",
+          body: "ה**לב** דופק ושולח דם לכל מקום — כך מגיע חמצן ואנרגיה לכל האיברים.\n\nה**ריאות** נושמות: מכניסות אוויר נקי ומוציאות אוויר משומש.\n\nה**מוח** שולח הוראות לכל הגוף — כשאנחנו רוצים לזוז, לדבר או לחשוב.",
         },
         {
           type: "content",
-          title: "Let's Practice",
-          subtitle: "בואו נתרגל",
-          body: "I wash my hands.\nI eat fruit every day.\nI go to sleep early.",
-          say: [
-            { match: "I wash my hands.", speak: "I wash my hands.", explain: "אני שוטף/ת ידיים" },
-            { match: "I eat fruit every day.", speak: "I eat fruit every day.", explain: "אני אוכל/ת פרי כל יום" },
-            { match: "I go to sleep early.", speak: "I go to sleep early.", explain: "אני הולך/ת לישון מוקדם" },
-          ],
+          title: "איך **שומרים** על בריאות?",
+          subtitle: "הרגלים טובים",
+          body: "**שתיית מים** — הגוף צריך מים כדי לעבוד.\n\n**אכילת פרי וירקות** — נותנים ויטמינים ואנרגיה.\n\n**התעמלות** — מחזקת את הלב, השרירים והגוף.\n\n**שינה מספקת** — בלילה הגוף נח ומתחזק.",
         },
         {
           type: "content",
-          title: "איך שומרים על בריאות?",
-          subtitle: "שאלה ותשובה",
-          body: "כדי לשאול איך שומרים על בריאות אומרים: How do you stay healthy?\n\nהתשובה: I drink water and I exercise.\n\nנסו לענות בעצמכם!",
-          say: [
-            { match: "How do you stay healthy?", speak: "How do you stay healthy?", explain: "איך אתה שומר על הבריאות שלך?" },
-            { match: "I drink water and I exercise.", speak: "I drink water and I exercise.", explain: "אני שותה מים ומתעמל/ת" },
-          ],
+          title: "מה עושים **כל יום**?",
+          subtitle: "שגרה בריאה",
+          body: "**שטיפת ידיים** לפני אוכל ואחרי שירותים — מונעת חיידקים.\n\n**צחצוח שיניים** בבוקר ובערב — שומר על הפה והשיניים.\n\n**ארוחת בוקר** — נותנת אנרגיה להתחלת היום.\n\n**יציאה לשחק בחוץ** — תנועה ואוויר נקי טובים לגוף.",
         },
         {
           type: "content",
-          title: "בריאות בחיים שלנו",
+          title: "כש**לא מרגישים** טוב",
+          subtitle: "מה עושים?",
+          body: "לפעמים הגוף חלש או חולה — וזה בסדר, זה קורה לכולם.\n\nאפשר **לנוח**, **לשתות**, ולספר למבוגר.\n\n**רופא** בודק מה קורה ויכול לתת **תרופה** או **חיסון** שיעזרו לגוף להתרפא.",
+        },
+        {
+          type: "content",
+          title: "בריאות **בחיים שלנו**",
           subtitle: "חיבור לחיים",
-          body: "כמה הרגלים קטנים ששומרים עלינו בריאים: לשטוף ידיים, לצחצח שיניים, לשתות מים, לישון מספיק ולבקר אצל הרופא כשצריך.",
-          say: [
-            { match: "wash", speak: "wash", explain: "לשטוף" },
-            { match: "sleep", speak: "sleep", explain: "לישון" },
-            { match: "doctor", speak: "doctor", explain: "רופא" },
-          ],
+          body: "כשאנחנו **דואגים לגוף** — אנחנו חזקים יותר, שמחים יותר, ויכולים ללמוד, לשחק ולעזור לאחרים.\n\nהרגלים קטנים כל יום — מים, שינה, תנועה, אוכל טוב — עושים **הבדל גדול** לאורך זמן.",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -780,7 +771,7 @@
     }
 
     function getTopicOptions() {
-      const subjects = state.subject === "all" ? Object.keys(LESSON_TOPICS) : [state.subject];
+      const subjects = state.subject === "all" ? ACTIVE_SUBJECTS : [state.subject];
       const grades = state.grade === "all" ? ["ag", "dv", "zh"] : [state.grade];
       const seen = new Map();
       subjects.forEach((subject) => {
@@ -828,7 +819,9 @@
           card.classList.add("hidden");
           return;
         }
-        const matchSubject = state.subject === "all" || lesson.subject === state.subject;
+        const inActiveSubjects = ACTIVE_SUBJECTS.includes(lesson.subject);
+        const matchSubject =
+          inActiveSubjects && (state.subject === "all" || lesson.subject === state.subject);
         const matchGrade = state.grade === "all" || lesson.grades.includes(state.grade);
         const matchTopic = state.topic === "all" || lesson.topic === state.topic;
         const show = matchSubject && matchGrade && matchTopic;
@@ -1243,12 +1236,206 @@
     return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
   }
 
+  function parseYoutubeId(input) {
+    if (!input) return "";
+    const str = String(input).trim();
+    if (/^[\w-]{11}$/.test(str)) return str;
+    try {
+      const url = new URL(str);
+      if (url.hostname.includes("youtu.be")) return url.pathname.slice(1).split("/")[0];
+      if (url.hostname.includes("youtube.com")) {
+        if (url.pathname.startsWith("/embed/")) return url.pathname.split("/")[2] || "";
+        return url.searchParams.get("v") || "";
+      }
+    } catch {
+      /* not a URL */
+    }
+    return "";
+  }
+
+  function renderYoutubeEmbed(input, title = "סרטון YouTube") {
+    const id = parseYoutubeId(input);
+    if (!id) return "";
+    const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?rel=0&modestbranding=1&playsinline=1`;
+    return `
+      <div class="lp-slide-video">
+        <div class="lp-slide-video-frame">
+          <iframe
+            src="${src}"
+            title="${escAttr(title)}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>`;
+  }
+
   function containsHebrew(str) {
     return /[֐-׿]/.test(str);
   }
 
   function containsLatinLetter(str) {
     return /[A-Za-z]/.test(str);
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function isHebrewLetter(ch) {
+    return /[\u0590-\u05FF]/.test(ch);
+  }
+
+  function replaceTermInPlainText(text, word, replacement, once = false) {
+    const needle = escHtml(word);
+    if (!needle) return text;
+    let result = "";
+    let i = 0;
+    while (i < text.length) {
+      const idx = text.indexOf(needle, i);
+      if (idx === -1) {
+        result += text.slice(i);
+        break;
+      }
+      const before = idx > 0 ? text[idx - 1] : "";
+      const after = idx + needle.length < text.length ? text[idx + needle.length] : "";
+      const atBoundary =
+        (!before || !isHebrewLetter(before)) && (!after || !isHebrewLetter(after));
+      if (atBoundary) {
+        result += text.slice(i, idx) + replacement;
+        if (once) return result;
+        i = idx + needle.length;
+      } else {
+        result += text.slice(i, idx + 1);
+        i = idx + 1;
+      }
+    }
+    return result;
+  }
+
+  function replaceOutsideTags(html, search, replacement, { once = false } = {}) {
+    if (!search) return html;
+    let replaced = false;
+    return html
+      .split(/(<[^>]+>)/g)
+      .map((part) => {
+        if (part.startsWith("<") || (once && replaced)) return part;
+        const next = replaceTermInPlainText(part, search, replacement, once);
+        if (once && next !== part) replaced = true;
+        return next;
+      })
+      .join("");
+  }
+
+  function formatLessonText(text, { terms = [], markedTerms = null } = {}) {
+    let out = escHtml(text);
+    out = out.replace(/\*\*(.+?)\*\*/g, '<strong class="lp-em">$1</strong>');
+    const sorted = [...terms].sort((a, b) => b.word.length - a.word.length);
+    for (const { word, def } of sorted) {
+      if (markedTerms?.has(word)) continue;
+      const rep = `<span class="lp-term" tabindex="0" data-explain="${escAttr(def)}">${escHtml(word)}</span>`;
+      const next = replaceOutsideTags(out, word, rep, { once: true });
+      if (next !== out) {
+        markedTerms?.add(word);
+        out = next;
+      }
+    }
+    return out;
+  }
+
+  function glossaryTermsFromLesson(lesson, slide) {
+    const seen = new Map();
+    const add = (word, def) => {
+      const w = String(word || "").trim();
+      const d = String(def || "").trim();
+      if (w && d && !seen.has(w)) seen.set(w, d);
+    };
+    (slide?.terms || []).forEach((t) => add(t.word || t.en, t.def || t.he));
+    if (lesson?.subject && lesson.subject !== "english") {
+      (lesson.vocab || []).forEach((v) => add(v.en, v.he));
+    }
+    return [...seen.entries()].map(([word, def]) => ({ word, def }));
+  }
+
+  function formatGlossaryDefinitionLine(line, terms, markedTerms) {
+    const match = String(line)
+      .trim()
+      .match(/^(.+?)\s[—–-]\s([\s\S]+)$/);
+    if (!match) return null;
+    const termPart = match[1].trim().replace(/\*\*(.+?)\*\*/g, "$1").trim();
+    const definition = match[2].trim();
+    const isVocabTerm = terms.some((t) => t.word === termPart);
+    if (!isVocabTerm) return null;
+    markedTerms?.add(termPart);
+    return `<strong class="lp-em">${escHtml(termPart)}</strong> — ${escHtml(definition)}`;
+  }
+
+  function isGlossaryDefinitionLine(line, terms) {
+    const match = String(line)
+      .trim()
+      .match(/^(.+?)\s[—–-]\s([\s\S]+)$/);
+    if (!match) return false;
+    const termPart = match[1].trim().replace(/\*\*(.+?)\*\*/g, "$1").trim();
+    return terms.some((t) => t.word === termPart);
+  }
+
+  function formatSlideLine(line, terms, markedTerms) {
+    if (!line.trim()) return line;
+    const glossaryLine = formatGlossaryDefinitionLine(line, terms, markedTerms);
+    if (glossaryLine) return glossaryLine;
+    return formatLessonText(line, { terms, markedTerms });
+  }
+
+  function buildSlideBody(body, slide, lesson) {
+    const hebrew = lesson?.subject !== "english";
+    const terms = hebrew ? glossaryTermsFromLesson(lesson, slide) : [];
+    const lines = body.split("\n").map((l) => l.trim()).filter(Boolean);
+    const glossaryLines = lines.filter((line) => isGlossaryDefinitionLine(line, terms));
+    const otherLines = lines.filter((line) => !isGlossaryDefinitionLine(line, terms));
+
+    if (glossaryLines.length < 2) {
+      return {
+        html: `<p class="lp-slide-body">${wrapSlideBody(body, slide, lesson)}</p>`,
+        layout: "default",
+      };
+    }
+
+    const markedTerms = new Set();
+    const glossaryHtml = glossaryLines
+      .map((line) => `<div class="lp-slide-glossary-item">${formatSlideLine(line, terms, markedTerms)}</div>`)
+      .join("");
+    const leadHtml = otherLines.map((line) => formatSlideLine(line, terms, markedTerms)).join("<br>");
+
+    const html = `<div class="lp-slide-body-layout">${leadHtml ? `<p class="lp-slide-body lp-slide-body-lead">${leadHtml}</p>` : ""}<div class="lp-slide-glossary-grid">${glossaryHtml}</div></div>`;
+    return { html, layout: "glossary-grid" };
+  }
+
+  function wrapSlideBody(body, slide, lesson) {
+    const hebrew = lesson?.subject !== "english";
+    const terms = hebrew ? glossaryTermsFromLesson(lesson, slide) : [];
+    const markedTerms = new Set();
+    const preformatted = hebrew
+      ? body
+          .split("\n")
+          .map((line) => {
+            if (!line.trim()) return line;
+            const glossaryLine = formatGlossaryDefinitionLine(line, terms, markedTerms);
+            if (glossaryLine) return glossaryLine;
+            return formatLessonText(line, { terms, markedTerms });
+          })
+          .join("\n")
+      : body;
+    return wrapSayableBody(preformatted, slide.say);
+  }
+
+  function renderSpeakBtn(speak) {
+    const text = String(speak || "").trim();
+    if (!text) return "";
+    return `<button type="button" class="lp-speak-btn" data-say="${escAttr(text)}" aria-label="השמע באנגלית: ${escAttr(text)}">${LP_SPEAKER_ICON}</button>`;
   }
 
   // Wraps standalone English lines and any curated `say` phrases in clickable
@@ -1260,7 +1447,7 @@
     );
 
     function sayTag(display, speak, explain) {
-      return `<span class="lp-say" data-say="${escAttr(speak)}" data-explain="${escAttr(explain || "")}">${display}</span>`;
+      return `<span class="lp-say-wrap"><span class="lp-say" data-say="${escAttr(speak)}" data-explain="${escAttr(explain || "")}">${display}</span>${renderSpeakBtn(speak)}</span>`;
     }
 
     return body
@@ -1356,7 +1543,7 @@
       }
     }
 
-    const SPEAKER_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
+    const SPEAKER_ICON = LP_SPEAKER_ICON;
 
     let wordPopupEl = null;
     let activeWordBtn = null;
@@ -1427,7 +1614,9 @@
     }
 
     function activeClassFor(el) {
-      return el.classList.contains("lp-word") ? "lp-word-active" : "lp-say-active";
+      if (el.classList.contains("lp-word")) return "lp-word-active";
+      if (el.classList.contains("lp-term")) return "lp-term-active";
+      return "lp-say-active";
     }
 
     function closeWordPopup() {
@@ -1463,10 +1652,34 @@
       activeWordBtn = btn;
       btn.classList.add(activeClassFor(btn));
       const isWord = btn.classList.contains("lp-word");
-      popup.dataset.word = (isWord ? btn.dataset.en : btn.dataset.say) || "";
-      $(".lp-word-popup-text", popup).textContent = (isWord ? btn.dataset.he : btn.dataset.explain || btn.dataset.say) || "";
+      const isTerm = btn.classList.contains("lp-term");
+      const speakWordText = isWord ? btn.dataset.en : isTerm ? "" : btn.dataset.say;
+      popup.dataset.word = speakWordText || "";
+      $(".lp-word-popup-text", popup).textContent =
+        (isWord ? btn.dataset.he : isTerm ? btn.dataset.explain : btn.dataset.explain || btn.dataset.say) || "";
+      $(".lp-word-popup-speak", popup).classList.toggle("hidden", !speakWordText);
       popup.classList.remove("hidden");
       positionWordPopup(btn);
+    }
+
+    let termHoverTimer = null;
+
+    function bindTermHover() {
+      $$(".lp-term", slideEl).forEach((term) => {
+        term.addEventListener("mouseenter", () => {
+          clearTimeout(termHoverTimer);
+          openWordPopup(term);
+        });
+        term.addEventListener("mouseleave", () => {
+          termHoverTimer = setTimeout(() => {
+            if (activeWordBtn === term) closeWordPopup();
+          }, 140);
+        });
+        term.addEventListener("focus", () => openWordPopup(term));
+        term.addEventListener("blur", () => {
+          if (activeWordBtn === term) closeWordPopup();
+        });
+      });
     }
 
     function popElement(el, variant = "pop") {
@@ -1478,10 +1691,23 @@
     }
 
     slideEl.addEventListener("click", (e) => {
+      const speakBtn = e.target.closest(".lp-speak-btn");
+      if (speakBtn) {
+        e.stopPropagation();
+        speakWord(speakBtn.dataset.say);
+        popElement(speakBtn);
+        return;
+      }
       const wordBtn = e.target.closest(".lp-word");
       if (wordBtn) {
         e.stopPropagation();
         openWordPopup(wordBtn);
+        return;
+      }
+      const termBtn = e.target.closest(".lp-term");
+      if (termBtn) {
+        e.stopPropagation();
+        openWordPopup(termBtn);
         return;
       }
       const sayEl = e.target.closest(".lp-say");
@@ -1672,34 +1898,49 @@
 
     function renderContentSlide(slide) {
       let bodyHtml = "";
+      let bodyLayout = "default";
 
       if (slide.items?.length) {
         bodyHtml = `<ul class="lp-slide-list">${slide.items
           .map(
             (it) =>
-              `<li><button type="button" class="lp-word" dir="ltr" data-en="${it.en}" data-he="${it.he}">${it.en}</button><span>${it.he}</span></li>`
+              `<li><span class="lp-word-cell"><button type="button" class="lp-word" dir="ltr" data-en="${escAttr(it.en)}" data-he="${escAttr(it.he)}">${escHtml(it.en)}</button>${renderSpeakBtn(it.en)}</span><span>${escHtml(it.he)}</span></li>`
           )
           .join("")}</ul>`;
       } else if (slide.body) {
-        bodyHtml = `<p class="lp-slide-body">${wrapSayableBody(slide.body, slide.say)}</p>`;
+        const built = buildSlideBody(slide.body, slide, lesson);
+        bodyLayout = built.layout;
+        bodyHtml = built.html;
       }
 
+      const videoHtml = slide.video ? renderYoutubeEmbed(slide.video, slide.videoTitle) : "";
       const visualHtml =
         slide.visual && slide.visual.startsWith("volcano-")
           ? renderVolcanoScene(slide.visual.slice("volcano-".length), { hebrew: isHebrewLesson(lesson) })
           : "";
+      const useGlossaryGrid = bodyLayout === "glossary-grid";
+      if (useGlossaryGrid && visualHtml) {
+        bodyHtml = bodyHtml.replace(
+          '<div class="lp-slide-glossary-grid">',
+          `<div class="lp-slide-glossary-visual">${visualHtml}</div><div class="lp-slide-glossary-grid">`
+        );
+      }
+      const sideHtml = useGlossaryGrid ? "" : videoHtml || visualHtml;
+      const hasSideVisual = !!(sideHtml && !videoHtml);
+
+      const titleHtml = formatLessonText(slide.title || "");
 
       return `
-        <div class="lp-slide-inner${visualHtml ? " has-visual" : ""}">
+        <div class="lp-slide-inner${hasSideVisual ? " has-visual" : ""}${useGlossaryGrid ? " has-glossary-grid" : ""}${videoHtml ? " has-video" : ""}">
           <div class="lp-slide-text-col">
             <div class="lp-slide-head">
-              <h2 class="lp-slide-title">${slide.title}</h2>
+              <h2 class="lp-slide-title">${titleHtml}</h2>
             </div>
             <div class="lp-slide-body-wrap">
               ${bodyHtml}
             </div>
           </div>
-          ${visualHtml}
+          ${sideHtml}
         </div>`;
     }
 
@@ -1719,6 +1960,7 @@
         $$(".lp-game-btn", slideEl).forEach((btn) => {
           btn.addEventListener("click", () => launchLessonGame(lesson, btn.dataset.gameId, index));
         });
+        bindTermHover();
       };
 
       if (current?.classList.contains("is-visible")) {

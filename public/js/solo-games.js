@@ -21,6 +21,25 @@ function soloCustomVocabRounds(fallback) {
   return Math.max(2, meta.vocab.length);
 }
 
+const HEBREW_FINAL = { "ך": "כ", "ם": "מ", "ן": "נ", "ף": "פ", "ץ": "צ" };
+const HEBREW_ALPHABET = "אבגדהוזחטיכלמנסעפצקרשת".split("");
+
+function soloHebrewChar(ch) {
+  return HEBREW_FINAL[ch] || ch;
+}
+
+function soloIsHebrewContent() {
+  const meta = soloCustomMeta();
+  if (meta?.subject && meta.subject !== "english" && meta.subject !== "math") return true;
+  try {
+    const D = typeof getGameData === "function" ? getGameData(window._currentGameId) : window.VOCAB_DATA;
+    const sample = D?.VOCAB?.[0]?.en || "";
+    return /[\u0590-\u05FF]/.test(sample);
+  } catch {
+    return false;
+  }
+}
+
 const SoloGames = {
   names: {
     "word-runner": "רץ וקופץ",
@@ -1095,13 +1114,37 @@ const SoloGames = {
   /* ── Hangman ── */
   mountHangman(root, ui) {
     const D = this._data();
-    const fromLesson = !!sessionStorage.getItem("gameclass-lesson-return");
+    const isHebrew = soloIsHebrewContent();
     let score = 0;
     let word = "";
     let guessed = [];
+    let hintedIndices = new Set();
     let wrong = 0;
     const maxWrong = 7;
     let currentItem = null;
+
+    const charMatches = (ch, letter) =>
+      isHebrew ? soloHebrewChar(ch) === soloHebrewChar(letter) : ch === letter;
+
+    const isCharGuessed = (ch) => {
+      if (ch === " ") return true;
+      if (!isHebrew) return guessed.includes(ch);
+      const norm = soloHebrewChar(ch);
+      return guessed.some((g) => soloHebrewChar(g) === norm);
+    };
+
+    const isLetterUsed = (letter) => {
+      if (!isHebrew) return guessed.includes(letter);
+      const norm = soloHebrewChar(letter);
+      return guessed.some((g) => soloHebrewChar(g) === norm);
+    };
+
+    const isSlotRevealed = (index) => {
+      if (hintedIndices.has(index)) return true;
+      const ch = word[index];
+      if (!ch || ch === " ") return true;
+      return isCharGuessed(ch);
+    };
 
     const escapeHtml = (s) =>
       String(s || "")
@@ -1137,9 +1180,10 @@ const SoloGames = {
                   ${hangmanSvg()}
                   <div class="hangman-solo-lives" id="hmLives" aria-label="ניסיונות שנותרו"></div>
                 </div>
-                <div class="hangman-solo-slots" id="hmSlots" dir="ltr"></div>
+                <div class="hangman-solo-slots" id="hmSlots"></div>
               </div>
-              <div class="hangman-solo-letters" id="hmLetters" dir="ltr"></div>
+              <button type="button" class="hangman-solo-hint-btn btn btn-candy font-cartoon" id="hmHintBtn">💡 רמז — חשיפת אות</button>
+              <div class="hangman-solo-letters" id="hmLetters"></div>
               <div class="hangman-solo-result hidden" id="hmResult"></div>
             </div>
           </div>
@@ -1167,20 +1211,21 @@ const SoloGames = {
       });
     };
 
-    const renderSlots = (revealLetter = null) => {
+    const renderSlots = (revealIndex = null) => {
       const el = document.getElementById("hmSlots");
       if (!el) return;
       el.innerHTML = [...word]
-        .map((ch) => {
+        .map((ch, i) => {
           if (ch === " ") return `<span class="hangman-slot is-space"></span>`;
-          const show = guessed.includes(ch);
-          const justRevealed = revealLetter === ch && show;
-          return `<span class="hangman-slot${show ? " is-revealed" : ""}${justRevealed ? " is-pop" : ""}">
+          const show = isSlotRevealed(i);
+          const justRevealed = revealIndex === i && show;
+          const hinted = hintedIndices.has(i);
+          return `<span class="hangman-slot${show ? " is-revealed" : ""}${justRevealed ? " is-pop" : ""}${hinted ? " is-hinted" : ""}">
             <span class="hangman-slot-letter">${show ? escapeHtml(ch) : ""}</span>
           </span>`;
         })
         .join("");
-      if (revealLetter) {
+      if (revealIndex !== null) {
         el.querySelectorAll(".hangman-slot.is-pop").forEach((slot) => {
           slot.addEventListener("animationend", () => slot.classList.remove("is-pop"), { once: true });
         });
@@ -1190,12 +1235,14 @@ const SoloGames = {
     const renderKeyboard = (clickedLetter = null, wasCorrect = null) => {
       const el = document.getElementById("hmLetters");
       if (!el) return;
-      el.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+      el.setAttribute("dir", isHebrew ? "rtl" : "ltr");
+      const letters = isHebrew ? HEBREW_ALPHABET : "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      el.innerHTML = letters
         .map((L) => {
-          const used = guessed.includes(L);
+          const used = isLetterUsed(L);
           let cls = "hangman-key";
-          if (used) cls += wasCorrect === true && L === clickedLetter ? " is-correct" : " is-used";
-          if (used && wasCorrect === false && L === clickedLetter) cls += " is-wrong";
+          if (used) cls += wasCorrect === true && charMatches(L, clickedLetter) ? " is-correct" : " is-used";
+          if (used && wasCorrect === false && charMatches(L, clickedLetter)) cls += " is-wrong";
           return `<button type="button" class="${cls}" data-l="${L}" ${used ? "disabled" : ""}>${L}</button>`;
         })
         .join("");
@@ -1215,7 +1262,34 @@ const SoloGames = {
     const renderHint = () => {
       const el = document.getElementById("hmHint");
       if (!el || !currentItem) return;
-      el.innerHTML = `<span class="hangman-solo-hint-he font-cartoon">${escapeHtml(currentItem.he)}</span>`;
+      const hintText = isHebrew ? currentItem.he : currentItem.hint || currentItem.he;
+      const hintCls = isHebrew ? "hangman-solo-hint-def" : "hangman-solo-hint-he";
+      el.innerHTML = `<span class="${hintCls} font-cartoon">${escapeHtml(hintText)}</span>`;
+    };
+
+    const updateHintBtn = () => {
+      const btn = document.getElementById("hmHintBtn");
+      if (!btn) return;
+      const hidden = [...word].some((ch, i) => ch !== " " && !isSlotRevealed(i));
+      btn.disabled = !hidden || isWon() || isLost();
+    };
+
+    const handleWin = () => {
+      score += 20;
+      ui.setScore(score);
+      document.getElementById("hmStage")?.classList.add("is-win");
+      const totalWords = soloIsCustomContent() ? wordsDone : 0;
+      const hasMore = soloIsCustomContent() ? wordQueue.length > 0 : false;
+      showResult("win", hasMore ? "כל הכבוד! 🎉 מילה הבאה…" : "כל הכבוד! 🎉");
+      updateHintBtn();
+      if (soloIsCustomContent() && !wordQueue.length) {
+        setTimeout(
+          () => finishAllWords(`סיימתם ${totalWords} מילים! ניקוד: ${score}`),
+          1400
+        );
+        return;
+      }
+      setTimeout(() => beginWord(true), 1400);
     };
 
     const showResult = (type, message) => {
@@ -1230,19 +1304,36 @@ const SoloGames = {
       document.getElementById("hmResult")?.classList.add("hidden");
     };
 
-    const isWon = () => [...word.replace(/ /g, "")].every((ch) => guessed.includes(ch));
+    const isWon = () => [...word].every((ch, i) => ch === " " || isSlotRevealed(i));
     const isLost = () => wrong >= maxWrong;
 
+    const onHint = () => {
+      if (isWon() || isLost()) return;
+      const hiddenIndices = [...word]
+        .map((ch, i) => (ch !== " " && !isSlotRevealed(i) ? i : -1))
+        .filter((i) => i >= 0);
+      if (!hiddenIndices.length) return;
+
+      const pick = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
+      hintedIndices.add(pick);
+      renderSlots(pick);
+      updateHintBtn();
+
+      if (isWon()) handleWin();
+    };
+
     const onGuess = (letter) => {
-      if (!letter || guessed.includes(letter) || isWon() || isLost()) return;
-      guessed.push(letter);
-      const correct = word.includes(letter);
+      if (!letter || isLetterUsed(letter) || isWon() || isLost()) return;
+      const stored = isHebrew ? soloHebrewChar(letter) : letter;
+      guessed.push(stored);
+      const correct = [...word].some((ch) => ch !== " " && charMatches(ch, letter));
       if (!correct) wrong++;
 
-      renderSlots(correct ? letter : null);
+      renderSlots(correct ? [...word].findIndex((ch) => ch !== " " && charMatches(ch, letter)) : null);
       renderLives();
       updateFigure(!correct);
       renderKeyboard(letter, correct);
+      updateHintBtn();
 
       if (!correct) {
         document.getElementById("hmStage")?.classList.add("is-shake");
@@ -1254,19 +1345,7 @@ const SoloGames = {
       }
 
       if (isWon()) {
-        score += 20;
-        ui.setScore(score);
-        document.getElementById("hmStage")?.classList.add("is-win");
-        showResult("win", "כל הכבוד! 🎉");
-        if (soloIsCustomContent() && !wordQueue.length) {
-          finishAllWords(`סיימתם ${wordsDone} מילים! ניקוד: ${score}`);
-          return;
-        }
-        if (fromLesson) {
-          ui.onGameOver(score, "סיום");
-          return;
-        }
-        setTimeout(() => beginWord(true), 1400);
+        handleWin();
         return;
       }
 
@@ -1274,9 +1353,9 @@ const SoloGames = {
         const el = document.getElementById("hmSlots");
         if (el) {
           el.innerHTML = [...word]
-            .map((ch) => {
+            .map((ch, i) => {
               if (ch === " ") return `<span class="hangman-slot is-space"></span>`;
-              const show = guessed.includes(ch);
+              const show = isSlotRevealed(i);
               return `<span class="hangman-slot is-revealed${show ? "" : " is-missed"}">
                 <span class="hangman-slot-letter">${escapeHtml(ch)}</span>
               </span>`;
@@ -1284,12 +1363,12 @@ const SoloGames = {
             .join("");
         }
         showResult("lose", `המילה: ${word}`);
+        updateHintBtn();
         if (soloIsCustomContent() && !wordQueue.length) {
-          finishAllWords(`סיום! ${wordsDone} מילים · ניקוד: ${score}`);
-          return;
-        }
-        if (fromLesson) {
-          ui.onGameOver(score, "סיום");
+          setTimeout(
+            () => finishAllWords(`סיום! ${wordsDone} מילים · ניקוד: ${score}`),
+            2200
+          );
           return;
         }
         setTimeout(() => beginWord(true), 2200);
@@ -1317,15 +1396,20 @@ const SoloGames = {
       } else {
         currentItem = D.one();
       }
-      word = currentItem.en.toUpperCase();
+      word = isHebrew ? String(currentItem.en || "").trim() : String(currentItem.en || "").toUpperCase();
       guessed = [];
+      hintedIndices = new Set();
       wrong = 0;
+
+      document.getElementById("hmSlots")?.setAttribute("dir", isHebrew ? "rtl" : "ltr");
+      root.querySelector(".hangman-solo-wrap")?.classList.toggle("is-hebrew", isHebrew);
 
       renderHint();
       renderLives();
       updateFigure(false);
       renderSlots();
       renderKeyboard();
+      updateHintBtn();
 
       const stage = document.getElementById("hmStage");
       if (animated && stage) {
@@ -1339,6 +1423,7 @@ const SoloGames = {
     };
 
     buildShell();
+    document.getElementById("hmHintBtn")?.addEventListener("click", onHint);
 
     SoloGames.bindStartRetry("hm", () => {
       document.getElementById("hmStage")?.classList.remove("hidden");

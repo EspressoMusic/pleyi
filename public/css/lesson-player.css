@@ -87,7 +87,8 @@ body.page-ready-lessons .svc-lesson-part {
   -webkit-text-stroke: 0 transparent;
   paint-order: normal;
   text-shadow: none;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 body.page-ready-lessons .svc-lesson-name {
@@ -97,10 +98,10 @@ body.page-ready-lessons .svc-lesson-name {
 }
 
 body.page-ready-lessons .svc-lesson-part {
-  font-size: clamp(0.7rem, 2vw, 0.82rem);
-  line-height: 1.2;
-  font-weight: 800;
-  opacity: 0.88;
+  font-size: clamp(1.2rem, 4.5vw, 1.65rem);
+  line-height: 1.1;
+  font-weight: 900;
+  opacity: 1;
 }
 
 body.page-ready-lessons .svc-lesson-preview .js-lesson-open {
@@ -202,6 +203,16 @@ body.page-ready-lessons .svc-lesson-learned-badge {
   line-height: 1.3;
   white-space: nowrap;
   box-shadow: 2px 2px 0 var(--ink);
+  pointer-events: none;
+}
+
+body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.hidden)) .svc-lesson-title-wrap,
+body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
+body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
+  padding-top: 1.85rem;
+  padding-inline-start: 2.85rem;
+  padding-inline-end: 1.65rem;
+  box-sizing: border-box;
 }
 
 body.page-ready-lessons .svc-lesson-premium-lock {
@@ -651,8 +662,8 @@ body.page-ready-lessons .lesson-player-shell {
   flex-direction: column;
   min-height: 0;
   width: min(900px, 100%);
-  height: auto;
-  min-height: min(60vh, 520px);
+  height: min(68vh, 600px);
+  min-height: min(68vh, 600px);
   max-height: calc(100dvh - 48px);
   margin: 0;
   padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
@@ -714,7 +725,26 @@ body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner {
 }
 
 body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-visual {
-  max-width: 68rem;
+  max-width: min(64rem, 92vw);
+  padding-inline: clamp(20px, 4vw, 48px);
+}
+
+body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-visual .lp-slide-text-col {
+  max-width: min(34rem, 52%);
+  padding-inline: clamp(14px, 2.5vw, 28px);
+}
+
+body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-video {
+  max-width: min(64rem, 92vw);
+}
+
+body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-video .lp-slide-text-col {
+  max-width: min(34rem, 52%);
+}
+
+body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-video .lp-slide-video {
+  max-width: min(480px, 46%);
+  width: min(480px, 46%);
 }
 
 body.page-ready-lessons .lesson-player.is-expanded .lp-slide-title {
@@ -748,14 +778,18 @@ body.page-ready-lessons .lesson-player.is-expanded .lp-slide-games-intro {
   max-width: 34rem;
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-volcano-scene {
+body.page-ready-lessons .lesson-player.is-expanded .lp-volcano-scene:not(.lp-volcano-scene--output) {
   width: clamp(200px, 22vw, 320px);
   height: clamp(200px, 22vw, 320px);
 }
 
+body.page-ready-lessons .lesson-player.is-expanded .lp-volcano-scene--output {
+  min-width: clamp(260px, 28vw, 380px);
+}
+
 body.page-ready-lessons .lesson-player.is-expanded .lp-volcano-output-badge {
-  font-size: 1.05rem;
-  padding: 12px 16px;
+  font-size: clamp(1.1rem, 2.6vh, 1.35rem);
+  padding: 14px 22px;
 }
 
 body.page-ready-lessons .lesson-player-top-actions {
@@ -937,10 +971,12 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
 }
 
 .lesson-player-slide-wrap {
+  flex: 1 1 auto;
   min-height: 0;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -950,10 +986,14 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   border: none;
   border-radius: 0;
   background: transparent;
-  padding: clamp(6px, 2vh, 24px) clamp(14px, 3vw, 24px);
+  padding: clamp(12px, 2.5vh, 28px) clamp(24px, 6vw, 52px);
   box-shadow: none;
   position: relative;
   margin-block: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: min(100%, 100%);
 }
 
 .lp-slide-inner {
@@ -965,6 +1005,8 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   width: 100%;
   max-width: 34rem;
   margin: 0 auto;
+  padding-inline: clamp(16px, 4vw, 28px);
+  box-sizing: border-box;
   opacity: 0;
   transform: translateX(0);
   transition: opacity 0.32s ease, transform 0.32s ease;
@@ -1032,37 +1074,252 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: clamp(20px, 4vw, 48px);
-  max-width: 56rem;
+  gap: clamp(20px, 4vw, 40px);
+  max-width: min(50rem, 100%);
+  padding-inline: clamp(16px, 4vw, 36px);
 }
 
 .lp-slide-inner.has-visual .lp-slide-text-col {
-  align-items: flex-start;
-  flex: 1 1 auto;
+  align-items: center;
+  flex: 1 1 0;
   min-width: 0;
+  max-width: min(28rem, 58%);
+  padding-inline: clamp(12px, 3vw, 24px);
 }
 
 .lp-slide-inner.has-visual .lp-slide-head {
-  align-items: flex-start;
+  align-items: center;
+  width: 100%;
+  min-height: 0;
 }
 
 .lp-slide-inner.has-visual .lp-slide-title,
 .lp-slide-inner.has-visual .lp-slide-body {
-  text-align: start;
+  text-align: center;
+  max-width: 100%;
 }
 
 .lp-slide-inner.has-visual .lp-slide-body-wrap {
-  align-items: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+.lp-slide-inner.has-visual .lp-volcano-scene {
+  flex: 0 0 auto;
 }
 
 .lp-slide-inner.has-visual .lp-slide-list {
   max-width: none;
 }
 
-@media (max-width: 720px) {
+.lp-slide-inner.has-glossary-grid {
+  flex-direction: column;
+  align-items: center;
+  max-width: min(56rem, 100%);
+  padding-inline: clamp(16px, 4vw, 36px);
+}
+
+.lp-slide-inner.has-glossary-grid .lp-slide-text-col {
+  align-items: center;
+  max-width: 100%;
+  width: 100%;
+  padding-inline: clamp(12px, 3vw, 24px);
+}
+
+.lp-slide-inner.has-glossary-grid .lp-slide-head {
+  min-height: 0;
+}
+
+.lp-slide-body-layout {
+  display: grid;
+  grid-template-columns: minmax(150px, 42%) minmax(0, 1fr);
+  grid-template-areas:
+    "lead lead"
+    "visual glossary";
+  direction: ltr;
+  align-items: center;
+  gap: clamp(14px, 2.5vw, 24px);
+  width: 100%;
+}
+
+.lp-slide-body-lead {
+  grid-area: lead;
+  margin: 0;
+  max-width: none;
+  text-align: center;
+  font-size: clamp(1.05rem, 3.2vh, 1.4rem);
+  font-weight: 700;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+
+.lp-slide-body-layout:not(:has(.lp-slide-body-lead)) {
+  grid-template-areas: "visual glossary";
+}
+
+.lp-slide-glossary-visual {
+  grid-area: visual;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.lp-slide-glossary-visual .lp-volcano-scene--output {
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(8px, 1.8vw, 12px);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.lp-slide-glossary-visual .lp-volcano-output-badge {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  justify-content: center;
+  padding-inline: clamp(18px, 4vw, 28px);
+  box-sizing: border-box;
+}
+
+.lp-slide-glossary-grid {
+  grid-area: glossary;
+  display: grid;
+  grid-template-columns: 1fr;
+  direction: rtl;
+  gap: clamp(10px, 1.8vh, 14px);
+  width: 100%;
+  max-width: none;
+}
+
+.lp-slide-glossary-item {
+  padding: clamp(12px, 2.2vh, 16px) clamp(16px, 3vw, 22px);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+  font-size: clamp(0.92rem, 2.1vh, 1.08rem);
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.lp-slide-inner.has-glossary-grid .lp-volcano-scene:not(.lp-volcano-scene--output) {
+  width: clamp(170px, 100%, 250px);
+  height: clamp(170px, 100%, 250px);
+}
+
+.lp-slide-inner.has-video {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 3vw, 32px);
+  max-width: min(50rem, 100%);
+  width: 100%;
+  padding-inline: clamp(16px, 4vw, 36px);
+}
+
+.lp-slide-inner.has-video .lp-slide-text-col {
+  align-items: center;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: min(26rem, 56%);
+  width: auto;
+  padding-inline: clamp(12px, 3vw, 20px);
+}
+
+.lp-slide-inner.has-video .lp-slide-head {
+  align-items: center;
+  min-height: 0;
+}
+
+.lp-slide-inner.has-video .lp-slide-title,
+.lp-slide-inner.has-video .lp-slide-body {
+  text-align: center;
+}
+
+.lp-slide-inner.has-video .lp-slide-body-wrap {
+  align-items: center;
+  width: 100%;
+}
+
+.lp-slide-inner.has-video .lp-slide-video {
+  flex: 0 1 auto;
+  width: min(250px, 40%);
+  max-width: min(250px, 40%);
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.lp-slide-video {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: min(560px, 92vw);
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.lp-slide-video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow-sticker);
+  background: #111;
+}
+
+.lp-slide-video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media (max-width: 900px) {
+  .lp-slide-video {
+    max-width: 100%;
+  }
+
+  .lesson-player-slide {
+    padding-inline: clamp(18px, 6vw, 36px);
+  }
+
+  .lp-slide-inner {
+    padding-inline: clamp(14px, 4vw, 24px);
+  }
+
+  .lp-slide-inner.has-video {
+    flex-direction: column;
+    max-width: min(32rem, 100%);
+    padding-inline: clamp(14px, 5vw, 28px);
+    gap: clamp(14px, 2.5vh, 20px);
+  }
+
+  .lp-slide-inner.has-video .lp-slide-text-col,
+  .lp-slide-inner.has-video .lp-slide-video {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .lp-slide-inner.has-video .lp-slide-video-frame {
+    max-height: min(24vh, 180px);
+  }
+
   .lp-slide-inner.has-visual {
     flex-direction: column;
-    max-width: 30rem;
+    max-width: min(32rem, 100%);
+    padding-inline: clamp(14px, 5vw, 28px);
+    gap: clamp(16px, 3vh, 24px);
+  }
+
+  .lp-slide-inner.has-visual .lp-slide-text-col {
+    max-width: 100%;
+    padding-inline: clamp(10px, 3vw, 20px);
   }
 
   .lp-slide-inner.has-visual .lp-slide-text-col,
@@ -1074,6 +1331,36 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   .lp-slide-inner.has-visual .lp-slide-title,
   .lp-slide-inner.has-visual .lp-slide-body {
     text-align: center;
+  }
+
+  .lp-slide-inner.has-glossary-grid .lp-slide-body-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "lead"
+      "visual"
+      "glossary";
+    direction: ltr;
+  }
+
+  .lp-slide-glossary-grid {
+    max-width: 100%;
+  }
+
+  .lp-slide-inner.has-glossary-grid .lp-volcano-scene:not(.lp-volcano-scene--output) {
+    width: clamp(150px, 52vw, 210px);
+    height: clamp(150px, 52vw, 210px);
+  }
+
+  .lp-slide-glossary-visual .lp-volcano-scene--output {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lp-slide-glossary-visual .lp-volcano-output-badge {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    padding-inline: clamp(16px, 5vw, 24px);
   }
 }
 
@@ -1099,9 +1386,10 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
 .lp-slide-body {
   margin: 0;
   max-width: 36rem;
+  padding-inline: clamp(8px, 2.5vw, 18px);
   font-size: clamp(1.05rem, 3.2vh, 1.4rem);
   font-weight: 700;
-  line-height: 1.5;
+  line-height: 1.55;
   color: color-mix(in srgb, var(--ink) 78%, transparent);
 }
 
@@ -1196,8 +1484,16 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
 }
 
 /* Clickable "tap to hear" phrases inside prose body text */
+.lp-say-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  vertical-align: baseline;
+  max-width: 100%;
+}
+
 .lp-say {
-  display: inline-block;
+  display: inline;
   cursor: pointer;
   padding: 0 2px;
   border-radius: 5px;
@@ -1206,6 +1502,43 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   text-decoration-color: color-mix(in srgb, var(--memteal) 55%, transparent);
   text-underline-offset: 3px;
   transition: background 0.12s ease;
+}
+
+.lp-speak-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--memteal) 16%, transparent);
+  color: var(--ink);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s ease, transform 0.12s ease, color 0.12s ease;
+}
+
+.lp-speak-btn:hover {
+  background: var(--memteal);
+  color: #fff;
+}
+
+.lp-speak-btn:active {
+  transform: scale(0.94);
+}
+
+.lp-speak-btn.is-popped {
+  animation: lp-say-pop 0.4s ease;
+}
+
+.lp-word-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .lp-say:hover {
@@ -1225,6 +1558,40 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   0% { transform: scale(1); }
   40% { transform: scale(1.08); background: color-mix(in srgb, var(--memteal) 30%, transparent); }
   100% { transform: scale(1); }
+}
+
+/* Bold emphasis for key phrases in lesson titles and body */
+.lp-em {
+  font-weight: 900;
+  color: var(--ink);
+}
+
+/* Glossary terms — underline + hover/click definition popup */
+.lp-term {
+  display: inline;
+  cursor: help;
+  padding: 0 2px;
+  border-radius: 5px;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: color-mix(in srgb, var(--memorange) 65%, transparent);
+  text-underline-offset: 3px;
+  transition: background 0.12s ease;
+}
+
+.lp-term:hover,
+.lp-term:focus-visible {
+  background: color-mix(in srgb, var(--memorange) 14%, transparent);
+  outline: none;
+}
+
+.lp-term.lp-term-active {
+  background: color-mix(in srgb, var(--memorange) 24%, transparent);
+  text-decoration-style: solid;
+}
+
+.lp-word-popup-speak.hidden {
+  display: none;
 }
 
 .lp-slide-list {
@@ -1907,27 +2274,46 @@ body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  background: linear-gradient(160deg, #fef8ee 0%, #fdeee0 100%);
+  gap: clamp(10px, 2vh, 14px);
+  width: auto;
+  height: auto;
+  min-width: clamp(220px, 34vw, 340px);
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .lp-volcano-output-badge {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.6);
+  justify-content: center;
+  gap: clamp(10px, 2vw, 14px);
+  padding: clamp(12px, 2.4vh, 16px) clamp(20px, 4.5vw, 30px);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
   font-weight: 800;
-  font-size: 0.82rem;
+  font-size: clamp(1rem, 2.8vh, 1.28rem);
   color: var(--ink);
+  direction: rtl;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .lp-volcano-output-badge em,
 .lp-volcano-output-label {
   font-style: normal;
+}
+
+.lp-volcano-output-label {
+  flex: 0 1 auto;
+  text-align: center;
+  padding-inline: clamp(4px, 1vw, 8px);
+  line-height: 1.25;
 }
 
 .lp-volcano-output-badge span,
@@ -1941,8 +2327,8 @@ body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
 
 .lp-volcano-output-drop {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: clamp(20px, 3.2vh, 26px);
+  height: clamp(20px, 3.2vh, 26px);
   border-radius: 50% 50% 50% 0;
   transform: rotate(45deg);
   background: linear-gradient(160deg, #fff2b0 0%, #ff9a3c 55%, #ff4d2e 100%);
@@ -1957,8 +2343,8 @@ body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
 
 .lp-volcano-output-puff {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: clamp(20px, 3.2vh, 26px);
+  height: clamp(20px, 3.2vh, 26px);
   border-radius: 50%;
   background: radial-gradient(circle, #f4f4f6 0%, #c9c9d1 70%, transparent 90%);
   animation: lp-volcano-output-puff 2.6s ease-in-out infinite;
@@ -1971,8 +2357,8 @@ body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
 
 .lp-volcano-output-fleck {
   display: inline-block;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   margin-inline-end: 2px;
   border-radius: 50%;
   background: #8a8a92;
@@ -2064,9 +2450,13 @@ body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
 }
 
 @media (max-width: 720px) {
-  .lp-volcano-scene {
+  .lp-volcano-scene:not(.lp-volcano-scene--output) {
     width: clamp(130px, 40vw, 190px);
     height: clamp(130px, 40vw, 190px);
+  }
+
+  .lp-volcano-scene--output {
+    min-width: min(100%, 300px);
   }
 }
 
