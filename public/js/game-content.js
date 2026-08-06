@@ -258,6 +258,16 @@
     } catch {
       /* ignore */
     }
+    try {
+      // Only capture the games-panel page we're leaving — not another /play
+      // page (e.g. switching games from inside the games panel modal),
+      // which would otherwise overwrite the original entry point.
+      if (!/^\/play\//.test(window.location.pathname)) {
+        sessionStorage.setItem("gameclass-play-return", window.location.href);
+      }
+    } catch {
+      /* ignore */
+    }
     window.location.assign(`/play/${gameId}${roomQ}`);
   }
 

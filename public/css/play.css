@@ -135,6 +135,13 @@
   padding: clamp(6px, 1.2vh, 12px);
 }
 
+/* The start/game-over overlay is built to fill its stage edge-to-edge
+   (inset: 0; border-radius: 0) — don't let play-root's padding poke the
+   mint stage background out around it as a frame. */
+.play-root:has(.solo-overlay:not(.hidden)) {
+  padding: 0;
+}
+
 .play-root .solo-game-wrap:not(.solo-game-wrap--vd),
 .play-root .ts-pro-wrap {
   flex: 1;
@@ -363,35 +370,37 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(28px, 6vh, 48px);
+  justify-content: safe center;
+  gap: clamp(14px, 4vh, 48px);
   background: rgba(0, 102, 255, 0.92);
   color: var(--white);
   text-align: center;
-  padding: clamp(32px, 6vw, 56px);
+  padding: clamp(16px, 4vh, 56px) clamp(20px, 6vw, 56px);
   z-index: 20;
   border-radius: 0;
+  overflow-y: auto;
 }
 
 .solo-overlay.hidden { display: none; }
 
 .solo-overlay h2 {
-  font-size: clamp(52px, 16vw, 104px);
+  font-size: clamp(32px, min(16vw, 9vh), 104px);
   line-height: 1.05;
   margin: 0;
 }
 
 .solo-overlay p {
-  font-size: clamp(22px, 5vw, 32px);
+  font-size: clamp(16px, min(5vw, 3.6vh), 32px);
   font-weight: 700;
   max-width: min(680px, 92%);
-  line-height: 1.45;
+  line-height: 1.4;
   margin: 0;
 }
 
 .solo-overlay .solo-play-again {
   margin-top: 0;
-  padding: clamp(18px, 3.5vw, 28px) clamp(56px, 14vw, 96px);
-  font-size: clamp(24px, 5.5vw, 36px);
+  padding: clamp(12px, 2.5vh, 28px) clamp(40px, 14vw, 96px);
+  font-size: clamp(18px, min(5.5vw, 4.2vh), 36px);
   min-width: min(320px, 85vw);
 }
 
@@ -595,6 +604,8 @@
   grid-template-rows: auto auto minmax(0, 1fr);
   gap: clamp(6px, 1.2vh, 10px);
   flex: 1;
+  min-width: 0;
+  width: 100%;
   min-height: 0;
   max-height: 100%;
   height: 100%;
@@ -621,15 +632,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: min(210px, 52vw);
-  aspect-ratio: 5 / 4;
+  width: min(320px, 90vw);
   max-height: min(28vh, 180px);
   margin: 0 auto;
-  padding: clamp(10px, 2vh, 16px);
-  background: var(--white);
-  border: 4px solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sticker);
+  padding: clamp(6px, 1.5vh, 12px);
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 
 .vd-word-box .solo-quiz-word {
@@ -641,12 +650,13 @@
 .solo-options { display: grid; gap: 10px; }
 
 .solo-options--vd {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: repeat(2, minmax(min-content, auto));
-  gap: clamp(8px, 1.4vh, 12px);
+  gap: clamp(14px, 2.6vh, 22px);
   max-width: min(680px, 98vw);
   margin: 0 auto;
   width: 100%;
+  min-width: 0;
   min-height: 0;
   height: auto;
   flex: 1 1 auto;
@@ -664,6 +674,7 @@
   height: auto;
   min-height: clamp(92px, 18vh, 156px);
   max-height: none;
+  min-width: 0;
   padding: clamp(12px, 2.2vh, 18px) clamp(14px, 3.5vw, 22px);
   font-size: clamp(14px, 2.8vw, 18px);
   border-radius: clamp(18px, 4vw, 28px);
@@ -700,9 +711,9 @@
   }
 
   .vd-word-box {
-    width: min(180px, 48vw);
+    width: min(300px, 92vw);
     max-height: min(22vh, 140px);
-    padding: clamp(8px, 1.5vh, 12px);
+    padding: clamp(6px, 1.5vh, 10px);
   }
 
   .vd-word-box .solo-quiz-word {
@@ -710,7 +721,7 @@
   }
 
   .solo-options--vd {
-    gap: clamp(6px, 1vh, 10px);
+    gap: clamp(10px, 2vh, 16px);
   }
 
   .solo-options--vd .solo-option {
@@ -1047,12 +1058,13 @@
 }
 
 .hangman-solo-card {
+  container-type: size;
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  gap: clamp(10px, 2vh, 22px);
+  gap: clamp(4px, 1cqh, 22px);
   overflow: hidden;
   background: transparent;
   border: none;
@@ -1073,7 +1085,7 @@
 }
 
 .hangman-solo-hint-he {
-  font-size: clamp(2.75rem, 11vw, 4.25rem);
+  font-size: clamp(1.1rem, 9cqh, 4.25rem);
   font-weight: 900;
   color: var(--ink);
   line-height: 1.05;
@@ -1085,16 +1097,16 @@
   width: fit-content;
   max-width: min(900px, 96%);
   margin-inline: auto;
-  padding: clamp(14px, 2.5vh, 20px) clamp(18px, 4.5vw, 32px);
+  padding: clamp(8px, 2.5cqh, 20px) clamp(14px, 4.5vw, 32px);
   box-sizing: border-box;
   background: linear-gradient(180deg, #fff9d0 0%, #ffe066 42%, #ffb347 100%);
   border: 4px solid var(--ink);
   border-radius: clamp(14px, 2.5vw, 20px);
   box-shadow: var(--shadow-sticker);
-  font-size: clamp(1.05rem, 2.8vh, 1.55rem);
+  font-size: clamp(0.85rem, 2.8cqh, 1.55rem);
   font-weight: 900;
   color: var(--ink);
-  line-height: 1.45;
+  line-height: 1.4;
   text-align: center;
   direction: rtl;
   white-space: normal;
@@ -1107,7 +1119,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(12px, 2.5vh, 24px);
+  gap: clamp(6px, 1.8cqh, 24px);
   margin-bottom: 0;
 }
 
@@ -1115,16 +1127,18 @@
   flex: 0 0 auto;
   align-self: center;
   margin: 0;
-  padding: clamp(10px, 1.8vh, 14px) clamp(20px, 4vw, 32px);
-  font-size: clamp(1rem, 2.6vh, 1.35rem);
+  padding: clamp(6px, 1.8cqh, 14px) clamp(20px, 4vw, 32px);
+  font-size: clamp(0.8rem, 2.6cqh, 1.35rem);
   font-weight: 900;
   border-radius: 999px;
   cursor: pointer;
+  box-shadow: none;
   transition: transform 0.12s ease, opacity 0.15s ease;
 }
 
 .hangman-solo-hint-btn:not(:disabled):active {
   transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 .hangman-solo-hint-btn:disabled {
@@ -1136,54 +1150,20 @@
   background: var(--mempurple, #c4b5fd);
 }
 
-.hangman-solo-figure-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(10px, 1.8vh, 16px);
-  padding: clamp(12px, 2vh, 20px) clamp(16px, 3vw, 28px);
-  background: var(--mempink);
-  border: 4px solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sticker);
-  color: var(--ink);
-}
-
-.hangman-solo-svg {
-  width: min(180px, 28vh, 38vw);
-  height: auto;
-}
-
-.hm-part {
-  opacity: 0;
-  transform-origin: center;
-  transition: opacity 0.22s ease, transform 0.32s var(--ease, ease);
-  transform: scale(0.55);
-}
-
-.hm-part.is-visible {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.hm-part.is-new {
-  animation: hm-part-pop 0.42s var(--ease, ease);
-}
-
 .hangman-solo-lives {
   display: flex;
-  gap: 8px;
+  gap: clamp(6px, 1.4cqh, 10px);
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .hangman-solo-life {
-  width: clamp(14px, 2.2vh, 20px);
-  height: clamp(14px, 2.2vh, 20px);
+  width: clamp(14px, 3cqh, 26px);
+  height: clamp(14px, 3cqh, 26px);
   border-radius: 50%;
   background: var(--electric);
-  border: 2px solid var(--ink);
-  box-shadow: 2px 2px 0 var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: none;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -1196,7 +1176,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: clamp(10px, 1.8vh, 16px);
+  gap: clamp(6px, 1.8cqh, 16px);
   direction: ltr;
   width: 100%;
 }
@@ -1209,8 +1189,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: clamp(48px, 10vw, 68px);
-  height: clamp(56px, 11vh, 76px);
+  min-width: clamp(34px, 10cqw, 68px);
+  height: clamp(38px, 8cqh, 76px);
   padding-inline: clamp(4px, 1vw, 8px);
   background: var(--memyellow);
   border: 4px solid var(--ink);
@@ -1228,7 +1208,7 @@
 }
 
 .hangman-slot-letter {
-  font-size: clamp(1.75rem, 5vh, 2.75rem);
+  font-size: clamp(1.1rem, 4cqh, 2.75rem);
   font-weight: 900;
   color: var(--ink);
   letter-spacing: 0.02em;
@@ -1257,16 +1237,16 @@
 }
 
 .hangman-solo-letters {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   display: flex;
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
-  gap: clamp(12px, 2vh, 18px) clamp(14px, 2.5vw, 20px);
+  gap: clamp(6px, 1.6cqh, 18px) clamp(8px, 2.5vw, 20px);
   direction: ltr;
   max-width: min(820px, 100%);
   margin: 0 auto;
-  padding: clamp(4px, 1vh, 12px) 0;
+  padding: 0;
   background: none;
   border: none;
   box-shadow: none;
@@ -1281,16 +1261,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(52px, 9vh, 72px);
-  height: clamp(52px, 9vh, 72px);
-  padding: 0 clamp(6px, 1.2vw, 10px);
+  width: clamp(30px, 8cqh, 72px);
+  height: clamp(30px, 8cqh, 72px);
+  padding: 0 clamp(4px, 1.2vw, 10px);
   font-family: inherit;
-  font-size: clamp(20px, 4.2vh, 30px);
+  font-size: clamp(13px, 3.6cqh, 30px);
   font-weight: 900;
   color: var(--ink);
   background: var(--white);
   border: 3px solid var(--ink);
-  border-radius: 16px;
+  border-radius: 22%;
   box-shadow: 4px 4px 0 var(--ink);
   cursor: pointer;
   transition: transform 0.1s ease, background 0.12s ease, box-shadow 0.1s ease;
@@ -1384,11 +1364,6 @@
   100% { transform: scale(1); }
 }
 
-@keyframes hm-part-pop {
-  0% { transform: scale(0.35); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
 @keyframes hm-key-correct {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); }
@@ -1418,35 +1393,34 @@
 
 @media (max-width: 480px) {
   .hangman-solo-hint-def {
-    font-size: clamp(0.95rem, 2.6vh, 1.35rem);
-    padding: clamp(12px, 2.2vh, 16px) clamp(14px, 4vw, 22px);
+    font-size: clamp(0.8rem, 2.6cqh, 1.35rem);
+    padding: clamp(8px, 2.2cqh, 16px) clamp(14px, 4vw, 22px);
   }
 
   .hangman-solo-letters {
-    gap: 10px 12px;
+    gap: clamp(6px, 1.4cqh, 10px) 12px;
   }
 
   .hangman-key {
-    width: clamp(44px, 8vh, 58px);
-    height: clamp(44px, 8vh, 58px);
-    font-size: clamp(17px, 3.6vh, 24px);
+    width: clamp(28px, 7.5cqh, 58px);
+    height: clamp(28px, 7.5cqh, 58px);
+    font-size: clamp(12px, 3.4cqh, 24px);
     border-width: 2px;
     box-shadow: 3px 3px 0 var(--ink);
   }
 
   .hangman-slot {
-    min-width: clamp(40px, 9vw, 52px);
-    height: clamp(48px, 9vh, 62px);
+    min-width: clamp(30px, 12cqw, 52px);
+    height: clamp(32px, 7.5cqh, 62px);
   }
 
   .hangman-slot-letter {
-    font-size: clamp(1.45rem, 4.5vh, 2rem);
+    font-size: clamp(1rem, 3.8cqh, 2rem);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hangman-solo,
-  .hm-part,
   .hangman-slot.is-pop,
   .hangman-key.is-correct,
   .hangman-key.is-wrong,
@@ -1456,10 +1430,6 @@
   .hangman-solo-result {
     animation: none !important;
     transition: none !important;
-  }
-
-  .hm-part.is-visible {
-    transform: none;
   }
 }
 
@@ -1536,8 +1506,10 @@
 .play-root > .solo-msg {
   margin-top: 0;
   width: min(520px, 92vw);
-  padding: clamp(24px, 5vw, 40px);
-  font-size: clamp(20px, 4.5vw, 28px);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: clamp(16px, 4vh, 40px) clamp(20px, 5vw, 40px);
+  font-size: clamp(16px, min(4.5vw, 3.6vh), 28px);
   border: 4px solid var(--ink);
   box-shadow: var(--shadow-sticker);
 }
@@ -1867,7 +1839,7 @@
   place-items: center;
   background: rgba(0, 40, 120, 0.88);
   z-index: 30;
-  padding: 24px;
+  padding: clamp(10px, 3vh, 24px) clamp(10px, 4vw, 24px);
   border-radius: 16px;
 }
 
@@ -1886,29 +1858,32 @@
   background: var(--white);
   border: 5px solid var(--ink);
   border-radius: 24px;
-  padding: clamp(40px, 6vw, 56px) clamp(32px, 5vw, 48px);
+  padding: clamp(18px, 4vh, 56px) clamp(20px, 5vw, 48px);
   max-width: min(560px, 92vw);
+  max-height: 100%;
+  overflow-y: auto;
   text-align: center;
   box-shadow: 0 20px 0 var(--ink), 0 0 80px rgba(255, 225, 53, 0.3);
 }
 
 .ts-pro-overlay-card h2 {
-  font-size: clamp(40px, 10vw, 72px);
-  margin: 0 0 clamp(12px, 2vh, 20px);
+  font-size: clamp(26px, min(10vw, 7vh), 72px);
+  line-height: 1.1;
+  margin: 0 0 clamp(6px, 1.5vh, 20px);
   color: var(--ink);
 }
 
 .ts-pro-overlay-card p {
   font-weight: 700;
-  font-size: clamp(20px, 4vw, 28px);
-  line-height: 1.55;
-  margin: 0 0 clamp(24px, 4vh, 36px);
+  font-size: clamp(14px, min(4vw, 2.6vh), 28px);
+  line-height: 1.45;
+  margin: 0 0 clamp(12px, 3vh, 36px);
   color: #444;
 }
 
 .ts-pro-start-btn {
-  padding: clamp(18px, 3.5vw, 28px) clamp(48px, 12vw, 80px);
-  font-size: clamp(22px, 5vw, 34px);
+  padding: clamp(10px, 2.5vh, 28px) clamp(32px, 12vw, 80px);
+  font-size: clamp(16px, min(5vw, 3.4vh), 34px);
   font-weight: 900;
   font-family: inherit;
   background: linear-gradient(135deg, #FFE135, #ffaa00);

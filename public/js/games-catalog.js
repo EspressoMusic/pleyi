@@ -38,23 +38,18 @@ const SKILL_COLORS = {
 };
 
 window.GAMES_CATALOG = {
-  english: [
-    { id: "tower-stack", title: "מגדל מילים", desc: "בנו מגדל מילים מהיר נגד השעון", icon: "🗼", color: "purple", tags: ["אוצר מילים", "מהירות"], level: "hard" },
-    { id: "vocabulary-duel", title: "טריוויה", desc: "מה התרגום? ענו מהר על השאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"], level: "easy" },
-    { id: "hangman", title: "איש תלוי", desc: "נחשו את המילה לפני שנגמרו הניסיונות", icon: "🎯", color: "purple", tags: ["אוצר מילים", "חידון"], level: "medium" },
-    { id: "spot-diff", title: "מצא את ההבדלים", desc: "מצאו את הפריט השונה בין שני הלוחות", icon: "🔍", color: "yellow", tags: ["זיכרון", "חידון"], level: "medium" },
-  ],
+  english: [],
   math: [],
 
   lifeskills: [
-    { id: "vocabulary-duel", title: "Duel מיומנויות", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"], level: "easy" },
+    { id: "vocabulary-duel", title: "טריוויית מיומנויות", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"], level: "easy" },
     { id: "hangman", title: "נחשו את המושג", desc: "נחשו מושג מכישורי חיים לפני שנגמרו הניסיונות", icon: "", color: "purple", tags: ["מיומנויות", "חידון"], level: "medium" },
     { id: "tower-stack", title: "מגדל מיומנויות", desc: "בנו מגדל — בחרו את ההסבר הנכון", icon: "", color: "purple", tags: ["מיומנויות", "מהירות"], level: "hard" },
     { id: "spot-diff", title: "מצא את ההבדל", desc: "מצאו את המושג או הרעיון השונה", icon: "", color: "yellow", tags: ["הבנה", "זיכרון"], level: "medium" },
   ],
 
   science: [
-    { id: "vocabulary-duel", title: "Duel מושגים", desc: "מה ההגדרה? ענו על מושגים כלליים", icon: "", color: "yellow", tags: ["חידון", "מושגים"], level: "easy" },
+    { id: "vocabulary-duel", title: "טריוויית מושגים", desc: "מה ההגדרה? ענו על מושגים כלליים", icon: "", color: "yellow", tags: ["חידון", "מושגים"], level: "easy" },
     { id: "spot-diff", title: "השוואת תופעות", desc: "מצאו את ההבדל בין שני מצבים", icon: "", color: "teal", tags: ["מושגים", "זיכרון"], level: "medium" },
   ],
 

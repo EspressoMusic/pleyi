@@ -893,111 +893,76 @@ body.coloring-zoom-open {
   flex: 1;
 }
 
-/* Game-builder — coloring-page style tiles: single-color frame, real game image, favorite + info controls */
+/* Game-builder — coloring-page style tiles: single-color frame, title + subject, info control */
+body.page-game-builder .svc-filter-bar {
+  margin-bottom: 48px;
+}
+
 body.page-game-builder .svc-lesson-grid {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  align-items: start;
   gap: 24px;
   max-width: 1100px;
 }
 
 body.page-game-builder .svc-lesson-preview {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
   background: #3aada0;
   padding: 14px;
   aspect-ratio: 1 / 1;
 }
 
-body.page-game-builder .svc-game-preview-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background: var(--white);
-  border: 4px solid var(--ink);
-  border-radius: 8px;
-  box-sizing: border-box;
-}
-
 body.page-game-builder .svc-game-preview-fallback {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  height: 100%;
-  background: var(--white);
-  border: 4px solid var(--ink);
-  border-radius: 8px;
-  box-sizing: border-box;
-  padding: 12px;
-  font-size: clamp(1.2rem, 4vw, 1.6rem);
-  font-weight: 900;
+  padding: 14px 8px 0;
   text-align: center;
   color: var(--ink);
 }
 
-body.page-game-builder .svc-game-fav-btn {
-  position: absolute;
-  top: 12px;
-  inset-inline-end: 12px;
-  z-index: 2;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.15s ease;
+body.page-game-builder .svc-game-preview-fallback strong {
+  font-size: clamp(1.4rem, 5vw, 1.9rem);
+  font-weight: 900;
+  line-height: 1.2;
 }
 
-body.page-game-builder .svc-game-fav-btn:hover,
-body.page-game-builder .svc-game-fav-btn:focus-visible {
-  transform: scale(1.08);
+body.page-game-builder .svc-game-preview-fallback span {
+  font-size: 1.15rem;
+  font-weight: 800;
+  opacity: 1;
 }
 
-body.page-game-builder .svc-game-fav-btn svg {
-  width: 26px;
-  height: 26px;
-  overflow: visible;
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2;
-  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.35));
+body.page-game-builder .svc-game-play-btn {
+  flex-shrink: 0;
+  width: 100%;
+  box-shadow: none !important;
 }
 
-body.page-game-builder .svc-game-fav-btn.is-active svg {
-  fill: #ff4d6d;
-  stroke: #ff4d6d;
-}
-
-body.page-game-builder .svc-lesson-body {
-  background: #eafffb;
-}
-
-body.page-game-builder .svc-lesson-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-body.page-game-builder .svc-lesson-head h3 {
-  flex: 1;
-  min-width: 0;
+body.page-game-builder .svc-game-play-btn:active {
+  box-shadow: none !important;
 }
 
 body.page-game-builder .svc-lesson-info-toggle {
-  flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  z-index: 5;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: 2px solid var(--ink);
   border-radius: 50%;
-  background: #d8fbf4;
+  background: rgba(255, 255, 255, 0.92);
   color: var(--ink);
   font-size: 12px;
   font-weight: 900;
@@ -1009,8 +974,8 @@ body.page-game-builder .svc-lesson-info-toggle {
 
 body.page-game-builder .svc-lesson-info-toggle:hover,
 body.page-game-builder .svc-lesson-info-toggle:focus-visible {
-  background: #baf3ea;
-  transform: translateY(-1px);
+  background: var(--memyellow);
+  transform: scale(1.05);
 }
 
 body.page-game-builder .svc-custom-tile {
@@ -1021,75 +986,138 @@ body.page-game-builder .svc-custom-tile {
   text-align: inherit;
   cursor: pointer;
   width: 100%;
+  aspect-ratio: 1 / 1;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--memyellow),
+    var(--memyellow) 16px,
+    color-mix(in srgb, var(--memyellow) 82%, white 18%) 16px,
+    color-mix(in srgb, var(--memyellow) 82%, white 18%) 32px
+  );
+}
+
+body.page-game-builder .svc-custom-tile:hover {
+  transform: translateY(-2px);
 }
 
 body.page-game-builder .svc-custom-tile-preview {
-  background: repeating-linear-gradient(45deg, #eafffb, #eafffb 10px, #d8fbf4 10px, #d8fbf4 20px);
-  border: 3px dashed var(--ink);
-  border-bottom: 3px dashed var(--ink);
-  transition: background-color 0.15s ease;
-}
-
-body.page-game-builder .svc-custom-tile-plus {
-  font-size: 3.5rem;
-  font-weight: 900;
-  color: var(--ink);
-  line-height: 1;
+  display: none;
 }
 
 body.page-game-builder .svc-custom-tile-body {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  background: none;
 }
 
 body.page-game-builder .svc-custom-tile-title {
-  font-size: 1.05rem;
-  color: var(--ink);
-}
-
-body.page-game-builder .svc-custom-tile:hover .svc-custom-tile-preview,
-body.page-game-builder .svc-custom-tile:focus-visible .svc-custom-tile-preview {
-  background-color: #d8fbf4;
-}
-
-/* Info popover — subject + level, opened from the small "i" toggle on each game card */
-.svc-game-info-pop {
-  position: fixed;
-  z-index: 60;
-  min-width: 140px;
-  padding: 10px 14px;
-  border: 3px solid var(--ink);
-  border-radius: 14px;
-  background: var(--white);
-  box-shadow: var(--shadow-sticker);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.svc-game-info-pop.hidden {
-  display: none;
-}
-
-.svc-game-info-pop p {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  font-size: 0.85rem;
-}
-
-.svc-game-info-pop p span {
-  color: var(--body);
-  font-weight: 700;
-}
-
-.svc-game-info-pop p strong {
+  font-size: clamp(1.3rem, 4vw, 1.7rem);
   color: var(--ink);
   font-weight: 900;
+}
+
+body.page-game-builder .svc-custom-tile:hover,
+body.page-game-builder .svc-custom-tile:focus-visible {
+  background: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--memyellow) 85%, black 15%),
+    color-mix(in srgb, var(--memyellow) 85%, black 15%) 16px,
+    color-mix(in srgb, var(--memyellow) 70%, white 30%) 16px,
+    color-mix(in srgb, var(--memyellow) 70%, white 30%) 32px
+  );
+}
+
+body.page-game-builder .svc-custom-tile:active {
+  transform: translate(4px, 4px);
+  box-shadow: 4px 4px 0 0 var(--ink);
+}
+
+/* Game info modal — opened from the "i" toggle on each game card */
+.modal-overlay > .modal.modal-game-info {
+  --modal-fill: var(--memteal);
+  background: color-mix(in srgb, var(--memteal) 12%, var(--white)) !important;
+  max-width: min(520px, 92vw);
+  width: 100%;
+  text-align: start;
+  padding: 36px 34px 32px;
+  overflow: visible;
+}
+
+.game-info-head {
+  margin: 0 0 18px;
+}
+
+.game-info-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  line-height: 1.2;
+  text-align: center;
+  paint-order: normal !important;
+  -webkit-text-stroke: 0 transparent !important;
+  -webkit-text-fill-color: var(--ink) !important;
+  color: var(--ink) !important;
+  text-shadow: none !important;
+}
+
+.game-info-summary {
+  margin: 0 0 20px;
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+  font-weight: 700;
+  line-height: 1.65;
+  color: var(--body);
+  text-align: center;
+  max-width: 42ch;
+  margin-inline: auto;
+  margin-bottom: 20px;
+}
+
+.game-info-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 0 24px;
+}
+
+.game-info-meta > div {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 6px 14px;
+  border: 2px solid color-mix(in srgb, var(--ink) 85%, var(--memteal));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--memteal) 62%, #ffffff);
+}
+
+.game-info-meta dt {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--ink) 70%, var(--memteal));
+}
+
+.game-info-meta dd {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: color-mix(in srgb, var(--ink) 88%, #004840);
+}
+
+.game-info-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.game-info-actions .btn {
+  min-width: min(100%, 240px);
+  padding: 14px 32px;
+  font-size: clamp(1.05rem, 3vw, 1.25rem);
+  box-shadow: none;
 }
 
 .svc-family-steps {

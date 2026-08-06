@@ -24,7 +24,7 @@
   }
 
   if (!customMeta) {
-    customMeta = { subject: "english", level: "medium", topic: "all", isPreset: true, gameId };
+    customMeta = { subject: "lifeskills", level: "medium", topic: "all", isPreset: true, gameId };
   }
 
   let cleanup = null;
@@ -52,7 +52,7 @@
 
     if (customMeta.isPreset && window.GAME_CONTENT) {
       window._activeGameData = GAME_CONTENT.buildGameData(
-        customMeta.subject || "english",
+        customMeta.subject || "lifeskills",
         customMeta.level || "medium",
         customMeta.topic || "all"
       );
@@ -60,7 +60,7 @@
       const base = customMeta.subject === "math" ? window.MATH_DATA : window.VOCAB_DATA;
       window._activeGameData = { ...base, VOCAB: customMeta.vocab };
     } else if (window.GAME_CONTENT) {
-      window._activeGameData = GAME_CONTENT.buildGameData("english", "medium", "all");
+      window._activeGameData = GAME_CONTENT.buildGameData("lifeskills", "medium", "all");
     }
   }
 

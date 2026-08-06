@@ -3418,7 +3418,11 @@ body.in-room .game-actions .btn {
 }
 
 .modal-overlay {
-  position: fixed;
+  /* !important: the ambient-bg sibling rule above forces position:relative
+     on every direct child of <body> with higher specificity — this overlay
+     is appended as a direct child of <body> and must stay fixed to the
+     viewport regardless of page. */
+  position: fixed !important;
   inset: 0;
   z-index: 500;
   background: rgba(185, 103, 255, 0.14);
@@ -3735,7 +3739,9 @@ body.in-room .game-actions .btn {
 
 /* Toast */
 .toast {
-  position: fixed;
+  /* !important: needed to beat the ambient-bg sibling rule that forces
+     position:relative on direct children of <body> (see .modal-overlay above). */
+  position: fixed !important;
   bottom: 28px;
   right: 50%;
   transform: translateX(50%);

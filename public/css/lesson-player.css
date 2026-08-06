@@ -12,6 +12,57 @@ body.page-ready-lessons .svc-lesson-grid {
   max-width: 960px;
 }
 
+/* Phones: two smaller cards per row instead of one oversized square column */
+@media (max-width: 768px) {
+  body.page-ready-lessons .svc-lesson-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    max-width: 460px;
+  }
+
+  body.page-ready-lessons .svc-lesson-preview {
+    padding: 8px 8px 10px;
+    gap: 6px;
+    border-radius: 16px;
+  }
+
+  body.page-ready-lessons .svc-lesson-name,
+  body.page-ready-lessons .svc-lesson-part {
+    font-size: clamp(0.82rem, 3.6vw, 1rem);
+    line-height: 1.15;
+  }
+
+  body.page-ready-lessons .svc-lesson-preview .js-lesson-open {
+    min-height: 26px;
+    padding: 5px 8px;
+    font-size: clamp(0.64rem, 2.6vw, 0.76rem);
+  }
+
+  body.page-ready-lessons .svc-lesson-info-toggle {
+    top: 6px;
+    inset-inline-end: 6px;
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+  }
+
+  body.page-ready-lessons .svc-lesson-learned-badge,
+  body.page-ready-lessons .svc-lesson-premium-lock,
+  body.page-ready-lessons .svc-lesson-recommended-badge {
+    top: 6px;
+    padding: 2px 7px;
+    font-size: 0.58rem;
+  }
+
+  body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.hidden)) .svc-lesson-title-wrap,
+  body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
+  body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
+    padding-top: 1.4rem;
+    padding-inline-start: 1.9rem;
+    padding-inline-end: 1.1rem;
+  }
+}
+
 body.page-ready-lessons .svc-lesson-card {
   position: relative;
   display: flex;
@@ -297,6 +348,17 @@ body.page-ready-lessons #lessonInfoModal {
   z-index: 1500 !important;
 }
 
+/* The login modal and the save/favorite toast can both fire while the lesson
+   info modal is open (e.g. clicking "save" while logged out) — without these
+   overrides they render at the site-wide z-index and end up hidden behind it. */
+body.page-ready-lessons #loginModal {
+  z-index: 1600 !important;
+}
+
+body.page-ready-lessons #toast {
+  z-index: 1700 !important;
+}
+
 .modal-overlay > .modal.modal-lesson-info {
   --modal-fill: var(--lesson-turquoise, var(--memteal));
   background: color-mix(in srgb, var(--memteal) 12%, var(--white)) !important;
@@ -518,7 +580,7 @@ body.page-ready-lessons #lessonInfoModal {
   width: auto;
   min-width: 0;
   height: auto;
-  padding: 8px;
+  padding: 10px;
   margin: 0;
   border: none;
   background: transparent;
@@ -529,8 +591,8 @@ body.page-ready-lessons #lessonInfoModal {
 
 .lesson-info-fav-btn svg {
   display: block;
-  width: 26px;
-  height: 26px;
+  width: 36px;
+  height: 36px;
   overflow: visible;
 }
 
@@ -979,6 +1041,12 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   align-items: center;
   overflow-y: auto;
   overflow-x: hidden;
+  /* .lesson-player-stage centers its grid items by default, which lets this
+     item size to its (possibly tall) content and overflow the row — clipped
+     by the stage's overflow:hidden with no way to scroll to the rest. Stretch
+     this item to the row's real height so oversized slide text scrolls
+     inside it instead of silently clipping top and bottom. */
+  align-self: stretch;
 }
 
 .lesson-player-slide {
@@ -1157,6 +1225,18 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   grid-template-areas: "visual glossary";
 }
 
+/* No visual scene for this topic yet — don't reserve a dead 42% column for it. */
+.lp-slide-body-layout:not(:has(.lp-slide-glossary-visual)) {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "lead"
+    "glossary";
+}
+
+.lp-slide-body-layout:not(:has(.lp-slide-glossary-visual)):not(:has(.lp-slide-body-lead)) {
+  grid-template-areas: "glossary";
+}
+
 .lp-slide-glossary-visual {
   grid-area: visual;
   display: flex;
@@ -1208,7 +1288,8 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
 
 .lp-slide-inner.has-glossary-grid .lp-volcano-scene:not(.lp-volcano-scene--output) {
   width: clamp(170px, 100%, 250px);
-  height: clamp(170px, 100%, 250px);
+  aspect-ratio: 1 / 1;
+  height: auto;
 }
 
 .lp-slide-inner.has-video {

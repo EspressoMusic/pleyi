@@ -158,7 +158,7 @@
       numbers: "מספרים",
       animals: "בעלי חיים",
       family: "משפחה",
-      health: "נפלאות הבריאה",
+      health: "גוף האדם - הלב",
     };
     return names[lessonId] || "שיעור זה";
   }

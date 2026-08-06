@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#00C9B7" />
   <title>מערכת יצירת משחק — Pleyi</title>
   <meta name="description" content="מעלים תוכן לימודי — המערכת יוצרת משחק. פשוט, מהיר, מוכן לכיתה."/>
-  <link rel="stylesheet" href="/styles.css?v=56"/>
+  <link rel="stylesheet" href="/styles.css?v=59"/>
   <link rel="stylesheet" href="/css/clean-site.css?v=70"/>
-  <link rel="stylesheet" href="/css/service-landing.css?v=33"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=36"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -22,6 +22,11 @@
     <div class="container nav-inner">
       <nav class="nav-links" id="navLinks">
         <a href="/" class="nav-pill">בית</a>
+        <div class="nav-services">
+          <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false">שירותים</button>
+        </div>
+        <a href="/#about" class="nav-pill">מי אנחנו</a>
+        <a href="/#contact" class="nav-pill">צור קשר</a>
       </nav>
       <div class="nav-actions">
         <button type="button" class="nav-auth-btn" id="authLoginBtn">התחברות</button>
@@ -39,10 +44,25 @@
         <button class="menu-toggle" id="menuToggle" aria-label="תפריט"><span></span><span></span><span></span></button>
       </div>
     </div>
+    <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
+      <a href="/services/ready-lessons" class="nav-services-link" role="menuitem">שיעורים</a>
+      <a href="/services/worksheets" class="nav-services-link" role="menuitem">דפי עבודה</a>
+      <a href="/services/game-builder" class="nav-services-link active" role="menuitem">משחקים</a>
+    </div>
   </header>
 
   <nav class="mobile-nav" id="mobileNav">
     <a href="/">בית</a>
+    <div class="mobile-nav-services">
+      <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel">שירותים</button>
+      <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
+        <a href="/services/ready-lessons" role="menuitem">שיעורים</a>
+        <a href="/services/worksheets" role="menuitem">דפי עבודה</a>
+        <a href="/services/game-builder" role="menuitem">משחקים</a>
+      </div>
+    </div>
+    <a href="/#about">מי אנחנו</a>
+    <a href="/#contact">צור קשר</a>
     <button type="button" class="mobile-nav-auth" id="mobileLoginBtn">התחברות</button>
   </nav>
 
@@ -155,6 +175,24 @@
     </div>
   </footer>
 
+  <div class="modal-overlay hidden" id="gameInfoModal">
+    <div class="modal modal-game-info">
+      <button class="modal-close" id="gameInfoClose" type="button" aria-label="סגירה">×</button>
+      <header class="game-info-head">
+        <h2 class="font-cartoon game-info-title" id="gameInfoTitle"></h2>
+      </header>
+      <p class="game-info-summary" id="gameInfoSummary"></p>
+      <dl class="game-info-meta">
+        <div><dt>נושא</dt><dd id="gameInfoSubject"></dd></div>
+        <div><dt>סוג משחק</dt><dd id="gameInfoType"></dd></div>
+        <div><dt>רמה</dt><dd id="gameInfoLevel"></dd></div>
+      </dl>
+      <div class="game-info-actions">
+        <button type="button" class="btn btn-primary btn-candy font-cartoon" id="gameInfoPlayBtn">שחק עכשיו</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay hidden" id="loginModal">
     <div class="modal modal-login">
       <button class="modal-close" id="loginClose" type="button">×</button>
@@ -191,7 +229,7 @@
   <script src="/js/ambient-bg.js?v=3"></script>
   <script src="/js/scroll-animations.js?v=3"></script>
   <script src="/js/service-landing.js?v=3"></script>
-  <script src="/js/game-builder.js"></script>
+  <script src="/js/game-builder.js?v=2"></script>
   <script src="/js/cookie-consent.js?v=2"></script>
 </body>
 </html>

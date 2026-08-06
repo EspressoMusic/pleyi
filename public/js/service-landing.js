@@ -25,34 +25,48 @@ function bindNavServices() {
     window.dispatchEvent(new Event("scroll"));
   };
 
+  let closeTimer = null;
+
+  const openDropdown = () => {
+    clearTimeout(closeTimer);
+    positionDropdown();
+    clearDesktopNavActive();
+    dropdown.classList.remove("hidden");
+    requestAnimationFrame(() => dropdown.classList.add("open"));
+    btn.setAttribute("aria-expanded", "true");
+  };
+
+  const closeDropdown = () => {
+    if (dropdown.classList.contains("hidden")) return;
+    const wasOpen = dropdown.classList.contains("open");
+    dropdown.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => dropdown.classList.add("hidden"), 240);
+    if (wasOpen) restoreDesktopNavActive();
+  };
+
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    const open = dropdown.classList.toggle("hidden") === false;
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
-    if (open) {
-      positionDropdown();
-      clearDesktopNavActive();
-    } else {
-      restoreDesktopNavActive();
-    }
+    if (dropdown.classList.contains("open")) closeDropdown();
+    else openDropdown();
   });
 
   window.addEventListener(
     "resize",
     () => {
-      if (!dropdown.classList.contains("hidden")) positionDropdown();
+      if (dropdown.classList.contains("open")) positionDropdown();
     },
     { passive: true }
   );
 
-  document.addEventListener("click", () => {
-    const wasOpen = !dropdown.classList.contains("hidden");
-    dropdown.classList.add("hidden");
-    btn.setAttribute("aria-expanded", "false");
-    if (wasOpen) restoreDesktopNavActive();
-  });
+  document.addEventListener("click", () => closeDropdown());
 
   dropdown.addEventListener("click", (e) => e.stopPropagation());
+
+  dropdown.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => closeDropdown());
+  });
 }
 
 function bindMobileMenu() {
@@ -156,9 +170,9 @@ function bindCreateGameForm() {
   const selectedLabel = $("#svcSelectedGameLabel");
   const contentHint = $("#svcContentHint");
   const backBtn = $("#svcCreateBack");
+  if (!pickGrid) return;
   const pairCountBox = $("#svcPairCount");
   const pairCountBtns = $$(".svc-pair-count-btn", pairCountBox);
-  if (!pickGrid) return;
 
   let selectedGameId = "";
   let selectedPairCount = 6;

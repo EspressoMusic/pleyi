@@ -183,6 +183,7 @@
 
   const LESSON_RETURN_KEY = "gameclass-lesson-return";
   const LESSON_RESTORE_KEY = "gameclass-lesson-restore";
+  const PLAY_RETURN_KEY = "gameclass-play-return";
 
   function readLessonReturn() {
     try {
@@ -384,7 +385,9 @@
     playExitBtn?.addEventListener("click", () => {
       if (!roomCode && returnToLesson()) return;
       sessionStorage.removeItem(LESSON_RETURN_KEY);
-      const dest = roomCode ? `/room?code=${encodeURIComponent(roomCode)}` : "/";
+      const panelReturn = sessionStorage.getItem(PLAY_RETURN_KEY);
+      sessionStorage.removeItem(PLAY_RETURN_KEY);
+      const dest = roomCode ? `/room?code=${encodeURIComponent(roomCode)}` : panelReturn || "/";
       window.location.href = dest;
     });
 

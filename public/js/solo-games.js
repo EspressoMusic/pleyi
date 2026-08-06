@@ -1152,22 +1152,6 @@ const SoloGames = {
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
-    const hangmanSvg = () => `
-      <svg class="hangman-solo-svg" viewBox="0 0 200 220" aria-hidden="true">
-        <g class="hm-gallows" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round">
-          <line x1="20" y1="210" x2="120" y2="210"/>
-          <line x1="50" y1="210" x2="50" y2="24"/>
-          <line x1="50" y1="24" x2="130" y2="24"/>
-          <line x1="130" y1="24" x2="130" y2="52"/>
-        </g>
-        <circle class="hm-part" data-step="1" cx="130" cy="68" r="16" stroke="currentColor" stroke-width="4" fill="none"/>
-        <line class="hm-part" data-step="2" x1="130" y1="84" x2="130" y2="138" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-        <line class="hm-part" data-step="3" x1="130" y1="98" x2="98" y2="118" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-        <line class="hm-part" data-step="4" x1="130" y1="98" x2="162" y2="118" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-        <line class="hm-part" data-step="5" x1="130" y1="138" x2="104" y2="178" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-        <line class="hm-part" data-step="6" x1="130" y1="138" x2="156" y2="178" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-      </svg>`;
-
     const buildShell = () => {
       root.innerHTML = `
         <div class="solo-game-wrap hangman-solo-wrap">
@@ -1176,10 +1160,7 @@ const SoloGames = {
             <div class="hangman-solo-card">
               <div class="hangman-solo-hint" id="hmHint"></div>
               <div class="hangman-solo-body">
-                <div class="hangman-solo-figure-wrap">
-                  ${hangmanSvg()}
-                  <div class="hangman-solo-lives" id="hmLives" aria-label="ניסיונות שנותרו"></div>
-                </div>
+                <div class="hangman-solo-lives" id="hmLives" aria-label="ניסיונות שנותרו"></div>
                 <div class="hangman-solo-slots" id="hmSlots"></div>
               </div>
               <button type="button" class="hangman-solo-hint-btn btn btn-candy font-cartoon" id="hmHintBtn">💡 רמז — חשיפת אות</button>
@@ -1197,18 +1178,6 @@ const SoloGames = {
         const lost = i < wrong;
         return `<span class="hangman-solo-life${lost ? " is-lost" : ""}"></span>`;
       }).join("");
-    };
-
-    const updateFigure = (animateLast = false) => {
-      root.querySelectorAll(".hm-part").forEach((part) => {
-        const step = Number(part.dataset.step);
-        const visible = step <= wrong;
-        part.classList.toggle("is-visible", visible);
-        if (animateLast && visible && step === wrong) {
-          part.classList.add("is-new");
-          part.addEventListener("animationend", () => part.classList.remove("is-new"), { once: true });
-        }
-      });
     };
 
     const renderSlots = (revealIndex = null) => {
@@ -1331,7 +1300,6 @@ const SoloGames = {
 
       renderSlots(correct ? [...word].findIndex((ch) => ch !== " " && charMatches(ch, letter)) : null);
       renderLives();
-      updateFigure(!correct);
       renderKeyboard(letter, correct);
       updateHintBtn();
 
@@ -1406,7 +1374,6 @@ const SoloGames = {
 
       renderHint();
       renderLives();
-      updateFigure(false);
       renderSlots();
       renderKeyboard();
       updateHintBtn();
