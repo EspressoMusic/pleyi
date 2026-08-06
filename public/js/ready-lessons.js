@@ -4,7 +4,14 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים" };
+  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "נפלאות הבריאה", volcano: "הר געש" };
+
+  const STANDARD_LESSON_GAMES = [
+    { id: "vocabulary-duel", label: "טריוויה", icon: "⚔️" },
+    { id: "tower-stack", label: "מגדל מילים", icon: "🗼" },
+    { id: "hangman", label: "איש תלוי", icon: "🎯" },
+    { id: "spot-diff", label: "מצא הבדלים", icon: "🔍" },
+  ];
 
   const LESSON_CATALOG = {
     intro: {
@@ -26,10 +33,7 @@
         { en: "video", he: "וידאו" },
         { en: "music", he: "מוזיקה" },
       ],
-      games: [
-        { id: "word-memory", label: "זיכרון מילים", icon: "🧠" },
-        { id: "hangman", label: "איש תלוי", icon: "🎯" },
-      ],
+      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -150,10 +154,7 @@
         { en: "pink", he: "ורוד" },
         { en: "black", he: "שחור" },
       ],
-      games: [
-        { id: "word-memory", label: "זיכרון מילים", icon: "🧠" },
-        { id: "spot-diff", label: "מצא את ההבדלים", icon: "🔍" },
-      ],
+      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -253,10 +254,7 @@
         { en: "nine", he: "תשע" },
         { en: "ten", he: "עשר" },
       ],
-      games: [
-        { id: "hangman", label: "איש תלוי", icon: "🎯" },
-        { id: "tower-stack", label: "מגדל מילים", icon: "🗼" },
-      ],
+      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -355,10 +353,7 @@
         { en: "rabbit", he: "ארנב" },
         { en: "horse", he: "סוס" },
       ],
-      games: [
-        { id: "word-memory", label: "זיכרון מילים", icon: "🧠" },
-        { id: "hangman", label: "איש תלוי", icon: "🎯" },
-      ],
+      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -443,10 +438,7 @@
         { en: "grandmother", he: "סבתא" },
         { en: "grandfather", he: "סבא" },
       ],
-      games: [
-        { id: "vocabulary-duel", label: "טריוויה", icon: "⚔️" },
-        { id: "word-memory", label: "זיכרון מילים", icon: "🧠" },
-      ],
+      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -507,13 +499,99 @@
         },
       ],
     },
+
+    volcano: {
+      id: "volcano",
+      name: "הר געש",
+      nameMain: "הר געש",
+      namePart: "",
+      subject: "volcano",
+      grades: ["ag", "dv", "zh"],
+      topic: "volcano",
+      gradeLabel: "כל הכיתות",
+      duration: "20 דק'",
+      summary: "מכירים הר געש מקרוב — איך הוא בנוי, מה קורה בפנים כדור הארץ, ולמה הוא מתפרץ. עם אנימציית התפרצות ומשחק בסוף.",
+      vocab: [
+        { en: "הר געש", he: "הר מיוחד שיכול לפלוט אבנים לוהטות, עשן ולבה מתוך פנים כדור הארץ" },
+        { en: "לבה", he: "סלע נוזלי ולוהט שיוצא מהר הגעש בזמן התפרצות" },
+        { en: "מאגמה", he: "סלע נוזלי וחם מאוד שנמצא עמוק מתחת לאדמה" },
+        { en: "לוע", he: "הפתח שבראש הר הגעש שממנו יוצאת הלבה" },
+        { en: "התפרצות", he: "הרגע שבו הר הגעש פולט לבה, עשן ואבנים" },
+        { en: "אפר געשי", he: "אבק ופירורי סלע קטנים שנפלטים מהר הגעש" },
+        { en: "הר געש פעיל", he: "הר געש שהתפרץ לאחרונה ועלול להתפרץ שוב" },
+        { en: "הר געש רדום", he: "הר געש שלא התפרץ הרבה זמן אבל עדיין עלול להתעורר" },
+        { en: "וולקנולוג", he: "מדען שחוקר הרי געש" },
+        { en: "קרום כדור הארץ", he: "השכבה החיצונית והמוצקה שעליה אנחנו חיים" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זה הר געש?",
+          subtitle: "פתיחה",
+          visual: "volcano-calm",
+          body: "הר געש הוא הר מיוחד שיכול לפלוט אבנים לוהטות, עשן ולבה מתוך פנים כדור הארץ.\n\nהיום נכיר איך הוא בנוי, מה קורה בפנים שלו, ולמה הוא מתפרץ.",
+        },
+        {
+          type: "content",
+          title: "מילים חשובות",
+          subtitle: "אוצר מושגים",
+          visual: "volcano-calm",
+          body: "לוע — הפתח שבראש הר הגעש שממנו יוצאת הלבה.\n\nמאגמה — סלע נוזלי וחם מאוד שנמצא עמוק מתחת לאדמה. כשהיא יוצאת החוצה קוראים לה לבה.\n\nהתפרצות — הרגע שבו הר הגעש פולט לבה, עשן ואבנים.",
+        },
+        {
+          type: "content",
+          title: "איך הר געש מתפרץ?",
+          subtitle: "בפנים ההר",
+          visual: "volcano-erupting",
+          body: "עמוק מתחת לאדמה יש מאגמה — סלע נוזלי וחם מאוד.\n\nכשהלחץ בפנים ההר גדל, המאגמה עולה דרך הלוע שבראש ההר.\n\nכשהיא יוצאת החוצה היא נקראת לבה, ויחד איתה יוצאים גם עשן ואפר געשי.",
+        },
+        {
+          type: "content",
+          title: "כמה חם הלבה?",
+          subtitle: "עובדה מרתקת",
+          visual: "volcano-erupting",
+          body: "לבה יכולה להגיע לחום של יותר מ-1,000 מעלות צלזיוס — חם מספיק כדי להתיך מתכת!\n\nלמרות שהיא נראית איטית, לבה יכולה לזרום במהירות של עשרות קילומטרים בשעה במורד ההר.\n\nכשהיא מתקררת, הלבה הופכת לאט לאט לסלע קשה חדש.",
+        },
+        {
+          type: "content",
+          title: "פעיל, רדום או כבוי?",
+          subtitle: "סוגי הרי געש",
+          visual: "volcano-erupting",
+          body: "הר געש פעיל הוא הר שהתפרץ לאחרונה או עלול להתפרץ שוב בקרוב.\n\nהר געש רדום לא התפרץ הרבה מאוד זמן, אבל עדיין יכול להתעורר יום אחד.\n\nהר געש כבוי כבר לא צפוי להתפרץ שוב לעולם.",
+        },
+        {
+          type: "content",
+          title: "מה יוצא מהר געש?",
+          subtitle: "שאלה ותשובה",
+          visual: "volcano-output",
+          body: "מה יוצא מהר געש כשהוא מתפרץ?\n\nלבה — סלע נוזלי ולוהט שזורם במורד ההר.\n\nעשן — ענן כבד שעולה מהלוע אל השמיים.\n\nאפר געשי — אבק ופירורי סלע קטנטנים שיכולים לנסוע רחוק מאוד ברוח.",
+        },
+        {
+          type: "content",
+          title: "הרי געש בעולם האמיתי",
+          subtitle: "חיבור לחיים",
+          visual: "volcano-world",
+          body: "יש אלפי הרי געש בעולם — חלקם על היבשה וחלקם עמוק בים.\n\nהר הגעש קילאווהה שבהוואי הוא אחד הפעילים ביותר בעולם, וממשיך להתפרץ במשך שנים רבות.\n\nמדענים שנקראים וולקנולוגים חוקרים הרי געש כדי לדעת מתי הם עלולים להתפרץ, ולשמור על אנשים שגרים בקרבתם בבטחה.",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          visual: "volcano-celebrate",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+    },
+
     health: {
       id: "health",
       premium: true,
       name: "נפלאות הבריאה",
       nameMain: "נפלאות הבריאה",
       namePart: "",
-      subject: "lifeskills",
+      subject: "health",
       grades: ["ag", "dv", "zh"],
       topic: "health",
       gradeLabel: "כל הכיתות",
@@ -531,10 +609,7 @@
         { en: "sick", he: "חולה" },
         { en: "fruit", he: "פרי" },
       ],
-      games: [
-        { id: "word-memory", label: "זיכרון מילים", icon: "🧠" },
-        { id: "vocabulary-duel", label: "טריוויה", icon: "⚔️" },
-      ],
+      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -641,10 +716,15 @@
         { id: "geometry", label: "גאומטריה" },
       ],
     },
-    lifeskills: {
+    health: {
       ag: [{ id: "health", label: "נפלאות הבריאה" }],
       dv: [{ id: "health", label: "נפלאות הבריאה" }],
       zh: [{ id: "health", label: "נפלאות הבריאה" }],
+    },
+    volcano: {
+      ag: [{ id: "volcano", label: "הר געש" }],
+      dv: [{ id: "volcano", label: "הר געש" }],
+      zh: [{ id: "volcano", label: "הר געש" }],
     },
   };
 
@@ -796,6 +876,90 @@
     applyFilters();
   }
 
+  function showToast(msg) {
+    const t = $("#toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.remove("hidden");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => t.classList.add("hidden"), 2800);
+  }
+
+  // --- Favorite lessons (requires login; synced to Firestore) ---
+  let favoriteLessonIds = new Set();
+
+  async function refreshFavoriteLessons() {
+    if (!window.GameAuth?.getUser()) {
+      favoriteLessonIds = new Set();
+      return;
+    }
+    try {
+      favoriteLessonIds = new Set(await UserData.getFavoriteLessons());
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function syncFavBtnState(lessonId) {
+    const btn = $("#lessonInfoFavBtn");
+    if (!btn || btn.dataset.lesson !== lessonId) return;
+    const active = favoriteLessonIds.has(lessonId);
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-pressed", active ? "true" : "false");
+    btn.setAttribute("aria-label", active ? "הסרה משיעורים שאהבתי" : "הוספה לשיעורים שאהבתי");
+  }
+
+  const FAV_CONFETTI_COLORS = ["#ff3b5c", "#ffd23f", "#4da6ff", "#7ee08c", "#c792ff"];
+
+  function spawnFavConfetti(btn) {
+    if (!btn) return;
+    const layer = document.createElement("span");
+    layer.className = "fav-confetti";
+    const pieceCount = 10;
+    for (let i = 0; i < pieceCount; i++) {
+      const piece = document.createElement("span");
+      piece.className = "fav-confetti-piece";
+      const angle = (Math.PI * 2 * i) / pieceCount + (Math.random() * 0.5 - 0.25);
+      const distance = 22 + Math.random() * 14;
+      piece.style.setProperty("--fav-confetti-x", `${Math.cos(angle) * distance}px`);
+      piece.style.setProperty("--fav-confetti-y", `${Math.sin(angle) * distance}px`);
+      piece.style.setProperty("--fav-confetti-rot", `${Math.floor(Math.random() * 360)}deg`);
+      piece.style.setProperty("--fav-confetti-delay", `${Math.random() * 0.05}s`);
+      piece.style.background = FAV_CONFETTI_COLORS[i % FAV_CONFETTI_COLORS.length];
+      layer.appendChild(piece);
+    }
+    btn.appendChild(layer);
+    setTimeout(() => layer.remove(), 900);
+
+    btn.classList.remove("just-activated");
+    void btn.offsetWidth;
+    btn.classList.add("just-activated");
+    setTimeout(() => btn.classList.remove("just-activated"), 600);
+  }
+
+  async function toggleFavoriteLesson(lessonId, btn) {
+    if (!window.GameAuth?.getUser()) {
+      showToast("התחברו כדי לשמור שיעורים שאהבתם");
+      window.GameAuth?.handleLoginClick({ redirect: false });
+      return;
+    }
+
+    const res = await UserData.toggleFavoriteLesson(lessonId);
+    if (!res.ok) {
+      showToast(res.error || "לא ניתן לשמור כרגע");
+      return;
+    }
+
+    if (res.favorited) {
+      favoriteLessonIds.add(lessonId);
+      spawnFavConfetti(btn);
+    } else {
+      favoriteLessonIds.delete(lessonId);
+    }
+    syncFavBtnState(lessonId);
+    showToast(res.favorited ? "נוסף לשיעורים שאהבתי" : "הוסר משיעורים שאהבתי");
+  }
+
   const LESSON_SHARE_PATH = "/services/ready-lessons";
 
   function openLessonInfoModal(lessonId) {
@@ -817,6 +981,15 @@
     if (shareBtn) shareBtn.dataset.lesson = lessonId;
     const shareLabel = $("#lessonInfoShareLabel");
     if (shareLabel) shareLabel.textContent = "שיתוף השיעור";
+    const links = buildShareLinks(lessonId);
+    const waLink = $("#lessonInfoShareWhatsapp");
+    if (waLink && links) waLink.href = links.whatsapp;
+    const emailLink = $("#lessonInfoShareEmail");
+    if (emailLink && links) emailLink.href = links.email;
+
+    const favBtn = $("#lessonInfoFavBtn");
+    if (favBtn) favBtn.dataset.lesson = lessonId;
+    syncFavBtnState(lessonId);
 
     modal.classList.remove("hidden");
   }
@@ -825,25 +998,25 @@
     $("#lessonInfoModal")?.classList.add("hidden");
   }
 
-  async function shareLesson(lessonId) {
+  function buildShareLinks(lessonId) {
     const lesson = LESSON_CATALOG[lessonId];
-    if (!lesson) return;
-    const shareLabel = $("#lessonInfoShareLabel");
+    if (!lesson) return null;
     const url = `${window.location.origin}${LESSON_SHARE_PATH}?lesson=${encodeURIComponent(lessonId)}`;
-    const title = `שיעור: ${lesson.nameMain || lesson.name}`;
     const text = `בואו ללמוד "${lesson.nameMain || lesson.name}" באנגלית עם Pleyi!`;
+    const title = `שיעור: ${lesson.nameMain || lesson.name}`;
+    return {
+      url,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`,
+      email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${text}\n\n${url}`)}`,
+    };
+  }
 
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text, url });
-        return;
-      } catch (err) {
-        if (err?.name === "AbortError") return;
-      }
-    }
-
+  async function copyShareLink(lessonId) {
+    const links = buildShareLinks(lessonId);
+    if (!links) return;
+    const shareLabel = $("#lessonInfoShareLabel");
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(links.url);
       if (shareLabel) {
         shareLabel.textContent = "הקישור הועתק!";
         setTimeout(() => {
@@ -872,17 +1045,47 @@
       if (e.target === modal) closeLessonInfoModal();
     });
     $("#lessonInfoOpenBtn")?.addEventListener("click", closeLessonInfoModal);
-    $("#lessonInfoShareBtn")?.addEventListener("click", (e) => {
-      shareLesson(e.currentTarget.dataset.lesson);
+    $("#lessonInfoFavBtn")?.addEventListener("click", (e) => {
+      toggleFavoriteLesson(e.currentTarget.dataset.lesson, e.currentTarget);
     });
+
+    const shareBtn = $("#lessonInfoShareBtn");
+    const shareMenu = $("#lessonInfoShareMenu");
+    function closeShareMenu() {
+      shareMenu?.classList.add("hidden");
+      shareBtn?.setAttribute("aria-expanded", "false");
+    }
+    shareBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const willOpen = shareMenu?.classList.contains("hidden");
+      closeShareMenu();
+      if (willOpen) {
+        shareMenu?.classList.remove("hidden");
+        shareBtn.setAttribute("aria-expanded", "true");
+      }
+    });
+    shareMenu?.addEventListener("click", (e) => e.stopPropagation());
+    $("#lessonInfoShareCopy")?.addEventListener("click", () => {
+      copyShareLink(shareBtn?.dataset.lesson);
+      closeShareMenu();
+    });
+    $("#lessonInfoShareWhatsapp")?.addEventListener("click", closeShareMenu);
+    $("#lessonInfoShareEmail")?.addEventListener("click", closeShareMenu);
+    document.addEventListener("click", closeShareMenu);
+
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !modal.classList.contains("hidden")) closeLessonInfoModal();
+      if (e.key !== "Escape") return;
+      if (!shareMenu?.classList.contains("hidden")) {
+        closeShareMenu();
+        return;
+      }
+      if (!modal.classList.contains("hidden")) closeLessonInfoModal();
     });
   }
 
   function tryOpenSharedLesson() {
     const lessonId = new URLSearchParams(window.location.search).get("lesson");
-    if (lessonId && LESSON_CATALOG[lessonId]) openLessonInfoModal(lessonId);
+    if (lessonId && LESSON_CATALOG[lessonId]) openLessonSlides?.(lessonId);
   }
 
   const LESSON_RETURN_KEY = "gameclass-lesson-return";
@@ -1070,6 +1273,8 @@
       gamePick: gameId,
     });
   }
+
+  let openLessonSlides = null;
 
   function bindLessonPlayer() {
     const player = $("#lessonPlayer");
@@ -1284,6 +1489,80 @@
         </div>`;
     }
 
+    function renderVolcanoMountainScene(modifierClass) {
+      return `
+        <div class="lp-volcano-scene${modifierClass}" aria-hidden="true">
+          <div class="lp-volcano-sky"></div>
+          <svg class="lp-volcano-mountain" viewBox="0 0 200 170" preserveAspectRatio="xMidYMax meet">
+            <defs>
+              <linearGradient id="lpVolcanoBody" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#5b3d2e"/>
+                <stop offset="100%" stop-color="#2f2019"/>
+              </linearGradient>
+              <linearGradient id="lpVolcanoLava" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#fff2b0"/>
+                <stop offset="45%" stop-color="#ffb347"/>
+                <stop offset="100%" stop-color="#ff4d2e"/>
+              </linearGradient>
+              <radialGradient id="lpVolcanoCrater" cx="50%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#fff8dc"/>
+                <stop offset="45%" stop-color="#ffb347"/>
+                <stop offset="100%" stop-color="#ff4d2e" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <path fill="url(#lpVolcanoBody)" d="M14 168 L92 58 Q100 46 108 58 L186 168 Z"/>
+            <path class="lp-volcano-lava-streak lp-volcano-lava-streak--l" fill="url(#lpVolcanoLava)" d="M97 62 C88 95 74 122 64 168 L78 168 C90 124 98 98 105 66 Z"/>
+            <path class="lp-volcano-lava-streak lp-volcano-lava-streak--r" fill="url(#lpVolcanoLava)" d="M103 62 C112 95 126 122 136 168 L122 168 C110 124 102 98 95 66 Z"/>
+            <ellipse class="lp-volcano-crater" fill="url(#lpVolcanoCrater)" cx="100" cy="59" rx="20" ry="12"/>
+          </svg>
+          <div class="lp-volcano-smoke">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="lp-volcano-embers">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>`;
+    }
+
+    function renderVolcanoOutputScene() {
+      return `
+        <div class="lp-volcano-scene lp-volcano-scene--output" aria-hidden="true">
+          <div class="lp-volcano-output-badge lp-volcano-output-badge--lava">
+            <span class="lp-volcano-output-drop"></span>
+            <em dir="ltr">lava</em>
+          </div>
+          <div class="lp-volcano-output-badge lp-volcano-output-badge--smoke">
+            <span class="lp-volcano-output-puff"></span>
+            <em dir="ltr">smoke</em>
+          </div>
+          <div class="lp-volcano-output-badge lp-volcano-output-badge--ash">
+            <span class="lp-volcano-output-fleck"></span><span class="lp-volcano-output-fleck"></span><span class="lp-volcano-output-fleck"></span>
+            <em dir="ltr">ash</em>
+          </div>
+        </div>`;
+    }
+
+    function renderVolcanoWorldScene() {
+      return `
+        <div class="lp-volcano-scene lp-volcano-scene--world" aria-hidden="true">
+          <div class="lp-volcano-sky lp-volcano-sky--dusk"></div>
+          <svg class="lp-volcano-range" viewBox="0 0 200 170" preserveAspectRatio="xMidYMax meet">
+            <path class="lp-volcano-range-back" d="M0 168 L38 100 L68 132 L100 78 L132 128 L162 92 L200 168 Z"/>
+            <path class="lp-volcano-range-front" d="M0 168 L55 118 L90 168 L120 112 L150 168 L200 132 L200 168 Z"/>
+            <circle class="lp-volcano-range-glow" cx="100" cy="80" r="4.5"/>
+          </svg>
+          <div class="lp-volcano-range-smoke"><span></span><span></span></div>
+          <div class="lp-volcano-range-markers"><i></i><i></i><i></i></div>
+        </div>`;
+    }
+
+    function renderVolcanoScene(variant) {
+      if (variant === "output") return renderVolcanoOutputScene();
+      if (variant === "world") return renderVolcanoWorldScene();
+      const modifierClass = variant === "celebrate" ? " lp-volcano-scene--celebrate" : variant === "calm" ? " lp-volcano-scene--calm" : "";
+      return renderVolcanoMountainScene(modifierClass);
+    }
+
     function renderContentSlide(slide) {
       let bodyHtml = "";
       let hasInteractiveBody = false;
@@ -1301,10 +1580,14 @@
         hasInteractiveBody = bodyHtml.includes("lp-say");
       }
 
+      const visualHtml =
+        slide.visual && slide.visual.startsWith("volcano-") ? renderVolcanoScene(slide.visual.slice("volcano-".length)) : "";
+
       const isClosing = slide.subtitle === "כל הכבוד!";
-      const orbHtml = hasInteractiveBody
-        ? ""
-        : `<button type="button" class="lp-slide-orb${isClosing ? " lp-slide-orb--celebrate" : ""}" aria-label="קישוט">
+      const orbHtml =
+        hasInteractiveBody || visualHtml
+          ? ""
+          : `<button type="button" class="lp-slide-orb${isClosing ? " lp-slide-orb--celebrate" : ""}" aria-label="קישוט">
             <span class="lp-slide-orb-inner">
               <span class="lp-slide-orb-ring"></span>
               <span class="lp-slide-orb-core"></span>
@@ -1313,13 +1596,16 @@
 
       return `
         ${orbHtml}
-        <div class="lp-slide-inner">
-          <div class="lp-slide-head">
-            <h2 class="lp-slide-title">${slide.title}</h2>
+        <div class="lp-slide-inner${visualHtml ? " has-visual" : ""}">
+          <div class="lp-slide-text-col">
+            <div class="lp-slide-head">
+              <h2 class="lp-slide-title">${slide.title}</h2>
+            </div>
+            <div class="lp-slide-body-wrap">
+              ${bodyHtml}
+            </div>
           </div>
-          <div class="lp-slide-body-wrap">
-            ${bodyHtml}
-          </div>
+          ${visualHtml}
         </div>`;
     }
 
@@ -1413,6 +1699,7 @@
       setExpanded(false);
       document.body.style.overflow = "hidden";
     }
+    openLessonSlides = open;
 
     function close() {
       closeWordPopup();
@@ -1527,6 +1814,13 @@
     updateLessonLocks();
     document.addEventListener("premium-updated", updateLessonLocks);
     tryOpenSharedLesson();
+
+    window.GameAuth?.bindModals(showToast);
+    window.GameAuth?.onUserChange(async () => {
+      await refreshFavoriteLessons();
+      const favBtn = $("#lessonInfoFavBtn");
+      if (favBtn?.dataset.lesson) syncFavBtnState(favBtn.dataset.lesson);
+    });
   }
 
   if (document.readyState === "loading") {

@@ -391,6 +391,35 @@ window.UserData = {
     return { ok: true };
   },
 
+  async getFavoriteLessons() {
+    const uid = this._uid();
+    const db = this._db();
+    if (!uid || !db) return [];
+
+    const snap = await db.collection("favoriteLessons").where("userId", "==", uid).get();
+    return snap.docs.map((d) => d.data().lessonId);
+  },
+
+  async toggleFavoriteLesson(lessonId) {
+    const uid = this._uid();
+    const db = this._db();
+    if (!uid || !db) return { ok: false, error: "יש להתחבר כדי לשמור שיעורים שאהבתם" };
+
+    const ref = db.collection("favoriteLessons").doc(`${uid}_${lessonId}`);
+    const doc = await ref.get();
+    if (doc.exists) {
+      await ref.delete();
+      return { ok: true, favorited: false };
+    }
+
+    await ref.set({
+      userId: uid,
+      lessonId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    return { ok: true, favorited: true };
+  },
+
   async recordPlay({ gameId, gameTitle, customGameId, isCustom, score, reason }) {
     const uid = this._uid();
     const db = this._db();

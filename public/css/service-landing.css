@@ -93,7 +93,7 @@ body.page-ready-lessons .svc-filter-bar {
   border-radius: 18px;
   box-shadow: var(--shadow-sticker);
   background: #cdf5ee;
-  margin-bottom: clamp(44px, 7vw, 64px);
+  margin-bottom: clamp(60px, 8.5vw, 84px);
 }
 
 body.page-ready-lessons .svc-filter-trigger {
@@ -574,7 +574,7 @@ body.page-worksheets .svc-tile-image--turquoise.is-zoomed {
   align-items: stretch;
   max-width: 520px;
   margin: 0 auto 24px;
-  border: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border: 3px solid var(--ink);
   border-radius: 12px;
   background: var(--white);
 }
@@ -782,6 +782,205 @@ body.page-worksheets .svc-tile-image--turquoise.is-zoomed {
   flex: 1;
 }
 
+/* Game-builder — coloring-page style tiles: single-color frame, real game image, favorite + info controls */
+body.page-game-builder .svc-lesson-grid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 1100px;
+}
+
+body.page-game-builder .svc-lesson-preview {
+  position: relative;
+  background: #3aada0;
+  padding: 14px;
+  aspect-ratio: 1 / 1;
+}
+
+body.page-game-builder .svc-game-preview-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--white);
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+body.page-game-builder .svc-game-preview-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 12px;
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  font-weight: 900;
+  text-align: center;
+  color: var(--ink);
+}
+
+body.page-game-builder .svc-game-fav-btn {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+body.page-game-builder .svc-game-fav-btn:hover,
+body.page-game-builder .svc-game-fav-btn:focus-visible {
+  transform: scale(1.08);
+}
+
+body.page-game-builder .svc-game-fav-btn svg {
+  width: 26px;
+  height: 26px;
+  overflow: visible;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.35));
+}
+
+body.page-game-builder .svc-game-fav-btn.is-active svg {
+  fill: #ff4d6d;
+  stroke: #ff4d6d;
+}
+
+body.page-game-builder .svc-lesson-body {
+  background: #eafffb;
+}
+
+body.page-game-builder .svc-lesson-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+body.page-game-builder .svc-lesson-head h3 {
+  flex: 1;
+  min-width: 0;
+}
+
+body.page-game-builder .svc-lesson-info-toggle {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #d8fbf4;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: background 0.12s, transform 0.12s;
+}
+
+body.page-game-builder .svc-lesson-info-toggle:hover,
+body.page-game-builder .svc-lesson-info-toggle:focus-visible {
+  background: #baf3ea;
+  transform: translateY(-1px);
+}
+
+body.page-game-builder .svc-custom-tile {
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  width: 100%;
+}
+
+body.page-game-builder .svc-custom-tile-preview {
+  background: repeating-linear-gradient(45deg, #eafffb, #eafffb 10px, #d8fbf4 10px, #d8fbf4 20px);
+  border: 3px dashed var(--ink);
+  border-bottom: 3px dashed var(--ink);
+  transition: background-color 0.15s ease;
+}
+
+body.page-game-builder .svc-custom-tile-plus {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1;
+}
+
+body.page-game-builder .svc-custom-tile-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+body.page-game-builder .svc-custom-tile-title {
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+body.page-game-builder .svc-custom-tile:hover .svc-custom-tile-preview,
+body.page-game-builder .svc-custom-tile:focus-visible .svc-custom-tile-preview {
+  background-color: #d8fbf4;
+}
+
+/* Info popover — subject + level, opened from the small "i" toggle on each game card */
+.svc-game-info-pop {
+  position: fixed;
+  z-index: 60;
+  min-width: 140px;
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: var(--shadow-sticker);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.svc-game-info-pop.hidden {
+  display: none;
+}
+
+.svc-game-info-pop p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 0.85rem;
+}
+
+.svc-game-info-pop p span {
+  color: var(--body);
+  font-weight: 700;
+}
+
+.svc-game-info-pop p strong {
+  color: var(--ink);
+  font-weight: 900;
+}
+
 .svc-family-steps {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -860,6 +1059,7 @@ body.page-worksheets .svc-tile-image--turquoise.is-zoomed {
 
 #create.clean-section--soft {
   background: transparent !important;
+  padding-top: 24px;
 }
 
 #create .clean-section-title {

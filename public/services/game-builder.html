@@ -9,11 +9,11 @@
   <meta name="description" content="מעלים תוכן לימודי — המערכת יוצרת משחק. פשוט, מהיר, מוכן לכיתה."/>
   <link rel="stylesheet" href="/styles.css?v=56"/>
   <link rel="stylesheet" href="/css/clean-site.css?v=70"/>
-  <link rel="stylesheet" href="/css/service-landing.css?v=28"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=33"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
-<body class="clean-site service-panel">
+<body class="clean-site service-panel page-game-builder">
 
   <div class="scroll-progress" id="scrollProgress"></div>
   <div class="loader" id="loader"><div class="loader-bar"></div></div>
@@ -58,8 +58,6 @@
 
     <section class="clean-section clean-section--soft scroll-section" id="create">
       <div class="container">
-        <h2 class="clean-section-title font-cartoon">משחקים מוכנים</h2>
-
         <div class="svc-filter-bar" id="gameFilters">
           <div class="svc-filter-dropdown" data-filter-key="subject">
             <button type="button" class="svc-filter-trigger" id="filterGameSubjectTrigger" aria-expanded="false">
@@ -88,12 +86,6 @@
 
         <div class="svc-lesson-grid" id="readyGamesGrid"></div>
         <p class="svc-lesson-empty hidden" id="readyGamesEmpty">לא נמצאו משחקים בסינון הזה.</p>
-
-        <div class="svc-custom-cta">
-          <button type="button" class="btn btn-outline btn-candy font-cartoon" id="toggleCustomCreateBtn" aria-expanded="false" aria-controls="svcCreateBox">
-            + יצירת משחק מותאם אישית
-          </button>
-        </div>
 
         <div class="svc-create-box hidden" id="svcCreateBox">
           <form id="svcCreateForm">

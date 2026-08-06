@@ -280,7 +280,7 @@
       const meta = window.PlaySession?.getMeta() || {};
       const subject = meta.subject || "english";
       const pickerGames = [
-        { id: "word-memory", title: "זיכרון", icon: "🧠" },
+        { id: "vocabulary-duel", title: "טריוויה", icon: "⚔️" },
         { id: "hangman", title: "איש תלוי", icon: "🎯" },
         { id: "spot-diff", title: "מצא הבדלים", icon: "🔍" },
         { id: "tower-stack", title: "מגדל קוביות", icon: "🗼" },

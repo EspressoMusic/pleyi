@@ -122,7 +122,7 @@
           entry.target.classList.toggle("in-view", entry.isIntersecting);
         });
       },
-      { threshold: 0.08, rootMargin: "0px 0px -5% 0px" }
+      { threshold: 0, rootMargin: "0px 0px -5% 0px" }
     );
     sections.forEach((s) => sectionObs.observe(s));
   }

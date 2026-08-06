@@ -41,7 +41,6 @@ window.GAMES_CATALOG = {
   english: [
     { id: "tower-stack", title: "מגדל מילים", desc: "בנו מגדל מילים מהיר נגד השעון", icon: "🗼", color: "purple", tags: ["אוצר מילים", "מהירות"], level: "hard" },
     { id: "vocabulary-duel", title: "טריוויה", desc: "מה התרגום? ענו מהר על השאלות", icon: "⚔️", color: "yellow", tags: ["חידון", "תרגום"], level: "easy" },
-    { id: "word-memory", title: "זיכרון מילים", desc: "התאימו כל מילה לתרגום שלה", icon: "🧠", color: "pink", tags: ["זיכרון", "תרגום"], level: "easy" },
     { id: "hangman", title: "איש תלוי", desc: "נחשו את המילה לפני שנגמרו הניסיונות", icon: "🎯", color: "purple", tags: ["אוצר מילים", "חידון"], level: "medium" },
     { id: "spot-diff", title: "מצא את ההבדלים", desc: "מצאו את הפריט השונה בין שני הלוחות", icon: "🔍", color: "yellow", tags: ["זיכרון", "חידון"], level: "medium" },
   ],
@@ -49,20 +48,14 @@ window.GAMES_CATALOG = {
 
   lifeskills: [
     { id: "vocabulary-duel", title: "Duel מיומנויות", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"], level: "easy" },
-    { id: "word-memory", title: "זיכרון מיומנויות", desc: "התאימו מושג להסבר שלו", icon: "", color: "pink", tags: ["זיכרון", "הבנה"], level: "easy" },
     { id: "hangman", title: "נחשו את המושג", desc: "נחשו מושג מכישורי חיים לפני שנגמרו הניסיונות", icon: "", color: "purple", tags: ["מיומנויות", "חידון"], level: "medium" },
-    { id: "sentence-scramble", title: "סדר משפט", desc: "סדרו מילים למשפט שלם על מיומנות חיים", icon: "", color: "teal", tags: ["הבנה", "מיומנויות"], level: "hard" },
     { id: "tower-stack", title: "מגדל מיומנויות", desc: "בנו מגדל — בחרו את ההסבר הנכון", icon: "", color: "purple", tags: ["מיומנויות", "מהירות"], level: "hard" },
     { id: "spot-diff", title: "מצא את ההבדל", desc: "מצאו את המושג או הרעיון השונה", icon: "", color: "yellow", tags: ["הבנה", "זיכרון"], level: "medium" },
   ],
 
   science: [
     { id: "vocabulary-duel", title: "Duel מושגים", desc: "מה ההגדרה? ענו על מושגים כלליים", icon: "", color: "yellow", tags: ["חידון", "מושגים"], level: "easy" },
-    { id: "word-memory", title: "זיכרון מושגים", desc: "התאימו מושג להגדרה", icon: "", color: "pink", tags: ["זיכרון", "מושגים"], level: "easy" },
-    { id: "math-blitz", title: "ברק ידע", desc: "עובדות ומושגים בקצב מהיר", icon: "", color: "yellow", tags: ["מהירות", "מושגים"], level: "hard" },
     { id: "spot-diff", title: "השוואת תופעות", desc: "מצאו את ההבדל בין שני מצבים", icon: "", color: "teal", tags: ["מושגים", "זיכרון"], level: "medium" },
-    { id: "word-runner", title: "רץ למושג", desc: "רדפו אחרי התשובה הנכונה בנתיב", icon: "", color: "teal", tags: ["מהירות", "מושגים"], level: "medium" },
-    { id: "candy-match", title: "התאמת קטגוריות", desc: "התאימו פריטים מאותה קטגוריה", icon: "", color: "pink", tags: ["מושגים", "זיכרון"], level: "medium" },
   ],
 
   subjects: {
@@ -137,7 +130,7 @@ window.GAMES_CATALOG = {
 
   compatibleRoomGames(items) {
     const roomGames = [
-      "word-memory",
+      "vocabulary-duel",
       "hangman",
       "spot-diff",
       "tower-stack",
@@ -146,16 +139,15 @@ window.GAMES_CATALOG = {
 
     const n = items.length;
     const out = [];
-    if (n >= 2) out.push("word-memory");
     if (n >= 1) out.push("hangman");
     if (n >= 3) out.push("spot-diff", "tower-stack");
+    if (n >= 4) out.push("vocabulary-duel");
     return out.filter((id) => roomGames.includes(id));
   },
 
   pickGameForContent(items, subject) {
     const n = items.length;
     if (subject === "math") return null;
-    if (n >= 6) return "word-memory";
     if (n >= 4) return "vocabulary-duel";
     if (n >= 3) return "tower-stack";
     return "vocabulary-duel";
