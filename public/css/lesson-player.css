@@ -26,6 +26,10 @@ body.page-ready-lessons .svc-lesson-grid {
     border-radius: 16px;
   }
 
+  body.page-ready-lessons .svc-lesson-title-wrap {
+    padding-bottom: 38px;
+  }
+
   body.page-ready-lessons .svc-lesson-name,
   body.page-ready-lessons .svc-lesson-part {
     font-size: clamp(0.82rem, 3.6vw, 1rem);
@@ -33,6 +37,7 @@ body.page-ready-lessons .svc-lesson-grid {
   }
 
   body.page-ready-lessons .svc-lesson-preview .js-lesson-open {
+    bottom: 10px;
     min-height: 26px;
     padding: 5px 8px;
     font-size: clamp(0.64rem, 2.6vw, 0.76rem);
@@ -58,8 +63,6 @@ body.page-ready-lessons .svc-lesson-grid {
   body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
   body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
     padding-top: 1.4rem;
-    padding-inline-start: 1.9rem;
-    padding-inline-end: 1.1rem;
   }
 }
 
@@ -93,7 +96,9 @@ body.page-ready-lessons .svc-lesson-preview {
   border-radius: 20px;
   box-shadow: var(--shadow-sticker);
   background: var(--lesson-turquoise) !important;
-  overflow: visible;
+  /* overflow must stay non-visible: as a flex item, "visible" makes long titles
+     grow this box past its aspect-ratio square instead of respecting it */
+  overflow: hidden;
   transform: scale(1);
   transform-origin: center center;
   transition: transform 0.32s cubic-bezier(0.34, 1.25, 0.64, 1), box-shadow 0.28s ease;
@@ -114,16 +119,15 @@ body.page-ready-lessons .svc-lesson-preview--orange {
 }
 
 body.page-ready-lessons .svc-lesson-title-wrap {
-  flex: 1;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
   width: 100%;
-  padding: 0 8px;
-  min-height: 0;
-  position: relative;
+  padding: 0 8px 50px;
   z-index: 0;
   pointer-events: none;
 }
@@ -155,11 +159,26 @@ body.page-ready-lessons .svc-lesson-part {
   opacity: 1;
 }
 
+/* When a lesson has both a subject and a specific part, the part (e.g. "הלב")
+   is the headline and the subject (e.g. "גוף האדם") is a small label under it. */
+body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-part {
+  order: -1;
+  font-size: clamp(1.5rem, 6vw, 2.15rem);
+}
+
+body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-name {
+  font-size: clamp(0.8rem, 2.8vw, 0.95rem);
+  font-weight: 700;
+}
+
 body.page-ready-lessons .svc-lesson-preview .js-lesson-open {
-  flex-shrink: 0;
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 1;
   width: 86%;
-  margin-inline: auto;
-  margin-bottom: 0;
+  margin: 0;
   padding: 7px 12px;
   min-height: 34px;
   font-size: clamp(0.82rem, 2.8vw, 0.92rem);
@@ -261,8 +280,6 @@ body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.h
 body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
 body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
   padding-top: 1.85rem;
-  padding-inline-start: 2.85rem;
-  padding-inline-end: 1.65rem;
   box-sizing: border-box;
 }
 
@@ -810,11 +827,11 @@ body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-video .lp
 }
 
 body.page-ready-lessons .lesson-player.is-expanded .lp-slide-title {
-  font-size: clamp(2.2rem, 7vh, 4.4rem);
+  font-size: calc(var(--lp-fit, 1) * clamp(2.2rem, 7vh, 4.4rem));
 }
 
 body.page-ready-lessons .lesson-player.is-expanded .lp-slide-body {
-  font-size: clamp(1.4rem, 4vh, 2.15rem);
+  font-size: calc(var(--lp-fit, 1) * clamp(1.4rem, 4vh, 2.15rem));
   max-width: 46rem;
 }
 
@@ -823,16 +840,16 @@ body.page-ready-lessons .lesson-player.is-expanded .lp-slide-list {
 }
 
 body.page-ready-lessons .lesson-player.is-expanded .lp-slide-list li {
-  padding: 14px 18px;
-  font-size: 1.2rem;
+  padding: calc(var(--lp-fit, 1) * 14px) 18px;
+  font-size: calc(var(--lp-fit, 1) * 1.2rem);
 }
 
 body.page-ready-lessons .lesson-player.is-expanded .lp-slide-list li span:last-child {
-  font-size: 1.1rem;
+  font-size: calc(var(--lp-fit, 1) * 1.1rem);
 }
 
 body.page-ready-lessons .lesson-player.is-expanded .lp-word {
-  font-size: 1.3rem;
+  font-size: calc(var(--lp-fit, 1) * 1.3rem);
 }
 
 body.page-ready-lessons .lesson-player.is-expanded .lp-slide-games-intro {
@@ -1054,7 +1071,9 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   border: none;
   border-radius: 0;
   background: transparent;
-  padding: clamp(12px, 2.5vh, 28px) clamp(24px, 6vw, 52px);
+  /* --lp-fit is set by ready-lessons.js to shrink dense slides (long glossary
+     lists, etc.) so they fit without scrolling — see fitSlideContent(). */
+  padding: calc(var(--lp-fit, 1) * clamp(12px, 2.5vh, 28px)) clamp(24px, 6vw, 52px);
   box-shadow: none;
   position: relative;
   margin-block: auto;
@@ -1068,7 +1087,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(8px, 2.2vh, 18px);
+  gap: calc(var(--lp-fit, 1) * clamp(8px, 2.2vh, 18px));
   text-align: center;
   width: 100%;
   max-width: 34rem;
@@ -1087,14 +1106,14 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  min-height: clamp(2.6rem, 9vh, 5.6rem);
+  min-height: calc(var(--lp-fit, 1) * clamp(2.6rem, 9vh, 5.6rem));
 }
 
 .lp-slide-body-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(6px, 1.8vh, 14px);
+  gap: calc(var(--lp-fit, 1) * clamp(6px, 1.8vh, 14px));
   width: 100%;
 }
 
@@ -1133,7 +1152,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(8px, 2.2vh, 18px);
+  gap: calc(var(--lp-fit, 1) * clamp(8px, 2.2vh, 18px));
   width: 100%;
   min-width: 0;
 }
@@ -1206,7 +1225,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
     "visual glossary";
   direction: ltr;
   align-items: center;
-  gap: clamp(14px, 2.5vw, 24px);
+  gap: calc(var(--lp-fit, 1) * clamp(14px, 2.5vw, 24px));
   width: 100%;
 }
 
@@ -1215,7 +1234,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   margin: 0;
   max-width: none;
   text-align: center;
-  font-size: clamp(1.05rem, 3.2vh, 1.4rem);
+  font-size: calc(var(--lp-fit, 1) * clamp(1.05rem, 3.2vh, 1.4rem));
   font-weight: 700;
   line-height: 1.5;
   color: color-mix(in srgb, var(--ink) 78%, transparent);
@@ -1269,18 +1288,15 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   display: grid;
   grid-template-columns: 1fr;
   direction: rtl;
-  gap: clamp(10px, 1.8vh, 14px);
+  gap: calc(var(--lp-fit, 1) * clamp(10px, 1.8vh, 14px));
   width: 100%;
   max-width: none;
 }
 
 .lp-slide-glossary-item {
-  padding: clamp(12px, 2.2vh, 16px) clamp(16px, 3vw, 22px);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
-  font-size: clamp(0.92rem, 2.1vh, 1.08rem);
-  font-weight: 700;
+  padding: 0;
+  font-size: calc(var(--lp-fit, 1) * clamp(1.15rem, 2.8vh, 1.4rem));
+  font-weight: 800;
   line-height: 1.5;
   text-align: right;
   box-sizing: border-box;
@@ -1456,7 +1472,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
 
 .lp-slide-title {
   margin: 0;
-  font-size: clamp(1.4rem, 5.8vh, 2.6rem);
+  font-size: calc(var(--lp-fit, 1) * clamp(1.4rem, 5.8vh, 2.6rem));
   font-weight: 900;
   -webkit-text-stroke: 0.5px currentColor;
   color: var(--ink);
@@ -1468,7 +1484,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   margin: 0;
   max-width: 36rem;
   padding-inline: clamp(8px, 2.5vw, 18px);
-  font-size: clamp(1.05rem, 3.2vh, 1.4rem);
+  font-size: calc(var(--lp-fit, 1) * clamp(1.05rem, 3.2vh, 1.4rem));
   font-weight: 700;
   line-height: 1.55;
   color: color-mix(in srgb, var(--ink) 78%, transparent);
@@ -1680,7 +1696,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 10px;
+  gap: calc(var(--lp-fit, 1) * 10px);
   width: 100%;
   max-width: 320px;
 }
@@ -1690,7 +1706,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 14px;
+  padding: calc(var(--lp-fit, 1) * 10px) 14px;
   border-radius: 10px;
   background: #f7fdfc;
   border: 1px solid color-mix(in srgb, var(--memteal) 25%, transparent);
@@ -1698,7 +1714,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
 }
 
 .lp-slide-list li span:last-child {
-  font-size: 0.95rem;
+  font-size: calc(var(--lp-fit, 1) * 0.95rem);
   color: color-mix(in srgb, var(--ink) 65%, transparent);
 }
 
@@ -1713,7 +1729,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   background: color-mix(in srgb, var(--memteal) 16%, transparent);
   color: var(--ink);
   font: inherit;
-  font-size: 1.05rem;
+  font-size: calc(var(--lp-fit, 1) * 1.05rem);
   font-weight: 900;
   cursor: pointer;
   transition: background 0.12s, transform 0.12s, color 0.12s;
@@ -1790,7 +1806,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: calc(var(--lp-fit, 1) * 16px);
   width: 100%;
 }
 
@@ -1807,7 +1823,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: calc(var(--lp-fit, 1) * 12px);
   width: 100%;
   max-width: 420px;
 }
@@ -1817,8 +1833,8 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 18px 16px;
+  gap: calc(var(--lp-fit, 1) * 6px);
+  padding: calc(var(--lp-fit, 1) * 18px) calc(var(--lp-fit, 1) * 16px);
   border: 3px solid var(--ink);
   border-radius: 14px;
   background: #fffef5;
@@ -1834,11 +1850,11 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
 }
 
 .lp-game-btn-icon {
-  font-size: 1.6rem;
+  font-size: calc(var(--lp-fit, 1) * 1.6rem);
 }
 
 .lp-game-btn-label {
-  font-size: 0.95rem;
+  font-size: calc(var(--lp-fit, 1) * 0.95rem);
   font-weight: 900;
   color: var(--ink);
 }

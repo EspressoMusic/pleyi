@@ -197,10 +197,11 @@
         return shuffle(pool).slice(0, n);
       },
       one(exclude = []) {
-        return this.pick(1, exclude)[0];
+        const picked = this.pick(1, exclude);
+        return picked.length ? picked[0] : this.pick(1, [])[0];
       },
-      quizQuestion() {
-        const correct = this.one();
+      quizQuestion(exclude = []) {
+        const correct = this.one(exclude);
         if (correct.options?.length >= 2) {
           return {
             word: correct.en,

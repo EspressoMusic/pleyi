@@ -18,9 +18,9 @@
         ],
       },
     ],
-    "vocabulary-duel": [{ key: "disableTimer", label: "בטל טיימר", default: false }],
-    "tower-stack": [{ key: "disableTimer", label: "בטל טיימר", default: false }],
-    "math-blitz": [{ key: "disableTimer", label: "בטל טיימר", default: false }],
+    "vocabulary-duel": [{ key: "disableTimer", label: "בטל טיימר", default: true }],
+    "tower-stack": [{ key: "disableTimer", label: "בטל טיימר", default: true }],
+    "math-blitz": [{ key: "disableTimer", label: "בטל טיימר", default: true }],
   };
 
   function loadAll() {

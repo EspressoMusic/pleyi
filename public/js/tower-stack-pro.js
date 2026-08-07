@@ -12,10 +12,7 @@ window.TowerStackPro = {
               <div class="ts-pro-stat"><span>❤️</span><div class="ts-pro-hearts" id="tsProLives"></div></div>
               <div class="ts-pro-stat"><span>🔥</span><strong id="tsProStreak">0</strong></div>
               <div class="ts-pro-stat"><span>🏗️</span><strong id="tsProHeight">0</strong></div>
-            </div>
-            <div class="ts-pro-word-bar hidden" id="tsProWordBar">
-              <span class="ts-pro-label">מילה:</span>
-              <strong id="tsProEnWord" dir="ltr">—</strong>
+              <div class="ts-pro-stat"><span>שלב</span><strong id="tsProStage">1</strong></div>
             </div>
             <div class="ts-pro-timer hidden" id="tsProTimer"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" id="tsProTimerRing"/></svg><span id="tsProTimerNum">8</span></div>
           </div>
@@ -27,7 +24,7 @@ window.TowerStackPro = {
         <div class="ts-pro-overlay" id="tsProStart">
           <div class="ts-pro-overlay-card">
             <h2>מגדל מילים</h2>
-            <p>קוביות נופלות מהשמיים — מילה באנגלית, ואז פירוש בעברית.<br>החליטו נכון או לא נכון. בנו את המגדל הגבוה ביותר!</p>
+            <p>קוביות נופלות מהשמיים — מילה, ואז הפירוש שלה.<br>החליטו נכון או לא נכון. בנו את המגדל הגבוה ביותר!</p>
             <button type="button" class="ts-pro-start-btn" id="tsProStartBtn">▶ התחל</button>
           </div>
         </div>
@@ -47,6 +44,7 @@ window.TowerStackPro = {
     let score = 0;
     let lives = 3;
     let streak = 0;
+    let stage = 0;
     let tower = [];
     let falling = null;
     let resolveAnim = null;
@@ -162,13 +160,14 @@ window.TowerStackPro = {
       ).join("");
       document.getElementById("tsProStreak").textContent = String(streak);
       document.getElementById("tsProHeight").textContent = String(Math.floor(tower.length / 2));
+      document.getElementById("tsProStage").textContent = `${stage}/${D.VOCAB.length}`;
     };
 
     const pickWord = () => {
       const pool = D.VOCAB.filter((v) => !usedWords.includes(v.en));
       const item = pool.length ? pool[Math.floor(Math.random() * pool.length)] : D.one();
       usedWords.push(item.en);
-      if (usedWords.length > D.VOCAB.length - 2) usedWords = [item.en];
+      if (usedWords.length >= D.VOCAB.length) usedWords = [item.en];
       return item;
     };
 
@@ -188,10 +187,11 @@ window.TowerStackPro = {
 
     const startEnFall = () => {
       currentWord = pickWord();
+      stage = (stage % D.VOCAB.length) + 1;
+      updateHud();
       phase = "en-fall";
       document.getElementById("tsProControls").classList.add("hidden");
       document.getElementById("tsProTimer").classList.add("hidden");
-      document.getElementById("tsProWordBar").classList.add("hidden");
       GE.sfxWhoosh();
       falling = makeBlock("en", currentWord.en, "", EN_COLOR);
       trails = [];
@@ -202,8 +202,6 @@ window.TowerStackPro = {
       const wrong = D.one([currentWord.en]);
       const displayHe = isCorrectTranslation ? currentWord.he : wrong.he;
       phase = "he-fall";
-      document.getElementById("tsProWordBar").classList.remove("hidden");
-      document.getElementById("tsProEnWord").textContent = currentWord.en;
       GE.sfxWhoosh();
       falling = makeBlock("he", displayHe, "", HE_COLOR);
       falling.targetY = nextBlockTargetY();
@@ -471,6 +469,7 @@ window.TowerStackPro = {
       score = 0;
       lives = 3;
       streak = 0;
+      stage = 0;
       tower = [];
       usedWords = [];
       cameraY = 0;

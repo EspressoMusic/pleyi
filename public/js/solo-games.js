@@ -165,6 +165,7 @@ const SoloGames = {
     let speed = 2.2;
     let level = 1;
     let target = null;
+    let lastTargetWord = null;
     let words = [];
     let spawnTimer = 0;
     let lastTs = 0;
@@ -182,7 +183,8 @@ const SoloGames = {
     };
 
     const newTarget = () => {
-      target = D.one();
+      target = D.one(lastTargetWord ? [lastTargetWord] : []);
+      lastTargetWord = target.en;
       document.getElementById("wrHint").textContent = `${target.emoji || ""} ${target.he} (${target.hint})`;
     };
 
@@ -455,7 +457,18 @@ const SoloGames = {
     let score = 0;
     const maxRounds = soloCustomVocabRounds(10);
 
+    const syncRoundHud = () => {
+      const pill = document.getElementById("playQuestionPill");
+      const label = document.getElementById("playQuestionLabel");
+      const el = document.getElementById("playQuestionNum");
+      if (!pill || !el) return;
+      pill.classList.remove("hidden");
+      if (label) label.textContent = "סיבוב";
+      el.textContent = `${round + 1}/${maxRounds}`;
+    };
+
     const render = () => {
+      syncRoundHud();
       const items = D.pick(6);
       const diffIdx = Math.floor(Math.random() * 6);
       const wrong = D.one([items[diffIdx].en]);
@@ -465,13 +478,9 @@ const SoloGames = {
       root.innerHTML = `
         <div class="solo-game-wrap">
           ${round === 0 ? SoloGames.overlayHtml("מצא את ההבדלים", "לחצו על הפריט השונה בין שני הלוחות.", "sd") : ""}
-          <div class="solo-hud">
-            <span>סיבוב ${round + 1}/${maxRounds}</span>
-            <span>ניקוד: <strong id="sdScore">${score}</strong></span>
-          </div>
           <div class="spot-solo-board">
-            <div class="spot-solo-panel"><h4>A</h4><div class="spot-solo-grid" id="sdLeft"></div></div>
-            <div class="spot-solo-panel"><h4>B</h4><div class="spot-solo-grid" id="sdRight"></div></div>
+            <div class="spot-solo-panel"><h4>1</h4><div class="spot-solo-grid" id="sdLeft"></div></div>
+            <div class="spot-solo-panel"><h4>2</h4><div class="spot-solo-grid" id="sdRight"></div></div>
           </div>
           <div id="sdMsg"></div>
         </div>`;
@@ -480,40 +489,50 @@ const SoloGames = {
 
       const cell = (item, i, side) =>
         `<button type="button" class="spot-solo-cell" data-i="${i}" data-side="${side}">
-          <span class="emoji">${item.emoji || "⭐"}</span>
           <span dir="ltr">${item.en}</span>
         </button>`;
 
       document.getElementById("sdLeft").innerHTML = left.map((it, i) => cell(it, i, "left")).join("");
       document.getElementById("sdRight").innerHTML = right.map((it, i) => cell(it, i, "right")).join("");
 
-      const onPick = (idx) => {
-        if (idx === diffIdx) {
+      const onPick = (idx, btn) => {
+        root.querySelectorAll(".spot-solo-cell").forEach((c) => (c.disabled = true));
+        const correct = idx === diffIdx;
+        btn?.classList.add(correct ? "correct" : "wrong");
+        if (correct) {
+          window.GameEngine?.launchConfetti?.();
+          window.GameEngine?.sfxCorrect?.();
           score += 15;
-          ui.setScore(score);
-          round++;
-          if (round >= maxRounds) {
+        } else {
+          score = Math.max(0, score - 5);
+        }
+        ui.setScore(score);
+        round++;
+        const isLast = round >= maxRounds;
+        document.getElementById("sdMsg").innerHTML = `
+          <div class="solo-msg ${correct ? "ok" : "bad"}">${correct ? "כל הכבוד!" : "אופס... לא נורא! בפעם הבאה!"}</div>
+          <button type="button" class="solo-play-again" id="sdNextBtn">${isLast ? "סיום" : "הבא"}</button>`;
+        document.getElementById("sdNextBtn").addEventListener("click", () => {
+          if (isLast) {
             root.innerHTML = `<div class="solo-msg ok">כל הכבוד! ניקוד: ${score}<br><button class="solo-play-again" onclick="location.reload()">שחק שוב</button></div>`;
             ui.onGameOver(score, "סיום");
-            return;
+          } else {
+            render();
           }
-          setTimeout(render, 400);
-        } else {
-          const btn = root.querySelector(`[data-i="${idx}"]`);
-          btn?.classList.add("wrong");
-          score = Math.max(0, score - 5);
-          ui.setScore(score);
-          document.getElementById("sdMsg").innerHTML = `<div class="solo-msg bad">לא נכון! -5</div>`;
-        }
+        });
       };
 
       root.querySelectorAll(".spot-solo-cell").forEach((btn) => {
-        btn.addEventListener("click", () => onPick(Number(btn.dataset.i)));
+        btn.addEventListener("click", () => onPick(Number(btn.dataset.i), btn));
       });
     };
 
     render();
-    return () => {};
+    return () => {
+      document.getElementById("playQuestionPill")?.classList.add("hidden");
+      const label = document.getElementById("playQuestionLabel");
+      if (label) label.textContent = "שאלה";
+    };
   },
 
   /* ── Candy Match 3 ── */
@@ -673,6 +692,7 @@ const SoloGames = {
     let round = 0;
     let timeLeft = 0;
     let timer = null;
+    let lastWanted = null;
     const maxRounds = 12;
 
     const nextRound = () => {
@@ -682,7 +702,8 @@ const SoloGames = {
         ui.onGameOver(score, "סיום");
         return;
       }
-      const wanted = D.one();
+      const wanted = D.one(lastWanted ? [lastWanted] : []);
+      lastWanted = wanted.en;
       const shelf = D.shuffle([wanted, ...D.pick(5, [wanted.en])]).slice(0, 6);
       timeLeft = 8;
       round++;
@@ -753,6 +774,7 @@ const SoloGames = {
     const D = this._data();
     let score = 0;
     let q = 0;
+    let lastWord = null;
     const total = soloCustomVocabRounds(10);
     let timer = null;
     let timeLeft = 0;
@@ -795,7 +817,8 @@ const SoloGames = {
         ui.onGameOver(score, "סיום");
         return;
       }
-      const question = D.quizQuestion();
+      const question = D.quizQuestion(lastWord ? [lastWord] : []);
+      lastWord = question.word;
       q++;
       const showTimer = timerEnabled();
       syncPlayHud(q, QUESTION_TIME, showTimer);
@@ -1122,6 +1145,16 @@ const SoloGames = {
     let wrong = 0;
     const maxWrong = 7;
     let currentItem = null;
+    let lastWord = null;
+
+    const pickShortWord = (exclude) => {
+      const len = (v) => (v.en || "").replace(/\s/g, "").length;
+      let pool = D.VOCAB.filter((v) => len(v) <= 7 && v.en !== exclude);
+      if (pool.length < 3) pool = D.VOCAB.filter((v) => len(v) <= 10 && v.en !== exclude);
+      if (!pool.length) pool = D.VOCAB.filter((v) => v.en !== exclude);
+      if (!pool.length) pool = D.VOCAB;
+      return D.shuffle(pool)[0];
+    };
 
     const charMatches = (ch, letter) =>
       isHebrew ? soloHebrewChar(ch) === soloHebrewChar(letter) : ch === letter;
@@ -1163,7 +1196,9 @@ const SoloGames = {
                 <div class="hangman-solo-lives" id="hmLives" aria-label="ניסיונות שנותרו"></div>
                 <div class="hangman-solo-slots" id="hmSlots"></div>
               </div>
-              <button type="button" class="hangman-solo-hint-btn btn btn-candy font-cartoon" id="hmHintBtn">💡 רמז — חשיפת אות</button>
+              <button type="button" class="hangman-solo-hint-btn btn btn-candy font-cartoon" id="hmHintBtn" aria-label="רמז — חשיפת אות">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.3V16h6v-.2c0-.9.4-1.7 1-2.3A6 6 0 0 0 12 3Z" fill="#FFE135" stroke="var(--ink)" stroke-width="2"/></svg>
+              </button>
               <div class="hangman-solo-letters" id="hmLetters"></div>
               <div class="hangman-solo-result hidden" id="hmResult"></div>
             </div>
@@ -1246,6 +1281,7 @@ const SoloGames = {
     const handleWin = () => {
       score += 20;
       ui.setScore(score);
+      window.GameEngine?.launchConfetti?.();
       document.getElementById("hmStage")?.classList.add("is-win");
       const totalWords = soloIsCustomContent() ? wordsDone : 0;
       const hasMore = soloIsCustomContent() ? wordQueue.length > 0 : false;
@@ -1296,7 +1332,12 @@ const SoloGames = {
       const stored = isHebrew ? soloHebrewChar(letter) : letter;
       guessed.push(stored);
       const correct = [...word].some((ch) => ch !== " " && charMatches(ch, letter));
-      if (!correct) wrong++;
+      if (correct) {
+        window.GameEngine?.sfxCorrect?.();
+      } else {
+        wrong++;
+        window.GameEngine?.sfxWrong?.();
+      }
 
       renderSlots(correct ? [...word].findIndex((ch) => ch !== " " && charMatches(ch, letter)) : null);
       renderLives();
@@ -1362,7 +1403,8 @@ const SoloGames = {
         currentItem = wordQueue.shift();
         wordsDone++;
       } else {
-        currentItem = D.one();
+        currentItem = pickShortWord(lastWord);
+        lastWord = currentItem.en;
       }
       word = isHebrew ? String(currentItem.en || "").trim() : String(currentItem.en || "").toUpperCase();
       guessed = [];
@@ -1405,6 +1447,7 @@ const SoloGames = {
     const D = this._data();
     let score = 0;
     let round = 0;
+    let lastSentenceIdx = -1;
     const max = 8;
 
     const next = () => {
@@ -1413,7 +1456,12 @@ const SoloGames = {
         ui.onGameOver(score, "סיום");
         return;
       }
-      const s = D.SENTENCES[Math.floor(Math.random() * D.SENTENCES.length)];
+      let sIdx = Math.floor(Math.random() * D.SENTENCES.length);
+      if (D.SENTENCES.length > 1 && sIdx === lastSentenceIdx) {
+        sIdx = (sIdx + 1) % D.SENTENCES.length;
+      }
+      lastSentenceIdx = sIdx;
+      const s = D.SENTENCES[sIdx];
       const answer = s.words.join(" ");
       let bank = D.shuffle([...s.words]);
       let built = [];
@@ -1473,6 +1521,7 @@ const SoloGames = {
     const D = this._data();
     let score = 0;
     let round = 0;
+    let lastItem = null;
     const max = 10;
 
     const next = () => {
@@ -1481,7 +1530,8 @@ const SoloGames = {
         ui.onGameOver(score, "סיום");
         return;
       }
-      const item = D.one();
+      const item = D.one(lastItem ? [lastItem] : []);
+      lastItem = item.en;
       round++;
 
       root.innerHTML = `

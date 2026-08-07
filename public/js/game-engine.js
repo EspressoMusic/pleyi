@@ -243,8 +243,13 @@ window.GameEngine = {
       ctx.font = `${Math.round(h * 0.38)}px serif`;
       ctx.fillText(emoji, x, dy + h * 0.32);
     }
-    const fontSize = Math.min(h * 0.38, Math.max(14, w / (text.length * 0.52)));
+    let fontSize = Math.min(h * 0.38, Math.max(14, w / (text.length * 0.52)));
+    const maxTextWidth = w - 20;
     ctx.font = `900 ${fontSize}px Google Sans, sans-serif`;
+    while (fontSize > 10 && ctx.measureText(text).width > maxTextWidth) {
+      fontSize -= 1;
+      ctx.font = `900 ${fontSize}px Google Sans, sans-serif`;
+    }
     ctx.direction = kind === "en" ? "ltr" : "rtl";
     ctx.fillText(text, x, dy + h * (emoji ? 0.64 : 0.52));
     ctx.direction = "inherit";

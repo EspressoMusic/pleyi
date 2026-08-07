@@ -4,8 +4,8 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "גוף האדם", volcano: "הר געש" };
-  const ACTIVE_SUBJECTS = ["lifeskills", "health", "volcano"];
+  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "נפלאות הבריאה" };
+  const ACTIVE_SUBJECTS = ["lifeskills", "health"];
   const LESSON_SHARE_PATH = "/services/ready-lessons.html";
   const LP_SPEAKER_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
 
@@ -22,7 +22,7 @@
       name: "הר געש",
       nameMain: "הר געש",
       namePart: "",
-      subject: "volcano",
+      subject: "health",
       grades: ["ag", "dv", "zh"],
       topic: "volcano",
       gradeLabel: "כל הכיתות",
@@ -206,14 +206,18 @@
       ],
     },
     health: {
-      ag: [{ id: "health", label: "הלב" }],
-      dv: [{ id: "health", label: "הלב" }],
-      zh: [{ id: "health", label: "הלב" }],
-    },
-    volcano: {
-      ag: [{ id: "volcano", label: "הר געש" }],
-      dv: [{ id: "volcano", label: "הר געש" }],
-      zh: [{ id: "volcano", label: "הר געש" }],
+      ag: [
+        { id: "health", label: "הלב" },
+        { id: "volcano", label: "הר געש" },
+      ],
+      dv: [
+        { id: "health", label: "הלב" },
+        { id: "volcano", label: "הר געש" },
+      ],
+      zh: [
+        { id: "health", label: "הלב" },
+        { id: "volcano", label: "הר געש" },
+      ],
     },
   };
 
@@ -1015,7 +1019,28 @@
     const bgMenu = $("#lessonPlayerBgMenu");
     const backdrop = $("#lessonPlayerBackdrop");
     const shell = $(".lesson-player-shell", player);
+    const slideWrapEl = $(".lesson-player-slide-wrap", player);
     if (!player || !slideEl) return;
+
+    // Dense slides (long glossary lists, etc.) can be taller than the slide
+    // viewport — shrink font sizes/gaps (via the --lp-fit CSS var consumed
+    // throughout lesson-player.css) instead of letting the slide scroll.
+    const LP_FIT_MIN = 0.65;
+    const LP_FIT_STEP = 0.03;
+    function fitSlideContent() {
+      if (!slideWrapEl) return;
+      slideEl.style.removeProperty("--lp-fit");
+      const available = slideWrapEl.clientHeight;
+      if (!available) return;
+      let scale = 1;
+      while (scale > LP_FIT_MIN + 1e-6 && slideEl.scrollHeight > available) {
+        scale = Math.max(LP_FIT_MIN, scale - LP_FIT_STEP);
+        slideEl.style.setProperty("--lp-fit", scale.toFixed(2));
+      }
+    }
+    if (typeof ResizeObserver !== "undefined" && slideWrapEl) {
+      new ResizeObserver(fitSlideContent).observe(slideWrapEl);
+    }
 
     if (player.parentElement !== document.body) {
       document.body.appendChild(player);
@@ -1448,6 +1473,7 @@
         slideEl.innerHTML = html;
         const inner = $(".lp-slide-inner", slideEl);
         if (!inner) return;
+        fitSlideContent();
         if (direction > 0) inner.classList.add("from-next");
         if (direction < 0) inner.classList.add("from-prev");
         requestAnimationFrame(() => {

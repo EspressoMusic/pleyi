@@ -846,6 +846,9 @@ body.coloring-zoom-open {
   font-weight: 900;
   text-align: center;
   border-bottom: 3px solid var(--ink);
+  /* must stay non-visible: as a flex item, "visible" lets long titles grow
+     this box past its aspect-ratio instead of respecting it, breaking equal card sizes */
+  overflow: hidden;
 }
 
 .svc-lesson-preview--teal { background: var(--memteal); }

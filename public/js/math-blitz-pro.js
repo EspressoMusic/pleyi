@@ -42,6 +42,11 @@ window.MathBlitzPro = {
     let buttons = [];
     let phase = "play";
     let feedback = null;
+    let timerEnabled = true;
+
+    const syncTimerSetting = () => {
+      timerEnabled = !window.PlaySettings?.get("math-blitz")?.disableTimer;
+    };
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -173,22 +178,24 @@ window.MathBlitzPro = {
         ctx.fillText(question.word, 0, 0);
         ctx.restore();
 
-        const ringR = 44;
-        const cx = w - 56;
-        const cy = 56;
-        ctx.strokeStyle = "rgba(255,255,255,0.2)";
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.strokeStyle = timeLeft < 4 ? "#e07070" : "#FFE135";
-        ctx.beginPath();
-        ctx.arc(cx, cy, ringR, -Math.PI / 2, -Math.PI / 2 + (timeLeft / maxTime) * Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = "#fff";
-        ctx.font = "900 22px Google Sans,sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(String(Math.ceil(timeLeft)), cx, cy + 8);
+        if (timerEnabled) {
+          const ringR = 44;
+          const cx = w - 56;
+          const cy = 56;
+          ctx.strokeStyle = "rgba(255,255,255,0.2)";
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.strokeStyle = timeLeft < 4 ? "#e07070" : "#FFE135";
+          ctx.beginPath();
+          ctx.arc(cx, cy, ringR, -Math.PI / 2, -Math.PI / 2 + (timeLeft / maxTime) * Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = "#fff";
+          ctx.font = "900 22px Google Sans,sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(String(Math.ceil(timeLeft)), cx, cy + 8);
+        }
       }
 
       buttons.forEach((b) => {
@@ -226,7 +233,7 @@ window.MathBlitzPro = {
       GE.updateParticles(particles, dt);
       GE.updatePopups(popups, dt);
 
-      if (phase === "play" && question) {
+      if (phase === "play" && question && timerEnabled) {
         timeLeft -= dt / 1000;
         if (timeLeft <= 0) pickAnswer("");
       }
@@ -288,6 +295,12 @@ window.MathBlitzPro = {
     canvas.addEventListener("touchstart", onPointer, { passive: true });
     document.getElementById("mbProStartBtn").addEventListener("click", startGame);
     document.getElementById("mbProRetry").addEventListener("click", startGame);
+    window.addEventListener("play-settings-change", (e) => {
+      if (e.detail?.gameId !== "math-blitz") return;
+      syncTimerSetting();
+    });
+
+    syncTimerSetting();
 
     return () => {
       running = false;

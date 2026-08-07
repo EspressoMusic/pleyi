@@ -53,7 +53,7 @@
   z-index: 40;
   isolation: isolate;
   margin-bottom: 0;
-  padding-bottom: 8px;
+  padding-bottom: 13px;
   border-radius: 8px 8px 0 0;
   justify-content: space-between;
   align-items: center;
@@ -372,7 +372,7 @@
   justify-content: center;
   justify-content: safe center;
   gap: clamp(14px, 4vh, 48px);
-  background: rgba(0, 102, 255, 0.92);
+  background: #0066ff;
   color: var(--white);
   text-align: center;
   padding: clamp(16px, 4vh, 56px) clamp(20px, 6vw, 56px);
@@ -461,44 +461,72 @@
 .wr-controls button:active { transform: scale(0.95); }
 
 .spot-solo-board {
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Straight divider between the two panels, instead of boxing each side */
+.spot-solo-board::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  background: var(--ink);
+  pointer-events: none;
 }
 
 .spot-solo-panel {
-  background: var(--white);
-  border: 4px solid var(--ink);
-  border-radius: var(--radius);
-  padding: 12px;
-  box-shadow: var(--shadow-sticker);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .spot-solo-panel h4 {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   font-weight: 900;
   text-align: center;
   color: var(--ink);
+  font-size: clamp(18px, 2.5vw, 28px);
+  flex-shrink: 0;
 }
 
 .spot-solo-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(8px, 1.6vw, 18px);
+  flex: 1;
+  min-height: 0;
 }
 
 .spot-solo-cell {
-  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px;
   border: 3px solid var(--ink);
-  border-radius: 12px;
-  background: var(--memyellow);
+  border-radius: 16px;
+  background: #009e8e;
   cursor: pointer;
   font-weight: 800;
-  font-size: 14px;
+  font-size: clamp(13px, 2.3vw, 28px);
+  line-height: 1.15;
+  transition: transform 0.12s ease;
 }
 
-.spot-solo-cell .emoji { font-size: 28px; display: block; margin-bottom: 4px; }
-.spot-solo-cell.correct { background: #6bbf8a; }
+.spot-solo-cell:active { transform: scale(0.94); }
+.spot-solo-cell.correct { background: #6bbf8a; animation: pop 0.4s ease; }
 .spot-solo-cell.wrong { background: #e07070; animation: shake 0.4s; }
 .spot-solo-cell:disabled { cursor: default; opacity: 0.85; }
 
@@ -506,6 +534,12 @@
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-6px); }
   75% { transform: translateX(6px); }
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 .candy-solo-grid {
@@ -596,7 +630,7 @@
 }
 
 .play-body:has(.solo-game-wrap--vd) .play-top-strip {
-  padding-bottom: 4px;
+  padding-bottom: 9px;
 }
 
 .play-root .solo-game-wrap--vd {
@@ -643,7 +677,7 @@
 
 .vd-word-box .solo-quiz-word {
   margin: 0;
-  font-size: clamp(24px, 6vw, 40px);
+  font-size: clamp(30px, 8vw, 56px);
   line-height: 1.1;
 }
 
@@ -653,9 +687,11 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: repeat(2, minmax(min-content, auto));
   gap: clamp(14px, 2.6vh, 22px);
-  max-width: min(680px, 98vw);
-  margin: 0 auto;
+  max-width: min(680px, 100%);
+  margin: clamp(24px, 6vh, 46px) auto 0;
   width: 100%;
+  box-sizing: border-box;
+  padding-inline: 2px;
   min-width: 0;
   min-height: 0;
   height: auto;
@@ -663,6 +699,7 @@
   align-content: start;
   align-self: stretch;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .solo-options--vd .solo-option {
@@ -717,11 +754,12 @@
   }
 
   .vd-word-box .solo-quiz-word {
-    font-size: clamp(22px, 5.5vw, 34px);
+    font-size: clamp(26px, 7vw, 44px);
   }
 
   .solo-options--vd {
     gap: clamp(10px, 2vh, 16px);
+    margin-top: clamp(8px, 2.5vh, 18px);
   }
 
   .solo-options--vd .solo-option {
@@ -834,7 +872,7 @@
   }
 }
 
-.solo-option:hover:not(:disabled) { background: var(--mempink); }
+.solo-options:not(.solo-options--vd) .solo-option:hover:not(:disabled) { background: var(--mempink); }
 .solo-option.correct { background: #6bbf8a !important; color: var(--ink) !important; }
 .solo-option.wrong { background: #e07070 !important; color: var(--ink) !important; }
 .solo-option:disabled { cursor: default; transform: none; }
@@ -1059,6 +1097,7 @@
 
 .hangman-solo-card {
   container-type: size;
+  position: relative;
   flex: 1;
   min-height: 0;
   display: flex;
@@ -1097,16 +1136,15 @@
   width: fit-content;
   max-width: min(900px, 96%);
   margin-inline: auto;
-  padding: clamp(8px, 2.5cqh, 20px) clamp(14px, 4.5vw, 32px);
+  padding: 0;
   box-sizing: border-box;
-  background: linear-gradient(180deg, #fff9d0 0%, #ffe066 42%, #ffb347 100%);
-  border: 4px solid var(--ink);
-  border-radius: clamp(14px, 2.5vw, 20px);
-  box-shadow: var(--shadow-sticker);
-  font-size: clamp(0.85rem, 2.8cqh, 1.55rem);
+  background: none;
+  border: none;
+  box-shadow: none;
+  font-size: clamp(2.4rem, 8.5cqh, 5rem);
   font-weight: 900;
   color: var(--ink);
-  line-height: 1.4;
+  line-height: 1.2;
   text-align: center;
   direction: rtl;
   white-space: normal;
@@ -1124,13 +1162,18 @@
 }
 
 .hangman-solo-hint-btn {
-  flex: 0 0 auto;
-  align-self: center;
+  position: absolute;
+  top: clamp(4px, 1.5cqh, 14px);
+  left: clamp(4px, 1.5vw, 14px);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(36px, 6cqh, 52px);
+  height: clamp(36px, 6cqh, 52px);
   margin: 0;
-  padding: clamp(6px, 1.8cqh, 14px) clamp(20px, 4vw, 32px);
-  font-size: clamp(0.8rem, 2.6cqh, 1.35rem);
-  font-weight: 900;
-  border-radius: 999px;
+  padding: 0;
+  border-radius: 50%;
   cursor: pointer;
   box-shadow: none;
   transition: transform 0.12s ease, opacity 0.15s ease;
@@ -1152,14 +1195,16 @@
 
 .hangman-solo-lives {
   display: flex;
-  gap: clamp(6px, 1.4cqh, 10px);
+  gap: clamp(9px, 2cqh, 16px);
   flex-wrap: wrap;
   justify-content: center;
+  margin-top: 0;
+  margin-bottom: clamp(24px, 6cqh, 46px);
 }
 
 .hangman-solo-life {
-  width: clamp(14px, 3cqh, 26px);
-  height: clamp(14px, 3cqh, 26px);
+  width: clamp(22px, 5cqh, 42px);
+  height: clamp(22px, 5cqh, 42px);
   border-radius: 50%;
   background: var(--electric);
   border: 3px solid var(--ink);
@@ -1176,7 +1221,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: clamp(6px, 1.8cqh, 16px);
+  gap: clamp(10px, 3cqh, 26px);
   direction: ltr;
   width: 100%;
 }
@@ -1261,11 +1306,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(30px, 8cqh, 72px);
-  height: clamp(30px, 8cqh, 72px);
+  width: clamp(48px, 13cqh, 118px);
+  height: clamp(48px, 13cqh, 118px);
   padding: 0 clamp(4px, 1.2vw, 10px);
   font-family: inherit;
-  font-size: clamp(13px, 3.6cqh, 30px);
+  font-size: clamp(20px, 6cqh, 48px);
   font-weight: 900;
   color: var(--ink);
   background: var(--white);
@@ -1393,8 +1438,7 @@
 
 @media (max-width: 480px) {
   .hangman-solo-hint-def {
-    font-size: clamp(0.8rem, 2.6cqh, 1.35rem);
-    padding: clamp(8px, 2.2cqh, 16px) clamp(14px, 4vw, 22px);
+    font-size: clamp(1.3rem, 5cqh, 2.5rem);
   }
 
   .hangman-solo-letters {
@@ -1402,9 +1446,9 @@
   }
 
   .hangman-key {
-    width: clamp(28px, 7.5cqh, 58px);
-    height: clamp(28px, 7.5cqh, 58px);
-    font-size: clamp(12px, 3.4cqh, 24px);
+    width: clamp(42px, 11cqh, 86px);
+    height: clamp(42px, 11cqh, 86px);
+    font-size: clamp(17px, 5cqh, 34px);
     border-width: 2px;
     box-shadow: 3px 3px 0 var(--ink);
   }
@@ -1520,6 +1564,48 @@
 
 .solo-msg.ok { background: #6bbf8a; color: var(--ink); }
 .solo-msg.bad { background: #e07070; color: white; }
+
+#sdMsg:not(:empty) {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+#sdMsg .solo-msg {
+  width: auto;
+  margin-top: 0;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: clamp(28px, 6vw, 56px);
+  font-weight: 900;
+  paint-order: stroke fill;
+  -webkit-text-stroke: clamp(3px, 0.6vw, 6px) var(--ink);
+  text-shadow: none;
+}
+
+#sdMsg .solo-msg.ok {
+  background: none;
+  color: #2fae5c;
+  -webkit-text-fill-color: #2fae5c;
+}
+
+#sdMsg .solo-msg.bad {
+  background: none;
+  color: #e04b4b;
+  -webkit-text-fill-color: #e04b4b;
+}
+
+#sdMsg .solo-play-again {
+  margin-top: 0;
+}
 
 .solo-play-again {
   margin-top: 16px;
