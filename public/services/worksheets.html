@@ -9,7 +9,7 @@
   <meta name="description" content="משחקים, דפי צביעה ודפי עבודה — קטגוריות מסודרות לכיתה ולבית."/>
   <link rel="stylesheet" href="/styles.css?v=59"/>
   <link rel="stylesheet" href="/css/clean-site.css?v=82"/>
-  <link rel="stylesheet" href="/css/service-landing.css?v=43"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=44"/>
   <link rel="stylesheet" href="/css/legal.css"/>
   <link rel="stylesheet" href="/css/accessibility.css" />
 </head>
@@ -94,6 +94,19 @@
               <li><button type="button" data-type="crossword">תשבץ</button></li>
               <li><button type="button" data-type="numberColoring">צביעה עם מספרים</button></li>
               <li><button type="button" data-type="lineTracing">שרטוט קווים</button></li>
+            </ul>
+          </div>
+          <div class="svc-filter-divider hidden" id="difficultyDivider" aria-hidden="true"></div>
+          <div class="svc-filter-dropdown hidden" data-filter-key="difficulty" id="difficultyFilterDropdown">
+            <button type="button" class="svc-filter-trigger" id="filterDifficultyTrigger" aria-expanded="false">
+              <span class="svc-filter-trigger-label">רמת קושי</span>
+              <span class="svc-filter-trigger-value" id="filterDifficultyValue">הכל</span>
+            </button>
+            <ul class="svc-filter-menu hidden" id="filterDifficultyMenu">
+              <li><button type="button" data-difficulty="all" class="active">הכל</button></li>
+              <li><button type="button" data-difficulty="easy">קל</button></li>
+              <li><button type="button" data-difficulty="medium">בינוני</button></li>
+              <li><button type="button" data-difficulty="hard">קשה</button></li>
             </ul>
           </div>
         </div>
@@ -279,6 +292,42 @@
               <a href="/assets/worksheets/d30.png" download="רכבת-בתחנה-לצביעה.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
             </div>
           </article>
+          <article class="svc-tile svc-tile--coloring" data-category="sudoku" data-difficulty="hard">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/sudoku-hard-1.png" alt="סודוקו רמה קשה 1" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/sudoku-hard-1.png" download="סודוקו-קשה-1.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
+          </article>
+          <article class="svc-tile svc-tile--coloring" data-category="sudoku" data-difficulty="hard">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/sudoku-hard-2.png" alt="סודוקו רמה קשה 2" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/sudoku-hard-2.png" download="סודוקו-קשה-2.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
+          </article>
+          <article class="svc-tile svc-tile--coloring" data-category="sudoku" data-difficulty="hard">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/sudoku-hard-3.png" alt="סודוקו רמה קשה 3" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/sudoku-hard-3.png" download="סודוקו-קשה-3.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
+          </article>
+          <article class="svc-tile svc-tile--coloring" data-category="sudoku" data-difficulty="hard">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/sudoku-hard-4.png" alt="סודוקו רמה קשה 4" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/sudoku-hard-4.png" download="סודוקו-קשה-4.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
+          </article>
+          <article class="svc-tile svc-tile--coloring" data-category="sudoku" data-difficulty="hard">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/sudoku-hard-5.png" alt="סודוקו רמה קשה 5" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/sudoku-hard-5.png" download="סודוקו-קשה-5.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
+          </article>
+          <article class="svc-tile svc-tile--coloring" data-category="sudoku" data-difficulty="hard">
+            <div class="svc-tile-image svc-tile-image--turquoise">
+              <img src="/assets/worksheets/sudoku-hard-6.png" alt="סודוקו רמה קשה 6" width="400" height="400" loading="lazy" />
+              <a href="/assets/worksheets/sudoku-hard-6.png" download="סודוקו-קשה-6.png" class="btn svc-tile-download btn-candy font-cartoon">להורדה</a>
+            </div>
+          </article>
         </div>
         <p class="svc-empty-state hidden" id="worksheetEmptyState">לא נמצאו פריטים בקטגוריה זו.</p>
       </div>
@@ -327,7 +376,7 @@
   <script src="/js/user-data.js"></script>
   <script src="/js/ambient-bg.js?v=3"></script>
   <script src="/js/scroll-animations.js?v=3"></script>
-  <script src="/js/worksheets.js?v=14"></script>
+  <script src="/js/worksheets.js?v=15"></script>
   <script src="/js/service-landing.js?v=3"></script>
   <script src="/js/cookie-consent.js?v=2"></script>
 </body>

@@ -77,9 +77,15 @@
     const typeTrigger = $("#filterTypeTrigger");
     const tiles = $$(".svc-tile[data-category]");
     const empty = $("#worksheetEmptyState");
+    const difficultyDropdown = $("#difficultyFilterDropdown");
+    const difficultyDivider = $("#difficultyDivider");
+    const difficultyMenu = $("#filterDifficultyMenu");
+    const difficultyValue = $("#filterDifficultyValue");
+    const difficultyTrigger = $("#filterDifficultyTrigger");
     if (!filtersRoot || !typeMenu || !tiles.length) return;
 
     let currentType = "coloring";
+    let currentDifficulty = "all";
     let openDropdown = null;
 
     function closeDropdown() {
@@ -102,10 +108,19 @@
       openDropdown = { wrap, trigger, menu };
     }
 
+    function syncDifficultyVisibility() {
+      const show = currentType === "sudoku";
+      difficultyDropdown?.classList.toggle("hidden", !show);
+      difficultyDivider?.classList.toggle("hidden", !show);
+    }
+
     function applyFilters() {
       let visible = 0;
       tiles.forEach((tile) => {
-        const show = tile.dataset.category === currentType;
+        const matchesType = tile.dataset.category === currentType;
+        const matchesDifficulty =
+          currentType !== "sudoku" || currentDifficulty === "all" || tile.dataset.difficulty === currentDifficulty;
+        const show = matchesType && matchesDifficulty;
         tile.classList.toggle("hidden", !show);
         if (show) visible += 1;
       });
@@ -125,6 +140,28 @@
         $$("button", typeMenu).forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         if (typeValue) typeValue.textContent = CATEGORY_LABELS[currentType] || btn.textContent;
+        currentDifficulty = "all";
+        if (difficultyValue) difficultyValue.textContent = "הכל";
+        $$("button", difficultyMenu || []).forEach((b) => b.classList.toggle("active", b.dataset.difficulty === "all"));
+        syncDifficultyVisibility();
+        closeDropdown();
+        applyFilters();
+      });
+    });
+
+    difficultyTrigger?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const wrap = $('[data-filter-key="difficulty"]', filtersRoot);
+      openDropdownMenu(wrap, difficultyTrigger, difficultyMenu);
+    });
+
+    $$("button", difficultyMenu || []).forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        currentDifficulty = btn.dataset.difficulty || "all";
+        $$("button", difficultyMenu).forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (difficultyValue) difficultyValue.textContent = btn.textContent;
         closeDropdown();
         applyFilters();
       });
@@ -135,6 +172,7 @@
       if (e.key === "Escape") closeDropdown();
     });
 
+    syncDifficultyVisibility();
     applyFilters();
   }
 

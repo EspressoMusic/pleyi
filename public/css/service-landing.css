@@ -307,7 +307,16 @@ body.page-worksheets .svc-filter-bar {
   border-radius: 0;
   overflow: visible;
   max-width: 320px;
+  gap: 18px;
   margin-bottom: 80px;
+}
+
+body.page-worksheets .svc-filter-bar:has(#difficultyFilterDropdown:not(.hidden)) {
+  max-width: 540px;
+}
+
+body.page-worksheets .svc-filter-divider {
+  display: none;
 }
 
 body.page-worksheets .svc-filter-trigger {

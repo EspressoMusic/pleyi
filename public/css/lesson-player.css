@@ -27,6 +27,7 @@ body.page-ready-lessons .svc-lesson-grid {
   }
 
   body.page-ready-lessons .svc-lesson-title-wrap {
+    padding-top: 22px;
     padding-bottom: 38px;
   }
 
@@ -127,7 +128,8 @@ body.page-ready-lessons .svc-lesson-title-wrap {
   justify-content: center;
   gap: 4px;
   width: 100%;
-  padding: 0 8px 50px;
+  padding: 30px 8px 54px;
+  box-sizing: border-box;
   z-index: 0;
   pointer-events: none;
 }
@@ -163,7 +165,8 @@ body.page-ready-lessons .svc-lesson-part {
    is the headline and the subject (e.g. "גוף האדם") is a small label under it. */
 body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-part {
   order: -1;
-  font-size: clamp(1.5rem, 6vw, 2.15rem);
+  font-size: clamp(1.3rem, 5.2vw, 1.85rem);
+  line-height: 1.15;
 }
 
 body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-name {
@@ -1078,7 +1081,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   position: relative;
   margin-block: auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   min-height: min(100%, 100%);
 }
@@ -1484,7 +1487,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   margin: 0;
   max-width: 36rem;
   padding-inline: clamp(8px, 2.5vw, 18px);
-  font-size: calc(var(--lp-fit, 1) * clamp(1.05rem, 3.2vh, 1.4rem));
+  font-size: calc(var(--lp-fit, 1) * clamp(1.3rem, 4vh, 1.75rem));
   font-weight: 700;
   line-height: 1.55;
   color: color-mix(in srgb, var(--ink) 78%, transparent);
