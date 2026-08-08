@@ -449,7 +449,7 @@
         <span class="hub-game-level hub-game-level--${level}">${escapeHtml(catalog.levelLabel ? catalog.levelLabel(level) : level)}</span>
         ${gameThumbHtml(game)}
         <h3 class="hub-game-title font-cartoon">${game.title}</h3>
-        <button type="button" class="hub-game-play-btn btn btn-primary btn-candy btn-full">שחק עכשיו</button>
+        <button type="button" class="hub-game-play-btn btn btn-primary btn-candy btn-full">שחק</button>
       </article>`;
   }
 

@@ -446,7 +446,7 @@
       lock.remove();
     }
     const playBtn = card.querySelector(".hub-game-play-btn");
-    if (playBtn) playBtn.textContent = "שחק עכשיו";
+    if (playBtn) playBtn.textContent = "שחק";
   }
 
   function updateRoomGameButtons() {

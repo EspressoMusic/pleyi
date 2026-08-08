@@ -4,8 +4,8 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "נפלאות הבריאה" };
-  const ACTIVE_SUBJECTS = ["lifeskills", "health"];
+  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "נפלאות הבריאה", body: "גוף האדם" };
+  const ACTIVE_SUBJECTS = ["lifeskills", "health", "body"];
   const LESSON_SHARE_PATH = "/services/ready-lessons.html";
   const LP_SPEAKER_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
 
@@ -118,7 +118,7 @@
       name: "גוף האדם - הלב",
       nameMain: "גוף האדם",
       namePart: "הלב",
-      subject: "health",
+      subject: "body",
       grades: ["ag", "dv", "zh"],
       topic: "health",
       gradeLabel: "כל הכיתות",
@@ -191,7 +191,7 @@
       name: "גוף האדם - ריאות ונשימה",
       nameMain: "גוף האדם",
       namePart: "ריאות ונשימה",
-      subject: "health",
+      subject: "body",
       grades: ["ag", "dv", "zh"],
       topic: "lungs",
       gradeLabel: "כל הכיתות",
@@ -262,7 +262,7 @@
       name: "גוף האדם - המוח",
       nameMain: "גוף האדם",
       namePart: "המוח",
-      subject: "health",
+      subject: "body",
       grades: ["ag", "dv", "zh"],
       topic: "brain",
       gradeLabel: "כל הכיתות",
@@ -333,7 +333,7 @@
       name: "גוף האדם - שרירים ועצמות",
       nameMain: "גוף האדם",
       namePart: "שרירים ועצמות",
-      subject: "health",
+      subject: "body",
       grades: ["ag", "dv", "zh"],
       topic: "skeleton",
       gradeLabel: "כל הכיתות",
@@ -404,7 +404,7 @@
       name: "גוף האדם - מערכת העיכול",
       nameMain: "גוף האדם",
       namePart: "מערכת העיכול",
-      subject: "health",
+      subject: "body",
       grades: ["ag", "dv", "zh"],
       topic: "digestion",
       gradeLabel: "כל הכיתות",
@@ -490,13 +490,17 @@
       ],
     },
     health: {
+      ag: [{ id: "volcano", label: "הר געש" }],
+      dv: [{ id: "volcano", label: "הר געש" }],
+      zh: [{ id: "volcano", label: "הר געש" }],
+    },
+    body: {
       ag: [
         { id: "health", label: "הלב" },
         { id: "lungs", label: "ריאות ונשימה" },
         { id: "brain", label: "המוח" },
         { id: "skeleton", label: "שרירים ועצמות" },
         { id: "digestion", label: "מערכת העיכול" },
-        { id: "volcano", label: "הר געש" },
       ],
       dv: [
         { id: "health", label: "הלב" },
@@ -504,7 +508,6 @@
         { id: "brain", label: "המוח" },
         { id: "skeleton", label: "שרירים ועצמות" },
         { id: "digestion", label: "מערכת העיכול" },
-        { id: "volcano", label: "הר געש" },
       ],
       zh: [
         { id: "health", label: "הלב" },
@@ -512,7 +515,6 @@
         { id: "brain", label: "המוח" },
         { id: "skeleton", label: "שרירים ועצמות" },
         { id: "digestion", label: "מערכת העיכול" },
-        { id: "volcano", label: "הר געש" },
       ],
     },
   };
@@ -1104,7 +1106,7 @@
         (!before || !isHebrewLetter(before)) && (!after || !isHebrewLetter(after));
       if (atBoundary) {
         result += text.slice(i, idx) + replacement;
-        if (once) return result;
+        if (once) return result + text.slice(idx + needle.length);
         i = idx + needle.length;
       } else {
         result += text.slice(i, idx + 1);
@@ -1321,7 +1323,7 @@
     // Dense slides (long glossary lists, etc.) can be taller than the slide
     // viewport — shrink font sizes/gaps (via the --lp-fit CSS var consumed
     // throughout lesson-player.css) instead of letting the slide scroll.
-    const LP_FIT_MIN = 0.65;
+    const LP_FIT_MIN = 0.45;
     const LP_FIT_STEP = 0.03;
     function fitSlideContent() {
       if (!slideWrapEl) return;
@@ -1714,7 +1716,7 @@
       return renderVolcanoMountainScene(modifierClass);
     }
 
-    function renderContentSlide(slide) {
+    function renderContentSlide(slide, { isLast = false } = {}) {
       let bodyHtml = "";
       let bodyLayout = "default";
 
@@ -1749,7 +1751,8 @@
       const titleHtml = formatLessonText(slide.title || "");
 
       return `
-        <div class="lp-slide-inner${hasSideVisual ? " has-visual" : ""}${useGlossaryGrid ? " has-glossary-grid" : ""}${videoHtml ? " has-video" : ""}">
+        <div class="lp-slide-inner${hasSideVisual ? " has-visual" : ""}${useGlossaryGrid ? " has-glossary-grid" : ""}${videoHtml ? " has-video" : ""}${isLast ? " lp-slide-inner--outro" : ""}">
+          ${isLast ? '<div class="lp-outro-confetti" aria-hidden="true"></div>' : ""}
           <div class="lp-slide-text-col">
             <div class="lp-slide-head">
               <h2 class="lp-slide-title">${titleHtml}</h2>
@@ -1762,6 +1765,26 @@
         </div>`;
     }
 
+    const LP_OUTRO_CONFETTI_COLORS = ["#ff3b5c", "#ffd23f", "#4da6ff", "#7ee08c", "#c792ff", "#ff9f43"];
+
+    function spawnOutroConfetti(inner) {
+      const layer = $(".lp-outro-confetti", inner);
+      if (!layer) return;
+      if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+      const pieceCount = 26;
+      for (let i = 0; i < pieceCount; i++) {
+        const piece = document.createElement("span");
+        piece.className = "lp-outro-confetti-piece";
+        piece.style.setProperty("--lp-confetti-x", `${Math.random() * 100}%`);
+        piece.style.setProperty("--lp-confetti-delay", `${Math.random() * 0.6}s`);
+        piece.style.setProperty("--lp-confetti-duration", `${1.8 + Math.random() * 1.2}s`);
+        piece.style.setProperty("--lp-confetti-drift", `${Math.random() * 60 - 30}px`);
+        piece.style.setProperty("--lp-confetti-rot", `${(Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 360)}deg`);
+        piece.style.background = LP_OUTRO_CONFETTI_COLORS[i % LP_OUTRO_CONFETTI_COLORS.length];
+        layer.appendChild(piece);
+      }
+    }
+
     function animateSlide(html, direction = 0) {
       const current = $(".lp-slide-inner", slideEl);
 
@@ -1770,6 +1793,7 @@
         const inner = $(".lp-slide-inner", slideEl);
         if (!inner) return;
         fitSlideContent();
+        if (inner.classList.contains("lp-slide-inner--outro")) spawnOutroConfetti(inner);
         if (direction > 0) inner.classList.add("from-next");
         if (direction < 0) inner.classList.add("from-prev");
         requestAnimationFrame(() => {
@@ -1823,7 +1847,10 @@
 
     function renderStep(direction = 0) {
       const slide = steps[index];
-      const html = slide.type === "games" ? renderGamesSlide(slide) : renderContentSlide(slide);
+      const html =
+        slide.type === "games"
+          ? renderGamesSlide(slide)
+          : renderContentSlide(slide, { isLast: index === steps.length - 1 });
       animateSlide(html, direction);
       updateNav();
       if (index === steps.length - 1) markLessonLearned(lesson.id);
@@ -1847,6 +1874,7 @@
       }
       steps = lesson.slides || [];
       index = 0;
+      player.dataset.lessonId = lessonId;
       renderDots();
       renderStep();
       player.classList.remove("hidden");

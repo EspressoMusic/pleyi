@@ -53,11 +53,11 @@
       <article class="svc-lesson-card" data-game-id="${game.id}" data-game-subject="${subject}" data-game-level="${level}" data-game-title="${escapeHtml(game.title)}">
         <div class="svc-lesson-preview">
           <button type="button" class="svc-lesson-info-toggle" data-info-subject="${escapeHtml(subjectLabel)}" data-info-type="${escapeHtml(typeLabel)}" data-info-level="${escapeHtml(levelLabel)}" data-info-desc="${escapeHtml(summary)}" aria-label="מידע נוסף">i</button>
-          <span class="svc-game-preview-fallback" aria-hidden="true">
-            <strong>${escapeHtml(game.title)}</strong>
-            <span>${escapeHtml(subjectLabel)}</span>
-          </span>
-          <button type="button" class="btn btn-primary btn-candy font-cartoon svc-game-play-btn">שחק עכשיו</button>
+          <div class="svc-lesson-title-wrap">
+            <span class="svc-lesson-name">${escapeHtml(subjectLabel)}</span>
+            <span class="svc-lesson-part">${escapeHtml(game.title)}</span>
+          </div>
+          <button type="button" class="btn btn-primary btn-candy font-cartoon svc-game-play-btn">שחק</button>
         </div>
       </article>`;
   }

@@ -6,6 +6,11 @@ body.page-ready-lessons {
   --lesson-card-ink: #000000;
 }
 
+/* All lessons use the Varela Round font instead of the site-wide default. */
+.lesson-player {
+  font-family: "Varela Round", var(--font-sans, "Google Sans"), system-ui, sans-serif;
+}
+
 body.page-ready-lessons .svc-lesson-grid {
   grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   gap: 20px;
@@ -838,6 +843,14 @@ body.page-ready-lessons .lesson-player.is-expanded .lp-slide-body {
   max-width: 46rem;
 }
 
+body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner--outro .lp-slide-title {
+  font-size: calc(var(--lp-fit, 1) * clamp(3rem, 9vh, 5.6rem));
+}
+
+body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner--outro .lp-slide-body {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.9rem, 5.5vh, 2.6rem));
+}
+
 body.page-ready-lessons .lesson-player.is-expanded .lp-slide-list {
   max-width: 420px;
 }
@@ -1059,13 +1072,10 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* .lesson-player-stage centers its grid items by default, which lets this
-     item size to its (possibly tall) content and overflow the row — clipped
-     by the stage's overflow:hidden with no way to scroll to the rest. Stretch
-     this item to the row's real height so oversized slide text scrolls
-     inside it instead of silently clipping top and bottom. */
+  /* Slides must never scroll (classroom-board format) — fitSlideContent() in
+     ready-lessons.js shrinks --lp-fit until content fits instead. Keep this
+     hidden on both axes so no scrollbar can ever appear. */
+  overflow: hidden;
   align-self: stretch;
 }
 
@@ -1306,7 +1316,7 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
 }
 
 .lp-slide-inner.has-glossary-grid .lp-volcano-scene:not(.lp-volcano-scene--output) {
-  width: clamp(170px, 100%, 250px);
+  width: calc(var(--lp-fit, 1) * clamp(110px, 100%, 250px));
   aspect-ratio: 1 / 1;
   height: auto;
 }
@@ -1491,6 +1501,103 @@ body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
   font-weight: 700;
   line-height: 1.55;
   color: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+
+/* Closing "end of lesson" slide — short text with lots of empty space
+   below it, so center it in the slide instead of pinning it to the top,
+   and size it up since there's nothing else competing for room. */
+.lp-slide-inner--outro {
+  align-self: center;
+  position: relative;
+}
+
+.lp-slide-inner--outro .lp-slide-title {
+  font-size: calc(var(--lp-fit, 1) * clamp(2.6rem, 8vh, 5rem));
+}
+
+.lp-slide-inner--outro .lp-slide-body {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.7rem, 5vh, 2.4rem));
+}
+
+/* Closing slide flourish: the title pops in with a playful bounce, the
+   thank-you line rises in just after, and a confetti burst (pieces spawned
+   in JS, see spawnOutroConfetti) falls behind the text. Text sits above the
+   confetti layer since .lp-slide-text-col is a flex item — z-index applies
+   without needing position. */
+.lp-slide-inner--outro .lp-slide-text-col {
+  position: relative;
+  z-index: 1;
+}
+
+.lp-slide-inner--outro.is-visible .lp-slide-title {
+  animation: lp-outro-title-pop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.lp-slide-inner--outro.is-visible .lp-slide-body {
+  animation: lp-outro-body-rise 0.55s ease both;
+  animation-delay: 0.22s;
+}
+
+@keyframes lp-outro-title-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-6deg);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.1) rotate(2deg);
+  }
+  78% {
+    transform: scale(0.96) rotate(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes lp-outro-body-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lp-outro-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lp-outro-confetti-piece {
+  position: absolute;
+  top: -12px;
+  left: var(--lp-confetti-x, 50%);
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: lp-outro-confetti-fall var(--lp-confetti-duration, 2.2s) var(--lp-confetti-delay, 0s) ease-in forwards;
+}
+
+@keyframes lp-outro-confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(min(60vh, 420px)) translateX(var(--lp-confetti-drift, 0px)) rotate(var(--lp-confetti-rot, 360deg));
+  }
 }
 
 /* Decorative side ornament — no emoji, just a small idle-animated bubble that
@@ -2584,6 +2691,16 @@ body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
 
   .lp-say.is-popped {
     animation: none;
+  }
+
+  .lp-slide-inner--outro.is-visible .lp-slide-title,
+  .lp-slide-inner--outro.is-visible .lp-slide-body {
+    animation: none;
+  }
+
+  .lp-outro-confetti-piece {
+    animation: none;
+    display: none;
   }
 
   .lp-volcano-crater,
