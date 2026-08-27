@@ -156,15 +156,10 @@ function bindCreateGameForm() {
   const form = $("#svcCreateForm");
   const stepPick = $("#svcCreateStepPick");
   const stepContent = $("#svcCreateStepContent");
-  const pickToggle = $("#svcGamePickToggle");
   const pickGrid = $("#svcGamePickGrid");
   const textarea = $("#svcMaterialInput");
   const fieldRows = $("#svcFieldRows");
   const addRowBtn = $("#svcFieldAddBtn");
-  const fileInput = $("#svcMaterialFile");
-  const fileBtn = $("#svcMaterialFileBtn");
-  const fileName = $("#svcMaterialFileName");
-  const box = $("#svcMaterialBox");
   const err = $("#svcCreateError");
   const gamePickInput = $("#svcGamePick");
   const selectedLabel = $("#svcSelectedGameLabel");
@@ -177,11 +172,6 @@ function bindCreateGameForm() {
   let selectedGameId = "";
   let selectedPairCount = 6;
 
-  pickToggle?.addEventListener("click", () => {
-    const open = pickGrid.classList.toggle("hidden") === false;
-    pickToggle.setAttribute("aria-expanded", open ? "true" : "false");
-  });
-
   pairCountBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       selectedPairCount = Number(btn.dataset.pairs) || 6;
@@ -189,22 +179,33 @@ function bindCreateGameForm() {
     });
   });
 
-  function updatePreview() {
-    const items = window.CreateGameFlow?.parseItems(textarea?.value || "", "english") || [];
-    window.CreateGameFlow?.updatePreview($("#svcPreview"), items, selectedGameId);
+  // The word/translation columns are explicit, labeled inputs, not pasted free
+  // text — so items are built straight from row values instead of routing
+  // through the free-text parser's English/Hebrew script-detection heuristics,
+  // which would silently drop valid rows (e.g. two Hebrew synonyms, an English
+  // word paired with an English synonym, or numbers) that don't fit the guess.
+  function collectFieldItems() {
+    const items = [];
+    const seen = new Set();
+    $$(".svc-field-row", fieldRows).forEach((row) => {
+      const left = row.querySelector(".svc-field-left")?.value.trim() || "";
+      const right = row.querySelector(".svc-field-right")?.value.trim() || "";
+      if (!left || !right) return;
+      const key = `${left}\0${right}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      items.push({
+        en: left,
+        he: right,
+        hint: window.LEARNING_PARSE?.itemHint?.(left, "english") || `What is ${left}?`,
+        emoji: window.LEARNING_PARSE?.itemEmoji?.("english") || "📖",
+      });
+    });
+    return items;
   }
 
-  function syncTextareaFromRows() {
-    if (!textarea) return;
-    const lines = $$(".svc-field-row", fieldRows)
-      .map((row) => {
-        const left = row.querySelector(".svc-field-left")?.value.trim() || "";
-        const right = row.querySelector(".svc-field-right")?.value.trim() || "";
-        return left && right ? `${left}=${right}` : "";
-      })
-      .filter(Boolean);
-    textarea.value = lines.join("\n");
-    updatePreview();
+  function updatePreview() {
+    window.CreateGameFlow?.updatePreview($("#svcPreview"), collectFieldItems(), selectedGameId);
   }
 
   function addFieldRow(leftVal = "", rightVal = "") {
@@ -219,13 +220,15 @@ function bindCreateGameForm() {
       <input type="text" class="svc-field-left" placeholder="${escapeHtml(fields.leftPh || "")}" dir="ltr" value="${escapeHtml(leftVal)}" />
       <span class="svc-field-row-arrow" aria-hidden="true">=</span>
       <input type="text" class="svc-field-right" placeholder="${escapeHtml(fields.rightPh || "")}" dir="rtl" value="${escapeHtml(rightVal)}" />
-      <button type="button" class="svc-field-remove" aria-label="הסרת שורה">×</button>
+      <button type="button" class="svc-field-remove" aria-label="הסרת שורה">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      </button>
     `;
-    row.querySelector(".svc-field-left")?.addEventListener("input", syncTextareaFromRows);
-    row.querySelector(".svc-field-right")?.addEventListener("input", syncTextareaFromRows);
+    row.querySelector(".svc-field-left")?.addEventListener("input", updatePreview);
+    row.querySelector(".svc-field-right")?.addEventListener("input", updatePreview);
     row.querySelector(".svc-field-remove")?.addEventListener("click", () => {
       row.remove();
-      syncTextareaFromRows();
+      updatePreview();
     });
     fieldRows.appendChild(row);
     return row;
@@ -263,9 +266,8 @@ function bindCreateGameForm() {
     stepPick?.classList.add("hidden");
     stepContent?.classList.remove("hidden");
     err?.classList.add("hidden");
-    if (fileName) fileName.textContent = "";
     renderFieldRows(gameId);
-    syncTextareaFromRows();
+    updatePreview();
     setTimeout(() => $(".svc-field-left", fieldRows)?.focus(), 120);
   }
 
@@ -282,41 +284,6 @@ function bindCreateGameForm() {
   });
 
   backBtn?.addEventListener("click", showStepPick);
-
-  async function loadFile(file) {
-    if (!file) return;
-    if (fileName) fileName.textContent = `טוען ${file.name}…`;
-    try {
-      const text = await window.extractMaterialText(file);
-      if (fileName) fileName.textContent = file.name;
-      const items = window.CreateGameFlow?.parseItems(text, "english") || [];
-      if (items.length) {
-        renderFieldRows(selectedGameId, items);
-        syncTextareaFromRows();
-      } else {
-        textarea.value = text;
-        updatePreview();
-      }
-    } catch (e) {
-      if (err) {
-        err.textContent = e.message || "לא ניתן לקרוא את הקובץ";
-        err.classList.remove("hidden");
-      }
-    }
-  }
-
-  fileBtn?.addEventListener("click", () => fileInput?.click());
-  fileInput?.addEventListener("change", () => loadFile(fileInput.files?.[0]));
-  box?.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    box.classList.add("is-dragover");
-  });
-  box?.addEventListener("dragleave", () => box.classList.remove("is-dragover"));
-  box?.addEventListener("drop", (e) => {
-    e.preventDefault();
-    box.classList.remove("is-dragover");
-    loadFile(e.dataTransfer?.files?.[0]);
-  });
 
   const submit = async (e) => {
     e?.preventDefault();
@@ -338,17 +305,16 @@ function bindCreateGameForm() {
     }
 
     try {
-      let text = textarea?.value || "";
-      const ready = await window.CreateGameFlow.ensureContent(text, "english");
-      if (!ready.ok) {
+      const items = collectFieldItems();
+      if (!items.length) {
         if (err) {
-          err.textContent = ready.error;
+          err.textContent = "מלאו לפחות שורה אחת עם מילה ותרגום";
           err.classList.remove("hidden");
         }
         return;
       }
 
-      const valid = window.CreateGameFlow.validateItemsForGame(selectedGameId, ready.items);
+      const valid = window.CreateGameFlow.validateItemsForGame(selectedGameId, items);
       if (!valid.ok) {
         if (err) {
           err.textContent = valid.error;
@@ -357,8 +323,10 @@ function bindCreateGameForm() {
         return;
       }
 
-      text = ready.text;
-      textarea.value = text;
+      const text = window.LEARNING_PARSE?.formatLearningContent
+        ? window.LEARNING_PARSE.formatLearningContent(items)
+        : items.map((it) => `${it.en}=${it.he}`).join("\n");
+      if (textarea) textarea.value = text;
       updatePreview();
 
       if (selectedGameId === "word-memory") {
@@ -370,7 +338,7 @@ function bindCreateGameForm() {
       const saved = await window.CreateGameFlow.persistCreatedGame({
         subject: "english",
         gameId: selectedGameId,
-        items: ready.items,
+        items,
         content: text,
       });
       if (!saved.ok && saved.quotaMessage) {
@@ -379,10 +347,9 @@ function bindCreateGameForm() {
 
       window.CreateGameFlow.launchGame({
         text,
-        items: ready.items,
+        items,
         subject: "english",
         gamePick: selectedGameId,
-        aiGameId: ready.aiGameId,
       });
     } finally {
       if (btn) {

@@ -44,7 +44,6 @@ body.clean-site .scroll-section .svc-game-pick-btn,
 body.clean-site .scroll-section .svc-filter-bar,
 body.clean-site .scroll-section .contact-channel-btn,
 body.clean-site .scroll-section .clean-center-cta,
-body.clean-site .scroll-section .svc-create-box,
 body.clean-site .hero-title .line {
   opacity: 0;
   transform: translateY(36px);
@@ -74,7 +73,6 @@ body.clean-site .scroll-section.in-view .svc-game-pick-btn,
 body.clean-site .scroll-section.in-view .svc-filter-bar,
 body.clean-site .scroll-section.in-view .contact-channel-btn,
 body.clean-site .scroll-section.in-view .clean-center-cta,
-body.clean-site .scroll-section.in-view .svc-create-box,
 body.clean-site .scroll-section.in-view .hero-title .line {
   opacity: 1;
   transform: none;
@@ -138,7 +136,6 @@ body.clean-site .svc-game-pick-btn:nth-child(6) {
   body.clean-site .scroll-section .svc-filter-bar,
   body.clean-site .scroll-section .contact-channel-btn,
   body.clean-site .scroll-section .clean-center-cta,
-  body.clean-site .scroll-section .svc-create-box,
   body.clean-site .hero-title .line {
     opacity: 1;
     transform: none;
@@ -2125,13 +2122,17 @@ body.in-room {
   opacity: 0;
   visibility: hidden;
   transform: translateY(12px);
-  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s, box-shadow 0.15s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s, box-shadow 0.15s ease, background 0.2s ease;
 }
 
 .back-to-top-btn.is-visible {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+.back-to-top-btn.is-on-yellow {
+  background: var(--memteal);
 }
 
 .back-to-top-btn:hover {

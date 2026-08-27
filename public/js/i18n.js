@@ -1,7 +1,7 @@
 /* Pleyi — Hebrew / English UI strings */
 
 const I18n = {
-  lang: "he",
+  lang: "en",
 
   strings: {
     he: {
@@ -408,12 +408,6 @@ const I18n = {
     this.setLang(this.lang === "he" ? "en" : "he");
   },
 
-  detectLang() {
-    const langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || "he"];
-    const isHebrew = langs.some((l) => /^he\b|^iw\b/i.test(l));
-    return isHebrew ? "he" : "en";
-  },
-
   init() {
     let saved = null;
     try {
@@ -421,7 +415,7 @@ const I18n = {
     } catch {
       /* ignore */
     }
-    this.setLang(saved || this.detectLang());
+    this.setLang(saved || "en");
 
     if (!this._bound) {
       this._bound = true;

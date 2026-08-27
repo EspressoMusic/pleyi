@@ -1,6 +1,10 @@
 /* Premium games — word-shop */
 
 (function () {
+  // Payments are on hold — the business isn't registered ("עוסק") yet, so we
+  // can't legally collect money. Flip back to true once that's sorted.
+  const PAYMENTS_ENABLED = false;
+
   const PREMIUM_GAMES = new Set(["word-shop"]);
   const CACHE_KEY = "pleyi-premium-cache";
 
@@ -9,7 +13,7 @@
   let settings = null;
   let creditsByPlan = { free: 10, monthly: 50, yearly: 120 };
   let selectedPlan = "yearly";
-  let payMethod = "card";
+  let payMethod = "bit";
   let pendingTarget = null;
   let modalBuilt = false;
 
@@ -239,13 +243,6 @@
       });
     });
 
-    root.querySelectorAll(".premium-pay-tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        payMethod = tab.dataset.pay || "card";
-        renderSignupPage();
-      });
-    });
-
     document.getElementById("premiumLoginBtn")?.addEventListener("click", async () => {
       const res = await window.GameAuth?.signInWithGoogle?.();
       if (res?.error) showError(res.error);
@@ -277,11 +274,23 @@
       return;
     }
 
+    const unlockPhrase = target.kind === "lesson" ? "ותכנים נוספים" : "ומשחקים נוספים";
+    const itemLabel = target.kind === "lesson" ? "השיעור" : "המשחק";
+
+    if (!PAYMENTS_ENABLED) {
+      root.innerHTML = `
+        <header class="premium-page-header">
+          <span class="premium-page-badge">פרימיום</span>
+          <h1 class="premium-page-title">מנוי פרימיום</h1>
+          <p class="premium-page-lead">${target.id ? `פתחו את ${itemLabel} <strong>${escapeHtml(target.name)}</strong> ${unlockPhrase} עם מנוי פעיל.` : "גישה למשחקי פרימיום וקרדיטים ליצירת משחקים עם AI."}</p>
+        </header>
+        <p class="premium-login-hint">רכישת מנוי אינה זמינה כרגע — בקרוב!</p>`;
+      return;
+    }
+
     const bitPhone = settings?.bitPhone || "0586122187";
     const bitName = settings?.bitPayName || "Pleyi";
     const plan = (plans && plans[selectedPlan]) || { price: selectedPlan === "yearly" ? 299 : 29 };
-    const unlockPhrase = target.kind === "lesson" ? "ותכנים נוספים" : "ומשחקים נוספים";
-    const itemLabel = target.kind === "lesson" ? "השיעור" : "המשחק";
 
     root.innerHTML = `
       <header class="premium-page-header">
@@ -296,17 +305,7 @@
              <button type="button" class="premium-login-btn" id="premiumLoginBtn">התחברות עם Google</button>`
       }
       <div class="premium-plans" id="premiumPlans">${planButtonsHtml()}</div>
-      <div class="premium-pay-tabs">
-        <button type="button" class="premium-pay-tab${payMethod === "card" ? " is-active" : ""}" data-pay="card">כרטיס אשראי</button>
-        <button type="button" class="premium-pay-tab${payMethod === "bit" ? " is-active" : ""}" data-pay="bit">ביט</button>
-      </div>
-      <div class="premium-pay-panel${payMethod === "card" ? "" : " hidden"}" id="premiumPayCard">
-        <div class="premium-field">
-          <label for="premiumCardNumber">מספר כרטיס</label>
-          <input type="text" id="premiumCardNumber" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" dir="ltr" />
-        </div>
-      </div>
-      <div class="premium-pay-panel${payMethod === "bit" ? "" : " hidden"}" id="premiumPayBit">
+      <div class="premium-pay-panel" id="premiumPayBit">
         <div class="premium-bit-box">
           <p>שלמו <strong>₪${plan.price}</strong> בביט ל־<strong dir="ltr">${escapeHtml(bitPhone)}</strong></p>
           <p>שם: ${escapeHtml(bitName)}</p>
@@ -338,18 +337,15 @@
   }
 
   async function subscribe() {
+    if (!PAYMENTS_ENABLED) {
+      showError("רכישת מנוי אינה זמינה כרגע");
+      return;
+    }
+
     const user = window.GameAuth?.getUser();
     if (!user?.uid) {
       showError("יש להתחבר לפני התשלום");
       return;
-    }
-
-    if (payMethod === "card") {
-      const card = document.getElementById("premiumCardNumber")?.value.replace(/\s/g, "") || "";
-      if (card.length < 12) {
-        showError("מספר כרטיס לא תקין");
-        return;
-      }
     }
 
     const btn = document.getElementById("premiumSubmitBtn");

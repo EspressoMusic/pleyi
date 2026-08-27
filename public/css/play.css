@@ -517,8 +517,9 @@
   padding: 8px;
   border: 3px solid var(--ink);
   border-radius: 16px;
-  background: #009e8e;
+  background: #4fd3c4;
   cursor: pointer;
+  font-family: "Varela Round", var(--font-sans, "Google Sans"), system-ui, sans-serif;
   font-weight: 800;
   font-size: clamp(13px, 2.3vw, 28px);
   line-height: 1.15;
@@ -686,12 +687,12 @@
 .solo-options--vd {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: repeat(2, minmax(min-content, auto));
-  gap: clamp(14px, 2.6vh, 22px);
+  gap: clamp(28px, 6vh, 48px);
   max-width: min(680px, 100%);
-  margin: clamp(24px, 6vh, 46px) auto 0;
+  margin: clamp(56px, 13vh, 90px) auto 0;
   width: 100%;
   box-sizing: border-box;
-  padding-inline: 2px;
+  padding: 6px 10px 10px;
   min-width: 0;
   min-height: 0;
   height: auto;
@@ -758,8 +759,8 @@
   }
 
   .solo-options--vd {
-    gap: clamp(10px, 2vh, 16px);
-    margin-top: clamp(8px, 2.5vh, 18px);
+    gap: clamp(22px, 4.5vh, 34px);
+    margin-top: clamp(26px, 6vh, 44px);
   }
 
   .solo-options--vd .solo-option {
@@ -829,7 +830,9 @@
 
 .solo-options--vd .solo-option:hover:not(:disabled) {
   filter: brightness(1.06);
-  transform: scale(1.02);
+  transform: scale(1.08);
+  position: relative;
+  z-index: 2;
 }
 
 .vd-feedback {
@@ -1593,8 +1596,8 @@
 
 #sdMsg .solo-msg.ok {
   background: none;
-  color: #2fae5c;
-  -webkit-text-fill-color: #2fae5c;
+  color: #59be7d;
+  -webkit-text-fill-color: #59be7d;
 }
 
 #sdMsg .solo-msg.bad {
@@ -1881,7 +1884,11 @@
 }
 
 .ts-pro-controls {
-  flex-shrink: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;

@@ -249,6 +249,17 @@
     );
     updateVisibility();
 
+    const yellowSection = document.querySelector(".section-yellow");
+    if (yellowSection && "IntersectionObserver" in window) {
+      const yellowObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => btn.classList.toggle("is-on-yellow", entry.isIntersecting));
+        },
+        { rootMargin: "-90% 0px 0px 0px" }
+      );
+      yellowObserver.observe(yellowSection);
+    }
+
     btn.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
     });

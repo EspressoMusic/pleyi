@@ -376,5 +376,7 @@
     formatLearningContent,
     normalizeLearningContent,
     looksLikeReadyPairs,
+    itemHint,
+    itemEmoji,
   };
 })();

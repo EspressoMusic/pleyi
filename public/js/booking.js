@@ -54,21 +54,9 @@ const Booking = {
 
   bindPaymentTabs() {
 
-    document.querySelectorAll(".pay-tab").forEach((tab) => {
+    // Bit is the only payment method — no real processor is wired up yet,
 
-      tab.addEventListener("click", () => {
-
-        this.payMethod = tab.dataset.pay;
-
-        document.querySelectorAll(".pay-tab").forEach((t) => t.classList.toggle("active", t === tab));
-
-        document.getElementById("payPanelBit")?.classList.toggle("hidden", this.payMethod !== "bit");
-
-        document.getElementById("payPanelCard")?.classList.toggle("hidden", this.payMethod !== "card");
-
-      });
-
-    });
+    // so there's nothing here to route between.
 
   },
 
@@ -414,7 +402,7 @@ const Booking = {
 
 
 
-  async processPayment(method) {
+  async processPayment(method = "bit") {
 
     const err = document.getElementById("payFormError");
 
@@ -424,25 +412,7 @@ const Booking = {
 
 
 
-    if (method === "card") {
-
-      const card = document.getElementById("cardNumber")?.value.replace(/\s/g, "") || "";
-
-      if (card.length < 12) {
-
-        err.textContent = "מספר כרטיס לא תקין";
-
-        err.classList.remove("hidden");
-
-        return;
-
-      }
-
-    }
-
-
-
-    const btn = method === "bit" ? document.getElementById("bitConfirmBtn") : document.getElementById("paySubmitBtn");
+    const btn = document.getElementById("bitConfirmBtn");
 
     if (btn) {
 
@@ -472,7 +442,7 @@ const Booking = {
 
       btn.disabled = false;
 
-      btn.textContent = method === "bit" ? "אישרתי ששילמתי בביט" : "שלם ואשר תור";
+      btn.textContent = "אישרתי ששילמתי בביט";
 
     }
 
@@ -561,14 +531,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   document.getElementById("bookingDetailsForm")?.addEventListener("submit", (e) => Booking.submitDetails(e));
-
-  document.getElementById("paymentForm")?.addEventListener("submit", (e) => {
-
-    e.preventDefault();
-
-    Booking.processPayment("card");
-
-  });
 
   document.getElementById("bitConfirmBtn")?.addEventListener("click", () => Booking.processPayment("bit"));
 

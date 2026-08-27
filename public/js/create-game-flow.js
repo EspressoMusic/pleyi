@@ -9,43 +9,55 @@
   }
 
   function gameTitle(gameId) {
-    const catalog = window.GAMES_CATALOG;
-    const game = catalog?.english?.find((g) => g.id === gameId);
-    return game?.title || gameId;
+    return GAME_RULES[gameId]?.title || gameId;
   }
 
   const GAME_RULES = {
     "word-memory": {
+      title: "זיכרון",
+      desc: "התאימו כל מילה לתרגום שלה",
       minItems: 2,
       hint: "מלאו זוגות של מילה ותרגום — אפשר להוסיף כמה שרוצים.",
       lengthLabel: (n) => `${n} זוגות`,
       fields: { left: "מילה", right: "תרגום", leftPh: "apple", rightPh: "תפוח" },
     },
     "vocabulary-duel": {
+      title: "טריוויה",
+      desc: "מה התרגום? ענו מהר על השאלות",
       minItems: 4,
       hint: "מלאו לפחות 4 מילים עם תרגום — כל שורה תהפוך לשאלה אחת בטריוויה.",
       lengthLabel: (n) => `${n} שאלות`,
       fields: { left: "מילה", right: "תרגום", leftPh: "book", rightPh: "ספר" },
     },
     hangman: {
+      title: "איש תלוי",
+      desc: "נחשו את המילה לפני שנגמרו הניסיונות",
       minItems: 1,
       hint: "מלאו מילים באנגלית עם תרגום — כל מילה תהיה סבב ניחוש אחד.",
       lengthLabel: (n) => `${n} מילים`,
       fields: { left: "מילה באנגלית", right: "תרגום", leftPh: "banana", rightPh: "בננה" },
     },
     "spot-diff": {
+      title: "מצא את ההבדל",
+      desc: "מצאו את הפריט השונה בין שני הלוחות",
       minItems: 6,
       hint: "מלאו לפחות 6 פריטים — כל שורה תהפוך לסיבוב אחד במשחק.",
       lengthLabel: (n) => `${n} סיבובים`,
       fields: { left: "פריט", right: "תרגום", leftPh: "dog", rightPh: "כלב" },
     },
     "tower-stack": {
+      title: "מגדל מילים",
+      desc: "בנו מגדל מילים מהיר נגד השעון",
       minItems: 3,
       hint: "מלאו זוגות מילה ותרגום — במשחק תצטרכו לשפוט אם התרגום שמוצג נכון או שגוי.",
       lengthLabel: (n) => `${n} מילים במאגר`,
       fields: { left: "מילה", right: "תרגום", leftPh: "sun", rightPh: "שמש" },
     },
   };
+
+  // The four game types offered for user-created content (independent of the
+  // ready-made lesson catalog, which is empty for English until real lessons ship).
+  const PICKER_GAME_IDS = ["tower-stack", "vocabulary-duel", "hangman", "spot-diff"];
 
   const LOCAL_GAMES_KEY = "pleyi-local-games";
   const LOCAL_GAMES_MAX = 20;
@@ -109,16 +121,14 @@
 
   function renderGamePicker(container, subject, selectedId, onSelect) {
     if (!container) return;
-    const games = window.GAMES_CATALOG?.[subject] || window.GAMES_CATALOG?.english || [];
-    container.innerHTML = games
-      .map(
-        (g) => `
-        <button type="button" class="svc-game-pick-btn${selectedId === g.id ? " is-selected" : ""}" data-game-id="${g.id}">
-          <span class="svc-game-pick-title">${g.title}</span>
-          <span class="svc-game-pick-desc">${g.desc || ""}</span>
-        </button>`
-      )
-      .join("");
+    container.innerHTML = PICKER_GAME_IDS.map((id) => {
+      const rules = GAME_RULES[id];
+      return `
+        <button type="button" class="svc-game-pick-btn${selectedId === id ? " is-selected" : ""}" data-game-id="${id}">
+          <span class="svc-game-pick-title">${rules.title}</span>
+          <span class="svc-game-pick-desc">${rules.desc || ""}</span>
+        </button>`;
+    }).join("");
 
     container.querySelectorAll("[data-game-id]").forEach((btn) => {
       btn.addEventListener("click", () => onSelect?.(btn.dataset.gameId));
@@ -139,12 +149,11 @@
     return { ok: true };
   }
 
-  function populateGamePick(selectEl, subject = "english") {
+  function populateGamePick(selectEl) {
     if (!selectEl) return;
-    const games = window.GAMES_CATALOG?.[subject] || window.GAMES_CATALOG?.english || [];
     selectEl.innerHTML =
       `<option value="auto">בחירה אוטומטית (מומלץ)</option>` +
-      games.map((g) => `<option value="${g.id}">${g.title}</option>`).join("");
+      PICKER_GAME_IDS.map((id) => `<option value="${id}">${GAME_RULES[id].title}</option>`).join("");
   }
 
   function resolveGameId(items, gamePick, subject = "english") {

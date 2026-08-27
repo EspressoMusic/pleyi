@@ -110,15 +110,8 @@ window.TowerStackPro = {
 
     const getCameraFocusY = () => {
       const cubeTop = CUBE_DEPTH + 8;
-      if (falling) {
-        const blockY = phase === "he-judge" ? nextBlockTargetY() : Math.min(falling.y, nextBlockTargetY());
-        return blockY - cubeTop;
-      }
-      if (resolveAnim?.block) {
-        const b = resolveAnim.block;
-        const blockY = resolveAnim.type === "stack" ? b.targetY : b.y;
-        return blockY - cubeTop;
-      }
+      if (falling) return nextBlockTargetY() - cubeTop;
+      if (resolveAnim?.block) return resolveAnim.block.targetY - cubeTop;
       if (tower.length) return blockYForIndex(tower.length - 1) - cubeTop;
       return groundY() - BLOCK_H;
     };

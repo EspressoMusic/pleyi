@@ -21,6 +21,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Payments are on hold — the business isn't registered ("עוסק") yet, so we
+// can't legally collect money. Flip back to true once that's sorted.
+const PAYMENTS_ENABLED = false;
+
 const materialUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024 },
@@ -32,6 +36,25 @@ const servicePages = ["ready-lessons", "worksheets", "family", "game-builder"];
 servicePages.forEach((slug) => {
   app.get(`/services/${slug}`, (_req, res) => {
     res.sendFile(path.join(__dirname, "public", "services", `${slug}.html`));
+  });
+});
+
+const blogPosts = [
+  "english-games-for-classroom",
+  "quick-lesson-plan-guide",
+  "printable-english-worksheets-guide",
+  "digital-vs-frontal-classroom-games",
+  "family-english-practice-at-home",
+  "substitute-teacher-lesson-plan",
+  "choosing-game-by-age-level",
+  "english-classroom-games-faq",
+];
+app.get("/blog", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "blog", "index.html"));
+});
+blogPosts.forEach((slug) => {
+  app.get(`/blog/${slug}`, (_req, res) => {
+    res.sendFile(path.join(__dirname, "public", "blog", `${slug}.html`));
   });
 });
 
@@ -139,6 +162,9 @@ app.get("/api/premium/status", requireAuth, async (req, res) => {
 });
 
 app.post("/api/premium/subscribe", requireAuth, async (req, res) => {
+  if (!PAYMENTS_ENABLED) {
+    return res.status(503).json({ ok: false, error: "רכישת מנוי אינה זמינה כרגע" });
+  }
   try {
     const { planId, method } = req.body || {};
     const email = req.userEmail || req.body?.email || "";
@@ -253,6 +279,9 @@ app.post("/api/bookings", (req, res) => {
 });
 
 app.post("/api/bookings/:id/pay", (req, res) => {
+  if (!PAYMENTS_ENABLED) {
+    return res.status(503).json({ ok: false, error: "תשלום אינו זמין כרגע" });
+  }
   try {
     const method = req.body?.method || "bit";
     const booking =

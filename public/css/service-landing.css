@@ -766,10 +766,23 @@ body.coloring-zoom-open {
   max-height: min(280px, 50vh);
   overflow-y: auto;
   overscroll-behavior: contain;
+  transform-origin: top center;
+  animation: svcFilterMenuOpen 0.16s ease;
 }
 
 .svc-filter-menu.hidden {
   display: none;
+}
+
+@keyframes svcFilterMenuOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .svc-filter-menu li {
@@ -843,6 +856,7 @@ body.coloring-zoom-open {
   background: var(--white);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .svc-lesson-preview {
@@ -955,7 +969,7 @@ body.page-game-builder .svc-lesson-preview {
   border: 3px solid var(--ink);
   border-radius: 20px;
   box-shadow: var(--shadow-sticker);
-  background: var(--memteal) !important;
+  background: #00c9b7 !important;
   overflow: hidden;
   transform: scale(1);
   transform-origin: center center;
@@ -1055,6 +1069,7 @@ body.page-game-builder .svc-lesson-info-toggle:focus-visible {
 }
 
 body.page-game-builder .svc-custom-tile {
+  position: relative;
   padding: 0;
   margin: 0;
   font: inherit;
@@ -1077,6 +1092,30 @@ body.page-game-builder .svc-custom-tile:hover {
   transform: translateY(-2px);
 }
 
+body.page-game-builder .svc-custom-tile:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+body.page-game-builder .svc-custom-tile:disabled:hover {
+  transform: none;
+}
+
+body.page-game-builder .svc-custom-tile-soon-badge {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  z-index: 1;
+  padding: 4px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
 body.page-game-builder .svc-custom-tile-preview {
   display: none;
 }
@@ -1096,8 +1135,8 @@ body.page-game-builder .svc-custom-tile-title {
   font-weight: 900;
 }
 
-body.page-game-builder .svc-custom-tile:hover,
-body.page-game-builder .svc-custom-tile:focus-visible {
+body.page-game-builder .svc-custom-tile:not(:disabled):hover,
+body.page-game-builder .svc-custom-tile:not(:disabled):focus-visible {
   background: repeating-linear-gradient(
     45deg,
     color-mix(in srgb, var(--memyellow) 85%, black 15%),
@@ -1240,14 +1279,25 @@ body.page-game-builder .svc-custom-tile:active {
   color: var(--body);
 }
 
-.svc-create-box {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 24px;
-  border: 3px solid var(--ink);
-  border-radius: 20px;
-  background: var(--memteal);
-  box-shadow: var(--shadow-candy);
+#svcCreateModal .modal {
+  max-width: min(720px, 94vw);
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#svcCreateForm {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+#svcCreateModal .svc-create-modal-title {
+  margin: 0 0 18px;
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  text-align: center;
 }
 
 #readyGamesGrid {
@@ -1286,41 +1336,12 @@ body.page-game-builder .svc-custom-tile:active {
   opacity: 0.88;
 }
 
-.svc-create-box .join-material-box {
-  margin-bottom: 16px;
-}
-
-.svc-game-pick-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  margin: 0 0 18px;
-  padding: 16px;
-  font: inherit;
-  font-size: 1.2rem;
+.svc-game-pick-label {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
   font-weight: 900;
   color: var(--ink);
   text-align: center;
-  background: #fffef5;
-  border: 3px solid var(--ink);
-  border-radius: 16px;
-  box-shadow: var(--shadow-candy);
-  cursor: pointer;
-  transition: transform 0.12s;
-}
-
-.svc-game-pick-toggle:hover {
-  transform: translateY(-2px);
-}
-
-.svc-game-pick-toggle-chevron {
-  transition: transform 0.15s;
-}
-
-.svc-game-pick-toggle[aria-expanded="true"] .svc-game-pick-toggle-chevron {
-  transform: rotate(180deg);
 }
 
 .svc-game-pick-grid {
@@ -1409,6 +1430,13 @@ body.page-game-builder .svc-custom-tile:active {
   color: color-mix(in srgb, var(--ink) 78%, transparent);
 }
 
+.svc-create-step {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
 .svc-create-step.hidden {
   display: none;
 }
@@ -1465,11 +1493,11 @@ body.page-game-builder .svc-custom-tile:active {
   border: 3px solid var(--ink);
   border-radius: 16px;
   background: #fffef5;
-  transition: box-shadow 0.15s;
-}
-
-.svc-fields-box.is-dragover {
-  box-shadow: 0 0 0 3px var(--memteal);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .svc-fields-source {
@@ -1488,6 +1516,18 @@ body.page-game-builder .svc-custom-tile:active {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex: 0 1 auto;
+  min-height: 100px;
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin-inline-end: -20px;
+  padding-inline-end: 20px;
+}
+
+.svc-field-rows::-webkit-scrollbar {
+  display: none;
 }
 
 .svc-field-row {
@@ -1532,27 +1572,27 @@ body.page-game-builder .svc-custom-tile:active {
   align-items: center;
   justify-content: center;
   padding: 0;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--danger);
   border-radius: 50%;
   background: #fff;
-  font: inherit;
-  font-size: 1rem;
-  font-weight: 900;
-  line-height: 1;
-  color: var(--ink);
+  color: var(--danger);
   cursor: pointer;
   transition: transform 0.12s, background 0.12s;
 }
 
+.svc-field-remove svg {
+  display: block;
+}
+
 .svc-field-remove:hover {
-  background: var(--mempink);
+  background: var(--danger);
+  color: #fff;
   transform: scale(1.08);
 }
 
 .svc-field-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 14px;
@@ -1582,26 +1622,6 @@ body.page-game-builder .svc-custom-tile:active {
 .svc-field-add-icon {
   font-size: 1.1rem;
   line-height: 1;
-}
-
-.svc-field-upload {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 4px;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: color-mix(in srgb, var(--ink) 75%, transparent);
-  cursor: pointer;
-  opacity: 0.85;
-}
-
-.svc-field-upload:hover {
-  opacity: 1;
-  text-decoration: underline;
 }
 
 @media (max-width: 480px) {

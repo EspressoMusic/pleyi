@@ -3275,7 +3275,11 @@ body.in-room .game-actions .btn {
 
 /* Win celebration */
 .win-confetti-layer {
-  position: fixed;
+  /* !important: the ambient-bg sibling rule above forces position:relative
+     on every direct child of <body> with higher specificity — this layer
+     is appended as a direct child of <body> and must stay fixed to the
+     viewport so confetti falls from the top of the screen. */
+  position: fixed !important;
   inset: 0;
   z-index: 25000;
   pointer-events: none;
@@ -3493,7 +3497,8 @@ body.in-room .game-actions .btn {
 
 #joinModal .modal h2.font-cartoon,
 #soloContentModal .modal h2.font-cartoon,
-#playModeModal .modal h2.font-cartoon {
+#playModeModal .modal h2.font-cartoon,
+#svcCreateModal .modal h2.font-cartoon {
   text-align: center;
   width: 100%;
   margin: 0 0 12px;
@@ -3776,8 +3781,7 @@ body.in-room .game-actions .btn {
     filter 0.85s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-[data-reveal="up"],
-[data-reveal]:not([data-reveal="left"]):not([data-reveal="right"]):not([data-reveal="scale"]) {
+[data-reveal="up"] {
   transform: translateY(40px);
 }
 

@@ -6,7 +6,7 @@
 
   const catalog = window.GAMES_CATALOG;
   const grid = $("#readyGamesGrid");
-  const createBox = $("#svcCreateBox");
+  const createModal = $("#svcCreateModal");
   if (!catalog || !grid) return;
 
   const GAME_TYPE_LABELS = {
@@ -64,13 +64,36 @@
 
   function customTileHtml() {
     return `
-      <button type="button" class="svc-lesson-card svc-custom-tile" id="toggleCustomCreateBtn" aria-expanded="false" aria-controls="svcCreateBox">
+      <button type="button" class="svc-lesson-card svc-custom-tile" id="toggleCustomCreateBtn" disabled aria-haspopup="dialog" aria-controls="svcCreateModal">
+        <span class="svc-custom-tile-soon-badge">בקרוב</span>
         <span class="svc-lesson-preview svc-custom-tile-preview"></span>
         <span class="svc-lesson-body svc-custom-tile-body">
           <span class="svc-custom-tile-title font-cartoon">ליצירת משחק אישי</span>
         </span>
       </button>`;
   }
+
+  // --- Custom-create modal (opened from the "ליצירת משחק אישי" tile) ---
+  function openCreateModal() {
+    if (!createModal) return;
+    createModal.classList.remove("hidden");
+    createModal.setAttribute("aria-hidden", "false");
+    setTimeout(() => $(".svc-game-pick-btn", createModal)?.focus(), 50);
+  }
+
+  function closeCreateModal() {
+    if (!createModal) return;
+    createModal.classList.add("hidden");
+    createModal.setAttribute("aria-hidden", "true");
+  }
+
+  createModal?.addEventListener("click", (e) => {
+    if (e.target === createModal) closeCreateModal();
+  });
+  $("#svcCreateModalClose")?.addEventListener("click", closeCreateModal);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !createModal?.classList.contains("hidden")) closeCreateModal();
+  });
 
   const state = { subject: "all", gameType: "all", level: "all" };
 
@@ -144,14 +167,12 @@
 
     const customTile = e.target.closest("#toggleCustomCreateBtn");
     if (customTile) {
-      const open = createBox?.classList.toggle("hidden") === false;
-      customTile.setAttribute("aria-expanded", open ? "true" : "false");
-      if (open) createBox?.scrollIntoView({ behavior: "smooth", block: "start" });
+      openCreateModal();
       return;
     }
 
-    const playBtn = e.target.closest(".svc-game-play-btn");
-    if (playBtn) launchGameFromCard(playBtn.closest("[data-game-id]"));
+    const card = e.target.closest("[data-game-id]");
+    if (card) launchGameFromCard(card);
   });
 
   // --- Filter dropdowns (same interaction pattern as ready-lessons.js) ---
