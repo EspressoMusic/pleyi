@@ -32,7 +32,6 @@
   <link rel="stylesheet" href="styles.css?v=64"/>
   <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
   <link rel="stylesheet" href="css/clean-site.css?v=80"/>
-  <link rel="stylesheet" href="/css/blog.css?v=1"/>
   <link rel="stylesheet" href="css/legal.css"/>
   <link rel="stylesheet" href="css/accessibility.css" />
 </head>
@@ -73,6 +72,7 @@
     </div>
     <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
       <a href="/services/ready-lessons" class="nav-services-link" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+      <a href="/services/english" class="nav-services-link" role="menuitem" data-i18n="services.english">לומדים אנגלית</a>
       <a href="/services/worksheets" class="nav-services-link" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
       <a href="/services/game-builder" class="nav-services-link" role="menuitem" data-i18n="services.gameBuilder">משחקים</a>
     </div>
@@ -84,6 +84,7 @@
       <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel" data-i18n="nav.services">שירותים</button>
       <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
         <a href="/services/ready-lessons" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
+        <a href="/services/english" role="menuitem" data-i18n="services.english">לומדים אנגלית</a>
         <a href="/services/worksheets" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
         <a href="/services/game-builder" role="menuitem" data-i18n="services.gameBuilder">משחקים</a>
       </div>
@@ -184,30 +185,6 @@
               </svg>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3.5 מהבלוג -->
-    <section id="blog-teaser" class="clean-section clean-section--soft scroll-section">
-      <div class="container">
-        <h2 class="clean-section-title font-cartoon">מהבלוג</h2>
-        <div class="blog-grid">
-          <a href="/blog/english-games-for-classroom" class="blog-card">
-            <span class="blog-card-tag">משחקים</span>
-            <h3>10 משחקי אנגלית לכיתה שכל מורה חייבת להכיר</h3>
-            <p>רעיונות מוכנים למשחקים שעובדים בפועל — בלי הכנה מסובכת.</p>
-            <span class="blog-card-read">לקריאה ←</span>
-          </a>
-          <a href="/blog/quick-lesson-plan-guide" class="blog-card">
-            <span class="blog-card-tag">מערכי שיעור</span>
-            <h3>איך מכינים מערך שיעור אנגלית מהיר</h3>
-            <p>מבנה קבוע שאפשר לחזור עליו כל שבוע, גם כשאין זמן.</p>
-            <span class="blog-card-read">לקריאה ←</span>
-          </a>
-        </div>
-        <div class="clean-center-cta">
-          <a href="/blog" class="btn btn-outline font-cartoon">לכל המאמרים בבלוג</a>
         </div>
       </div>
     </section>
@@ -339,6 +316,7 @@
         <h2>יומן המורה</h2>
         <div class="dash-header-actions">
           <button type="button" class="btn btn-primary btn-sm" id="dashStartLessonBtn">פתח חדר שיעור</button>
+          <a href="/admin/students" class="btn btn-outline btn-sm">ניהול תלמידים</a>
           <button type="button" class="btn btn-outline btn-sm" id="dashBackHome">← חזרה לאתר</button>
         </div>
       </div>
@@ -486,7 +464,7 @@
   <script src="js/teacher-dashboard.js"></script>
   <script src="/js/ambient-bg.js?v=3"></script>
   <script src="js/scroll-animations.js?v=4"></script>
-  <script src="/js/i18n.js?v=1"></script>
+  <script src="/js/i18n.js?v=4"></script>
   <script src="/js/app.js?v=9"></script>
   <script src="js/cookie-consent.js?v=3"></script>
 </body>

@@ -22,6 +22,27 @@
     "math-blitz": "ברק מהיר",
   };
 
+  const GAME_TYPE_LABELS_EN = {
+    "tower-stack": "Word Tower",
+    "vocabulary-duel": "Trivia",
+    "word-memory": "Memory",
+    hangman: "Hangman",
+    "spot-diff": "Spot the Difference",
+    "sentence-scramble": "Sentence Scramble",
+    "word-runner": "Obstacle Run",
+    "candy-match": "Candy Match",
+    "word-shop": "Shop",
+    "math-blitz": "Math Blitz",
+  };
+
+  function curLang() {
+    return window.I18n?.lang === "en" ? "en" : "he";
+  }
+
+  function t(he, en) {
+    return curLang() === "en" ? en : he;
+  }
+
   function escapeHtml(str) {
     return String(str || "")
       .replace(/&/g, "&amp;")
@@ -43,21 +64,24 @@
   }
 
   function cardHtml(game) {
+    const en = curLang() === "en";
     const level = game.level || "medium";
     const subject = game._subject;
-    const subjectLabel = catalog.subjects?.[subject] || subject;
+    const subjectLabel = (en ? catalog.subjectsEn?.[subject] : catalog.subjects?.[subject]) || subject;
     const levelLabel = catalog.levelLabel ? catalog.levelLabel(level) : level;
-    const typeLabel = GAME_TYPE_LABELS[game.id] || game.title;
-    const summary = catalog.gameSummary ? catalog.gameSummary(game.desc) : game.desc || "";
+    const typeLabel = (en ? GAME_TYPE_LABELS_EN[game.id] : GAME_TYPE_LABELS[game.id]) || (en ? game.titleEn : game.title) || game.title;
+    const title = (en ? game.titleEn : game.title) || game.title;
+    const desc = (en ? game.descEn : game.desc) || game.desc;
+    const summary = catalog.gameSummary ? catalog.gameSummary(desc) : desc || "";
     return `
-      <article class="svc-lesson-card" data-game-id="${game.id}" data-game-subject="${subject}" data-game-level="${level}" data-game-title="${escapeHtml(game.title)}">
+      <article class="svc-lesson-card" data-game-id="${game.id}" data-game-subject="${subject}" data-game-level="${level}" data-game-title="${escapeHtml(title)}">
         <div class="svc-lesson-preview">
-          <button type="button" class="svc-lesson-info-toggle" data-info-subject="${escapeHtml(subjectLabel)}" data-info-type="${escapeHtml(typeLabel)}" data-info-level="${escapeHtml(levelLabel)}" data-info-desc="${escapeHtml(summary)}" aria-label="מידע נוסף">i</button>
+          <button type="button" class="svc-lesson-info-toggle" data-info-subject="${escapeHtml(subjectLabel)}" data-info-type="${escapeHtml(typeLabel)}" data-info-level="${escapeHtml(levelLabel)}" data-info-desc="${escapeHtml(summary)}" aria-label="${t("מידע נוסף", "More info")}">i</button>
           <div class="svc-lesson-title-wrap">
             <span class="svc-lesson-name">${escapeHtml(subjectLabel)}</span>
-            <span class="svc-lesson-part">${escapeHtml(game.title)}</span>
+            <span class="svc-lesson-part">${escapeHtml(title)}</span>
           </div>
-          <button type="button" class="btn btn-primary btn-candy font-cartoon svc-game-play-btn">שחק</button>
+          <button type="button" class="btn btn-primary btn-candy font-cartoon svc-game-play-btn">${t("שחק", "Play")}</button>
         </div>
       </article>`;
   }
@@ -65,10 +89,10 @@
   function customTileHtml() {
     return `
       <button type="button" class="svc-lesson-card svc-custom-tile" id="toggleCustomCreateBtn" disabled aria-haspopup="dialog" aria-controls="svcCreateModal">
-        <span class="svc-custom-tile-soon-badge">בקרוב</span>
+        <span class="svc-custom-tile-soon-badge">${t("בקרוב", "Coming soon")}</span>
         <span class="svc-lesson-preview svc-custom-tile-preview"></span>
         <span class="svc-lesson-body svc-custom-tile-body">
-          <span class="svc-custom-tile-title font-cartoon">ליצירת משחק אישי</span>
+          <span class="svc-custom-tile-title font-cartoon">${t("ליצירת משחק אישי", "Create your own game")}</span>
         </span>
       </button>`;
   }
@@ -106,8 +130,13 @@
     });
 
     grid.innerHTML = games.map(cardHtml).join("") + customTileHtml();
-    $("#readyGamesEmpty")?.classList.toggle("hidden", games.length > 0);
+    const emptyEl = $("#readyGamesEmpty");
+    if (emptyEl) {
+      emptyEl.textContent = t("לא נמצאו משחקים בסינון הזה.", "No games match these filters.");
+      emptyEl.classList.toggle("hidden", games.length > 0);
+    }
   }
+
 
   // --- Game info modal (title, subject, type, level, description — opened from the "i" toggle) ---
   const infoModal = $("#gameInfoModal");
@@ -207,6 +236,12 @@
       )
       .join("");
 
+    // Keep the trigger's displayed value in sync with the current state —
+    // needed both on first render and when the language toggle rebuilds
+    // this menu with the currently-selected option's translated label.
+    const current = options.find((o) => o.id === state[key]) || options[0];
+    if (valueEl && current) valueEl.textContent = current.label;
+
     menuEl.querySelectorAll("button").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -221,28 +256,33 @@
   }
 
   function buildSubjectMenu() {
+    const en = curLang() === "en";
     const options = [
-      { id: "all", label: "הכל" },
-      ...enabledSubjects().map((s) => ({ id: s, label: catalog.subjects?.[s] || s })),
+      { id: "all", label: t("הכל", "All") },
+      ...enabledSubjects().map((s) => ({ id: s, label: (en ? catalog.subjectsEn?.[s] : catalog.subjects?.[s]) || s })),
     ];
     buildMenu($("#filterGameSubjectMenu"), $("#filterGameSubjectValue"), options, "subject");
   }
 
   function buildGameTypeMenu() {
+    const en = curLang() === "en";
+    const labels = en ? GAME_TYPE_LABELS_EN : GAME_TYPE_LABELS;
     const ids = new Set();
     enabledSubjects().forEach((s) => {
       if (state.subject !== "all" && state.subject !== s) return;
       (catalog[s] || []).forEach((g) => ids.add(g.id));
     });
     if (!ids.has(state.gameType)) state.gameType = "all";
-    const options = [{ id: "all", label: "הכל" }, ...[...ids].map((id) => ({ id, label: GAME_TYPE_LABELS[id] || id }))];
+    const options = [{ id: "all", label: t("הכל", "All") }, ...[...ids].map((id) => ({ id, label: labels[id] || id }))];
     buildMenu($("#filterGameTypeMenu"), $("#filterGameTypeValue"), options, "gameType");
   }
 
   function buildLevelMenu() {
+    const en = curLang() === "en";
+    const dict = en ? catalog.levelsEn : catalog.levels;
     const options = [
-      { id: "all", label: "הכל" },
-      ...Object.entries(catalog.levels || {}).map(([id, label]) => ({ id, label })),
+      { id: "all", label: t("הכל", "All") },
+      ...Object.entries(dict || {}).map(([id, label]) => ({ id, label })),
     ];
     buildMenu($("#filterGameLevelMenu"), $("#filterGameLevelValue"), options, "level");
   }
@@ -268,8 +308,14 @@
     if (e.key === "Escape") closeDropdown();
   });
 
-  buildSubjectMenu();
-  buildGameTypeMenu();
-  buildLevelMenu();
-  renderGrid();
+  function refreshLanguage() {
+    buildSubjectMenu();
+    buildGameTypeMenu();
+    buildLevelMenu();
+    renderGrid();
+  }
+
+  window.addEventListener("gameclass:lang", refreshLanguage);
+
+  refreshLanguage();
 })();

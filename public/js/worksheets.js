@@ -4,13 +4,13 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  const CATEGORY_LABELS = {
-    coloring: "דפי צביעה",
-    activity: "דפי פעילות",
-    sudoku: "סודוקו",
-    numberColoring: "צביעה עם מספרים",
-    lineTracing: "שרטוט קווים",
-  };
+  function curLang() {
+    return window.I18n?.lang === "en" ? "en" : "he";
+  }
+
+  function t(he, en) {
+    return curLang() === "en" ? en : he;
+  }
 
   function getPrintArea() {
     let area = document.getElementById("svcPrintArea");
@@ -61,10 +61,23 @@
       const printBtn = document.createElement("button");
       printBtn.type = "button";
       printBtn.className = "btn svc-tile-print btn-candy font-cartoon";
-      printBtn.textContent = "הדפסה";
-      printBtn.setAttribute("aria-label", `הדפסת ${img.alt || "דף"}`);
+      printBtn.textContent = t("הדפסה", "Print");
+      printBtn.setAttribute("aria-label", t(`הדפסת ${img.alt || "דף"}`, `Print ${img.alt || "page"}`));
       printBtn.addEventListener("click", () => printWorksheetImage(img.src, img.alt));
       actions.appendChild(printBtn);
+    });
+  }
+
+  // addPrintButtons() only creates each tile's button once — this relabels
+  // the download/print buttons already on the page when the language toggles.
+  function relabelTileButtons() {
+    $$(".svc-tile-download").forEach((btn) => {
+      btn.textContent = t("להורדה", "Download");
+    });
+    $$(".svc-tile-print").forEach((btn) => {
+      const img = $("img", btn.closest(".svc-tile-image--turquoise, .coloring-zoom-flyout-inner"));
+      btn.textContent = t("הדפסה", "Print");
+      btn.setAttribute("aria-label", t(`הדפסת ${img?.alt || "דף"}`, `Print ${img?.alt || "page"}`));
     });
   }
 
@@ -122,7 +135,20 @@
         tile.classList.toggle("hidden", !show);
         if (show) visible += 1;
       });
-      empty?.classList.toggle("hidden", visible > 0);
+      if (empty) {
+        empty.textContent = t("לא נמצאו פריטים בקטגוריה זו.", "No items found in this category.");
+        empty.classList.toggle("hidden", visible > 0);
+      }
+    }
+
+    // Static HTML defaults the type/difficulty trigger text to Hebrew — sync
+    // it to whatever the active option now says (data-i18n keeps that text
+    // current) both on first bind and whenever the language toggles.
+    function syncFilterValues() {
+      const activeTypeBtn = $("button.active", typeMenu);
+      if (typeValue && activeTypeBtn) typeValue.textContent = activeTypeBtn.textContent;
+      const activeDiffBtn = $("button.active", difficultyMenu);
+      if (difficultyValue && activeDiffBtn) difficultyValue.textContent = activeDiffBtn.textContent;
     }
 
     typeTrigger?.addEventListener("click", (e) => {
@@ -137,10 +163,13 @@
         currentType = btn.dataset.type || "coloring";
         $$("button", typeMenu).forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        if (typeValue) typeValue.textContent = CATEGORY_LABELS[currentType] || btn.textContent;
+        if (typeValue) typeValue.textContent = btn.textContent;
         currentDifficulty = "all";
-        if (difficultyValue) difficultyValue.textContent = "הכל";
         $$("button", difficultyMenu || []).forEach((b) => b.classList.toggle("active", b.dataset.difficulty === "all"));
+        if (difficultyValue) {
+          const allBtn = $('button[data-difficulty="all"]', difficultyMenu);
+          if (allBtn) difficultyValue.textContent = allBtn.textContent;
+        }
         syncDifficultyVisibility();
         closeDropdown();
         applyFilters();
@@ -171,7 +200,14 @@
     });
 
     syncDifficultyVisibility();
+    syncFilterValues();
     applyFilters();
+
+    window.addEventListener("gameclass:lang", () => {
+      syncFilterValues();
+      applyFilters();
+      relabelTileButtons();
+    });
   }
 
   function bindColoringZoom() {
@@ -272,7 +308,7 @@
       flyout.className = "coloring-zoom-flyout";
       flyout.setAttribute("role", "dialog");
       flyout.setAttribute("aria-modal", "true");
-      flyout.setAttribute("aria-label", img.alt || "תצוגה מוגדלת");
+      flyout.setAttribute("aria-label", img.alt || t("תצוגה מוגדלת", "Zoomed view"));
 
       const downloadLink = $(".svc-tile-download", container);
 
@@ -291,7 +327,7 @@
 
       const download = document.createElement("a");
       download.className = "btn svc-tile-download btn-candy font-cartoon";
-      download.textContent = "להורדה";
+      download.textContent = t("להורדה", "Download");
       if (downloadLink) {
         download.href = downloadLink.href;
         download.download = downloadLink.download || "";
@@ -303,8 +339,8 @@
       const printBtn = document.createElement("button");
       printBtn.type = "button";
       printBtn.className = "btn svc-tile-print btn-candy font-cartoon";
-      printBtn.textContent = "הדפסה";
-      printBtn.setAttribute("aria-label", `הדפסת ${img.alt || "דף"}`);
+      printBtn.textContent = t("הדפסה", "Print");
+      printBtn.setAttribute("aria-label", t(`הדפסת ${img.alt || "דף"}`, `Print ${img.alt || "page"}`));
       printBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         printWorksheetImage(img.src, img.alt);
@@ -316,7 +352,7 @@
       const closeBtn = document.createElement("button");
       closeBtn.type = "button";
       closeBtn.className = "coloring-zoom-close";
-      closeBtn.setAttribute("aria-label", "סגירה");
+      closeBtn.setAttribute("aria-label", t("סגירה", "Close"));
       closeBtn.innerHTML =
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>';
       closeBtn.addEventListener("click", (e) => {
@@ -366,6 +402,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     addPrintButtons();
+    relabelTileButtons();
     bindWorksheetFilters();
     bindColoringZoom();
   });

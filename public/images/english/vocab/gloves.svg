@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+<g stroke="#1b1b1b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<g transform="translate(-6 8) scale(0.62)">
+<rect x="31" y="48" width="58" height="60" rx="24" fill="#4DA6FF"/>
+<path d="M41 62V26M53 58V15M65 58V17M77 62V28" fill="none" stroke="#1b1b1b" stroke-width="16"/><path d="M41 62V26M53 58V15M65 58V17M77 62V28" fill="none" stroke="#4DA6FF" stroke-width="7"/>
+<path d="M40 84L17 64" fill="none" stroke="#1b1b1b" stroke-width="16"/><path d="M40 84L17 64" fill="none" stroke="#4DA6FF" stroke-width="7"/>
+<rect x="35" y="52" width="50" height="22" fill="#4DA6FF" stroke="none"/>
+<circle cx="45" cy="84" r="9" fill="#4DA6FF" stroke="none"/>
+<rect x="33" y="96" width="54" height="18" rx="5" fill="#2E6FB0"/></g>
+<g transform="translate(126 8) scale(-0.62 0.62)">
+<rect x="31" y="48" width="58" height="60" rx="24" fill="#4DA6FF"/>
+<path d="M41 62V26M53 58V15M65 58V17M77 62V28" fill="none" stroke="#1b1b1b" stroke-width="16"/><path d="M41 62V26M53 58V15M65 58V17M77 62V28" fill="none" stroke="#4DA6FF" stroke-width="7"/>
+<path d="M40 84L17 64" fill="none" stroke="#1b1b1b" stroke-width="16"/><path d="M40 84L17 64" fill="none" stroke="#4DA6FF" stroke-width="7"/>
+<rect x="35" y="52" width="50" height="22" fill="#4DA6FF" stroke="none"/>
+<circle cx="45" cy="84" r="9" fill="#4DA6FF" stroke="none"/>
+<rect x="33" y="96" width="54" height="18" rx="5" fill="#2E6FB0"/></g>
+</g>
+</svg>

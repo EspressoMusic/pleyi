@@ -1,0 +1,3658 @@
+/* Learn English page — topic tiles, topic page (lesson + practice),
+   exercise runner (all exercise types), slide viewer */
+
+body.page-english {
+  --eng-right: #1f9d55;
+  --eng-right-soft: #c9f5d9;
+  --eng-wrong: #d63c3c;
+  --eng-wrong-soft: #ffd9d9;
+  --eng-soft: #e8faf8;
+  --eng-card: #eaf5ff;
+  --eng-card-hover: #d6ebff;
+  --eng-card-border: 3px solid var(--ink);
+  --eng-card-shadow: 4px 5px 0 0 var(--ink);
+  --eng-card-shadow-hover: 5px 7px 0 0 var(--ink);
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+body.page-english main {
+  flex: 1 0 auto;
+}
+
+body.page-english .site-footer.section-yellow {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+body.page-english section.clean-section.clean-section--hero {
+  padding-bottom: 24px;
+}
+
+/* This page is standalone — no site navbar — so the hero doesn't need the
+   generic clean-site clearance for it. */
+body.page-english .clean-hero-inner {
+  padding-top: max(40px, calc(env(safe-area-inset-top, 0px) + 24px));
+}
+
+body.page-english .eng-page-title.font-cartoon {
+  margin: 0 0 14px;
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  text-align: center;
+}
+
+body.page-english .eng-page-title .line {
+  display: block;
+}
+
+.eng-hero-lead {
+  margin: 0 auto;
+  max-width: 34rem;
+  font-size: clamp(1.05rem, 3vw, 1.3rem);
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--body);
+  white-space: normal;
+}
+
+/* This page has no navbar, so the generic clean-section "clear the fixed
+   navbar" top padding would only add an empty gap. */
+body.page-english .eng-section {
+  padding-top: 32px !important;
+  padding-bottom: 72px;
+  overflow: visible;
+}
+
+/* ── Topic grid ── */
+
+/* Grid (not flex-wrap) so every row shares one height: 1fr auto rows grow
+   all tiles to the tallest one, e.g. when a title wraps to two lines. */
+.eng-topic-grid {
+  --eng-tile-size: clamp(150px, 42vw, 210px);
+  display: grid;
+  grid-template-columns: repeat(2, var(--eng-tile-size));
+  grid-auto-rows: 1fr;
+  justify-content: center;
+  gap: 22px;
+  margin: 0 auto;
+}
+
+@media (min-width: 760px) {
+  .eng-topic-grid {
+    grid-template-columns: repeat(3, var(--eng-tile-size));
+  }
+}
+
+.eng-topic-card {
+  display: grid;
+}
+
+.eng-topic-tile {
+  position: relative;
+  min-height: var(--eng-tile-size);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 10px 62px;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: var(--shadow-sticker);
+  background: var(--memteal);
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  transition: transform 0.32s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.eng-topic-tile:hover,
+.eng-topic-tile:focus-visible {
+  transform: scale(1.06);
+}
+
+.eng-topic-title {
+  font-size: clamp(1.3rem, 4.8vw, 1.75rem);
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.eng-topic-sub {
+  font-size: clamp(0.9rem, 3vw, 1.05rem);
+  font-weight: 800;
+}
+
+.eng-topic-tile .eng-topic-open {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: 84%;
+  padding: 7px 12px;
+  font-size: clamp(0.85rem, 2.8vw, 0.95rem);
+  text-align: center;
+  box-shadow: none !important;
+}
+
+/* Groups of tiles: topics, reading, vocabulary by topic. */
+.eng-topic-groups {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(32px, 6vw, 48px);
+}
+
+.eng-group-title {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: clamp(1.45rem, 4.4vw, 2rem);
+  font-weight: 900;
+  color: var(--ink);
+}
+
+/* Vocabulary tiles carry one picture from their topic. */
+.eng-topic-tile.has-img {
+  gap: 2px;
+  padding-top: 12px;
+}
+
+.eng-topic-img {
+  width: clamp(52px, 13vw, 74px);
+  height: clamp(52px, 13vw, 74px);
+  margin-bottom: 4px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* The reading library is one wide tile. */
+.eng-topic-grid--wide {
+  grid-template-columns: minmax(0, calc(var(--eng-tile-size) * 2 + 22px));
+}
+
+@media (min-width: 760px) {
+  .eng-topic-grid--wide {
+    grid-template-columns: minmax(0, calc(var(--eng-tile-size) * 3 + 44px));
+  }
+}
+
+.eng-topic-tile--wide {
+  min-height: 0;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  text-align: start;
+}
+
+.eng-topic-tile--wide:hover,
+.eng-topic-tile--wide:focus-visible {
+  transform: scale(1.02);
+}
+
+.eng-topic-wide-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--white);
+}
+
+.eng-topic-wide-icon svg {
+  width: 38px;
+  height: 38px;
+}
+
+.eng-topic-wide-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eng-topic-tile--wide .eng-topic-open {
+  position: static;
+  transform: none;
+  flex-shrink: 0;
+  width: auto;
+  padding: 9px 24px;
+}
+
+@media (max-width: 520px) {
+  .eng-topic-tile--wide {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .eng-topic-wide-text {
+    flex-basis: calc(100% - 80px);
+  }
+
+  .eng-topic-tile--wide .eng-topic-open {
+    width: 100%;
+  }
+}
+
+/* ── Shared: back button (round arrow icon; the label lives in aria-label) ── */
+
+.eng-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.eng-back svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* The arrow points right ("back" in RTL); flip it for LTR. */
+[dir="ltr"] .eng-back svg {
+  transform: scaleX(-1);
+}
+
+.eng-back:hover {
+  background: var(--memyellow);
+  transform: translateY(-1px);
+}
+
+/* ── Topic page ── */
+
+.eng-topic-view,
+.eng-exercise-view {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.eng-topic-head,
+.eng-runner-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.eng-topic-head .eng-back {
+  align-self: flex-start;
+}
+
+/* Back link on the start side, progress in the middle, sound / translation
+   toggles on the end side. Columns are pinned so the tools stay at the end
+   on the results screen, which has no progress. */
+.eng-runner-bar {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.eng-runner-bar > .eng-back {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.eng-runner-bar > .eng-progress {
+  grid-column: 2;
+}
+
+.eng-runner-tools {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eng-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.eng-tool svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.eng-tool[aria-pressed="true"] {
+  background: var(--memteal);
+}
+
+.eng-tool:hover {
+  transform: translateY(-1px);
+}
+
+.eng-tool:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+body.clean-site .eng-topic-heading.font-cartoon,
+body.clean-site .eng-runner-title.font-cartoon {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  line-height: 1.15;
+}
+
+body.clean-site .eng-runner-title.font-cartoon {
+  font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+}
+
+.eng-topic-heading-en {
+  margin: -4px 0 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+/* padding: styles.css gives every <section> 80px of vertical padding. */
+.eng-step {
+  margin-bottom: 32px;
+  padding: 0;
+}
+
+.eng-step-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-step-num {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.eng-lesson-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(16px, 3vw, 24px);
+  border: var(--eng-card-border);
+  border-radius: 20px;
+  background: var(--eng-card);
+  box-shadow: var(--eng-card-shadow);
+}
+
+.eng-lesson-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: var(--memteal);
+}
+
+.eng-lesson-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.eng-lesson-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.eng-lesson-title {
+  margin: 0 0 2px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-lesson-meta {
+  margin: 0 0 6px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.eng-lesson-summary {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+/* !important: .btn-candy / .btn-primary force a thicker 4px border and a larger
+   offset shadow; slim them down to match the cards. */
+.eng-lesson-card .eng-lesson-open {
+  flex-shrink: 0;
+  padding: 9px 21px;
+  border: 3px solid var(--ink) !important;
+  box-shadow: 3px 4px 0 0 var(--ink) !important;
+  font-size: 1.05rem;
+}
+
+.eng-lesson-card .eng-lesson-open:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink) !important;
+}
+
+.eng-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.eng-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: var(--eng-card-border);
+  border-radius: 16px;
+  background: var(--eng-card);
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: var(--eng-card-shadow);
+  transition: transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+}
+
+.eng-item:hover,
+.eng-item:focus-visible {
+  transform: translateY(-2px);
+  background: var(--eng-card-hover);
+  box-shadow: var(--eng-card-shadow-hover);
+}
+
+.eng-item-icon,
+.eng-ex-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--memteal);
+}
+
+.eng-item-icon svg,
+.eng-ex-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.eng-item-text,
+.eng-ex-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eng-item-title,
+.eng-ex-title {
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.eng-item-meta,
+.eng-ex-meta {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--body);
+}
+
+.eng-item-action {
+  flex-shrink: 0;
+  padding: 5px 15px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.eng-ex-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.eng-ex-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: var(--eng-card-border);
+  border-radius: 18px;
+  background: var(--eng-card);
+  color: var(--ink);
+  box-shadow: var(--eng-card-shadow);
+  transition: transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+}
+
+/* Exercise and reading cards: the title link stretches over the whole card,
+   and the "i" help button sits above it. Hovering the help button doesn't
+   lift the card, since clicking there won't open the exercise. */
+.eng-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.eng-card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.eng-card-link:focus-visible {
+  outline: none;
+}
+
+.eng-ex-card:has(.eng-card-link:focus-visible),
+.eng-level-card:has(.eng-card-link:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.eng-ex-card:hover:not(:has(.eng-info-btn:hover)),
+.eng-ex-card:has(.eng-card-link:focus-visible) {
+  transform: translateY(-2px);
+  background: var(--eng-card-hover);
+  box-shadow: var(--eng-card-shadow-hover);
+}
+
+/* Each exercise type gets its own icon color so the list is easy to scan. */
+.eng-ex-card--truefalse .eng-ex-icon { background: #ffd4a3; }
+.eng-ex-card--write .eng-ex-icon { background: #ff9ec7; }
+.eng-ex-card--order .eng-ex-icon { background: #b9a4ff; }
+.eng-ex-card--picture .eng-ex-icon,
+.eng-ex-card--pick-picture .eng-ex-icon { background: #9be7ff; }
+.eng-ex-card--listen .eng-ex-icon { background: var(--memyellow); }
+.eng-ex-card--match .eng-ex-icon { background: #a6f0a0; }
+.eng-ex-card--print .eng-ex-icon { background: #ffd6f0; }
+
+/* "All sheets together" closes the printable worksheets grid at full width. */
+.eng-ex-card--print-all {
+  grid-column: 1 / -1;
+}
+
+/* The help dialog's icon takes the same color as its exercise card's. */
+.eng-help-card--truefalse .eng-help-icon { background: #ffd4a3; }
+.eng-help-card--write .eng-help-icon { background: #ff9ec7; }
+.eng-help-card--order .eng-help-icon { background: #b9a4ff; }
+.eng-help-card--picture .eng-help-icon,
+.eng-help-card--pick-picture .eng-help-icon { background: #9be7ff; }
+.eng-help-card--listen .eng-help-icon { background: var(--memyellow); }
+.eng-help-card--match .eng-help-icon { background: #a6f0a0; }
+.eng-help-card--level-1 .eng-help-icon { background: var(--eng-level-1); }
+.eng-help-card--level-2 .eng-help-icon { background: var(--eng-level-2); }
+.eng-help-card--level-3 .eng-help-icon { background: var(--eng-level-3); }
+.eng-help-card--level-4 .eng-help-icon { background: var(--eng-level-4); }
+
+@media (max-width: 420px) {
+  .eng-ex-card {
+    gap: 10px;
+    padding: 14px 12px;
+  }
+
+  .eng-ex-card .eng-info-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.eng-ex-best {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--eng-right);
+}
+
+.eng-empty {
+  margin: 0;
+  padding: 18px 8px;
+  text-align: center;
+  font-weight: 800;
+  color: var(--body);
+}
+
+/* ── Reading passages: level cards (topic page and reading library) ── */
+
+body.page-english {
+  --eng-level-1: #c9f5d9;
+  --eng-level-2: #fff1a6;
+  --eng-level-3: #ffd9b0;
+  --eng-level-4: #ffc9de;
+}
+
+.eng-step-lead {
+  margin: -4px 0 16px;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--body);
+}
+
+.eng-step-lead--page {
+  max-width: 40rem;
+  margin: -10px auto 28px;
+  text-align: center;
+}
+
+.eng-step-num--level-1 { background: var(--eng-level-1); }
+.eng-step-num--level-2 { background: var(--eng-level-2); }
+.eng-step-num--level-3 { background: var(--eng-level-3); }
+.eng-step-num--level-4 { background: var(--eng-level-4); }
+
+.eng-level-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.eng-level-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 12px 16px;
+  border: var(--eng-card-border);
+  border-radius: 18px;
+  background: var(--eng-level-1);
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  box-shadow: var(--eng-card-shadow);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.eng-level-card--2 { background: var(--eng-level-2); }
+.eng-level-card--3 { background: var(--eng-level-3); }
+.eng-level-card--4 { background: var(--eng-level-4); }
+
+.eng-level-card:hover:not(:has(.eng-info-btn:hover)),
+.eng-level-card:has(.eng-card-link:focus-visible) {
+  transform: translateY(-3px);
+  box-shadow: var(--eng-card-shadow-hover);
+}
+
+.eng-level-head .eng-info-btn {
+  width: 30px;
+  height: 30px;
+}
+
+.eng-level-head .eng-info-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.eng-level-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.eng-level-name {
+  font-size: 1.2rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .eng-level-head {
+    gap: 6px;
+  }
+
+  .eng-level-name {
+    font-size: 1.05rem;
+  }
+}
+
+/* Difficulty bars: as many filled bars as the level. */
+.eng-level-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.eng-level-bars i {
+  width: 7px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  background: var(--white);
+}
+
+.eng-level-bars i:nth-child(1) { height: 9px; }
+.eng-level-bars i:nth-child(2) { height: 13px; }
+.eng-level-bars i:nth-child(3) { height: 17px; }
+.eng-level-bars i:nth-child(4) { height: 21px; }
+
+.eng-level-bars i.is-on {
+  background: var(--ink);
+}
+
+.eng-level-title {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.eng-level-meta {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+/* In the library the passage title leads and the level is already the
+   section heading, so the level line is smaller. */
+.eng-level-card.is-library .eng-level-name {
+  font-size: 0.95rem;
+}
+
+.eng-level-card.is-library .eng-level-title {
+  order: -1;
+  font-size: 1.2rem;
+}
+
+/* ── Exercise screen: fixed to the viewport, no navbar / footer / page scroll ──
+   html.eng-runner-open is set by showView() while an exercise is shown. */
+
+html.eng-runner-open,
+html.eng-runner-open body.page-english {
+  height: 100%;
+  overflow: hidden;
+}
+
+html.eng-runner-open body.page-english {
+  height: 100dvh;
+  min-height: 0;
+}
+
+html.eng-runner-open .navbar,
+html.eng-runner-open .mobile-nav,
+html.eng-runner-open .scroll-progress,
+html.eng-runner-open .site-footer {
+  display: none !important;
+}
+
+html.eng-runner-open body.page-english main,
+html.eng-runner-open #engMain,
+html.eng-runner-open #engMain > .container,
+html.eng-runner-open .eng-exercise-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+html.eng-runner-open body.page-english .eng-section {
+  padding-top: clamp(12px, 2.5dvh, 28px) !important;
+  padding-bottom: clamp(12px, 2.5dvh, 28px);
+}
+
+html.eng-runner-open .eng-runner-head {
+  flex-shrink: 0;
+  gap: clamp(8px, 1.5dvh, 14px);
+  margin-bottom: clamp(10px, 2dvh, 22px);
+}
+
+/* Last-resort guard for very short screens: the card never pushes past the
+   viewport, so its buttons always stay reachable. */
+html.eng-runner-open .eng-runner-card {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Exercise runner (shared) ── */
+
+.eng-exercise-view {
+  max-width: 780px;
+}
+
+.eng-runner-card {
+  padding: clamp(20px, 4vw, 40px);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: var(--white);
+  box-shadow: var(--shadow-candy);
+}
+
+/* Progress (in the header bar): a ring with one arc per question around the
+   question number — the ring alone says where the student is, so there is no
+   text label ("Question 1 of 10" lives only in the aria-label). The ring sits
+   on a white disc so the teal arcs read against the teal page. */
+.eng-progress {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.eng-ring {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--ink);
+}
+
+.eng-ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.eng-ring-seg {
+  fill: none;
+  stroke-width: 5;
+}
+
+.eng-ring-track {
+  stroke: currentColor;
+  stroke-opacity: 0.12;
+}
+
+.eng-ring-fill {
+  stroke: var(--memteal);
+}
+
+.eng-ring-fill.is-current {
+  stroke-opacity: 0.4;
+}
+
+.eng-ring-fill.is-new {
+  animation: eng-ring-draw 0.5s ease-out both;
+}
+
+@keyframes eng-ring-draw {
+  from { stroke-dashoffset: var(--seg); }
+  to { stroke-dashoffset: 0; }
+}
+
+.eng-ring-num {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-ring-fill.is-new {
+    animation: none;
+  }
+}
+
+.eng-instructions {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.eng-sentence {
+  margin: 0 0 26px;
+  padding: 22px 16px;
+  border-radius: 18px;
+  background: var(--eng-soft);
+  text-align: center;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.45rem, 4.4vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.eng-sentence p {
+  margin: 0;
+}
+
+.eng-sentence p.is-struck {
+  text-decoration: line-through;
+  text-decoration-color: var(--eng-wrong);
+  text-decoration-thickness: 3px;
+  opacity: 0.7;
+}
+
+/* Hebrew translation under the sentence — shown by the translation toggle. */
+.eng-sentence .eng-translation {
+  display: none;
+  margin: 12px auto 0;
+  padding-top: 10px;
+  max-width: 34em;
+  border-top: 2px dashed rgba(0, 0, 0, 0.2);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: max(1.05rem, 0.62em);
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.eng-runner-card.is-translated .eng-translation {
+  display: block;
+}
+
+.eng-tr-blank {
+  display: inline-block;
+  width: 2.6em;
+  margin: 0 0.2em;
+  border-bottom: 3px solid currentColor;
+}
+
+.eng-context {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 14px;
+  border: 2px dashed rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  background: var(--white);
+  font-size: 0.7em;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.eng-fix {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 4px 14px;
+  border-radius: 12px;
+  background: var(--eng-right-soft);
+  color: #11643a;
+  font-size: 0.8em;
+  animation: eng-pop 0.28s ease;
+}
+
+.eng-fix svg {
+  width: 0.9em;
+  height: 0.9em;
+  flex-shrink: 0;
+}
+
+.eng-blank {
+  display: inline-block;
+  min-width: 3.4em;
+  padding: 0 0.25em;
+  border-bottom: 4px solid var(--ink);
+  line-height: 1.25;
+  text-align: center;
+}
+
+.eng-blank.is-letter {
+  min-width: 1.2em;
+  padding: 0 0.1em;
+}
+
+.eng-blank.is-right,
+.eng-blank.is-wrong {
+  border-radius: 10px 10px 0 0;
+  animation: eng-pop 0.28s ease;
+}
+
+.eng-blank.is-right {
+  background: var(--eng-right-soft);
+  border-bottom-color: var(--eng-right);
+}
+
+.eng-blank.is-wrong {
+  background: var(--eng-wrong-soft);
+  border-bottom-color: var(--eng-wrong);
+}
+
+.eng-hint {
+  font-size: 0.72em;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+@keyframes eng-pop {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes eng-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+.eng-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.eng-option {
+  position: relative;
+  min-width: 110px;
+  padding: 14px 22px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.eng-option:hover:not(:disabled),
+.eng-tf-btn:hover:not(:disabled),
+.eng-pic-option:hover:not(:disabled) {
+  background: var(--memyellow);
+  transform: translate(-1px, -2px);
+}
+
+.eng-option:active:not(:disabled),
+.eng-tf-btn:active:not(:disabled),
+.eng-pic-option:active:not(:disabled) {
+  transform: translate(3px, 4px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.eng-option:disabled,
+.eng-tf-btn:disabled,
+.eng-pic-option:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.eng-option.is-right,
+.eng-option.is-wrong,
+.eng-tf-btn.is-right,
+.eng-tf-btn.is-wrong,
+.eng-pic-option.is-right,
+.eng-pic-option.is-wrong {
+  opacity: 1;
+}
+
+.eng-option.is-right,
+.eng-tf-btn.is-right,
+.eng-pic-option.is-right {
+  background: var(--eng-right-soft);
+  border-color: var(--eng-right);
+  box-shadow: 4px 5px 0 0 var(--eng-right);
+}
+
+.eng-option.is-wrong,
+.eng-tf-btn.is-wrong,
+.eng-pic-option.is-wrong {
+  background: var(--eng-wrong-soft);
+  border-color: var(--eng-wrong);
+  box-shadow: 4px 5px 0 0 var(--eng-wrong);
+}
+
+.eng-option-key {
+  position: absolute;
+  top: 4px;
+  left: 7px;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 900;
+  opacity: 0.45;
+}
+
+.eng-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 64px;
+  margin-top: 20px;
+}
+
+.eng-feedback-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.eng-feedback-msg > svg {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.eng-feedback-msg.is-right { color: var(--eng-right); }
+.eng-feedback-msg.is-wrong { color: var(--eng-wrong); }
+
+.eng-next {
+  padding: 10px 28px;
+  font-size: 1.05rem;
+}
+
+.eng-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.eng-check {
+  padding: 11px 34px;
+  font-size: 1.1rem;
+}
+
+.eng-check:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none !important;
+}
+
+.eng-speak {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.eng-speak svg {
+  width: 20px;
+  height: 20px;
+}
+
+.eng-speak--inline {
+  width: 30px;
+  height: 30px;
+  border-width: 2px;
+}
+
+.eng-speak--inline svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ── True / false ── */
+
+.eng-options--tf {
+  gap: 16px;
+}
+
+.eng-tf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 170px;
+  padding: 14px 26px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.eng-tf-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.eng-tf-btn--true svg { color: var(--eng-right); }
+.eng-tf-btn--false svg { color: var(--eng-wrong); }
+
+/* ── Typing ── */
+
+/* The correction sits on the same line as the crossed-out input, so the
+   sentence doesn't break into extra lines. */
+.eng-input-wrap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25em;
+  vertical-align: baseline;
+}
+
+.eng-input {
+  width: 4.4em;
+  padding: 0 0.2em;
+  border: none;
+  border-bottom: 4px solid var(--ink);
+  border-radius: 10px 10px 0 0;
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+  /* 16px+ keeps iOS from zooming into the field */
+  font-size: max(16px, 1em);
+  line-height: 1.3;
+  text-align: center;
+  outline: none;
+}
+
+.eng-input:focus {
+  background: #fffbe0;
+  border-bottom-color: #e0a800;
+}
+
+.eng-input.is-right {
+  background: var(--eng-right-soft);
+  border-bottom-color: var(--eng-right);
+}
+
+.eng-input.is-wrong {
+  background: var(--eng-wrong-soft);
+  border-bottom-color: var(--eng-wrong);
+  text-decoration: line-through;
+}
+
+.eng-input.is-shake {
+  animation: eng-shake 0.4s ease;
+}
+
+.eng-input::placeholder {
+  font-size: 0.55em;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.eng-correction {
+  display: inline-block;
+  padding: 0 0.25em;
+  border-bottom: 4px solid var(--eng-right);
+  border-radius: 10px 10px 0 0;
+  background: var(--eng-right-soft);
+  color: var(--ink);
+  line-height: 1.3;
+  animation: eng-pop 0.28s ease;
+}
+
+.eng-input-wrap #engCorrection:empty {
+  display: none;
+}
+
+.eng-write-solo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0 auto 22px;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.5rem, 4.4vw, 2.1rem);
+}
+
+.eng-write-solo .eng-input {
+  width: min(320px, 100%);
+}
+
+/* ── Sentence order ── */
+
+.eng-order-he {
+  margin: 0 0 14px;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.eng-order-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 74px;
+  margin-bottom: 18px;
+  padding: 12px;
+  border: 3px dashed rgba(0, 0, 0, 0.35);
+  border-radius: 18px;
+  background: var(--eng-soft);
+}
+
+.eng-order-line.is-right {
+  border-style: solid;
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+}
+
+.eng-order-line.is-wrong {
+  border-style: solid;
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+}
+
+.eng-order-placeholder {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.eng-order-bank {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  margin-bottom: 18px;
+}
+
+.eng-chip {
+  padding: 10px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.eng-chip:hover:not(:disabled) {
+  background: var(--memyellow);
+  transform: translateY(-2px);
+}
+
+.eng-chip.is-placed {
+  background: var(--memteal);
+}
+
+/* A used chip keeps its slot in the bank so the other chips don't jump. */
+.eng-chip.is-used {
+  visibility: hidden;
+}
+
+.eng-chip:disabled {
+  cursor: default;
+}
+
+/* ── Pictures & listening ── */
+
+.eng-picture-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto 22px;
+  padding: 16px;
+  width: fit-content;
+  border-radius: 22px;
+  background: var(--eng-soft);
+}
+
+.eng-picture-img {
+  width: clamp(130px, 30vw, 190px);
+  height: clamp(130px, 30vw, 190px);
+  object-fit: contain;
+  user-select: none;
+}
+
+.eng-picture-he {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.eng-word-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 0 22px;
+}
+
+.eng-word-big {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.eng-pic-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.eng-pic-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px 8px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.eng-pic-option img {
+  width: 100%;
+  max-width: 120px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* The word under each picture would give the answer away — it appears only
+   once the question is answered. */
+.eng-pic-label {
+  min-height: 1.4em;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  visibility: hidden;
+}
+
+.eng-pic-option.is-revealed .eng-pic-label {
+  visibility: visible;
+}
+
+.eng-listen-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px;
+}
+
+.eng-listen-btn {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  padding: 0;
+  border: 4px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: var(--shadow-sticker);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.eng-listen-btn:hover {
+  transform: scale(1.06);
+}
+
+.eng-listen-btn:active {
+  transform: scale(0.95);
+}
+
+.eng-listen-btn svg {
+  width: 46px;
+  height: 46px;
+}
+
+.eng-listen-label {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-listen-fallback {
+  margin: 0;
+  font-weight: 800;
+  color: var(--body);
+}
+
+/* ── Matching ── */
+
+.eng-match {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 4vw, 40px);
+}
+
+.eng-match-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eng-match-item {
+  min-height: 56px;
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, opacity 0.2s ease;
+}
+
+.eng-match-item:hover:not(:disabled) {
+  background: #fffbe0;
+}
+
+.eng-match-item.is-selected {
+  background: var(--memyellow);
+  transform: scale(1.03);
+}
+
+.eng-match-item.is-matched {
+  background: var(--eng-right-soft);
+  border-color: var(--eng-right);
+  box-shadow: 3px 4px 0 0 var(--eng-right);
+  cursor: default;
+  opacity: 0.75;
+}
+
+.eng-match-item.is-wrong {
+  background: var(--eng-wrong-soft);
+  border-color: var(--eng-wrong);
+  animation: eng-shake 0.4s ease;
+}
+
+.eng-match-item--img {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+}
+
+.eng-match-item--img img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+/* ── Results ── */
+
+.eng-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.eng-stars {
+  display: flex;
+  gap: 10px;
+}
+
+.eng-star svg {
+  width: clamp(44px, 10vw, 60px);
+  height: clamp(44px, 10vw, 60px);
+  fill: #ececec;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.eng-star.is-on svg {
+  fill: var(--memyellow);
+  animation: eng-pop 0.4s ease both;
+}
+
+.eng-star.is-on:nth-child(2) svg { animation-delay: 0.12s; }
+.eng-star.is-on:nth-child(3) svg { animation-delay: 0.24s; }
+
+.eng-grade {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 150px;
+  margin-top: 4px;
+  padding: 10px 30px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: var(--memyellow);
+  box-shadow: var(--shadow-sticker);
+  color: var(--ink);
+}
+
+.eng-grade-label {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.eng-score.font-cartoon {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 4.4rem);
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.eng-results-count {
+  margin: 4px 0 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-results-msg {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.eng-results-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.eng-results-actions .btn {
+  padding: 12px 26px;
+  font-size: 1.05rem;
+}
+
+.eng-btn-secondary {
+  background: var(--white);
+  color: var(--ink);
+}
+
+.eng-results-actions a.btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* A device that opened a student's personal link: whose file the practice
+   is saved to. Hidden on the full-screen exercise screen. */
+.eng-student-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 14px;
+  max-width: 960px;
+  margin: 0 auto 24px;
+  padding: 10px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--white);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+html.eng-runner-open .eng-student-bar {
+  display: none;
+}
+
+.eng-student-bar-link {
+  padding: 6px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.eng-student-bar-link:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.eng-student-bar-out {
+  padding: 4px 6px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.88rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.eng-mistakes {
+  width: 100%;
+  margin-top: 18px;
+  padding: 18px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--eng-soft);
+}
+
+.eng-mistakes h3 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-mistakes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.12rem;
+  line-height: 1.7;
+}
+
+.eng-mistakes .eng-blank {
+  min-width: 0;
+  border-bottom-width: 3px;
+  animation: none;
+}
+
+.eng-context-inline,
+.eng-review-he {
+  font-size: 0.85em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.eng-review-tag {
+  padding: 0 8px;
+  border-radius: 8px;
+  background: var(--eng-right-soft);
+  color: #11643a;
+  font-size: 0.85em;
+}
+
+.eng-review-wrong {
+  text-decoration-color: var(--eng-wrong);
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.eng-review-line {
+  display: block;
+}
+
+.eng-review-answer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 800;
+  color: #11643a;
+}
+
+.eng-review-answer svg {
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+}
+
+.eng-review-word {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eng-review-word img {
+  width: 36px;
+  height: 36px;
+}
+
+.eng-copy-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px 10px;
+  border: none;
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.eng-copy-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Exercise help: the "i" button and its dialog ── */
+
+.eng-info-btn {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.eng-info-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-info-btn:hover,
+.eng-info-btn:focus-visible {
+  background: var(--memyellow);
+  transform: translateY(-1px);
+}
+
+.eng-info-btn:active {
+  transform: translate(1px, 2px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+/* Exercise screen: the button sits right after the title. */
+.eng-runner-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: 100%;
+}
+
+.eng-runner-title-row .eng-runner-title {
+  min-width: 0;
+}
+
+/* position/z-index need !important: styles.css forces position:relative on
+   every direct child of <body> for the ambient background layering. */
+.eng-help {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2100 !important;
+  display: grid;
+  place-items: center;
+  padding: max(12px, env(safe-area-inset-top, 0px)) 16px max(12px, env(safe-area-inset-bottom, 0px));
+}
+
+.eng-help.hidden {
+  display: none !important;
+}
+
+body.eng-help-open {
+  overflow: hidden;
+}
+
+.eng-help-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* Sized to fit the screen; the inner scroll is only a guard for very short
+   screens. */
+.eng-help-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: min(540px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 18px 20px 20px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--shadow-candy);
+  animation: eng-pop 0.22s ease;
+}
+
+.eng-help-card::-webkit-scrollbar {
+  display: none;
+}
+
+.eng-help-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eng-help-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--memteal);
+}
+
+.eng-help-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.eng-help-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.eng-help-kicker {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.eng-help .eng-help-title {
+  margin: 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.eng-help-close {
+  flex-shrink: 0;
+  align-self: flex-start;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.eng-help-close:hover,
+.eng-help-close:focus-visible {
+  background: var(--memyellow);
+}
+
+.eng-help-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-help-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.eng-help .eng-help-label {
+  align-self: flex-start;
+  margin: 0;
+  padding: 2px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-help-what {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.eng-help-tip {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+/* An English run inside Hebrew text wraps as one piece. */
+.eng-help-ltr {
+  display: inline-block;
+}
+
+/* The worked example: the question with its answer already in place. */
+.eng-help-example {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 14px;
+  border-radius: 18px;
+  background: var(--eng-soft);
+  text-align: center;
+}
+
+.eng-help-example p {
+  margin: 0;
+}
+
+.eng-help-sentence,
+.eng-help-q,
+.eng-help-word,
+.eng-help-passage,
+.eng-help-opt,
+.eng-help-chip,
+.eng-help-heard,
+.eng-help-fix b {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+}
+
+.eng-help-sentence {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.eng-help-fill {
+  display: inline-block;
+  min-width: 2em;
+  padding: 0 0.3em;
+  border-bottom: 4px solid var(--eng-right);
+  border-radius: 6px 6px 0 0;
+  background: var(--eng-right-soft);
+  line-height: 1.3;
+}
+
+.eng-help-fill.is-letter,
+.eng-help-typed.is-letter {
+  min-width: 0;
+  margin: 0;
+  padding: 0 0.12em;
+}
+
+.eng-help-typed {
+  display: inline-block;
+  min-width: 3em;
+  margin: 0 0.15em;
+  padding: 0 0.4em;
+  border: 3px solid var(--eng-right);
+  border-radius: 10px;
+  background: var(--white);
+  line-height: 1.35;
+}
+
+.eng-help-hint {
+  font-size: 0.75em;
+  color: var(--body);
+}
+
+.eng-help-context {
+  padding: 2px 14px;
+  border: 2px dashed rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  background: var(--white);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.eng-help-tr {
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+.eng-help-tr--prompt {
+  color: var(--ink);
+}
+
+.eng-help-options,
+.eng-help-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.eng-help-opt,
+.eng-help-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: var(--white);
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.eng-help-opt.is-right,
+.eng-help-chip.is-right {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+}
+
+.eng-help-opt svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--eng-right);
+}
+
+.eng-help-arrow {
+  display: grid;
+  color: var(--ink);
+}
+
+.eng-help-arrow svg {
+  width: 26px;
+  height: 26px;
+}
+
+.eng-help-tf {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Sentence and verdict side by side; the corrected sentence under them. */
+.eng-help-tf-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 12px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: var(--white);
+}
+
+.eng-help-tf-row .eng-help-sentence {
+  font-size: 1.25rem;
+}
+
+.eng-help-tf-row .eng-help-fix {
+  flex-basis: 100%;
+}
+
+.eng-help-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 14px;
+  border: 3px solid var(--eng-right);
+  border-radius: 999px;
+  background: var(--eng-right-soft);
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-help-badge.is-false {
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+}
+
+.eng-help-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Label and English sentence as separate pieces, so a wrapped line never
+   mixes their reading directions. */
+.eng-help-fix {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 6px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.eng-help-fix b {
+  font-weight: 700;
+}
+
+.eng-help-picture {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 8px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--white);
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.eng-help-picture img {
+  width: 92px;
+  height: 92px;
+  object-fit: contain;
+}
+
+.eng-help-pics {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.eng-help-pic {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  padding: 6px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+}
+
+.eng-help-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.eng-help-pic.is-right {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+}
+
+.eng-help-pic--small {
+  width: 54px;
+  height: 54px;
+  padding: 4px;
+}
+
+.eng-help-pic-check {
+  position: absolute;
+  top: -10px;
+  inset-inline-end: -10px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--eng-right);
+  color: var(--white);
+}
+
+.eng-help-pic-check svg {
+  width: 14px;
+  height: 14px;
+}
+
+.eng-help-word {
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.eng-help-listen {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.eng-help-speak {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+}
+
+.eng-help-speak:active {
+  transform: translate(1px, 2px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.eng-help-speak svg {
+  width: 28px;
+  height: 28px;
+}
+
+.eng-help-heard {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.eng-help-pairs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.eng-help-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eng-help-pair .eng-help-chip {
+  justify-content: center;
+  min-width: 3.2em;
+}
+
+.eng-help-pair-line {
+  width: 40px;
+  border-top: 3px dashed var(--eng-right);
+}
+
+.eng-help-step {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-align: start;
+  color: var(--ink);
+}
+
+.eng-help-step-num {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.eng-help-passage {
+  align-self: stretch;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--white);
+  font-size: 1.1rem;
+  line-height: 1.75;
+  text-align: left;
+  color: var(--ink);
+}
+
+.eng-help-mark {
+  padding: 0 3px;
+  border-radius: 4px;
+  background: #ffe14d;
+  box-shadow: inset 0 -3px 0 #e0b400;
+  color: inherit;
+}
+
+.eng-help-q {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.eng-help-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.eng-help-actions .eng-help-go {
+  min-width: 12rem;
+  text-decoration: none;
+}
+
+@media (max-width: 520px) {
+  .eng-help {
+    padding-inline: 12px;
+  }
+
+  .eng-help-card {
+    gap: 10px;
+    padding: 14px 14px 16px;
+  }
+
+  .eng-help-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .eng-help .eng-help-title {
+    font-size: 1.18rem;
+  }
+
+  .eng-help-block {
+    gap: 6px;
+  }
+
+  .eng-help-what {
+    font-size: 1.06rem;
+    line-height: 1.45;
+  }
+
+  .eng-help-tip {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .eng-help-example {
+    gap: 10px;
+    padding: 12px 10px;
+  }
+
+  .eng-help-sentence {
+    font-size: 1.2rem;
+    line-height: 1.5;
+  }
+
+  .eng-help-tf-row .eng-help-sentence {
+    font-size: 1.12rem;
+  }
+
+  .eng-help-opt,
+  .eng-help-chip {
+    padding: 3px 12px;
+    font-size: 1.05rem;
+  }
+
+  .eng-help-pic {
+    width: 68px;
+    height: 68px;
+  }
+
+  .eng-help-picture img {
+    width: 76px;
+    height: 76px;
+  }
+
+  .eng-help-passage {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .eng-help-step,
+  .eng-help-q {
+    font-size: 0.98rem;
+  }
+}
+
+/* Short screens: tighter still, so the dialog fits without scrolling. */
+@media (max-height: 700px) {
+  .eng-help-card {
+    gap: 8px;
+    padding-block: 12px 14px;
+  }
+
+  .eng-help-head .eng-help-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .eng-help .eng-help-label {
+    padding: 0 12px;
+    font-size: 0.9rem;
+  }
+
+  .eng-help-block {
+    gap: 4px;
+  }
+
+  .eng-help-example {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .eng-help-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .eng-help-pairs {
+    gap: 6px;
+  }
+
+  .eng-help-passage {
+    padding: 6px 10px;
+    line-height: 1.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-help-card {
+    animation: none;
+  }
+}
+
+/* ── Slide viewer ──
+   position/z-index need !important: styles.css forces position:relative on
+   every direct child of <body> for the ambient background layering. */
+
+.eng-slide-viewer {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2000 !important;
+  display: grid;
+  place-items: center;
+  padding: clamp(10px, 3vw, 28px);
+}
+
+.eng-slide-viewer.hidden {
+  display: none !important;
+}
+
+body.eng-viewer-open {
+  overflow: hidden;
+}
+
+.eng-slide-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.eng-slide-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(1180px, 100%);
+  max-height: 100%;
+  padding: 12px;
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  background: var(--white);
+  box-shadow: var(--shadow-candy);
+}
+
+.eng-slide-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.eng-slide-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-slide-counter {
+  flex-shrink: 0;
+  padding: 3px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.eng-slide-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.eng-slide-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.eng-slide-icon-btn:hover {
+  background: var(--memyellow);
+}
+
+.eng-slide-icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-slide-stage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 0;
+}
+
+.eng-slide-frame {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f4f4f4;
+}
+
+.eng-slide-img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 150px);
+  object-fit: contain;
+}
+
+.eng-slide-nav {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  cursor: pointer;
+}
+
+.eng-slide-nav svg {
+  width: 24px;
+  height: 24px;
+}
+
+[dir="rtl"] .eng-slide-nav svg {
+  transform: scaleX(-1);
+}
+
+.eng-slide-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+  box-shadow: none;
+}
+
+.eng-slide-shell:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-height: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.eng-slide-shell:fullscreen .eng-slide-stage {
+  flex: 1;
+}
+
+.eng-slide-shell:fullscreen .eng-slide-frame {
+  height: 100%;
+}
+
+.eng-slide-shell:fullscreen .eng-slide-img {
+  max-height: calc(100vh - 80px);
+}
+
+/* ── Reading runner: passage on one side, the task (marking / questions) on
+   the other; each side scrolls on its own if it has to, the page never does. ── */
+
+.eng-exercise-view.is-reading {
+  max-width: 1180px;
+}
+
+.eng-read {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: clamp(12px, 2vw, 24px);
+  min-height: 0;
+}
+
+.eng-read-side {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.eng-read-passage {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(14px, 2.4dvh, 26px) clamp(16px, 2.2vw, 30px);
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #fffdf3;
+  scrollbar-width: thin;
+}
+
+.eng-read-title {
+  margin: 0 0 clamp(8px, 1.4dvh, 14px);
+  text-align: center;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.25rem, 3dvh, 1.65rem);
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-read-text {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.08rem, 2.5dvh, 1.3rem);
+  font-weight: 600;
+  line-height: 1.85;
+  color: var(--ink);
+}
+
+.eng-read-text p {
+  margin: 0 0 0.7em;
+}
+
+.eng-read-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Every word is clickable while marking (role="button" spans); it still
+   reads as plain text. */
+.eng-tok {
+  padding: 0.05em 0.1em;
+  border-radius: 0.35em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.eng-tok[tabindex] {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.eng-read-text.is-marking .eng-tok[tabindex]:hover:not(.is-found, .is-miss, .is-revealed) {
+  background: #e3f1ff;
+}
+
+.eng-tok[tabindex]:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.eng-tok.is-found {
+  background: #ffe14d;
+  box-shadow: inset 0 -3px 0 #e0b400;
+  animation: eng-pop 0.24s ease;
+}
+
+.eng-tok.is-revealed {
+  background: #ffc48a;
+  box-shadow: inset 0 -3px 0 #e07b00;
+}
+
+.eng-tok.is-miss {
+  background: var(--eng-wrong-soft);
+  text-decoration: line-through;
+  text-decoration-color: var(--eng-wrong);
+  text-decoration-thickness: 2px;
+  animation: eng-shake 0.3s ease;
+}
+
+/* While answering questions the marked words stay, a little softer. */
+.eng-read.is-questions .eng-tok.is-found,
+.eng-read.is-questions .eng-tok.is-revealed {
+  background: #fff3a8;
+  box-shadow: none;
+  animation: none;
+}
+
+/* Phones only (see the narrow-screen block at the end). */
+.eng-read-expand {
+  display: none;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 2px 2px 0 0 var(--ink);
+  cursor: pointer;
+}
+
+.eng-read-expand svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-read-glossary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: clamp(10px, 2dvh, 16px) 0 0;
+  padding-top: 10px;
+  border-top: 2px dashed rgba(0, 0, 0, 0.25);
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.eng-read-glossary-title {
+  font-weight: 900;
+}
+
+.eng-read-task {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 2px 4px 4px;
+  scrollbar-width: thin;
+}
+
+.eng-read-step {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--body);
+}
+
+.eng-read-instr {
+  margin: 0 0 10px;
+  font-size: clamp(1.08rem, 2.5dvh, 1.25rem);
+  font-weight: 900;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.eng-read-hint {
+  align-self: flex-start;
+  margin: 0 0 12px;
+  padding: 5px 14px;
+  border: 2px dashed var(--ink);
+  border-radius: 12px;
+  background: var(--white);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.eng-read-count {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.eng-read-found b {
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.eng-read-misses {
+  font-size: 0.95rem;
+  color: var(--eng-wrong);
+}
+
+.eng-read-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+}
+
+.eng-read-reveal {
+  padding: 9px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.eng-read-reveal:hover {
+  background: var(--memyellow);
+}
+
+.eng-read-reveal:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.eng-feedback-msg.is-shown {
+  color: #a05400;
+}
+
+.eng-read-feedback {
+  justify-content: flex-start;
+  min-height: 0;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+.eng-read-q {
+  margin: 0 0 8px;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.12rem, 2.6dvh, 1.4rem);
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.eng-read-task .eng-translation {
+  display: none;
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+.eng-runner-card.is-translated .eng-read-task .eng-translation {
+  display: block;
+}
+
+.eng-read-options {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(7px, 1.2dvh, 10px);
+  margin-top: 4px;
+}
+
+.eng-read-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: clamp(7px, 1.3dvh, 11px) 14px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  text-align: left;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1rem, 2.3dvh, 1.15rem);
+  font-weight: 700;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.eng-read-option:hover:not(:disabled) {
+  background: var(--memyellow);
+  transform: translate(-1px, -2px);
+}
+
+.eng-read-option:active:not(:disabled) {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.eng-read-option:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.eng-read-option.is-right,
+.eng-read-option.is-wrong {
+  opacity: 1;
+}
+
+.eng-read-option.is-right {
+  background: var(--eng-right-soft);
+  border-color: var(--eng-right);
+  box-shadow: 3px 4px 0 0 var(--eng-right);
+}
+
+.eng-read-option.is-wrong {
+  background: var(--eng-wrong-soft);
+  border-color: var(--eng-wrong);
+  box-shadow: 3px 4px 0 0 var(--eng-wrong);
+}
+
+.eng-read-option-key {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--eng-soft);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.eng-read-task .eng-options--tf {
+  justify-content: flex-start;
+  margin-top: 4px;
+}
+
+.eng-read-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 2px 0 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.eng-read-lang svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-read-input {
+  width: 100%;
+  min-height: 3.2em;
+  padding: 10px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--ink);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.45;
+  resize: none;
+}
+
+.eng-read-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 201, 183, 0.35);
+}
+
+.eng-read-input.is-right {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+}
+
+.eng-read-input.is-wrong {
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+}
+
+.eng-read-input.is-shake {
+  animation: eng-shake 0.35s ease;
+}
+
+.eng-read-task .eng-actions {
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.eng-read-model {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border: 2px dashed var(--ink);
+  border-radius: 12px;
+  background: #eef6ff;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.eng-read-model-label {
+  font-weight: 900;
+}
+
+.eng-ring-icon svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
+/* ── Phones ── */
+
+@media (max-width: 768px) {
+  .eng-topic-grid {
+    gap: 14px;
+  }
+
+  .eng-level-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .eng-ex-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .eng-lesson-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .eng-lesson-card .eng-lesson-open {
+    width: 100%;
+  }
+
+  .eng-option {
+    min-width: calc(33.333% - 8px);
+    padding: 12px 10px;
+    font-size: 1.15rem;
+  }
+
+  .eng-option-key {
+    display: none;
+  }
+
+  .eng-options {
+    gap: 8px;
+  }
+
+  .eng-tf-btn {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 10px;
+    font-size: 1.1rem;
+  }
+
+  .eng-tool {
+    padding: 6px 11px;
+    font-size: 0.88rem;
+  }
+
+  .eng-pic-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .eng-pic-option img {
+    max-width: 90px;
+  }
+
+  .eng-chip {
+    padding: 8px 12px;
+    font-size: 1.1rem;
+  }
+
+  .eng-match-item {
+    min-height: 48px;
+    padding: 8px 10px;
+    font-size: 1rem;
+  }
+
+  .eng-match-item--img img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .eng-slide-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .eng-slide-nav {
+    position: absolute;
+    bottom: 22px;
+    width: 42px;
+    height: 42px;
+    z-index: 1;
+  }
+
+  .eng-slide-nav--prev { inset-inline-start: 22px; }
+  .eng-slide-nav--next { inset-inline-end: 22px; }
+
+  .eng-slide-img {
+    max-height: calc(100dvh - 120px);
+  }
+}
+
+/* ── Fixed exercise screen: sizes follow the viewport height so a whole
+   question fits without scrolling. Kept last so it wins over the mobile rules. ── */
+
+html.eng-runner-open body.clean-site .eng-runner-title.font-cartoon {
+  font-size: clamp(1.35rem, min(5.5vw, 4.4dvh), 2.4rem);
+}
+
+html.eng-runner-open .eng-runner-tools {
+  flex-wrap: nowrap;
+}
+
+/* The card shrinks to the space left under the header; the matching board
+   and the mistakes list give up height first, everything else keeps its size. */
+html.eng-runner-open .eng-runner-card {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(14px, 3dvh, 34px) clamp(14px, 4vw, 36px);
+}
+
+html.eng-runner-open .eng-runner-card > *,
+html.eng-runner-open .eng-results > * {
+  flex-shrink: 0;
+}
+
+html.eng-runner-open .eng-instructions {
+  margin-bottom: clamp(8px, 2dvh, 18px);
+  font-size: clamp(0.95rem, 2.4dvh, 1.1rem);
+}
+
+html.eng-runner-open .eng-sentence {
+  margin-bottom: clamp(12px, 2.6dvh, 26px);
+  padding: clamp(10px, 2.2dvh, 22px) 16px;
+  font-size: clamp(1.25rem, min(4.4vw, 4dvh), 2.2rem);
+  line-height: 1.5;
+}
+
+html.eng-runner-open .eng-option,
+html.eng-runner-open .eng-tf-btn {
+  padding-block: clamp(8px, 1.6dvh, 14px);
+}
+
+html.eng-runner-open .eng-feedback {
+  min-height: clamp(44px, 7dvh, 64px);
+  margin-top: clamp(8px, 2dvh, 20px);
+}
+
+html.eng-runner-open .eng-picture-box {
+  margin-bottom: clamp(10px, 2.4dvh, 22px);
+  padding: clamp(8px, 1.6dvh, 16px);
+}
+
+html.eng-runner-open .eng-picture-img {
+  width: clamp(96px, min(30vw, 19dvh), 190px);
+  height: clamp(96px, min(30vw, 19dvh), 190px);
+}
+
+html.eng-runner-open .eng-word-prompt {
+  margin-bottom: clamp(10px, 2.4dvh, 22px);
+}
+
+html.eng-runner-open .eng-pic-option img {
+  width: min(100%, 12dvh);
+}
+
+html.eng-runner-open .eng-listen-prompt {
+  gap: clamp(4px, 1dvh, 10px);
+  margin-bottom: clamp(10px, 2.4dvh, 24px);
+}
+
+html.eng-runner-open .eng-listen-btn {
+  width: clamp(60px, 11dvh, 96px);
+  height: clamp(60px, 11dvh, 96px);
+}
+
+html.eng-runner-open .eng-listen-btn svg {
+  width: 48%;
+  height: 48%;
+}
+
+html.eng-runner-open .eng-match {
+  flex-shrink: 1;
+  min-height: 0;
+  display: flex;
+}
+
+html.eng-runner-open .eng-match-col {
+  flex: 1 1 0;
+  min-width: 0;
+  gap: clamp(6px, 1.2dvh, 10px);
+}
+
+html.eng-runner-open .eng-match-item {
+  flex: 0 1 56px;
+  min-height: 38px;
+  padding-block: 4px;
+}
+
+html.eng-runner-open .eng-match-item--img img {
+  width: auto;
+  height: 100%;
+  max-height: 58px;
+}
+
+html.eng-runner-open .eng-results {
+  flex-shrink: 1;
+  min-height: 0;
+  gap: clamp(6px, 1.4dvh, 12px);
+}
+
+html.eng-runner-open .eng-star svg {
+  width: clamp(30px, 5.5dvh, 60px);
+  height: clamp(30px, 5.5dvh, 60px);
+}
+
+html.eng-runner-open .eng-grade {
+  margin-top: 0;
+  padding: clamp(4px, 1dvh, 10px) 26px clamp(4px, 1.2dvh, 12px);
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+html.eng-runner-open .eng-grade-label {
+  font-size: 0.95rem;
+}
+
+html.eng-runner-open .eng-score.font-cartoon {
+  font-size: clamp(2rem, 6.5dvh, 4.4rem);
+}
+
+html.eng-runner-open .eng-results-count {
+  margin: 0;
+  font-size: clamp(1rem, 2.4dvh, 1.2rem);
+}
+
+html.eng-runner-open .eng-results-msg {
+  font-size: clamp(0.95rem, 2.3dvh, 1.15rem);
+}
+
+html.eng-runner-open .eng-results-actions {
+  gap: 10px;
+  margin-top: 2px;
+}
+
+html.eng-runner-open .eng-results-actions .btn {
+  padding: clamp(7px, 1.4dvh, 12px) 18px;
+  font-size: clamp(0.92rem, 2.2dvh, 1.05rem);
+}
+
+/* A long list of mistakes scrolls inside its own box; the page never does. */
+html.eng-runner-open .eng-mistakes {
+  flex-shrink: 1;
+  min-height: 6.5rem;
+  margin-top: 0;
+  padding: clamp(10px, 2dvh, 18px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+html.eng-runner-open .eng-mistakes h3 {
+  margin-bottom: 8px;
+}
+
+html.eng-runner-open .eng-mistakes ul {
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 420px) {
+  html.eng-runner-open .eng-tool {
+    padding: 7px 10px;
+  }
+
+  html.eng-runner-open .eng-tool span {
+    display: none;
+  }
+}
+
+/* Short phones: tighter picture tiles so the 2×2 picture grid still fits. */
+@media (max-height: 720px) {
+  html.eng-runner-open .eng-pic-options {
+    gap: 8px;
+  }
+
+  html.eng-runner-open .eng-pic-option {
+    gap: 0;
+    padding: 6px 6px 2px;
+  }
+
+  html.eng-runner-open .eng-pic-option img {
+    width: min(100%, 9.5dvh);
+  }
+
+  html.eng-runner-open .eng-pic-label {
+    font-size: 0.92rem;
+  }
+
+  html.eng-runner-open .eng-listen-btn {
+    width: clamp(52px, 9dvh, 96px);
+    height: clamp(52px, 9dvh, 96px);
+  }
+
+  html.eng-runner-open .eng-results {
+    gap: 6px;
+  }
+
+  html.eng-runner-open .eng-star svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  html.eng-runner-open .eng-mistakes {
+    min-height: 4.6rem;
+  }
+}
+
+/* ── Fixed screen: reading. The card takes all the height under the header
+   and the passage / task boxes scroll inside it. ── */
+
+html.eng-runner-open .eng-runner-card:has(> .eng-read) {
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: clamp(10px, 2dvh, 22px);
+}
+
+html.eng-runner-open .eng-runner-card > .eng-read {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Narrow screens: the passage on top, the task under it. The passage keeps
+   at least a third of the card; the task takes what it needs, up to 60%. */
+@media (max-width: 820px) {
+  .eng-read {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .eng-read-side {
+    flex: 1 1 0;
+    min-height: 30%;
+  }
+
+  .eng-read-passage {
+    padding: 12px 14px;
+  }
+
+  .eng-read-expand {
+    display: grid;
+  }
+
+  .eng-read-task {
+    flex: 0 1 auto;
+    max-height: 68%;
+    padding: 2px;
+  }
+
+  .eng-read.is-text-open .eng-read-task {
+    display: none;
+  }
+
+  .eng-read.is-text-open .eng-read-side {
+    flex: 1 1 auto;
+  }
+
+  .eng-read-title {
+    padding: 0 34px;
+    font-size: 1.15rem;
+  }
+
+  /* The ring already shows the step / question number. */
+  .eng-read-step {
+    display: none;
+  }
+
+  /* Marking: the instruction and its words on one line, the count and the
+     buttons on the next, so the passage keeps most of the screen. */
+  .eng-read-mark-head,
+  .eng-read-mark-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+  }
+
+  .eng-read-mark-foot {
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+
+  .eng-read-mark-head .eng-read-instr,
+  .eng-read-mark-head .eng-read-hint,
+  .eng-read-mark-foot .eng-read-count {
+    margin: 0;
+  }
+
+  .eng-read-mark-head .eng-read-hint {
+    align-self: center;
+  }
+
+  .eng-read-mark-foot .eng-read-actions {
+    gap: 8px;
+  }
+
+  .eng-read-mark-foot .eng-read-reveal {
+    padding: 6px 12px;
+    font-size: 0.88rem;
+  }
+
+  .eng-read-mark-foot .eng-check {
+    padding: 7px 16px;
+    font-size: 0.98rem;
+  }
+
+  .eng-read-text {
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  .eng-read-step {
+    margin-bottom: 2px;
+    font-size: 0.85rem;
+  }
+
+  .eng-read-instr {
+    margin-bottom: 6px;
+    font-size: 1rem;
+  }
+
+  .eng-read-hint {
+    margin-bottom: 8px;
+    padding: 3px 10px;
+    font-size: 1rem;
+  }
+
+  .eng-read-count {
+    margin-bottom: 8px;
+  }
+
+  .eng-read-found b {
+    font-size: 1.3rem;
+  }
+
+  .eng-read-q {
+    font-size: 1.05rem;
+  }
+
+  .eng-read-option {
+    gap: 8px;
+    padding: 7px 10px;
+    font-size: 0.98rem;
+  }
+
+  .eng-read-option-key {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+
+  .eng-read-feedback {
+    margin-top: 8px;
+  }
+
+  .eng-read-feedback .eng-feedback-msg {
+    font-size: 1.05rem;
+  }
+
+  .eng-read-input {
+    font-size: 1.02rem;
+  }
+}

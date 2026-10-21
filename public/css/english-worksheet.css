@@ -1,0 +1,730 @@
+/* Learn English — printable worksheets page (english-worksheet.js).
+   Each .ws-page is one A4 sheet; on screen the sheets are previewed on a soft
+   background and shrunk to fit narrow screens, in print only the sheets show. */
+
+:root {
+  --ink: #000000;
+  --paper-ink: #161616;
+  --memyellow: #ffe135;
+  --memteal: #00e5cc;
+  --stage-bg: #e0fbf8;
+  --ws-key: #e03131;
+  --ws-example: #6b6b6b;
+  --ws-line: #2a2a2a;
+  --ws-soft: #fff6c4;
+  --font: "Google Sans", "Rubik", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--stage-bg);
+  color: var(--ink);
+  font-family: var(--font);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ── Toolbar ── */
+
+.ws-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 3px solid var(--ink);
+  background: #ffffff;
+}
+
+.ws-toolbar-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.ws-toolbar-row[hidden] {
+  display: none;
+}
+
+.ws-back,
+.ws-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ws-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* The arrow points back: left in English, right in Hebrew. */
+[dir="ltr"] .ws-back svg {
+  transform: scaleX(-1);
+}
+
+.ws-back:hover,
+.ws-lang:hover {
+  background: var(--stage-bg);
+}
+
+.ws-toolbar-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.ws-sheet-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ws-pick {
+  padding: 5px 13px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ws-pick:hover {
+  background: var(--stage-bg);
+}
+
+.ws-pick.is-on {
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.ws-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ws-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ws-switch-track {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: #ffffff;
+  transition: background 0.15s ease;
+}
+
+.ws-switch-track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: inset-inline-start 0.15s ease;
+}
+
+.ws-switch input:checked + .ws-switch-track {
+  background: var(--memteal);
+}
+
+.ws-switch input:checked + .ws-switch-track::after {
+  inset-inline-start: 22px;
+}
+
+.ws-switch input:focus-visible + .ws-switch-track {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.ws-print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: 1.05rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.ws-print-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ws-print-btn:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.ws-tip {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* ── Stage: the A4 previews ── */
+
+.ws-stage {
+  padding: 24px 16px 48px;
+}
+
+.ws-pages {
+  zoom: var(--ws-zoom, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.ws-missing {
+  margin: 40px 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* ── One A4 sheet ── */
+
+/* Sized for young readers: large, plain text and roomy writing lines.
+   Bold is kept for headings and the words to choose from. */
+.ws-page {
+  display: flex;
+  flex-direction: column;
+  width: 210mm;
+  height: 297mm;
+  padding: 12mm 14mm 9mm;
+  overflow: hidden;
+  background: #ffffff;
+  color: var(--paper-ink);
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.08), 0 10px 30px rgba(0, 60, 55, 0.18);
+  direction: ltr;
+  text-align: left;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.4;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.ws-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ws-head-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ws-head-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ws-topic {
+  padding: 4px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memteal);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.ws-title {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.ws-title-he {
+  font-size: 15px;
+  font-weight: 600;
+  color: #555;
+  text-align: left;
+}
+
+.ws-head-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.ws-sheet-num {
+  padding: 4px 13px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--memyellow);
+  font-size: 16px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ws-sheet-num small {
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+.ws-key-badge {
+  display: none;
+  padding: 3px 10px;
+  border: 2px solid var(--ws-key);
+  border-radius: 8px;
+  color: var(--ws-key);
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.show-answers .ws-key-badge {
+  display: inline-block;
+}
+
+.ws-fields {
+  display: flex;
+  gap: 20px;
+  margin-top: 14px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.ws-field {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex: 2;
+}
+
+.ws-field--short {
+  flex: 1;
+}
+
+.ws-field i {
+  flex: 1;
+  height: 1.2em;
+  border-bottom: 2px solid var(--ws-line);
+}
+
+/* The rule box */
+.ws-remember {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--ws-soft);
+}
+
+.ws-remember-label {
+  flex-shrink: 0;
+  padding: 4px 11px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.ws-remember-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ws-remember-note {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ws-remember-note[dir="rtl"] {
+  text-align: right;
+}
+
+.ws-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ws-chip {
+  padding: 2px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ── Tasks ── */
+
+.ws-tasks {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+/* A Hebrew line too long to share the row drops below, still on the right. */
+.ws-task-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.ws-task-num {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memteal);
+  font-size: 17px;
+}
+
+.ws-task-he {
+  margin-inline-start: auto;
+  font-size: 16px;
+  font-weight: 600;
+  color: #555;
+}
+
+.ws-list {
+  margin: 0;
+  padding: 0 0 0 4px;
+  list-style: none;
+  counter-reset: ws-item;
+}
+
+.ws-list > li {
+  counter-increment: ws-item;
+}
+
+.ws-list > li::before {
+  content: counter(ws-item) ".";
+  display: inline-block;
+  min-width: 1.9em;
+  font-weight: 700;
+  color: #777;
+}
+
+.ws-list > li.is-example {
+  counter-increment: none;
+}
+
+.ws-list > li.is-example::before {
+  content: "e.g.";
+  font-size: 0.82em;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--ws-example);
+}
+
+/* Blanks and answer lines — the answer is always there, only shown in the
+   answer key (or, on an example, in grey). */
+.ws-blank {
+  display: inline-block;
+  width: var(--w, 6ch);
+  margin: 0 5px;
+  border-bottom: 2px solid var(--ws-line);
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: baseline;
+}
+
+.ws-ans {
+  visibility: hidden;
+  color: var(--ws-key);
+  font-weight: 700;
+}
+
+.show-answers .ws-ans,
+.is-solved .ws-ans {
+  visibility: visible;
+}
+
+.is-solved .ws-ans,
+.show-answers .is-solved .ws-ans {
+  color: var(--ws-example);
+  font-weight: 600;
+}
+
+/* circle */
+.ws-list--circle > li {
+  line-height: 2.2;
+}
+
+.ws-opts {
+  margin: 0 6px;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.ws-opt {
+  margin: 0 3px;
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+.ws-opt-sep {
+  margin: 0 1px;
+  font-weight: 500;
+  color: #999;
+}
+
+.show-answers .ws-opt.is-answer {
+  box-shadow: 0 0 0 2.5px var(--ws-key);
+  color: var(--ws-key);
+}
+
+/* fill */
+.ws-list--fill {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 1), minmax(0, 1fr));
+  gap: 0 24px;
+}
+
+.ws-list--fill > li {
+  line-height: 2.2;
+  white-space: nowrap;
+}
+
+/* fill with pictures: number, picture, then the sentence beside it */
+.ws-list--pics {
+  gap: 10px 14px;
+  padding-left: 0;
+}
+
+.ws-list--pics > li.ws-pic {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  line-height: 1.6;
+}
+
+.ws-list--pics > li.ws-pic::before {
+  min-width: 1.1em;
+}
+
+.ws-pic img {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+}
+
+/* rewrite / order: the sentence, an arrow, and a line to write on */
+.ws-list--rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ws-row {
+  display: grid;
+  grid-template-columns: 1.9em var(--src, 64mm) 1.6em minmax(0, 1fr);
+  align-items: end;
+  min-height: 13mm;
+}
+
+.ws-row::before {
+  padding-bottom: 4px;
+}
+
+.ws-row--order {
+  --src: 76mm;
+}
+
+.ws-src {
+  padding-bottom: 4px;
+}
+
+.ws-src--he {
+  font-family: "Rubik", var(--font);
+  font-size: 20px;
+  text-align: left;
+}
+
+.ws-arrow {
+  padding-bottom: 4px;
+  color: #888;
+  text-align: center;
+}
+
+/* nowrap: the answer key must keep the student copy's layout. */
+.ws-line {
+  display: block;
+  min-height: 1.6em;
+  padding: 0 6px 2px;
+  border-bottom: 2px solid var(--ws-line);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ws-alt {
+  margin-left: 10px;
+  font-size: 0.78em;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.ws-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding-bottom: 4px;
+}
+
+.ws-word {
+  padding: 0 7px;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  background: #ffffff;
+  font-weight: 600;
+}
+
+/* about yourself */
+.ws-list--about > li {
+  line-height: 2.6;
+}
+
+/* footer */
+.ws-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 5px;
+  border-top: 1.5px dashed #bbb;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+/* ── Phones ── */
+
+@media (max-width: 640px) {
+  .ws-toolbar-title {
+    order: 3;
+    flex-basis: 100%;
+    font-size: 1.1rem;
+  }
+
+  .ws-sheet-picker {
+    flex-basis: 100%;
+  }
+
+  .ws-tip {
+    font-size: 0.8rem;
+  }
+}
+
+/* ── Print: only the sheets, one per page ── */
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  body {
+    min-height: 0;
+    background: #ffffff;
+  }
+
+  .ws-toolbar {
+    display: none;
+  }
+
+  .ws-stage {
+    padding: 0;
+  }
+
+  .ws-pages {
+    zoom: 1;
+    display: block;
+  }
+
+  .ws-page {
+    box-shadow: none;
+    break-after: page;
+  }
+
+  .ws-page:last-child {
+    break-after: auto;
+  }
+}

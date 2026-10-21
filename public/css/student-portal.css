@@ -1,0 +1,254 @@
+/* Student homework page (/s/<key>) */
+
+body.stu-body {
+  --stu-done: #1f9d55;
+  --stu-done-soft: #c9f5d9;
+  --stu-late: #d63c3c;
+  --stu-late-soft: #ffd9d9;
+  min-height: 100vh;
+  background: var(--electric);
+  color: var(--ink);
+}
+
+.stu-top {
+  display: flex;
+  justify-content: center;
+  padding: 14px 16px;
+  background: var(--white);
+  border-bottom: 3px solid var(--ink);
+}
+
+.stu-brand {
+  font-size: 1.6rem;
+  color: var(--ink);
+}
+
+.stu-main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 16px 72px;
+}
+
+.stu-loading {
+  text-align: center;
+  font-weight: 800;
+}
+
+.stu-hello {
+  margin: 0;
+  font-size: clamp(2.2rem, 8vw, 3.4rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--ink);
+}
+
+.stu-lead {
+  margin: 10px auto 0;
+  max-width: 32rem;
+  font-size: clamp(1.05rem, 3.5vw, 1.25rem);
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.stu-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 420px;
+  margin: 22px auto 0;
+  padding: 10px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+}
+
+.stu-progress-label {
+  flex-shrink: 0;
+  font-weight: 900;
+}
+
+.stu-progress-bar {
+  flex: 1;
+  height: 14px;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--stu-done-soft);
+}
+
+.stu-progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--stu-done);
+}
+
+.stu-hw-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stu-hw {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  background: var(--white);
+  box-shadow: var(--shadow-sticker);
+}
+
+.stu-hw.is-done {
+  background: var(--stu-done-soft);
+  box-shadow: none;
+}
+
+.stu-hw.is-late {
+  border-color: var(--stu-late);
+}
+
+.stu-hw-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.stu-hw.is-done .stu-hw-badge {
+  background: var(--stu-done);
+  color: var(--white);
+}
+
+.stu-hw-badge svg {
+  width: 24px;
+  height: 24px;
+}
+
+.stu-hw-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.stu-hw-topic {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.stu-hw-title {
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+.stu-hw-due {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.stu-hw-due.is-late {
+  color: var(--stu-late);
+}
+
+.stu-hw-note {
+  margin-top: 4px;
+  padding: 4px 10px;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 10px;
+  background: var(--clean-bg-cream);
+  border: 2px solid var(--ink);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.stu-hw-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.stu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 22px;
+  font-size: 1.05rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.stu-btn--again {
+  background: var(--white);
+  color: var(--ink);
+}
+
+.stu-hw-done {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--stu-done);
+}
+
+.stu-free {
+  margin-top: 34px;
+  padding: 20px;
+  border: 3px dashed var(--ink);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+.stu-free-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.stu-free p {
+  margin: 6px 0 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .stu-hw {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .stu-hw-body {
+    flex-basis: calc(100% - 62px);
+  }
+
+  .stu-hw-action {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .stu-hw:not(.is-done) .stu-hw-action .stu-btn {
+    width: 100%;
+  }
+}

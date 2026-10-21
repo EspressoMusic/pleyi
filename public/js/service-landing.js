@@ -391,7 +391,7 @@ function bindMyGamesSection() {
         (g) => `
         <div class="svc-my-games-row">
           <span class="svc-my-games-row-title">${escapeHtml(g.title)}</span>
-          <button type="button" class="btn btn-outline btn-candy btn-sm svc-my-games-play" data-play="${escapeHtml(g.id)}">פתח</button>
+          <button type="button" class="btn btn-outline btn-candy btn-sm svc-my-games-play" data-play="${escapeHtml(g.id)}">${window.I18n?.lang === "en" ? "Open" : "פתח"}</button>
         </div>`
       )
       .join("");

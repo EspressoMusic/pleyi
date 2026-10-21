@@ -5,15 +5,93 @@
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
   const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "נפלאות הבריאה", body: "גוף האדם" };
-  const ACTIVE_SUBJECTS = ["lifeskills", "health", "body"];
+  const SUBJECT_LABELS_EN = { english: "English", math: "Math", lifeskills: "Life Skills", health: "Health Wonders", body: "Human Body" };
+  const ACTIVE_SUBJECTS = ["english", "lifeskills", "health", "body"];
   const LESSON_SHARE_PATH = "/services/ready-lessons.html";
   const LP_SPEAKER_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
 
+  function curLang() {
+    return window.I18n?.lang === "en" ? "en" : "he";
+  }
+
+  function subjectLabel(subject) {
+    return (curLang() === "en" ? SUBJECT_LABELS_EN[subject] : SUBJECT_LABELS[subject]) || subject;
+  }
+
+  const GRADE_GROUP_LABELS = {
+    all: { he: "הכל", en: "All" },
+    ag: { he: "א–ג", en: "Grades 1–3" },
+    dv: { he: "ד–ו", en: "Grades 4–6" },
+    zh: { he: "ז–ח", en: "Grades 7–8" },
+  };
+
+  function gradeGroupLabel(code) {
+    return GRADE_GROUP_LABELS[code]?.[curLang()] || GRADE_GROUP_LABELS.all[curLang()];
+  }
+
+  function formatGradeLabel(label) {
+    if (curLang() !== "en") return label;
+    return label === "כל הכיתות" ? "All grades" : label;
+  }
+
+  function formatDuration(duration) {
+    if (curLang() !== "en") return duration;
+    const m = String(duration).match(/(\d+)/);
+    return m ? `${m[1]} min` : duration;
+  }
+
+  // Merges a lesson's English overrides (lesson.en) on top of its Hebrew
+  // source when the UI is in English — text fields only, ids/config as-is.
+  function localizeLesson(lesson) {
+    if (!lesson) return lesson;
+    if (curLang() !== "en" || !lesson.en) return lesson;
+    return { ...lesson, ...lesson.en, id: lesson.id };
+  }
+
   const STANDARD_LESSON_GAMES = [
-    { id: "vocabulary-duel", label: "טריוויה", icon: "⚔️" },
-    { id: "tower-stack", label: "מגדל מילים", icon: "🗼" },
-    { id: "hangman", label: "איש תלוי", icon: "🎯" },
-    { id: "spot-diff", label: "מצא הבדלים", icon: "🔍" },
+    { id: "vocabulary-duel", label: "טריוויה", labelEn: "Trivia", icon: "⚔️" },
+    { id: "tower-stack", label: "מגדל מילים", labelEn: "Word Tower", icon: "🗼" },
+    { id: "hangman", label: "איש תלוי", labelEn: "Hangman", icon: "🎯" },
+    { id: "spot-diff", label: "מצא הבדלים", labelEn: "Spot the Differences", icon: "🔍" },
+  ];
+
+  // Picture vocabulary shared by the vocabulary lesson's picture slides
+  // (both languages) and its game vocab list.
+  const VOCAB_PICTURES = {
+    cat: { en: "cat", he: "חתול" },
+    dog: { en: "dog", he: "כלב" },
+    fish: { en: "fish", he: "דג" },
+    bird: { en: "bird", he: "ציפור" },
+    apple: { en: "apple", he: "תפוח" },
+    banana: { en: "banana", he: "בננה" },
+    icecream: { en: "ice cream", he: "גלידה" },
+    book: { en: "book", he: "ספר" },
+    pencil: { en: "pencil", he: "עיפרון" },
+    cup: { en: "cup", he: "כוס" },
+    clock: { en: "clock", he: "שעון" },
+    ball: { en: "ball", he: "כדור" },
+    house: { en: "house", he: "בית" },
+    car: { en: "car", he: "מכונית" },
+    umbrella: { en: "umbrella", he: "מטרייה" },
+    tree: { en: "tree", he: "עץ" },
+    flower: { en: "flower", he: "פרח" },
+    sun: { en: "sun", he: "שמש" },
+    moon: { en: "moon", he: "ירח" },
+    star: { en: "star", he: "כוכב" },
+  };
+
+  function vocabPictures(...ids) {
+    return ids.map((id) => ({ ...VOCAB_PICTURES[id], img: `/images/english/vocab/${id}.svg` }));
+  }
+
+  // Ball-and-box scenes for the prepositions lesson (the same pictures as its
+  // "Where is the ball?" exercise on the Learn English page).
+  const PREPOSITION_PICTURES = [
+    { en: "in", he: "בתוך", img: "/images/english/vocab/prep-in.svg" },
+    { en: "on", he: "על", img: "/images/english/vocab/prep-on.svg" },
+    { en: "under", he: "מתחת", img: "/images/english/vocab/prep-under.svg" },
+    { en: "next to", he: "ליד", img: "/images/english/vocab/prep-next-to.svg" },
+    { en: "between", he: "בין", img: "/images/english/vocab/prep-between.svg" },
   ];
 
   const LESSON_CATALOG = {
@@ -118,6 +196,93 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Volcano",
+        nameMain: "Volcano",
+        namePart: "",
+        summary: "Get to know volcanoes up close — how they're built, what happens inside the Earth, and why they erupt. With a game at the end.",
+        vocab: [
+          { en: "Volcano", he: "A special mountain that can shoot out hot rocks, smoke, and lava from deep inside the Earth." },
+          { en: "Lava", he: "Hot liquid rock that flows out of a volcano during an eruption." },
+          { en: "Smoke", he: "A thick cloud that rises from the crater into the sky during an eruption." },
+          { en: "Magma", he: "Very hot liquid rock found deep underground." },
+          { en: "Crater", he: "The opening at the top of a volcano that lava flows out of." },
+          { en: "Eruption", he: "The moment when a volcano blasts out lava, smoke, and rocks." },
+          { en: "Volcanic ash", he: "Tiny bits of dust and rock that are thrown out of a volcano." },
+          { en: "Active volcano", he: "A volcano that has erupted recently and could erupt again soon." },
+          { en: "Dormant volcano", he: "A volcano that hasn't erupted in a long time but could still wake up one day." },
+          { en: "Extinct volcano", he: "A volcano that is not expected to ever erupt again." },
+          { en: "Volcanologist", he: "A scientist who studies volcanoes." },
+          { en: "Volcanologists", he: "Scientists who study volcanoes." },
+          { en: "Earth's crust", he: "The solid outer layer of the Earth that we live on." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Volcano**?",
+            subtitle: "Opening",
+            body: "A **volcano** is a special mountain that can shoot out hot rocks, smoke, and lava from deep inside the Earth.\n\nToday we'll learn how it's built, what happens inside it, and why it **erupts**.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Crater — the opening at the top of a volcano that lava flows out of.\n\nMagma — very hot liquid rock found deep underground. When it comes out, it's called lava.\n\nEruption — the moment when a volcano blasts out lava, smoke, and rocks.",
+          },
+          {
+            type: "content",
+            title: "How does a volcano **erupt**?",
+            subtitle: "Inside the mountain",
+            body: "Deep underground there is **magma** — very hot liquid rock.\n\nWhen the pressure inside the mountain builds up, the magma rises through the crater at the top.\n\nWhen it comes out, it's called **lava**, and smoke and volcanic ash come out along with it.",
+          },
+          {
+            type: "content",
+            title: "Watch: **Volcano** in action",
+            subtitle: "Short video",
+            body: "A short video (3 minutes) showing how **magma** rises, comes out of the mountain as **lava**, and builds the shape of the mountain.",
+            video: "https://www.youtube.com/watch?v=K7Oq9_DU1Mc",
+            videoTitle: "All About Volcanoes — SciShow Kids",
+          },
+          {
+            type: "content",
+            title: "How hot is **lava**?",
+            subtitle: "Fun fact",
+            body: "Lava can reach temperatures of more than **1,000 degrees Celsius** — hot enough to melt metal!\n\nEven though it looks slow, lava can flow down a mountain at dozens of kilometers per hour.\n\nAs it cools, lava slowly turns into new, hard rock.",
+          },
+          {
+            type: "content",
+            title: "**Active**, dormant, or extinct?",
+            subtitle: "Types of volcanoes",
+            body: "An **active volcano** has erupted recently or could erupt again soon.\n\nA **dormant volcano** hasn't erupted in a very long time, but it could still wake up one day.\n\nAn **extinct volcano** is not expected to ever erupt again.",
+          },
+          {
+            type: "content",
+            title: "**What comes out** of a volcano?",
+            subtitle: "Question & answer",
+            body: "**What comes out** of a volcano when it **erupts**?\n\nLava — hot liquid rock that flows down the mountain.\n\nSmoke — a thick cloud that rises from the crater into the sky.\n\nVolcanic ash — tiny bits of dust and rock that can travel very far in the wind.",
+          },
+          {
+            type: "content",
+            title: "Volcanoes **around the world**",
+            subtitle: "Real-life connection",
+            body: "There are **thousands of volcanoes** in the world — some on land and some deep in the ocean.\n\nKilauea, in Hawaii, is one of the most active volcanoes in the world, and has kept erupting for many years.\n\nScientists called **volcanologists** study volcanoes to know when they might erupt, and to keep nearby residents safe.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "If you were **volcanologists** and discovered that a volcano might erupt soon, what would you do to keep nearby residents safe?\n\nWhat surprised you the most about everything we learned about volcanoes?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     health: {
@@ -197,6 +362,78 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Human Body - The Heart",
+        nameMain: "Human Body",
+        namePart: "The Heart",
+        summary: "Get to know the heart up close — what it looks like, how it works, and why it's so important to our body. With a game at the end.",
+        vocab: [
+          { en: "Heart", he: "The organ that beats and pumps blood to every part of the body." },
+          { en: "Pulse", he: "The rhythm at which the heart keeps beating." },
+          { en: "Blood", he: "The fluid the heart sends around the body — it carries oxygen and food to our cells." },
+          { en: "Arteries", he: "Tubes that carry blood from the heart to the rest of the body." },
+          { en: "Veins", he: "Tubes that carry blood back to the heart." },
+          { en: "Oxygen", he: "A gas that blood carries to every cell so it has energy." },
+          { en: "Heart muscle", he: "The strong muscle that squeezes and relaxes, making the heart beat." },
+          { en: "Blood circulation", he: "The path blood takes from the heart to the body and back again." },
+          { en: "Fast pulse", he: "A quick heartbeat — for example after running or getting excited." },
+          { en: "Rest", he: "A time when the heart beats slowly and calmly." },
+          { en: "Exercise", he: "Physical activity that strengthens the heart muscle." },
+          { en: "Heart doctor", he: "A doctor who specializes in checking and protecting heart health." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is the **Heart**?",
+            subtitle: "Opening",
+            body: "The heart is a **small, powerful muscle**, about the size of a fist, that sits in our chest.\n\nIt beats without stopping, day and night, our whole life — sending blood to every part of the body.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Heart — the organ that beats and pumps blood around the body.\n\nPulse — the rhythm at which the heart beats.\n\nArteries — tubes that carry blood from the heart to the body.\n\nVeins — tubes that carry blood back to the heart.",
+          },
+          {
+            type: "content",
+            title: "How does the **Heart** work?",
+            subtitle: "Inside the body",
+            body: "With every beat, the **heart squeezes** and pushes blood through the **arteries** to every part of the body — all the way to our fingertips.\n\nThe blood returns to the heart through the **veins**, and then it all starts again — over and over, all day long.",
+          },
+          {
+            type: "content",
+            title: "Why is the **Heart** so important?",
+            subtitle: "The heart's job",
+            body: "The blood the heart sends carries **oxygen** and food to every cell in the body.\n\nWithout the heart, no organ would get what it needs to work — that's why the heart is one of our most important organs.",
+          },
+          {
+            type: "content",
+            title: "When does the **Pulse** change?",
+            subtitle: "Fast and slow",
+            body: "When we're **running, excited, or playing** — the heart beats faster to send more blood to the muscles.\n\nWhen we're **resting or sleeping** — the heart beats slowly and calmly, because the body doesn't need much energy.",
+          },
+          {
+            type: "content",
+            title: "How do you **strengthen** your heart?",
+            subtitle: "Good habits",
+            body: "**Exercise** — running, jumping, and playing outside strengthen the heart muscle.\n\n**Enough sleep** — lets the heart rest and grow stronger.\n\n**Eating fruit and vegetables and drinking water** — help the heart work well.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Which activities during your day make your **pulse** beat faster?\n\nWhat can you start doing today to strengthen your heart?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     lungs: {
@@ -274,6 +511,76 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Human Body - Lungs & Breathing",
+        nameMain: "Human Body",
+        namePart: "Lungs & Breathing",
+        summary: "Get to know the lungs up close — how we breathe, why it matters so much, and how to keep our lungs healthy. With a game at the end.",
+        vocab: [
+          { en: "Lungs", he: "Two spongy organs in the chest that help us breathe." },
+          { en: "Breathing", he: "The process of drawing air in and pushing it back out." },
+          { en: "Inhale", he: "To draw air into the lungs." },
+          { en: "Exhale", he: "To push air out of the lungs." },
+          { en: "Windpipe", he: "The tube that carries air from the throat to the lungs." },
+          { en: "Oxygen", he: "A gas in the air that the body needs to make energy." },
+          { en: "Carbon dioxide", he: "A gas the body breathes out." },
+          { en: "Diaphragm", he: "A muscle under the lungs that helps us inhale and exhale." },
+          { en: "Deep breathing", he: "A slow, full breath of air that calms the body." },
+          { en: "Healthy lungs", he: "Lungs that work well and aren't damaged by smoke or pollution." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Lung**?",
+            subtitle: "Opening",
+            body: "The lungs are **two large, spongy organs** in our chest, one on each side of the heart.\n\nThey fill and empty with air every time we breathe — day and night, without stopping.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Inhale — to draw air into the lungs.\n\nExhale — to push air out of the lungs.\n\nWindpipe — the tube that carries air from the throat to the lungs.",
+          },
+          {
+            type: "content",
+            title: "How does **Breathing** work?",
+            subtitle: "Inside the body",
+            body: "When we inhale, air travels through the nose or mouth, down the **windpipe**, and into the **lungs**.\n\nThe lungs take **oxygen** from the air and pass it into the blood, and in exchange release **carbon dioxide** the body doesn't need.",
+          },
+          {
+            type: "content",
+            title: "Why is **Breathing** so important?",
+            subtitle: "The lungs' job",
+            body: "Every cell in our body needs **oxygen** to work and make energy.\n\nWithout breathing, the blood wouldn't get oxygen, and the body couldn't function — that's why we breathe automatically, without even thinking about it.",
+          },
+          {
+            type: "content",
+            title: "When does **Breathing** change?",
+            subtitle: "Fast and slow",
+            body: "When we're **running or working hard** — breathing speeds up, to bring more oxygen to the muscles.\n\nWhen we're **resting or relaxing** — breathing is slow and deep, and that helps the body relax.",
+          },
+          {
+            type: "content",
+            title: "How do you **strengthen** your lungs?",
+            subtitle: "Good habits",
+            body: "**Exercise** — running, swimming, and playing outside strengthen the lungs.\n\n**Clean air** — avoiding smoke and pollution keeps lungs healthy.\n\n**Deep breaths** — a few deep breaths a day help the lungs and the body relax.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Put a hand on your chest for a moment and breathe deeply — when do you notice your **breathing** change?\n\nWhat can you do to keep your lungs healthy?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     brain: {
@@ -351,6 +658,76 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Human Body - The Brain",
+        nameMain: "Human Body",
+        namePart: "The Brain",
+        summary: "Get to know the brain up close — how it controls the body, how memory and learning work, and how to keep it sharp and focused. With a game at the end.",
+        vocab: [
+          { en: "Brain", he: "The organ inside the skull that controls everything the body does and thinks." },
+          { en: "Skull", he: "The hard bone that protects the brain." },
+          { en: "Nerves", he: "Thin wires that carry messages between the brain and the rest of the body." },
+          { en: "Memory", he: "The brain's ability to store and recall information." },
+          { en: "Thinking", he: "The process by which the brain processes information and solves problems." },
+          { en: "Reflex", he: "A fast, automatic response of the body without thinking." },
+          { en: "Spinal cord", he: "The main nerve highway that connects the brain to the rest of the body." },
+          { en: "Senses", he: "The ways we take in information from the world — sight, hearing, and more." },
+          { en: "Focus", he: "The ability to concentrate on one task for a period of time." },
+          { en: "Sleep", he: "A time of rest when the brain processes and organizes what we've learned." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is the **Brain**?",
+            subtitle: "Opening",
+            body: "The brain is the organ inside our **skull**, protected by hard bone.\n\nIt's the body's \"commander\" — controlling every movement, thought, and feeling we have.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Nerves — thin wires that carry messages between the brain and the body.\n\nSpinal cord — the main nerve highway that connects the brain to the rest of the body.\n\nMemory — the brain's ability to store and recall information.",
+          },
+          {
+            type: "content",
+            title: "How does the **Brain** work?",
+            subtitle: "Inside the body",
+            body: "The brain sends and receives messages through **nerves** and through the **spinal cord**, which runs down through the whole body.\n\nWhen we touch something hot, the **nerves** send a fast message to the brain, and the brain sends back an order to move the hand — this is called a **reflex**.",
+          },
+          {
+            type: "content",
+            title: "Why is the **Brain** so important?",
+            subtitle: "The brain's job",
+            body: "The brain controls breathing, heartbeat, movement, speech, memory, and even our feelings.\n\nEvery **sense** we have — sight, hearing, smell, taste, and touch — goes through the brain so we can understand what's happening around us.",
+          },
+          {
+            type: "content",
+            title: "When does the **Brain** work best?",
+            subtitle: "Awake and tired",
+            body: "When we're **awake and rested** — it's easier to focus and learn new things.\n\nWhen we're **tired** — it's harder to concentrate, which is why **sleep** is so important for the brain.",
+          },
+          {
+            type: "content",
+            title: "How do you **strengthen** your brain?",
+            subtitle: "Good habits",
+            body: "**Reading and learning** — challenge the brain and strengthen it.\n\n**Enough sleep** — gives the brain time to process and organize what we've learned.\n\n**Eating well and drinking water** — help the brain work with focus.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "When do you feel your **brain** working best, and when is it hardest for you to focus?\n\nWhat do you do to let your brain rest and grow stronger?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     skeleton: {
@@ -428,6 +805,76 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Human Body - Muscles & Bones",
+        nameMain: "Human Body",
+        namePart: "Muscles & Bones",
+        summary: "Get to know the skeleton and muscles up close — how they give the body shape and movement, and how to keep them strong. With a game at the end.",
+        vocab: [
+          { en: "Skeleton", he: "All the bones in the body together, which give it shape and support." },
+          { en: "Bone", he: "A hard part of the body that builds the skeleton." },
+          { en: "Muscle", he: "Tissue in the body that squeezes and relaxes, allowing movement." },
+          { en: "Joint", he: "The place where two bones meet and allow movement." },
+          { en: "Tendons", he: "Bands that connect muscles to bones." },
+          { en: "Spine", he: "The row of bones down the middle of the back that supports the body." },
+          { en: "Muscle contraction", he: "When a muscle shortens and creates movement." },
+          { en: "Flexibility", he: "The body's ability to move easily through a wide range of motion." },
+          { en: "Fracture", he: "A crack or break in a bone." },
+          { en: "Calcium", he: "A nutrient that strengthens bones." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is the **Skeleton**?",
+            subtitle: "Opening",
+            body: "The skeleton is all the **bones** in our body together — we have more than 200 bones that give the body shape, support, and strength.\n\nWithout a skeleton, our body couldn't stand or move.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Bone — a hard part that builds the skeleton.\n\nJoint — the place where two bones meet and allow movement.\n\nMuscle — tissue that squeezes and relaxes, letting us move.",
+          },
+          {
+            type: "content",
+            title: "How do **Muscles and Bones** work together?",
+            subtitle: "Inside the body",
+            body: "**Muscles** are connected to bones by **tendons**.\n\nWhen a muscle **contracts**, it pulls the bone and moves it — that's how we walk, jump, and lift things.",
+          },
+          {
+            type: "content",
+            title: "Why are the **Skeleton and Muscles** so important?",
+            subtitle: "Their job",
+            body: "The skeleton keeps the body's shape and protects important organs — for example, the skull protects the brain.\n\nMuscles let us move, run, talk, and even smile — almost every movement in the body needs a muscle.",
+          },
+          {
+            type: "content",
+            title: "What happens when a bone **breaks**?",
+            subtitle: "Healthy or broken",
+            body: "Sometimes, after a hard knock, a bone can get a **fracture** — a crack or break.\n\nOur body can heal broken bones slowly over time, but it takes time, and sometimes a cast helps hold the bone in place until it heals.",
+          },
+          {
+            type: "content",
+            title: "How do you **strengthen** muscles and bones?",
+            subtitle: "Good habits",
+            body: "**Foods rich in calcium** — like milk and cheese, help bones grow strong.\n\n**Exercise** — running, climbing, and jumping strengthen muscles and bones.\n\n**Good posture** — sitting and standing up straight keeps the spine healthy.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "What physical activities do you do that strengthen your **muscles** and **bones**?\n\nWhat's important to do when a friend is hurt and you think they might have a **fracture**?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     digestion: {
@@ -505,6 +952,76 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Human Body - Digestive System",
+        nameMain: "Human Body",
+        namePart: "Digestive System",
+        summary: "Get to know the digestive system up close — what happens to food from the moment it enters the mouth until the end, and how to keep it healthy. With a game at the end.",
+        vocab: [
+          { en: "Digestive system", he: "The chain of organs that processes the food we eat." },
+          { en: "Stomach", he: "An organ in the belly that breaks down food using acids." },
+          { en: "Esophagus", he: "The tube that carries food from the mouth to the stomach." },
+          { en: "Intestines", he: "Long tubes that keep breaking down food and absorb nutrients from it." },
+          { en: "Saliva", he: "A fluid in the mouth that starts breaking down food while chewing." },
+          { en: "Digestion", he: "The process by which the body breaks food down into things it can use." },
+          { en: "Nutrients", he: "Substances in food that the body needs to grow and function." },
+          { en: "Liver", he: "An organ that helps digest fat and clears toxins from the blood." },
+          { en: "Large intestine", he: "The last part of the intestines, which absorbs water and prepares waste to leave the body." },
+          { en: "Balanced diet", he: "Eating a variety of healthy foods in the right amounts." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is the **Digestive System**?",
+            subtitle: "Opening",
+            body: "The digestive system is a long chain of organs that turns the food we eat into energy and things the body needs.\n\nIt starts in our mouth and continues through the whole body.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Stomach — an organ in the belly that breaks down food using acids.\n\nIntestines — long tubes that keep breaking down food and absorb nutrients from it.\n\nEsophagus — the tube that carries food from the mouth to the stomach.",
+          },
+          {
+            type: "content",
+            title: "How does **Digestion** work?",
+            subtitle: "Inside the body",
+            body: "When we chew food, **saliva** starts breaking it down, and it travels down the **esophagus** into the **stomach**.\n\nIn the stomach, food mixes with acids and moves on to the intestines, where the body absorbs **nutrients** from it into the blood.",
+          },
+          {
+            type: "content",
+            title: "Why is **Digestion** so important?",
+            subtitle: "The digestive system's job",
+            body: "Digestion turns food into the **nutrients** and energy the body needs to grow, move, and think.\n\nWithout proper digestion, the body wouldn't get what it needs to work every day.",
+          },
+          {
+            type: "content",
+            title: "What happens **at the end** of the process?",
+            subtitle: "The final stage",
+            body: "After the intestines absorb all the nutrients, what's left moves on to the **large intestine**.\n\nThere the last of the water is absorbed, and the waste that remains leaves the body when we go to the bathroom.",
+          },
+          {
+            type: "content",
+            title: "How do you **keep** your digestive system healthy?",
+            subtitle: "Good habits",
+            body: "**Balanced diet** — eating vegetables, fruit, and fiber helps digestion work well.\n\n**Drinking water** — helps the digestive system run smoothly.\n\n**Chewing slowly** — chewing food well makes it easier on the stomach.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Which foods do you eat that help your **digestive system** work well?\n\nWhy is it important to chew food slowly instead of rushing to swallow it?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     money: {
@@ -598,6 +1115,92 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Life Skills - Money & Smart Shopping",
+        nameMain: "Life Skills",
+        namePart: "Money & Smart Shopping",
+        summary: "Learn what a budget is, how to tell needs from wants, and how to shop smart and save money wisely. With a game at the end.",
+        vocab: [
+          { en: "Budget", he: "A plan that shows how much money we have and how much we intend to spend and save." },
+          { en: "Income", he: "Money you receive, like allowance or a salary." },
+          { en: "Expense", he: "Money spent to buy or pay for something." },
+          { en: "Savings", he: "Money kept and not spent now, for use in the future." },
+          { en: "Needs", he: "Things you must have to live, like food, clothes, and a place to live." },
+          { en: "Wants", he: "Things you would like to buy, but don't need in order to live." },
+          { en: "Price", he: "How much money you have to pay to buy something." },
+          { en: "Discount", he: "A temporary reduction in a product's price." },
+          { en: "Comparing prices", he: "Checking the price of the same product in different places before buying." },
+          { en: "Smart shopping", he: "A thought-out decision before buying, instead of an impulse buy." },
+          { en: "Allowance", he: "A small, regular amount of money kids get from their parents." },
+          { en: "Bank account", he: "A place at a bank where money is kept." },
+          { en: "Interest", he: "A small amount of extra money a bank adds to money kept in savings." },
+          { en: "Savings goal", he: "An amount of money we set as a target to save toward." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Budget**?",
+            subtitle: "Opening",
+            body: "A **budget** is a simple plan that helps us know how much money we have, and how much we plan to spend and save from it.\n\nBoth grown-ups and kids can manage a budget — for example, planning how to use weekly allowance.\n\nToday we'll learn how to tell **needs** from **wants**, and how to make a **smart purchase** with the money we have.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Budget — a plan that shows how much money we have and how much we intend to spend and save.\n\nIncome — money you receive, like allowance.\n\nExpense — money spent to buy or pay for something.\n\nSavings — money kept and not spent now, for use in the future.",
+          },
+          {
+            type: "content",
+            title: "**Needs** vs. **Wants**",
+            subtitle: "What really matters?",
+            body: "**Needs** are things we must have to live — like food, clothes, and a place to live.\n\n**Wants** are things we'd be happy to buy, like a new toy or candy — but we don't need them to live.\n\nBefore buying something, it's worth asking: is this a **need** or a **want**? It helps decide if it's really worth buying right now.",
+          },
+          {
+            type: "content",
+            title: "How do you build a **Budget**?",
+            subtitle: "Step by step",
+            body: "First, check how much **income** you have — for example, how much **allowance** you get per week.\n\nThen decide how much of the money goes to **expenses** (like candy or a game), and how much goes to **savings**.\n\nA good budget always leaves a little money aside for savings — even if it's a small amount.",
+          },
+          {
+            type: "content",
+            title: "What is **Smart Shopping**?",
+            subtitle: "Before you buy",
+            body: "**Smart shopping** starts with a question: do I really need this, or am I buying on impulse?\n\nIt's worth checking the **price** in one or two places before buying — that's called **comparing prices**, and sometimes you can find the same product cheaper.\n\nIt also helps to wait a day or two before a big purchase — if you still want it after waiting, it's probably really important to you.",
+          },
+          {
+            type: "content",
+            title: "**Discounts** and sales — always worth it?",
+            subtitle: "Watch out for traps",
+            body: "A **discount** is a temporary price cut, but not every sale is really a saving.\n\nSometimes stores show a \"sale\" on a product you wouldn't have bought anyway — and you end up spending more money, not less.\n\nThe golden rule: only buy things you really need, even if they're on sale.",
+          },
+          {
+            type: "content",
+            title: "Saving toward a **Goal**",
+            subtitle: "Planning for the long run",
+            body: "A **savings goal** is an amount of money we set as a target to save toward — for example, to buy a new game.\n\nThe best way is to set aside a small part of your **allowance** every week, until you reach the goal.\n\nWhen money is kept in a **bank account**, the bank sometimes adds a bit of **interest** too — meaning the money grows on its own over time.",
+          },
+          {
+            type: "content",
+            title: "**Responsibility** with allowance",
+            subtitle: "Good habits",
+            body: "**Allowance** is a great chance to learn to manage money on your own, even in small amounts.\n\nIt helps to split it in advance: part for everyday **expenses**, and part for **savings** toward something bigger.\n\nThe more you practice managing a small budget today, the easier it will be to manage bigger money when you grow up.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Think of something you bought recently — was it a **need** or a **want**? How did you decide?\n\nIf you got $10 **allowance** this week, how would you split it between spending and **saving**?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     time: {
@@ -690,6 +1293,91 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Life Skills - Time Management & Planning",
+        nameMain: "Life Skills",
+        namePart: "Time Management & Planning",
+        summary: "Learn how to plan your day, set priorities, deal with procrastination and distractions, and keep a balance between studying, playing, and resting. With a game at the end.",
+        vocab: [
+          { en: "Planning", he: "Thinking ahead about how we'll use our time." },
+          { en: "Schedule", he: "A list that shows when to do each activity during the day." },
+          { en: "Priorities", he: "Deciding what's important to do first." },
+          { en: "Procrastination", he: "The habit of putting off tasks to a later time." },
+          { en: "Goal", he: "Something you want to achieve." },
+          { en: "Break", he: "A short rest between tasks." },
+          { en: "Routine", he: "A fixed order of actions that repeats every day." },
+          { en: "Distraction", he: "Something that interrupts your focus on a task." },
+          { en: "Time management", he: "The ability to plan and use time efficiently." },
+          { en: "Deadline", he: "The date or time by which a task must be ready." },
+          { en: "Task", he: "Something that needs to get done." },
+          { en: "Balance", he: "Splitting time correctly between studying, playing, and resting." },
+          { en: "Focus", he: "The ability to stay concentrated on one task for a period of time." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is **Time Management**?",
+            subtitle: "Opening",
+            body: "**Time management** is the ability to plan and use the time we have efficiently — so we can fit in studying, playing, and resting.\n\nWe all have exactly the same number of hours in a day, but people who know how to **plan** manage to get more done and feel less stressed.\n\nToday we'll learn how to build a **schedule**, how to set **priorities**, and how to deal with **procrastination**.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Planning — thinking ahead about how we'll use our time.\n\nSchedule — a list that shows when to do each activity during the day.\n\nPriorities — deciding what's important to do first.\n\nProcrastination — the habit of putting off tasks to a later time.",
+          },
+          {
+            type: "content",
+            title: "Setting **Priorities**",
+            subtitle: "What matters first?",
+            body: "Not all our **tasks** are equally important — some are more urgent, and some can wait.\n\nGood **priorities** start with a question: what must get done today, and what can wait until tomorrow?\n\nIt helps to start with the least pleasant task — that way it doesn't hang over your head all day.",
+          },
+          {
+            type: "content",
+            title: "Building a daily **Schedule**",
+            subtitle: "From morning to night",
+            body: "A good **schedule** splits the day into clear blocks — time for a morning **routine**, time for studying, and time for playing and resting.\n\nIt helps to write the schedule on paper or in a planner — that way you see it clearly and don't forget tasks.\n\nIt's important to leave some unplanned free time too — sometimes things take longer than we thought.",
+          },
+          {
+            type: "content",
+            title: "What is **Procrastination**?",
+            subtitle: "The enemy of time",
+            body: "**Procrastination** is the habit of putting off a task to later, even when you know you need to do it.\n\nIt happens because a task seems hard or boring — so we'd rather do something more fun first.\n\nA good way to beat procrastination: start with just 5 minutes of work on the task. Usually, once you start, it's easier to keep going.",
+          },
+          {
+            type: "content",
+            title: "Dealing with **Distractions**",
+            subtitle: "Staying focused",
+            body: "A **distraction** is anything that stops us from focusing — like a phone, background TV, or noise.\n\nWhen working on an important task, it helps to remove distractions in advance — for example, turning off phone notifications.\n\nA short **break** between tasks actually helps **focus** — the brain gets a moment to rest and comes back refreshed.",
+          },
+          {
+            type: "content",
+            title: "Setting Small and Big **Goals**",
+            subtitle: "Where are we heading?",
+            body: "A **goal** is something you want to achieve — like finishing homework before dinner, or reading a whole book by the end of the month.\n\nA big goal is easier to reach when you break it into smaller tasks, one at a time.\n\nHitting a **deadline** on time gives a feeling of success — and that encourages you to keep planning well.",
+          },
+          {
+            type: "content",
+            title: "Keeping a **Balance**",
+            subtitle: "Studying, playing, and resting",
+            body: "A good **balance** means your schedule has time for studying, for playing, and for resting — not just one of them.\n\nA day that's too packed with no **breaks** tires out the body and mind, making it harder to focus.\n\nWhen there's a steady **routine** with set times for sleep, studying, and play, it's easier to feel calm and organized.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "What's the thing you tend to put off most because of **procrastination**? Why do you think that happens?\n\nWhich **distraction** bothers your focus the most, and how can you deal with it?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     communication: {
@@ -782,6 +1470,91 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Life Skills - Communication & Conflict Resolution",
+        nameMain: "Life Skills",
+        namePart: "Communication & Conflict Resolution",
+        summary: "Learn what active listening is, how to spot a conflict and resolve it respectfully, and how to express feelings and calm yourself down when angry. With a game at the end.",
+        vocab: [
+          { en: "Communication", he: "Passing thoughts, feelings, and information between people." },
+          { en: "Active listening", he: "Listening fully to what another person is saying, without interrupting." },
+          { en: "Empathy", he: "The ability to understand and feel what another person is feeling." },
+          { en: "Conflict", he: "A situation of disagreement or argument between people." },
+          { en: "Compromise", he: "An agreement in which each side gives up a little to reach a shared solution." },
+          { en: "Body language", he: "Body movements and posture that send a message without words." },
+          { en: "Expressing feelings", he: "Telling others how you feel, in words." },
+          { en: "Mutual respect", he: "A pleasant, respectful attitude between both sides." },
+          { en: "Tone of voice", he: "The sound and way something is said." },
+          { en: "Problem-solving", he: "A process of finding a solution to a difficult situation." },
+          { en: "Self-calming", he: "Ways to calm down when angry or frustrated." },
+          { en: "Agreement", he: "A situation in which both sides agree on something together." },
+          { en: "Point of view", he: "The way a particular person sees and understands a certain situation." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is good **Communication**?",
+            subtitle: "Opening",
+            body: "**Communication** is the way we pass thoughts, feelings, and information to other people — through words, tone of voice, and body language.\n\nGood communication helps us understand others, and helps them understand us — and it also prevents many **conflicts** before they even start.\n\nToday we'll learn what **active listening** is, and how to resolve disagreements respectfully.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Communication — passing thoughts, feelings, and information between people.\n\nActive listening — listening fully to what another person is saying, without interrupting.\n\nEmpathy — the ability to understand and feel what another person is feeling.\n\nConflict — a situation of disagreement or argument between people.",
+          },
+          {
+            type: "content",
+            title: "What is **Active Listening**?",
+            subtitle: "Really listening",
+            body: "**Active listening** means really listening to what someone is saying, instead of just waiting for your turn to talk.\n\nWhen you really listen, you keep eye contact, don't interrupt the speaker, and sometimes even repeat back what you heard in your own words — to make sure you understood correctly.\n\nGood listening makes the other person feel seen and respected.",
+          },
+          {
+            type: "content",
+            title: "**Body Language** and Tone of Voice",
+            subtitle: "Beyond words",
+            body: "Sometimes we say one thing in words, but our **body language** sends a completely different message.\n\nA calm, pleasant **tone of voice** makes people listen more, while an angry tone can make them get defensive.\n\nWhen talking to someone, it's worth paying attention to what your body is \"saying\" too — facial expressions, posture, and eye contact.",
+          },
+          {
+            type: "content",
+            title: "What is a **Conflict**?",
+            subtitle: "Why it happens",
+            body: "A **conflict** is a situation where two people have different opinions, wants, or needs — and it happens to everyone, even good friends.\n\nA conflict isn't necessarily a bad thing — it's a chance to learn to listen to the other person's **point of view**.\n\nThe problem starts when people don't know how to talk about it respectfully, and then it can turn into a fight.",
+          },
+          {
+            type: "content",
+            title: "How do you resolve a **Conflict**?",
+            subtitle: "In a healthy way",
+            body: "First, each side says how they feel, without shouting and without blaming.\n\nThen you listen to the other side's point of view — even if you don't agree with it.\n\nFinally, look for a **compromise**: a solution where each side gives up a little, to reach an **agreement** both sides can live with.",
+          },
+          {
+            type: "content",
+            title: "What is **Empathy**?",
+            subtitle: "Understanding the other side",
+            body: "**Empathy** is the ability to understand and feel what another person is feeling, even if we're not in the same situation.\n\nWhen we ask ourselves \"how would I feel in their place?\" — it's easier to respond gently and with **mutual respect**.\n\nEmpathy doesn't mean always agreeing with the other person — it means understanding them, even when you think differently.",
+          },
+          {
+            type: "content",
+            title: "**Self-Calming** when angry",
+            subtitle: "Before you react",
+            body: "When we're angry, it's easy to say things we regret later.\n\n**Self-calming** can be something simple — counting to ten, taking a deep breath, or stepping away from the situation for a moment before reacting.\n\nOnly after calming down a bit is it easier to express feelings in words clearly and respectfully, instead of shouting.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Think of a small **conflict** you had with a friend or a sibling — how did you resolve it?\n\nWhat's the difference between listening \"just because\" and **active listening**?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     safety: {
@@ -874,6 +1647,91 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Life Skills - Online Safety",
+        nameMain: "Life Skills",
+        namePart: "Online Safety",
+        summary: "Learn how to protect personal information, spot dangers online, deal with cyberbullying, and keep healthy screen habits. With a game at the end.",
+        vocab: [
+          { en: "Internet", he: "A giant network that connects computers and phones all over the world." },
+          { en: "Personal information", he: "Details like full name, address, or phone number that should stay private." },
+          { en: "Password", he: "A secret combination of letters and numbers that keeps an account safe." },
+          { en: "Privacy", he: "Keeping personal information away from strangers." },
+          { en: "Online stranger", he: "Someone you don't really know, even if you talk to them online." },
+          { en: "Cyberbullying", he: "Hurting or harassing someone through the internet." },
+          { en: "Suspicious message", he: "A message that tries to get someone to do something unsafe." },
+          { en: "Reporting", he: "Telling a trusted adult or a website about something wrong that happened online." },
+          { en: "Blocking", he: "An action that stops a certain person from contacting us online." },
+          { en: "Inappropriate content", he: "Pictures, videos, or text that aren't suitable for our age." },
+          { en: "Two-step verification", he: "A security method that requires two steps to log into an account." },
+          { en: "Screen time", he: "The time spent in front of screens like a phone or computer." },
+          { en: "Trusted adult", he: "A parent, teacher, or other adult you can turn to with a problem." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "Why is **Online Safety** important?",
+            subtitle: "Opening",
+            body: "The **internet** is an amazing tool — you can learn, play, and talk with friends through it. But just like in the real world, you need to know how to stay safe there.\n\nJust like you wouldn't give a stranger on the street your address, it's important to protect **personal information** online too.\n\nToday we'll learn how to spot dangers online, and what to do when something doesn't feel right.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "Personal information — details like full name, address, or phone number that should stay private.\n\nPassword — a secret combination of letters and numbers that keeps an account safe.\n\nOnline stranger — someone you don't really know, even if you talk to them online.\n\nReporting — telling a trusted adult about something wrong that happened online.",
+          },
+          {
+            type: "content",
+            title: "What should you **not share** online?",
+            subtitle: "Protecting personal information",
+            body: "**Personal information** includes full name, home address, phone number, school name, and private photos — all of this should stay private.\n\nEven if someone nice online asks for details like these, you don't have to share them — you can always ask a **trusted adult** before answering.\n\nSimple rule: if you wouldn't tell it to a stranger on the street, don't say it online either.",
+          },
+          {
+            type: "content",
+            title: "Strong, Private **Passwords**",
+            subtitle: "Keeping your account safe",
+            body: "A good **password** mixes letters, numbers, and symbols, and is hard for strangers to guess.\n\nIt's important not to share a password with anyone, except a parent or trusted adult at home.\n\nWhen you can, it's worth turning on **two-step verification** — this adds an extra step that makes sure only you can log into your account.",
+          },
+          {
+            type: "content",
+            title: "**Strangers** Online",
+            subtitle: "Careful even when it feels like you \"know\" them",
+            body: "An **online stranger** is someone you've never really met, even if you've talked to them a lot online and it feels like you know them.\n\nSometimes people online aren't really who they say they are — so you should never meet up in person with someone you only met online, without an adult.\n\nIf a **suspicious message** asks to meet up, or asks for photos or personal information — the first step is to tell a trusted adult.",
+          },
+          {
+            type: "content",
+            title: "What is **Cyberbullying**?",
+            subtitle: "Spotting it and responding right",
+            body: "**Cyberbullying** is when someone hurts, insults, or harasses another person through messages, social media, or online games.\n\nIf it happens to you, don't respond in anger and don't keep the conversation going — instead, save proof (like a screenshot) and report it to a trusted adult.\n\nMost sites and apps also let you **block** and **report** a user who's behaving badly — it's completely okay to use these tools.",
+          },
+          {
+            type: "content",
+            title: "When do you **Report** something?",
+            subtitle: "If something doesn't feel right",
+            body: "If you come across **inappropriate content**, a strange message, or something that makes you feel uncomfortable — the rule is always the same: tell an adult.\n\nThere's nothing \"embarrassing\" about reporting — that's exactly what responsible people online do.\n\nThe faster you report and talk about it, the easier it is to solve the problem.",
+          },
+          {
+            type: "content",
+            title: "Healthy **Screen** Habits",
+            subtitle: "Balanced use",
+            body: "**Screen time** is the time spent on a phone, tablet, or computer — and it needs balance too, just like everything else.\n\nBreaks from screens, playing outside, and good sleep matter just as much as screen time itself.\n\nWhen you combine online safety with healthy screen habits, the internet can stay a fun and safe place.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "What kinds of **personal information** should never be shared online, and why?\n\nWhat would you do if you got a **suspicious message** from someone you don't really know?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     tsunami: {
@@ -951,6 +1809,76 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Tsunami",
+        nameMain: "Wonders of Nature",
+        namePart: "Tsunami",
+        summary: "Get to know tsunamis up close — how a huge wave forms from an earthquake under the sea, and how people stay safe when it arrives. With a game at the end.",
+        vocab: [
+          { en: "Tsunami", he: "A huge, powerful ocean wave usually caused by an earthquake on the sea floor." },
+          { en: "Undersea earthquake", he: "An earthquake that happens beneath the ocean floor." },
+          { en: "Tectonic plates", he: "Giant pieces of the Earth's crust that move very slowly." },
+          { en: "Tsunami warning", he: "An alert signal that tells people to move away from the coast and go to higher ground." },
+          { en: "Evacuation", he: "Leaving a dangerous place quickly and in an organized way, to safety." },
+          { en: "Energy", he: "The power a tsunami carries over a huge distance across the ocean." },
+          { en: "Coast", he: "The area where land meets the sea." },
+          { en: "Shallow water", he: "Water that isn't deep, near the coast, where the wave grows taller." },
+          { en: "Early warning system", he: "A system that detects undersea earthquakes and warns residents before a tsunami arrives." },
+          { en: "Seismologist", he: "A scientist who studies earthquakes and tsunamis." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Tsunami**?",
+            subtitle: "Opening",
+            body: "A **tsunami** is a huge, powerful wave that forms in the ocean, usually following an earthquake under the sea.\n\nUnlike regular waves you see at the beach, a tsunami can travel very fast and reach coasts thousands of kilometers away.\n\nToday we'll learn how a tsunami forms, why it's so dangerous, and how people stay safe when it arrives.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Undersea earthquake** — an earthquake that happens beneath the ocean floor, usually the main cause of a tsunami.\n\n**Tectonic plates** — giant pieces of the Earth's crust that move very slowly and sometimes collide.\n\n**Tsunami warning** — an alert signal that tells people to move away from the coast and go to higher ground.",
+          },
+          {
+            type: "content",
+            title: "How does a **Tsunami** form?",
+            subtitle: "Beneath the sea surface",
+            body: "Deep in the ocean there are huge **tectonic plates** that move slowly. When they suddenly collide or break, an **undersea earthquake** happens.\n\nThe sudden shock pushes a massive amount of water upward, creating a series of waves that spread out in every direction — that's the tsunami.\n\nIn the middle of the ocean these waves can be low and very fast, but as they approach **shallow water** near the coast, they slow down and grow to a huge height.",
+          },
+          {
+            type: "content",
+            title: "What happens **when the tsunami arrives**?",
+            subtitle: "Approaching the coast",
+            body: "As a tsunami nears the **coast**, sometimes the sea suddenly pulls back and exposes the ocean floor — this is an important warning sign.\n\nMinutes later the wave itself arrives, which can be as tall as a building and travel far inland.\n\nThe **energy** a tsunami carries can travel thousands of kilometers across the ocean without losing much of its power.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "A tsunami can travel across the open ocean at the speed of a passenger jet — over 700 kilometers per hour!\n\nEven so, out in the deep sea the wave is barely noticeable, because it's so low and wide — the real danger only begins once it reaches **shallow water** near the coast.",
+          },
+          {
+            type: "content",
+            title: "How do people **stay safe**?",
+            subtitle: "Safety",
+            body: "When there's a **tsunami warning**, the first rule is to move to higher ground and away from the coast as fast as possible, without waiting to see the wave.\n\nIf you see the water suddenly pull back from the shore, that's a sign to run immediately — not to go look up close.\n\nMany places around the world now have an **early warning system** that detects undersea earthquakes and warns residents before a tsunami arrives.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "If you were at the beach and saw the water suddenly pull back, what would you do?\n\nWhy is it important to have early warning systems for tsunamis, even if they're not always 100% accurate?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     earthquake: {
@@ -1028,6 +1956,76 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Earthquake",
+        nameMain: "Wonders of Nature",
+        namePart: "Earthquake",
+        summary: "Get to know earthquakes up close — why the Earth shakes, how scientists measure them, and how to stay safe when the ground moves. With a game at the end.",
+        vocab: [
+          { en: "Earthquake", he: "A sudden shaking of the ground caused by movement deep underground." },
+          { en: "Earth's crust", he: "The solid outer layer of the Earth that we live on." },
+          { en: "Tectonic plates", he: "Giant pieces of the crust that move very slowly all the time." },
+          { en: "Fault", he: "A line in the Earth's crust where two plates meet and can slip." },
+          { en: "Focus", he: "The point deep underground where an earthquake begins." },
+          { en: "Seismic waves", he: "Waves of energy that travel out from the focus and shake the ground around it." },
+          { en: "Seismograph", he: "A device that measures and records the shaking of an earthquake." },
+          { en: "Magnitude", he: "A number that shows how strong an earthquake was." },
+          { en: "Aftershock", he: "A smaller quake that happens after the main earthquake." },
+          { en: "Seismologist", he: "A scientist who studies earthquakes." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is an **Earthquake**?",
+            subtitle: "Opening",
+            body: "An **earthquake** is a sudden shaking of the ground beneath our feet.\n\nIt happens when something moves deep inside the Earth, far below the surface we see.\n\nToday we'll learn why this happens, how scientists measure earthquakes, and how to stay safe when the ground shakes.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Tectonic plates** — giant pieces of the Earth's crust that move very slowly all the time.\n\n**Fault** — a line in the crust where two plates meet and can slip against each other.\n\n**Focus** — the point deep underground where an earthquake begins.\n\n**Seismograph** — a device that measures and records the shaking.",
+          },
+          {
+            type: "content",
+            title: "How does an **Earthquake** happen?",
+            subtitle: "Beneath the ground",
+            body: "The Earth is covered by huge **tectonic plates** that move very slowly — sometimes just a few centimeters a year.\n\nWhen plates get stuck against each other near a **fault**, huge pressure builds up over time. When the pressure gets too strong, the plates suddenly slip.\n\nThat sudden slip releases enormous energy that travels as **seismic waves** from the **focus** and shakes the ground around it.",
+          },
+          {
+            type: "content",
+            title: "How **strong** is an earthquake?",
+            subtitle: "Measuring the shake",
+            body: "Scientists use a **seismograph** to record the shaking and calculate the **magnitude** of an earthquake.\n\nSmall earthquakes happen all the time and most people don't feel them, but very strong ones can shake buildings and roads.\n\nSometimes after the main quake, **aftershocks** arrive — smaller quakes that continue for hours or days afterward.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "Every day, thousands of small earthquakes happen around the world — most so weak that nobody feels them.\n\nJapan, which sits on several major faults, experiences more earthquakes than any other country in the world, so its buildings are specially built to withstand shaking.",
+          },
+          {
+            type: "content",
+            title: "How do you **stay safe**?",
+            subtitle: "Safety",
+            body: "When you feel an earthquake, the rule is: **drop, cover, and hold on** — drop to the floor, cover yourself under a sturdy table, and hold on until the shaking stops.\n\nIt's important to stay away from windows, tall shelves, and furniture that could fall.\n\nMany families in earthquake areas prepare an emergency kit in advance with water, a flashlight, and first-aid supplies.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "If you felt an earthquake right now in class, where would you go to be the safest?\n\nWhy is it important for families in earthquake areas to prepare an emergency kit in advance?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     hurricane: {
@@ -1105,6 +2103,76 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Hurricane",
+        nameMain: "Wonders of Nature",
+        namePart: "Hurricane",
+        summary: "Get to know hurricanes up close — how a giant storm builds over the ocean, what the eye of the storm is, and how people prepare for it. With a game at the end.",
+        vocab: [
+          { en: "Hurricane", he: "A huge, powerful storm with fierce winds and heavy rain that forms over warm ocean water." },
+          { en: "Tropical storm", he: "A storm that starts growing stronger over a warm ocean and might turn into a hurricane." },
+          { en: "Eye of the storm", he: "The calm area at the center of a hurricane." },
+          { en: "Eyewall", he: "The ring around the eye, where the winds are the strongest." },
+          { en: "Water vapor", he: "Warm water that turns into gas and rises into the air, feeding the storm." },
+          { en: "Category", he: "A number that shows how strong a storm is, based on wind speed." },
+          { en: "Storm surge", he: "A rise in sea level toward the coast during a hurricane." },
+          { en: "Evacuation", he: "Leaving a dangerous area in an organized way before a storm arrives." },
+          { en: "Hurricane center", he: "A place where scientists track hurricanes and warn people about them." },
+          { en: "Hurricane season", he: "The time of year with the most hurricanes." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Hurricane**?",
+            subtitle: "Opening",
+            body: "A **hurricane** is a huge, powerful storm that forms over warm ocean water, with fierce winds and heavy rain.\n\nA hurricane can be as wide as an entire country and move slowly for days before it reaches land.\n\nToday we'll learn how a hurricane builds, what the **eye of the storm** is, and how people prepare for it.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Eye of the storm** — the calm area at the center of a hurricane.\n\n**Eyewall** — the ring around the eye, where the winds are strongest.\n\n**Water vapor** — warm water that turns into gas and rises into the air, feeding the storm.\n\n**Category** — a number that shows how strong the storm is.",
+          },
+          {
+            type: "content",
+            title: "How does a **Hurricane** build?",
+            subtitle: "Over the ocean",
+            body: "When ocean water is very warm, it turns into **water vapor** that rises into the air and forms big clouds.\n\nThe warm air rises quickly, and cooler air rushes in to take its place — creating a giant spinning motion.\n\nAs the storm gathers more heat and energy from the water, the winds get stronger and it grows from a **tropical storm** into a **hurricane**.",
+          },
+          {
+            type: "content",
+            title: "What's **inside** a hurricane?",
+            subtitle: "The eye of the storm",
+            body: "At the center of a hurricane is the **eye of the storm** — a calm, clear area with almost no wind or rain.\n\nAround the eye is the **eyewall**, where the strongest winds and heaviest rain in the whole storm are found.\n\nWhen a hurricane reaches land, it can also cause a **storm surge** — a huge rise in sea level that floods the coast.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "A hurricane can be wider than 1,000 kilometers — almost like an entire country!\n\nEven though it looks like a spinning ball from space, it holds a massive amount of energy — all of it coming from the heat of the ocean water.",
+          },
+          {
+            type: "content",
+            title: "How do people **prepare** for a hurricane?",
+            subtitle: "Safety",
+            body: "Scientists at the **hurricane center** track storms from space and the air, warning residents days before a hurricane arrives.\n\nWhen an **evacuation** is announced, it's important to leave the dangerous area quickly and follow instructions, instead of waiting to see the storm up close.\n\nFamilies in hurricane areas prepare an emergency kit in advance with water, food, and flashlights, and cover their windows with special boards.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Why is it important to leave a dangerous area right away when an evacuation is announced, even if the hurricane hasn't arrived yet?\n\nWhat surprised you the most about everything we learned about hurricanes?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     tornado: {
@@ -1181,6 +2249,75 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Tornado",
+        nameMain: "Wonders of Nature",
+        namePart: "Tornado",
+        summary: "Get to know tornadoes up close — how a spinning funnel cloud forms out of a thunderstorm, and how people stay safe when it arrives. With a game at the end.",
+        vocab: [
+          { en: "Tornado", he: "A column of air spinning at very high speed that touches the ground." },
+          { en: "Funnel cloud", he: "The funnel-shaped form that drops from the clouds before a tornado touches the ground." },
+          { en: "Thunderstorm", he: "A storm with thunder, lightning, and heavy rain that sometimes produces tornadoes." },
+          { en: "Warm air and cold air", he: "Two different air masses that create storm conditions when they meet." },
+          { en: "Wind speed", he: "How fast the wind moves inside a tornado." },
+          { en: "Tornado warning", he: "An alert signal that tells people to find shelter immediately." },
+          { en: "Storm shelter", he: "A low, safe room to hide in during a tornado." },
+          { en: "Storm chasers", he: "People who follow tornadoes to study them and warn others." },
+          { en: "Damage path", he: "The trail a tornado follows, leaving damage behind it." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Tornado**?",
+            subtitle: "Opening",
+            body: "A **tornado** is a column of air spinning at extremely high speed that touches the ground and can cause huge damage within minutes.\n\nIt looks like a **funnel cloud** dropping from the sky to the ground, and usually forms out of a powerful thunderstorm.\n\nToday we'll learn how a tornado forms, and how people stay safe when it gets close.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Funnel cloud** — the funnel-shaped form that drops from the clouds before a tornado touches the ground.\n\n**Thunderstorm** — a storm with thunder, lightning, and heavy rain that sometimes produces tornadoes.\n\n**Tornado warning** — an alert signal that tells people to find shelter immediately.",
+          },
+          {
+            type: "content",
+            title: "How does a **Tornado** form?",
+            subtitle: "Inside the thunderstorm",
+            body: "A tornado starts forming when **warm, humid air** meets **cold, dry air** inside a powerful **thunderstorm**.\n\nThe meeting of warm and cold air creates a spinning motion inside the cloud.\n\nWhen that spin gets stronger and reaches down to the ground, a column of air spinning at tremendous speed forms — that's the tornado.",
+          },
+          {
+            type: "content",
+            title: "How **strong** can a tornado be?",
+            subtitle: "The power of the wind",
+            body: "The **wind speed** inside a tornado can reach more than 300 kilometers per hour — much faster than the strongest wind in a hurricane.\n\nWinds like that can lift cars, uproot trees, and destroy houses within seconds.\n\nA tornado moves along a **damage path** that can be short or stretch for several kilometers.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "Most of the world's tornadoes happen in an area of the United States called \"Tornado Alley,\" because warm and cold air meet there very often.\n\n**Storm chasers** are people who travel specifically to film and study tornadoes — an exciting but also very dangerous job.",
+          },
+          {
+            type: "content",
+            title: "How do you **stay safe**?",
+            subtitle: "Safety",
+            body: "When you hear a **tornado warning**, the rule is to find shelter immediately — best in a **storm shelter** or an inner room with no windows.\n\nIf you're outside with no shelter nearby, it's better to lie down low and stay away from trees and cars.\n\nIt's important to never try to see a tornado up close — it can suddenly change direction and speed.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "If you were at home and heard a tornado warning, which room in the house would you go to, and why?\n\nWhat's the difference between a regular thunderstorm and one that produces a tornado?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     thunderstorm: {
@@ -1257,6 +2394,75 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Thunder & Lightning",
+        nameMain: "Wonders of Nature",
+        namePart: "Thunder & Lightning",
+        summary: "Get to know thunderstorms up close — how lightning forms, why we hear thunder after it, and how to stay safe during a storm. With a game at the end.",
+        vocab: [
+          { en: "Lightning", he: "A huge, fast electrical discharge that happens in the sky during a storm." },
+          { en: "Thunder", he: "The loud sound heard after a lightning flash." },
+          { en: "Storm cloud", he: "A tall, dark cloud that lightning and thunder form inside." },
+          { en: "Electric charge", he: "Electrical power that builds up inside clouds from colliding water drops and ice crystals." },
+          { en: "Lightning rod", he: "A metal rod that protects buildings from a lightning strike." },
+          { en: "30/30 rule", he: "A rule that helps you know when lightning is too close and when it's safe to go back outside." },
+          { en: "Speed of light", he: "The speed at which light from the lightning reaches our eyes, almost instantly." },
+          { en: "Speed of sound", he: "The speed at which thunder reaches our ears, slower than light." },
+          { en: "Summer storm", he: "A thunderstorm that usually happens on hot summer days." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is **Lightning**?",
+            subtitle: "Opening",
+            body: "**Lightning** is a huge, fast electrical discharge that happens in the sky during a thunderstorm.\n\nIt lasts only a split second, but it's hotter than the surface of the sun and lights up the whole sky.\n\nToday we'll learn how lightning forms, why we hear **thunder** after it, and how to stay safe during a storm.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Storm cloud** — a tall, dark cloud that lightning and thunder form inside.\n\n**Electric charge** — electrical power that builds up inside the clouds.\n\n**Thunder** — the loud sound heard after the lightning flash.",
+          },
+          {
+            type: "content",
+            title: "How does **Lightning** form?",
+            subtitle: "Inside the storm cloud",
+            body: "Inside a big **storm cloud**, tiny water drops and ice crystals crash into each other again and again.\n\nThese collisions build up a huge **electric charge** inside the cloud — the top part with one charge and the bottom part with the opposite charge.\n\nWhen the difference in charge gets too big, an enormous amount of electricity is released all at once — that's the lightning.",
+          },
+          {
+            type: "content",
+            title: "Why do you hear **Thunder**?",
+            subtitle: "Light and sound",
+            body: "Lightning heats the air around it to more than 25,000 degrees Celsius in an instant — hotter than the surface of the sun!\n\nThat sudden heat makes the air expand incredibly fast and vibrate — that vibration is the thunder you hear.\n\nYou see the lightning almost instantly because the **speed of light** is very fast, but you hear the thunder a bit later because the **speed of sound** is slower.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "You can tell how far away lightning struck: count the seconds between the flash and the thunder, and divide by 3 to get the distance in kilometers, roughly.\n\nAt any given moment, about 2,000 thunderstorms are happening around the world at the same time!",
+          },
+          {
+            type: "content",
+            title: "How do you **stay safe**?",
+            subtitle: "Safety",
+            body: "The **30/30 rule** says: if you hear thunder less than 30 seconds after the lightning, go inside right away; and wait 30 minutes after the last thunder before going back outside.\n\nDuring a storm it's best to stay indoors, keep away from open windows, and not stand under a tall, lone tree.\n\nTall buildings are usually protected by a **lightning rod** — a metal rod that safely carries the lightning down to the ground.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Why is it important to go inside right away when you hear thunder close by, even if it's not raining yet?\n\nBased on what we learned today, how can you roughly tell how far away a lightning strike was?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     avalanche: {
@@ -1333,6 +2539,75 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Avalanche",
+        nameMain: "Wonders of Nature",
+        namePart: "Avalanche",
+        summary: "Get to know avalanches up close — how layers of snow on a steep mountain break loose and fall suddenly, and how to stay safe in the mountains. With a game at the end.",
+        vocab: [
+          { en: "Avalanche", he: "A huge amount of snow that breaks loose and slides down a mountain suddenly and fast." },
+          { en: "Snow layer", he: "One layer among several layers of snow stacked on top of each other on a mountain." },
+          { en: "Steep slope", he: "A mountain with a sharp incline where snow can slide easily." },
+          { en: "Snow weight", he: "The heaviness of snow that builds up and presses on the layers beneath it." },
+          { en: "Trigger", he: "Something that sets off an avalanche, like a noise, movement, or a change in temperature." },
+          { en: "Avalanche beacon", he: "A device that helps locate people buried under the snow." },
+          { en: "Rescue gear", he: "Special tools that help find and rescue people from an avalanche." },
+          { en: "Rescue dog", he: "A trained dog that sniffs out and finds people buried under snow." },
+          { en: "Risk zone", he: "A place on a mountain with a higher chance of an avalanche." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is an **Avalanche**?",
+            subtitle: "Opening",
+            body: "An **avalanche** is a huge amount of snow that suddenly breaks loose and slides down a **steep slope** at tremendous speed.\n\nIt can happen within seconds, and move faster than a car driving on a road.\n\nToday we'll learn why avalanches happen, and how people in the mountains stay safe.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Snow layer** — one layer among several layers of snow stacked on top of each other on a mountain.\n\n**Trigger** — something that sets off an avalanche, like a noise or movement.\n\n**Risk zone** — a place on a mountain with a higher chance of an avalanche.",
+          },
+          {
+            type: "content",
+            title: "How does an **Avalanche** start?",
+            subtitle: "On the mountain",
+            body: "When snow falls again and again, many **snow layers** pile up on top of each other on a **steep slope**.\n\nSometimes the layers don't stick well to each other — for example if one layer is too soft or froze differently from the layer beneath it.\n\nWhen the **snow weight** gets too heavy, a small **trigger** — like a loud noise, a skier passing by, or even a change in temperature — can be enough to make the whole layer slide at once.",
+          },
+          {
+            type: "content",
+            title: "How **fast** is an avalanche?",
+            subtitle: "Power and flow",
+            body: "A big avalanche can move at more than 100 kilometers per hour within seconds.\n\nIt carries not just snow, but also ice, rocks, and trees that get torn up along the way.\n\nSomeone buried under an avalanche can only be helped in the first few minutes — that's why it's so important to have tools for finding people quickly.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "Trained **rescue dogs** can find a person buried under snow much faster than people can — sometimes within just a few minutes.\n\nMany skiers and hikers carry an **avalanche beacon** — a small device that sends a signal to help find them if they get buried.",
+          },
+          {
+            type: "content",
+            title: "How do you **stay safe**?",
+            subtitle: "Safety",
+            body: "Before heading into the mountains in winter, it's important to check the avalanche risk forecast and avoid known **risk zones**.\n\nPeople hiking in snowy mountains usually carry **rescue gear** — including an avalanche beacon, a shovel, and a probe.\n\nIf you see an avalanche coming, the rule is to try to move sideways out of its path, not to run straight ahead of it.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Why is it important to check the avalanche risk forecast before heading into the mountains in winter?\n\nWhat surprised you the most about everything we learned about avalanches?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     rainbow: {
@@ -1408,6 +2683,74 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Rainbow",
+        nameMain: "Wonders of Nature",
+        namePart: "Rainbow",
+        summary: "Get to know rainbows up close — how sunlight turns into colors, and why a rainbow is always shaped like an arc. With a game at the end.",
+        vocab: [
+          { en: "Rainbow", he: "A colorful phenomenon in the sky formed when sunlight passes through raindrops." },
+          { en: "White light", he: "The light that comes from the sun, which looks white but actually contains every color." },
+          { en: "Refraction", he: "When a ray of light changes direction as it passes from one substance into another, like from air into water." },
+          { en: "Spectrum", he: "All the colors that make up white light, arranged next to each other." },
+          { en: "Raindrop", he: "A tiny ball of water that light bends and spreads into colors as it passes through." },
+          { en: "Reflection", he: "When light hits something and bounces back in another direction, like inside a raindrop." },
+          { en: "Double rainbow", he: "Two rainbows seen together in the sky, with the colors in the second one reversed." },
+          { en: "Viewing angle", he: "The direction a person is looking from, relative to the sun, to see the rainbow." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Rainbow**?",
+            subtitle: "Opening",
+            body: "A **rainbow** is one of the most beautiful sights in nature — a colorful arc that appears in the sky after rain, while the sun is still shining.\n\nIt forms when **white light** from the sun passes through tiny **raindrops** still floating in the air.\n\nToday we'll learn why the rainbow is full of colors, and why it's always shaped like an arc.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**White light** — the light that comes from the sun, which looks white but actually contains every color.\n\n**Refraction** — when a ray of light changes direction as it passes from one substance into another.\n\n**Spectrum** — all the colors that make up white light together.",
+          },
+          {
+            type: "content",
+            title: "How do the **Colors** form?",
+            subtitle: "Inside a raindrop",
+            body: "Sunlight looks white, but it's actually made up of every color in the **spectrum** — red, orange, yellow, green, blue, and violet.\n\nWhen light enters a **raindrop**, it bends — meaning it changes direction slightly — and each color bends at a slightly different angle.\n\nThe light keeps going, hits the back wall of the drop, and **reflects**, then bends again as it exits — that's how all the colors spread apart and appear separately as a rainbow.",
+          },
+          {
+            type: "content",
+            title: "Why is a rainbow **shaped** like an arc?",
+            subtitle: "The perfect shape",
+            body: "Every raindrop sends just one color toward our eyes, at a precise angle of about 42 degrees from the sun.\n\nWhen you look at thousands of raindrops together, each one sends a different color toward you — and together they create the perfect arc of colors.\n\nBecause this angle is the same in every direction, a rainbow always looks like a perfect half-circle.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "Sometimes you can see a **double rainbow** — a second, fainter rainbow that appears above the first one, with its colors reversed.\n\nEvery person sees a slightly different rainbow, because it depends on their own **viewing angle** — there's no real fixed \"place\" where the rainbow sits in the sky.",
+          },
+          {
+            type: "content",
+            title: "**Where** do you see rainbows around the world?",
+            subtitle: "Real-life connection",
+            body: "You can see a rainbow anywhere in the world where there's rain and sun together — near waterfalls, in water sprinklers, and even near a garden hose on a sunny day.\n\nTo see a rainbow, the sun needs to be behind you and the rain in front of you — that's why rainbows usually appear in the morning or afternoon, when the sun is low in the sky.\n\nIn many cultures around the world, the rainbow is seen as a symbol of hope and beauty.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Where have you seen a rainbow yourself, and how many colors were you able to spot in it?\n\nWhy do you think you need both sun and rain together to see a rainbow?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     aurora: {
@@ -1483,6 +2826,74 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Aurora",
+        nameMain: "Wonders of Nature",
+        namePart: "Aurora",
+        summary: "Get to know the aurora up close — how particles from the sun create dancing lights in the night sky near the poles. With a game at the end.",
+        vocab: [
+          { en: "Aurora", he: "Colorful lights that dance in the night sky near the Earth's poles." },
+          { en: "Solar wind", he: "A stream of charged particles sent out from the sun in every direction into space." },
+          { en: "Magnetic field", he: "The invisible force that surrounds the Earth and protects it." },
+          { en: "Atmosphere", he: "The layer of air that surrounds the Earth." },
+          { en: "Charged particle", he: "A tiny particle with an electric charge that comes from the sun." },
+          { en: "North Pole and South Pole", he: "The two points where the magnetic field is strongest and the most aurora is seen." },
+          { en: "Collision", he: "When a particle from the sun hits an air molecule and makes it glow." },
+          { en: "Aurora colors", he: "The different shades of the aurora, like green, pink, and purple." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is an **Aurora**?",
+            subtitle: "Opening",
+            body: "An **aurora** is an amazing phenomenon where colorful lights seem to dance in the night sky, mostly near the Earth's poles.\n\nIt can look green, pink, purple, or blue, and moves slowly like a giant curtain in the sky.\n\nToday we'll learn where the aurora comes from, and why you can only see it in certain places.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Solar wind** — a stream of charged particles sent out from the sun in every direction into space.\n\n**Magnetic field** — the invisible force that surrounds the Earth and protects it.\n\n**Atmosphere** — the layer of air that surrounds the Earth.",
+          },
+          {
+            type: "content",
+            title: "How does the **Aurora** form?",
+            subtitle: "From the sun to the sky",
+            body: "The sun constantly sends out **solar wind** — a stream of **charged particles** moving through space at tremendous speed.\n\nWhen these particles reach Earth, our **magnetic field** steers most of them toward the **North Pole** and the **South Pole**.\n\nThere the particles enter the **atmosphere** and **collide** with air molecules — that collision makes the molecules glow in different colors.",
+          },
+          {
+            type: "content",
+            title: "Where do the **Colors** come from?",
+            subtitle: "A light show",
+            body: "The **aurora colors** depend on which type of molecule the particle hits, and at what height.\n\nOxygen at lower heights usually creates green — the most common color in an aurora — and at higher altitudes it can create red.\n\nNitrogen can create shades of blue and purple, which is why sometimes you see several colors dancing together in the same aurora.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "The aurora at the North Pole is called \"Aurora Borealis,\" and the one at the South Pole is called \"Aurora Australis\" — the two happen at exactly the same time, like a mirror image.\n\nEspecially strong auroras have happened in the past following huge solar storms, and were sometimes seen even far away from the poles.",
+          },
+          {
+            type: "content",
+            title: "**Where** do you see the aurora?",
+            subtitle: "Real-life connection",
+            body: "You can see the aurora mostly in countries close to the poles, like Norway, Iceland, Canada, and Alaska, on dark, clear nights.\n\nTo see it well, it helps to get away from city lights and wait for a cold night with no clouds.\n\nScientists study the **solar wind** to understand how it affects satellites and communication systems on Earth too.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Which colors would you most want to see in an aurora, and why?\n\nWhy do you think you need dark, cloud-free skies to see a good aurora?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     geyser: {
@@ -1558,6 +2969,74 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Geyser",
+        nameMain: "Wonders of Nature",
+        namePart: "Geyser",
+        summary: "Get to know geysers up close — how underground water heats up and shoots into the air, and what makes a geyser erupt again and again. With a game at the end.",
+        vocab: [
+          { en: "Geyser", he: "A special hot spring that suddenly shoots a column of boiling water and steam into the air." },
+          { en: "Underground water", he: "Water found deep beneath the surface of the ground." },
+          { en: "Volcanic heat", he: "Heat that comes from hot rocks deep underground, near areas of volcanic activity." },
+          { en: "Pressure", he: "A force that builds up when hot water is trapped in a narrow underground channel." },
+          { en: "Geyser channel", he: "The narrow, winding path that water rises through to reach the surface." },
+          { en: "Steam", he: "Water that has turned into gas because of high heat." },
+          { en: "Eruption interval", he: "The amount of time that passes between one eruption and the next in the same geyser." },
+          { en: "Hot spring", he: "A source of hot water that flows out of the ground without erupting, unlike a geyser." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Geyser**?",
+            subtitle: "Opening",
+            body: "A **geyser** is a special hot spring that suddenly shoots a huge column of boiling water and **steam** dozens of meters into the air.\n\nUnlike a regular hot spring that flows quietly, a geyser erupts with energy, and sometimes even at a steady, predictable pace.\n\nToday we'll learn where the heat in the water comes from, and why a geyser erupts at particular moments.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Underground water** — water found deep beneath the surface of the ground.\n\n**Volcanic heat** — heat that comes from hot rocks deep underground.\n\n**Geyser channel** — the narrow path that water rises through to reach the surface.",
+          },
+          {
+            type: "content",
+            title: "How does a **Geyser** heat up?",
+            subtitle: "Deep underground",
+            body: "Deep underground, **underground water** flows past extremely hot rocks that get **volcanic heat** from inside the Earth.\n\nThe water heats up inside a narrow, winding **geyser channel**, but because of the pressure from the water above it, it doesn't turn into steam right away.\n\nThe water keeps heating up until it's hot enough to suddenly turn into steam all at once — and that's what pushes the water upward in an eruption.",
+          },
+          {
+            type: "content",
+            title: "What happens **during an eruption**?",
+            subtitle: "The moment it bursts",
+            body: "When the water in the channel suddenly turns to **steam**, huge **pressure** builds up and pushes all the water above it out quickly.\n\nThe column of water and steam can shoot more than 50 meters into the air, and last anywhere from a few seconds to a few minutes.\n\nAfter the eruption, the water slowly refills and reheats, until the next eruption.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "The most famous geyser in the world is called \"Old Faithful,\" found in Yellowstone National Park in the United States — it erupts reliably about every 60 to 110 minutes.\n\nThere are fewer than 1,000 active geysers in the world, and most are found in areas with volcanic activity, like Yellowstone, Iceland, and New Zealand.",
+          },
+          {
+            type: "content",
+            title: "Every **Geyser** is different",
+            subtitle: "Real-life connection",
+            body: "Every geyser has its own **eruption interval** — some erupt every few minutes, and some only once every few hours or days.\n\nScientists study geysers to better understand activity beneath the Earth's surface, and sometimes even use that heat to produce clean electricity.\n\nGeyser areas are also a special home for tiny microbes that love extreme heat, which can barely be found anywhere else.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Why do you think a geyser erupts at set intervals, instead of just flowing steadily like a regular spring?\n\nWould you want to see a geyser erupt up close? Why or why not?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
 
     glacier: {
@@ -1633,10 +3112,3043 @@
           body: "תודה על ההשתתפות!",
         },
       ],
+
+      en: {
+        name: "Wonders of Nature - Glacier",
+        nameMain: "Wonders of Nature",
+        namePart: "Glacier",
+        summary: "Get to know glaciers up close — how snow turns into a giant slab of slowly flowing ice, and why glaciers matter so much to the Earth. With a game at the end.",
+        vocab: [
+          { en: "Glacier", he: "A huge block of ice formed from compacted snow over many years, that moves slowly over the ground." },
+          { en: "Compacted snow", he: "Layers of snow pressed together over the years that turn into hard ice." },
+          { en: "Glacier flow", he: "The very slow movement of a glacier down a mountain or valley." },
+          { en: "Tidewater glacier", he: "A glacier that reaches all the way to the sea, sometimes breaking off pieces into the water." },
+          { en: "Iceberg", he: "A huge block of ice that breaks off a tidewater glacier and floats in the ocean." },
+          { en: "Melting", he: "The process by which ice turns into water because of heat." },
+          { en: "Ice layer", he: "One layer among many that make up a glacier, each from a different time period." },
+          { en: "Glacial meltwater", he: "Clean water that comes from melting glaciers and feeds rivers and lakes." },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Glacier**?",
+            subtitle: "Opening",
+            body: "A **glacier** is a huge block of ice formed from **compacted snow** that has built up over hundreds and thousands of years, and moves very slowly over the ground.\n\nGlaciers can be found on high mountains and in especially cold regions, like the North and South Poles.\n\nToday we'll learn how a glacier forms, how it moves, and why it matters so much to the Earth.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            body: "**Compacted snow** — layers of snow pressed together over the years that turn into hard ice.\n\n**Glacier flow** — the very slow movement of a glacier down a mountain.\n\n**Iceberg** — a huge block of ice that breaks off a tidewater glacier and floats in the ocean.",
+          },
+          {
+            type: "content",
+            title: "How does a **Glacier** form?",
+            subtitle: "Year after year",
+            body: "Every winter, new snow falls on especially cold regions, and in summer only some of it melts.\n\nWhat's left gets compacted over the years by the weight of the **layers** above it, until it turns from **compacted snow** into hard, heavy ice.\n\nWhen the ice piles up to a huge height, it gets so heavy that it starts to slowly move down the mountain — this is called **glacier flow**.",
+          },
+          {
+            type: "content",
+            title: "Where does a **Glacier** move?",
+            subtitle: "To the sea and back",
+            body: "Some glaciers stay in the mountains, but a **tidewater glacier** keeps flowing until it reaches the ocean.\n\nWhen the edge of a tidewater glacier reaches the water, sometimes large pieces break off and float as giant **icebergs** in the ocean.\n\nThis process, where ice breaks and falls into the water, happens naturally in healthy glaciers too.",
+          },
+          {
+            type: "content",
+            title: "Fun fact",
+            subtitle: "Fun fact",
+            body: "Some glaciers move just a few centimeters a year, while others can move many meters in a single day — almost like a slow river of ice.\n\nAlmost 70 percent of all the fresh water in the world is stored inside glaciers and polar ice — more than all the rivers and lakes combined.",
+          },
+          {
+            type: "content",
+            title: "Why are **Glaciers** important?",
+            subtitle: "Real-life connection",
+            body: "**Glacial meltwater** feeds many of the world's rivers and lakes, providing clean water to people, animals, and farms.\n\nScientists track glaciers to understand changes in Earth's climate, because glaciers **melting** too quickly can affect sea levels around the world.\n\nGlaciers also keep \"records\" of ancient air from thousands of years ago, which help scientists learn how the climate has changed over time.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Why do you think it's important to keep glaciers healthy, even if they're far from our home?\n\nWhat surprised you the most about everything we learned about glaciers?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    letters: {
+      id: "letters",
+      name: "אנגלית - אותיות וצלילים",
+      nameMain: "אנגלית",
+      namePart: "אותיות וצלילים",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "letters",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "מכירים את 26 האותיות באנגלית ואת הצליל של כל אות, לומדים את התנועות a, e, i, o, u — הניקוד של האנגלית — ומתחילים לקרוא מילים קצרות. עם משחק בסוף.",
+      vocab: [
+        { en: "cat", he: "חתול" },
+        { en: "dog", he: "כלב" },
+        { en: "sun", he: "שמש" },
+        { en: "cup", he: "כוס" },
+        { en: "bed", he: "מיטה" },
+        { en: "pig", he: "חזיר" },
+        { en: "hat", he: "כובע" },
+        { en: "box", he: "קופסה" },
+        { en: "pen", he: "עט" },
+        { en: "bus", he: "אוטובוס" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "**אותיות** ו**צלילים**",
+          subtitle: "פתיחה",
+          body: "באנגלית יש 26 אותיות, ולכל אות יש שם וגם צליל.\n\nכשאומרים את הצלילים של האותיות אחד אחרי השני — קוראים מילה:\nc, a, t — cat\n\nהיום נכיר את האותיות, את התנועות — הניקוד של האנגלית — ונתחיל לקרוא מילים.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "letter", he: "אות" },
+            { en: "sound", he: "צליל" },
+            { en: "capital letter", he: "אות גדולה — למשל A" },
+            { en: "small letter", he: "אות קטנה — למשל a" },
+            { en: "vowel", he: "תנועה — a, e, i, o, u" },
+            { en: "consonant", he: "עיצור — כל שאר האותיות" },
+            { en: "word", he: "מילה" },
+            { en: "read", he: "לקרוא" },
+          ],
+        },
+        {
+          type: "content",
+          title: "ה-**ABC**",
+          subtitle: "26 אותיות",
+          body: "אלה כל האותיות באנגלית, לפי הסדר:\nA B C D E F G H I J K L M\nN O P Q R S T U V W X Y Z\n\nלכל אות יש צורה גדולה וצורה קטנה:\nA a, B b, C c, D d\n\nאות גדולה כותבים בתחילת משפט ובשמות של אנשים ומקומות:\nDanny lives in Israel.",
+        },
+        {
+          type: "content",
+          title: "**שם** האות ו**צליל** האות",
+          subtitle: "שני דברים שונים",
+          body: "לכל אות יש שם — איך שקוראים לה ב-ABC — ויש לה צליל — איך שהיא נשמעת בתוך מילה.\n\nלאות b קוראים \"בִּי\", אבל בתוך מילה היא נשמעת \"בּ\":\nball, book, banana\n\nלאות m קוראים \"אֶם\", אבל בתוך מילה היא נשמעת \"מ\":\nmoon, milk, mom",
+        },
+        { type: "content", title: "באיזו **אות** מתחילה כל מילה?", subtitle: "הצליל הראשון", pictures: vocabPictures("ball", "cat", "dog", "fish", "sun") },
+        {
+          type: "content",
+          title: "**התנועות** — הניקוד של האנגלית",
+          subtitle: "a, e, i, o, u",
+          body: "בעברית מסמנים את התנועות בניקוד — סימנים קטנים מתחת לאותיות ומעליהן.\nבאנגלית אין ניקוד — התנועות הן חמש אותיות רגילות בתוך המילה:\na e i o u\n\nכמעט בכל מילה באנגלית יש לפחות תנועה אחת — היא נותנת למילה את הצליל שלה.\nכל שאר האותיות נקראות עיצורים.",
+        },
+        {
+          type: "content",
+          title: "הצליל הקצר של כל **תנועה**",
+          subtitle: "תנועות קצרות",
+          items: [
+            { en: "a — cat", he: "נשמעת אֶ פתוחה, כמו קֶט" },
+            { en: "e — bed", he: "נשמעת אֶ, כמו בֶּד" },
+            { en: "i — pig", he: "נשמעת אִ, כמו פִּיג" },
+            { en: "o — dog", he: "נשמעת אוֹ, כמו דוֹג" },
+            { en: "u — sun", he: "נשמעת אַ, כמו סַן" },
+          ],
+        },
+        {
+          type: "content",
+          title: "קוראים **מילה**",
+          subtitle: "מחברים צלילים",
+          body: "כדי לקרוא מילה, אומרים את הצליל של כל אות — ומחברים אותם יחד:\nc, a, t — cat\nd, o, g — dog\ns, u, n — sun\n\nמחליפים תנועה אחת — ומקבלים מילה חדשה:\nhat, hit, hot\npan, pen, pin",
+        },
+        {
+          type: "content",
+          title: "שתי אותיות — **צליל אחד**",
+          subtitle: "עובדה מעניינת",
+          body: "לפעמים שתי אותיות ביחד עושות צליל חדש אחד:\nsh — fish, shoe\nch — chair, lunch\nth — three, mother\n\nכשרואים את הזוגות האלה במילה — קוראים אותם כצליל אחד.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: להתבלבל בין b ל-d. טיפ: במילה bed האותיות נראות כמו מיטה — ה-b בצד אחד וה-d בצד השני:\nbed\n\nטעות נוספת: לקרוא את שמות האותיות במקום הצלילים שלהן. במילה cat לא אומרים \"סִי-אֵי-טִי\" — אומרים את הצלילים ומחברים:\ncat",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "באיזו אות מתחיל השם שלכם באנגלית? איזה צליל היא עושה?\n\nבמה, לדעתכם, קריאה באנגלית שונה מקריאה בעברית?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Letters and Sounds",
+        nameMain: "English",
+        namePart: "Letters and Sounds",
+        summary: "Meet the 26 English letters and the sound each one makes, learn the vowels a, e, i, o, u — the \"niqqud\" of English — and start reading short words. With a game at the end.",
+        slides: [
+          {
+            type: "content",
+            title: "**Letters** and **sounds**",
+            subtitle: "Opening",
+            body: "English has 26 letters, and every letter has a name and a sound.\n\nWhen we say the sounds of the letters one after the other, we read a word:\nc, a, t — cat\n\nToday we'll meet the letters and the vowels — the \"niqqud\" of English — and start reading words.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "letter", he: "אות" },
+              { en: "sound", he: "צליל" },
+              { en: "capital letter", he: "A big letter, like A" },
+              { en: "small letter", he: "A small letter, like a" },
+              { en: "vowel", he: "One of a, e, i, o, u" },
+              { en: "consonant", he: "Any other letter" },
+              { en: "word", he: "מילה" },
+              { en: "read", he: "לקרוא" },
+            ],
+          },
+          {
+            type: "content",
+            title: "The **ABC**",
+            subtitle: "26 letters",
+            body: "These are all the English letters, in order:\nA B C D E F G H I J K L M\nN O P Q R S T U V W X Y Z\n\nEvery letter has a capital form and a small form:\nA a, B b, C c, D d\n\nWe write a capital letter at the start of a sentence and in names of people and places:\nDanny lives in Israel.",
+          },
+          {
+            type: "content",
+            title: "Letter **name** and letter **sound**",
+            subtitle: "Two different things",
+            body: "Every letter has a name — what we call it in the ABC — and a sound — how it sounds inside a word.\n\nThe letter b is called \"bee\", but inside a word it sounds like /b/:\nball, book, banana\n\nThe letter m is called \"em\", but inside a word it sounds like /m/:\nmoon, milk, mom",
+          },
+          { type: "content", title: "Which **letter** does each word start with?", subtitle: "הצליל הראשון", pictures: vocabPictures("ball", "cat", "dog", "fish", "sun") },
+          {
+            type: "content",
+            title: "**Vowels** — the niqqud of English",
+            subtitle: "a, e, i, o, u",
+            body: "In Hebrew, vowel sounds are shown with niqqud — small marks under and above the letters.\nEnglish has no niqqud — its vowels are five ordinary letters inside the word:\na e i o u\n\nAlmost every English word has at least one vowel — it gives the word its sound.\nAll the other letters are called consonants.",
+          },
+          {
+            type: "content",
+            title: "The short sound of each **vowel**",
+            subtitle: "Short vowels",
+            items: [
+              { en: "a — cat", he: "Short a, as in apple" },
+              { en: "e — bed", he: "Short e, as in egg" },
+              { en: "i — pig", he: "Short i, as in igloo" },
+              { en: "o — dog", he: "Short o, as in octopus" },
+              { en: "u — sun", he: "Short u, as in umbrella" },
+            ],
+          },
+          {
+            type: "content",
+            title: "Reading a **word**",
+            subtitle: "Blending sounds",
+            body: "To read a word, say the sound of each letter — then blend them together:\nc, a, t — cat\nd, o, g — dog\ns, u, n — sun\n\nChange one vowel and you get a new word:\nhat, hit, hot\npan, pen, pin",
+          },
+          {
+            type: "content",
+            title: "Two letters — **one sound**",
+            subtitle: "Fun fact",
+            body: "Sometimes two letters together make one new sound:\nsh — fish, shoe\nch — chair, lunch\nth — three, mother\n\nWhen you see these pairs in a word, read them as one sound.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is mixing up b and d. Tip: in the word bed, the letters look like a bed — b on one side and d on the other:\nbed\n\nAnother mistake is reading the letter names instead of their sounds. In cat we don't say \"see-ay-tee\" — we say the sounds and blend them:\ncat",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Which letter does your name start with in English? What sound does it make?\n\nHow do you think reading in English is different from reading in Hebrew?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    pronouns: {
+      id: "pronouns",
+      name: "אנגלית - כינויי גוף",
+      nameMain: "אנגלית",
+      namePart: "כינויי גוף",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "pronouns",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים את כינויי הגוף באנגלית — I, you, he, she, it, we, they — ומתי משתמשים בכל אחד מהם. עם משחק בסוף.",
+      vocab: [
+        { en: "I", he: "אני" },
+        { en: "You", he: "אתה / את (וגם אתם / אתן, ברבים)" },
+        { en: "He", he: "הוא" },
+        { en: "She", he: "היא" },
+        { en: "It", he: "זה / זאת" },
+        { en: "We", he: "אנחנו" },
+        { en: "They", he: "הם / הן" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זה **כינוי גוף**?",
+          subtitle: "פתיחה",
+          body: "כינוי גוף (Pronoun) הוא מילה קטנה שמחליפה שם של אדם, חיה או דבר — כדי שלא נצטרך לחזור על אותו שם שוב ושוב.\n\nבמקום להגיד את זה שוב ושוב:\nDanny is happy. Danny is playing. Danny is eating.\nאפשר להגיד:\nDanny is happy. He is playing. He is eating.\n\nהיום נכיר את שבעת כינויי הגוף באנגלית:\nI, you, he, she, it, we, they",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "I", he: "אני" },
+            { en: "You", he: "אתה / את (וגם אתם / אתן, ברבים)" },
+            { en: "He", he: "הוא" },
+            { en: "She", he: "היא" },
+            { en: "It", he: "זה / זאת" },
+            { en: "We", he: "אנחנו" },
+            { en: "They", he: "הם / הן" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**He**, **She** ו-**It**",
+          subtitle: "מי זה מי?",
+          body: "משתמשים ב-He כשמדברים על גבר או ילד, לדוגמה:\nDanny is tall. He is tall.\n\nמשתמשים ב-She כשמדברים על אישה או ילדה, לדוגמה:\nSarah is smart. She is smart.\n\nמשתמשים ב-It כשמדברים על חפץ, בעל חיים או דבר, לדוגמה:\nThe dog is cute. It is cute.",
+        },
+        {
+          type: "content",
+          title: "**We** ו-**They**",
+          subtitle: "כשמדברים על יותר מאחד",
+          body: "We משמש כשאנחנו מדברים על עצמנו ועוד אנשים, לדוגמה:\nDanny and I are friends. We are friends.\n\nThey משמש כשמדברים על כמה אנשים או דברים אחרים, לדוגמה:\nDanny and Sarah are playing. They are playing.\n\nשימו לב: גם קבוצת חפצים או חיות יכולה להיות They, לדוגמה:\nThe cats are sleeping. They are sleeping.",
+        },
+        {
+          type: "content",
+          title: "**You** — יחיד ורבים",
+          subtitle: "מילה אחת, שתי משמעויות",
+          body: "באנגלית, You משמש גם ליחיד (את/אתה) וגם לרבים (אתם/אתן) — בניגוד לעברית שיש בה מילים שונות.\n\nלמשל, פונים לילד אחד:\nDanny, are you ready?\nופונים לקבוצת ילדים באותה מילה בדיוק:\nKids, are you ready?\n\nכדי לדעת אם מדובר ביחיד או ברבים, פשוט מבינים ממי מדברים — מהקשר המשפט.",
+        },
+        {
+          type: "content",
+          title: "כינויי גוף במקום שמות",
+          subtitle: "תרגול",
+          body: "דני אוהב כדורגל. הוא משחק כל יום:\nDanny loves soccer. He plays every day.\n\nשרה ואני חברות. אנחנו לומדות ביחד:\nSarah and I are friends. We study together.\n\nהילדים משחקים בחוץ. הם שמחים:\nThe kids are playing outside. They are happy.",
+        },
+        {
+          type: "content",
+          title: "כינויי מושא — בונוס",
+          subtitle: "עובדה מעניינת",
+          body: "לכל כינוי גוף יש גם \"תאום\" שנקרא כינוי מושא — משמש כשהמילה לא בתחילת המשפט: me, you, him, her, it, us, them.\n\nלדוגמה:\nHe likes her.\nHe הוא כינוי גוף, her הוא כינוי מושא.\n\nעוד נלמד על זה בהמשך — כרגע מספיק להכיר שהוא קיים!",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: להשתמש ב-it כשמדברים על אדם. הצורה הנכונה:\nHe is my brother.\nולא:\nIt is my brother.\n\nטעות נפוצה נוספת: לשכוח ש-they יכול להתייחס גם לחפצים ולא רק לאנשים.\n\nתרגול קטן וחזרה עוזרים לזכור בקלות איזה כינוי גוף מתאים למי.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "חשבו על בן משפחה או חבר/ה — איזה כינוי גוף (he/she) הייתם משתמשים בשבילו/ה?\n\nאיזה כינוי גוף הכי קשה לכם לזכור — you, it או they? למה?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Pronouns",
+        nameMain: "English",
+        namePart: "Pronouns",
+        summary: "Learn the English pronouns — I, you, he, she, it, we, they — and when to use each one. With a game at the end.",
+        vocab: [
+          { en: "I", he: "אני" },
+          { en: "You", he: "אתה / את (and also plural, אתם / אתן)" },
+          { en: "He", he: "הוא" },
+          { en: "She", he: "היא" },
+          { en: "It", he: "זה / זאת" },
+          { en: "We", he: "אנחנו" },
+          { en: "They", he: "הם / הן" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Pronoun**?",
+            subtitle: "Opening",
+            body: "A pronoun is a small word that replaces the name of a person, animal, or thing — so we don't have to repeat the same name again and again.\n\nInstead of saying this again and again:\nDanny is happy. Danny is playing. Danny is eating.\nwe can say:\nDanny is happy. He is playing. He is eating.\n\nToday we'll meet the seven English pronouns:\nI, you, he, she, it, we, they",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "I", he: "אני" },
+              { en: "You", he: "אתה / את (and also plural, אתם / אתן)" },
+              { en: "He", he: "הוא" },
+              { en: "She", he: "היא" },
+              { en: "It", he: "זה / זאת" },
+              { en: "We", he: "אנחנו" },
+              { en: "They", he: "הם / הן" },
+            ],
+          },
+          {
+            type: "content",
+            title: "**He**, **She**, and **It**",
+            subtitle: "Who is who?",
+            body: "We use He for a man or boy, for example:\nDanny is tall. He is tall.\n\nWe use She for a woman or girl, for example:\nSarah is smart. She is smart.\n\nWe use It for an object, animal, or thing, for example:\nThe dog is cute. It is cute.",
+          },
+          {
+            type: "content",
+            title: "**We** and **They**",
+            subtitle: "Talking about more than one",
+            body: "We is used when we talk about ourselves and other people, for example:\nDanny and I are friends. We are friends.\n\nThey is used to talk about several other people or things, for example:\nDanny and Sarah are playing. They are playing.\n\nNote: a group of objects or animals can also be They, for example:\nThe cats are sleeping. They are sleeping.",
+          },
+          {
+            type: "content",
+            title: "**You** — singular and plural",
+            subtitle: "One word, two meanings",
+            body: "In English, You is used for both singular (את/אתה) and plural (אתם/אתן) — unlike Hebrew, which has different words for each.\n\nFor example, talking to one child:\nDanny, are you ready?\nand talking to a group of children with the exact same word:\nKids, are you ready?\n\nTo know if it's singular or plural, you simply understand from context who is being spoken to.",
+          },
+          {
+            type: "content",
+            title: "Pronouns instead of names",
+            subtitle: "Practice",
+            body: "Instead of repeating a name, we use a pronoun the second time:\n\nDanny loves soccer. He plays every day.\n\nSarah and I are friends. We study together.\n\nThe kids are playing outside. They are happy.",
+          },
+          {
+            type: "content",
+            title: "Object pronouns — bonus",
+            subtitle: "Fun fact",
+            body: "Every pronoun has a \"twin\" called an object pronoun — used when the word isn't at the start of the sentence: me, you, him, her, it, us, them.\n\nFor example:\nHe likes her.\nHe is a subject pronoun, her is an object pronoun.\n\nWe'll learn more about this later — for now it's enough to know it exists!",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is using it for a person. Correct:\nHe is my brother.\nNot:\nIt is my brother.\n\nAnother common mistake is forgetting that they can refer to objects too, not just people.\n\nA little practice and review makes it easy to remember which pronoun fits who.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Think of a family member or friend — which pronoun (he/she) would you use for them?\n\nWhich pronoun is hardest for you to remember — you, it, or they? Why?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    verbs: {
+      id: "verbs",
+      name: "אנגלית - פעלים",
+      nameMain: "אנגלית",
+      namePart: "פעלים",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "verbs",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים מה זה פועל באנגלית, פעלי פעולה נפוצים, ואיך בונים משפט פשוט בזמן הווה. עם משחק בסוף.",
+      vocab: [
+        { en: "Verb", he: "פועל — מילה שמתארת פעולה או מצב" },
+        { en: "Run", he: "לרוץ" },
+        { en: "Jump", he: "לקפוץ" },
+        { en: "Eat", he: "לאכול" },
+        { en: "Play", he: "לשחק" },
+        { en: "Read", he: "לקרוא" },
+        { en: "Write", he: "לכתוב" },
+        { en: "Sleep", he: "לישון" },
+        { en: "Swim", he: "לשחות" },
+        { en: "Watch", he: "לצפות" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זה **פועל**?",
+          subtitle: "פתיחה",
+          body: "פועל (Verb) הוא מילה שמתארת פעולה שמישהו עושה, או מצב שמישהו נמצא בו.\n\nלדוגמה:\nDanny runs.\nהמילה runs היא הפועל — היא מתארת מה דני עושה.\n\nהיום נכיר פעלי פעולה נפוצים, ונלמד איך בונים איתם משפט פשוט באנגלית.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "Verb", he: "פועל — מילה שמתארת פעולה או מצב" },
+            { en: "Run", he: "לרוץ" },
+            { en: "Jump", he: "לקפוץ" },
+            { en: "Eat", he: "לאכול" },
+            { en: "Play", he: "לשחק" },
+            { en: "Read", he: "לקרוא" },
+            { en: "Write", he: "לכתוב" },
+            { en: "Sleep", he: "לישון" },
+            { en: "Swim", he: "לשחות" },
+            { en: "Watch", he: "לצפות" },
+          ],
+        },
+        {
+          type: "content",
+          title: "פעלי **פעולה**",
+          subtitle: "מה אנחנו עושים?",
+          body: "פעלי פעולה מתארים דברים שאנחנו עושים כל יום, כמו:\neat, play, read, run\n\nכל משפט באנגלית חייב פועל — בלי פועל, המשפט לא שלם. למשל, המשפט הבא אינו שלם:\nDanny a book.\nצריך להוסיף פועל:\nDanny reads a book.",
+        },
+        {
+          type: "content",
+          title: "מבנה משפט: נושא + פועל",
+          subtitle: "החוקיה",
+          body: "משפט פשוט באנגלית בנוי מנושא (מי עושה את הפעולה) ואחריו פועל (מה הוא עושה), לדוגמה:\nI play. She reads. They swim.\n\nהסדר הזה — נושא ואז פועל — הוא כמעט תמיד קבוע באנגלית, בניגוד לעברית שבה לפעמים הסדר גמיש יותר.",
+        },
+        {
+          type: "content",
+          title: "גוף שלישי יחיד — מוסיפים **s**",
+          subtitle: "he / she / it",
+          body: "כשהנושא הוא he, she או it, מוסיפים s בסוף הפועל בזמן הווה, לדוגמה:\nI play. She plays.\nI read. He reads.\nI watch. It watches.\n\nזו אחת הטעויות הכי נפוצות אצל תלמידים — לזכור להוסיף את ה-s!",
+        },
+        {
+          type: "content",
+          title: "פעלים **לא רגילים**",
+          subtitle: "יוצאים מן הכלל",
+          body: "רוב הפעלים רק מוסיפים s בגוף שלישי, אבל כמה פעלים חשובים משתנים בצורה מיוחדת:\nHave becomes has.\nGo becomes goes.\nDo becomes does.\n\nכדאי לזכור אותם בעל פה — הם מופיעים כמעט בכל שיחה באנגלית.",
+        },
+        {
+          type: "content",
+          title: "פועל בשגרת היום",
+          subtitle: "חיבור לחיים",
+          body: "אפשר לתאר את כל היום שלנו רק עם פעלים:\nI wake up. I eat breakfast. I play. I read. I sleep.\n\nכל פעולה שאנחנו עושים — יש לה פועל באנגלית שמתאר אותה. ככל שנכיר יותר פעלים, כך נוכל לתאר יותר דברים שאנחנו עושים בכל יום.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: לשכוח את ה-s בגוף שלישי. הצורה הנכונה:\nShe plays.\nולא:\nShe play.\n\nטעות נוספת: לבנות משפט בלי פועל בכלל — כל משפט חייב פועל.\n\nתרגול עם דוגמאות אמיתיות עוזר לזכור את החוקים בקלות.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "חשבו על 3 דברים שאתם עושים כל יום — אילו פעלים באנגלית מתארים אותם?\n\nאיזה פועל הכי קשה לכם לזכור? למה, לדעתכם?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Verbs",
+        nameMain: "English",
+        namePart: "Verbs",
+        summary: "Learn what a verb is in English, common action verbs, and how to build a simple present-tense sentence. With a game at the end.",
+        vocab: [
+          { en: "Verb", he: "A word that describes an action or a state" },
+          { en: "Run", he: "לרוץ" },
+          { en: "Jump", he: "לקפוץ" },
+          { en: "Eat", he: "לאכול" },
+          { en: "Play", he: "לשחק" },
+          { en: "Read", he: "לקרוא" },
+          { en: "Write", he: "לכתוב" },
+          { en: "Sleep", he: "לישון" },
+          { en: "Swim", he: "לשחות" },
+          { en: "Watch", he: "לצפות" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **Verb**?",
+            subtitle: "Opening",
+            body: "A verb is a word that describes an action someone does, or a state someone is in.\n\nFor example:\nDanny runs.\nThe word \"runs\" is the verb — it describes what Danny does.\n\nToday we'll meet common action verbs, and learn how to build a simple sentence in English with them.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "Verb", he: "A word that describes an action or a state" },
+              { en: "Run", he: "לרוץ" },
+              { en: "Jump", he: "לקפוץ" },
+              { en: "Eat", he: "לאכול" },
+              { en: "Play", he: "לשחק" },
+              { en: "Read", he: "לקרוא" },
+              { en: "Write", he: "לכתוב" },
+              { en: "Sleep", he: "לישון" },
+              { en: "Swim", he: "לשחות" },
+              { en: "Watch", he: "לצפות" },
+            ],
+          },
+          {
+            type: "content",
+            title: "**Action** verbs",
+            subtitle: "What do we do?",
+            body: "Action verbs describe things we do every day, like:\neat, play, read, run\n\nEvery English sentence needs a verb — without one, the sentence isn't complete. For example, this isn't a full sentence:\nDanny a book.\nIt needs a verb:\nDanny reads a book.",
+          },
+          {
+            type: "content",
+            title: "Sentence structure: Subject + Verb",
+            subtitle: "The rule",
+            body: "A simple English sentence is built from a subject (who does the action) followed by a verb (what they do), for example:\nI play. She reads. They swim.\n\nThis order — subject then verb — is almost always fixed in English, unlike Hebrew, where the order can sometimes be more flexible.",
+          },
+          {
+            type: "content",
+            title: "Third person singular — add **s**",
+            subtitle: "he / she / it",
+            body: "When the subject is he, she, or it, we add s to the end of the verb in the present tense, for example:\nI play. She plays.\nI read. He reads.\nI watch. It watches.\n\nThis is one of the most common mistakes students make — remembering to add the s!",
+          },
+          {
+            type: "content",
+            title: "**Irregular** verbs",
+            subtitle: "Exceptions to the rule",
+            body: "Most verbs simply add s in the third person, but a few important verbs change in a special way:\nHave becomes has.\nGo becomes goes.\nDo becomes does.\n\nIt's worth memorizing them — they appear in almost every English conversation.",
+          },
+          {
+            type: "content",
+            title: "Verbs in our daily routine",
+            subtitle: "Real-life connection",
+            body: "We can describe our whole day using just verbs:\nI wake up. I eat breakfast. I play. I read. I sleep.\n\nEvery action we take has an English verb that describes it. The more verbs we know, the more things we can describe about our day.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake: forgetting the s in the third person. Correct:\nShe plays.\nNot:\nShe play.\n\nAnother mistake: building a sentence without any verb at all — every sentence needs one.\n\nPracticing with real examples makes it easy to remember the rules.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Think of 3 things you do every day — which English verbs describe them?\n\nWhich verb is hardest for you to remember? Why do you think that is?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    tobe: {
+      id: "tobe",
+      name: "אנגלית - פועל להיות (To Be)",
+      nameMain: "אנגלית",
+      namePart: "פועל להיות (To Be)",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "tobe",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים את פועל הקיום החשוב ביותר באנגלית — am, is, are, ובזמן עבר was ו-were — איך משתמשים בו במשפטי חיוב, שלילה ושאלה. עם משחק בסוף.",
+      vocab: [
+        { en: "Am", he: "צורת \"להיות\" עבור I" },
+        { en: "Is", he: "צורת \"להיות\" עבור he/she/it" },
+        { en: "Are", he: "צורת \"להיות\" עבור you/we/they" },
+        { en: "I'm", he: "קיצור של I am" },
+        { en: "You're", he: "קיצור של You are" },
+        { en: "He's / She's / It's", he: "קיצור של He is / She is / It is" },
+        { en: "We're", he: "קיצור של We are" },
+        { en: "They're", he: "קיצור של They are" },
+        { en: "Isn't", he: "קיצור של Is not" },
+        { en: "Aren't", he: "קיצור של Are not" },
+        { en: "Was", he: "צורת \"להיות\" בעבר עבור I/he/she/it" },
+        { en: "Were", he: "צורת \"להיות\" בעבר עבור you/we/they" },
+        { en: "Wasn't", he: "קיצור של Was not" },
+        { en: "Weren't", he: "קיצור של Were not" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זה פועל **To Be**?",
+          subtitle: "פתיחה",
+          body: "To Be (\"להיות\") הוא אחד הפעלים החשובים ביותר באנגלית — הוא מתאר מי אנחנו, מה אנחנו, ואיך אנחנו מרגישים.\n\nבזמן הווה, לפועל To Be יש שלוש צורות בלבד: am, is ו-are, לדוגמה:\nI am happy. She is tall. They are friends.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "Am", he: "צורת \"להיות\" עבור I" },
+            { en: "Is", he: "צורת \"להיות\" עבור he/she/it" },
+            { en: "Are", he: "צורת \"להיות\" עבור you/we/they" },
+            { en: "I'm", he: "קיצור של I am" },
+            { en: "You're", he: "קיצור של You are" },
+            { en: "He's / She's / It's", he: "קיצור של He is / She is / It is" },
+            { en: "We're", he: "קיצור של We are" },
+            { en: "They're", he: "קיצור של They are" },
+            { en: "Isn't", he: "קיצור של Is not" },
+            { en: "Aren't", he: "קיצור של Are not" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**Am**, **Is** ו-**Are**",
+          subtitle: "מתי משתמשים בכל אחת?",
+          body: "משתמשים ב-am רק עם I, לדוגמה:\nI am ten years old.\n\nמשתמשים ב-is עם he, she ו-it, לדוגמה:\nHe is tall. The dog is cute.\n\nמשתמשים ב-are עם you, we ו-they, לדוגמה:\nWe are friends. You are kind.",
+        },
+        {
+          type: "content",
+          title: "קיצורים (Contractions)",
+          subtitle: "מדברים מהר יותר",
+          body: "בשפה מדוברת, לרוב מקצרים את פועל ה-To Be:\nI am becomes I'm. You are becomes You're. He is becomes He's.\nShe is becomes She's. It is becomes It's. We are becomes We're. They are becomes They're.\n\nהקיצורים נפוצים מאוד בדיבור ובכתיבה לא רשמית.",
+        },
+        {
+          type: "content",
+          title: "משפטי **שלילה**",
+          subtitle: "Negative",
+          body: "כדי לשלול, מוסיפים not אחרי am/is/are, לדוגמה:\nI am not tired. She is not here. They are not ready.\n\nגם לשלילה יש קיצורים:\nis not becomes isn't. are not becomes aren't.\n\nשימו לב: ל-am not אין קיצור נפוץ משלו — פשוט אומרים I'm not.",
+        },
+        {
+          type: "content",
+          title: "שואלים **שאלות**",
+          subtitle: "Questions",
+          body: "כדי לשאול שאלה עם To Be, פשוט מחליפים את הסדר — הפועל בא לפני הנושא, לדוגמה:\nYou are ready becomes Are you ready?\nHe is happy becomes Is he happy?\nI am late becomes Am I late?",
+        },
+        {
+          type: "content",
+          title: "בעבר: **Was** ו-**Were**",
+          subtitle: "זמן עבר",
+          body: "בזמן עבר יש לפועל To Be רק שתי צורות: was ו-were.\n\nמשתמשים ב-was עם I, he, she ו-it, לדוגמה:\nI was at home yesterday. He was happy.\n\nמשתמשים ב-were עם you, we ו-they, לדוגמה:\nWe were at school. They were tired.",
+        },
+        {
+          type: "content",
+          title: "**Wasn't**, **Weren't** ושאלות בעבר",
+          subtitle: "שלילה ושאלה בעבר",
+          body: "כדי לשלול בעבר מוסיפים not אחרי was או were, ובדיבור מקצרים:\nwas not becomes wasn't. were not becomes weren't.\nI wasn't late. They weren't at home.\n\nכדי לשאול בעבר מחליפים את הסדר, בדיוק כמו בהווה:\nWas he sick?\nWere you at the party?",
+        },
+        {
+          type: "content",
+          title: "שימושים ב-**To Be**",
+          subtitle: "חיבור לחיים",
+          body: "משתמשים ב-To Be כדי לתאר מי אנחנו:\nI am Danny.\n\nגם כדי לתאר מאיפה אנחנו:\nI am from Israel.\n\nוגם כדי לתאר איך אנחנו מרגישים:\nI am happy today.\n\nזה אחד הפעלים שמשתמשים בו הכי הרבה בשיחה יומיומית באנגלית.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: להשתמש בצורה הלא נכונה. הצורה הנכונה:\nShe is happy.\nולא:\nShe are happy.\n\nטעות נוספת: לשכוח לגמרי את פועל ה-To Be — בעברית אפשר להגיד \"אני עייף\" בלי מילת קישור, אבל באנגלית חייבים את המילה am/is/are:\nI am tired.\n\nזוהי טעות נפוצה מאוד אצל דוברי עברית שלומדים אנגלית!",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "תארו את עצמכם במשפט אחד עם am — מי אתם, מאיפה אתם, ואיך אתם מרגישים היום?\n\nאיזו צורה הכי קשה לכם לזכור — am, is או are? למה?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - The Verb To Be",
+        nameMain: "English",
+        namePart: "The Verb To Be",
+        summary: "Learn the most important verb in English — am, is, are, and in the past was and were — and how to use it in positive, negative, and question sentences. With a game at the end.",
+        vocab: [
+          { en: "Am", he: "The \"to be\" form for I" },
+          { en: "Is", he: "The \"to be\" form for he/she/it" },
+          { en: "Are", he: "The \"to be\" form for you/we/they" },
+          { en: "I'm", he: "Short for I am" },
+          { en: "You're", he: "Short for You are" },
+          { en: "He's / She's / It's", he: "Short for He is / She is / It is" },
+          { en: "We're", he: "Short for We are" },
+          { en: "They're", he: "Short for They are" },
+          { en: "Isn't", he: "Short for Is not" },
+          { en: "Aren't", he: "Short for Are not" },
+          { en: "Was", he: "The past \"to be\" form for I/he/she/it" },
+          { en: "Were", he: "The past \"to be\" form for you/we/they" },
+          { en: "Wasn't", he: "Short for Was not" },
+          { en: "Weren't", he: "Short for Were not" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is the verb **To Be**?",
+            subtitle: "Opening",
+            body: "To Be is one of the most important verbs in English — it describes who we are, what we are, and how we feel.\n\nIn the present tense, the verb To Be has only three forms: am, is, and are, for example:\nI am happy. She is tall. They are friends.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "Am", he: "The \"to be\" form for I" },
+              { en: "Is", he: "The \"to be\" form for he/she/it" },
+              { en: "Are", he: "The \"to be\" form for you/we/they" },
+              { en: "I'm", he: "Short for I am" },
+              { en: "You're", he: "Short for You are" },
+              { en: "He's / She's / It's", he: "Short for He is / She is / It is" },
+              { en: "We're", he: "Short for We are" },
+              { en: "They're", he: "Short for They are" },
+              { en: "Isn't", he: "Short for Is not" },
+              { en: "Aren't", he: "Short for Are not" },
+            ],
+          },
+          {
+            type: "content",
+            title: "**Am**, **Is**, and **Are**",
+            subtitle: "When to use each one?",
+            body: "We use am only with I, for example:\nI am ten years old.\n\nWe use is with he, she, and it, for example:\nHe is tall. The dog is cute.\n\nWe use are with you, we, and they, for example:\nWe are friends. You are kind.",
+          },
+          {
+            type: "content",
+            title: "Contractions",
+            subtitle: "Speaking faster",
+            body: "In spoken language, we usually shorten the verb To Be:\nI am becomes I'm. You are becomes You're. He is becomes He's.\nShe is becomes She's. It is becomes It's. We are becomes We're. They are becomes They're.\n\nContractions are very common in speech and informal writing.",
+          },
+          {
+            type: "content",
+            title: "**Negative** sentences",
+            subtitle: "Negative",
+            body: "To make a negative, add not after am/is/are, for example:\nI am not tired. She is not here. They are not ready.\n\nNegatives have contractions too:\nis not becomes isn't. are not becomes aren't.\n\nNote: am not doesn't have a common contraction on its own — we just say I'm not.",
+          },
+          {
+            type: "content",
+            title: "Asking **Questions**",
+            subtitle: "Questions",
+            body: "To ask a question with To Be, simply switch the order — the verb comes before the subject, for example:\nYou are ready becomes Are you ready?\nHe is happy becomes Is he happy?\nI am late becomes Am I late?",
+          },
+          {
+            type: "content",
+            title: "In the past: **Was** and **Were**",
+            subtitle: "Past tense",
+            body: "In the past tense, the verb To Be has only two forms: was and were.\n\nWe use was with I, he, she, and it, for example:\nI was at home yesterday. He was happy.\n\nWe use were with you, we, and they, for example:\nWe were at school. They were tired.",
+          },
+          {
+            type: "content",
+            title: "**Wasn't**, **Weren't**, and past questions",
+            subtitle: "Negatives and questions in the past",
+            body: "To make a past negative, add not after was or were — in speech we shorten it:\nwas not becomes wasn't. were not becomes weren't.\nI wasn't late. They weren't at home.\n\nTo ask a question in the past, switch the order, just like in the present:\nWas he sick?\nWere you at the party?",
+          },
+          {
+            type: "content",
+            title: "Using **To Be**",
+            subtitle: "Real-life connection",
+            body: "We use To Be to say who we are:\nI am Danny.\n\nAlso to say where we're from:\nI am from Israel.\n\nAnd to say how we feel:\nI am happy today.\n\nIt's one of the most used verbs in everyday English conversation.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake: using the wrong form. Correct:\nShe is happy.\nNot:\nShe are happy.\n\nAnother mistake: forgetting the verb To Be completely — in Hebrew you can say \"אני עייף\" (I tired) without a linking word, but in English you must use am/is/are:\nI am tired.\n\nThis is a very common mistake for Hebrew speakers learning English!",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Describe yourself in one sentence using am — who are you, where are you from, and how do you feel today?\n\nWhich form is hardest for you to remember — am, is, or are? Why?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    "have-has": {
+      id: "have-has",
+      name: "אנגלית - יש לי, יש לו (Have / Has)",
+      nameMain: "אנגלית",
+      namePart: "יש לי, יש לו (Have / Has)",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "have-has",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים איך אומרים \"יש לי\" באנגלית — מתי אומרים have ומתי has, איך אומרים \"אין לי\" ואיך שואלים \"יש לך?\". עם משחק בסוף.",
+      vocab: [
+        { en: "I have", he: "יש לי" },
+        { en: "You have", he: "יש לך / יש לכם" },
+        { en: "He has", he: "יש לו" },
+        { en: "She has", he: "יש לה" },
+        { en: "It has", he: "יש לו / יש לה (לחפץ או לחיה)" },
+        { en: "We have", he: "יש לנו" },
+        { en: "They have", he: "יש להם / יש להן" },
+        { en: "don't have", he: "אין ל... (עם I, you, we, they)" },
+        { en: "doesn't have", he: "אין ל... (עם he, she, it)" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "איך אומרים **יש לי**?",
+          subtitle: "פתיחה",
+          body: "בעברית אומרים \"יש לי\", \"יש לו\", \"יש להם\". באנגלית משתמשים בפועל have — ולפעמים בצורה has.\n\nלמשל:\nI have a dog.\nShe has a cat.\n\nהיום נלמד מתי אומרים have ומתי has.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "I have", he: "יש לי" },
+            { en: "You have", he: "יש לך / יש לכם" },
+            { en: "He has", he: "יש לו" },
+            { en: "She has", he: "יש לה" },
+            { en: "It has", he: "יש לו / יש לה (לחפץ או לחיה)" },
+            { en: "We have", he: "יש לנו" },
+            { en: "They have", he: "יש להם / יש להן" },
+            { en: "don't have", he: "אין ל... (עם I, you, we, they)" },
+            { en: "doesn't have", he: "אין ל... (עם he, she, it)" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**have** — עם I, you, we, they",
+          subtitle: "רוב כינויי הגוף",
+          body: "עם I, you, we, they אומרים have:\nI have a bike.\nYou have a nice bag.\nWe have a big garden.\nThey have two cats.\n\nגם עם כמה אנשים או כמה דברים אומרים have:\nMy friends have a ball.",
+        },
+        {
+          type: "content",
+          title: "**has** — עם he, she, it",
+          subtitle: "גוף שלישי יחיד",
+          body: "עם he, she, it אומרים has:\nHe has a red car.\nShe has long hair.\nIt has four legs.\n\nגם עם שם של אדם אחד, חיה אחת או דבר אחד אומרים has:\nDanny has a new phone.\nThe dog has a ball.",
+        },
+        {
+          type: "content",
+          title: "טריק **לזכירה**",
+          subtitle: "has מסתיים ב-s",
+          body: "זוכרים שעם he, she, it מוסיפים s לפועל?\nShe plays. He reads.\n\nגם have משתנה עם he, she, it — הוא הופך ל-has:\nI have — She has\nWe have — He has\n\nאם אפשר להחליף את מי שמדברים עליו ב-he, she או it — אומרים has.",
+        },
+        {
+          type: "content",
+          title: "**אין לי** — don't have / doesn't have",
+          subtitle: "שלילה",
+          body: "כדי להגיד \"אין לי\" שמים don't או doesn't לפני have:\nI don't have a pet.\nThey don't have homework.\n\nעם he, she, it אומרים doesn't have — ולא doesn't has:\nShe doesn't have a brother.\nHe doesn't have a bike.",
+        },
+        {
+          type: "content",
+          title: "**יש לך?** — Do / Does",
+          subtitle: "שאלה",
+          body: "כדי לשאול \"יש לך?\" מתחילים ב-Do או ב-Does:\nDo you have a pencil?\nYes, I do. / No, I don't.\n\nעם he, she, it שואלים עם Does — ואחריו תמיד have:\nDoes she have a cat?\nYes, she does. / No, she doesn't.",
+        },
+        {
+          type: "content",
+          title: "have — לא רק **יש לי**",
+          subtitle: "עובדה מעניינת",
+          body: "באנגלית משתמשים ב-have גם לארוחות ולשיעורים:\nI have breakfast at seven.\nWe have English on Monday.\n\nוגם כשמתארים איך מישהו נראה:\nShe has blue eyes.\nHe has short hair.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: להגיד have עם he או she. הצורה הנכונה:\nHe has a dog.\nולא:\nHe have a dog.\n\nטעות נוספת: להשאיר has אחרי doesn't. הצורה הנכונה:\nShe doesn't have a dog.\nולא:\nShe doesn't has a dog.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "מה יש לכם בתיק היום? ספרו באנגלית עם I have.\n\nספרו על חבר או בן משפחה — מה יש לו או לה? השתמשו ב-He has או ב-She has.",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Have / Has",
+        nameMain: "English",
+        namePart: "Have / Has",
+        summary: "Learn how to say what someone has — when to say have and when to say has, how to say \"I don't have\", and how to ask \"Do you have?\". With a game at the end.",
+        vocab: [
+          { en: "I have", he: "יש לי" },
+          { en: "You have", he: "יש לך (and plural, יש לכם)" },
+          { en: "He has", he: "יש לו" },
+          { en: "She has", he: "יש לה" },
+          { en: "It has", he: "יש לו / יש לה (for a thing or an animal)" },
+          { en: "We have", he: "יש לנו" },
+          { en: "They have", he: "יש להם / יש להן" },
+          { en: "don't have", he: "אין ל... (with I, you, we, they)" },
+          { en: "doesn't have", he: "אין ל... (with he, she, it)" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "How do we say **I have**?",
+            subtitle: "Opening",
+            body: "In Hebrew we say יש לי, יש לו, יש להם. In English we use the verb have — and sometimes its form has.\n\nFor example:\nI have a dog.\nShe has a cat.\n\nToday we'll learn when to say have and when to say has.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "I have", he: "יש לי" },
+              { en: "You have", he: "יש לך (and plural, יש לכם)" },
+              { en: "He has", he: "יש לו" },
+              { en: "She has", he: "יש לה" },
+              { en: "It has", he: "יש לו / יש לה (for a thing or an animal)" },
+              { en: "We have", he: "יש לנו" },
+              { en: "They have", he: "יש להם / יש להן" },
+              { en: "don't have", he: "אין ל... (with I, you, we, they)" },
+              { en: "doesn't have", he: "אין ל... (with he, she, it)" },
+            ],
+          },
+          {
+            type: "content",
+            title: "**have** — with I, you, we, they",
+            subtitle: "Most pronouns",
+            body: "With I, you, we, and they we say have:\nI have a bike.\nYou have a nice bag.\nWe have a big garden.\nThey have two cats.\n\nWith several people or things we also say have:\nMy friends have a ball.",
+          },
+          {
+            type: "content",
+            title: "**has** — with he, she, it",
+            subtitle: "Third person singular",
+            body: "With he, she, and it we say has:\nHe has a red car.\nShe has long hair.\nIt has four legs.\n\nWith the name of one person, one animal, or one thing we also say has:\nDanny has a new phone.\nThe dog has a ball.",
+          },
+          {
+            type: "content",
+            title: "A trick to **remember**",
+            subtitle: "has ends in s",
+            body: "Remember that with he, she, and it we add s to the verb?\nShe plays. He reads.\n\nhave changes with he, she, and it too — it becomes has:\nI have — She has\nWe have — He has\n\nIf you can replace the subject with he, she, or it — say has.",
+          },
+          {
+            type: "content",
+            title: "**I don't have** — don't have / doesn't have",
+            subtitle: "Negatives",
+            body: "To say you don't have something, put don't or doesn't before have:\nI don't have a pet.\nThey don't have homework.\n\nWith he, she, and it we say doesn't have — not doesn't has:\nShe doesn't have a brother.\nHe doesn't have a bike.",
+          },
+          {
+            type: "content",
+            title: "**Do you have?** — Do / Does",
+            subtitle: "Questions",
+            body: "To ask if someone has something, start with Do or Does:\nDo you have a pencil?\nYes, I do. / No, I don't.\n\nWith he, she, and it we ask with Does — and after it always comes have:\nDoes she have a cat?\nYes, she does. / No, she doesn't.",
+          },
+          {
+            type: "content",
+            title: "have — not just **owning**",
+            subtitle: "Fun fact",
+            body: "In English we also use have for meals and lessons:\nI have breakfast at seven.\nWe have English on Monday.\n\nAnd to describe how someone looks:\nShe has blue eyes.\nHe has short hair.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is saying have with he or she. Correct:\nHe has a dog.\nNot:\nHe have a dog.\n\nAnother mistake is keeping has after doesn't. Correct:\nShe doesn't have a dog.\nNot:\nShe doesn't has a dog.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "What do you have in your bag today? Tell us in English with I have.\n\nTell us about a friend or family member — what do they have? Use He has or She has.",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    vocabulary: {
+      id: "vocabulary",
+      name: "אנגלית - אוצר מילים בתמונות",
+      nameMain: "אנגלית",
+      namePart: "אוצר מילים בתמונות",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "vocabulary",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "מכירים 20 מילים בסיסיות באנגלית דרך תמונות — בעלי חיים, אוכל, חפצים ודברים בטבע — ובונים איתן משפט ראשון. עם משחק בסוף.",
+      vocab: Object.values(VOCAB_PICTURES).map(({ en, he }) => ({ en, he })),
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "לומדים **מילים** עם **תמונות**",
+          subtitle: "פתיחה",
+          body: "היום נכיר 20 מילים חדשות באנגלית — לכל מילה יש תמונה.\n\nלחצו על כל מילה כדי לשמוע איך אומרים אותה, ונסו להגיד אותה בקול:\nLook, listen and say!",
+        },
+        { type: "content", title: "**בעלי חיים**", subtitle: "Animals", pictures: vocabPictures("cat", "dog", "fish", "bird") },
+        { type: "content", title: "**אוכל**", subtitle: "Food", pictures: vocabPictures("apple", "banana", "icecream") },
+        { type: "content", title: "**בבית ובבית הספר**", subtitle: "At home and at school", pictures: vocabPictures("book", "pencil", "cup", "clock", "ball") },
+        { type: "content", title: "**בחוץ**", subtitle: "Outside", pictures: vocabPictures("house", "car", "umbrella", "tree", "flower") },
+        { type: "content", title: "**בשמיים**", subtitle: "In the sky", pictures: vocabPictures("sun", "moon", "star") },
+        {
+          type: "content",
+          title: "המשפט הראשון: **This is a**",
+          subtitle: "משפט ראשון",
+          body: "עם המילים החדשות אפשר כבר לבנות משפט שלם:\nThis is a cat.\nThis is a book.\n\nלפני מילה שמתחילה בתנועה (a, e, i, o, u) אומרים an במקום a:\nThis is an apple.\nThis is an umbrella.",
+        },
+        {
+          type: "content",
+          title: "**יותר מאחד**",
+          subtitle: "רבים",
+          body: "כשיש יותר מאחד, מוסיפים s בסוף המילה:\none cat, two cats\none book, three books\none star, many stars\n\nכך אפשר לספור כל דבר באנגלית!",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: לשכוח את a לפני המילה. הצורה הנכונה:\nThis is a dog.\nולא:\nThis is dog.\n\nטעות נוספת: להגיד a לפני מילה שמתחילה בתנועה. הצורה הנכונה:\nThis is an apple.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "איזו מילה חדשה אהבתם הכי הרבה היום? איך אומרים אותה באנגלית?\n\nהסתכלו מסביב בכיתה — לאילו חפצים אתם כבר יודעים לקרוא בשם באנגלית?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Picture Vocabulary",
+        nameMain: "English",
+        namePart: "Picture Vocabulary",
+        summary: "Learn 20 basic English words through pictures — animals, food, objects, and nature — and build a first sentence with them. With a game at the end.",
+        slides: [
+          {
+            type: "content",
+            title: "Learning **words** with **pictures**",
+            subtitle: "Opening",
+            body: "Today we'll meet 20 new English words — every word has a picture.\n\nClick each word to hear how to say it, and try saying it out loud:\nLook, listen and say!",
+          },
+          { type: "content", title: "**Animals**", subtitle: "בעלי חיים", pictures: vocabPictures("cat", "dog", "fish", "bird") },
+          { type: "content", title: "**Food**", subtitle: "אוכל", pictures: vocabPictures("apple", "banana", "icecream") },
+          { type: "content", title: "**At home and at school**", subtitle: "בבית ובבית הספר", pictures: vocabPictures("book", "pencil", "cup", "clock", "ball") },
+          { type: "content", title: "**Outside**", subtitle: "בחוץ", pictures: vocabPictures("house", "car", "umbrella", "tree", "flower") },
+          { type: "content", title: "**In the sky**", subtitle: "בשמיים", pictures: vocabPictures("sun", "moon", "star") },
+          {
+            type: "content",
+            title: "A first sentence: **This is a**",
+            subtitle: "First sentence",
+            body: "With the new words we can already build a full sentence:\nThis is a cat.\nThis is a book.\n\nBefore a word that starts with a vowel (a, e, i, o, u) we say an instead of a:\nThis is an apple.\nThis is an umbrella.",
+          },
+          {
+            type: "content",
+            title: "**More than one**",
+            subtitle: "Plurals",
+            body: "When there is more than one, we add s to the end of the word:\none cat, two cats\none book, three books\none star, many stars\n\nNow you can count anything in English!",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is forgetting a before the word. Correct:\nThis is a dog.\nNot:\nThis is dog.\n\nAnother mistake is saying a before a word that starts with a vowel. Correct:\nThis is an apple.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Which new word did you like most today? How do you say it in English?\n\nLook around the classroom — which objects can you already name in English?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    prepositions: {
+      id: "prepositions",
+      name: "אנגלית - מילות יחס ומיקום",
+      nameMain: "אנגלית",
+      namePart: "מילות יחס ומיקום",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "prepositions",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים להגיד איפה משהו נמצא — in, on, under, next to, between — ומתי אומרים at. עם משחק בסוף.",
+      vocab: [
+        { en: "in", he: "בתוך" },
+        { en: "on", he: "על" },
+        { en: "at", he: "ב... (במקום או בשעה)" },
+        { en: "under", he: "מתחת ל..." },
+        { en: "next to", he: "ליד" },
+        { en: "between", he: "בין" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "איפה זה **נמצא**?",
+          subtitle: "פתיחה",
+          body: "מילות יחס (prepositions) הן מילים קטנות שאומרות איפה משהו נמצא — בתוך, על, מתחת או ליד.\n\nלמשל:\nThe cat is on the bed.\nThe ball is under the table.\n\nהיום נכיר שש מילות יחס חשובות.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "in", he: "בתוך" },
+            { en: "on", he: "על" },
+            { en: "at", he: "ב... (במקום או בשעה)" },
+            { en: "under", he: "מתחת ל..." },
+            { en: "next to", he: "ליד" },
+            { en: "between", he: "בין" },
+          ],
+        },
+        { type: "content", title: "איפה **הכדור**?", subtitle: "Where is the ball?", pictures: PREPOSITION_PICTURES },
+        {
+          type: "content",
+          title: "**in** ו-**on**",
+          subtitle: "בתוך ועל",
+          body: "in — בתוך, כשמשהו נמצא בפנים:\nThe ball is in the box.\nThe fish is in the water.\n\non — על, כשמשהו נמצא למעלה ונוגע:\nThe book is on the table.\nThe hat is on my head.",
+        },
+        {
+          type: "content",
+          title: "**under**, **next to** ו-**between**",
+          subtitle: "מתחת, ליד ובין",
+          body: "under — מתחת:\nThe dog is under the table.\n\nnext to — ליד, קרוב מאוד:\nI sit next to Noa.\n\nbetween — בין שני דברים:\nThe ball is between the boxes.\nB is between A and C.",
+        },
+        {
+          type: "content",
+          title: "**at** — במקום או בשעה",
+          subtitle: "מילה מיוחדת",
+          body: "at אומרת באיזה מקום מישהו נמצא:\nI am at home.\nWe are at school.\nSomeone is at the door.\n\nוגם באיזו שעה משהו קורה:\nThe lesson starts at eight o'clock.",
+        },
+        {
+          type: "content",
+          title: "**ב** בעברית — **in** או **at**?",
+          subtitle: "עברית מול אנגלית",
+          body: "בעברית אומרים \"ב\" גם כשמשהו בתוך הקופסה וגם כשמישהו בבית הספר. באנגלית בוחרים לפי המשמעות:\nThe pencil is in my bag.\nI am at school.\n\nבתוך משהו — in. במקום מסוים או בשעה — at.",
+        },
+        {
+          type: "content",
+          title: "מתארים את **הכיתה**",
+          subtitle: "חיבור לחיים",
+          body: "הסתכלו מסביב — אפשר לתאר כל דבר בכיתה:\nThe board is on the wall.\nMy bag is under my chair.\nThe teacher is next to the board.\nI sit between two friends.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: לשכוח את to אחרי next. הצורה הנכונה:\nThe dog is next to the door.\nולא:\nThe dog is next the door.\n\nטעות נוספת: להגיד in לפני שעה. הצורה הנכונה:\nI wake up at seven.\nולא:\nI wake up in seven.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "איפה נמצא התיק שלכם עכשיו? תארו באנגלית עם in, on, under או next to.\n\nליד מי אתם יושבים בכיתה? ובין מי למי? (I sit next to... / I sit between...)",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Prepositions of Place",
+        nameMain: "English",
+        namePart: "Prepositions of Place",
+        summary: "Learn how to say where something is — in, on, under, next to, between — and when to say at. With a game at the end.",
+        vocab: [
+          { en: "in", he: "בתוך" },
+          { en: "on", he: "על" },
+          { en: "at", he: "ב... (a place or a time)" },
+          { en: "under", he: "מתחת ל..." },
+          { en: "next to", he: "ליד" },
+          { en: "between", he: "בין" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "Where **is** it?",
+            subtitle: "Opening",
+            body: "Prepositions are small words that tell us where something is — inside, on top, under, or beside.\n\nFor example:\nThe cat is on the bed.\nThe ball is under the table.\n\nToday we'll meet six important prepositions.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "in", he: "בתוך" },
+              { en: "on", he: "על" },
+              { en: "at", he: "ב... (a place or a time)" },
+              { en: "under", he: "מתחת ל..." },
+              { en: "next to", he: "ליד" },
+              { en: "between", he: "בין" },
+            ],
+          },
+          { type: "content", title: "Where is the **ball**?", subtitle: "איפה הכדור?", pictures: PREPOSITION_PICTURES },
+          {
+            type: "content",
+            title: "**in** and **on**",
+            subtitle: "Inside and on top",
+            body: "in — when something is inside:\nThe ball is in the box.\nThe fish is in the water.\n\non — when something is on top and touching:\nThe book is on the table.\nThe hat is on my head.",
+          },
+          {
+            type: "content",
+            title: "**under**, **next to**, and **between**",
+            subtitle: "Below, beside, and between",
+            body: "under — below something:\nThe dog is under the table.\n\nnext to — beside, very close:\nI sit next to Noa.\n\nbetween — in the middle of two things:\nThe ball is between the boxes.\nB is between A and C.",
+          },
+          {
+            type: "content",
+            title: "**at** — a place or a time",
+            subtitle: "A special word",
+            body: "at tells us where someone is:\nI am at home.\nWe are at school.\nSomeone is at the door.\n\nIt also tells us when something happens:\nThe lesson starts at eight o'clock.",
+          },
+          {
+            type: "content",
+            title: "Hebrew **ב** — **in** or **at**?",
+            subtitle: "Hebrew vs. English",
+            body: "In Hebrew we say ב both when something is inside a box and when someone is at school. In English we choose by the meaning:\nThe pencil is in my bag.\nI am at school.\n\nInside something — in. At a place or a time — at.",
+          },
+          {
+            type: "content",
+            title: "Describing the **classroom**",
+            subtitle: "Real-life connection",
+            body: "Look around — you can describe everything in the classroom:\nThe board is on the wall.\nMy bag is under my chair.\nThe teacher is next to the board.\nI sit between two friends.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is forgetting to after next. Correct:\nThe dog is next to the door.\nNot:\nThe dog is next the door.\n\nAnother mistake is saying in before a time. Correct:\nI wake up at seven.\nNot:\nI wake up in seven.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Where is your bag right now? Describe it in English with in, on, under, or next to.\n\nWho do you sit next to in class? Who do you sit between? (I sit next to... / I sit between...)",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    connectors: {
+      id: "connectors",
+      name: "אנגלית - מילות קישור",
+      nameMain: "אנגלית",
+      namePart: "מילות קישור",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "connectors",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים לחבר משפטים עם and, but, because, so, before ו-after — ולספר דברים ארוכים ומעניינים יותר. עם משחק בסוף.",
+      vocab: [
+        { en: "and", he: "וגם, ו..." },
+        { en: "but", he: "אבל" },
+        { en: "because", he: "כי, בגלל ש..." },
+        { en: "so", he: "אז, לכן" },
+        { en: "before", he: "לפני" },
+        { en: "after", he: "אחרי" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זו **מילת קישור**?",
+          subtitle: "פתיחה",
+          body: "מילת קישור (connector) מחברת שני חלקים למשפט אחד — כמו דבק.\n\nבמקום שני משפטים קצרים:\nI like pizza. I like pasta.\nאפשר משפט אחד:\nI like pizza and pasta.\n\nהיום נכיר שש מילות קישור חשובות.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "and", he: "וגם, ו..." },
+            { en: "but", he: "אבל" },
+            { en: "because", he: "כי, בגלל ש..." },
+            { en: "so", he: "אז, לכן" },
+            { en: "before", he: "לפני" },
+            { en: "after", he: "אחרי" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**and** ו-**but**",
+          subtitle: "וגם, אבל",
+          body: "and מוסיפה עוד דבר — וגם:\nI have a cat and a dog.\nShe sings and dances.\n\nbut מראה ניגוד — משהו הפוך או מפתיע:\nI like apples, but I don't like bananas.\nIt is sunny, but it is cold.",
+        },
+        {
+          type: "content",
+          title: "**because** ו-**so**",
+          subtitle: "סיבה ותוצאה",
+          body: "because אומרת למה — את הסיבה:\nI am happy because it is my birthday.\n\nso אומרת מה קורה בגלל זה — את התוצאה:\nIt is my birthday, so I am happy.\n\nאותו רעיון — אבל בסדר הפוך! אחרי because באה הסיבה, ואחרי so באה התוצאה.",
+        },
+        {
+          type: "content",
+          title: "**before** ו-**after**",
+          subtitle: "לפני ואחרי",
+          body: "before — לפני, משהו שקורה קודם:\nI wash my hands before I eat.\n\nafter — אחרי, משהו שקורה אחר כך:\nI do my homework after school.\nAfter dinner, we watch TV.",
+        },
+        {
+          type: "content",
+          title: "**and** — מילה נפרדת",
+          subtitle: "עברית מול אנגלית",
+          body: "בעברית, ו' החיבור נצמדת למילה שאחריה: חתול וכלב.\nבאנגלית and היא מילה נפרדת:\na cat and a dog\n\nכשיש רשימה, שמים פסיקים — ואת and רק לפני הדבר האחרון:\nI like red, blue and green.",
+        },
+        {
+          type: "content",
+          title: "מספרים **סיפור**",
+          subtitle: "מחברים הכול",
+          body: "עם מילות קישור אפשר לספר סיפור שלם:\nI wake up and I eat breakfast.\nI am tired, but I go to school.\nAfter school, I play football.\nI am hungry, so I eat a sandwich.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: להתבלבל בין because ל-so. אחרי because באה הסיבה:\nI wear a coat because it is cold.\nולא:\nI wear a coat so it is cold.\n\nטעות נוספת: לשכוח פסיק לפני but או so כשהם מחברים שני משפטים:\nIt is late, so I go to bed.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "מה אתם עושים לפני בית הספר, ומה אחרי? ספרו באנגלית עם before ו-after.\n\nהשלימו בקול: I like ice cream because... — למה אתם אוהבים את מה שאתם אוהבים?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Connecting Words",
+        nameMain: "English",
+        namePart: "Connecting Words",
+        summary: "Learn to join sentences with and, but, because, so, before, and after — and tell longer, more interesting stories. With a game at the end.",
+        vocab: [
+          { en: "and", he: "וגם, ו..." },
+          { en: "but", he: "אבל" },
+          { en: "because", he: "כי, בגלל ש..." },
+          { en: "so", he: "אז, לכן" },
+          { en: "before", he: "לפני" },
+          { en: "after", he: "אחרי" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **connecting word**?",
+            subtitle: "Opening",
+            body: "A connecting word (connector) joins two parts into one sentence — like glue.\n\nInstead of two short sentences:\nI like pizza. I like pasta.\nwe can say one sentence:\nI like pizza and pasta.\n\nToday we'll meet six important connecting words.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "and", he: "וגם, ו..." },
+              { en: "but", he: "אבל" },
+              { en: "because", he: "כי, בגלל ש..." },
+              { en: "so", he: "אז, לכן" },
+              { en: "before", he: "לפני" },
+              { en: "after", he: "אחרי" },
+            ],
+          },
+          {
+            type: "content",
+            title: "**and** and **but**",
+            subtitle: "Adding and contrasting",
+            body: "and adds one more thing:\nI have a cat and a dog.\nShe sings and dances.\n\nbut shows a contrast — something opposite or surprising:\nI like apples, but I don't like bananas.\nIt is sunny, but it is cold.",
+          },
+          {
+            type: "content",
+            title: "**because** and **so**",
+            subtitle: "Reason and result",
+            body: "because tells us why — the reason:\nI am happy because it is my birthday.\n\nso tells us what happens because of it — the result:\nIt is my birthday, so I am happy.\n\nSame idea — but in the opposite order! The reason comes after because, and the result comes after so.",
+          },
+          {
+            type: "content",
+            title: "**before** and **after**",
+            subtitle: "First and later",
+            body: "before — something that happens first:\nI wash my hands before I eat.\n\nafter — something that happens later:\nI do my homework after school.\nAfter dinner, we watch TV.",
+          },
+          {
+            type: "content",
+            title: "**and** — a separate word",
+            subtitle: "Hebrew vs. English",
+            body: "In Hebrew, the ו that means \"and\" sticks to the next word: חתול וכלב.\nIn English, and is a separate word:\na cat and a dog\n\nIn a list, we use commas — and put and only before the last item:\nI like red, blue and green.",
+          },
+          {
+            type: "content",
+            title: "Telling a **story**",
+            subtitle: "Putting it all together",
+            body: "With connecting words we can tell a whole story:\nI wake up and I eat breakfast.\nI am tired, but I go to school.\nAfter school, I play football.\nI am hungry, so I eat a sandwich.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is mixing up because and so. The reason comes after because:\nI wear a coat because it is cold.\nNot:\nI wear a coat so it is cold.\n\nAnother mistake is forgetting the comma before but or so when they join two sentences:\nIt is late, so I go to bed.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "What do you do before school, and what do you do after? Tell us in English with before and after.\n\nFinish out loud: I like ice cream because... — why do you like the things you like?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    questions: {
+      id: "questions",
+      name: "אנגלית - מילות שאלה",
+      nameMain: "אנגלית",
+      namePart: "מילות שאלה",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "questions",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים את מילות השאלה באנגלית — What, Where, Who, When, Why, How — ואיך בונים איתן שאלה נכונה. עם משחק בסוף.",
+      vocab: [
+        { en: "What", he: "מה" },
+        { en: "Where", he: "איפה" },
+        { en: "Who", he: "מי" },
+        { en: "When", he: "מתי" },
+        { en: "Why", he: "למה" },
+        { en: "How", he: "איך" },
+        { en: "How many", he: "כמה (כשסופרים)" },
+        { en: "Which", he: "איזה / איזו" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זו **מילת שאלה**?",
+          subtitle: "פתיחה",
+          body: "מילת שאלה היא מילה שבאה בתחילת השאלה ואומרת מה אנחנו רוצים לדעת.\n\nלמשל, כשרוצים לדעת איפה משהו נמצא, מתחילים ב-Where:\nWhere is my bag?\n\nהיום נכיר את מילות השאלה החשובות באנגלית.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "What", he: "מה" },
+            { en: "Where", he: "איפה" },
+            { en: "Who", he: "מי" },
+            { en: "When", he: "מתי" },
+            { en: "Why", he: "למה" },
+            { en: "How", he: "איך" },
+            { en: "How many", he: "כמה (כשסופרים)" },
+            { en: "Which", he: "איזה / איזו" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**What** ו-**Who**",
+          subtitle: "מה? ומי?",
+          body: "What שואלת על דבר או על פעולה, לדוגמה:\nWhat is this?\nWhat is your name?\n\nWho שואלת על אדם, לדוגמה:\nWho is she?\nWho is your teacher?",
+        },
+        {
+          type: "content",
+          title: "**Where** ו-**When**",
+          subtitle: "איפה? ומתי?",
+          body: "Where שואלת על מקום, לדוגמה:\nWhere is the cat?\nWhere do you live?\n\nWhen שואלת על זמן, לדוגמה:\nWhen is your birthday?\nWhen do you go to school?",
+        },
+        {
+          type: "content",
+          title: "**Why** ו-**How**",
+          subtitle: "למה? ואיך?",
+          body: "Why שואלת על סיבה, ועונים עליה בדרך כלל עם because, לדוגמה:\nWhy are you happy?\nBecause it is my birthday!\n\nHow שואלת על דרך או על מצב, לדוגמה:\nHow are you?",
+        },
+        {
+          type: "content",
+          title: "**How many** ו-**Which**",
+          subtitle: "כמה? ואיזה?",
+          body: "How many שואלת על מספר — כמה יש ממשהו, לדוגמה:\nHow many cats do you have?\n\nWhich שואלת על בחירה מתוך כמה אפשרויות, לדוגמה:\nWhich color do you like, red or blue?",
+        },
+        {
+          type: "content",
+          title: "**שאלה** ו**תשובה**",
+          subtitle: "תרגול",
+          body: "Where is the ball? It is under the bed.\n\nWho is he? He is my brother.\n\nWhen is the party? It is on Sunday.\n\nHow many books do you have? I have three books.",
+        },
+        {
+          type: "content",
+          title: "**סדר המילים** בשאלה",
+          subtitle: "שימו לב",
+          body: "באנגלית מילת השאלה באה תמיד בהתחלה, ואחריה הפועל:\nWhere is the dog?\nולא:\nThe dog is where?\n\nובסוף כל שאלה שמים סימן שאלה (?).",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: לבלבל בין Where ל-When. Where שואלת איפה, ו-When שואלת מתי:\nWhere is the party? At my house.\nWhen is the party? On Sunday.\n\nטעות נוספת: לבלבל בין Who ל-How — הן נשמעות דומה, אבל Who היא מי ו-How היא איך.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "איזו שאלה באנגלית הייתם שואלים תלמיד חדש בכיתה כדי להכיר אותו?\n\nאיזו מילת שאלה הכי קשה לכם לזכור — Where, When או Who? למה?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Question Words",
+        nameMain: "English",
+        namePart: "Question Words",
+        summary: "Learn the English question words — What, Where, Who, When, Why, How — and how to build a correct question with them. With a game at the end.",
+        vocab: [
+          { en: "What", he: "מה" },
+          { en: "Where", he: "איפה" },
+          { en: "Who", he: "מי" },
+          { en: "When", he: "מתי" },
+          { en: "Why", he: "למה" },
+          { en: "How", he: "איך" },
+          { en: "How many", he: "כמה (when counting)" },
+          { en: "Which", he: "איזה / איזו" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **question word**?",
+            subtitle: "Opening",
+            body: "A question word comes at the start of a question and tells us what we want to know.\n\nFor example, when we want to know where something is, we start with Where:\nWhere is my bag?\n\nToday we'll meet the most important English question words.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "What", he: "מה" },
+              { en: "Where", he: "איפה" },
+              { en: "Who", he: "מי" },
+              { en: "When", he: "מתי" },
+              { en: "Why", he: "למה" },
+              { en: "How", he: "איך" },
+              { en: "How many", he: "כמה (when counting)" },
+              { en: "Which", he: "איזה / איזו" },
+            ],
+          },
+          {
+            type: "content",
+            title: "**What** and **Who**",
+            subtitle: "What? and who?",
+            body: "What asks about a thing or an action, for example:\nWhat is this?\nWhat is your name?\n\nWho asks about a person, for example:\nWho is she?\nWho is your teacher?",
+          },
+          {
+            type: "content",
+            title: "**Where** and **When**",
+            subtitle: "Where? and when?",
+            body: "Where asks about a place, for example:\nWhere is the cat?\nWhere do you live?\n\nWhen asks about time, for example:\nWhen is your birthday?\nWhen do you go to school?",
+          },
+          {
+            type: "content",
+            title: "**Why** and **How**",
+            subtitle: "Why? and how?",
+            body: "Why asks about a reason, and we usually answer with because, for example:\nWhy are you happy?\nBecause it is my birthday!\n\nHow asks about a way or a state, for example:\nHow are you?",
+          },
+          {
+            type: "content",
+            title: "**How many** and **Which**",
+            subtitle: "How many? and which?",
+            body: "How many asks about a number — how many of something there are, for example:\nHow many cats do you have?\n\nWhich asks about a choice between options, for example:\nWhich color do you like, red or blue?",
+          },
+          {
+            type: "content",
+            title: "**Question** and **answer**",
+            subtitle: "Practice",
+            body: "Where is the ball? It is under the bed.\n\nWho is he? He is my brother.\n\nWhen is the party? It is on Sunday.\n\nHow many books do you have? I have three books.",
+          },
+          {
+            type: "content",
+            title: "**Word order** in a question",
+            subtitle: "Watch out",
+            body: "In English the question word always comes first, and then the verb:\nWhere is the dog?\nNot:\nThe dog is where?\n\nAnd every question ends with a question mark (?).",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is mixing up Where and When. Where asks about a place, When asks about time:\nWhere is the party? At my house.\nWhen is the party? On Sunday.\n\nAnother mistake is mixing up Who and How — they sound alike, but Who means who and How means how.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "What question in English would you ask a new student to get to know them?\n\nWhich question word is hardest for you to remember — Where, When, or Who? Why?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    negation: {
+      id: "negation",
+      name: "אנגלית - מילות שלילה",
+      nameMain: "אנגלית",
+      namePart: "מילות שלילה",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "negation",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים איך אומרים \"לא\" באנגלית — not, don't, doesn't, didn't, no, never — ומתי משתמשים בכל אחת. עם משחק בסוף.",
+      vocab: [
+        { en: "not", he: "לא" },
+        { en: "no", he: "לא / אין" },
+        { en: "never", he: "אף פעם" },
+        { en: "nobody", he: "אף אחד" },
+        { en: "nothing", he: "שום דבר" },
+        { en: "am not", he: "אני לא (עם I)" },
+        { en: "is not", he: "לא (עם he/she/it), בקיצור isn't" },
+        { en: "are not", he: "לא (עם you/we/they), בקיצור aren't" },
+        { en: "do not", he: "לא, לפני פועל (עם I/you/we/they), בקיצור don't" },
+        { en: "does not", he: "לא, לפני פועל (עם he/she/it), בקיצור doesn't" },
+        { en: "did not", he: "לא, לפני פועל בזמן עבר (עם כל הגופים), בקיצור didn't" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זה **משפט שלילה**?",
+          subtitle: "פתיחה",
+          body: "משפט שלילה אומר שמשהו לא נכון או לא קורה — כמו המילה \"לא\" בעברית.\n\nלמשל:\nI am happy.\nI am not happy.\n\nבעברית מספיק להוסיף \"לא\", אבל באנגלית יש כמה דרכים לשלול — תלוי בפועל שבמשפט.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "not", he: "לא" },
+            { en: "no", he: "לא / אין" },
+            { en: "never", he: "אף פעם" },
+            { en: "nobody", he: "אף אחד" },
+            { en: "nothing", he: "שום דבר" },
+            { en: "don't", he: "לא (עם I/you/we/they)" },
+            { en: "doesn't", he: "לא (עם he/she/it)" },
+            { en: "didn't", he: "לא, בזמן עבר (עם כל הגופים)" },
+            { en: "isn't / aren't", he: "קיצור של is not / are not" },
+          ],
+        },
+        {
+          type: "content",
+          title: "שלילה עם **am / is / are**",
+          subtitle: "פועל להיות",
+          body: "כשיש במשפט am, is או are, מוסיפים not אחריהם:\nI am not tired.\nShe is not here.\nWe are not ready.\n\nבדיבור מקצרים — is not הופך ל-isn't, ו-are not הופך ל-aren't:\nHe isn't hungry. They aren't at home.",
+        },
+        {
+          type: "content",
+          title: "שלילה עם **don't**",
+          subtitle: "פעלים רגילים",
+          body: "כשיש במשפט פועל רגיל כמו like, play או eat, מוסיפים don't לפני הפועל:\nI like milk.\nI don't like milk.\n\nמשתמשים ב-don't עם I, you, we ו-they:\nWe don't play outside. They don't eat fish.",
+        },
+        {
+          type: "content",
+          title: "שלילה עם **doesn't**",
+          subtitle: "he / she / it",
+          body: "עם he, she ו-it משתמשים ב-doesn't:\nShe likes cats.\nShe doesn't like cats.\n\nשימו לב: אחרי doesn't הפועל חוזר לצורה הרגילה — בלי s:\nHe doesn't play.\nולא:\nHe doesn't plays.",
+        },
+        {
+          type: "content",
+          title: "שלילה בעבר: **didn't**",
+          subtitle: "זמן עבר",
+          body: "בזמן עבר משתמשים ב-didn't (did not) עם כל הגופים: I, you, he, she, it, we, they.\n\nאחרי didn't הפועל חוזר לצורה הרגילה — בלי ed ובלי צורת עבר:\nI played. I didn't play.\nHe went home. He didn't go home.\n\nולא:\nHe didn't went home.",
+        },
+        {
+          type: "content",
+          title: "**no**, **never**, **nobody**, **nothing**",
+          subtitle: "עוד מילות שלילה",
+          body: "המילה no פירושה לא, או אין:\nI have no pencil.\n\nהמילה never פירושה אף פעם:\nI never eat fish.\n\nהמילה nobody פירושה אף אחד, והמילה nothing פירושה שום דבר:\nNobody is here. I see nothing.",
+        },
+        {
+          type: "content",
+          title: "**תשובות קצרות**",
+          subtitle: "לא, אני לא",
+          body: "על שאלה של כן או לא אפשר לענות בתשובה קצרה של שלילה:\nAre you tired? No, I am not.\nIs it cold? No, it isn't.\nDo you like pizza? No, I don't.\nDoes he swim? No, he doesn't.\nDid you see it? No, I didn't.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: לשים not לפני פועל רגיל. הצורה הנכונה:\nI don't like it.\nולא:\nI not like it.\n\nטעות נוספת: שתי מילות שלילה באותו משפט — באנגלית משתמשים רק באחת:\nI have nothing.\nולא:\nI don't have nothing.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "איזה מאכל אתם לא אוהבים? איך אומרים את זה באנגלית עם don't?\n\nמה ההבדל בין שלילה בעברית לשלילה באנגלית, לדעתכם?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Negative Words",
+        nameMain: "English",
+        namePart: "Negative Words",
+        summary: "Learn how to say \"no\" in English — not, don't, doesn't, didn't, no, never — and when to use each one. With a game at the end.",
+        vocab: [
+          { en: "not", he: "לא" },
+          { en: "no", he: "לא / אין" },
+          { en: "never", he: "אף פעם" },
+          { en: "nobody", he: "אף אחד" },
+          { en: "nothing", he: "שום דבר" },
+          { en: "am not", he: "אני לא (with I)" },
+          { en: "is not", he: "לא (with he/she/it), short: isn't" },
+          { en: "are not", he: "לא (with you/we/they), short: aren't" },
+          { en: "do not", he: "לא, before a verb (with I/you/we/they), short: don't" },
+          { en: "does not", he: "לא, before a verb (with he/she/it), short: doesn't" },
+          { en: "did not", he: "לא, before a verb in the past (with everyone), short: didn't" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a **negative sentence**?",
+            subtitle: "Opening",
+            body: "A negative sentence says that something is not true or is not happening — like the word \"לא\" in Hebrew.\n\nFor example:\nI am happy.\nI am not happy.\n\nIn Hebrew you just add \"לא\", but English has a few ways to make a sentence negative — it depends on the verb.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "not", he: "לא" },
+              { en: "no", he: "לא / אין" },
+              { en: "never", he: "אף פעם" },
+              { en: "nobody", he: "אף אחד" },
+              { en: "nothing", he: "שום דבר" },
+              { en: "don't", he: "לא (with I/you/we/they)" },
+              { en: "doesn't", he: "לא (with he/she/it)" },
+              { en: "didn't", he: "לא, in the past (with everyone)" },
+              { en: "isn't / aren't", he: "short for is not / are not" },
+            ],
+          },
+          {
+            type: "content",
+            title: "Negatives with **am / is / are**",
+            subtitle: "The verb to be",
+            body: "When a sentence has am, is, or are, we add not after it:\nI am not tired.\nShe is not here.\nWe are not ready.\n\nIn speech we shorten them — is not becomes isn't, and are not becomes aren't:\nHe isn't hungry. They aren't at home.",
+          },
+          {
+            type: "content",
+            title: "Negatives with **don't**",
+            subtitle: "Regular verbs",
+            body: "When a sentence has a regular verb like like, play, or eat, we add don't before the verb:\nI like milk.\nI don't like milk.\n\nWe use don't with I, you, we, and they:\nWe don't play outside. They don't eat fish.",
+          },
+          {
+            type: "content",
+            title: "Negatives with **doesn't**",
+            subtitle: "he / she / it",
+            body: "With he, she, and it we use doesn't:\nShe likes cats.\nShe doesn't like cats.\n\nNote: after doesn't the verb goes back to its basic form — no s:\nHe doesn't play.\nNot:\nHe doesn't plays.",
+          },
+          {
+            type: "content",
+            title: "Negatives in the past: **didn't**",
+            subtitle: "Past tense",
+            body: "In the past tense we use didn't (did not) with everyone: I, you, he, she, it, we, they.\n\nAfter didn't the verb goes back to its basic form — no ed and no past form:\nI played. I didn't play.\nHe went home. He didn't go home.\n\nNot:\nHe didn't went home.",
+          },
+          {
+            type: "content",
+            title: "**no**, **never**, **nobody**, **nothing**",
+            subtitle: "More negative words",
+            body: "The word no means not, or there isn't any:\nI have no pencil.\n\nThe word never means not ever:\nI never eat fish.\n\nThe word nobody means no person, and nothing means not anything:\nNobody is here. I see nothing.",
+          },
+          {
+            type: "content",
+            title: "**Short answers**",
+            subtitle: "No, I'm not",
+            body: "We can answer a yes/no question with a short negative answer:\nAre you tired? No, I am not.\nIs it cold? No, it isn't.\nDo you like pizza? No, I don't.\nDoes he swim? No, he doesn't.\nDid you see it? No, I didn't.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is putting not before a regular verb. Correct:\nI don't like it.\nNot:\nI not like it.\n\nAnother mistake is using two negative words in one sentence — English uses only one:\nI have nothing.\nNot:\nI don't have nothing.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Which food don't you like? How do you say it in English with don't?\n\nWhat do you think is the difference between negatives in Hebrew and in English?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    tenses: {
+      id: "tenses",
+      name: "אנגלית - זמנים בסיסיים",
+      nameMain: "אנגלית",
+      namePart: "זמנים בסיסיים",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "tenses",
+      gradeLabel: "כל הכיתות",
+      duration: "30 דק'",
+      summary: "לומדים את שלושת הזמנים הבסיסיים באנגלית — הווה פשוט, עבר פשוט ועתיד עם will — ואיך מילות זמן עוזרות לבחור ביניהם. עם משחק בסוף.",
+      vocab: [
+        { en: "Present", he: "הווה — מה שקורה תמיד או בהרגל" },
+        { en: "Past", he: "עבר — מה שכבר קרה ונגמר" },
+        { en: "Future", he: "עתיד — מה שעוד יקרה" },
+        { en: "will", he: "מילה שבאה לפני הפועל בעתיד" },
+        { en: "today", he: "היום" },
+        { en: "yesterday", he: "אתמול" },
+        { en: "tomorrow", he: "מחר" },
+        { en: "always", he: "תמיד" },
+        { en: "usually", he: "בדרך כלל" },
+        { en: "soon", he: "בקרוב" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זה **זמן** של פועל?",
+          subtitle: "פתיחה",
+          body: "באנגלית הפועל משתנה לפי הזמן — מתי הפעולה קורית.\n\nלמשל:\nI play.\nI played.\nI will play.\n\nהיום נלמד את שלושת הזמנים הבסיסיים: הווה, עבר ועתיד.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "Present Simple", he: "הווה פשוט — מה שקורה תמיד או בהרגל" },
+            { en: "Past Simple", he: "עבר פשוט — מה שכבר קרה ונגמר" },
+            { en: "Future (will)", he: "עתיד — מה שעוד יקרה" },
+            { en: "every day", he: "כל יום" },
+            { en: "yesterday", he: "אתמול" },
+            { en: "last week", he: "בשבוע שעבר" },
+            { en: "tomorrow", he: "מחר" },
+            { en: "next week", he: "בשבוע הבא" },
+          ],
+        },
+        {
+          type: "content",
+          title: "הווה פשוט — **Present Simple**",
+          subtitle: "מה קורה תמיד",
+          body: "משתמשים בהווה פשוט לדברים שקורים תמיד, או שאנחנו עושים בהרגל — כל יום, כל שבוע:\nI play football every day.\nWe eat breakfast at seven.\n\nזוכרים? עם he, she ו-it מוסיפים s לפועל:\nShe plays football every day.",
+        },
+        {
+          type: "content",
+          title: "עבר פשוט — **Past Simple**",
+          subtitle: "מה כבר קרה",
+          body: "משתמשים בעבר פשוט לדברים שכבר קרו ונגמרו — אתמול, בשבוע שעבר:\nI played football yesterday.\nShe watched TV last night.\n\nלרוב הפעלים מוסיפים ed בסוף, ואותה צורה מתאימה לכל הגופים:\nI walked. He walked. They walked.",
+        },
+        {
+          type: "content",
+          title: "פעלים **שמשתנים** בעבר",
+          subtitle: "בלי ed",
+          body: "יש פעלים שבעבר לא מקבלים ed, אלא משנים את הצורה שלהם:\ngo — went\neat — ate\nsee — saw\n\nלמשל:\nI went to school yesterday.\n\nאת הפעלים האלה נלמד לעומק בשיעור \"פעלים חשובים\".",
+        },
+        {
+          type: "content",
+          title: "עתיד — **will**",
+          subtitle: "מה עוד יקרה",
+          body: "משתמשים בעתיד לדברים שעוד לא קרו — מחר, בשבוע הבא. מוסיפים will לפני הפועל:\nI will play football tomorrow.\nShe will visit Grandma next week.\n\nאחרי will הפועל תמיד בצורה הבסיסית — בלי s ובלי ed:\nHe will play.",
+        },
+        {
+          type: "content",
+          title: "**מילות זמן** — הרמז שלנו",
+          subtitle: "איך יודעים איזה זמן?",
+          body: "מילות זמן במשפט עוזרות לדעת באיזה זמן להשתמש:\nהווה: every day, always, usually\nעבר: yesterday, last week, two days ago\nעתיד: tomorrow, next week, soon\n\nכשרואים מילת זמן — בודקים לאיזה זמן היא שייכת, ובוחרים את צורת הפועל המתאימה.",
+        },
+        {
+          type: "content",
+          title: "פועל אחד — **שלושה זמנים**",
+          subtitle: "השוואה",
+          body: "ככה נראה אותו פועל בשלושת הזמנים:\nI watch TV every day.\nI watched TV yesterday.\nI will watch TV tomorrow.\n\nבהווה — הפועל הבסיסי. בעבר — מוסיפים ed. בעתיד — מוסיפים will לפני הפועל.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: להוסיף s אחרי will. הצורה הנכונה:\nHe will play.\nולא:\nHe will plays.\n\nטעות נוספת: לשכוח את ה-ed בעבר. הצורה הנכונה:\nI watched TV yesterday.\nולא:\nI watch TV yesterday.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "ספרו באנגלית על משהו אחד שעשיתם אתמול, ועל משהו אחד שתעשו מחר.\n\nגם בעברית הפועל משתנה לפי הזמן. מה דומה ומה שונה באנגלית, לדעתכם?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Basic Tenses",
+        nameMain: "English",
+        namePart: "Basic Tenses",
+        summary: "Learn the three basic English tenses — Present Simple, Past Simple, and the future with will — and how time words help you choose between them. With a game at the end.",
+        vocab: [
+          { en: "Present", he: "הווה — what always happens, or happens as a habit" },
+          { en: "Past", he: "עבר — what already happened and ended" },
+          { en: "Future", he: "עתיד — what will happen" },
+          { en: "will", he: "The word that comes before the verb in the future" },
+          { en: "today", he: "היום" },
+          { en: "yesterday", he: "אתמול" },
+          { en: "tomorrow", he: "מחר" },
+          { en: "always", he: "תמיד" },
+          { en: "usually", he: "בדרך כלל" },
+          { en: "soon", he: "בקרוב" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "What is a verb's **tense**?",
+            subtitle: "Opening",
+            body: "In English the verb changes with the tense — when the action happens.\n\nFor example:\nI play.\nI played.\nI will play.\n\nToday we'll learn the three basic tenses: present, past, and future.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "Present Simple", he: "What always happens, or happens as a habit" },
+              { en: "Past Simple", he: "What already happened and ended" },
+              { en: "Future (will)", he: "What will happen" },
+              { en: "every day", he: "כל יום" },
+              { en: "yesterday", he: "אתמול" },
+              { en: "last week", he: "בשבוע שעבר" },
+              { en: "tomorrow", he: "מחר" },
+              { en: "next week", he: "בשבוע הבא" },
+            ],
+          },
+          {
+            type: "content",
+            title: "Present Simple",
+            subtitle: "What always happens",
+            body: "We use the Present Simple for things that always happen, or that we do as a habit — every day, every week:\nI play football every day.\nWe eat breakfast at seven.\n\nRemember? With he, she, and it we add s to the verb:\nShe plays football every day.",
+          },
+          {
+            type: "content",
+            title: "Past Simple",
+            subtitle: "What already happened",
+            body: "We use the Past Simple for things that already happened and ended — yesterday, last week:\nI played football yesterday.\nShe watched TV last night.\n\nMost verbs add ed at the end, and the same form works for everyone:\nI walked. He walked. They walked.",
+          },
+          {
+            type: "content",
+            title: "Verbs that **change** in the past",
+            subtitle: "No ed",
+            body: "Some verbs don't take ed in the past — they change their form instead:\ngo — went\neat — ate\nsee — saw\n\nFor example:\nI went to school yesterday.\n\nWe'll learn these verbs in depth in the \"Important Verbs\" lesson.",
+          },
+          {
+            type: "content",
+            title: "The future — **will**",
+            subtitle: "What will happen",
+            body: "We use the future for things that haven't happened yet — tomorrow, next week. We add will before the verb:\nI will play football tomorrow.\nShe will visit Grandma next week.\n\nAfter will the verb is always in its basic form — no s and no ed:\nHe will play.",
+          },
+          {
+            type: "content",
+            title: "**Time words** — our clue",
+            subtitle: "How do we know the tense?",
+            body: "Time words in a sentence tell us which tense to use:\nPresent: every day, always, usually\nPast: yesterday, last week, two days ago\nFuture: tomorrow, next week, soon\n\nWhen you see a time word, check which tense it belongs to, and choose the matching verb form.",
+          },
+          {
+            type: "content",
+            title: "One verb — **three tenses**",
+            subtitle: "Comparison",
+            body: "Here is the same verb in all three tenses:\nI watch TV every day.\nI watched TV yesterday.\nI will watch TV tomorrow.\n\nPresent — the basic verb. Past — add ed. Future — add will before the verb.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is adding s after will. Correct:\nHe will play.\nNot:\nHe will plays.\n\nAnother mistake is forgetting the ed in the past. Correct:\nI watched TV yesterday.\nNot:\nI watch TV yesterday.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Tell us in English about one thing you did yesterday, and one thing you will do tomorrow.\n\nIn Hebrew the verb changes with the tense too. What do you think is similar, and what is different, in English?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    "irregular-verbs": {
+      id: "irregular-verbs",
+      name: "אנגלית - פעלים חשובים",
+      nameMain: "אנגלית",
+      namePart: "פעלים חשובים",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "irregular-verbs",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים פעלים חשובים שמשנים את הצורה שלהם בעבר — go/went, eat/ate, see/saw, can/could ועוד — ואיך משתמשים בהם במשפט. עם משחק בסוף.",
+      vocab: [
+        { en: "went", he: "הלך — עבר של go" },
+        { en: "ate", he: "אכל — עבר של eat" },
+        { en: "saw", he: "ראה — עבר של see" },
+        { en: "could", he: "יכול היה — עבר של can" },
+        { en: "had", he: "היה לו — עבר של have" },
+        { en: "did", he: "עשה — עבר של do" },
+        { en: "came", he: "בא — עבר של come" },
+        { en: "ran", he: "רץ — עבר של run" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "פעלים **חשובים**",
+          subtitle: "פתיחה",
+          body: "רוב הפעלים באנגלית מקבלים ed בעבר:\nplay — played\n\nאבל לכמה מהפעלים הכי נפוצים יש צורת עבר מיוחדת, בלי ed:\ngo — went\n\nהיום נכיר אותם — הם מופיעים כמעט בכל סיפור באנגלית.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "go — went", he: "ללכת — הלך" },
+            { en: "eat — ate", he: "לאכול — אכל" },
+            { en: "see — saw", he: "לראות — ראה" },
+            { en: "can — could", he: "יכול — יכול היה" },
+            { en: "have — had", he: "יש לי — היה לי" },
+            { en: "do — did", he: "לעשות — עשה" },
+            { en: "come — came", he: "לבוא — בא" },
+            { en: "run — ran", he: "לרוץ — רץ" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**go** / **went**",
+          subtitle: "ללכת",
+          body: "הפועל go פירושו ללכת או לנסוע:\nI go to school every day.\n\nבעבר, go הופך ל-went:\nI went to the park yesterday.\nWe went to the beach last summer.",
+        },
+        {
+          type: "content",
+          title: "**eat** / **ate**",
+          subtitle: "לאכול",
+          body: "הפועל eat פירושו לאכול:\nI eat an apple every day.\n\nבעבר, eat הופך ל-ate:\nI ate pizza yesterday.\nShe ate a sandwich for lunch.",
+        },
+        {
+          type: "content",
+          title: "**see** / **saw**",
+          subtitle: "לראות",
+          body: "הפועל see פירושו לראות:\nI see a bird in the tree.\n\nבעבר, see הופך ל-saw:\nI saw a funny movie last night.\nWe saw a big dog in the park.",
+        },
+        {
+          type: "content",
+          title: "**can** / **could**",
+          subtitle: "יכול / יודע",
+          body: "המילה can פירושה יכול, או יודע לעשות משהו:\nI can swim.\n\nבעבר, can הופך ל-could:\nWhen I was five, I could read.\n\nאחרי can ו-could בא פועל בצורה הבסיסית — בלי s:\nShe can swim.",
+        },
+        {
+          type: "content",
+          title: "עוד פעלים **חשובים**",
+          subtitle: "כדאי לזכור",
+          body: "עוד פעלים נפוצים עם צורת עבר מיוחדת:\nhave — had\ndo — did\ncome — came\nrun — ran\n\nלמשל:\nI had a great day.",
+        },
+        {
+          type: "content",
+          title: "בעבר — **צורה אחת לכולם**",
+          subtitle: "בלי s",
+          body: "בזמן עבר הפועל לא משתנה לפי הגוף — אין s בגוף שלישי:\nI went. She went. They went.\nI ate. He ate. We ate.\n\nזה מה שהופך את זמן העבר לקל יותר — לומדים צורה אחת, ומשתמשים בה עם כולם.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: להוסיף ed לפועל עם צורת עבר מיוחדת. הצורה הנכונה:\nI went home.\nולא:\nI goed home.\n\nטעות נוספת: להוסיף s לפועל שאחרי can. הצורה הנכונה:\nHe can run.\nולא:\nHe can runs.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "מה אכלתם אתמול, ולאן הלכתם? ספרו באנגלית עם ate ו-went.\n\nלמה, לדעתכם, דווקא לפעלים הכי נפוצים יש צורות עבר מיוחדות?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Important Verbs",
+        nameMain: "English",
+        namePart: "Important Verbs",
+        summary: "Learn important verbs that change their form in the past — go/went, eat/ate, see/saw, can/could, and more — and how to use them in a sentence. With a game at the end.",
+        vocab: [
+          { en: "went", he: "הלך — the past of go" },
+          { en: "ate", he: "אכל — the past of eat" },
+          { en: "saw", he: "ראה — the past of see" },
+          { en: "could", he: "יכול היה — the past of can" },
+          { en: "had", he: "היה לו — the past of have" },
+          { en: "did", he: "עשה — the past of do" },
+          { en: "came", he: "בא — the past of come" },
+          { en: "ran", he: "רץ — the past of run" },
+        ],
+        slides: [
+          {
+            type: "content",
+            title: "**Important** verbs",
+            subtitle: "Opening",
+            body: "Most English verbs take ed in the past:\nplay — played\n\nBut some of the most common verbs have a special past form, without ed:\ngo — went\n\nToday we'll meet them — they appear in almost every English story.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "go — went", he: "ללכת — הלך" },
+              { en: "eat — ate", he: "לאכול — אכל" },
+              { en: "see — saw", he: "לראות — ראה" },
+              { en: "can — could", he: "יכול — יכול היה" },
+              { en: "have — had", he: "יש לי — היה לי" },
+              { en: "do — did", he: "לעשות — עשה" },
+              { en: "come — came", he: "לבוא — בא" },
+              { en: "run — ran", he: "לרוץ — רץ" },
+            ],
+          },
+          {
+            type: "content",
+            title: "**go** / **went**",
+            subtitle: "To go",
+            body: "The verb go means to move from place to place — to walk or travel somewhere:\nI go to school every day.\n\nIn the past, go becomes went:\nI went to the park yesterday.\nWe went to the beach last summer.",
+          },
+          {
+            type: "content",
+            title: "**eat** / **ate**",
+            subtitle: "To eat",
+            body: "The verb eat means to have food:\nI eat an apple every day.\n\nIn the past, eat becomes ate:\nI ate pizza yesterday.\nShe ate a sandwich for lunch.",
+          },
+          {
+            type: "content",
+            title: "**see** / **saw**",
+            subtitle: "To see",
+            body: "The verb see means to notice something with your eyes:\nI see a bird in the tree.\n\nIn the past, see becomes saw:\nI saw a funny movie last night.\nWe saw a big dog in the park.",
+          },
+          {
+            type: "content",
+            title: "**can** / **could**",
+            subtitle: "Able to",
+            body: "The word can means you are able to, or know how to, do something:\nI can swim.\n\nIn the past, can becomes could:\nWhen I was five, I could read.\n\nAfter can and could comes a verb in its basic form — no s:\nShe can swim.",
+          },
+          {
+            type: "content",
+            title: "More **important** verbs",
+            subtitle: "Worth remembering",
+            body: "More common verbs with a special past form:\nhave — had\ndo — did\ncome — came\nrun — ran\n\nFor example:\nI had a great day.",
+          },
+          {
+            type: "content",
+            title: "In the past — **one form for everyone**",
+            subtitle: "No s",
+            body: "In the past tense the verb doesn't change with the subject — no s for he, she, or it:\nI went. She went. They went.\nI ate. He ate. We ate.\n\nThat's what makes the past tense easier — you learn one form and use it with everyone.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is adding ed to a verb with a special past form. Correct:\nI went home.\nNot:\nI goed home.\n\nAnother mistake is adding s to the verb after can. Correct:\nHe can run.\nNot:\nHe can runs.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "What did you eat yesterday, and where did you go? Tell us in English with ate and went.\n\nWhy do you think the most common verbs are the ones with special past forms?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    plurals: {
+      id: "plurals",
+      name: "אנגלית - יחיד ורבים",
+      nameMain: "אנגלית",
+      namePart: "יחיד ורבים",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "plurals",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים איך הופכים מילה לרבים באנגלית — s, es, ies ו-ves — ומכירים מילים מיוחדות כמו child / children ו-foot / feet. עם משחק בסוף.",
+      vocab: [
+        { en: "books", he: "ספרים" },
+        { en: "boxes", he: "קופסאות" },
+        { en: "babies", he: "תינוקות" },
+        { en: "leaves", he: "עלים" },
+        { en: "children", he: "ילדים" },
+        { en: "men", he: "גברים" },
+        { en: "geese", he: "אווזים" },
+        { en: "feet", he: "כפות רגליים" },
+        { en: "teeth", he: "שיניים" },
+        { en: "mice", he: "עכברים" },
+        { en: "people", he: "אנשים" },
+        { en: "sheep", he: "כבשה / כבשים" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מה זה **יחיד** ומה זה **רבים**?",
+          subtitle: "פתיחה",
+          body: "יחיד (singular) — דבר אחד. רבים (plural) — יותר מדבר אחד.\n\nבעברית אומרים ספר וספרים. באנגלית רוב המילים מקבלות s בסוף, לדוגמה:\none book, two books\n\nאבל יש גם מילים שמשתנות בדרך מיוחדת — והיום נכיר את כולן.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "singular", he: "יחיד — דבר אחד" },
+            { en: "plural", he: "רבים — יותר מדבר אחד" },
+            { en: "book → books", he: "ספר → ספרים" },
+            { en: "box → boxes", he: "קופסה → קופסאות" },
+            { en: "baby → babies", he: "תינוק → תינוקות" },
+            { en: "child → children", he: "ילד → ילדים" },
+            { en: "man → men", he: "גבר → גברים" },
+            { en: "mouse → mice", he: "עכבר → עכברים" },
+            { en: "foot → feet", he: "כף רגל → כפות רגליים" },
+            { en: "tooth → teeth", he: "שן → שיניים" },
+          ],
+        },
+        {
+          type: "content",
+          title: "כלל 1: מוסיפים **s**",
+          subtitle: "רוב המילים",
+          body: "רוב המילים באנגלית מקבלות s בסוף כשהן ברבים, לדוגמה:\none cat, two cats\none bird, three birds\none apple, five apples\n\nזה הכלל הכי נפוץ — כשלא בטוחים, מתחילים ממנו.",
+        },
+        {
+          type: "content",
+          title: "כלל 2: מוסיפים **es**",
+          subtitle: "אחרי s, sh, ch, x",
+          body: "כשהמילה מסתיימת ב-s, sh, ch או x, מוסיפים es — כך קל יותר להגיד אותה, לדוגמה:\none bus, two buses\none dish, two dishes\none watch, two watches\none box, two boxes\n\nגם כמה מילים שמסתיימות ב-o מקבלות es:\ntomatoes, potatoes",
+        },
+        {
+          type: "content",
+          title: "כלל 3: **y** הופכת ל-**ies**",
+          subtitle: "עיצור ואחריו y",
+          body: "כשלפני ה-y בסוף המילה יש עיצור, מוחקים את ה-y ומוסיפים ies, לדוגמה:\none baby, two babies\none city, two cities\none story, two stories\n\nאבל כשלפני ה-y יש תנועה (a, e, o, u), מוסיפים רק s:\none boy, two boys\none day, two days",
+        },
+        {
+          type: "content",
+          title: "כלל 4: **f** הופכת ל-**ves**",
+          subtitle: "מילים שמסתיימות ב-f או fe",
+          body: "בהרבה מילים שמסתיימות ב-f או ב-fe, ה-f הופכת ל-ves, לדוגמה:\none leaf, two leaves\none knife, two knives\none wolf, two wolves\none half, two halves",
+        },
+        {
+          type: "content",
+          title: "מילים **מיוחדות**",
+          subtitle: "רבים חריגים",
+          body: "יש מילים שלא מקבלות s בכלל — הן משתנות לגמרי. את המילים האלה פשוט זוכרים בעל פה:\nchild, children\nman, men\ngoose, geese\nfoot, feet\ntooth, teeth\nmouse, mice\nperson, people",
+        },
+        {
+          type: "content",
+          title: "**אותה מילה** ביחיד וברבים",
+          subtitle: "מילים שלא משתנות",
+          body: "יש כמה מילים שנשארות בדיוק אותו דבר גם ברבים, לדוגמה:\none fish, two fish\none sheep, ten sheep\n\nאיך יודעים אם זה יחיד או רבים? לפי המספר, או לפי הפועל שבא אחרי המילה:\nThe sheep is white.\nThe sheep are white.",
+        },
+        {
+          type: "content",
+          title: "רבים **בתוך משפט**",
+          subtitle: "is או are",
+          body: "כשמדברים על רבים, גם הפועל משתנה — is הופך ל-are, ו-this הופך ל-these, לדוגמה:\nThe book is new.\nThe books are new.\nThis is my friend.\nThese are my friends.\n\nושימו לב: אחרי כל מספר גדול מ-1 באים רבים:\ntwo dogs, three children",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: לשכוח את ה-s אחרי מספר. הצורה הנכונה:\nI have two dogs.\nולא:\nI have two dog.\n\nטעות נוספת: להוסיף s למילה מיוחדת. הצורה הנכונה:\nThe children are here.\nולא:\nThe childs are here.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "ספרו באנגלית כמה דברים יש לכם בתיק — ברבים, לדוגמה: I have three books…\n\nאיזו מילה מיוחדת (כמו children או teeth) הכי קשה לכם לזכור? איך אפשר לזכור אותה?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Singular and Plural",
+        nameMain: "English",
+        namePart: "Singular and Plural",
+        summary: "Learn how to make a word plural in English — s, es, ies, and ves — and meet special words like child / children and foot / feet. With a game at the end.",
+        slides: [
+          {
+            type: "content",
+            title: "What are **singular** and **plural**?",
+            subtitle: "Opening",
+            body: "Singular means one thing. Plural means more than one thing.\n\nMost English words get an s at the end in the plural, for example:\none book, two books\n\nBut some words change in a special way — and today we'll meet them all.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "singular", he: "one thing" },
+              { en: "plural", he: "more than one thing" },
+              { en: "book → books", he: "ספר → ספרים" },
+              { en: "box → boxes", he: "קופסה → קופסאות" },
+              { en: "baby → babies", he: "תינוק → תינוקות" },
+              { en: "child → children", he: "ילד → ילדים" },
+              { en: "man → men", he: "גבר → גברים" },
+              { en: "mouse → mice", he: "עכבר → עכברים" },
+              { en: "foot → feet", he: "כף רגל → כפות רגליים" },
+              { en: "tooth → teeth", he: "שן → שיניים" },
+            ],
+          },
+          {
+            type: "content",
+            title: "Rule 1: add **s**",
+            subtitle: "Most words",
+            body: "Most English words get an s at the end in the plural, for example:\none cat, two cats\none bird, three birds\none apple, five apples\n\nThis is the most common rule — when you're not sure, start with it.",
+          },
+          {
+            type: "content",
+            title: "Rule 2: add **es**",
+            subtitle: "After s, sh, ch, x",
+            body: "When a word ends in s, sh, ch, or x, we add es — it makes the word easier to say, for example:\none bus, two buses\none dish, two dishes\none watch, two watches\none box, two boxes\n\nSome words that end in o get es too:\ntomatoes, potatoes",
+          },
+          {
+            type: "content",
+            title: "Rule 3: **y** becomes **ies**",
+            subtitle: "A consonant before y",
+            body: "When there is a consonant before the y at the end of a word, we drop the y and add ies, for example:\none baby, two babies\none city, two cities\none story, two stories\n\nBut when there is a vowel (a, e, o, u) before the y, we just add s:\none boy, two boys\none day, two days",
+          },
+          {
+            type: "content",
+            title: "Rule 4: **f** becomes **ves**",
+            subtitle: "Words that end in f or fe",
+            body: "In many words that end in f or fe, the f becomes ves, for example:\none leaf, two leaves\none knife, two knives\none wolf, two wolves\none half, two halves",
+          },
+          {
+            type: "content",
+            title: "**Special** words",
+            subtitle: "Irregular plurals",
+            body: "Some words don't get an s at all — they change completely. We simply learn these words by heart:\nchild, children\nman, men\ngoose, geese\nfoot, feet\ntooth, teeth\nmouse, mice\nperson, people",
+          },
+          {
+            type: "content",
+            title: "**The same word** in singular and plural",
+            subtitle: "Words that don't change",
+            body: "A few words stay exactly the same in the plural, for example:\none fish, two fish\none sheep, ten sheep\n\nHow do we know if it's singular or plural? From the number, or from the verb after the word:\nThe sheep is white.\nThe sheep are white.",
+          },
+          {
+            type: "content",
+            title: "Plurals **in a sentence**",
+            subtitle: "is or are",
+            body: "With plurals, the verb changes too — is becomes are, and this becomes these, for example:\nThe book is new.\nThe books are new.\nThis is my friend.\nThese are my friends.\n\nAnd note: after any number bigger than 1 comes a plural:\ntwo dogs, three children",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is forgetting the s after a number. Correct:\nI have two dogs.\nNot:\nI have two dog.\n\nAnother mistake is adding s to a special word. Correct:\nThe children are here.\nNot:\nThe childs are here.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Count the things in your bag in English — in the plural, for example: I have three books…\n\nWhich special word (like children or teeth) is the hardest for you to remember? How can you remember it?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    articles: {
+      id: "articles",
+      name: "אנגלית - מילות הצבעה ויידוע",
+      nameMain: "אנגלית",
+      namePart: "מילות הצבעה ויידוע",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "articles",
+      gradeLabel: "כל הכיתות",
+      duration: "25 דק'",
+      summary: "לומדים את מילות ההצבעה this, that, these, those — קרוב או רחוק, אחד או הרבה — ואת מילות היידוע a, an, the. עם משחק בסוף.",
+      vocab: [
+        { en: "this", he: "זה / זאת (קרוב, אחד)" },
+        { en: "that", he: "ההוא / ההיא (רחוק, אחד)" },
+        { en: "these", he: "אלה (קרובים, הרבה)" },
+        { en: "those", he: "ההם / ההן (רחוקים, הרבה)" },
+        { en: "near", he: "קרוב" },
+        { en: "far", he: "רחוק" },
+        { en: "a dog", he: "כלב (סתם כלב)" },
+        { en: "an apple", he: "תפוח (סתם תפוח)" },
+        { en: "the sun", he: "השמש" },
+        { en: "this book", he: "הספר הזה" },
+        { en: "these books", he: "הספרים האלה" },
+        { en: "those cars", he: "המכוניות ההן" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "מילים **קטנות** וחשובות",
+          subtitle: "פתיחה",
+          body: "לפני שם עצם באות לפעמים מילים קטנות שאומרות לנו על איזה דבר מדברים.\n\nמילות ההצבעה — this, that, these, those — אומרות אם הדבר קרוב או רחוק, ואם יש אחד או הרבה.\n\nמילות היידוע — a, an, the — אומרות אם מדברים על דבר כלשהו, או על דבר מסוים.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות**",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "this", he: "זה / זאת — קרוב, אחד" },
+            { en: "that", he: "ההוא / ההיא — רחוק, אחד" },
+            { en: "these", he: "אלה — קרובים, הרבה" },
+            { en: "those", he: "ההם / ההן — רחוקים, הרבה" },
+            { en: "a", he: "סתם אחד — לפני עיצור" },
+            { en: "an", he: "סתם אחד — לפני תנועה" },
+            { en: "the", he: "ה' הידיעה — דבר מסוים" },
+            { en: "near", he: "קרוב" },
+            { en: "far", he: "רחוק" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**This** ו-**That**",
+          subtitle: "דבר אחד",
+          body: "this — דבר אחד שקרוב אליי, לדוגמה:\nThis is my bag.\nI like this book.\n\nthat — דבר אחד שרחוק ממני, לדוגמה:\nThat is my school.\nLook at that bird!",
+        },
+        {
+          type: "content",
+          title: "**These** ו-**Those**",
+          subtitle: "הרבה דברים",
+          body: "these — כמה דברים שקרובים אליי, לדוגמה:\nThese are my shoes.\nI love these cookies.\n\nthose — כמה דברים שרחוקים ממני, לדוגמה:\nThose are big trees.\nWho are those children?",
+        },
+        {
+          type: "content",
+          title: "איך **בוחרים**?",
+          subtitle: "קרוב או רחוק, אחד או הרבה",
+          body: "שואלים שתי שאלות: האם הדבר קרוב או רחוק? והאם יש אחד או הרבה?\n\nקרוב ואחד — this. רחוק ואחד — that.\nקרוב והרבה — these. רחוק והרבה — those.\n\nושימו לב לפועל: עם this ו-that בא is, ועם these ו-those בא are:\nThis is a cat. These are cats.",
+        },
+        {
+          type: "content",
+          title: "**A** ו-**An**",
+          subtitle: "סתם אחד",
+          body: "a ו-an פירושן אחד, כשלא חשוב איזה בדיוק. בעברית אין להן מילה, אבל באנגלית חייבים לשים אותן לפני שם עצם ביחיד:\nI have a dog.\nHe is a teacher.\n\nלפני מילה שמתחילה בתנועה (a, e, i, o, u) אומרים an:\nan apple, an egg, an orange, an umbrella",
+        },
+        {
+          type: "content",
+          title: "**The**",
+          subtitle: "ה' הידיעה",
+          body: "the היא כמו ה' הידיעה בעברית — מדברים על דבר מסוים, שכבר יודעים עליו:\nI have a cat. The cat is black.\n\nאומרים the גם כשיש רק אחד כזה בעולם:\nthe sun, the moon, the sky\n\nאת the אפשר לשים גם לפני מילה ברבים:\nthe books, the children",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה אצל דוברי עברית: לשכוח את a. הצורה הנכונה:\nHe is a doctor.\nולא:\nHe is doctor.\n\nטעות נוספת: this לפני מילה ברבים. הצורה הנכונה:\nThese shoes are new.\nולא:\nThis shoes are new.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "הצביעו על חפץ קרוב ועל חפץ רחוק בכיתה ותארו אותם באנגלית: This is… / That is…\n\nבעברית אין מילה כמו a — למה לדעתכם באנגלית צריך אותה?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - This, That and Articles",
+        nameMain: "English",
+        namePart: "This, That and Articles",
+        summary: "Learn the pointing words this, that, these, those — near or far, one or many — and the articles a, an, the. With a game at the end.",
+        slides: [
+          {
+            type: "content",
+            title: "Small but **important** words",
+            subtitle: "Opening",
+            body: "Before a noun we sometimes have small words that tell us which thing we're talking about.\n\nThe pointing words — this, that, these, those — tell us if the thing is near or far, and if there is one or many.\n\nThe articles — a, an, the — tell us if we mean any thing, or one certain thing.",
+          },
+          {
+            type: "content",
+            title: "**Important words**",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "this", he: "near, one thing" },
+              { en: "that", he: "far, one thing" },
+              { en: "these", he: "near, many things" },
+              { en: "those", he: "far, many things" },
+              { en: "a", he: "any one — before a consonant" },
+              { en: "an", he: "any one — before a vowel" },
+              { en: "the", he: "a certain thing" },
+              { en: "near", he: "close to me" },
+              { en: "far", he: "away from me" },
+            ],
+          },
+          {
+            type: "content",
+            title: "**This** and **That**",
+            subtitle: "One thing",
+            body: "this — one thing that is near me, for example:\nThis is my bag.\nI like this book.\n\nthat — one thing that is far from me, for example:\nThat is my school.\nLook at that bird!",
+          },
+          {
+            type: "content",
+            title: "**These** and **Those**",
+            subtitle: "Many things",
+            body: "these — a few things that are near me, for example:\nThese are my shoes.\nI love these cookies.\n\nthose — a few things that are far from me, for example:\nThose are big trees.\nWho are those children?",
+          },
+          {
+            type: "content",
+            title: "How do we **choose**?",
+            subtitle: "Near or far, one or many",
+            body: "Ask two questions: Is it near or far? Is there one or many?\n\nNear and one — this. Far and one — that.\nNear and many — these. Far and many — those.\n\nAnd watch the verb: this and that go with is, these and those go with are:\nThis is a cat. These are cats.",
+          },
+          {
+            type: "content",
+            title: "**A** and **An**",
+            subtitle: "Any one",
+            body: "a and an mean one, when it doesn't matter which one. Hebrew has no word for them, but in English we must put them before a singular noun:\nI have a dog.\nHe is a teacher.\n\nBefore a word that starts with a vowel (a, e, i, o, u) we say an:\nan apple, an egg, an orange, an umbrella",
+          },
+          {
+            type: "content",
+            title: "**The**",
+            subtitle: "A certain thing",
+            body: "the is like ה' הידיעה in Hebrew — we talk about a certain thing that we already know about:\nI have a cat. The cat is black.\n\nWe also say the when there is only one in the world:\nthe sun, the moon, the sky\n\nthe can come before a plural word too:\nthe books, the children",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake for Hebrew speakers is forgetting a. Correct:\nHe is a doctor.\nNot:\nHe is doctor.\n\nAnother mistake is using this before a plural word. Correct:\nThese shoes are new.\nNot:\nThis shoes are new.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Point at something near you and something far away in the classroom, and describe them in English: This is… / That is…\n\nHebrew has no word like a — why do you think English needs it?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
+    },
+
+    bagrut: {
+      id: "bagrut",
+      name: "אנגלית - שאלות בגרות",
+      nameMain: "אנגלית",
+      namePart: "שאלות בגרות",
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "bagrut",
+      gradeLabel: "כל הכיתות",
+      duration: "30 דק'",
+      summary: "לומדים איך עונים על סוגי השאלות שבמבחן ובבגרות — שאלות אמריקאיות, נכון / לא נכון, שאלות פתוחות והשלמת משפטים — ואיך מוצאים את התשובה בטקסט. עם משחק בסוף.",
+      vocab: [
+        { en: "circle", he: "הקיפו" },
+        { en: "complete", he: "השלימו" },
+        { en: "copy", he: "העתיקו" },
+        { en: "answer", he: "ענו" },
+        { en: "explain", he: "הסבירו" },
+        { en: "according to the text", he: "לפי הטקסט" },
+        { en: "paragraph", he: "פסקה" },
+        { en: "line", he: "שורה" },
+        { en: "sentence", he: "משפט" },
+        { en: "title", he: "כותרת" },
+        { en: "main idea", he: "הרעיון המרכזי" },
+        { en: "reason", he: "סיבה" },
+        { en: "true", he: "נכון" },
+        { en: "false", he: "לא נכון" },
+      ],
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: "שאלות **בגרות**",
+          subtitle: "פתיחה",
+          body: "במבחנים באנגלית, וגם בבגרות, קוראים קטע ועונים עליו על כמה סוגים של שאלות:\nשאלות אמריקאיות, נכון / לא נכון, שאלות פתוחות והשלמת משפטים.\n\nהיום נלמד איך עונים על כל סוג, ואיך מוצאים את התשובה בטקסט.",
+        },
+        {
+          type: "content",
+          title: "**מילים חשובות** בהוראות",
+          subtitle: "אוצר מושגים",
+          items: [
+            { en: "circle", he: "הקיפו" },
+            { en: "complete", he: "השלימו" },
+            { en: "copy", he: "העתיקו" },
+            { en: "answer", he: "ענו" },
+            { en: "explain", he: "הסבירו" },
+            { en: "according to the text", he: "לפי הטקסט" },
+            { en: "paragraph", he: "פסקה" },
+            { en: "line", he: "שורה" },
+            { en: "main idea", he: "הרעיון המרכזי" },
+            { en: "reason", he: "סיבה" },
+          ],
+        },
+        {
+          type: "content",
+          title: "מתחילים **מהשאלות**",
+          subtitle: "איך ניגשים לקטע",
+          body: "לפני שקוראים את כל הטקסט, קוראים את הכותרת ואת השאלות — כך יודעים מה לחפש.\n\nאחר כך קוראים את הטקסט ומסמנים בו את המקומות שעונים על השאלות.\n\nהשאלות מופיעות בדרך כלל לפי סדר הטקסט — מההתחלה ועד הסוף.",
+        },
+        {
+          type: "content",
+          title: "שאלות **אמריקאיות**",
+          subtitle: "Multiple choice",
+          body: "ההוראה:\nCircle the number of the correct answer.\n\nקוראים את כל התשובות, מוחקים את אלה שבטוח לא נכונות, ובוחרים לפי מה שכתוב בטקסט — לא לפי מה שנשמע הגיוני.\n\nלפעמים התשובה כתובה במילים אחרות: בטקסט כתוב walks, והתשובה היא on foot.",
+        },
+        {
+          type: "content",
+          title: "**נכון** או **לא נכון**",
+          subtitle: "True / False",
+          body: "ההוראה:\nWrite TRUE or FALSE.\n\nמוצאים בטקסט את המשפט שמדבר על אותו נושא, ומשווים מילה במילה. מילה קטנה אחת יכולה לשנות הכול — כמו always ו-never.\n\nלפעמים מבקשים גם להעתיק את המילים שמוכיחות את התשובה:\nCopy the words that support your answer.",
+        },
+        {
+          type: "content",
+          title: "שאלות **פתוחות**",
+          subtitle: "Open questions",
+          body: "עונים באנגלית, בקצרה, ורק על מה שנשאל. מילת השאלה אומרת מה לחפש:\nWhere — מקום. When — זמן. Who — אדם. Why — סיבה.\n\nלדוגמה:\nWhy was Dan late?\nBecause he missed the bus.",
+        },
+        {
+          type: "content",
+          title: "**השלמת** משפטים",
+          subtitle: "Sentence completion",
+          body: "ההוראה:\nComplete the sentence.\n\nתחילת המשפט כבר כתובה. מוצאים אותה בטקסט, וממשיכים לפי מה שכתוב שם.\n\nבטקסט כתוב:\nBen was hungry, so he made a sandwich.\nהשלימו:\nBen made a sandwich because he…\nהתשובה: was hungry.",
+        },
+        {
+          type: "content",
+          title: "טעויות נפוצות",
+          subtitle: "שימו לב",
+          body: "טעות נפוצה: לענות ממה שאתם יודעים, ולא ממה שכתוב בקטע. התשובה תמיד לפי הטקסט!\n\nטעות נוספת: לא לענות על מה שנשאל — למשל, לכתוב מקום כשהשאלה מתחילה ב-When.\n\nועוד טיפ: לא משאירים שאלה ריקה. גם תשובה חלקית יכולה לקבל נקודות.",
+        },
+        {
+          type: "content",
+          title: "דיון כיתתי",
+          subtitle: "שאלות על השיעור",
+          body: "איזה סוג שאלה הכי קשה לכם — אמריקאית, נכון / לא נכון, פתוחה או השלמה? למה?\n\nמה אתם עושים כשיש בקטע מילה שאתם לא מכירים?",
+        },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        {
+          type: "content",
+          title: "סוף השיעור",
+          subtitle: "כל הכבוד!",
+          body: "תודה על ההשתתפות!",
+        },
+      ],
+
+      en: {
+        name: "English - Exam Questions",
+        nameMain: "English",
+        namePart: "Exam Questions",
+        summary: "Learn how to answer the kinds of questions in a test and in the Bagrut — multiple choice, true / false, open questions, and sentence completion — and how to find the answer in the text. With a game at the end.",
+        slides: [
+          {
+            type: "content",
+            title: "**Exam** questions",
+            subtitle: "Opening",
+            body: "In English tests, and in the Bagrut too, we read a passage and answer a few kinds of questions about it:\nmultiple choice, true / false, open questions, and sentence completion.\n\nToday we'll learn how to answer each kind, and how to find the answer in the text.",
+          },
+          {
+            type: "content",
+            title: "**Important words** in the instructions",
+            subtitle: "Vocabulary",
+            items: [
+              { en: "circle", he: "draw a ring around the answer" },
+              { en: "complete", he: "finish the sentence" },
+              { en: "copy", he: "write the same words from the text" },
+              { en: "answer", he: "write an answer" },
+              { en: "explain", he: "say why or how" },
+              { en: "according to the text", he: "what the text says" },
+              { en: "paragraph", he: "a group of lines in the text" },
+              { en: "line", he: "one row of the text" },
+              { en: "main idea", he: "what the whole text is about" },
+              { en: "reason", he: "why something happens" },
+            ],
+          },
+          {
+            type: "content",
+            title: "Start with **the questions**",
+            subtitle: "How to begin",
+            body: "Before you read the whole text, read the title and the questions — then you know what to look for.\n\nThen read the text and mark the places that answer the questions.\n\nThe questions usually follow the order of the text — from the beginning to the end.",
+          },
+          {
+            type: "content",
+            title: "**Multiple choice**",
+            subtitle: "Choose the answer",
+            body: "The instruction:\nCircle the number of the correct answer.\n\nRead all the answers, cross out the ones that are surely wrong, and choose by what the text says — not by what sounds logical.\n\nSometimes the answer uses other words: the text says walks, and the answer is on foot.",
+          },
+          {
+            type: "content",
+            title: "**True** or **False**",
+            subtitle: "True / False",
+            body: "The instruction:\nWrite TRUE or FALSE.\n\nFind the sentence in the text about the same thing, and compare them word by word. One small word can change everything — like always and never.\n\nSometimes you also need to copy the words that prove your answer:\nCopy the words that support your answer.",
+          },
+          {
+            type: "content",
+            title: "**Open** questions",
+            subtitle: "Write the answer",
+            body: "Answer in English, briefly, and only what was asked. The question word tells you what to look for:\nWhere — a place. When — a time. Who — a person. Why — a reason.\n\nFor example:\nWhy was Dan late?\nBecause he missed the bus.",
+          },
+          {
+            type: "content",
+            title: "Sentence **completion**",
+            subtitle: "Finish the sentence",
+            body: "The instruction:\nComplete the sentence.\n\nThe beginning is already written. Find it in the text, and go on by what it says there.\n\nThe text says:\nBen was hungry, so he made a sandwich.\nComplete:\nBen made a sandwich because he…\nThe answer: was hungry.",
+          },
+          {
+            type: "content",
+            title: "Common mistakes",
+            subtitle: "Watch out",
+            body: "A common mistake is answering from what you know, and not from what the passage says. The answer is always according to the text!\n\nAnother mistake is not answering what was asked — for example, writing a place when the question starts with When.\n\nOne more tip: never leave a question empty. Even a partial answer can get points.",
+          },
+          {
+            type: "content",
+            title: "Class discussion",
+            subtitle: "Questions about the lesson",
+            body: "Which kind of question is the hardest for you — multiple choice, true / false, open, or completion? Why?\n\nWhat do you do when there is a word in the passage that you don't know?",
+          },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          {
+            type: "content",
+            title: "End of lesson",
+            subtitle: "Well done!",
+            body: "Thanks for participating!",
+          },
+        ],
+      },
     },
   };
 
+  // Vocabulary-by-topic lessons, one per category in english-vocab.js (loaded
+  // before this file on the pages that show them): an opening, the words in
+  // picture slides of four or five, example sentences, a class discussion
+  // and the games.
+  function vocabCategoryLesson(cat) {
+    const pictures = cat.words.map((w) => ({ en: w.en, he: w.he, img: `/images/english/vocab/${w.id}.svg` }));
+    const perSlide = pictures.length % 5 === 0 ? 5 : 4;
+    const groups = [];
+    for (let i = 0; i < pictures.length; i += perSlide) groups.push(pictures.slice(i, i + perSlide));
+    // A last slide with a single picture joins the one before it.
+    if (groups.length > 1 && groups[groups.length - 1].length === 1) groups[groups.length - 2].push(...groups.pop());
+    // English lines become speakable sentences in the player (no ** inside them).
+    const sentences = cat.sentences.map((s) => `${s.en}\n${s.he}`).join("\n\n");
+    const sentencesEn = cat.sentences.map((s) => s.en).join("\n\n");
+    const count = pictures.length;
+    return {
+      id: `vocab-${cat.id}`,
+      name: `אנגלית - אוצר מילים: ${cat.title}`,
+      nameMain: "אנגלית",
+      namePart: `אוצר מילים: ${cat.title}`,
+      subject: "english",
+      grades: ["ag", "dv", "zh"],
+      topic: "vocab-topics",
+      gradeLabel: "כל הכיתות",
+      duration: "20 דק'",
+      summary: `מכירים ${count} מילים באנגלית בנושא ${cat.title} — לכל מילה יש תמונה, ואפשר לשמוע איך אומרים אותה. עם משחק בסוף.`,
+      vocab: pictures.map(({ en, he }) => ({ en, he })),
+      games: STANDARD_LESSON_GAMES,
+      slides: [
+        {
+          type: "content",
+          title: `לומדים מילים: **${cat.title}**`,
+          subtitle: "פתיחה",
+          body: `היום נכיר ${count} מילים באנגלית בנושא ${cat.title} — לכל מילה יש תמונה.\n\nלחצו על כל מילה כדי לשמוע איך אומרים אותה, ונסו להגיד אותה בקול:\nLook, listen and say!`,
+        },
+        ...groups.map((group) => ({ type: "content", title: `**${cat.title}**`, subtitle: cat.titleEn, pictures: group })),
+        { type: "content", title: "משפטים עם **המילים**", subtitle: "משפטים", body: sentences },
+        { type: "content", title: "דיון כיתתי", subtitle: "שאלות על השיעור", body: cat.discussion.he.join("\n\n") },
+        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
+        { type: "content", title: "סוף השיעור", subtitle: "כל הכבוד!", body: "תודה על ההשתתפות!" },
+      ],
+      en: {
+        name: `English - Vocabulary: ${cat.titleEn}`,
+        nameMain: "English",
+        namePart: `Vocabulary: ${cat.titleEn}`,
+        summary: `Learn ${count} English words about ${cat.titleEn.toLowerCase()} — every word has a picture and you can hear how to say it. With a game at the end.`,
+        slides: [
+          {
+            type: "content",
+            title: `Learning words: **${cat.titleEn}**`,
+            subtitle: "Opening",
+            body: `Today we'll meet ${count} English words about ${cat.titleEn.toLowerCase()} — every word has a picture.\n\nClick each word to hear how to say it, and try saying it out loud:\nLook, listen and say!`,
+          },
+          ...groups.map((group) => ({ type: "content", title: `**${cat.titleEn}**`, subtitle: cat.title, pictures: group })),
+          { type: "content", title: "Sentences with **the words**", subtitle: "Sentences", body: sentencesEn },
+          { type: "content", title: "Class discussion", subtitle: "Questions about the lesson", body: cat.discussion.en.join("\n\n") },
+          { type: "games", title: "Time to practice!", subtitle: "Games" },
+          { type: "content", title: "End of lesson", subtitle: "Well done!", body: "Thanks for participating!" },
+        ],
+      },
+    };
+  }
+
+  (window.ENGLISH_VOCAB_CATEGORIES || []).forEach((cat) => {
+    LESSON_CATALOG[`vocab-${cat.id}`] = vocabCategoryLesson(cat);
+  });
+
   const LESSON_TOPICS = {
+    english: {
+      ag: [
+        { id: "letters", label: "אותיות וצלילים" },
+        { id: "pronouns", label: "כינויי גוף" },
+        { id: "verbs", label: "פעלים" },
+        { id: "tobe", label: "פועל להיות (To Be)" },
+        { id: "have-has", label: "יש לי, יש לו (Have / Has)" },
+        { id: "vocabulary", label: "אוצר מילים בתמונות" },
+        { id: "prepositions", label: "מילות יחס ומיקום" },
+        { id: "connectors", label: "מילות קישור" },
+        { id: "plurals", label: "יחיד ורבים" },
+        { id: "articles", label: "מילות הצבעה ויידוע" },
+        { id: "questions", label: "מילות שאלה" },
+        { id: "negation", label: "מילות שלילה" },
+        { id: "tenses", label: "זמנים בסיסיים" },
+        { id: "irregular-verbs", label: "פעלים חשובים" },
+        { id: "bagrut", label: "שאלות בגרות" },
+        { id: "vocab-topics", label: "אוצר מילים לפי נושאים", labelEn: "Vocabulary by topic" },
+      ],
+      dv: [
+        { id: "letters", label: "אותיות וצלילים" },
+        { id: "pronouns", label: "כינויי גוף" },
+        { id: "verbs", label: "פעלים" },
+        { id: "tobe", label: "פועל להיות (To Be)" },
+        { id: "have-has", label: "יש לי, יש לו (Have / Has)" },
+        { id: "vocabulary", label: "אוצר מילים בתמונות" },
+        { id: "prepositions", label: "מילות יחס ומיקום" },
+        { id: "connectors", label: "מילות קישור" },
+        { id: "plurals", label: "יחיד ורבים" },
+        { id: "articles", label: "מילות הצבעה ויידוע" },
+        { id: "questions", label: "מילות שאלה" },
+        { id: "negation", label: "מילות שלילה" },
+        { id: "tenses", label: "זמנים בסיסיים" },
+        { id: "irregular-verbs", label: "פעלים חשובים" },
+        { id: "bagrut", label: "שאלות בגרות" },
+        { id: "vocab-topics", label: "אוצר מילים לפי נושאים", labelEn: "Vocabulary by topic" },
+      ],
+      zh: [
+        { id: "letters", label: "אותיות וצלילים" },
+        { id: "pronouns", label: "כינויי גוף" },
+        { id: "verbs", label: "פעלים" },
+        { id: "tobe", label: "פועל להיות (To Be)" },
+        { id: "have-has", label: "יש לי, יש לו (Have / Has)" },
+        { id: "vocabulary", label: "אוצר מילים בתמונות" },
+        { id: "prepositions", label: "מילות יחס ומיקום" },
+        { id: "connectors", label: "מילות קישור" },
+        { id: "plurals", label: "יחיד ורבים" },
+        { id: "articles", label: "מילות הצבעה ויידוע" },
+        { id: "questions", label: "מילות שאלה" },
+        { id: "negation", label: "מילות שלילה" },
+        { id: "tenses", label: "זמנים בסיסיים" },
+        { id: "irregular-verbs", label: "פעלים חשובים" },
+        { id: "bagrut", label: "שאלות בגרות" },
+        { id: "vocab-topics", label: "אוצר מילים לפי נושאים", labelEn: "Vocabulary by topic" },
+      ],
+    },
     lifeskills: {
       ag: [
         { id: "money", label: "ניהול כסף וקניות חכמות" },
@@ -1774,6 +6286,7 @@
     }
 
     function bindDropdown(wrap, trigger, menu, onSelect) {
+      if (!menu) return;
       trigger?.addEventListener("click", (e) => {
         e.stopPropagation();
         openDropdownMenu(wrap, trigger, menu);
@@ -1797,11 +6310,18 @@
       subjects.forEach((subject) => {
         grades.forEach((grade) => {
           (LESSON_TOPICS[subject]?.[grade] || []).forEach((topic) => {
-            if (!seen.has(topic.id)) seen.set(topic.id, topic.label);
+            if (!seen.has(topic.id)) {
+              // Derive the label from the lesson itself (already localized)
+              // instead of duplicating translated topic names separately.
+              const topicLesson = localizeLesson(LESSON_CATALOG[topic.id]);
+              const plain = curLang() === "en" && topic.labelEn ? topic.labelEn : topic.label;
+              const label = topicLesson ? topicLesson.namePart || topicLesson.nameMain || plain : plain;
+              seen.set(topic.id, label);
+            }
           });
         });
       });
-      return [{ id: "all", label: "הכל" }, ...[...seen.entries()].map(([id, label]) => ({ id, label }))];
+      return [{ id: "all", label: gradeGroupLabel("all") }, ...[...seen.entries()].map(([id, label]) => ({ id, label }))];
     }
 
     function renderTopicMenu() {
@@ -1816,7 +6336,7 @@
         .join("");
 
       const current = topics.find((t) => t.id === state.topic);
-      if (topicValue) topicValue.textContent = current?.label || "הכל";
+      if (topicValue) topicValue.textContent = current?.label || gradeGroupLabel("all");
 
       $$("button", topicMenu).forEach((btn) => {
         btn.addEventListener("click", (e) => {
@@ -1850,6 +6370,84 @@
       });
       empty?.classList.toggle("hidden", visible > 0);
     }
+
+    // Card titles sit in a fixed square (see lesson-player.css) with
+    // overflow:hidden — a long title (more likely in English than in the
+    // original short Hebrew labels) can overflow that box and hide the
+    // subtitle underneath it. Shrink via --card-fit the same way
+    // fitSlideContent() shrinks dense lesson slides, instead of clipping.
+    const CARD_FIT_MIN = 0.55;
+    const CARD_FIT_STEP = 0.05;
+    function fitLessonCardTitle(wrap) {
+      if (!wrap) return;
+      wrap.style.removeProperty("--card-fit");
+      const nameEl = $(".svc-lesson-name", wrap);
+      const partEl = $(".svc-lesson-part", wrap);
+      if (!nameEl && !partEl) return;
+      // wrap is absolutely positioned (inset: 0) so its own scrollHeight
+      // never reflects overflowing children — measure the two text lines
+      // directly against the padding-box space actually available for them.
+      const cs = getComputedStyle(wrap);
+      const available = wrap.clientHeight - parseFloat(cs.paddingTop || "0") - parseFloat(cs.paddingBottom || "0");
+      const gap = nameEl && partEl ? parseFloat(cs.rowGap || cs.gap || "0") || 0 : 0;
+      const needed = () => (nameEl?.offsetHeight || 0) + (partEl?.offsetHeight || 0) + gap;
+      let scale = 1;
+      while (scale > CARD_FIT_MIN + 1e-6 && needed() > available) {
+        scale = Math.max(CARD_FIT_MIN, scale - CARD_FIT_STEP);
+        wrap.style.setProperty("--card-fit", scale.toFixed(2));
+      }
+    }
+
+    if (typeof ResizeObserver !== "undefined") {
+      cards.forEach((card) => {
+        const preview = $(".svc-lesson-preview", card);
+        const wrap = $(".svc-lesson-title-wrap", card);
+        if (!preview || !wrap) return;
+        // Observe the fixed-size outer square, not the wrap we resize the
+        // font of, so shrinking the font doesn't retrigger the observer.
+        new ResizeObserver(() => fitLessonCardTitle(wrap)).observe(preview);
+      });
+    }
+
+    function relabelLessonCards() {
+      const lang = curLang();
+      cards.forEach((card) => {
+        const lesson = localizeLesson(LESSON_CATALOG[card.dataset.lesson]);
+        if (!lesson) return;
+        const nameEl = $(".svc-lesson-name", card);
+        const partEl = $(".svc-lesson-part", card);
+        if (nameEl) nameEl.textContent = lesson.nameMain || lesson.name;
+        if (partEl) partEl.textContent = lesson.namePart || "";
+        const openBtn = $(".js-lesson-open", card);
+        if (openBtn && !openBtn.hidden) openBtn.textContent = lang === "en" ? "Open" : "פתיחה";
+        const infoToggle = $(".svc-lesson-info-toggle", card);
+        if (infoToggle) infoToggle.setAttribute("aria-label", lang === "en" ? "Lesson info" : "מידע על השיעור");
+        const badge = $(".svc-lesson-learned-badge", card);
+        if (badge) badge.textContent = lang === "en" ? "Learned" : "נלמד";
+        fitLessonCardTitle($(".svc-lesson-title-wrap", card));
+      });
+      if (empty) {
+        empty.textContent =
+          lang === "en" ? "No lessons match these filters." : "לא נמצאו שיעורים לפי הסינון.";
+      }
+    }
+
+    function relabelFilterMenus() {
+      $$("button[data-subject]", filtersRoot).forEach((btn) => {
+        btn.textContent = btn.dataset.subject === "all" ? gradeGroupLabel("all") : subjectLabel(btn.dataset.subject);
+      });
+      $$("button[data-grade]", filtersRoot).forEach((btn) => {
+        btn.textContent = gradeGroupLabel(btn.dataset.grade);
+      });
+      if (subjectValue) {
+        subjectValue.textContent = state.subject === "all" ? gradeGroupLabel("all") : subjectLabel(state.subject);
+      }
+      if (gradeValue) gradeValue.textContent = gradeGroupLabel(state.grade);
+      renderTopicMenu();
+      relabelLessonCards();
+    }
+
+    window.addEventListener("gameclass:lang", relabelFilterMenus);
 
     bindDropdown(
       $('[data-filter-key="subject"]', filtersRoot),
@@ -1888,6 +6486,7 @@
 
     renderTopicMenu();
     applyFilters();
+    relabelFilterMenus();
   }
 
   function showToast(msg) {
@@ -1919,7 +6518,14 @@
     const modalBtn = $("#lessonInfoFavBtn");
     if (modalBtn?.dataset.lesson !== lessonId) return;
     const active = favoriteLessonIds.has(lessonId);
-    const label = active ? "הסרת השיעור מהשמורים" : "שמירת השיעור";
+    const label =
+      curLang() === "en"
+        ? active
+          ? "Remove lesson from saved"
+          : "Save lesson"
+        : active
+          ? "הסרת השיעור מהשמורים"
+          : "שמירת השיעור";
     modalBtn.classList.toggle("is-active", active);
     modalBtn.setAttribute("aria-pressed", active ? "true" : "false");
     modalBtn.setAttribute("aria-label", label);
@@ -1960,14 +6566,14 @@
 
   async function toggleFavoriteLesson(lessonId, btn) {
     if (!window.GameAuth?.getUser()) {
-      showToast("לא ניתן לשמור את השיעור לפני התחברות למערכת");
+      showToast(curLang() === "en" ? "Log in before saving lessons" : "לא ניתן לשמור את השיעור לפני התחברות למערכת");
       window.GameAuth?.handleLoginClick({ redirect: false });
       return;
     }
 
     const res = await UserData.toggleFavoriteLesson(lessonId);
     if (!res.ok) {
-      showToast(res.error || "לא ניתן לשמור כרגע");
+      showToast(res.error || (curLang() === "en" ? "Couldn't save right now" : "לא ניתן לשמור כרגע"));
       return;
     }
 
@@ -1978,7 +6584,15 @@
       favoriteLessonIds.delete(lessonId);
     }
     syncFavBtnState(lessonId);
-    showToast(res.favorited ? "השיעור נשמר" : "השיעור הוסר מהשמורים");
+    showToast(
+      curLang() === "en"
+        ? res.favorited
+          ? "Lesson saved"
+          : "Lesson removed from saved"
+        : res.favorited
+          ? "השיעור נשמר"
+          : "השיעור הוסר מהשמורים"
+    );
   }
 
   function isLessonLocked(lesson) {
@@ -1989,20 +6603,20 @@
     if (!openBtn || !lesson) return;
     const locked = isLessonLocked(lesson);
     openBtn.hidden = locked;
-    if (!locked) openBtn.textContent = "פתיחה";
+    if (!locked) openBtn.textContent = curLang() === "en" ? "Open" : "פתיחה";
   }
 
   function openLessonInfoModal(lessonId) {
-    const lesson = LESSON_CATALOG[lessonId];
+    const lesson = localizeLesson(LESSON_CATALOG[lessonId]);
     const modal = $("#lessonInfoModal");
     if (!lesson || !modal) return;
 
     modal.classList.remove("hidden");
 
     $("#lessonInfoTitle").textContent = lesson.nameMain || lesson.name;
-    $("#lessonInfoSubject").textContent = SUBJECT_LABELS[lesson.subject] || lesson.subject;
-    $("#lessonInfoGrade").textContent = lesson.gradeLabel;
-    $("#lessonInfoDuration").textContent = lesson.duration;
+    $("#lessonInfoSubject").textContent = subjectLabel(lesson.subject);
+    $("#lessonInfoGrade").textContent = formatGradeLabel(lesson.gradeLabel);
+    $("#lessonInfoDuration").textContent = formatDuration(lesson.duration);
     $("#lessonInfoSummary").textContent = lesson.summary;
     $("#lessonInfoLearnedBadge")?.classList.toggle("hidden", !getLearnedLessons().includes(lessonId));
     $("#lessonInfoPremiumBadge")?.classList.toggle("hidden", !lesson.premium || !!window.PleyiPremium?.hasPremium?.());
@@ -2015,7 +6629,7 @@
     const shareBtn = $("#lessonInfoShareBtn");
     if (shareBtn) shareBtn.dataset.lesson = lessonId;
     const shareLabel = $("#lessonInfoShareLabel");
-    if (shareLabel) shareLabel.textContent = "שיתוף השיעור";
+    if (shareLabel) shareLabel.textContent = curLang() === "en" ? "Share lesson" : "שיתוף השיעור";
     const links = buildShareLinks(lessonId);
     const waLink = $("#lessonInfoShareWhatsapp");
     if (waLink && links) waLink.href = links.whatsapp;
@@ -2032,11 +6646,13 @@
   }
 
   function buildShareLinks(lessonId) {
-    const lesson = LESSON_CATALOG[lessonId];
+    const lesson = localizeLesson(LESSON_CATALOG[lessonId]);
     if (!lesson) return null;
     const url = `${window.location.origin}${LESSON_SHARE_PATH}?lesson=${encodeURIComponent(lessonId)}`;
-    const text = `בואו ללמוד "${lesson.nameMain || lesson.name}" באנגלית עם Pleyi!`;
-    const title = `שיעור: ${lesson.nameMain || lesson.name}`;
+    const name = lesson.nameMain || lesson.name;
+    const text =
+      curLang() === "en" ? `Come learn "${name}" with Pleyi!` : `בואו ללמוד את השיעור "${name}" עם Pleyi!`;
+    const title = curLang() === "en" ? `Lesson: ${name}` : `שיעור: ${name}`;
     return {
       url,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`,
@@ -2051,9 +6667,11 @@
     try {
       await navigator.clipboard.writeText(links.url);
       if (shareLabel) {
-        shareLabel.textContent = "הקישור הועתק!";
+        const copiedLabel = curLang() === "en" ? "Link copied!" : "הקישור הועתק!";
+        const shareLabelText = curLang() === "en" ? "Share lesson" : "שיתוף השיעור";
+        shareLabel.textContent = copiedLabel;
         setTimeout(() => {
-          if (shareLabel.textContent === "הקישור הועתק!") shareLabel.textContent = "שיתוף השיעור";
+          if (shareLabel.textContent === copiedLabel) shareLabel.textContent = shareLabelText;
         }, 2000);
       }
     } catch {
@@ -2155,7 +6773,9 @@
   }
 
   function showLearnedBadge(lessonId) {
+    // Pages that embed the player without the lesson grid have no card.
     const card = $(`.svc-lesson-card[data-lesson="${lessonId}"]`);
+    if (!card) return;
     $(".svc-lesson-learned-badge", card)?.classList.remove("hidden");
   }
 
@@ -2310,13 +6930,27 @@
     return /[\u0590-\u05FF]/.test(ch);
   }
 
-  function replaceTermInPlainText(text, word, replacement, once = false) {
+  // Word-boundary check for the glossary-term matcher below. Must cover Latin
+  // letters too (not just Hebrew) so English lesson content doesn't match a
+  // term as a substring inside a longer word (e.g. "Heart" inside "Heartbeat").
+  function isWordLetter(ch) {
+    return /[\u0590-\u05FFA-Za-z]/.test(ch);
+  }
+
+  // `buildReplacement` receives the exact matched substring (preserving its
+  // original casing) so "Magma" in the vocab list still matches — and
+  // displays correctly as — a lowercase "magma" written mid-sentence.
+  // Hebrew has no letter casing, so this is a no-op there; it only matters
+  // now that lesson content can be English.
+  function replaceTermInPlainText(text, word, buildReplacement, once = false) {
     const needle = escHtml(word);
     if (!needle) return text;
+    const needleLower = needle.toLowerCase();
+    const textLower = text.toLowerCase();
     let result = "";
     let i = 0;
     while (i < text.length) {
-      const idx = text.indexOf(needle, i);
+      const idx = textLower.indexOf(needleLower, i);
       if (idx === -1) {
         result += text.slice(i);
         break;
@@ -2324,9 +6958,10 @@
       const before = idx > 0 ? text[idx - 1] : "";
       const after = idx + needle.length < text.length ? text[idx + needle.length] : "";
       const atBoundary =
-        (!before || !isHebrewLetter(before)) && (!after || !isHebrewLetter(after));
+        (!before || !isWordLetter(before)) && (!after || !isWordLetter(after));
       if (atBoundary) {
-        result += text.slice(i, idx) + replacement;
+        const matched = text.slice(idx, idx + needle.length);
+        result += text.slice(i, idx) + buildReplacement(matched);
         if (once) return result + text.slice(idx + needle.length);
         i = idx + needle.length;
       } else {
@@ -2337,14 +6972,14 @@
     return result;
   }
 
-  function replaceOutsideTags(html, search, replacement, { once = false } = {}) {
+  function replaceOutsideTags(html, search, buildReplacement, { once = false } = {}) {
     if (!search) return html;
     let replaced = false;
     return html
       .split(/(<[^>]+>)/g)
       .map((part) => {
         if (part.startsWith("<") || (once && replaced)) return part;
-        const next = replaceTermInPlainText(part, search, replacement, once);
+        const next = replaceTermInPlainText(part, search, buildReplacement, once);
         if (once && next !== part) replaced = true;
         return next;
       })
@@ -2357,8 +6992,9 @@
     const sorted = [...terms].sort((a, b) => b.word.length - a.word.length);
     for (const { word, def } of sorted) {
       if (markedTerms?.has(word)) continue;
-      const rep = `<span class="lp-term" tabindex="0" data-explain="${escAttr(def)}">${escHtml(word)}</span>`;
-      const next = replaceOutsideTags(out, word, rep, { once: true });
+      const buildRep = (matched) =>
+        `<span class="lp-term" tabindex="0" data-explain="${escAttr(def)}">${escHtml(matched)}</span>`;
+      const next = replaceOutsideTags(out, word, buildRep, { once: true });
       if (next !== out) {
         markedTerms?.add(word);
         out = next;
@@ -2435,27 +7071,32 @@
   }
 
   function wrapSlideBody(body, slide, lesson) {
-    const hebrew = lesson?.subject !== "english";
-    const terms = hebrew ? glossaryTermsFromLesson(lesson, slide) : [];
-    const markedTerms = new Set();
-    const preformatted = hebrew
-      ? body
-          .split("\n")
-          .map((line) => {
-            if (!line.trim()) return line;
-            const glossaryLine = formatGlossaryDefinitionLine(line, terms, markedTerms);
-            if (glossaryLine) return glossaryLine;
-            return formatLessonText(line, { terms, markedTerms });
-          })
-          .join("\n")
-      : body;
-    return wrapSayableBody(preformatted, slide.say);
+    // Non-"english"-subject lessons (life skills / body / nature) rely purely
+    // on glossary-term matching for interactivity, in whichever language is
+    // active — the line-based "sayable" wrapping below is for genuine
+    // English-vocabulary lessons only, where isolated foreign words are
+    // embedded in otherwise base-language text.
+    if (lesson?.subject !== "english") {
+      const terms = glossaryTermsFromLesson(lesson, slide);
+      const markedTerms = new Set();
+      return body
+        .split("\n")
+        .map((line) => {
+          if (!line.trim()) return line;
+          const glossaryLine = formatGlossaryDefinitionLine(line, terms, markedTerms);
+          if (glossaryLine) return glossaryLine;
+          return formatLessonText(line, { terms, markedTerms });
+        })
+        .join("<br>");
+    }
+    return wrapSayableBody(body, slide.say);
   }
 
   function renderSpeakBtn(speak) {
     const text = String(speak || "").trim();
     if (!text) return "";
-    return `<button type="button" class="lp-speak-btn" data-say="${escAttr(text)}" aria-label="השמע באנגלית: ${escAttr(text)}">${LP_SPEAKER_ICON}</button>`;
+    const label = curLang() === "en" ? `Play pronunciation: ${text}` : `השמע הגייה: ${text}`;
+    return `<button type="button" class="lp-speak-btn" data-say="${escAttr(text)}" aria-label="${escAttr(label)}">${LP_SPEAKER_ICON}</button>`;
   }
 
   // Wraps standalone English lines and any curated `say` phrases in clickable
@@ -2467,7 +7108,9 @@
     );
 
     function sayTag(display, speak, explain) {
-      return `<span class="lp-say-wrap"><span class="lp-say" data-say="${escAttr(speak)}" data-explain="${escAttr(explain || "")}">${display}</span>${renderSpeakBtn(speak)}</span>`;
+      // dir="ltr": an English sentence inside a Hebrew (RTL) slide would
+      // otherwise show its final period at the start of the line.
+      return `<span class="lp-say-wrap"><span class="lp-say" dir="ltr" data-say="${escAttr(speak)}" data-explain="${escAttr(explain || "")}">${display}</span>${renderSpeakBtn(speak)}</span>`;
     }
 
     return body
@@ -2509,7 +7152,9 @@
       JSON.stringify({
         lessonId: lesson.id,
         slideIndex,
-        returnUrl: "/services/ready-lessons",
+        // Back to whichever page opened the lesson (lessons library or the
+        // Learn English page), including its #topic hash.
+        returnUrl: `${window.location.pathname}${window.location.hash}`,
         lessonName: lesson.name,
       })
     );
@@ -2581,10 +7226,47 @@
       document.body.classList.toggle("lesson-player-expanded", expanded);
       if (expandBtn) {
         expandBtn.setAttribute("aria-pressed", expanded ? "true" : "false");
-        expandBtn.setAttribute("aria-label", expanded ? "חזור לחלון קטן" : "הגדל למסך מלא");
+        expandBtn.setAttribute(
+          "aria-label",
+          curLang() === "en"
+            ? expanded
+              ? "Exit fullscreen"
+              : "Fullscreen"
+            : expanded
+              ? "חזור לחלון קטן"
+              : "הגדל למסך מלא"
+        );
         expandBtn.innerHTML = expanded ? COMPRESS_ICON : EXPAND_ICON;
       }
     }
+
+    // The nav arrow glyphs point toward reading-start direction, so they must
+    // flip with the language's text direction (RTL Hebrew vs LTR English).
+    function relabelPlayerChrome() {
+      const en = curLang() === "en";
+      const prevArrow = en ? "←" : "→";
+      const nextArrow = en ? "→" : "←";
+      [prevBtn, prevMobile].forEach((btn) => {
+        if (!btn) return;
+        btn.textContent = prevArrow;
+        btn.setAttribute("aria-label", en ? "Previous slide" : "שקופית קודמת");
+      });
+      [nextBtn, nextMobile].forEach((btn) => {
+        if (!btn) return;
+        btn.textContent = nextArrow;
+        btn.setAttribute("aria-label", en ? "Next slide" : "שקופית הבאה");
+      });
+      closeBtn?.setAttribute("aria-label", en ? "Close" : "סגירה");
+      bgBtn?.setAttribute("aria-label", en ? "Slide background" : "רקע לשקופיות");
+      bgBtn?.setAttribute("title", en ? "Slide background" : "רקע לשקופיות");
+      pdfBtn?.setAttribute("aria-label", en ? "Show PDF slides" : "הצג את מצגת ה-PDF");
+      pdfBtn?.setAttribute("title", en ? "PDF slides" : "מצגת PDF");
+      setExpanded(player.classList.contains("is-expanded"));
+    }
+    window.addEventListener("gameclass:lang", relabelPlayerChrome);
+    // i18n.js's own initial setLang() may run (and dispatch this event) before
+    // this listener is registered, so also apply the current language once now.
+    relabelPlayerChrome();
 
     const SPEAKER_ICON = LP_SPEAKER_ICON;
 
@@ -2780,7 +7462,7 @@
                     (g) =>
                       `<button type="button" class="lp-game-btn" data-game-id="${g.id}">
                         <span class="lp-game-btn-icon" aria-hidden="true">${g.icon || "🎮"}</span>
-                        <span class="lp-game-btn-label">${g.label}</span>
+                        <span class="lp-game-btn-label">${curLang() === "en" ? g.labelEn : g.label}</span>
                       </button>`
                   )
                   .join("")}
@@ -2825,14 +7507,14 @@
         </div>`;
     }
 
-    function isHebrewLesson(lessonData) {
-      return lessonData?.subject !== "english";
+    function isHebrewLesson() {
+      return curLang() !== "en";
     }
 
     function renderVolcanoOutputScene(hebrew = true) {
       const labels = hebrew
         ? { lava: "לבה", smoke: "עשן", ash: "אפר געשי" }
-        : { lava: "lava", smoke: "smoke", ash: "ash" };
+        : { lava: "Lava", smoke: "Smoke", ash: "Ash" };
       return `
         <div class="lp-volcano-scene lp-volcano-scene--output" aria-hidden="true">
           <div class="lp-volcano-output-badge lp-volcano-output-badge--lava">
@@ -2891,7 +7573,10 @@
         </div>`;
     }
 
-    function renderVolcanoStatusScene() {
+    function renderVolcanoStatusScene(hebrew = true) {
+      const labels = hebrew
+        ? { active: "פעיל", dormant: "רדום", extinct: "כבוי" }
+        : { active: "Active", dormant: "Dormant", extinct: "Extinct" };
       return `
         <div class="lp-volcano-scene lp-volcano-scene--status" aria-hidden="true">
           <div class="lp-volcano-status-sky"></div>
@@ -2902,21 +7587,21 @@
                 <ellipse class="lp-volcano-status-glow" fill="#ff6b35" cx="30" cy="20" rx="7" ry="4"/>
               </svg>
               <div class="lp-volcano-status-smoke"><span></span><span></span></div>
-              <small>פעיל</small>
+              <small>${labels.active}</small>
             </div>
             <div class="lp-volcano-status-item lp-volcano-status-item--dormant">
               <svg viewBox="0 0 60 70" aria-hidden="true">
                 <path fill="#5d4037" d="M10 68 L30 24 L50 68 Z"/>
                 <ellipse fill="#8d6e63" cx="30" cy="26" rx="5" ry="3"/>
               </svg>
-              <small>רדום</small>
+              <small>${labels.dormant}</small>
             </div>
             <div class="lp-volcano-status-item lp-volcano-status-item--extinct">
               <svg viewBox="0 0 60 70" aria-hidden="true">
                 <path fill="#9e9e9e" d="M12 68 L30 30 L48 68 Z"/>
                 <path fill="#bdbdbd" d="M22 68 L30 38 L38 68 Z"/>
               </svg>
-              <small>כבוי</small>
+              <small>${labels.extinct}</small>
             </div>
           </div>
         </div>`;
@@ -2926,7 +7611,7 @@
       if (variant === "output") return renderVolcanoOutputScene(hebrew);
       if (variant === "world") return renderVolcanoWorldScene();
       if (variant === "earth") return renderVolcanoEarthScene();
-      if (variant === "status") return renderVolcanoStatusScene();
+      if (variant === "status") return renderVolcanoStatusScene(hebrew);
       if (variant === "lava") return renderVolcanoMountainScene(" lp-volcano-scene--lava");
       const modifierClass =
         variant === "celebrate"
@@ -2943,7 +7628,15 @@
       let bodyHtml = "";
       let bodyLayout = "default";
 
-      if (slide.items?.length) {
+      if (slide.pictures?.length) {
+        bodyHtml = `<ul class="lp-picture-grid" data-count="${slide.pictures.length}">${slide.pictures
+          .map(
+            (p) =>
+              `<li class="lp-picture-card"><img class="lp-picture-img" src="${escAttr(p.img)}" alt="${escAttr(p.en)}" draggable="false" /><span class="lp-word-cell"><button type="button" class="lp-word" dir="ltr" data-en="${escAttr(p.en)}" data-he="${escAttr(p.he)}">${escHtml(p.en)}</button>${renderSpeakBtn(p.en)}</span><span class="lp-picture-he">${escHtml(p.he)}</span></li>`
+          )
+          .join("")}</ul>`;
+        bodyLayout = "pictures";
+      } else if (slide.items?.length) {
         bodyHtml = `<ul class="lp-slide-list">${slide.items
           .map(
             (it) =>
@@ -2959,7 +7652,7 @@
       const videoHtml = slide.video ? renderYoutubeEmbed(slide.video, slide.videoTitle) : "";
       const visualHtml =
         slide.visual && slide.visual.startsWith("volcano-")
-          ? renderVolcanoScene(slide.visual.slice("volcano-".length), { hebrew: isHebrewLesson(lesson) })
+          ? renderVolcanoScene(slide.visual.slice("volcano-".length), { hebrew: isHebrewLesson() })
           : "";
       const useGlossaryGrid = bodyLayout === "glossary-grid";
       if (useGlossaryGrid && visualHtml) {
@@ -2974,7 +7667,7 @@
       const titleHtml = formatLessonText(slide.title || "");
 
       return `
-        <div class="lp-slide-inner${hasSideVisual ? " has-visual" : ""}${useGlossaryGrid ? " has-glossary-grid" : ""}${videoHtml ? " has-video" : ""}${isLast ? " lp-slide-inner--outro" : ""}">
+        <div class="lp-slide-inner${hasSideVisual ? " has-visual" : ""}${useGlossaryGrid ? " has-glossary-grid" : ""}${bodyLayout === "pictures" ? " has-pictures" : ""}${videoHtml ? " has-video" : ""}${isLast ? " lp-slide-inner--outro" : ""}">
           ${isLast ? '<div class="lp-outro-confetti" aria-hidden="true"></div>' : ""}
           <div class="lp-slide-text-col">
             <div class="lp-slide-head">
@@ -3115,16 +7808,19 @@
     }
 
     function open(lessonId) {
-      lesson = LESSON_CATALOG[lessonId];
+      lesson = localizeLesson(LESSON_CATALOG[lessonId]);
       if (!lesson) return;
       if (lesson.premium && !window.PleyiPremium?.hasPremium?.()) {
         window.PleyiPremium?.ensureLessonAccess?.(lessonId, lesson.nameMain || lesson.name);
         lesson = null;
         return;
       }
-      pdfMode = !!lesson.pdfSlides?.length;
+      // The PDF slide images are baked-in Hebrew graphics that can't be
+      // localized — fall back to the (translatable) text slides in English.
+      const hasPdf = curLang() !== "en" && !!lesson.pdfSlides?.length;
+      pdfMode = hasPdf;
       if (pdfBtn) {
-        pdfBtn.classList.toggle("hidden", !lesson.pdfSlides?.length);
+        pdfBtn.classList.toggle("hidden", curLang() === "en" || !lesson.pdfSlides?.length);
         pdfBtn.setAttribute("aria-pressed", pdfMode ? "true" : "false");
       }
       steps = buildSteps();
@@ -3134,7 +7830,7 @@
       renderStep();
       player.classList.remove("hidden");
       player.setAttribute("aria-hidden", "false");
-      setExpanded(false);
+      setExpanded(pdfMode);
       document.body.style.overflow = "hidden";
     }
     openLessonSlides = open;
@@ -3162,7 +7858,9 @@
     closeBtn?.addEventListener("click", close);
     pdfBtn?.addEventListener("click", (e) => {
       e.stopPropagation();
-      setPdfMode(!pdfMode);
+      const next = !pdfMode;
+      setPdfMode(next);
+      setExpanded(next);
     });
     expandBtn?.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -3271,5 +7969,10 @@
     init();
   }
 
-  window.ReadyLessons = { catalog: LESSON_CATALOG, subjectLabels: SUBJECT_LABELS };
+  window.ReadyLessons = {
+    catalog: LESSON_CATALOG,
+    subjectLabels: SUBJECT_LABELS,
+    openLesson: (lessonId) => openLessonSlides?.(lessonId),
+    localize: localizeLesson,
+  };
 })();

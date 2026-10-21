@@ -100,6 +100,7 @@
           reason,
         }).catch((err) => console.warn("history save failed", err));
       }
+      window.StudentProgress?.record({ kind: "game", gameId, gameTitle: displayTitle, score });
 
       if (!sessionStorage.getItem("gameclass-lesson-return")) return;
 

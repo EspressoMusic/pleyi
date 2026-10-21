@@ -12,6 +12,7 @@ const roomsLib = require("./lib/rooms");
 const { parseLearningContent, normalizeLearningContent } = require("./lib/parse-content");
 const { compatibleRoomGames } = require("./lib/room-games");
 const premiumLib = require("./lib/premium");
+const studentProgress = require("./lib/student-progress");
 const aiLesson = require("./lib/ai-lesson");
 const { extractText } = require("./lib/extract-text");
 const { verifyIdToken } = require("./lib/firebase-admin");
@@ -32,7 +33,7 @@ const materialUpload = multer({
 
 app.use(express.json());
 
-const servicePages = ["ready-lessons", "worksheets", "family", "game-builder"];
+const servicePages = ["ready-lessons", "english", "english-worksheet", "worksheets", "family", "game-builder"];
 servicePages.forEach((slug) => {
   app.get(`/services/${slug}`, (_req, res) => {
     res.sendFile(path.join(__dirname, "public", "services", `${slug}.html`));
@@ -82,6 +83,19 @@ app.get("/room", (_req, res) => {
 
 app.get("/premium", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "premium.html"));
+});
+
+app.get("/admin", (_req, res) => {
+  res.redirect(302, "/admin/students");
+});
+
+app.get("/admin/students", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin-students.html"));
+});
+
+// A student's personal homework page — the link the teacher sends.
+app.get("/s/:key", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "student.html"));
 });
 
 app.get("/play/:gameId", (req, res) => {
@@ -312,6 +326,80 @@ app.patch("/api/teacher/bookings/:id", teacherAuth, (req, res) => {
     res.status(400).json({ ok: false, error: e.message });
   }
 });
+
+/* ── Student files (the teacher opens one per student and sends its link) ── */
+
+// Errors from the store carry their own status (404 for an unknown file or
+// link); anything else is a bad request.
+function studentRoute(fn) {
+  return async (req, res) => {
+    try {
+      res.json({ ok: true, ...(await fn(req)) });
+    } catch (e) {
+      res.status(e.status || 400).json({ ok: false, error: e.message });
+    }
+  };
+}
+
+function pick(body, fields) {
+  return Object.fromEntries(fields.filter((f) => body?.[f] !== undefined).map((f) => [f, body[f]]));
+}
+
+// Student side: the secret link key is the only credential — no sign-in.
+app.get("/api/student/:key", studentRoute(async (req) => {
+  const student = await studentProgress.getPortal(req.params.key);
+  if (!student) throw Object.assign(new Error("הקישור לא תקין"), { status: 404 });
+  return { student };
+}));
+
+app.post("/api/progress", studentRoute(async (req) => {
+  const key = req.get("x-student-key") || req.body?.key;
+  const activity = await studentProgress.recordActivity(key, req.body?.activity);
+  return { id: activity.id };
+}));
+
+app.get("/api/admin/students", teacherAuth, studentRoute(async () => ({
+  students: await studentProgress.listStudents(),
+})));
+
+app.post("/api/admin/students", teacherAuth, studentRoute(async (req) => ({
+  student: await studentProgress.createStudent(pick(req.body, ["name", "grade"])),
+})));
+
+app.get("/api/admin/students/:id", teacherAuth, studentRoute(async (req) => {
+  const student = await studentProgress.getStudent(req.params.id);
+  if (!student) throw Object.assign(new Error("התלמיד לא נמצא"), { status: 404 });
+  return { student };
+}));
+
+app.patch("/api/admin/students/:id", teacherAuth, studentRoute((req) =>
+  studentProgress.updateDetails(req.params.id, pick(req.body, ["name", "grade", "focus"]))
+));
+
+app.delete("/api/admin/students/:id", teacherAuth, studentRoute(async (req) => {
+  await studentProgress.deleteStudent(req.params.id);
+  return {};
+}));
+
+app.post("/api/admin/students/:id/key", teacherAuth, studentRoute((req) =>
+  studentProgress.regenerateKey(req.params.id)
+));
+
+app.post("/api/admin/students/:id/notes", teacherAuth, studentRoute(async (req) => ({
+  note: await studentProgress.addNote(req.params.id, req.body?.text),
+})));
+
+app.delete("/api/admin/students/:id/notes/:noteId", teacherAuth, studentRoute((req) =>
+  studentProgress.deleteNote(req.params.id, req.params.noteId)
+));
+
+app.post("/api/admin/students/:id/homework", teacherAuth, studentRoute((req) =>
+  studentProgress.addHomework(req.params.id, req.body?.items, pick(req.body, ["dueDate", "note"]))
+));
+
+app.delete("/api/admin/students/:id/homework/:homeworkId", teacherAuth, studentRoute((req) =>
+  studentProgress.deleteHomework(req.params.id, req.params.homeworkId)
+));
 
 const rooms = new Map();
 

@@ -42,15 +42,15 @@ window.GAMES_CATALOG = {
   math: [],
 
   lifeskills: [
-    { id: "vocabulary-duel", title: "טריוויית מיומנויות", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"], level: "easy" },
-    { id: "hangman", title: "נחשו את המושג", desc: "נחשו מושג מכישורי חיים לפני שנגמרו הניסיונות", icon: "", color: "purple", tags: ["מיומנויות", "חידון"], level: "medium" },
-    { id: "tower-stack", title: "מגדל מיומנויות", desc: "בנו מגדל — בחרו את ההסבר הנכון", icon: "", color: "purple", tags: ["מיומנויות", "מהירות"], level: "hard" },
-    { id: "spot-diff", title: "מצא את ההבדל", desc: "מצאו את המושג או הרעיון השונה", icon: "", color: "yellow", tags: ["הבנה", "זיכרון"], level: "medium" },
+    { id: "vocabulary-duel", title: "טריוויית מיומנויות", titleEn: "Life Skills Trivia", desc: "מה המשמעות? ענו על מושגים מכישורי חיים", descEn: "What does it mean? Answer questions about life-skills concepts", icon: "", color: "yellow", tags: ["חידון", "מיומנויות"], level: "easy" },
+    { id: "hangman", title: "נחשו את המושג", titleEn: "Guess the Concept", desc: "נחשו מושג מכישורי חיים לפני שנגמרו הניסיונות", descEn: "Guess a life-skills concept before you run out of tries", icon: "", color: "purple", tags: ["מיומנויות", "חידון"], level: "medium" },
+    { id: "tower-stack", title: "מגדל מיומנויות", titleEn: "Skills Tower", desc: "בנו מגדל — בחרו את ההסבר הנכון", descEn: "Build a tower — pick the correct explanation", icon: "", color: "purple", tags: ["מיומנויות", "מהירות"], level: "hard" },
+    { id: "spot-diff", title: "מצא את ההבדל", titleEn: "Spot the Difference", desc: "מצאו את המושג או הרעיון השונה", descEn: "Find the concept or idea that's different", icon: "", color: "yellow", tags: ["הבנה", "זיכרון"], level: "medium" },
   ],
 
   science: [
-    { id: "vocabulary-duel", title: "טריוויית מושגים", desc: "מה ההגדרה? ענו על מושגים כלליים", icon: "", color: "yellow", tags: ["חידון", "מושגים"], level: "easy" },
-    { id: "spot-diff", title: "השוואת תופעות", desc: "מצאו את ההבדל בין שני מצבים", icon: "", color: "teal", tags: ["מושגים", "זיכרון"], level: "medium" },
+    { id: "vocabulary-duel", title: "טריוויית מושגים", titleEn: "Concept Trivia", desc: "מה ההגדרה? ענו על מושגים כלליים", descEn: "What's the definition? Answer general-knowledge questions", icon: "", color: "yellow", tags: ["חידון", "מושגים"], level: "easy" },
+    { id: "spot-diff", title: "השוואת תופעות", titleEn: "Compare Phenomena", desc: "מצאו את ההבדל בין שני מצבים", descEn: "Find the difference between two situations", icon: "", color: "teal", tags: ["מושגים", "זיכרון"], level: "medium" },
   ],
 
   subjects: {
@@ -60,11 +60,25 @@ window.GAMES_CATALOG = {
     science: "ידע כללי",
   },
 
+  subjectsEn: {
+    english: "English",
+    lifeskills: "Life Skills",
+    math: "Math",
+    science: "General Knowledge",
+  },
+
   subjectContent: {
     english: "אוצר מילים באנגלית — מילים, תרגום והגייה",
     lifeskills: "מושגים ומיומנויות לחיים ביומיום — תקשורת, כסף, בריאות ועוד",
     math: "תרגילי חשבון, פעולות ופתרון בעיות",
     science: "עובדות ומושגים כלליים — מדע, טבע ועולם",
+  },
+
+  subjectContentEn: {
+    english: "English vocabulary — words, translation, and pronunciation",
+    lifeskills: "Everyday life concepts and skills — communication, money, health, and more",
+    math: "Arithmetic exercises, operations, and problem solving",
+    science: "General facts and concepts — science, nature, and the world",
   },
 
   levels: {
@@ -73,8 +87,15 @@ window.GAMES_CATALOG = {
     hard: "קשה",
   },
 
+  levelsEn: {
+    easy: "Easy",
+    medium: "Medium",
+    hard: "Hard",
+  },
+
   levelLabel(level) {
-    return this.levels[level] || this.levels.medium;
+    const dict = window.I18n?.lang === "en" ? this.levelsEn : this.levels;
+    return dict[level] || dict.medium;
   },
 
   gameMeta(game, subject) {

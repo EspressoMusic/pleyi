@@ -1,6 +1,7 @@
 /* Ready lessons — square cards with title inside + fullscreen player */
+/* .lp-host: any other page that embeds the lesson player (e.g. Learn English). */
 
-body.page-ready-lessons {
+body:is(.page-ready-lessons, .lp-host) {
   --lesson-turquoise: var(--memteal);
   --lesson-turquoise-light: #33ecd6;
   --lesson-card-ink: #000000;
@@ -11,7 +12,7 @@ body.page-ready-lessons {
   font-family: "Varela Round", var(--font-sans, "Google Sans"), system-ui, sans-serif;
 }
 
-body.page-ready-lessons .svc-lesson-grid {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-grid {
   grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   gap: 20px;
   max-width: 960px;
@@ -19,37 +20,37 @@ body.page-ready-lessons .svc-lesson-grid {
 
 /* Phones: two smaller cards per row instead of one oversized square column */
 @media (max-width: 768px) {
-  body.page-ready-lessons .svc-lesson-grid {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     max-width: 460px;
   }
 
-  body.page-ready-lessons .svc-lesson-preview {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview {
     padding: 8px 8px 10px;
     gap: 6px;
     border-radius: 16px;
   }
 
-  body.page-ready-lessons .svc-lesson-title-wrap {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-title-wrap {
     padding-top: 22px;
     padding-bottom: 38px;
   }
 
-  body.page-ready-lessons .svc-lesson-name,
-  body.page-ready-lessons .svc-lesson-part {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-name,
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-part {
     font-size: clamp(0.82rem, 3.6vw, 1rem);
     line-height: 1.15;
   }
 
-  body.page-ready-lessons .svc-lesson-preview .js-lesson-open {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview .js-lesson-open {
     bottom: 10px;
     min-height: 26px;
     padding: 5px 8px;
     font-size: clamp(0.64rem, 2.6vw, 0.76rem);
   }
 
-  body.page-ready-lessons .svc-lesson-info-toggle {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-info-toggle {
     top: 6px;
     inset-inline-end: 6px;
     width: 18px;
@@ -57,22 +58,22 @@ body.page-ready-lessons .svc-lesson-grid {
     font-size: 9px;
   }
 
-  body.page-ready-lessons .svc-lesson-learned-badge,
-  body.page-ready-lessons .svc-lesson-premium-lock,
-  body.page-ready-lessons .svc-lesson-recommended-badge {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-learned-badge,
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-premium-lock,
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-recommended-badge {
     top: 6px;
     padding: 2px 7px;
     font-size: 0.58rem;
   }
 
-  body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.hidden)) .svc-lesson-title-wrap,
-  body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
-  body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.hidden)) .svc-lesson-title-wrap,
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
     padding-top: 1.4rem;
   }
 }
 
-body.page-ready-lessons .svc-lesson-card {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-card {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -87,7 +88,7 @@ body.page-ready-lessons .svc-lesson-card {
   cursor: default;
 }
 
-body.page-ready-lessons .svc-lesson-preview {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview {
   position: relative;
   aspect-ratio: 1 / 1;
   width: 100%;
@@ -112,19 +113,19 @@ body.page-ready-lessons .svc-lesson-preview {
   cursor: pointer;
 }
 
-body.page-ready-lessons .svc-lesson-card:hover .svc-lesson-preview {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-card:hover .svc-lesson-preview {
   transform: scale(1.08);
   z-index: 2;
 }
 
-body.page-ready-lessons .svc-lesson-preview--teal,
-body.page-ready-lessons .svc-lesson-preview--yellow,
-body.page-ready-lessons .svc-lesson-preview--pink,
-body.page-ready-lessons .svc-lesson-preview--orange {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview--teal,
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview--yellow,
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview--pink,
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview--orange {
   background: var(--lesson-turquoise) !important;
 }
 
-body.page-ready-lessons .svc-lesson-title-wrap {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-title-wrap {
   position: absolute;
   inset: 0;
   display: flex;
@@ -139,8 +140,8 @@ body.page-ready-lessons .svc-lesson-title-wrap {
   pointer-events: none;
 }
 
-body.page-ready-lessons .svc-lesson-name,
-body.page-ready-lessons .svc-lesson-part {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-name,
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-part {
   margin: 0;
   width: 100%;
   text-align: center;
@@ -153,14 +154,14 @@ body.page-ready-lessons .svc-lesson-part {
   overflow-wrap: normal;
 }
 
-body.page-ready-lessons .svc-lesson-name {
-  font-size: clamp(1.2rem, 4.5vw, 1.65rem);
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-name {
+  font-size: calc(var(--card-fit, 1) * clamp(1.2rem, 4.5vw, 1.65rem));
   line-height: 1.1;
   font-weight: 900;
 }
 
-body.page-ready-lessons .svc-lesson-part {
-  font-size: clamp(1.2rem, 4.5vw, 1.65rem);
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-part {
+  font-size: calc(var(--card-fit, 1) * clamp(1.2rem, 4.5vw, 1.65rem));
   line-height: 1.1;
   font-weight: 900;
   opacity: 1;
@@ -168,18 +169,18 @@ body.page-ready-lessons .svc-lesson-part {
 
 /* When a lesson has both a subject and a specific part, the part (e.g. "הלב")
    is the headline and the subject (e.g. "גוף האדם") is a small label under it. */
-body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-part {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-part {
   order: -1;
-  font-size: clamp(1.3rem, 5.2vw, 1.85rem);
+  font-size: calc(var(--card-fit, 1) * clamp(1.3rem, 5.2vw, 1.85rem));
   line-height: 1.15;
 }
 
-body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-name {
-  font-size: clamp(0.8rem, 2.8vw, 0.95rem);
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-name {
+  font-size: calc(var(--card-fit, 1) * clamp(0.8rem, 2.8vw, 0.95rem));
   font-weight: 700;
 }
 
-body.page-ready-lessons .svc-lesson-preview .js-lesson-open {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview .js-lesson-open {
   position: absolute;
   left: 50%;
   bottom: 12px;
@@ -196,7 +197,7 @@ body.page-ready-lessons .svc-lesson-preview .js-lesson-open {
   pointer-events: none;
 }
 
-body.page-ready-lessons .js-lesson-open {
+body:is(.page-ready-lessons, .lp-host) .js-lesson-open {
   flex-shrink: 0;
   width: 100%;
   margin: 0;
@@ -205,7 +206,7 @@ body.page-ready-lessons .js-lesson-open {
   box-shadow: none !important;
 }
 
-body.page-ready-lessons .js-lesson-open:active {
+body:is(.page-ready-lessons, .lp-host) .js-lesson-open:active {
   transform: none;
   box-shadow: none !important;
 }
@@ -246,7 +247,7 @@ body.page-ready-lessons .js-lesson-open:active {
   transform: translateY(-1px);
 }
 
-body.page-ready-lessons .svc-lesson-info-toggle {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-info-toggle {
   position: absolute;
   top: 8px;
   inset-inline-end: 8px;
@@ -261,12 +262,12 @@ body.page-ready-lessons .svc-lesson-info-toggle {
   transform: none;
 }
 
-body.page-ready-lessons .svc-lesson-info-toggle:hover {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-info-toggle:hover {
   background: var(--memyellow);
   transform: scale(1.05);
 }
 
-body.page-ready-lessons .svc-lesson-learned-badge {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-learned-badge {
   position: absolute;
   top: 8px;
   inset-inline-start: 8px;
@@ -284,14 +285,14 @@ body.page-ready-lessons .svc-lesson-learned-badge {
   pointer-events: none;
 }
 
-body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.hidden)) .svc-lesson-title-wrap,
-body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
-body.page-ready-lessons .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.hidden)) .svc-lesson-title-wrap,
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
   padding-top: 1.85rem;
   box-sizing: border-box;
 }
 
-body.page-ready-lessons .svc-lesson-premium-lock {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-premium-lock {
   position: absolute;
   top: 8px;
   inset-inline-start: 8px;
@@ -311,7 +312,7 @@ body.page-ready-lessons .svc-lesson-premium-lock {
   box-shadow: 2px 2px 0 var(--ink);
 }
 
-body.page-ready-lessons .svc-lesson-recommended-badge {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-recommended-badge {
   position: absolute;
   top: 8px;
   inset-inline-start: 8px;
@@ -328,13 +329,13 @@ body.page-ready-lessons .svc-lesson-recommended-badge {
   box-shadow: 2px 2px 0 var(--ink);
 }
 
-body.page-ready-lessons .svc-lesson-premium-lock svg {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-premium-lock svg {
   width: 12px;
   height: 12px;
   flex-shrink: 0;
 }
 
-body.page-ready-lessons .svc-lesson-card.is-premium-locked .svc-lesson-preview {
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-card.is-premium-locked .svc-lesson-preview {
   filter: none;
 }
 
@@ -368,7 +369,7 @@ body.page-ready-lessons .svc-lesson-card.is-premium-locked .svc-lesson-preview {
 }
 
 /* ── Lesson info modal (opened from the "i" toggle) ── */
-body.page-ready-lessons #lessonInfoModal {
+body:is(.page-ready-lessons, .lp-host) #lessonInfoModal {
   position: fixed !important;
   z-index: 1500 !important;
 }
@@ -376,11 +377,11 @@ body.page-ready-lessons #lessonInfoModal {
 /* The login modal and the save/favorite toast can both fire while the lesson
    info modal is open (e.g. clicking "save" while logged out) — without these
    overrides they render at the site-wide z-index and end up hidden behind it. */
-body.page-ready-lessons #loginModal {
+body:is(.page-ready-lessons, .lp-host) #loginModal {
   z-index: 1600 !important;
 }
 
-body.page-ready-lessons #toast {
+body:is(.page-ready-lessons, .lp-host) #toast {
   z-index: 1700 !important;
 }
 
@@ -697,17 +698,17 @@ body.page-ready-lessons #toast {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body.page-ready-lessons .svc-lesson-preview {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview {
     transition: none;
   }
 
-  body.page-ready-lessons .svc-lesson-card:hover .svc-lesson-preview {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-card:hover .svc-lesson-preview {
     transform: none;
   }
 }
 
 /* ── Centered lesson player modal + optional fullscreen ── */
-body.page-ready-lessons .lesson-player {
+body:is(.page-ready-lessons, .lp-host) .lesson-player {
   position: fixed !important;
   inset: 0 !important;
   z-index: 2000;
@@ -721,15 +722,15 @@ body.page-ready-lessons .lesson-player {
   pointer-events: none;
 }
 
-body.page-ready-lessons .lesson-player:not(.hidden) {
+body:is(.page-ready-lessons, .lp-host) .lesson-player:not(.hidden) {
   pointer-events: auto;
 }
 
-body.page-ready-lessons .lesson-player.hidden {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.hidden {
   display: none !important;
 }
 
-body.page-ready-lessons .lesson-player-backdrop {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.48);
@@ -741,7 +742,7 @@ body.page-ready-lessons .lesson-player-backdrop {
   to { opacity: 1; }
 }
 
-body.page-ready-lessons .lesson-player-shell {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell {
   position: relative;
   z-index: 1;
   pointer-events: auto;
@@ -773,27 +774,27 @@ body.page-ready-lessons .lesson-player-shell {
   }
 }
 
-body.page-ready-lessons .lesson-player.is-expanded {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded {
   padding: 0;
   place-items: stretch;
   z-index: 5000;
   background: linear-gradient(160deg, #f1eefb 0%, #e6def7 100%);
 }
 
-body.page-ready-lessons.lesson-player-expanded > .navbar,
-body.page-ready-lessons.lesson-player-expanded > header.navbar,
-body.page-ready-lessons.lesson-player-expanded > .mobile-nav,
-body.page-ready-lessons.lesson-player-expanded > .scroll-progress,
-body.page-ready-lessons.lesson-player-expanded > .back-to-top-btn {
+body:is(.page-ready-lessons, .lp-host).lesson-player-expanded > .navbar,
+body:is(.page-ready-lessons, .lp-host).lesson-player-expanded > header.navbar,
+body:is(.page-ready-lessons, .lp-host).lesson-player-expanded > .mobile-nav,
+body:is(.page-ready-lessons, .lp-host).lesson-player-expanded > .scroll-progress,
+body:is(.page-ready-lessons, .lp-host).lesson-player-expanded > .back-to-top-btn {
   visibility: hidden;
   pointer-events: none;
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lesson-player-backdrop {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lesson-player-backdrop {
   display: none;
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lesson-player-shell {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lesson-player-shell {
   width: 100%;
   height: 100%;
   max-height: none;
@@ -807,103 +808,115 @@ body.page-ready-lessons .lesson-player.is-expanded .lesson-player-shell {
 
 /* Fullscreen has far more room than the windowed modal — make the text
    itself bigger and clearer instead of just leaving it small and centered. */
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner {
   max-width: 46rem;
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-visual {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-visual {
   max-width: min(64rem, 92vw);
   padding-inline: clamp(20px, 4vw, 48px);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-visual .lp-slide-text-col {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-visual .lp-slide-text-col {
   max-width: min(34rem, 52%);
   padding-inline: clamp(14px, 2.5vw, 28px);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-video {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-video {
   max-width: min(64rem, 92vw);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-video .lp-slide-text-col {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-video .lp-slide-text-col {
   max-width: min(34rem, 52%);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner.has-video .lp-slide-video {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-video .lp-slide-video {
   max-width: min(480px, 46%);
   width: min(480px, 46%);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-title {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-title {
   font-size: calc(var(--lp-fit, 1) * clamp(2.2rem, 7vh, 4.4rem));
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-body {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-body {
   font-size: calc(var(--lp-fit, 1) * clamp(1.4rem, 4vh, 2.15rem));
   max-width: 46rem;
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner--outro .lp-slide-title {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner--outro .lp-slide-title {
   font-size: calc(var(--lp-fit, 1) * clamp(3rem, 9vh, 5.6rem));
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-inner--outro .lp-slide-body {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner--outro .lp-slide-body {
   font-size: calc(var(--lp-fit, 1) * clamp(1.9rem, 5.5vh, 2.6rem));
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-list {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-list {
   max-width: 420px;
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-list li {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-list li {
   padding: calc(var(--lp-fit, 1) * 14px) 18px;
   font-size: calc(var(--lp-fit, 1) * 1.2rem);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-list li span:last-child {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-list li span:last-child {
   font-size: calc(var(--lp-fit, 1) * 1.1rem);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-word {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-word {
   font-size: calc(var(--lp-fit, 1) * 1.3rem);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-slide-games-intro {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-games-intro {
   font-size: 1.2rem;
   max-width: 34rem;
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-volcano-scene:not(.lp-volcano-scene--output) {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-volcano-scene:not(.lp-volcano-scene--output) {
   width: clamp(200px, 22vw, 320px);
   height: clamp(200px, 22vw, 320px);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-volcano-scene--output {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-volcano-scene--output {
   min-width: clamp(260px, 28vw, 380px);
 }
 
-body.page-ready-lessons .lesson-player.is-expanded .lp-volcano-output-badge {
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-volcano-output-badge {
   font-size: clamp(1.1rem, 2.6vh, 1.35rem);
   padding: 14px 22px;
 }
 
-body.page-ready-lessons .lesson-player-top-actions {
+/* PDF-slide lessons: let the page image fill the whole stage instead of
+   staying capped at the windowed-modal width, in both windowed and
+   fullscreen (is-expanded) modes. */
+body:is(.page-ready-lessons, .lp-host) .lp-slide-inner--pdf {
+  max-width: 100%;
+  height: 100%;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-slide:has(.lp-slide-inner--pdf) {
+  padding: clamp(8px, 1.5vh, 16px) clamp(8px, 1.5vw, 16px);
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-top-actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-body.page-ready-lessons .lesson-player-bg-wrap {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-bg-wrap {
   position: relative;
 }
 
-body.page-ready-lessons .lesson-player-pdf-toggle.hidden {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle.hidden {
   display: none;
 }
 
-body.page-ready-lessons .lesson-player-bg-btn,
-body.page-ready-lessons .lesson-player-pdf-toggle,
-body.page-ready-lessons .lesson-player-expand {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-bg-btn,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-expand {
   width: 36px;
   height: 36px;
   min-width: 36px;
@@ -922,18 +935,18 @@ body.page-ready-lessons .lesson-player-expand {
   transition: background 0.12s, transform 0.12s, border-color 0.12s;
 }
 
-body.page-ready-lessons .lesson-player-bg-btn:hover,
-body.page-ready-lessons .lesson-player-bg-btn[aria-expanded="true"] {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-bg-btn:hover,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-bg-btn[aria-expanded="true"] {
   background: #fff;
   border-color: color-mix(in srgb, var(--ink) 35%, transparent);
 }
 
-body.page-ready-lessons .lesson-player-bg-btn:active,
-body.page-ready-lessons .lesson-player-expand:active {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-bg-btn:active,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-expand:active {
   transform: scale(0.97);
 }
 
-body.page-ready-lessons .lesson-player-bg-menu {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-bg-menu {
   position: absolute;
   top: calc(100% + 8px);
   inset-inline-end: 0;
@@ -948,11 +961,11 @@ body.page-ready-lessons .lesson-player-bg-menu {
   box-shadow: var(--shadow-sticker);
 }
 
-body.page-ready-lessons .lesson-player-bg-menu.hidden {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-bg-menu.hidden {
   display: none;
 }
 
-body.page-ready-lessons .lp-bg-swatch {
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch {
   width: 32px;
   height: 32px;
   padding: 0;
@@ -962,42 +975,42 @@ body.page-ready-lessons .lp-bg-swatch {
   transition: transform 0.12s, border-color 0.12s;
 }
 
-body.page-ready-lessons .lp-bg-swatch:hover {
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch:hover {
   transform: scale(1.08);
 }
 
-body.page-ready-lessons .lp-bg-swatch.active {
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch.active {
   border-color: var(--ink);
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--memteal);
 }
 
-body.page-ready-lessons .lp-bg-swatch[data-bg="default"] { background: linear-gradient(160deg, #f1eefb 0%, #e6def7 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="mint"] { background: linear-gradient(160deg, #e3f7f1 0%, #cdeee2 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="peach"] { background: linear-gradient(160deg, #fef1e6 0%, #fbdfc7 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="lavender"] { background: linear-gradient(160deg, #f1eefb 0%, #e0d6f5 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="sky"] { background: linear-gradient(160deg, #e9f4fd 0%, #cee6f9 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="sand"] { background: linear-gradient(160deg, #fbf6e9 0%, #f1e6c4 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="navy"] { background: linear-gradient(160deg, #1b2340 0%, #232c52 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="plum"] { background: linear-gradient(160deg, #2e1b34 0%, #3d2444 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="forest"] { background: linear-gradient(160deg, #16281f 0%, #1e3327 100%); }
-body.page-ready-lessons .lp-bg-swatch[data-bg="charcoal"] { background: linear-gradient(160deg, #201f22 0%, #2b2a2e 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="default"] { background: linear-gradient(160deg, #f1eefb 0%, #e6def7 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="mint"] { background: linear-gradient(160deg, #e3f7f1 0%, #cdeee2 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="peach"] { background: linear-gradient(160deg, #fef1e6 0%, #fbdfc7 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="lavender"] { background: linear-gradient(160deg, #f1eefb 0%, #e0d6f5 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="sky"] { background: linear-gradient(160deg, #e9f4fd 0%, #cee6f9 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="sand"] { background: linear-gradient(160deg, #fbf6e9 0%, #f1e6c4 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="navy"] { background: linear-gradient(160deg, #1b2340 0%, #232c52 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="plum"] { background: linear-gradient(160deg, #2e1b34 0%, #3d2444 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="forest"] { background: linear-gradient(160deg, #16281f 0%, #1e3327 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="charcoal"] { background: linear-gradient(160deg, #201f22 0%, #2b2a2e 100%); }
 
-body.page-ready-lessons .lesson-player-expand-icon {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-expand-icon {
   display: block;
 }
 
-body.page-ready-lessons .lesson-player-expand:hover,
-body.page-ready-lessons .lesson-player-expand[aria-pressed="true"] {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-expand:hover,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-expand[aria-pressed="true"] {
   background: #fff;
   border-color: color-mix(in srgb, var(--ink) 35%, transparent);
 }
 
-body.page-ready-lessons .lesson-player-pdf-toggle:hover {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle:hover {
   background: #fff;
   border-color: color-mix(in srgb, var(--ink) 35%, transparent);
 }
 
-body.page-ready-lessons .lesson-player-pdf-toggle[aria-pressed="true"] {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="true"] {
   background: var(--memteal);
   border-color: var(--ink);
 }
@@ -1230,7 +1243,7 @@ body.page-ready-lessons .lesson-player-pdf-toggle[aria-pressed="true"] {
 .lp-slide-inner--pdf {
   width: 100%;
   height: 100%;
-  max-width: min(64rem, 100%);
+  max-width: 100%;
   align-self: stretch;
   justify-content: center;
   padding-inline: 0;
@@ -2067,140 +2080,140 @@ body.page-ready-lessons .lesson-player-pdf-toggle[aria-pressed="true"] {
 }
 
 /* Slide background themes — color fills the whole card (shell), not just the inner rectangle */
-body.page-ready-lessons .lesson-player-shell.lp-bg-mint {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-mint {
   background: linear-gradient(160deg, #e3f7f1 0%, #d3f0e6 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-peach {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-peach {
   background: linear-gradient(160deg, #fef1e6 0%, #fce3d1 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-lavender {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-lavender {
   background: linear-gradient(160deg, #f1eefb 0%, #e6def7 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-sky {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-sky {
   background: linear-gradient(160deg, #e9f4fd 0%, #d7ebfa 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-sand {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-sand {
   background: linear-gradient(160deg, #fbf6e9 0%, #f4ecd2 100%);
 }
 
 /* Bold dark swatches — self-contained: bring their own light-ink text, like the site's sticker cards */
-body.page-ready-lessons .lesson-player-shell.lp-bg-navy {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-navy {
   background: linear-gradient(160deg, #1b2340 0%, #232c52 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-plum {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-plum {
   background: linear-gradient(160deg, #2e1b34 0%, #3d2444 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-forest {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-forest {
   background: linear-gradient(160deg, #16281f 0%, #1e3327 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-charcoal {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-charcoal {
   background: linear-gradient(160deg, #201f22 0%, #2b2a2e 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark {
   --lp-ink: #f4f1fb;
   --lp-muted: rgba(244, 241, 251, 0.72);
   --lp-surface: rgba(255, 255, 255, 0.08);
   color: var(--lp-ink);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lesson-player-progress,
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-slide-title,
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-slide-body,
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-slide-games-intro {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-progress,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-title,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-body,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-games-intro {
   color: var(--lp-ink);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-word {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-word {
   background: rgba(0, 201, 183, 0.22);
   color: var(--lp-ink);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-word:hover {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-word:hover {
   background: rgba(0, 201, 183, 0.34);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-word.lp-word-active {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-word.lp-word-active {
   background: #00c9b7;
   color: #0f2220;
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-slide-kicker,
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-slide-list li span:last-child,
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lesson-player-progress {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-kicker,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-list li span:last-child,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-progress {
   color: var(--lp-muted);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lesson-player-nav {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-nav {
   background: var(--lp-surface);
   color: var(--lp-ink);
   border-color: rgba(244, 241, 251, 0.22);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lesson-player-nav:hover:not(:disabled) {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-nav:hover:not(:disabled) {
   background: #00c9b7;
   color: #0f2220;
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lesson-player-dot {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-dot {
   background: rgba(244, 241, 251, 0.28);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lesson-player-dot.active {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-dot.active {
   background: #00c9b7;
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-slide-list li {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-list li {
   background: var(--lp-surface);
   border-color: rgba(255, 255, 255, 0.14);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-game-btn {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-game-btn {
   background: var(--lp-surface);
   color: var(--lp-ink);
   border: 3px solid rgba(255, 255, 255, 0.35);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-game-btn:hover {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-game-btn:hover {
   background: #00c9b7;
   color: #0f2220;
   border-color: var(--lp-ink);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-game-btn-label {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-game-btn-label {
   color: var(--lp-ink);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-game-btn:hover .lp-game-btn-label {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-game-btn:hover .lp-game-btn-label {
   color: #0f2220;
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-slide-orb-ring {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-orb-ring {
   border-color: rgba(0, 201, 183, 0.5);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-slide-orb-core {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-orb-core {
   background: linear-gradient(160deg, #4de6d4 0%, #00c9b7 100%);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say {
   color: var(--lp-ink);
   text-decoration-color: rgba(0, 201, 183, 0.6);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say:hover,
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.is-popped {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say:hover,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.is-popped {
   background: rgba(0, 201, 183, 0.22);
 }
 
-body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
   background: #00c9b7;
   color: #0f2220;
 }
@@ -2754,5 +2767,146 @@ body.page-ready-lessons .lesson-player-shell.lp-bg-dark .lp-say.lp-say-active {
   .lp-volcano-range-markers i {
     animation: none;
     opacity: 0.85;
+  }
+}
+
+/* ── Picture vocabulary slides (slide.pictures) ──
+   Every size here scales with --lp-fit so a crowded slide shrinks to fit
+   instead of scrolling (slides must never scroll). */
+.lp-slide-inner.has-pictures {
+  max-width: 52rem;
+}
+
+.lp-picture-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(var(--lp-fit, 1) * clamp(10px, 2vh, 18px));
+  width: 100%;
+}
+
+/* Five pictures read better as 3 + 2 than 4 + 1. */
+.lp-picture-grid[data-count="5"] {
+  max-width: calc(var(--lp-fit, 1) * 520px);
+}
+
+.lp-picture-card {
+  flex: 0 1 calc(var(--lp-fit, 1) * 150px);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--lp-fit, 1) * 6px);
+  padding: calc(var(--lp-fit, 1) * 10px) 6px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.lp-picture-img {
+  width: min(100%, calc(var(--lp-fit, 1) * clamp(56px, 11vh, 96px)));
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.lp-picture-card .lp-word {
+  font-size: calc(var(--lp-fit, 1) * 1.2rem);
+}
+
+.lp-picture-card .lp-speak-btn {
+  width: calc(var(--lp-fit, 1) * 28px);
+  height: calc(var(--lp-fit, 1) * 28px);
+}
+
+.lp-picture-he {
+  font-size: calc(var(--lp-fit, 1) * 0.98rem);
+  font-weight: 800;
+  color: color-mix(in srgb, var(--ink) 65%, transparent);
+}
+
+/* Fullscreen on a wide screen: bigger pictures (phones keep their compact grid). */
+@media (min-width: 601px) {
+  body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-picture-card {
+    flex-basis: calc(var(--lp-fit, 1) * 200px);
+  }
+
+  body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-picture-grid[data-count="5"] {
+    max-width: calc(var(--lp-fit, 1) * 680px);
+  }
+
+  body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-picture-img {
+    width: min(100%, calc(var(--lp-fit, 1) * clamp(80px, 17vh, 150px)));
+  }
+
+  body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-picture-card .lp-word {
+    font-size: calc(var(--lp-fit, 1) * 1.5rem);
+  }
+}
+
+/* Long word lists (7+ words) split into two columns, so they fit the slide
+   instead of shrinking to the --lp-fit floor and still getting clipped. */
+.lp-slide-inner:has(.lp-slide-list > li:nth-child(7)) {
+  max-width: 52rem;
+}
+
+.lp-slide-list:has(> li:nth-child(7)) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 680px;
+}
+
+.lp-slide-list .lp-speak-btn {
+  width: max(20px, calc(var(--lp-fit, 1) * 28px));
+  height: max(20px, calc(var(--lp-fit, 1) * 28px));
+}
+
+@media (max-width: 600px) {
+  .lp-slide-list:has(> li:nth-child(7)) {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 320px;
+  }
+
+  /* Phones: three picture cards per row (two for a set of four). The word
+     itself opens the pronunciation popup, so the separate speaker button
+     is dropped to keep the narrow cards readable. */
+  .lp-picture-grid {
+    gap: 8px;
+  }
+
+  .lp-picture-grid[data-count="5"] {
+    max-width: none;
+  }
+
+  .lp-picture-grid[data-count="4"] {
+    max-width: 240px;
+  }
+
+  .lp-picture-card {
+    flex: 0 0 calc((100% - 16px) / 3);
+    padding: 6px 4px;
+    border-radius: 14px;
+    box-shadow: 3px 3px 0 0 var(--ink);
+  }
+
+  .lp-picture-grid[data-count="4"] .lp-picture-card {
+    flex-basis: calc((100% - 8px) / 2);
+  }
+
+  .lp-picture-card .lp-speak-btn {
+    display: none;
+  }
+
+  .lp-picture-card .lp-word {
+    padding: 2px 4px;
+    font-size: calc(var(--lp-fit, 1) * 1rem);
+  }
+
+  .lp-picture-img {
+    width: min(100%, calc(var(--lp-fit, 1) * 64px));
   }
 }

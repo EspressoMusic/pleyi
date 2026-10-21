@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>ניהול תלמידים — Pleyi</title>
+  <meta name="robots" content="noindex, nofollow"/>
+  <link rel="stylesheet" href="/styles.css?v=64"/>
+  <link rel="stylesheet" href="/css/admin-students.css?v=5"/>
+</head>
+<body class="adm-body">
+
+  <header class="adm-top">
+    <div class="adm-top-inner">
+      <a href="/" class="adm-home">חזרה לאתר</a>
+      <h1 class="adm-top-title">ניהול תלמידים</h1>
+      <button type="button" class="adm-link-btn hidden" id="admLock">נעילה</button>
+    </div>
+  </header>
+
+  <main class="adm-main">
+    <div class="adm-gate hidden" id="admGate">
+      <form class="adm-card adm-gate-card" id="admGateForm">
+        <h2 class="adm-h2">כניסת מנהל</h2>
+        <p class="adm-muted">הזינו את קוד המורה כדי לראות את התלמידים וההתקדמות שלהם.</p>
+        <label class="adm-field">
+          <span>קוד מורה</span>
+          <input type="password" id="admPin" required autocomplete="current-password" dir="ltr" />
+        </label>
+        <p class="adm-error hidden" id="admGateError"></p>
+        <button type="submit" class="btn btn-primary btn-candy adm-btn-full">כניסה</button>
+      </form>
+    </div>
+
+    <div class="hidden" id="admListView"></div>
+    <div class="hidden" id="admDetailView"></div>
+  </main>
+
+  <div class="toast hidden" id="toast" role="status"></div>
+
+  <script src="/js/english-vocab.js?v=2"></script>
+  <script src="/js/english-data.js?v=10"></script>
+  <script src="/js/english-reading.js?v=4"></script>
+  <script src="/js/admin-students.js?v=6"></script>
+</body>
+</html>

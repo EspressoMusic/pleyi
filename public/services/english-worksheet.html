@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <title>דפי עבודה להדפסה — Pleyi</title>
+  <meta name="description" content="דפי עבודה באנגלית להדפסה לפי נושא — עם דף תשובות למורה." />
+  <link rel="stylesheet" href="/css/fonts.css?v=3" />
+  <link rel="stylesheet" href="/css/english-worksheet.css?v=6" />
+</head>
+<body>
+  <header class="ws-toolbar" id="wsToolbar">
+    <div class="ws-toolbar-row">
+      <a class="ws-back" id="wsBack" href="/services/english">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        <span id="wsBackLabel">חזרה לנושא</span>
+      </a>
+      <h1 class="ws-toolbar-title" id="wsToolbarTitle"></h1>
+      <button type="button" class="ws-lang" id="wsLang"></button>
+    </div>
+    <div class="ws-toolbar-row ws-toolbar-row--controls">
+      <div class="ws-sheet-picker" id="wsSheetPicker" role="group"></div>
+      <label class="ws-switch">
+        <input type="checkbox" id="wsAnswers" />
+        <span class="ws-switch-track" aria-hidden="true"></span>
+        <span id="wsAnswersLabel">דף תשובות</span>
+      </label>
+      <button type="button" class="ws-print-btn" id="wsPrint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>
+        <span id="wsPrintLabel">הדפסה</span>
+      </button>
+    </div>
+    <p class="ws-tip" id="wsTip"></p>
+  </header>
+
+  <main class="ws-stage" id="wsStage">
+    <div class="ws-pages" id="wsPages"></div>
+  </main>
+
+  <script src="/js/english-printables.js?v=5"></script>
+  <script src="/js/english-data.js?v=10"></script>
+  <script src="/js/english-worksheet.js?v=4"></script>
+</body>
+</html>
