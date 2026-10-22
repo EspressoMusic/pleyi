@@ -337,7 +337,7 @@
 
   function wordItem(id) {
     const v = VOCAB[id];
-    return v ? { word: id, en: v.en, he: v.he, img: imgUrl(id), accept: v.accept || [] } : null;
+    return v ? { word: id, en: v.en, he: v.he, img: imgUrl(v.img || id), accept: v.accept || [] } : null;
   }
 
   // Typed answers: ignore case, extra spaces, trailing punctuation and

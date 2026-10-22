@@ -711,7 +711,9 @@ body:is(.page-ready-lessons, .lp-host) #toast {
 body:is(.page-ready-lessons, .lp-host) .lesson-player {
   position: fixed !important;
   inset: 0 !important;
-  z-index: 2000;
+  /* !important: styles.css gives every direct child of body z-index 1,
+     which put the navbar (1000) on top of the open lesson. */
+  z-index: 2000 !important;
   display: grid !important;
   place-items: center;
   padding: clamp(16px, 4vw, 32px);
@@ -2909,4 +2911,28 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
   .lp-picture-img {
     width: min(100%, calc(var(--lp-fit, 1) * 64px));
   }
+
+  /* Same for word lists and English lines: tapping the word or the line
+     opens the popup with its own speaker, and the fixed-size buttons kept
+     long glossaries from shrinking to fit a phone slide. */
+  .lp-slide-list .lp-speak-btn,
+  .lp-say-wrap .lp-speak-btn {
+    display: none;
+  }
+
+  /* Two game buttons per row instead of one, so the games slide fits. */
+  .lp-game-btn {
+    flex-basis: 110px;
+  }
+
+  /* A portrait phone has height to spare: 68vh left the slide area under
+     300px, so long glossaries and English slides were clipped. */
+  body:is(.page-ready-lessons, .lp-host) .lesson-player-shell {
+    height: min(88dvh, calc(100dvh - 48px));
+    min-height: 0;
+  }
+}
+
+.lp-slide-games-intro {
+  font-size: calc(var(--lp-fit, 1) * 1rem);
 }
