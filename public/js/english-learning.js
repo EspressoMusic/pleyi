@@ -24,6 +24,10 @@
       backToTopic: "חזרה לנושא",
       stepLesson: "השיעור",
       stepPractice: "תרגול",
+      stepGames: "משחקים",
+      backToLesson: "חזרה לשיעור",
+      gamesLead: "משחקים עם המילים של הנושא — עם ניקוד, זמן ושיאים.",
+      playGame: "לשחק",
       openLesson: "פתיחת השיעור",
       lessonMeta: (slides, duration) => `${slides} שקופיות · ${duration}`,
       noExercises: "עוד אין תרגילים בנושא הזה.",
@@ -67,6 +71,13 @@
       keepGoing: "התחלה טובה — תרגלו שוב ותשתפרו.",
       again: "סבב חדש",
       retryMistakes: "לתרגל את הטעויות",
+      makeNew: "ליצור תרגילים חדשים",
+      makeNewReading: "ליצור קטע קריאה חדש",
+      makingNew: "יוצרים תרגילים חדשים…",
+      makingNewReading: "כותבים קטע קריאה חדש…",
+      makingNewNote: "זה יכול לקחת עד חצי דקה.",
+      newFailed: "לא הצלחנו ליצור תרגילים חדשים כרגע. נסו שוב בעוד דקה.",
+      newFromPool: "הנה שאלות מהתרגיל שעוד לא תרגלתם.",
       mistakesTitle: "מה כדאי לחזור עליו",
       copyLink: "העתקת קישור לתרגיל",
       copied: "הקישור הועתק!",
@@ -146,6 +157,10 @@
       backToTopic: "Back to topic",
       stepLesson: "The lesson",
       stepPractice: "Practice",
+      stepGames: "Games",
+      backToLesson: "Back to the lesson",
+      gamesLead: "Games with this topic's words — with points, timers and records.",
+      playGame: "Play",
       openLesson: "Open the lesson",
       lessonMeta: (slides, duration) => `${slides} slides · ${duration}`,
       noExercises: "No exercises for this topic yet.",
@@ -189,6 +204,13 @@
       keepGoing: "Good start — practice again to improve.",
       again: "New round",
       retryMistakes: "Practice my mistakes",
+      makeNew: "Create new exercises",
+      makeNewReading: "Create a new passage",
+      makingNew: "Creating new exercises…",
+      makingNewReading: "Writing a new passage…",
+      makingNewNote: "This can take up to half a minute.",
+      newFailed: "We couldn't create new exercises right now. Try again in a minute.",
+      newFromPool: "Here are questions from this exercise you haven't practiced yet.",
       mistakesTitle: "Worth reviewing",
       copyLink: "Copy exercise link",
       copied: "Link copied!",
@@ -290,6 +312,8 @@
     arrowDown: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6"/></svg>`,
   };
   ICONS.print = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>`;
+  ICONS.sparkle = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 11.8 8.7 17 10.5 11.8 12.3 10 17.5 8.2 12.3 3 10.5 8.2 8.7 10 3.5Z"/><path d="M18.5 14.5v6M15.5 17.5h6"/></svg>`;
+  ICONS.spinner = `<svg class="eng-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke-opacity="0.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>`;
   ICONS["pick-picture"] = ICONS.picture;
 
   function lang() {
@@ -524,6 +548,14 @@
       { freq: 1320, at: 0.05, dur: 0.14, type: "triangle", vol: 0.1 },
     ],
     miss: [{ freq: 190, to: 140, dur: 0.22, type: "sawtooth", vol: 0.12, filter: 900 }],
+    // Vocabulary games (english-games.js): a soft swish for turning a memory
+    // card, and a burst with a bright ring for popping a balloon.
+    flip: [{ freq: 520, to: 820, dur: 0.09, type: "triangle", vol: 0.08 }],
+    pop: [
+      { freq: 1500, to: 260, dur: 0.08, type: "square", vol: 0.06, filter: 2600 },
+      { freq: 988, at: 0.05, dur: 0.16, type: "triangle", vol: 0.14 },
+      { freq: 1319, at: 0.11, dur: 0.24, type: "triangle", vol: 0.12 },
+    ],
   };
 
   function playSfx(name) {
@@ -696,6 +728,48 @@
     return sheets + card(href(null), t("printAll"), t("printAllMeta", pack.sheets.length), " eng-ex-card--print-all");
   }
 
+  /* ── Vocabulary games (english-games.js) — on the picture-vocabulary topics,
+     with the words their picture exercises use. ── */
+
+  const GAME_EXERCISE_TYPES = ["picture", "pick-picture", "listen", "match"];
+
+  function gameWords(topic) {
+    const games = window.EnglishGames;
+    if (!games || !topic || (topicGroup(topic) !== "vocab" && topic.id !== "vocabulary")) return [];
+    const ids = new Set();
+    (topic.exercises || []).forEach((ex) => {
+      if (GAME_EXERCISE_TYPES.includes(ex.type)) (ex.words || []).forEach((id) => ids.add(id));
+    });
+    const words = games.usable([...ids].map(wordItem));
+    return words.length >= games.MIN_WORDS ? words : [];
+  }
+
+  function findGame(topic, id) {
+    const gameId = /^game-(.+)$/.exec(id || "")?.[1];
+    if (!gameId || !gameWords(topic).length) return null;
+    return window.EnglishGames.find(gameId);
+  }
+
+  function gameCardsHtml(topic) {
+    if (!gameWords(topic).length) return "";
+    const games = window.EnglishGames;
+    return games.list
+      .map((game) => {
+        const best = games.bestText(topic.id, game.id);
+        return `
+          <div class="eng-ex-card eng-ex-card--game eng-ex-card--game-${esc(game.id)}">
+            <span class="eng-ex-icon">${game.icon}</span>
+            <span class="eng-ex-text">
+              <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/game-${esc(game.id)}">${esc(loc(game, "title"))}</a>
+              <span class="eng-ex-meta">${esc(loc(game, "desc"))}</span>
+              ${best ? `<span class="eng-ex-best">${esc(best)}</span>` : ""}
+            </span>
+            <span class="eng-item-action" aria-hidden="true">${esc(t("playGame"))}</span>
+          </div>`;
+      })
+      .join("");
+  }
+
   function renderTopic(topic) {
     const view = views.topic();
     if (!view) return;
@@ -749,6 +823,7 @@
       .join("");
 
     const printables = printCardsHtml(topic);
+    const gameCards = gameCardsHtml(topic);
     const units = readingUnits(topic);
     let stepNum = 0;
     const step = (title, body) => `
@@ -785,7 +860,18 @@
     view.innerHTML = `
       ${head}
       ${lessonCard || decks ? step(t("stepLesson"), `${lessonCard}${decks ? `<div class="eng-item-list">${decks}</div>` : ""}`) : ""}
-      ${step(t("stepPractice"), exercises ? `<div class="eng-ex-grid">${exercises}</div>` : `<p class="eng-empty">${esc(t("noExercises"))}</p>`)}
+      ${step(
+        t("stepPractice"),
+        `${exercises ? `<div class="eng-ex-grid">${exercises}</div>` : gameCards ? "" : `<p class="eng-empty">${esc(t("noExercises"))}</p>`}${
+          gameCards
+            ? `<div class="eng-practice-games">
+                <h4 class="eng-practice-sub">${esc(t("stepGames"))}</h4>
+                <p class="eng-step-lead">${esc(t("gamesLead"))}</p>
+                <div class="eng-ex-grid">${gameCards}</div>
+              </div>`
+            : ""
+        }`
+      )}
       ${
         units.length
           ? step(
@@ -842,30 +928,91 @@
     answered: false,
     phase: "question",
     isRetry: false,
+    isNew: false,
+    newRequest: null,
+    prepared: false,
     timer: null,
     state: null,
     startedAt: 0,
     recorded: false,
   };
 
+  /* ── Seen items: a new round starts with the questions the student hasn't
+     had yet, and "create new exercises" asks the server only for ones they
+     haven't seen. Kept per exercise in this browser, oldest first. ── */
 
-  function buildRound(ex) {
-    // A passage's questions follow the text, so they keep their order.
-    if (ex.type === "reading") return [...ex.questions];
-    if (ex.type === "match") {
-      const pairs = ex.pairs || ex.words.map((id) => ({ a: VOCAB[id].en, img: imgUrl(id), word: id }));
-      return [{ pairs: shuffle(pairs).slice(0, ex.boardSize || 6) }];
+  const SEEN_KEY = "pleyi-english-seen";
+  const SEEN_CAP = 600;
+
+  function readSeen() {
+    try {
+      return JSON.parse(localStorage.getItem(SEEN_KEY)) || {};
+    } catch {
+      return {};
     }
-    const pool = ex.words ? ex.words.map(wordItem).filter(Boolean) : ex.questions;
-    return shuffle(pool).slice(0, ex.roundSize || 10);
   }
 
-  function startExercise(topic, exercise, round = null) {
+  function seenKeys(topic, ex) {
+    return readSeen()[`${topic.id}/${ex.id}`] || [];
+  }
+
+  // Moves `keys` to the end of the exercise's list (the most recently seen).
+  function markSeen(topic, ex, keys) {
+    if (!keys.length) return;
+    const all = readSeen();
+    const id = `${topic.id}/${ex.id}`;
+    const now = new Set(keys);
+    all[id] = [...(all[id] || []).filter((k) => !now.has(k)), ...keys].slice(-SEEN_CAP);
+    try {
+      localStorage.setItem(SEEN_KEY, JSON.stringify(all));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // A short id for one of the exercise's own items; new items from the
+  // server bring their own `key`.
+  function itemKey(item) {
+    if (item.key) return item.key;
+    const str = JSON.stringify([item.word, item.text, item.answer, item.a, item.b]);
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = (h * 33 + str.charCodeAt(i)) | 0;
+    return `p${(h >>> 0).toString(36)}`;
+  }
+
+  function poolOf(ex) {
+    if (ex.type === "match") return ex.pairs || ex.words.map((id) => ({ a: VOCAB[id].en, img: imgUrl(id), word: id }));
+    return ex.words ? ex.words.map(wordItem).filter(Boolean) : ex.questions;
+  }
+
+  // `size` items of `pool`: the ones not seen yet first, then the ones seen
+  // longest ago — so rounds go through the whole exercise before repeating.
+  function freshest(pool, size, seen) {
+    const order = new Map(seen.map((k, i) => [k, i]));
+    const unseen = shuffle(pool.filter((item) => !order.has(itemKey(item))));
+    const old = pool.filter((item) => order.has(itemKey(item))).sort((a, b) => order.get(itemKey(a)) - order.get(itemKey(b)));
+    return shuffle([...unseen, ...old].slice(0, Math.max(0, size)));
+  }
+
+  function buildRound(topic, ex) {
+    // A passage's questions follow the text, so they keep their order.
+    if (ex.type === "reading") return [...ex.questions];
+    const seen = seenKeys(topic, ex);
+    if (ex.type === "match") return [{ pairs: freshest(poolOf(ex), ex.boardSize || 6, seen) }];
+    return freshest(poolOf(ex), ex.roundSize || 10, seen);
+  }
+
+  // mode: "retry" — only the last round's mistakes; "new" — a round of new
+  // items made by the server (see makeNewRound).
+  function startExercise(topic, exercise, round = null, mode = round ? "retry" : "") {
     clearTimeout(runner.timer);
     runner.topic = topic;
     runner.exercise = exercise;
-    runner.isRetry = !!round;
-    runner.round = round || buildRound(exercise);
+    runner.isRetry = mode === "retry";
+    runner.isNew = mode === "new";
+    runner.newRequest = null;
+    runner.prepared = false;
+    runner.round = round || buildRound(topic, exercise);
     runner.total = exercise.type === "match" ? runner.round.reduce((n, b) => n + b.pairs.length, 0) : runner.round.length;
     runner.index = 0;
     runner.ringIndex = 0;
@@ -874,13 +1021,238 @@
     runner.mistakeLog = [];
     runner.startedAt = Date.now();
     runner.recorded = false;
+    // A new reading passage counts as seen once it opens.
+    if (exercise.key) markSeen(topic, exercise, [exercise.key]);
     if (exercise.type === "reading") startReading();
     else renderQuestion();
   }
 
+  /* ── New exercises: the server writes new items in the exercise's own
+     format (lib/english-practice.js) and keeps them in a shared bank. ── */
+
+  function practiceRequest(path, topic, ex) {
+    return fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topicId: topic.id, exerciseId: ex.id, seen: seenKeys(topic, ex) }),
+    });
+  }
+
+  // Sent when a round ends: the server gets new items ready while the
+  // student looks at the results, so the button rarely has to wait.
+  function preparePractice(topic, ex) {
+    practiceRequest("/api/english/practice/prepare", topic, ex).catch(() => {});
+  }
+
+  // A practice word in a new sentence from the server ({ word, text, he }).
+  // On a matching board the sentence takes the word's place.
+  function sentenceWord(item, isMatch) {
+    const base = wordItem(item.word);
+    if (!base) return null;
+    if (isMatch) return { a: item.text, img: base.img, word: item.word, key: item.key };
+    return { ...base, text: item.text, sentenceHe: item.he || "", key: item.key };
+  }
+
+  // A round of the server's new items, topped up with the exercise's own
+  // unseen items when there are too few. Null when there is nothing new.
+  function newRound(topic, ex, items) {
+    if (ex.type === "reading") {
+      const [unit] = items;
+      if (!unit?.passage || !unit.questions?.length) return null;
+      const exercise = { ...ex, key: unit.key, passage: unit.passage, questions: unit.questions };
+      return { exercise, round: [...unit.questions] };
+    }
+    const isMatch = ex.type === "match";
+    const size = isMatch ? (ex.words ? 4 : ex.boardSize || 6) : ex.roundSize || 10;
+    const seen = seenKeys(topic, ex);
+    const seenSet = new Set(seen);
+    let fresh = items.map((item) => (item.word ? sentenceWord(item, isMatch) : item)).filter(Boolean);
+    let pool = poolOf(ex);
+    if (!fresh.length && !pool.some((item) => !seenSet.has(itemKey(item)))) return null;
+    // A board shows each picture once, so a word may be on it only once.
+    if (isMatch && ex.words) {
+      const words = new Set();
+      fresh = fresh.filter((p) => !words.has(p.word) && words.add(p.word)).slice(0, size);
+      pool = pool.filter((p) => !words.has(p.word));
+    }
+    fresh = fresh.slice(0, size);
+    const picked = shuffle([...fresh, ...freshest(pool, size - fresh.length, seen)]);
+    return { exercise: ex, round: isMatch ? [{ pairs: picked }] : picked, fromPool: !fresh.length };
+  }
+
+  function newButtonLabel() {
+    const reading = runner.exercise?.type === "reading";
+    if (runner.newRequest) return t(reading ? "makingNewReading" : "makingNew");
+    return t(reading ? "makeNewReading" : "makeNew");
+  }
+
+  function newButtonHtml() {
+    const busy = !!runner.newRequest;
+    return `<button type="button" class="btn btn-candy font-cartoon eng-btn-new" id="engMakeNew"${busy ? ' disabled aria-busy="true"' : ""}>${busy ? ICONS.spinner : ICONS.sparkle}<span>${esc(newButtonLabel())}</span></button>`;
+  }
+
+  function refreshNewButton() {
+    const btn = $("#engMakeNew");
+    if (!btn) return;
+    btn.outerHTML = newButtonHtml();
+    $("#engMakeNew").addEventListener("click", makeNewRound);
+    const msg = $(".eng-results-msg");
+    if (msg) msg.textContent = runner.newRequest ? t("makingNewNote") : runner.resultsMessage || "";
+  }
+
+  async function makeNewRound() {
+    if (runner.newRequest) return;
+    const { topic } = runner;
+    const ex = findExercise(topic, runner.exercise.id) || runner.exercise;
+    const request = {};
+    runner.newRequest = request;
+    refreshNewButton();
+    let items = [];
+    try {
+      const res = await practiceRequest("/api/english/practice", topic, ex);
+      const data = await res.json();
+      if (data.ok) items = data.items || [];
+    } catch {
+      /* offline or a server error: the exercise's own unseen items, below */
+    }
+    // The student may have moved on while the items were being made.
+    const stillHere = runner.newRequest === request && runner.phase === "results" && !views.exercise()?.classList.contains("hidden");
+    if (!stillHere) return;
+    runner.newRequest = null;
+    const next = newRound(topic, ex, items);
+    if (!next) {
+      refreshNewButton();
+      showToast(t("newFailed"));
+      return;
+    }
+    startExercise(topic, next.exercise, next.round, "new");
+    if (next.fromPool) showToast(t("newFromPool"));
+  }
+
+  /* ── Game runner: a vocabulary game (english-games.js) in the same fixed
+     screen as the exercises. The game draws its own card content and header
+     pills (score, time, hearts…) through `shell`. ── */
+
+  let activeGame = null;
+
+  function stopGame() {
+    activeGame?.stop();
+    activeGame = null;
+  }
+
+  /* A picture game opened from a lesson's games slide: ready-lessons.js
+     stores where it came from, and the game's back arrow and results lead
+     back to that slide (on this page, or on the lessons library). */
+  const LESSON_RETURN_KEY = "gameclass-lesson-return";
+  const LESSON_RESTORE_KEY = "gameclass-lesson-restore";
+  let gameLessonReturn = null;
+
+  function readLessonReturn(hashPath) {
+    try {
+      const ret = JSON.parse(sessionStorage.getItem(LESSON_RETURN_KEY) || "null");
+      return ret?.pictureGame === hashPath && ret.returnUrl ? ret : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function forgetLessonReturn() {
+    gameLessonReturn = null;
+    try {
+      sessionStorage.removeItem(LESSON_RETURN_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function backToLesson() {
+    const ret = gameLessonReturn;
+    if (!ret) return;
+    forgetLessonReturn();
+    const [path, hash = ""] = ret.returnUrl.split("#");
+    if (path === location.pathname && window.ReadyLessons?.resumeLesson) {
+      // The lesson was opened here: back to its topic page, with the lesson on top.
+      location.hash = hash;
+      window.ReadyLessons.resumeLesson(ret.lessonId, ret.slideIndex);
+      return;
+    }
+    try {
+      sessionStorage.setItem(LESSON_RESTORE_KEY, JSON.stringify({ lessonId: ret.lessonId, slideIndex: ret.slideIndex }));
+    } catch {
+      /* ignore */
+    }
+    location.href = ret.returnUrl;
+  }
+
+  function renderGameShell(game, topic, inner, hud = "") {
+    const view = views.exercise();
+    const backLabel = gameLessonReturn ? "backToLesson" : "backToTopic";
+    view.classList.remove("is-reading");
+    view.innerHTML = `
+      <div class="eng-runner-head">
+        <div class="eng-runner-title-row">
+          <h2 class="font-cartoon eng-runner-title">${esc(loc(game, "title"))}</h2>
+          <span class="eng-game-topic">${esc(loc(topic, "title"))}</span>
+        </div>
+        <div class="eng-runner-bar eng-runner-bar--game">
+          <a class="eng-back" id="engGameBack" href="#${esc(topic.id)}" aria-label="${esc(t(backLabel))}" title="${esc(t(backLabel))}">${ICONS.back}</a>
+          <div class="eng-game-hud" id="engGameHud">${hud}</div>
+          <div class="eng-runner-tools" id="engRunnerTools"></div>
+        </div>
+      </div>
+      <div class="eng-runner-card eng-runner-card--game eng-runner-card--game-${esc(game.id)}">${inner}</div>`;
+    if (gameLessonReturn) {
+      $("#engGameBack").addEventListener("click", (e) => {
+        e.preventDefault();
+        backToLesson();
+      });
+    }
+    renderTools();
+    $$(".eng-speak[data-say]", view).forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        speak(btn.dataset.say);
+      });
+    });
+    return $(".eng-runner-card", view);
+  }
+
+  async function copyLink(hashPath) {
+    try {
+      await navigator.clipboard.writeText(`${location.origin}${location.pathname}#${hashPath}`);
+      showToast(t("copied"));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function startGame(topic, game) {
+    stopGame();
+    clearTimeout(runner.timer);
+    runner.topic = topic;
+    runner.exercise = null;
+    runner.phase = "game";
+    gameLessonReturn = readLessonReturn(`${topic.id}/game-${game.id}`);
+    activeGame = window.EnglishGames.start(game.id, {
+      topic,
+      words: gameWords(topic),
+      backToLesson: gameLessonReturn ? backToLesson : null,
+      shell: (inner, hud) => renderGameShell(game, topic, inner, hud),
+      speak,
+      canSpeak,
+      sfx: playSfx,
+      icons: { listen: ICONS.listen, star: ICONS.star, link: ICONS.link },
+      homeworkHtml: homeworkButtonHtml,
+      copyLink: () => copyLink(`${topic.id}/game-${game.id}`),
+      record: (activity) => window.StudentProgress?.record({ ...activity, topicId: topic.id, topicTitle: topic.title }),
+    });
+  }
+
   // Sentence exercises whose questions carry a Hebrew translation (`he`).
   // Order exercises also have `he`, but there it is the prompt itself.
+  // Picture words in new sentences carry theirs in `sentenceHe`.
   function hasTranslation(exercise) {
+    if (runner.round.some((q) => q?.sentenceHe)) return true;
     return ["choice", "truefalse", "write", "reading"].includes(exercise.type) && !!exercise.questions?.some((q) => q.he);
   }
 
@@ -1073,7 +1445,9 @@
     runner.phase = "question";
     runner.state = null;
     const type = runner.exercise.type;
-    (TYPES[type] || TYPES.choice).render(runner.round[runner.index]);
+    const q = runner.round[runner.index];
+    if (!runner.isRetry) markSeen(runner.topic, runner.exercise, type === "match" ? q.pairs.map(itemKey) : [itemKey(q)]);
+    (TYPES[type] || TYPES.choice).render(q);
   }
 
   function answerButtons() {
@@ -1102,7 +1476,7 @@
       const answer = q.correct ? "נכון" : `לא נכון${q.fix ? ` — ${q.fix}` : ""}`;
       return { prompt: q.text, answer, given: given ? "נכון" : "לא נכון" };
     }
-    if (q.word) return { prompt: q.he, answer: q.en, given };
+    if (q.word) return { prompt: q.text ? `${q.text} (${q.he})` : q.he, answer: q.en, given };
     if (type === "order") return { prompt: q.he || "", answer: q.answer, given };
     return { prompt: q.hint ? `${q.text} (${q.hint})` : q.text, answer: q.answer, given };
   }
@@ -1217,15 +1591,18 @@
 
     write: {
       render(q) {
-        const input = `<input type="text" class="eng-input" id="engInput" dir="ltr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("typeHere"))}" placeholder="${esc(q.word ? t("typeHere") : "")}" />`;
-        const prompt = q.word
-          ? `<div class="eng-picture-box"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><span class="eng-picture-he">${esc(q.he)}</span></div>
-             <div class="eng-write-solo" dir="ltr">${input}<span id="engCorrection"></span></div>`
-          : (() => {
-              const parts = esc(q.text).split("___");
-              const hint = q.hint ? ` <span class="eng-hint">(${esc(q.hint)})</span>` : "";
-              return `<div class="eng-sentence" dir="ltr"><p id="engSentence">${parts[0]}<span class="eng-input-wrap">${input}<span id="engCorrection"></span></span>${hint}${parts.slice(1).join("___")}</p>${translationHtml(q)}</div>`;
-            })();
+        const solo = q.word && !q.text;
+        const input = `<input type="text" class="eng-input" id="engInput" dir="ltr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("typeHere"))}" placeholder="${esc(solo ? t("typeHere") : "")}" />`;
+        const sentence = (he) => {
+          const parts = esc(q.text).split("___");
+          const hint = q.hint ? ` <span class="eng-hint">(${esc(q.hint)})</span>` : "";
+          return `<div class="eng-sentence" dir="ltr"><p id="engSentence">${parts[0]}<span class="eng-input-wrap">${input}<span id="engCorrection"></span></span>${hint}${parts.slice(1).join("___")}</p>${translationHtml({ he })}</div>`;
+        };
+        // A picture word on its own, or (a new exercise) inside a sentence.
+        const picture = q.word
+          ? `<div class="eng-picture-box${solo ? "" : " eng-picture-box--small"}"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><span class="eng-picture-he">${esc(q.he)}</span></div>`
+          : "";
+        const prompt = solo ? `${picture}<div class="eng-write-solo" dir="ltr">${input}<span id="engCorrection"></span></div>` : `${picture}${sentence(q.word ? q.sentenceHe : q.he)}`;
         renderRunnerShell(`
           ${instructionsHtml()}
           ${prompt}
@@ -1346,7 +1723,8 @@
         const options = wordOptions(q);
         renderRunnerShell(`
           ${instructionsHtml()}
-          <div class="eng-picture-box"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /></div>
+          <div class="eng-picture-box${q.text ? " eng-picture-box--small" : ""}"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /></div>
+          ${q.text ? wordSentenceHtml(q) : ""}
           <div class="eng-options" dir="ltr">
             ${options
               .map(
@@ -1365,9 +1743,13 @@
 
     "pick-picture": {
       render(q) {
+        // A new exercise shows the word inside a sentence.
+        const prompt = q.text
+          ? wordSentenceHtml(q, true)
+          : `<div class="eng-word-prompt" dir="ltr"><span class="eng-word-big">${esc(q.en)}</span>${speakBtn(q.en)}</div>`;
         renderRunnerShell(`
           ${instructionsHtml()}
-          <div class="eng-word-prompt" dir="ltr"><span class="eng-word-big">${esc(q.en)}</span>${speakBtn(q.en)}</div>
+          ${prompt}
           ${picOptionsHtml(wordOptions(q))}
           ${feedbackHtml}`,
           questionProgress()
@@ -1378,12 +1760,14 @@
 
     listen: {
       render(q) {
+        // A new exercise says the word inside a whole sentence.
+        const said = q.text ? fullSentence(q) : q.en;
         const prompt = canSpeak()
           ? `<div class="eng-listen-prompt">
                <button type="button" class="eng-listen-btn" id="engListenBtn" aria-label="${esc(t("play"))}">${ICONS.listen}</button>
-               <span class="eng-listen-label" id="engListenLabel">${esc(t("playAgain"))}</span>
+               <span class="eng-listen-label" id="engListenLabel"${q.text ? ' dir="auto"' : ""}>${esc(t("playAgain"))}</span>
              </div>`
-          : `<div class="eng-listen-prompt"><p class="eng-listen-fallback">${esc(t("noSpeech"))}</p><span class="eng-word-big" dir="ltr">${esc(q.en)}</span></div>`;
+          : `<div class="eng-listen-prompt"><p class="eng-listen-fallback">${esc(t("noSpeech"))}</p><span class="eng-word-big${q.text ? " eng-word-big--sentence" : ""}" dir="ltr">${esc(said)}</span></div>`;
         renderRunnerShell(`
           ${instructionsHtml()}
           ${prompt}
@@ -1392,11 +1776,11 @@
           questionProgress()
         );
         answerButtons().forEach((btn) => btn.addEventListener("click", () => pictureAnswer(q, btn.dataset.word)));
-        $("#engListenBtn")?.addEventListener("click", () => speak(q.en));
+        $("#engListenBtn")?.addEventListener("click", () => speak(said));
         // Clicking the previous answer counts as user activation, so the
         // browser lets the word play on its own.
         setTimeout(() => {
-          if (runner.round[runner.index] === q && !runner.answered) speak(q.en);
+          if (runner.round[runner.index] === q && !runner.answered) speak(said);
         }, 350);
       },
     },
@@ -1406,16 +1790,18 @@
         const sideA = shuffle(board.pairs.map((p, i) => ({ p, i })));
         const sideB = shuffle(board.pairs.map((p, i) => ({ p, i })));
         runner.state = { board, selected: null, matched: new Set(), errored: new Set() };
+        // Whole sentences (new exercises) get smaller text and their own height.
+        const long = (text) => (text.includes("___") || text.length > 26 ? " eng-match-item--long" : "");
         const itemB = ({ p, i }) =>
           p.img
             ? `<button type="button" class="eng-match-item eng-match-item--img" data-side="b" data-i="${i}"><img src="${esc(p.img)}" alt="" draggable="false" /></button>`
-            : `<button type="button" class="eng-match-item" data-side="b" data-i="${i}" dir="auto">${esc(p.b)}</button>`;
+            : `<button type="button" class="eng-match-item${long(p.b)}" data-side="b" data-i="${i}" dir="auto">${esc(p.b)}</button>`;
         const total = board.pairs.length;
         renderRunnerShell(
           `
           ${instructionsHtml()}
           <div class="eng-match" dir="ltr">
-            <div class="eng-match-col">${sideA.map(({ p, i }) => `<button type="button" class="eng-match-item" data-side="a" data-i="${i}" dir="ltr">${esc(p.a)}</button>`).join("")}</div>
+            <div class="eng-match-col">${sideA.map(({ p, i }) => `<button type="button" class="eng-match-item${long(p.a)}" data-side="a" data-i="${i}" dir="ltr">${esc(p.a)}</button>`).join("")}</div>
             <div class="eng-match-col">${sideB.map(itemB).join("")}</div>
           </div>
           ${feedbackHtml}`,
@@ -1493,6 +1879,20 @@
       </div>`;
   }
 
+  /* A picture word inside a new sentence (made by the server): the text has
+     a ___ where the word goes. */
+
+  function fullSentence(q) {
+    return q.text.replace("___", q.en);
+  }
+
+  // `shown` puts the word in its place (pick-picture reads it there);
+  // otherwise the sentence keeps its blank until the answer.
+  function wordSentenceHtml(q, shown = false) {
+    const say = shown ? speakBtn(fullSentence(q), "eng-speak--sentence") : "";
+    return `<div class="eng-sentence eng-sentence--word" dir="ltr"><p id="engSentence">${sentenceHtml(q, shown ? q.en : "", "word")}${say}</p>${translationHtml({ he: q.sentenceHe })}</div>`;
+  }
+
   // Shared by picture / pick-picture / listen: the answer is a vocab word id.
   function pictureAnswer(q, wordId) {
     if (runner.answered) return;
@@ -1504,7 +1904,8 @@
       if (btn.dataset.word === q.word) btn.classList.add("is-right");
       else if (btn.dataset.word === wordId) btn.classList.add("is-wrong");
     });
-    $("#engListenLabel")?.replaceChildren(document.createTextNode(q.en));
+    $("#engListenLabel")?.replaceChildren(document.createTextNode(q.text ? fullSentence(q) : q.en));
+    if (q.text && runner.exercise.type === "picture") $("#engSentence").innerHTML = sentenceHtml(q, q.en, isRight ? "right" : "wrong");
     if (isRight) {
       onRight(`${t("correct")} ${q.en} — ${q.he}`);
     } else {
@@ -1979,7 +2380,7 @@
   function recordRound() {
     if (runner.recorded) return;
     runner.recorded = true;
-    const { score, total, topic, exercise, isRetry, mistakeLog, startedAt } = runner;
+    const { score, total, topic, exercise, isRetry, isNew, mistakeLog, startedAt } = runner;
     const activity = {
       kind: "exercise",
       topicId: topic.id,
@@ -1990,6 +2391,7 @@
       score,
       total,
       isRetry,
+      isNew,
       durationSec: Math.round((Date.now() - startedAt) / 1000),
       mistakes: mistakeLog,
     };
@@ -2009,9 +2411,14 @@
     const grade = Math.round(ratio * 100);
     const stars = ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
     const message = ratio === 1 ? t("perfect") : ratio >= 0.7 ? t("great") : t("keepGoing");
+    runner.resultsMessage = message;
 
     // A mistakes-only retry is a partial round, so it doesn't count as a best score.
     if (!isRetry) saveBest(`${topic.id}/${exercise.id}`, score, total);
+    if (!runner.prepared) {
+      runner.prepared = true;
+      preparePractice(topic, exercise);
+    }
 
     // A reading round reports its two parts separately; it has no
     // mistakes-only retry, since its questions depend on the whole passage.
@@ -2041,8 +2448,9 @@
           <p class="eng-score font-cartoon">${grade}</p>
         </div>
         <p class="eng-results-count">${esc(countLine)}</p>
-        <p class="eng-results-msg">${esc(message)}</p>
+        <p class="eng-results-msg" aria-live="polite">${esc(runner.newRequest ? t("makingNewNote") : message)}</p>
         <div class="eng-results-actions">
+          ${newButtonHtml()}
           <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engAgain">${esc(t("again"))}</button>
           ${mistakes.length && !isReading ? `<button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engRetryMistakes">${esc(t("retryMistakes"))}</button>` : ""}
           ${homeworkButtonHtml()}
@@ -2051,6 +2459,7 @@
         <button type="button" class="eng-copy-link" id="engCopyLink">${ICONS.link}<span>${esc(t("copyLink"))}</span></button>
       </div>`);
 
+    $("#engMakeNew").addEventListener("click", makeNewRound);
     $("#engAgain").addEventListener("click", () => startExercise(topic, exercise));
     $("#engRetryMistakes")?.addEventListener("click", () => {
       const retry = exercise.type === "match" ? [{ pairs: shuffle(mistakes) }] : shuffle(mistakes);
@@ -2488,16 +2897,23 @@
 
   function route() {
     clearTimeout(runner.timer);
+    stopGame();
     readAloud.stop();
     window.speechSynthesis?.cancel?.();
     if (slideViewer.isOpen()) slideViewer.close();
     const [topicId, exerciseId] = decodeURIComponent(location.hash.replace(/^#/, "")).split("/");
     const topic = findTopic(topicId);
     const exercise = findExercise(topic, exerciseId);
+    const game = !exercise && findGame(topic, exerciseId);
+    // Leaving a game that came from a lesson drops the way back to it.
+    if (gameLessonReturn && !(game && gameLessonReturn.pictureGame === `${topic.id}/game-${game.id}`)) forgetLessonReturn();
 
     if (topic && exercise) {
       showView("exercise");
       startExercise(topic, exercise);
+    } else if (topic && game) {
+      showView("exercise");
+      startGame(topic, game);
     } else if (topic) {
       showView("topic");
       renderTopic(topic);
@@ -2535,6 +2951,8 @@
       help.refresh();
       if (views.exercise()?.classList.contains("hidden")) {
         route();
+      } else if (activeGame) {
+        activeGame.relabel();
       } else if (runner.phase === "results") {
         renderResults();
       } else if (runner.exercise?.type === "reading") {

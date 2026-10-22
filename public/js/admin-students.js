@@ -1,7 +1,8 @@
-/* Admin — student files (/admin/students). Behind the teacher PIN (the same
-   one as the bookings calendar). The teacher opens a file per student, assigns
-   homework and sends the student's personal link; everything the student does
-   through it shows up here. Exercise names and totals come from english-data.js.
+/* Admin — student files (/admin/students). The teacher signs in with Google
+   and sees only the files they opened. The teacher opens a file per student,
+   assigns homework and sends the student's personal link; everything the
+   student does through it shows up here. Exercise names and totals come from
+   english-data.js.
 
    Routes (hash): ""      → all files
                   "#<id>" → one student's file */
@@ -10,7 +11,6 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  const PIN_KEY = "teacher-pin";
   const TOPICS = window.ENGLISH_TOPICS || [];
   const TOTAL_EXERCISES = TOPICS.reduce((n, topic) => n + (topic.exercises?.length || 0), 0);
   const DAY_MS = 86400000;
@@ -45,7 +45,13 @@
 
   const VIEW_KEY = "adm-list-view";
 
-  let pin = readStored(PIN_KEY);
+  // The signed-in teacher ({ name, email, photoURL }), null when signed out.
+  let account = null;
+  let gateError = "";
+  // "local" means the server has no Firestore credential, so files live in a
+  // file on the server that a redeploy wipes.
+  let storage = "firestore";
+  let unclaimed = 0;
   let students = [];
   let current = null;
   let historyShown = HISTORY_PAGE;
@@ -107,16 +113,21 @@
     }
   }
 
-  async function api(path, { method = "GET", body } = {}) {
+  async function api(path, { method = "GET", body, headers = {} } = {}) {
+    // getIdToken() hands back a fresh token when the cached one has expired.
+    const token = await window.FirebaseApp?.auth?.currentUser?.getIdToken().catch(() => "");
     const res = await fetch(path, {
       method,
-      headers: { "Content-Type": "application/json", "X-Teacher-Pin": pin },
+      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}), ...headers },
       body: body ? JSON.stringify(body) : undefined,
     });
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) {
-      lock(data.error || "קוד מורה שגוי");
-      throw new Error(data.error || "קוד מורה שגוי");
+      // The server didn't accept the sign-in: sign out, and the auth listener
+      // shows the gate with this message.
+      gateError = data.error || "יש להתחבר מחדש";
+      window.FirebaseApp?.auth?.signOut();
+      throw new Error(gateError);
     }
     if (!res.ok || data.ok === false) throw new Error(data.error || "שגיאה בטעינת הנתונים");
     return data;
@@ -261,22 +272,55 @@
       </div>`;
   }
 
-  /* ── Gate ── */
+  /* ── Google sign-in ── */
+
+  const SIGN_IN_ERRORS = {
+    "auth/popup-closed-by-user": "חלון ההתחברות נסגר לפני שההתחברות הסתיימה",
+    "auth/cancelled-popup-request": "חלון ההתחברות נסגר לפני שההתחברות הסתיימה",
+    "auth/popup-blocked": "הדפדפן חסם את חלון ההתחברות — אפשרו חלונות קופצים ונסו שוב",
+    "auth/network-request-failed": "בעיית רשת — בדקו את החיבור לאינטרנט",
+    "auth/unauthorized-domain": "הכתובת הזאת עוד לא מורשית להתחברות ב-Firebase",
+    "auth/operation-not-allowed": "ההתחברות עם Google לא מופעלת ב-Firebase",
+  };
 
   function showOnly(id) {
     ["admGate", "admListView", "admDetailView"].forEach((key) => $(`#${key}`).classList.toggle("hidden", key !== id));
-    $("#admLock").classList.toggle("hidden", id === "admGate");
   }
 
-  function lock(error = "") {
-    pin = "";
-    saveStored(PIN_KEY, "");
+  function showGate(error = "") {
     showOnly("admGate");
     const err = $("#admGateError");
     err.textContent = error;
     err.classList.toggle("hidden", !error);
-    $("#admPin").value = "";
-    $("#admPin").focus();
+  }
+
+  function renderAccount() {
+    document.body.classList.toggle("adm-signed-in", !!account);
+    $("#admAccount").classList.toggle("hidden", !account);
+    if (!account) return;
+    $("#admAccountAvatar").innerHTML = account.photoURL
+      ? `<img src="${esc(account.photoURL)}" alt="" referrerpolicy="no-referrer" />`
+      : esc(account.name.charAt(0).toUpperCase());
+    $("#admAccountName").textContent = account.name;
+    $("#admAccount").title = account.email || "";
+  }
+
+  async function signIn() {
+    const btn = $("#admGoogleBtn");
+    btn.disabled = true;
+    $("#admGoogleLabel").textContent = "מתחבר…";
+    $("#admGateError").classList.add("hidden");
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      // The auth listener in init() takes over once this resolves.
+      await FirebaseApp.auth.signInWithPopup(provider);
+    } catch (err) {
+      showGate(SIGN_IN_ERRORS[err?.code] || "ההתחברות נכשלה. נסו שוב");
+    } finally {
+      btn.disabled = false;
+      $("#admGoogleLabel").textContent = "התחברות עם Google";
+    }
   }
 
   /* ── All files ── */
@@ -286,11 +330,46 @@
     const view = $("#admListView");
     if (!students.length) view.innerHTML = `<p class="adm-loading">טוען תלמידים…</p>`;
     try {
-      students = (await api("/api/admin/students")).students || [];
+      const data = await api("/api/admin/students");
+      students = data.students || [];
+      storage = data.storage || "firestore";
+      unclaimed = data.unclaimed || 0;
       renderList();
     } catch (e) {
-      if (pin) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
+      if (account) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
     }
+  }
+
+  function isLocalHost() {
+    return ["localhost", "127.0.0.1"].includes(location.hostname);
+  }
+
+  // Shown above the list: a warning while the server can't keep files for
+  // good, and the one-time claim of files opened before Google sign-in.
+  function listNotices() {
+    const parts = [];
+    if (storage === "local" && !isLocalHost()) {
+      parts.push(`
+        <div class="adm-card adm-notice" role="note">
+          <h3 class="adm-h3">התיקים עוד לא נשמרים לתמיד</h3>
+          <p>השרת עדיין לא מחובר למסד הנתונים של Firebase, ולכן התיקים נשמרים רק בקובץ זמני על השרת ועלולים להימחק בעדכון הבא של האתר. כדי שיישמרו לתמיד צריך להגדיר בשרת את <code dir="ltr">FIREBASE_SERVICE_ACCOUNT</code>.</p>
+        </div>`);
+    }
+    if (unclaimed) {
+      parts.push(`
+        <form class="adm-card adm-claim" id="admClaimForm">
+          <h3 class="adm-h3">${unclaimed === 1 ? "יש תיק אחד" : `יש ${unclaimed} תיקים`} מלפני הכניסה עם Google</h3>
+          <p class="adm-muted">הזינו את קוד המורה כדי לצרף אותם לחשבון שלכם. אחרי הצירוף הם יופיעו כאן עם כל ההתקדמות שנשמרה בהם.</p>
+          <div class="adm-claim-row">
+            <label class="adm-field">
+              <span>קוד מורה</span>
+              <input type="password" id="admClaimPin" required autocomplete="current-password" dir="ltr" />
+            </label>
+            <button type="submit" class="btn btn-primary btn-candy adm-create-btn">צירוף התיקים</button>
+          </div>
+        </form>`);
+    }
+    return parts.join("");
   }
 
   function filteredStudents() {
@@ -314,8 +393,10 @@
     view.innerHTML = `
       <div class="adm-page-head">
         <h2 class="adm-h1">התלמידים שלי</h2>
-        <p class="adm-muted">פותחים תיק לכל תלמיד ושולחים לו את הקישור האישי. כל מה שהוא פותר דרך הקישור נשמר בתיק — בלי הרשמה.</p>
+        <p class="adm-muted">פותחים תיק לכל תלמיד ושולחים לו את הקישור האישי. כל מה שהוא פותר דרך הקישור נשמר בתיק — התלמיד לא צריך להירשם.</p>
       </div>
+
+      ${listNotices()}
 
       <form class="adm-card adm-create" id="admCreateForm">
         <h3 class="adm-h3">פתיחת תיק חדש</h3>
@@ -375,6 +456,17 @@
         students = [student, ...students];
         showToast("התיק נפתח — עכשיו אפשר לתת שיעורי בית ולשלוח את הקישור");
         location.hash = encodeURIComponent(student.id);
+      });
+    });
+    $("#admClaimForm")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      withBusy(e.submitter, async () => {
+        const { claimed } = await api("/api/admin/students/claim", {
+          method: "POST",
+          headers: { "X-Teacher-Pin": $("#admClaimPin").value.trim() },
+        });
+        showToast(!claimed ? "אין תיקים לצרף" : claimed === 1 ? "תיק אחד צורף לחשבון שלכם" : `${claimed} תיקים צורפו לחשבון שלכם`);
+        loadList();
       });
     });
     $("#admSearch")?.addEventListener("input", (e) => {
@@ -780,7 +872,7 @@
       historyShown = HISTORY_PAGE;
       renderStudent();
     } catch (e) {
-      if (pin) view.innerHTML = `<a class="adm-back" href="#">חזרה לכל התלמידים</a><p class="adm-error">${esc(e.message)}</p>`;
+      if (account) view.innerHTML = `<a class="adm-back" href="#">חזרה לכל התלמידים</a><p class="adm-error">${esc(e.message)}</p>`;
     }
   }
 
@@ -1179,7 +1271,7 @@
               <span class="adm-act-title">${esc(a.exerciseTitle)}</span>
               ${scorePill(a.score, a.total)}
             </div>
-            <span class="adm-act-meta">${esc(a.topicTitle)} · ${esc(TYPE_LABELS[a.type] || "")}${a.isRetry ? " · תרגול טעויות" : ""} · ${esc(fmtDuration(a.durationSec))} · ${time}</span>
+            <span class="adm-act-meta">${esc(a.topicTitle)} · ${esc(TYPE_LABELS[a.type] || "")}${a.isRetry ? " · תרגול טעויות" : ""}${a.isNew ? " · תרגילים חדשים" : ""} · ${esc(fmtDuration(a.durationSec))} · ${time}</span>
             ${details}
           </div>
         </li>`;
@@ -1258,7 +1350,7 @@
     try {
       await fn();
     } catch (e) {
-      if (pin) showToast(e.message);
+      if (account) showToast(e.message);
     } finally {
       if (button) button.disabled = false;
     }
@@ -1414,8 +1506,9 @@
   /* ── Routing ── */
 
   function route() {
-    if (!pin) {
-      lock();
+    if (!account) {
+      showGate(gateError);
+      gateError = "";
       return;
     }
     const id = decodeURIComponent(location.hash.replace(/^#/, ""));
@@ -1424,23 +1517,37 @@
     window.scrollTo({ top: 0 });
   }
 
-  function init() {
-    $("#admGateForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      pin = $("#admPin").value.trim();
-      if (!pin) return;
-      saveStored(PIN_KEY, pin);
-      $("#admGateError").classList.add("hidden");
-      route();
-    });
-    $("#admLock").addEventListener("click", () => lock());
+  async function init() {
     window.addEventListener("hashchange", route);
     let resizeTimer;
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(drawTrend, 150);
     });
-    route();
+
+    // Firebase remembers the sign-in on this device, so a returning teacher
+    // lands straight on their files; until it answers, just show loading.
+    showOnly("admListView");
+    $("#admListView").innerHTML = `<p class="adm-loading">טוען…</p>`;
+    const ready = await window.FirebaseApp?.ready;
+    if (!ready) {
+      showGate("ההתחברות עם Google עדיין לא מוגדרת באתר (חסרות הגדרות Firebase)");
+      return;
+    }
+    $("#admGoogleBtn").disabled = false;
+    $("#admGoogleBtn").addEventListener("click", signIn);
+    $("#admSignOut").addEventListener("click", () => FirebaseApp.auth.signOut());
+
+    FirebaseApp.auth.onAuthStateChanged((user) => {
+      account = user
+        ? { name: user.displayName || user.email?.split("@")[0] || "מורה", email: user.email || "", photoURL: user.photoURL || "" }
+        : null;
+      // A different teacher may sign in next on this device — drop the last one's files.
+      students = [];
+      current = null;
+      renderAccount();
+      route();
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

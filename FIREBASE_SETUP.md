@@ -84,12 +84,16 @@ Each completed solo game:
 
 ### `students/{id}` (server-only)
 Student files the teacher opens at `/admin/students`, written by the server
-(`lib/student-progress.js`). Students don't sign in: each file has a secret
-`key`, and the student's link `/s/<key>` is their only credential. Needs the
-service account from step 4b; without it the files go to
-`data/student-progress.json`, which resets on hosts without a persistent disk.
-No client rule is needed — browsers never read it directly.
-- id, key, name, grade, focus, notes[], createdAt, lastActive
+(`lib/student-progress.js`). The teacher signs in with Google there, and each
+file belongs to the teacher who opened it (`ownerUid`) — a teacher only ever
+sees their own files. Students don't sign in: each file has a secret `key`,
+and the student's link `/s/<key>` is their only credential. Needs the service
+account from step 4b; without it the files go to `data/student-progress.json`,
+which resets on hosts without a persistent disk (the page shows a warning when
+that's the case). No client rule is needed — browsers never read it directly.
+Files opened before Google sign-in have no `ownerUid`; the page offers to
+attach them to the signed-in teacher's account after entering `TEACHER_PIN`.
+- id, key, ownerUid, ownerEmail, name, grade, focus, notes[], createdAt, lastActive
 - homework[] { topicId, exerciseId, titles, dueDate, note, assignedAt, doneAt, score, total, attempts }
 - counts { exercises, lessons, games, practiceSec }, best { "<topic>/<exercise>": { score, total, attempts, … } }
 - subcollection `activity/{id}`: kind (exercise / lesson / presentation / game), at, and the round's details (score, total, mistakes[], …)

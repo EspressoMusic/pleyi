@@ -14,6 +14,7 @@ const { compatibleRoomGames } = require("./lib/room-games");
 const premiumLib = require("./lib/premium");
 const studentProgress = require("./lib/student-progress");
 const aiLesson = require("./lib/ai-lesson");
+const englishPractice = require("./lib/english-practice");
 const { extractText } = require("./lib/extract-text");
 const { verifyIdToken } = require("./lib/firebase-admin");
 const multer = require("multer");
@@ -212,6 +213,25 @@ app.post("/api/ai/generate-game", async (req, res) => {
   }
 });
 
+/* ── Learn English: new practice items for an exercise ── */
+function clientIp(req) {
+  return String(req.get("x-forwarded-for") || req.socket.remoteAddress || "").split(",")[0].trim();
+}
+
+function practiceRoute(handler) {
+  return async (req, res) => {
+    try {
+      const { topicId, exerciseId, seen } = req.body || {};
+      res.json({ ok: true, ...(await handler({ topicId, exerciseId, seen, ip: clientIp(req) })) });
+    } catch (e) {
+      res.status(e.status || 500).json({ ok: false, error: e.message });
+    }
+  };
+}
+
+app.post("/api/english/practice", practiceRoute(englishPractice.getPractice));
+app.post("/api/english/practice/prepare", practiceRoute(englishPractice.preparePractice));
+
 app.post("/api/extract-text", (req, res) => {
   materialUpload.single("file")(req, res, async (err) => {
     if (err) {
@@ -358,48 +378,67 @@ app.post("/api/progress", studentRoute(async (req) => {
   return { id: activity.id };
 }));
 
-app.get("/api/admin/students", teacherAuth, studentRoute(async () => ({
-  students: await studentProgress.listStudents(),
+// Teacher side: signed in with Google. Every file belongs to the teacher who
+// opened it, so each call is scoped to the verified uid.
+const studentAdmin = express.Router();
+studentAdmin.use(requireAuth);
+
+studentAdmin.get("/", studentRoute(async (req) => ({
+  students: await studentProgress.listStudents(req.uid),
+  storage: studentProgress.storageMode(),
+  unclaimed: bookingsLib.getSettings().teacherPin ? await studentProgress.countUnowned() : 0,
 })));
 
-app.post("/api/admin/students", teacherAuth, studentRoute(async (req) => ({
-  student: await studentProgress.createStudent(pick(req.body, ["name", "grade"])),
+studentAdmin.post("/", studentRoute(async (req) => ({
+  student: await studentProgress.createStudent({ uid: req.uid, email: req.userEmail }, pick(req.body, ["name", "grade"])),
 })));
 
-app.get("/api/admin/students/:id", teacherAuth, studentRoute(async (req) => {
-  const student = await studentProgress.getStudent(req.params.id);
+// Files opened before Google sign-in have no owner; the teacher PIN proves
+// it's the site owner taking them over. A wrong PIN is a 403, not 401 — the
+// teacher is still signed in.
+studentAdmin.post("/claim", studentRoute((req) => {
+  if (!bookingsLib.verifyTeacherPin(req.get("x-teacher-pin"))) {
+    throw Object.assign(new Error("קוד מורה שגוי"), { status: 403 });
+  }
+  return studentProgress.claimUnowned({ uid: req.uid, email: req.userEmail });
+}));
+
+studentAdmin.get("/:id", studentRoute(async (req) => {
+  const student = await studentProgress.getStudent(req.uid, req.params.id);
   if (!student) throw Object.assign(new Error("התלמיד לא נמצא"), { status: 404 });
   return { student };
 }));
 
-app.patch("/api/admin/students/:id", teacherAuth, studentRoute((req) =>
-  studentProgress.updateDetails(req.params.id, pick(req.body, ["name", "grade", "focus"]))
+studentAdmin.patch("/:id", studentRoute((req) =>
+  studentProgress.updateDetails(req.uid, req.params.id, pick(req.body, ["name", "grade", "focus"]))
 ));
 
-app.delete("/api/admin/students/:id", teacherAuth, studentRoute(async (req) => {
-  await studentProgress.deleteStudent(req.params.id);
+studentAdmin.delete("/:id", studentRoute(async (req) => {
+  await studentProgress.deleteStudent(req.uid, req.params.id);
   return {};
 }));
 
-app.post("/api/admin/students/:id/key", teacherAuth, studentRoute((req) =>
-  studentProgress.regenerateKey(req.params.id)
+studentAdmin.post("/:id/key", studentRoute((req) =>
+  studentProgress.regenerateKey(req.uid, req.params.id)
 ));
 
-app.post("/api/admin/students/:id/notes", teacherAuth, studentRoute(async (req) => ({
-  note: await studentProgress.addNote(req.params.id, req.body?.text),
+studentAdmin.post("/:id/notes", studentRoute(async (req) => ({
+  note: await studentProgress.addNote(req.uid, req.params.id, req.body?.text),
 })));
 
-app.delete("/api/admin/students/:id/notes/:noteId", teacherAuth, studentRoute((req) =>
-  studentProgress.deleteNote(req.params.id, req.params.noteId)
+studentAdmin.delete("/:id/notes/:noteId", studentRoute((req) =>
+  studentProgress.deleteNote(req.uid, req.params.id, req.params.noteId)
 ));
 
-app.post("/api/admin/students/:id/homework", teacherAuth, studentRoute((req) =>
-  studentProgress.addHomework(req.params.id, req.body?.items, pick(req.body, ["dueDate", "note"]))
+studentAdmin.post("/:id/homework", studentRoute((req) =>
+  studentProgress.addHomework(req.uid, req.params.id, req.body?.items, pick(req.body, ["dueDate", "note"]))
 ));
 
-app.delete("/api/admin/students/:id/homework/:homeworkId", teacherAuth, studentRoute((req) =>
-  studentProgress.deleteHomework(req.params.id, req.params.homeworkId)
+studentAdmin.delete("/:id/homework/:homeworkId", studentRoute((req) =>
+  studentProgress.deleteHomework(req.uid, req.params.id, req.params.homeworkId)
 ));
+
+app.use("/api/admin/students", studentAdmin);
 
 const rooms = new Map();
 

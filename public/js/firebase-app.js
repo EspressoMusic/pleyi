@@ -19,7 +19,8 @@ window.FirebaseApp.ready = (async function initFirebase() {
     }
 
     window.FirebaseApp.auth = firebase.auth();
-    window.FirebaseApp.db = firebase.firestore();
+    // Pages that only sign in (e.g. /admin/students) skip the Firestore SDK.
+    window.FirebaseApp.db = firebase.firestore ? firebase.firestore() : null;
     window.FirebaseApp.configured = true;
     return true;
   } catch (err) {

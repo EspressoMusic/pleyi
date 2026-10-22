@@ -1723,6 +1723,69 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
   text-decoration: none;
 }
 
+/* "Create new exercises": new items written by the server. */
+.eng-btn-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--memyellow);
+  color: var(--ink);
+}
+
+.eng-btn-new svg {
+  width: 1.25em;
+  height: 1.25em;
+  flex-shrink: 0;
+}
+
+.eng-results-actions .eng-btn-new:disabled {
+  opacity: 1;
+  cursor: progress;
+}
+
+.eng-spin {
+  animation: eng-spin 0.9s linear infinite;
+}
+
+@keyframes eng-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-spin { animation-duration: 2.5s; }
+}
+
+/* A picture word inside a new sentence: a smaller picture over the
+   sentence, and the word itself highlighted where it is shown. */
+.eng-picture-box--small .eng-picture-img {
+  width: clamp(90px, 22vw, 140px);
+  height: clamp(90px, 22vw, 140px);
+}
+
+.eng-sentence--word {
+  font-size: clamp(1.3rem, 4vw, 1.9rem);
+}
+
+.eng-blank.is-word {
+  border-radius: 10px 10px 0 0;
+  background: var(--memyellow);
+}
+
+.eng-speak--sentence {
+  margin-inline-start: 10px;
+}
+
+.eng-word-big--sentence {
+  font-size: clamp(1.4rem, 4.4vw, 2rem);
+}
+
+#engListenLabel[dir="auto"] {
+  max-width: 100%;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.05rem, 3.4vw, 1.4rem);
+  text-align: center;
+}
+
 /* A device that opened a student's personal link: whose file the practice
    is saved to. Hidden on the full-screen exercise screen. */
 .eng-student-bar {
@@ -3342,6 +3405,15 @@ html.eng-runner-open .eng-picture-img {
   height: clamp(96px, min(30vw, 19dvh), 190px);
 }
 
+html.eng-runner-open .eng-picture-box--small .eng-picture-img {
+  width: clamp(64px, min(22vw, 12dvh), 140px);
+  height: clamp(64px, min(22vw, 12dvh), 140px);
+}
+
+html.eng-runner-open .eng-sentence--word {
+  font-size: clamp(1.1rem, min(4vw, 3.4dvh), 1.9rem);
+}
+
 html.eng-runner-open .eng-word-prompt {
   margin-bottom: clamp(10px, 2.4dvh, 22px);
 }
@@ -3387,6 +3459,19 @@ html.eng-runner-open .eng-match-item--img img {
   width: auto;
   height: 100%;
   max-height: 58px;
+}
+
+/* A whole sentence on a matching board (new exercises): smaller text, and
+   the button grows to fit it. */
+.eng-match-item--long {
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+html.eng-runner-open .eng-match-item--long {
+  flex: 0 1 auto;
+  padding-inline: 8px;
+  font-size: clamp(0.85rem, min(3.6vw, 2.4dvh), 1.05rem);
 }
 
 html.eng-runner-open .eng-results {

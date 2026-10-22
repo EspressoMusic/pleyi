@@ -4198,6 +4198,7 @@
       summary: "מכירים 20 מילים בסיסיות באנגלית דרך תמונות — בעלי חיים, אוכל, חפצים ודברים בטבע — ובונים איתן משפט ראשון. עם משחק בסוף.",
       vocab: Object.values(VOCAB_PICTURES).map(({ en, he }) => ({ en, he })),
       games: STANDARD_LESSON_GAMES,
+      gameTopic: "vocabulary",
       slides: [
         {
           type: "content",
@@ -4346,7 +4347,7 @@
           type: "content",
           title: "**under**, **next to** ו-**between**",
           subtitle: "מתחת, ליד ובין",
-          body: "under — מתחת:\nThe dog is under the table.\n\nnext to — ליד, קרוב מאוד:\nI sit next to Noa.\n\nbetween — בין שני דברים:\nThe ball is between the boxes.\nB is between A and C.",
+          body: "under — מתחת:\nThe dog is under the table.\n\nnext to — ליד, קרוב מאוד:\nI sit next to Dan.\n\nbetween — בין שני דברים:\nThe ball is between the boxes.\nB is between A and C.",
         },
         {
           type: "content",
@@ -4431,7 +4432,7 @@
             type: "content",
             title: "**under**, **next to**, and **between**",
             subtitle: "Below, beside, and between",
-            body: "under — below something:\nThe dog is under the table.\n\nnext to — beside, very close:\nI sit next to Noa.\n\nbetween — in the middle of two things:\nThe ball is between the boxes.\nB is between A and C.",
+            body: "under — below something:\nThe dog is under the table.\n\nnext to — beside, very close:\nI sit next to Dan.\n\nbetween — in the middle of two things:\nThe ball is between the boxes.\nB is between A and C.",
           },
           {
             type: "content",
@@ -8103,6 +8104,7 @@
       summary: `מכירים ${count} מילים באנגלית בנושא ${cat.title} — לכל מילה יש תמונה, ואפשר לשמוע איך אומרים אותה. עם משחק בסוף.`,
       vocab: pictures.map(({ en, he }) => ({ en, he })),
       games: STANDARD_LESSON_GAMES,
+      gameTopic: `vocab-${cat.id}`,
       slides: [
         {
           type: "content",
@@ -9252,7 +9254,31 @@
     });
   }
 
+  // A picture game runs on the Learn English page, on the lesson's topic; its
+  // results screen leads back to this slide (english-learning.js reads the
+  // same return key that play.html does, plus which game it is for).
+  function launchPictureGame(lesson, gameId, slideIndex, closePlayer) {
+    const target = `${lesson.gameTopic}/game-${gameId}`;
+    sessionStorage.setItem(
+      LESSON_RETURN_KEY,
+      JSON.stringify({
+        lessonId: lesson.id,
+        slideIndex,
+        returnUrl: `${window.location.pathname}${window.location.hash}`,
+        lessonName: lesson.name,
+        pictureGame: target,
+      })
+    );
+    if (/^\/services\/english(\.html)?$/.test(window.location.pathname)) {
+      closePlayer();
+      window.location.hash = target;
+    } else {
+      window.location.href = `/services/english#${target}`;
+    }
+  }
+
   let openLessonSlides = null;
+  let resumeLessonSlides = null;
 
   function bindLessonPlayer() {
     const player = $("#lessonPlayer");
@@ -9534,26 +9560,47 @@
     window.addEventListener("scroll", () => closeWordPopup(), true);
 
     function renderGamesSlide(slide) {
-      const games = lesson.games || [];
+      const en = curLang() === "en";
+      const classGames = (lesson.games || [])
+        .map(
+          (g) =>
+            `<button type="button" class="lp-game-btn" data-game-id="${g.id}">
+              <span class="lp-game-btn-icon" aria-hidden="true">${g.icon || "🎮"}</span>
+              <span class="lp-game-btn-label">${en ? g.labelEn : g.label}</span>
+            </button>`
+        )
+        .join("");
+      // Vocabulary lessons also offer the picture games of the Learn English
+      // page (english-games.js), played there on the lesson's words.
+      const pictureGames = lesson.gameTopic ? window.EnglishGames?.list || [] : [];
+      const options = pictureGames.length
+        ? `
+          <div class="lp-game-group">
+            <p class="lp-game-group-title">${en ? "Picture games" : "משחקי תמונות"}</p>
+            <div class="lp-game-options lp-game-options--wide">
+              ${pictureGames
+                .map(
+                  (g) =>
+                    `<button type="button" class="lp-game-btn lp-game-btn--picture lp-game-btn--${g.id}" data-picture-game="${g.id}">
+                      <span class="lp-game-btn-icon" aria-hidden="true">${g.icon}</span>
+                      <span class="lp-game-btn-label">${en ? g.titleEn : g.title}</span>
+                    </button>`
+                )
+                .join("")}
+            </div>
+          </div>
+          <div class="lp-game-group">
+            <p class="lp-game-group-title">${en ? "More games" : "משחקים נוספים"}</p>
+            <div class="lp-game-options lp-game-options--wide">${classGames}</div>
+          </div>`
+        : `<div class="lp-game-options">${classGames}</div>`;
       return `
         <div class="lp-slide-inner">
           <div class="lp-slide-head">
             <h2 class="lp-slide-title">${slide.title}</h2>
           </div>
           <div class="lp-slide-body-wrap">
-            <div class="lp-slide-games">
-              <div class="lp-game-options">
-                ${games
-                  .map(
-                    (g) =>
-                      `<button type="button" class="lp-game-btn" data-game-id="${g.id}">
-                        <span class="lp-game-btn-icon" aria-hidden="true">${g.icon || "🎮"}</span>
-                        <span class="lp-game-btn-label">${curLang() === "en" ? g.labelEn : g.label}</span>
-                      </button>`
-                  )
-                  .join("")}
-              </div>
-            </div>
+            <div class="lp-slide-games">${options}</div>
           </div>
         </div>`;
     }
@@ -9809,8 +9856,11 @@
           requestAnimationFrame(() => inner.classList.add("is-visible"));
         });
 
-        $$(".lp-game-btn", slideEl).forEach((btn) => {
+        $$(".lp-game-btn[data-game-id]", slideEl).forEach((btn) => {
           btn.addEventListener("click", () => launchLessonGame(lesson, btn.dataset.gameId, index));
+        });
+        $$(".lp-game-btn[data-picture-game]", slideEl).forEach((btn) => {
+          btn.addEventListener("click", () => launchPictureGame(lesson, btn.dataset.pictureGame, index, close));
         });
         bindTermHover();
       };
@@ -9893,7 +9943,9 @@
       renderStep(direction);
     }
 
-    function open(lessonId) {
+    // startIndex: open straight on that slide (back from a picture game) —
+    // rendering slide 0 first would race its exit animation.
+    function open(lessonId, startIndex = 0) {
       lesson = localizeLesson(LESSON_CATALOG[lessonId]);
       if (!lesson) return;
       if (lesson.premium && !window.PleyiPremium?.hasPremium?.()) {
@@ -9910,7 +9962,7 @@
         pdfBtn.setAttribute("aria-pressed", pdfMode ? "true" : "false");
       }
       steps = buildSteps();
-      index = 0;
+      index = Number.isInteger(startIndex) && startIndex > 0 && startIndex < steps.length ? startIndex : 0;
       player.dataset.lessonId = lessonId;
       renderDots();
       renderStep();
@@ -9920,6 +9972,7 @@
       document.body.style.overflow = "hidden";
     }
     openLessonSlides = open;
+    resumeLessonSlides = (lessonId, slideIndex) => open(lessonId, Number(slideIndex) || 0);
 
     function close() {
       closeWordPopup();
@@ -10059,6 +10112,7 @@
     catalog: LESSON_CATALOG,
     subjectLabels: SUBJECT_LABELS,
     openLesson: (lessonId) => openLessonSlides?.(lessonId),
+    resumeLesson: (lessonId, slideIndex) => resumeLessonSlides?.(lessonId, slideIndex),
     localize: localizeLesson,
   };
 })();

@@ -294,7 +294,74 @@ body.adm-body {
 
 .adm-gate-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
+}
+
+/* ── Signed-in teacher (top bar) ── */
+
+.adm-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.adm-account-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.adm-account-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adm-account-name {
+  max-width: 200px;
+  overflow: hidden;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Notices above the list ── */
+
+.adm-notice,
+.adm-claim {
+  margin: 18px 0;
+}
+
+.adm-notice {
+  background: var(--adm-ok-soft);
+}
+
+.adm-notice p {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.adm-notice code {
+  font-weight: 800;
+}
+
+.adm-claim-row {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) auto;
+  justify-content: start;
+  align-items: end;
+  gap: 12px;
 }
 
 /* ── KPI tiles ── */
@@ -1509,6 +1576,48 @@ body.adm-body {
 
   .adm-card {
     padding: 16px;
+  }
+
+  .adm-top-inner {
+    gap: 8px;
+    padding: 10px 14px;
+  }
+
+  .adm-top-title {
+    font-size: 1.15rem;
+    white-space: nowrap;
+  }
+
+  .adm-home,
+  .adm-link-btn {
+    padding: 6px 12px;
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+
+  .adm-account {
+    gap: 6px;
+  }
+
+  .adm-account-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .adm-account-name {
+    display: none;
+  }
+
+  .adm-claim-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Narrow phones: once signed in, the account chip takes the title's place
+   (the page heading below already names the page). */
+@media (max-width: 420px) {
+  .adm-signed-in .adm-top-title {
+    display: none;
   }
 
   .adm-tiles {

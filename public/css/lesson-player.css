@@ -2018,6 +2018,70 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   color: var(--ink);
 }
 
+/* Vocabulary lessons: the picture games (they open on the Learn English
+   page) above the other games, four to a row where the slide is wide enough. */
+.lp-game-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--lp-fit, 1) * 8px);
+  width: 100%;
+}
+
+.lp-game-group-title {
+  margin: 0;
+  font-size: calc(var(--lp-fit, 1) * 1.05rem);
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.lp-slide-games:has(.lp-game-group) {
+  container-type: inline-size;
+}
+
+.lp-game-options--wide {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 680px;
+}
+
+/* Two per row on a narrow slide (phones). */
+@container (max-width: 460px) {
+  .lp-game-options--wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lp-game-options--wide .lp-game-btn {
+  min-width: 0;
+  padding: calc(var(--lp-fit, 1) * 12px) calc(var(--lp-fit, 1) * 8px);
+}
+
+.lp-game-options--wide .lp-game-btn-label {
+  line-height: 1.25;
+}
+
+.lp-game-btn--picture .lp-game-btn-icon {
+  display: grid;
+  place-items: center;
+  width: calc(var(--lp-fit, 1) * 46px);
+  height: calc(var(--lp-fit, 1) * 46px);
+  border: 2.5px solid var(--ink);
+  border-radius: 13px;
+  background: var(--memteal);
+  color: var(--ink);
+}
+
+.lp-game-btn--picture .lp-game-btn-icon svg {
+  width: 60%;
+  height: 60%;
+}
+
+.lp-game-btn--memory .lp-game-btn-icon { background: #ffb27a; }
+.lp-game-btn--speed .lp-game-btn-icon { background: #ff9ec7; }
+.lp-game-btn--balloons .lp-game-btn-icon { background: #9be7ff; }
+.lp-game-btn--scramble .lp-game-btn-icon { background: #b9a4ff; }
+
 .lesson-player-dots {
   flex: 0 0 auto;
   display: flex;
@@ -2129,7 +2193,8 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark {
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-progress,
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-title,
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-body,
-body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-games-intro {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-games-intro,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-game-group-title {
   color: var(--lp-ink);
 }
 

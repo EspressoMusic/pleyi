@@ -1,0 +1,1020 @@
+/* Learn English — vocabulary games (english-games.js): the game cards on the
+   topic page, and the four games inside the fixed exercise screen. Loaded
+   after english-learning.css, whose runner, results and button styles the
+   games reuse. Every size inside the screen follows the viewport height,
+   so a game never scrolls (html.eng-runner-open). */
+
+/* ── Topic page: game cards (same card as the exercises, own icon colors),
+   in the practice step under the exercises ── */
+
+.eng-practice-games {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 3px dashed rgba(0, 0, 0, 0.2);
+}
+
+.eng-practice-sub {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-ex-card--game-memory .eng-ex-icon { background: #ffb27a; }
+.eng-ex-card--game-speed .eng-ex-icon { background: #ff9ec7; }
+.eng-ex-card--game-balloons .eng-ex-icon { background: #9be7ff; }
+.eng-ex-card--game-scramble .eng-ex-icon { background: #b9a4ff; }
+
+/* ── Header: game title + topic, and the score pills in the bar ── */
+
+.eng-runner-head:has(.eng-game-topic) .eng-runner-title-row {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+
+.eng-game-topic {
+  padding: 3px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.eng-runner-bar--game {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.eng-game-hud {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.eng-hud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.eng-hud-pill > svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* The star (score) comes without fill attributes — color it here. */
+.eng-hud-pill > svg:not([fill]) {
+  fill: var(--memyellow);
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.eng-hud-label {
+  font-weight: 800;
+  color: var(--body);
+}
+
+.eng-hud-value {
+  min-width: 1.4em;
+  font-size: 1.1rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.eng-hud-pill.is-bumped {
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-hud-pill.is-hit {
+  animation: eng-shake 0.4s ease;
+  background: var(--eng-wrong-soft);
+}
+
+.eng-hud-pill.is-low {
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+  color: var(--eng-wrong);
+  animation: eng-game-pulse 1s ease-in-out infinite;
+}
+
+@keyframes eng-game-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.eng-hud-hearts {
+  gap: 2px;
+  padding-inline: 9px;
+}
+
+.eng-heart {
+  display: inline-flex;
+}
+
+.eng-heart svg {
+  width: 22px;
+  height: 22px;
+  fill: #e4e4e4;
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  transition: fill 0.2s ease;
+}
+
+.eng-heart.is-on svg {
+  fill: #ff4f6d;
+}
+
+@media (max-width: 560px) {
+  .eng-hud-label {
+    display: none;
+  }
+
+  .eng-hud-pill {
+    padding: 4px 10px;
+  }
+
+  .eng-game-hud {
+    gap: 6px;
+  }
+}
+
+/* ── The card: fills the height under the header; the play area (stage)
+   takes whatever is left after the fixed-size parts. ── */
+
+html.eng-runner-open .eng-runner-card.eng-runner-card--game {
+  flex: 1 1 auto;
+}
+
+.eng-game-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+html.eng-runner-open .eng-runner-card--game > .eng-game-stage {
+  flex: 1 1 0;
+  min-height: 70px;
+}
+
+/* Short messages under the play area: what the pair or answer was, time
+   bonus, "try again". The line keeps its height so nothing jumps. */
+.eng-game-flash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(30px, 5dvh, 44px);
+  margin-top: clamp(6px, 1.4dvh, 12px);
+  text-align: center;
+}
+
+.eng-game-flash-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(1rem, 2.5dvh, 1.2rem);
+  font-weight: 900;
+  color: var(--ink);
+  animation: eng-pop 0.26s ease;
+}
+
+.eng-game-flash-msg > svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.eng-game-flash-msg.is-right { color: var(--eng-right); }
+.eng-game-flash-msg.is-wrong { color: var(--eng-wrong); }
+
+/* ── How-to screen ── */
+
+.eng-game-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 2.4dvh, 20px);
+  max-width: 34rem;
+  margin: auto;
+  text-align: center;
+}
+
+.eng-game-badge {
+  display: grid;
+  place-items: center;
+  width: clamp(70px, 13dvh, 104px);
+  height: clamp(70px, 13dvh, 104px);
+  border: 3px solid var(--ink);
+  border-radius: 28px;
+  background: var(--memteal);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  color: var(--ink);
+  animation: eng-pop 0.4s ease both;
+}
+
+.eng-game-badge svg {
+  width: 56%;
+  height: 56%;
+}
+
+.eng-game-badge--memory { background: #ffb27a; }
+.eng-game-badge--speed { background: #ff9ec7; }
+.eng-game-badge--balloons { background: #9be7ff; }
+.eng-game-badge--scramble { background: #b9a4ff; }
+
+.eng-game-howto {
+  margin: 0;
+  font-size: clamp(1.02rem, 2.7dvh, 1.22rem);
+  font-weight: 800;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.eng-game-best {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 4px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-game-best svg {
+  width: 20px;
+  height: 20px;
+}
+
+.eng-game-best.is-new {
+  background: var(--memyellow);
+  animation: eng-pop 0.4s 0.3s ease both;
+}
+
+.eng-game-start.btn {
+  padding: clamp(10px, 2dvh, 14px) 44px;
+  font-size: clamp(1.1rem, 2.8dvh, 1.35rem);
+}
+
+/* ── Results ── */
+
+.eng-game-results {
+  margin-block: auto;
+}
+
+/* Smaller than the exercise results: here the words to go over also need room. */
+html.eng-runner-open .eng-game-results .eng-star svg {
+  width: clamp(30px, 6.5dvh, 50px);
+  height: clamp(30px, 6.5dvh, 50px);
+}
+
+html.eng-runner-open .eng-game-results .eng-grade {
+  min-width: 130px;
+  margin-top: 0;
+  padding: clamp(4px, 1dvh, 10px) 26px clamp(6px, 1.2dvh, 12px);
+}
+
+html.eng-runner-open .eng-game-results .eng-score.font-cartoon {
+  font-size: clamp(2.2rem, 7.5dvh, 3.8rem);
+}
+
+html.eng-runner-open .eng-game-results .eng-results-msg {
+  margin-top: -4px;
+}
+
+.eng-game-results .eng-copy-link {
+  margin-top: 0;
+}
+
+.eng-game-review {
+  width: 100%;
+  padding: clamp(10px, 2dvh, 16px);
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--eng-soft);
+}
+
+.eng-game-review h3 {
+  margin: 0 0 10px;
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-game-review ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eng-game-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 6px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.eng-game-chip:hover {
+  background: var(--memyellow);
+  transform: translateY(-1px);
+}
+
+.eng-game-chip img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.eng-game-chip-en {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.eng-game-chip-he {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--body);
+}
+
+html.eng-runner-open .eng-game-review {
+  flex-shrink: 1;
+  min-height: 6.6rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+html.eng-runner-open .eng-game-review h3 {
+  margin-bottom: 8px;
+  font-size: clamp(0.92rem, 2.2dvh, 1.02rem);
+}
+
+/* ════════ Memory ════════ */
+
+.eng-mem-board {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), var(--cell, 110px));
+  grid-auto-rows: var(--cell, 110px);
+  gap: var(--gap, 12px);
+}
+
+.eng-mem-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  perspective: 900px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.eng-mem-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.42s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+.eng-mem-card.is-open .eng-mem-inner,
+.eng-mem-card.is-matched .eng-mem-inner {
+  transform: rotateY(180deg);
+}
+
+.eng-mem-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--ink);
+  border-radius: clamp(10px, calc(var(--cell, 110px) * 0.14), 18px);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.eng-mem-back {
+  background-color: var(--memteal);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.35) 18%, transparent 19%);
+  background-size: 22% 22%;
+  color: var(--ink);
+  transition: background-color 0.15s ease;
+}
+
+.eng-mem-back svg {
+  width: 46%;
+  height: 46%;
+  padding: 7%;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  box-sizing: border-box;
+}
+
+.eng-mem-card:not(.is-open):not(.is-matched):hover .eng-mem-back {
+  background-color: var(--memyellow);
+}
+
+.eng-mem-card:focus-visible {
+  outline: none;
+}
+
+.eng-mem-card:focus-visible .eng-mem-face {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.eng-mem-front {
+  /* A fixed track, so a long word wraps instead of widening the cell. */
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  padding: 9%;
+  background: var(--white);
+  transform: rotateY(180deg);
+}
+
+.eng-mem-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* --len: letters in the word's longest part, so it fits on one line;
+   two-word names wrap between the words. On small phones a long word stays
+   readable and splits instead (grand-father). */
+.eng-mem-word {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: max(14px, min(calc(var(--cell, 110px) * 0.24), calc(var(--cell, 110px) * 1.4 / var(--len, 5))));
+  max-width: 100%;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--ink);
+}
+
+.eng-mem-front:has(.eng-mem-word) {
+  padding: 5%;
+}
+
+.eng-mem-card.is-miss {
+  animation: eng-shake 0.4s 0.38s ease;
+}
+
+.eng-mem-card.is-miss .eng-mem-front {
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+}
+
+.eng-mem-card.is-matched {
+  cursor: default;
+  animation: eng-pop 0.36s 0.32s ease;
+}
+
+.eng-mem-card.is-matched .eng-mem-front {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+  box-shadow: 3px 4px 0 0 var(--eng-right);
+}
+
+/* ════════ Beat the clock ════════ */
+
+.eng-time-bar {
+  flex-shrink: 0;
+  height: clamp(12px, 2dvh, 16px);
+  margin-bottom: clamp(8px, 1.8dvh, 16px);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  overflow: hidden;
+}
+
+.eng-time-fill {
+  display: block;
+  height: 100%;
+  background: var(--memteal);
+  transform-origin: left center;
+  transition: background 0.2s ease;
+}
+
+[dir="rtl"] .eng-time-fill {
+  transform-origin: right center;
+}
+
+.eng-time-fill.is-low {
+  background: var(--eng-wrong);
+}
+
+.eng-speed-img {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 290px;
+  margin: auto;
+  aspect-ratio: 1 / 1;
+  padding: clamp(8px, 2dvh, 18px);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: var(--eng-soft);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  box-sizing: border-box;
+  object-fit: contain;
+  user-select: none;
+}
+
+.eng-speed-img.is-in {
+  animation: eng-pop 0.28s ease;
+}
+
+.eng-speed-options {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(8px, 1.6dvh, 14px);
+  margin-top: clamp(12px, 2.4dvh, 22px);
+}
+
+.eng-speed-option.eng-option {
+  min-width: 0;
+  padding: clamp(9px, 1.9dvh, 16px) 10px;
+  font-size: clamp(1.1rem, 3dvh, 1.45rem);
+  overflow-wrap: anywhere;
+}
+
+/* ════════ Balloon pop ════════ */
+
+.eng-balloon-target {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  margin-bottom: clamp(8px, 1.8dvh, 14px);
+}
+
+.eng-balloon-target-label {
+  font-size: clamp(0.95rem, 2.4dvh, 1.1rem);
+  font-weight: 900;
+  color: var(--body);
+}
+
+.eng-balloon-word {
+  padding: 2px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--memyellow);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.4rem, 4.4dvh, 2.2rem);
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.eng-balloon-word.is-in {
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-balloon-sky {
+  overflow: hidden;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #b6ebff 0%, #def6ff 60%, #f3fcff 100%);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html.eng-runner-open .eng-runner-card--game > .eng-balloon-sky {
+  min-height: 170px;
+}
+
+.eng-cloud {
+  position: absolute;
+  width: 92px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+}
+
+.eng-cloud::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  bottom: 12px;
+  width: 44px;
+  height: 36px;
+  border-radius: 50%;
+  background: inherit;
+}
+
+.eng-cloud--1 {
+  top: 14%;
+  left: 7%;
+}
+
+.eng-cloud--2 {
+  top: 48%;
+  right: 9%;
+  transform: scale(0.75);
+}
+
+.eng-balloon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: var(--size);
+  height: calc(var(--size) * 1.55);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.eng-balloon-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: var(--size);
+  height: calc(var(--size) * 1.14);
+  border: 3px solid var(--ink);
+  border-radius: 50% 50% 46% 46% / 54% 54% 46% 46%;
+  background: var(--b, var(--memyellow));
+  box-shadow: inset -7px -9px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* Shine */
+.eng-balloon-body::before {
+  content: "";
+  position: absolute;
+  top: 11%;
+  left: 17%;
+  width: 15%;
+  height: 22%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  transform: rotate(28deg);
+}
+
+/* Knot */
+.eng-balloon-body::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 12px;
+  height: 10px;
+  margin-left: -6px;
+  border: 3px solid var(--ink);
+  border-radius: 3px 3px 6px 6px;
+  background: var(--b, var(--memyellow));
+}
+
+.eng-balloon-body img {
+  position: relative;
+  z-index: 1;
+  width: 64%;
+  height: 64%;
+  padding: 7%;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  box-sizing: border-box;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.eng-balloon-string {
+  position: absolute;
+  top: calc(var(--size) * 1.14 + 7px);
+  left: calc(50% - 1px);
+  width: 2px;
+  height: calc(var(--size) * 0.36);
+  border-radius: 2px;
+  background: var(--ink);
+  transform-origin: top center;
+  animation: eng-balloon-string 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes eng-balloon-string {
+  from { transform: rotate(-9deg); }
+  to { transform: rotate(9deg); }
+}
+
+.eng-balloon--c0 { --b: #ffe135; }
+.eng-balloon--c1 { --b: #ff9ec7; }
+.eng-balloon--c2 { --b: #7fdcff; }
+.eng-balloon--c3 { --b: #a6f0a0; }
+.eng-balloon--c4 { --b: #c3b0ff; }
+.eng-balloon--c5 { --b: #ffb27a; }
+
+.eng-balloon:focus-visible {
+  outline: none;
+}
+
+.eng-balloon:focus-visible .eng-balloon-body {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.eng-balloon:disabled {
+  cursor: default;
+}
+
+.eng-balloon.is-popped .eng-balloon-body {
+  animation: eng-balloon-pop 0.36s ease-out forwards;
+}
+
+.eng-balloon.is-popped .eng-balloon-string {
+  opacity: 0;
+}
+
+/* The burst: a dashed ring flying out from where the balloon was. */
+.eng-balloon.is-popped::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--size) * 0.57);
+  left: 50%;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) * -0.5) 0 0 calc(var(--size) * -0.5);
+  border: 4px dashed var(--ink);
+  border-radius: 50%;
+  animation: eng-balloon-burst 0.4s ease-out forwards;
+}
+
+@keyframes eng-balloon-pop {
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(1.22); opacity: 1; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+@keyframes eng-balloon-burst {
+  from { transform: scale(0.45); opacity: 1; }
+  to { transform: scale(1.5); opacity: 0; }
+}
+
+.eng-balloon.is-wrong {
+  opacity: 0.55;
+}
+
+.eng-balloon.is-wrong .eng-balloon-body {
+  --b: var(--eng-wrong-soft);
+  border-color: var(--eng-wrong);
+  animation: eng-shake 0.4s ease;
+}
+
+/* Messages float over the bottom of the sky and fade by themselves. */
+.eng-balloon-flash {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  z-index: 3;
+  width: max-content;
+  max-width: calc(100% - 20px);
+  min-height: 0;
+  margin: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.eng-balloon-flash .eng-game-flash-msg {
+  padding: 6px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  animation: eng-balloon-flash 2.4s ease forwards;
+}
+
+@keyframes eng-balloon-flash {
+  0% { opacity: 0; transform: scale(0.85); }
+  8% { opacity: 1; transform: scale(1.05); }
+  14% { transform: scale(1); }
+  78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ════════ Letter scramble ════════ */
+
+.eng-scr-img {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 230px;
+  margin: auto;
+  aspect-ratio: 1 / 1;
+  padding: clamp(6px, 1.5dvh, 14px);
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  background: var(--eng-soft);
+  box-sizing: border-box;
+  object-fit: contain;
+  user-select: none;
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-scr-he {
+  flex-shrink: 0;
+  margin: clamp(6px, 1.4dvh, 12px) 0 0;
+  font-size: clamp(1.05rem, 2.8dvh, 1.35rem);
+  font-weight: 900;
+  text-align: center;
+  color: var(--ink);
+}
+
+/* --n: letters in the longest word (at least 6); the tiles share the
+   card's width between that many, and never get taller than the screen allows. */
+.eng-runner-card--game-scramble {
+  container-type: inline-size;
+}
+
+.eng-scr-board {
+  --tile: clamp(28px, min(calc((100cqw - (var(--n) - 1) * 6px) / var(--n)), 7.4dvh), 54px);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 2dvh, 18px);
+  margin-top: clamp(8px, 1.8dvh, 16px);
+}
+
+.eng-scr-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+}
+
+.eng-scr-word {
+  display: flex;
+  gap: 6px;
+}
+
+.eng-scr-slot,
+.eng-scr-tile {
+  display: grid;
+  place-items: center;
+  width: var(--tile);
+  padding: 0;
+  border: 3px solid var(--ink);
+  color: var(--ink);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: calc(var(--tile) * 0.56);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.eng-scr-slot {
+  height: calc(var(--tile) * 1.1);
+  border-style: dashed;
+  border-radius: 10px;
+  background: var(--eng-soft);
+  cursor: pointer;
+}
+
+.eng-scr-slot.is-filled {
+  border-style: solid;
+  border-bottom-width: 5px;
+  background: var(--white);
+}
+
+.eng-scr-slot.is-hint {
+  background: var(--memyellow);
+  cursor: default;
+}
+
+.eng-scr-slot.is-right {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+  color: #11643a;
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-scr-slot.is-wrong {
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+  animation: eng-shake 0.4s ease;
+}
+
+.eng-scr-slot:disabled {
+  opacity: 1;
+}
+
+.eng-scr-fixed {
+  align-self: center;
+  font-size: calc(var(--tile) * 0.6);
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-scr-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-width: calc(var(--tile) * 8 + 7 * 6px);
+}
+
+.eng-scr-tile {
+  height: var(--tile);
+  border-radius: 12px;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.eng-scr-tile:hover {
+  transform: translateY(-2px);
+}
+
+.eng-scr-tile:active {
+  transform: translate(2px, 3px);
+  box-shadow: none;
+}
+
+.eng-scr-tile.is-used {
+  visibility: hidden;
+}
+
+.eng-scr-actions {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(8px, 1.8dvh, 16px);
+}
+
+.eng-scr-hint:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+/* Hints stay labeled on phones, unlike the sound toggle next to them. */
+@media (max-width: 420px) {
+  html.eng-runner-open .eng-scr-hint span {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-mem-inner {
+    transition: none;
+  }
+
+  .eng-balloon-string,
+  .eng-hud-pill.is-low {
+    animation: none;
+  }
+}
