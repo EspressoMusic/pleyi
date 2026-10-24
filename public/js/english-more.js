@@ -152,7 +152,7 @@
     const sentences = [answer, ...wrongs.map((o) => fill(q.text, o))];
     // Four sentences have to fit a phone screen, a line each.
     if (sentences.some((s) => s.length > 48)) return null;
-    return { answer, options: sentences, he: q.he && !q.he.includes("___") ? q.he : "", context: q.context };
+    return { answer, options: sentences, he: q.he && !q.he.includes("___") ? q.he : "", context: q.context, say: q.say };
   }
 
   const letterCount = (word) => word.replace(/[^A-Za-z]/g, "").length;

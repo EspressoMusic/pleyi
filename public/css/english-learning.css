@@ -1010,6 +1010,28 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
   color: rgba(0, 0, 0, 0.75);
 }
 
+/* The Hebrew word next to how the English word sounds. */
+.eng-context-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 10px;
+}
+
+.eng-say {
+  border-style: solid;
+  border-color: var(--mempurple);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.eng-say-label {
+  margin-inline-end: 6px;
+  font-size: 0.75em;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+}
+
 .eng-fix {
   display: inline-flex;
   align-items: center;
@@ -2226,6 +2248,11 @@ body.eng-help-open {
   background: var(--white);
   font-size: 1.05rem;
   font-weight: 800;
+}
+
+.eng-help-say {
+  border-style: solid;
+  border-color: var(--mempurple);
 }
 
 .eng-help-tr {

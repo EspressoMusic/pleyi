@@ -162,6 +162,7 @@
       fixWordLabel: "המילה הנכונה:",
       errorWas: "הטעות:",
       shouldBe: "צריך:",
+      soundsLike: "נשמע:",
       slow: "לאט",
       slowLabel: "השמעה איטית",
       noSpeechWrite: "הדפדפן לא תומך בהשמעה — כתבו באנגלית:",
@@ -319,6 +320,7 @@
       fixWordLabel: "The right word:",
       errorWas: "The mistake:",
       shouldBe: "Should be:",
+      soundsLike: "Sounds:",
       slow: "Slow",
       slowLabel: "Play slowly",
       noSpeechWrite: "Your browser can't play audio — type it in English:",
@@ -690,16 +692,24 @@
     if (e.detail?.points) setBarPoints(e.detail.points.total);
   });
 
+  // The "how to join the leaderboard" card for visitors is hidden for now.
+  const SHOW_BOARD_JOIN = false;
+
   async function renderBoardCard() {
     const host = $("#engTopicsView");
     if (!host || !window.Leaderboard) return;
+    const linked = window.StudentProgress?.isLinked();
+    if (!linked && !SHOW_BOARD_JOIN) {
+      $("#engBoardCard")?.remove();
+      return;
+    }
     let card = $("#engBoardCard");
     if (!card) {
       card = document.createElement("section");
       card.id = "engBoardCard";
       host.prepend(card);
     }
-    if (!window.StudentProgress?.isLinked()) {
+    if (!linked) {
       card.className = "eng-board-card is-join";
       card.innerHTML = `
         <span class="eng-board-icon">${ICONS.trophy}</span>
@@ -1593,8 +1603,13 @@
     return `${parts[0]}${blank}${hint}${parts.slice(1).join("___")}`;
   }
 
+  // The Hebrew word, and when the item has one, how the English word
+  // sounds in Hebrew letters — for a student who doesn't know the word yet.
   function contextHtml(question) {
-    return question.context ? `<span class="eng-context">${esc(question.context)}</span>` : "";
+    if (!question.context) return "";
+    const chip = `<span class="eng-context">${esc(question.context)}</span>`;
+    if (!question.say) return chip;
+    return `<span class="eng-context-row" dir="rtl" lang="he">${chip}<span class="eng-context eng-say"><bdi class="eng-say-label">${esc(t("soundsLike"))}</bdi>${esc(question.say)}</span></span>`;
   }
 
   // Always rendered when the question has one; the runner card's
@@ -3138,6 +3153,7 @@
       return `
         ${helpSentence(q, q.answer, "eng-help-fill")}
         ${q.context ? `<span class="eng-help-context">${esc(q.context)}</span>` : ""}
+        ${q.say ? `<span class="eng-help-context eng-help-say" lang="he">${esc(t("soundsLike"))} ${esc(q.say)}</span>` : ""}
         ${helpTranslation(q.he)}
         ${helpOptions(options, q.answer)}`;
     },
