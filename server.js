@@ -374,9 +374,12 @@ app.get("/api/student/:key", studentRoute(async (req) => {
 
 app.post("/api/progress", studentRoute(async (req) => {
   const key = req.get("x-student-key") || req.body?.key;
-  const activity = await studentProgress.recordActivity(key, req.body?.activity);
-  return { id: activity.id };
+  const { activity, points } = await studentProgress.recordActivity(key, req.body?.activity);
+  return { id: activity.id, earned: activity.points || 0, points };
 }));
+
+// The student's class leaderboard (every file of the same teacher).
+app.get("/api/leaderboard", studentRoute((req) => studentProgress.getLeaderboard(req.get("x-student-key"))));
 
 // Teacher side: signed in with Google. Every file belongs to the teacher who
 // opened it, so each call is scoped to the verified uid.

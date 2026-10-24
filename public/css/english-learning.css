@@ -610,6 +610,11 @@ body.clean-site .eng-runner-title.font-cartoon {
 .eng-ex-card--listen .eng-ex-icon { background: var(--memyellow); }
 .eng-ex-card--match .eng-ex-icon { background: #a6f0a0; }
 .eng-ex-card--print .eng-ex-icon { background: #ffd6f0; }
+.eng-ex-card--find-error .eng-ex-icon { background: #ffb3b3; }
+.eng-ex-card--sentence-choice .eng-ex-icon { background: #c4e3ff; }
+.eng-ex-card--letters .eng-ex-icon { background: #ffe9a6; }
+.eng-ex-card--dictation .eng-ex-icon { background: #d9c9ff; }
+.eng-ex-card--translate .eng-ex-icon { background: #b8f2e6; }
 
 /* "All sheets together" closes the printable worksheets grid at full width. */
 .eng-ex-card--print-all {
@@ -3349,6 +3354,458 @@ body.eng-viewer-open {
   }
 }
 
+/* ── Practice by level (topic page): the exercises of each level under a
+   heading with how many points a right answer is worth there. ── */
+
+.eng-ex-level + .eng-ex-level {
+  margin-top: 26px;
+}
+
+.eng-ex-level-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-ex-level-title .eng-level-bars {
+  padding: 5px 7px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+}
+
+.eng-ex-level--1 .eng-level-bars { background: var(--eng-level-1); }
+.eng-ex-level--2 .eng-level-bars { background: var(--eng-level-2); }
+.eng-ex-level--3 .eng-level-bars { background: var(--eng-level-3); }
+
+.eng-ex-level-points {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 12px 3px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.eng-ex-level-points svg {
+  width: 17px;
+  height: 17px;
+  fill: var(--memyellow);
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.eng-ex-level-about {
+  margin: 4px 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--body);
+}
+
+/* ── Picture true / false: the word is the picture's caption ── */
+
+.eng-picture-word {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.5rem, 4.6vw, 2rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.eng-picture-word.is-struck {
+  text-decoration: line-through;
+  text-decoration-color: var(--eng-wrong);
+  text-decoration-thickness: 3px;
+  opacity: 0.7;
+}
+
+.eng-picture-box--tf .eng-fix {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+/* ── Find the mistake: every word is a button ── */
+
+.eng-sentence--tokens p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.22em 0.2em;
+}
+
+/* Each word looks like a light key, so it reads as something to tap. */
+.eng-token {
+  padding: 0.02em 0.24em;
+  border: 2px solid rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  background: var(--white);
+  color: inherit;
+  font: inherit;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.eng-token:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: var(--memyellow);
+}
+
+.eng-token:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.eng-token:disabled {
+  cursor: default;
+}
+
+.eng-token.is-error {
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+  text-decoration: line-through;
+  text-decoration-color: var(--eng-wrong);
+  text-decoration-thickness: 3px;
+}
+
+.eng-token.is-error.is-found {
+  box-shadow: 0 0 0 3px var(--eng-right);
+}
+
+.eng-token.is-miss {
+  border-color: rgba(0, 0, 0, 0.45);
+  border-style: dashed;
+}
+
+/* ── Which sentence is right: one sentence per row ── */
+
+.eng-options--sentences {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: min(560px, 100%);
+  margin: 0 auto;
+}
+
+.eng-option--sentence {
+  min-width: 0;
+  padding: 12px 18px 12px 30px;
+  font-size: 1.2rem;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.eng-sc-context {
+  margin: -4px 0 14px;
+  text-align: center;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.4rem;
+}
+
+/* ── Build the word: a line of letter slots over a bank of tiles ── */
+
+.eng-letter-slots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+  min-height: 62px;
+  margin: 0 auto 16px;
+  padding: 10px 12px;
+  width: fit-content;
+  max-width: 100%;
+  border: 3px dashed rgba(0, 0, 0, 0.35);
+  border-radius: 18px;
+  background: var(--eng-soft);
+}
+
+.eng-letter-slots.is-right {
+  border-style: solid;
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+}
+
+.eng-letter-slots.is-wrong {
+  border-style: solid;
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+}
+
+.eng-letter-slot {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 46px;
+  padding: 0;
+  border: none;
+  border-bottom: 4px solid var(--ink);
+  border-radius: 6px 6px 2px 2px;
+  background: var(--white);
+  color: var(--ink);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.eng-letter-slot.is-filled {
+  background: var(--memteal);
+  cursor: pointer;
+}
+
+.eng-letter-slot.is-filled:disabled {
+  cursor: default;
+}
+
+.eng-letter-gap {
+  width: 16px;
+}
+
+.eng-letter-fixed {
+  align-self: center;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.eng-letter-bank {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.eng-letter-tile {
+  min-width: 48px;
+  padding: 8px 12px;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+/* ── Dictation ── */
+
+.eng-dict-prompt {
+  flex-direction: row;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* Shown by the translation toggle, like the translation under a sentence. */
+.eng-dict-tr .eng-translation {
+  display: none;
+  margin: -6px auto 14px;
+  max-width: 34em;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.eng-runner-card.is-translated .eng-dict-tr .eng-translation {
+  display: block;
+}
+
+.eng-write-solo--sentence .eng-input {
+  width: min(560px, 100%);
+  font-size: 0.85em;
+}
+
+.eng-write-solo .eng-correction {
+  font-size: 0.8em;
+}
+
+/* ── Translate ── */
+
+.eng-word-big--he {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 900;
+}
+
+.eng-option--he {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 800;
+}
+
+/* ── Points earned: a pill in the header bar of the results screen ── */
+
+.eng-earned {
+  grid-column: 2;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.eng-earned-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px 5px 11px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
+  animation: eng-pop 0.35s ease;
+}
+
+.eng-earned-pill svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  fill: var(--white);
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-earned-pill {
+    animation: none;
+  }
+}
+
+/* ── Leaderboard: the student bar's points button and the card on top of
+   the topics page (the board itself is in leaderboard.css) ── */
+
+.eng-student-bar-points {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px 5px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.eng-student-bar-points svg {
+  width: 20px;
+  height: 20px;
+}
+
+.eng-student-bar-points:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.eng-board-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 620px;
+  margin: 0 auto 30px;
+  padding: clamp(16px, 3vw, 22px);
+  border: var(--eng-card-border);
+  border-radius: 22px;
+  background: var(--clean-bg-how, #b8fff5);
+  color: var(--ink);
+  box-shadow: var(--eng-card-shadow);
+}
+
+.eng-board-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.eng-board-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--memyellow);
+}
+
+.eng-board-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.eng-board-card .eng-board-title {
+  margin: 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.eng-board-more {
+  align-self: center;
+  padding: 8px 22px;
+  font-size: 1rem;
+}
+
+/* Visitors without a personal link: one line on how to join. */
+.eng-board-card.is-join {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  max-width: 760px;
+  background: var(--white);
+}
+
+.eng-board-join .eng-board-title {
+  font-size: 1.15rem;
+}
+
+.eng-board-join p {
+  margin: 2px 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+/* ── Help examples of the new types ── */
+
+.eng-help-error {
+  padding: 0 0.15em;
+  border-radius: 6px;
+  background: var(--eng-wrong-soft);
+  text-decoration: line-through;
+  text-decoration-color: var(--eng-wrong);
+  text-decoration-thickness: 3px;
+}
+
+.eng-help-sentences {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.eng-help-sentences .eng-help-opt {
+  font-size: 1.02rem;
+}
+
 /* ── Fixed exercise screen: sizes follow the viewport height so a whole
    question fits without scrolling. Kept last so it wins over the mobile rules. ── */
 
@@ -3740,4 +4197,76 @@ html.eng-runner-open .eng-runner-card > .eng-read {
   .eng-read-input {
     font-size: 1.02rem;
   }
+}
+
+/* ── Fixed screen: the exercise types from english-more.js ── */
+
+html.eng-runner-open .eng-sentence--tokens {
+  font-size: clamp(1.2rem, min(4.6vw, 4dvh), 2rem);
+}
+
+html.eng-runner-open .eng-options--sentences {
+  gap: clamp(6px, 1.2dvh, 10px);
+}
+
+html.eng-runner-open .eng-option--sentence {
+  padding-block: clamp(7px, 1.4dvh, 12px);
+  font-size: clamp(1rem, min(4vw, 2.8dvh), 1.2rem);
+}
+
+html.eng-runner-open .eng-sc-context {
+  margin-bottom: clamp(8px, 1.6dvh, 14px);
+  font-size: clamp(1.1rem, 3dvh, 1.4rem);
+}
+
+html.eng-runner-open .eng-letter-slots {
+  min-height: 0;
+  margin-bottom: clamp(8px, 1.8dvh, 16px);
+  padding: clamp(6px, 1.2dvh, 10px) 10px;
+  gap: clamp(4px, 1vw, 6px);
+}
+
+html.eng-runner-open .eng-letter-slot {
+  width: clamp(26px, min(8vw, 6dvh), 42px);
+  height: clamp(32px, min(9.5vw, 6.6dvh), 46px);
+  font-size: clamp(1.1rem, min(5vw, 3.4dvh), 1.6rem);
+}
+
+html.eng-runner-open .eng-letter-fixed {
+  font-size: clamp(1.1rem, min(5vw, 3.4dvh), 1.6rem);
+}
+
+html.eng-runner-open .eng-letter-bank {
+  gap: clamp(5px, 1dvh, 8px);
+  margin-bottom: clamp(8px, 1.8dvh, 16px);
+}
+
+html.eng-runner-open .eng-letter-tile {
+  min-width: clamp(36px, 6dvh, 48px);
+  padding: clamp(3px, 0.9dvh, 8px) 10px;
+  font-size: clamp(1.1rem, 3.2dvh, 1.5rem);
+}
+
+html.eng-runner-open .eng-dict-tr .eng-translation {
+  margin-bottom: clamp(8px, 1.6dvh, 14px);
+}
+
+html.eng-runner-open .eng-earned-pill {
+  padding: 4px 12px 4px 9px;
+  font-size: clamp(0.9rem, 2.2dvh, 1.05rem);
+}
+
+html.eng-runner-open .eng-picture-word {
+  font-size: clamp(1.25rem, min(4.6vw, 3.6dvh), 2rem);
+}
+
+/* The check button in the feedback area (letters, dictation). */
+.eng-feedback > .eng-check {
+  margin: 0;
+}
+
+/* The slow-replay button keeps its word even where the header tools show
+   icons only. */
+html.eng-runner-open .eng-slow-btn span {
+  display: inline;
 }

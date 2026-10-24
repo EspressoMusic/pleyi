@@ -149,7 +149,31 @@
         listen: "המילה מושמעת מיד, ולחיצה על הרמקול משמיעה אותה שוב. אחר כך לוחצים על התמונה הנכונה.",
         match: "לוחצים על משהו בצד אחד ואז על מה שמתאים לו בצד השני, עד שכל הזוגות מחוברים.",
         reading: "מסמנים מילה בלחיצה עליה, ובסוף לוחצים על „לשאלות”.",
+        "find-error": "קוראים את המשפט ולוחצים על המילה שלא נכונה. אחר כך מופיע המשפט המתוקן.",
+        "sentence-choice": "קוראים את כל המשפטים ולוחצים על המשפט שכתוב נכון. במחשב אפשר גם להקיש על המספר שלו.",
+        letters: "לוחצים על האותיות לפי הסדר. לחיצה על אות שכבר הונחה מחזירה אותה. בסוף לוחצים על „בדיקה”. במחשב אפשר גם להקליד.",
+        dictation: "שומעים, כותבים באנגלית ולוחצים על „בדיקה” (או על Enter). הרמקול משמיע שוב, וכפתור „לאט” משמיע לאט יותר.",
+        translate: "לוחצים על התרגום הנכון. במחשב אפשר גם להקיש על המספר שלו.",
       },
+      levelTitle: (n) => `רמה ${n} · ${["", "קל", "בינוני", "מתקדם"][n] || ""}`,
+      levelAbout: (n) => ["", "מזהים ובוחרים — מתחילים כאן", "משפטים, טעויות ואותיות", "כותבים לבד ושומעים"][n] || "",
+      levelPoints: (p) => `${p} נקודות לכל תשובה נכונה`,
+      foundError: "מצאתם את הטעות!",
+      fixWordLabel: "המילה הנכונה:",
+      errorWas: "הטעות:",
+      shouldBe: "צריך:",
+      slow: "לאט",
+      slowLabel: "השמעה איטית",
+      noSpeechWrite: "הדפדפן לא תומך בהשמעה — כתבו באנגלית:",
+      lettersLabel: (n) => `אות ${n}`,
+      earned: (n) => `+${n} נקודות`,
+      earnedTotal: (n) => `סה״כ ${n.toLocaleString("he-IL")}`,
+      myPoints: (n) => (n === 1 ? "נקודה אחת" : `${n.toLocaleString("he-IL")} נקודות`),
+      leaderboard: "טבלת השיאים",
+      boardTitle: "טבלת השיאים של הכיתה",
+      boardFull: "לטבלה המלאה",
+      boardJoinTitle: "טבלת השיאים",
+      boardJoin: "כל תשובה נכונה שווה נקודות! נכנסים דרך הקישור האישי מהמורה — והנקודות נשמרות ומופיעות בטבלת השיאים של הכיתה.",
     },
     en: {
       open: "Open",
@@ -282,7 +306,31 @@
         listen: "The word plays right away, and the speaker plays it again. Then click the right picture.",
         match: "Click something on one side, then what matches it on the other side, until every pair is joined.",
         reading: "Click a word to mark it, then click \"To the questions\".",
+        "find-error": "Read the sentence and click the wrong word. Then the corrected sentence appears.",
+        "sentence-choice": "Read all the sentences and click the one that is written correctly. On a computer you can also press its number.",
+        letters: "Click the letters in order. Clicking a letter that is already placed sends it back. Then click \"Check\". On a computer you can also type.",
+        dictation: "Listen, type it in English and click \"Check\" (or press Enter). The speaker plays it again, and \"Slow\" plays it slower.",
+        translate: "Click the right translation. On a computer you can also press its number.",
       },
+      levelTitle: (n) => `Level ${n} · ${["", "Easy", "Medium", "Advanced"][n] || ""}`,
+      levelAbout: (n) => ["", "Recognize and choose — start here", "Sentences, mistakes and spelling", "Write it yourself and listen"][n] || "",
+      levelPoints: (p) => `${p} points per right answer`,
+      foundError: "You found the mistake!",
+      fixWordLabel: "The right word:",
+      errorWas: "The mistake:",
+      shouldBe: "Should be:",
+      slow: "Slow",
+      slowLabel: "Play slowly",
+      noSpeechWrite: "Your browser can't play audio — type it in English:",
+      lettersLabel: (n) => `Letter ${n}`,
+      earned: (n) => `+${n} points`,
+      earnedTotal: (n) => `Total ${n.toLocaleString("en-US")}`,
+      myPoints: (n) => (n === 1 ? "1 point" : `${n.toLocaleString("en-US")} points`),
+      leaderboard: "Leaderboard",
+      boardTitle: "Class leaderboard",
+      boardFull: "Full leaderboard",
+      boardJoinTitle: "Leaderboard",
+      boardJoin: "Every right answer earns points! Open the personal link from your teacher, and your points are saved and shown on your class leaderboard.",
     },
   };
 
@@ -315,6 +363,12 @@
   ICONS.sparkle = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 11.8 8.7 17 10.5 11.8 12.3 10 17.5 8.2 12.3 3 10.5 8.2 8.7 10 3.5Z"/><path d="M18.5 14.5v6M15.5 17.5h6"/></svg>`;
   ICONS.spinner = `<svg class="eng-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke-opacity="0.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>`;
   ICONS["pick-picture"] = ICONS.picture;
+  ICONS["find-error"] = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M8 8.5l5 4M13 8.5l-5 4"/></svg>`;
+  ICONS["sentence-choice"] = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="5" rx="2"/><rect x="2.5" y="10" width="19" height="5" rx="2"/><path d="M5.5 6h10M5.5 12.5h7"/><path d="m3.5 19.5 2 2 4-4M12 19.5h8"/></svg>`;
+  ICONS.letters = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="9" height="12" rx="2"/><rect x="13" y="6" width="9" height="12" rx="2"/><path d="m4.5 15 2-6 2 6M5.2 13h2.6M15.5 9h2.2a1.5 1.5 0 0 1 0 3h-2.2V9Zm0 3h2.6a1.5 1.5 0 0 1 0 3h-2.6v-3Z"/></svg>`;
+  ICONS.dictation = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8v5h3l4 4V4L6 8H3Z"/><path d="M13.5 8.5a4 4 0 0 1 0 4"/><path d="M14 21h3l5-5-3-3-5 5v3Z"/></svg>`;
+  ICONS.trophy = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11M17 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5M12 14v3.5M8 21h8M9.5 17.5h5l.5 3.5H9l.5-3.5Z"/></svg>`;
+  ICONS.slow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.5 10v4M20 10v4"/></svg>`;
 
   function lang() {
     return window.I18n?.lang === "en" ? "en" : "he";
@@ -437,12 +491,12 @@
     });
   }
 
-  function speak(text) {
+  function speak(text, rate = 0.9) {
     if (!canSpeak() || !text) return;
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "en-US";
-    utter.rate = 0.9;
+    utter.rate = rate;
     const voice = pickVoice();
     if (voice) {
       utter.voice = voice;
@@ -591,14 +645,87 @@
     bar.className = "eng-student-bar";
     bar.innerHTML = `
       <span class="eng-student-bar-text">${esc(t("studentBar", student.name))}</span>
+      <button type="button" class="eng-student-bar-points" id="engBarPoints" title="${esc(t("leaderboard"))}">${ICONS.trophy}<span id="engBarPointsNum">${esc(t("leaderboard"))}</span></button>
       <a class="eng-student-bar-link" href="${esc(window.StudentProgress.homeUrl())}">${esc(t("myHomework"))}</a>
       <button type="button" class="eng-student-bar-out" id="engNotMe">${esc(t("notMe"))}</button>`;
     $("#engMain .container")?.prepend(bar);
+    $("#engBarPoints").addEventListener("click", () => window.Leaderboard?.open());
     $("#engNotMe").addEventListener("click", () => {
       if (!confirm(t("notMeConfirm", student.name))) return;
       window.StudentProgress.clear();
       bar.remove();
+      board.forget();
+      if (!views.topics()?.classList.contains("hidden")) renderBoardCard();
     });
+    const data = await board.load();
+    const me = data?.rows.find((row) => row.isMe);
+    if (me) setBarPoints(me.total);
+  }
+
+  function setBarPoints(total) {
+    const num = $("#engBarPointsNum");
+    if (num) num.textContent = t("myPoints", total);
+  }
+
+  /* ── Class leaderboard (leaderboard.js) on the topics page, for a student
+     who opened their personal link; everyone else sees how to join. ── */
+
+  const board = (() => {
+    let pending = null;
+    return {
+      load() {
+        if (!window.StudentProgress?.isLinked()) return Promise.resolve(null);
+        pending = pending || window.StudentProgress.leaderboard();
+        return pending;
+      },
+      forget() {
+        pending = null;
+      },
+    };
+  })();
+
+  // New points make the cached board stale; the student bar shows them at once.
+  window.addEventListener("pleyi:points", (e) => {
+    board.forget();
+    if (e.detail?.points) setBarPoints(e.detail.points.total);
+  });
+
+  async function renderBoardCard() {
+    const host = $("#engTopicsView");
+    if (!host || !window.Leaderboard) return;
+    let card = $("#engBoardCard");
+    if (!card) {
+      card = document.createElement("section");
+      card.id = "engBoardCard";
+      host.prepend(card);
+    }
+    if (!window.StudentProgress?.isLinked()) {
+      card.className = "eng-board-card is-join";
+      card.innerHTML = `
+        <span class="eng-board-icon">${ICONS.trophy}</span>
+        <div class="eng-board-join">
+          <h2 class="eng-board-title">${esc(t("boardJoinTitle"))}</h2>
+          <p>${esc(t("boardJoin"))}</p>
+        </div>`;
+      return;
+    }
+    card.className = "eng-board-card";
+    card.innerHTML = `
+      <div class="eng-board-head">
+        <span class="eng-board-icon">${ICONS.trophy}</span>
+        <h2 class="eng-board-title">${esc(t("boardTitle"))}</h2>
+      </div>
+      <div class="eng-board-body" id="engBoardBody"></div>
+      <button type="button" class="btn btn-candy font-cartoon eng-board-more" id="engBoardMore">${esc(t("boardFull"))}</button>`;
+    $("#engBoardMore").addEventListener("click", () => window.Leaderboard.open());
+    const data = await board.load();
+    const body = $("#engBoardBody");
+    if (!body) return;
+    if (!data) {
+      card.remove();
+      return;
+    }
+    window.Leaderboard.bind(body, data.rows, { limit: 5 });
   }
 
   // The topic grid is split into groups; a topic's `group` defaults to "grammar".
@@ -671,8 +798,19 @@
     return minutes ? `${minutes[0]} min` : "";
   }
 
+  // Points per right answer on each level — the same as lib/student-progress.js.
+  const LEVEL_POINTS = { 1: 10, 2: 15, 3: 20, 4: 25 };
+
+  // Practice exercises have levels 1–3 (english-more.js); reading passages 1–4.
+  function exerciseLevel(ex) {
+    if (ex.type === "reading") return ex.level || 1;
+    return Math.min(3, Math.max(1, ex.level || window.ENGLISH_TYPE_LEVEL?.[ex.type] || 1));
+  }
+
   function exerciseCountLabel(ex) {
     if (ex.type === "match") return ex.pairs ? t("pairs", ex.pairs.length) : t("words", ex.words.length);
+    // Picture true / false asks about every word twice.
+    if (ex.questions?.[0]?.img) return t("words", new Set(ex.questions.map((q) => q.word)).size);
     if (ex.words) return t("words", ex.words.length);
     return t("sentences", ex.questions.length);
   }
@@ -803,21 +941,36 @@
       )
       .join("");
 
-    const exercises = (topic.exercises || [])
-      .filter((ex) => ex.type !== "reading")
-      .map((ex) => {
-        const record = best[`${topic.id}/${ex.id}`];
-        const bestLine = record ? `<span class="eng-ex-best">${esc(t("best", record.score, record.total))}</span>` : "";
+    const exerciseCard = (ex) => {
+      const record = best[`${topic.id}/${ex.id}`];
+      const bestLine = record ? `<span class="eng-ex-best">${esc(t("best", record.score, record.total))}</span>` : "";
+      return `
+        <div class="eng-ex-card eng-ex-card--${esc(ex.type)}">
+          <span class="eng-ex-icon">${ICONS[ex.type] || ICONS.choice}</span>
+          <span class="eng-ex-text">
+            <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${esc(loc(ex, "title"))}</a>
+            <span class="eng-ex-meta">${esc(exerciseCountLabel(ex))}</span>
+            ${bestLine}
+          </span>
+          ${infoBtnHtml(ex)}
+          <span class="eng-item-action" aria-hidden="true">${esc(t("practice"))}</span>
+        </div>`;
+    };
+    // Practice exercises grouped by level (english-more.js), easiest first.
+    const practice = (topic.exercises || []).filter((ex) => ex.type !== "reading");
+    const exercises = [1, 2, 3]
+      .map((level) => {
+        const list = practice.filter((ex) => exerciseLevel(ex) === level);
+        if (!list.length) return "";
         return `
-          <div class="eng-ex-card eng-ex-card--${esc(ex.type)}">
-            <span class="eng-ex-icon">${ICONS[ex.type] || ICONS.choice}</span>
-            <span class="eng-ex-text">
-              <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${esc(loc(ex, "title"))}</a>
-              <span class="eng-ex-meta">${esc(exerciseCountLabel(ex))}</span>
-              ${bestLine}
-            </span>
-            ${infoBtnHtml(ex)}
-            <span class="eng-item-action" aria-hidden="true">${esc(t("practice"))}</span>
+          <div class="eng-ex-level eng-ex-level--${level}">
+            <h4 class="eng-ex-level-title">
+              <span class="eng-level-bars" aria-hidden="true">${[1, 2, 3].map((n) => `<i${n <= level ? ' class="is-on"' : ""}></i>`).join("")}</span>
+              <span class="eng-ex-level-name">${esc(t("levelTitle", level))}</span>
+              <span class="eng-ex-level-points">${ICONS.star}${esc(t("levelPoints", LEVEL_POINTS[level]))}</span>
+            </h4>
+            <p class="eng-ex-level-about">${esc(t("levelAbout", level))}</p>
+            <div class="eng-ex-grid">${list.map(exerciseCard).join("")}</div>
           </div>`;
       })
       .join("");
@@ -862,7 +1015,7 @@
       ${lessonCard || decks ? step(t("stepLesson"), `${lessonCard}${decks ? `<div class="eng-item-list">${decks}</div>` : ""}`) : ""}
       ${step(
         t("stepPractice"),
-        `${exercises ? `<div class="eng-ex-grid">${exercises}</div>` : gameCards ? "" : `<p class="eng-empty">${esc(t("noExercises"))}</p>`}${
+        `${exercises || (gameCards ? "" : `<p class="eng-empty">${esc(t("noExercises"))}</p>`)}${
           gameCards
             ? `<div class="eng-practice-games">
                 <h4 class="eng-practice-sub">${esc(t("stepGames"))}</h4>
@@ -1021,6 +1174,7 @@
     runner.mistakeLog = [];
     runner.startedAt = Date.now();
     runner.recorded = false;
+    runner.earned = null;
     // A new reading passage counts as seen once it opens.
     if (exercise.key) markSeen(topic, exercise, [exercise.key]);
     if (exercise.type === "reading") startReading();
@@ -1244,7 +1398,12 @@
       icons: { listen: ICONS.listen, star: ICONS.star, link: ICONS.link },
       homeworkHtml: homeworkButtonHtml,
       copyLink: () => copyLink(`${topic.id}/game-${game.id}`),
-      record: (activity) => window.StudentProgress?.record({ ...activity, topicId: topic.id, topicTitle: topic.title }),
+      record: (activity) => {
+        const run = activeGame;
+        window.StudentProgress?.record({ ...activity, topicId: topic.id, topicTitle: topic.title }).then((result) => {
+          if (result && run && run === activeGame) showEarned(result);
+        });
+      },
     });
   }
 
@@ -1253,7 +1412,7 @@
   // Picture words in new sentences carry theirs in `sentenceHe`.
   function hasTranslation(exercise) {
     if (runner.round.some((q) => q?.sentenceHe)) return true;
-    return ["choice", "truefalse", "write", "reading"].includes(exercise.type) && !!exercise.questions?.some((q) => q.he);
+    return ["choice", "truefalse", "write", "reading", "find-error", "letters", "dictation"].includes(exercise.type) && !!exercise.questions?.some((q) => q.he);
   }
 
   function toolsHtml() {
@@ -1413,6 +1572,12 @@
 
   const feedbackHtml = `<div class="eng-feedback" id="engFeedback" aria-live="polite"></div>`;
 
+  // The check button waits in the feedback area, which is empty until the
+  // answer — one row less on a phone. The feedback replaces it.
+  function feedbackWithCheckHtml(disabled = false) {
+    return `<div class="eng-feedback" id="engFeedback" aria-live="polite"><button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engCheck"${disabled ? " disabled" : ""}>${esc(t("check"))}</button></div>`;
+  }
+
   function sentenceHtml(question, filled, state) {
     // A missing letter inside a word ("___og") gets a letter-wide blank.
     // Decided by the options, not the answer, so the blank's width never
@@ -1474,8 +1639,13 @@
     if (type === "match") return { prompt: q.a, answer: q.b || VOCAB[q.word]?.he || "", given: "" };
     if (type === "truefalse") {
       const answer = q.correct ? "נכון" : `לא נכון${q.fix ? ` — ${q.fix}` : ""}`;
-      return { prompt: q.text, answer, given: given ? "נכון" : "לא נכון" };
+      const prompt = q.img ? `${q.text} (בתמונה: ${VOCAB[q.word]?.en || q.word})` : q.text;
+      return { prompt, answer, given: given ? "נכון" : "לא נכון" };
     }
+    if (type === "find-error") return { prompt: q.text, answer: `${errorWords(q)} ← ${q.fix}`, given };
+    if (type === "sentence-choice") return { prompt: q.he || q.context || "", answer: q.answer, given };
+    if (type === "translate" && runner.exercise.dir === "en-he") return { prompt: q.en, answer: q.he, given };
+    if (type === "dictation" && !q.word) return { prompt: q.he || "", answer: q.answer, given };
     if (q.word) return { prompt: q.text ? `${q.text} (${q.he})` : q.he, answer: q.en, given };
     if (type === "order") return { prompt: q.he || "", answer: q.answer, given };
     return { prompt: q.hint ? `${q.text} (${q.hint})` : q.text, answer: q.answer, given };
@@ -1553,10 +1723,15 @@
     },
 
     truefalse: {
+      // A question with `img` asks whether the word fits the picture.
       render(q) {
+        // The word is the picture's caption, and its fix shows under it.
+        const prompt = q.img
+          ? `<div class="eng-picture-box eng-picture-box--tf"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><p class="eng-picture-word" id="engSentence" dir="ltr">${esc(q.text)}${speakBtn(q.text, "eng-speak--inline")}</p><div id="engFix" dir="ltr"></div></div>`
+          : `<div class="eng-sentence" dir="ltr"><p id="engSentence">${esc(q.text)}</p><div id="engFix"></div>${translationHtml(q)}</div>`;
         renderRunnerShell(`
           ${instructionsHtml()}
-          <div class="eng-sentence" dir="ltr"><p id="engSentence">${esc(q.text)}</p><div id="engFix"></div>${translationHtml(q)}</div>
+          ${prompt}
           <div class="eng-options eng-options--tf">
             <button type="button" class="eng-tf-btn eng-tf-btn--true js-answer" data-value="true">${ICONS.check}<span>${esc(t("trueBtn"))}</span></button>
             <button type="button" class="eng-tf-btn eng-tf-btn--false js-answer" data-value="false">${ICONS.cross}<span>${esc(t("falseBtn"))}</span></button>
@@ -1583,10 +1758,15 @@
         if (isRight) onRight(t("correct"), q.correct ? AUTO_NEXT_MS : AUTO_NEXT_WITH_FIX_MS);
         else onWrong(q, esc(q.correct ? t("sentenceWasRight") : t("sentenceWasWrong")), value);
       },
-      review: (q) =>
-        q.correct
+      review: (q) => {
+        if (q.img) {
+          const word = q.correct ? q.text : q.fix;
+          return `<span class="eng-review-word"><img src="${esc(q.img)}" alt="" /><span dir="ltr">${esc(word)}</span> — ${esc(VOCAB[q.word]?.he || "")}</span>`;
+        }
+        return q.correct
           ? `<span dir="ltr">${esc(q.text)}</span> <span class="eng-review-tag">${esc(t("trueBtn"))}</span>`
-          : `<span dir="ltr"><s class="eng-review-wrong">${esc(q.text)}</s> → <strong>${esc(q.fix || "")}</strong></span>`,
+          : `<span dir="ltr"><s class="eng-review-wrong">${esc(q.text)}</s> → <strong>${esc(q.fix || "")}</strong></span>`;
+      },
     },
 
     write: {
@@ -1867,6 +2047,327 @@
   TYPES["pick-picture"].review = TYPES.picture.review;
   TYPES.listen.review = TYPES.picture.review;
 
+  /* ── Exercise types built by english-more.js ── */
+
+  // The wrong words of a find-error question, without end punctuation.
+  function errorWords(q) {
+    return q.text.split(" ").slice(q.from, q.to).join(" ").replace(/[.,!?;:]+$/, "");
+  }
+
+  TYPES["find-error"] = {
+    render(q) {
+      const tokens = q.text.split(" ");
+      const hint = q.hint ? ` <span class="eng-hint">(${esc(q.hint)})</span>` : "";
+      renderRunnerShell(`
+        ${instructionsHtml()}
+        <div class="eng-sentence eng-sentence--tokens" dir="ltr">
+          <p id="engSentence">${tokens.map((tk, i) => `<button type="button" class="eng-token js-token" data-i="${i}">${esc(tk)}</button>`).join("")}${hint}</p>
+          ${contextHtml(q)}
+          <div id="engFix"></div>
+          ${translationHtml(q)}
+        </div>
+        ${feedbackHtml}`,
+        questionProgress()
+      );
+      $$(".js-token", views.exercise()).forEach((btn) => btn.addEventListener("click", () => this.answer(q, Number(btn.dataset.i))));
+    },
+    answer(q, index) {
+      if (runner.answered) return;
+      runner.answered = true;
+      const isRight = index >= q.from && index < q.to;
+      $$(".js-token", views.exercise()).forEach((btn) => {
+        const i = Number(btn.dataset.i);
+        btn.disabled = true;
+        if (i >= q.from && i < q.to) btn.classList.add("is-error", isRight ? "is-found" : "is-missed");
+        else if (i === index) btn.classList.add("is-miss");
+      });
+      $("#engFix").innerHTML = `<p class="eng-fix">${ICONS.check}<span>${esc(q.full)}</span></p>`;
+      if (isRight) onRight(t("foundError"), AUTO_NEXT_WITH_FIX_MS);
+      else
+        onWrong(
+          q,
+          `${esc(t("errorWas"))} <bdi dir="ltr">${esc(errorWords(q))}</bdi> · ${esc(t("shouldBe"))} <bdi dir="ltr">${esc(q.fix)}</bdi>`,
+          q.text.split(" ")[index].replace(/[.,!?;:]+$/, "")
+        );
+    },
+    review: (q) =>
+      `<span dir="ltr"><s class="eng-review-wrong">${esc(errorWords(q))}</s> → <strong>${esc(q.fix)}</strong> · ${esc(q.full)}</span>`,
+  };
+
+  TYPES["sentence-choice"] = {
+    render(q) {
+      const options = shuffle(q.options);
+      renderRunnerShell(`
+        ${instructionsHtml()}
+        ${q.he ? `<p class="eng-order-he">${esc(q.he)}</p>` : ""}
+        ${q.context ? `<div class="eng-sc-context" dir="ltr">${contextHtml(q)}</div>` : ""}
+        <div class="eng-options eng-options--sentences" dir="ltr">
+          ${options
+            .map(
+              (opt, i) =>
+                `<button type="button" class="eng-option eng-option--sentence js-answer" data-option="${esc(opt)}"><span class="eng-option-key">${i + 1}</span>${esc(opt)}</button>`
+            )
+            .join("")}
+        </div>
+        ${feedbackHtml}`,
+        questionProgress()
+      );
+      answerButtons().forEach((btn) => btn.addEventListener("click", () => this.answer(q, btn.dataset.option)));
+    },
+    answer(q, choice) {
+      if (runner.answered) return;
+      runner.answered = true;
+      lockAnswers();
+      answerButtons().forEach((btn) => {
+        if (btn.dataset.option === q.answer) btn.classList.add("is-right");
+        else if (btn.dataset.option === choice) btn.classList.add("is-wrong");
+      });
+      if (choice === q.answer) onRight();
+      else onWrong(q, `${esc(t("fixLabel"))} <bdi dir="ltr">${esc(q.answer)}</bdi>`, choice);
+    },
+    review: (q) => `<span dir="ltr">${esc(q.answer)}</span>${q.he ? ` <span class="eng-review-he">${esc(q.he)}</span>` : ""}`,
+  };
+
+  // A short picture word gets two letters of another word as decoys.
+  function wordDecoys(q) {
+    if (q.en.replace(/[^A-Za-z]/g, "").length > 4) return [];
+    const other = shuffle(runner.exercise.words.filter((id) => id !== q.word && VOCAB[id]))[0];
+    return other ? shuffle([...VOCAB[other].en.replace(/[^A-Za-z]/g, "")]).slice(0, 2) : [];
+  }
+
+  // Spell the answer with letter tiles. Spaces, apostrophes and hyphens stay
+  // fixed in the answer line; only letters are tiles.
+  TYPES.letters = {
+    render(q) {
+      const answer = q.word ? q.en : q.answer;
+      const chars = [...answer];
+      const slots = chars.map((c, i) => (/[A-Za-z]/.test(c) ? i : -1)).filter((i) => i >= 0);
+      const letters = slots.map((i) => chars[i]);
+      let tiles = shuffle([...letters, ...(q.word ? wordDecoys(q) : q.extra || [])]);
+      for (let tries = 0; tries < 6 && tiles.length > 1 && tiles.slice(0, letters.length).join("") === letters.join(""); tries++) {
+        tiles = shuffle(tiles);
+      }
+      runner.state = { chars, slots, tiles, placed: [] };
+      const prompt = q.word
+        ? `<div class="eng-picture-box eng-picture-box--small"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><span class="eng-picture-he">${esc(q.he)}</span></div>`
+        : `<div class="eng-sentence" dir="ltr"><p id="engSentence">${sentenceHtml(q)}</p>${translationHtml(q)}</div>`;
+      renderRunnerShell(`
+        ${instructionsHtml()}
+        ${prompt}
+        <div class="eng-letter-slots" id="engSlots" dir="ltr"></div>
+        <div class="eng-letter-bank" id="engBank" dir="ltr"></div>
+        ${feedbackWithCheckHtml(true)}`,
+        questionProgress()
+      );
+      $("#engCheck").addEventListener("click", () => this.answer(q));
+      this.draw();
+    },
+    draw() {
+      const { chars, slots, tiles, placed } = runner.state;
+      let next = 0;
+      $("#engSlots").innerHTML = chars
+        .map((c, i) => {
+          if (!slots.includes(i)) return c === " " ? `<span class="eng-letter-gap"></span>` : `<span class="eng-letter-fixed">${esc(c)}</span>`;
+          const n = next++;
+          const tile = placed[n];
+          return tile == null
+            ? `<span class="eng-letter-slot" aria-label="${esc(t("lettersLabel", n + 1))}"></span>`
+            : `<button type="button" class="eng-letter-slot is-filled" data-tile="${tile}">${esc(tiles[tile])}</button>`;
+        })
+        .join("");
+      $("#engBank").innerHTML = tiles
+        .map((ch, i) => {
+          const used = placed.includes(i);
+          return `<button type="button" class="eng-chip eng-letter-tile${used ? " is-used" : ""}" data-tile="${i}"${used ? ' tabindex="-1" aria-hidden="true"' : ""}>${esc(ch)}</button>`;
+        })
+        .join("");
+      const check = $("#engCheck");
+      if (check) check.disabled = runner.answered || placed.length !== slots.length;
+      if (runner.answered) {
+        $$("#engSlots button").forEach((btn) => {
+          btn.disabled = true;
+        });
+        return;
+      }
+      $$("#engSlots .is-filled").forEach((btn) => btn.addEventListener("click", () => this.remove(Number(btn.dataset.tile))));
+      $$("#engBank .eng-letter-tile:not(.is-used)").forEach((btn) => btn.addEventListener("click", () => this.place(Number(btn.dataset.tile))));
+    },
+    place(tile) {
+      const st = runner.state;
+      if (runner.answered || st.placed.length >= st.slots.length || st.placed.includes(tile)) return;
+      st.placed = [...st.placed, tile];
+      this.draw();
+    },
+    remove(tile) {
+      if (runner.answered) return;
+      runner.state.placed = runner.state.placed.filter((i) => i !== tile);
+      this.draw();
+    },
+    // Typing on a keyboard places the first free tile with that letter.
+    key(e) {
+      const st = runner.state;
+      if (e.key === "Backspace") {
+        e.preventDefault();
+        if (st.placed.length) this.remove(st.placed[st.placed.length - 1]);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (st.placed.length === st.slots.length) $("#engCheck")?.click();
+      } else if (/^[a-z]$/i.test(e.key)) {
+        const tile = st.tiles.findIndex((ch, i) => !st.placed.includes(i) && ch.toLowerCase() === e.key.toLowerCase());
+        if (tile < 0) return;
+        e.preventDefault();
+        this.place(tile);
+      }
+    },
+    answer(q) {
+      if (runner.answered) return;
+      const { chars, slots, tiles, placed } = runner.state;
+      if (placed.length !== slots.length) return;
+      runner.answered = true;
+      let next = 0;
+      const built = chars.map((c, i) => (slots.includes(i) ? tiles[placed[next++]] : c)).join("");
+      const answer = q.word ? q.en : q.answer;
+      const isRight = [answer, ...(q.accept || [])].map(normalize).includes(normalize(built));
+      this.draw();
+      $("#engSlots").classList.add(isRight ? "is-right" : "is-wrong");
+      $("#engBank").classList.add("hidden");
+      if (!q.word) $("#engSentence").innerHTML = sentenceHtml(q, answer, isRight ? "right" : "wrong");
+      if (isRight) onRight(q.word ? `${t("correct")} ${q.en} — ${q.he}` : t("correct"));
+      else onWrong(q, `${esc(t("wrong", ""))}<bdi dir="ltr">${esc(answer)}</bdi>`, built);
+    },
+    review: (q) => (q.word ? TYPES.picture.review(q) : `<span dir="ltr">${sentenceHtml(q, q.answer, "right")}</span>`),
+  };
+
+  /* Dictation answers are compared word by word: case, punctuation and
+     contractions don't matter ("isn't" = "is not"), and numbers up to 20 may
+     be digits. */
+  const CONTRACTIONS = [
+    [/\bcan't\b/g, "can not"],
+    [/\bcannot\b/g, "can not"],
+    [/\bwon't\b/g, "will not"],
+    [/n't\b/g, " not"],
+    [/'m\b/g, " am"],
+    [/'re\b/g, " are"],
+    [/'ll\b/g, " will"],
+    [/'ve\b/g, " have"],
+    [/'d\b/g, " would"],
+  ];
+  const NUMBER_WORDS = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty".split(" ");
+
+  function dictationWords(str) {
+    let text = normalize(str).replace(/[.,!?;:"“”()]/g, " ").replace(/[-–—]/g, " ");
+    CONTRACTIONS.forEach(([re, full]) => {
+      text = text.replace(re, full);
+    });
+    return text
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w) => (/^\d+$/.test(w) && Number(w) <= 20 ? NUMBER_WORDS[Number(w)] : w))
+      .join(" ");
+  }
+
+  TYPES.dictation = {
+    render(q) {
+      const said = q.word ? q.en : q.answer;
+      const spoken = canSpeak();
+      // The picture would give a word away, so it shows only after the answer
+      // — or as the prompt, with the Hebrew, when the browser can't speak.
+      const picture = q.word
+        ? `<div class="eng-picture-box eng-picture-box--small${spoken ? " hidden" : ""}" id="engDictPic"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><span class="eng-picture-he">${esc(q.he)}</span></div>`
+        : "";
+      const prompt = spoken
+        ? `<div class="eng-listen-prompt eng-dict-prompt">
+             <button type="button" class="eng-listen-btn" id="engListenBtn" aria-label="${esc(t("play"))}">${ICONS.listen}</button>
+             <button type="button" class="eng-tool eng-slow-btn" id="engSlowBtn" title="${esc(t("slowLabel"))}">${ICONS.slow}<span>${esc(t("slow"))}</span></button>
+           </div>
+           ${q.word ? "" : `<div class="eng-dict-tr">${translationHtml(q)}</div>`}`
+        : `<p class="eng-listen-fallback">${esc(t("noSpeechWrite"))}</p>${q.word ? "" : `<p class="eng-order-he">${esc(q.he)}</p>`}`;
+      const input = `<input type="text" class="eng-input" id="engInput" dir="ltr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("typeHere"))}" placeholder="${esc(t("typeHere"))}" />`;
+      renderRunnerShell(`
+        ${instructionsHtml()}
+        ${picture}
+        ${prompt}
+        <div class="eng-write-solo${q.word ? "" : " eng-write-solo--sentence"}" dir="ltr">${input}<span id="engCorrection"></span></div>
+        ${feedbackWithCheckHtml()}`,
+        questionProgress()
+      );
+      const inputEl = $("#engInput");
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        if (runner.answered) goNext();
+        else this.answer(q);
+      });
+      $("#engCheck").addEventListener("click", () => this.answer(q));
+      $("#engListenBtn")?.addEventListener("click", () => speak(said));
+      $("#engSlowBtn")?.addEventListener("click", () => speak(said, 0.55));
+      inputEl.focus({ preventScroll: true });
+      // Clicking the previous answer counts as user activation, so the
+      // browser lets it play on its own.
+      setTimeout(() => {
+        if (runner.round[runner.index] === q && !runner.answered) speak(said);
+      }, 350);
+    },
+    answer(q) {
+      if (runner.answered) return;
+      const inputEl = $("#engInput");
+      if (!inputEl.value.trim()) {
+        inputEl.classList.remove("is-shake");
+        void inputEl.offsetWidth;
+        inputEl.classList.add("is-shake");
+        inputEl.placeholder = t("emptyAnswer");
+        inputEl.focus({ preventScroll: true });
+        return;
+      }
+      runner.answered = true;
+      const said = q.word ? q.en : q.answer;
+      const given = dictationWords(inputEl.value);
+      const isRight = [said, ...(q.accept || [])].some((a) => dictationWords(a) === given);
+      inputEl.readOnly = true;
+      inputEl.classList.add(isRight ? "is-right" : "is-wrong");
+      $("#engDictPic")?.classList.remove("hidden");
+      if (isRight) {
+        onRight(q.word ? `${t("correct")} ${q.en} — ${q.he}` : t("correct"));
+      } else {
+        $("#engCorrection").innerHTML = `<span class="eng-correction">${esc(said)}</span>`;
+        onWrong(q, `${esc(t("wrong", ""))}<bdi dir="ltr">${esc(said)}</bdi>`, inputEl.value.trim());
+      }
+    },
+    review: (q) =>
+      q.word ? TYPES.picture.review(q) : `<span dir="ltr">${esc(q.answer)}</span>${q.he ? ` <span class="eng-review-he">${esc(q.he)}</span>` : ""}`,
+  };
+
+  // A vocabulary word one way or the other: "en-he" shows the English word
+  // and Hebrew answers, "he-en" the other way round. No pictures, so every
+  // word of the topic can take part.
+  TYPES.translate = {
+    render(q) {
+      const toHe = runner.exercise.dir === "en-he";
+      const label = (o) => (toHe ? o.he : o.en);
+      const others = shuffle(runner.exercise.words.map(wordItem).filter((o) => o && label(o) !== label(q)));
+      const options = shuffle([q, ...others.filter((o, i) => others.findIndex((x) => label(x) === label(o)) === i).slice(0, 3)]);
+      const prompt = toHe
+        ? `<div class="eng-word-prompt" dir="ltr"><span class="eng-word-big">${esc(q.en)}</span>${speakBtn(q.en)}</div>`
+        : `<div class="eng-word-prompt"><span class="eng-word-big eng-word-big--he" dir="rtl" lang="he">${esc(q.he)}</span></div>`;
+      renderRunnerShell(`
+        ${instructionsHtml()}
+        ${prompt}
+        <div class="eng-options" dir="${toHe ? "rtl" : "ltr"}">
+          ${options
+            .map(
+              (o, i) =>
+                `<button type="button" class="eng-option js-answer${toHe ? " eng-option--he" : ""}" data-word="${esc(o.word)}"${toHe ? ' lang="he"' : ""}><span class="eng-option-key">${i + 1}</span>${esc(label(o))}</button>`
+            )
+            .join("")}
+        </div>
+        ${feedbackHtml}`,
+        questionProgress()
+      );
+      answerButtons().forEach((btn) => btn.addEventListener("click", () => pictureAnswer(q, btn.dataset.word)));
+    },
+    review: (q) => `<span dir="ltr">${esc(q.en)}</span> — ${esc(q.he)}`,
+  };
+
   function picOptionsHtml(options) {
     return `
       <div class="eng-pic-options">
@@ -1909,7 +2410,9 @@
     if (isRight) {
       onRight(`${t("correct")} ${q.en} — ${q.he}`);
     } else {
-      onWrong(q, `${esc(t("wrong", ""))}<span dir="ltr">${esc(q.en)}</span> — ${esc(q.he)} ${speakBtn(q.en, "eng-speak--inline")}`, VOCAB[wordId]?.en || wordId);
+      // What the student picked, as it read on the button.
+      const picked = runner.exercise.dir === "en-he" ? VOCAB[wordId]?.he : VOCAB[wordId]?.en;
+      onWrong(q, `${esc(t("wrong", ""))}<span dir="ltr">${esc(q.en)}</span> — ${esc(q.he)} ${speakBtn(q.en, "eng-speak--inline")}`, picked || wordId);
       $$("#engFeedback .eng-speak").forEach((btn) => btn.addEventListener("click", () => speak(btn.dataset.say)));
     }
   }
@@ -2392,10 +2895,32 @@
       total,
       isRetry,
       isNew,
+      level: exerciseLevel(exercise),
       durationSec: Math.round((Date.now() - startedAt) / 1000),
       mistakes: mistakeLog,
     };
-    window.StudentProgress?.record(activity);
+    const round = runner.round;
+    window.StudentProgress?.record(activity).then((result) => {
+      // The student may have started another round meanwhile.
+      if (!result || runner.round !== round) return;
+      runner.earned = result;
+      showEarned(result);
+    });
+  }
+
+  /* ── Points earned (a linked student's results screen) ── */
+
+  function earnedHtml(result) {
+    if (!result?.earned) return "";
+    const total = result.points ? ` · ${t("earnedTotal", result.points.total)}` : "";
+    return `<span class="eng-earned-pill" title="${esc(t("earned", result.earned) + total)}">${ICONS.star}<span>${esc(t("earned", result.earned))}</span></span>`;
+  }
+
+  // Fills the slot in the header bar of the results screen (exercises), or
+  // the header pills of a game's results screen.
+  function showEarned(result) {
+    const slot = $("#engEarned") || (runner.phase === "game" && $(".eng-game-results") && $("#engGameHud"));
+    if (slot) slot.innerHTML = earnedHtml(result);
   }
 
   function homeworkButtonHtml() {
@@ -2415,7 +2940,8 @@
 
     // A mistakes-only retry is a partial round, so it doesn't count as a best score.
     if (!isRetry) saveBest(`${topic.id}/${exercise.id}`, score, total);
-    if (!runner.prepared) {
+    // Exercises built in the browser (english-more.js) have no AI-made items.
+    if (!runner.prepared && !exercise.derived) {
       runner.prepared = true;
       preparePractice(topic, exercise);
     }
@@ -2450,16 +2976,18 @@
         <p class="eng-results-count">${esc(countLine)}</p>
         <p class="eng-results-msg" aria-live="polite">${esc(runner.newRequest ? t("makingNewNote") : message)}</p>
         <div class="eng-results-actions">
-          ${newButtonHtml()}
+          ${exercise.derived ? "" : newButtonHtml()}
           <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engAgain">${esc(t("again"))}</button>
           ${mistakes.length && !isReading ? `<button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engRetryMistakes">${esc(t("retryMistakes"))}</button>` : ""}
           ${homeworkButtonHtml()}
         </div>
         ${mistakesList}
         <button type="button" class="eng-copy-link" id="engCopyLink">${ICONS.link}<span>${esc(t("copyLink"))}</span></button>
-      </div>`);
+      </div>`,
+      `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
+    );
 
-    $("#engMakeNew").addEventListener("click", makeNewRound);
+    $("#engMakeNew")?.addEventListener("click", makeNewRound);
     $("#engAgain").addEventListener("click", () => startExercise(topic, exercise));
     $("#engRetryMistakes")?.addEventListener("click", () => {
       const retry = exercise.type === "match" ? [{ pairs: shuffle(mistakes) }] : shuffle(mistakes);
@@ -2484,6 +3012,10 @@
       if (runner.phase !== "question") return;
       // Typing exercises handle their own keys inside the input.
       if (e.target.closest?.("input, textarea")) return;
+      if (!runner.answered && runner.exercise?.type === "letters") {
+        TYPES.letters.key(e);
+        return;
+      }
       if (!runner.answered && /^[1-9]$/.test(e.key)) {
         const btn = answerButtons()[Number(e.key) - 1];
         if (btn && !btn.disabled) {
@@ -2610,6 +3142,16 @@
         ${helpOptions(options, q.answer)}`;
     },
     truefalse(ex) {
+      if (ex.questions[0]?.img) {
+        const q = ex.questions.find((item) => !item.correct) || ex.questions[0];
+        return `
+          <span class="eng-help-picture"><img src="${esc(q.img)}" alt="" draggable="false" /></span>
+          <div class="eng-help-tf-row">
+            <p class="eng-help-sentence" dir="ltr">${esc(q.text)}</p>
+            ${helpBadge(q.correct)}
+            ${q.correct ? "" : `<p class="eng-help-fix"><span>${esc(t("fixWordLabel"))}</span><b dir="ltr">${esc(q.fix)}</b></p>`}
+          </div>`;
+      }
       const right = ex.questions.find((q) => q.correct);
       const wrong = ex.questions.find((q) => !q.correct && q.fix) || ex.questions.find((q) => !q.correct);
       const row = (q) => `
@@ -2676,6 +3218,61 @@
                 ${p.img ? `<span class="eng-help-pic is-right eng-help-pic--small"><img src="${esc(p.img)}" alt="" draggable="false" /></span>` : `<span class="eng-help-chip is-right" dir="auto">${esc(p.b)}</span>`}
               </div>`
           )
+          .join("")}</div>`;
+    },
+    "find-error"(ex) {
+      const q = ex.questions.reduce((a, b) => (b.text.length < a.text.length ? b : a));
+      const words = q.text
+        .split(" ")
+        .map((tk, i) => (i >= q.from && i < q.to ? `<span class="eng-help-error">${esc(tk)}</span>` : esc(tk)))
+        .join(" ");
+      return `
+        <p class="eng-help-sentence" dir="ltr">${words}</p>
+        ${helpArrow}
+        <p class="eng-help-sentence" dir="ltr"><span class="eng-help-fill">${esc(q.full)}</span></p>`;
+    },
+    "sentence-choice"(ex) {
+      const q = ex.questions.reduce((a, b) => (b.answer.length < a.answer.length ? b : a));
+      return `
+        ${q.he ? `<p class="eng-help-tr eng-help-tr--prompt" dir="rtl" lang="he">${esc(q.he)}</p>` : ""}
+        <div class="eng-help-sentences" dir="ltr">${answerInMiddle(q.options.slice(0, 3), q.answer)
+          .map((o) => (o === q.answer ? `<span class="eng-help-opt is-right">${ICONS.check}${esc(o)}</span>` : `<span class="eng-help-opt">${esc(o)}</span>`))
+          .join("")}</div>`;
+    },
+    letters(ex) {
+      const chips = (list, cls = "") => `<div class="eng-help-chips" dir="ltr">${list.map((c) => `<span class="eng-help-chip${cls}">${esc(c)}</span>`).join("")}</div>`;
+      if (ex.words) {
+        const [w] = helpWords(ex, 1);
+        const letters = [...w.en.replace(/[^A-Za-z]/g, "")];
+        return `
+          <span class="eng-help-picture"><img src="${esc(w.img)}" alt="" draggable="false" /><span>${esc(w.he)}</span></span>
+          ${chips(scrambleWords(letters))}
+          ${helpArrow}
+          ${chips([w.en], " is-right")}`;
+      }
+      const q = ex.questions[0];
+      return `
+        ${helpSentence(q, q.answer, "eng-help-fill")}
+        ${chips(scrambleWords([...q.answer.replace(/[^A-Za-z]/g, ""), ...(q.extra || [])]))}`;
+    },
+    dictation(ex) {
+      const said = ex.words ? helpWords(ex, 1)[0].en : ex.questions.reduce((a, b) => (b.answer.length < a.answer.length ? b : a)).answer;
+      const prompt = canSpeak()
+        ? `<button type="button" class="eng-help-speak" data-say="${esc(said)}" aria-label="${esc(t("speakWord", said))}">${ICONS.listen}</button>`
+        : "";
+      return `
+        <div class="eng-help-listen">${prompt}<span class="eng-help-heard" dir="ltr">“${esc(said)}”</span></div>
+        <p class="eng-help-sentence" dir="ltr"><span class="eng-help-typed">${esc(said)}</span></p>`;
+    },
+    translate(ex) {
+      const words = helpWords(ex);
+      const [w] = words;
+      const toHe = ex.dir === "en-he";
+      const label = (item) => (toHe ? item.he : item.en);
+      return `
+        <p class="eng-help-word"${toHe ? ' dir="ltr"' : ' dir="rtl" lang="he"'}>${esc(toHe ? w.en : w.he)}</p>
+        <div class="eng-help-options" dir="${toHe ? "rtl" : "ltr"}">${answerInMiddle(words.map(label), label(w))
+          .map((o) => (o === label(w) ? `<span class="eng-help-opt is-right">${ICONS.check}${esc(o)}</span>` : `<span class="eng-help-opt">${esc(o)}</span>`))
           .join("")}</div>`;
     },
     reading(ex) {
@@ -2920,6 +3517,7 @@
     } else {
       showView("topics");
       renderTopicGrid();
+      renderBoardCard();
     }
     window.scrollTo({ top: 0 });
   }
@@ -2961,7 +3559,7 @@
         // with typed text in it.
         const q = runner.round[runner.index];
         if (runner.read.stage === "mark" || (!runner.answered && q?.type !== "open")) renderReading();
-      } else if (!runner.answered && !["write", "order", "match", "listen"].includes(runner.exercise?.type)) {
+      } else if (!runner.answered && !["write", "order", "match", "listen", "letters", "dictation"].includes(runner.exercise?.type)) {
         renderQuestion();
       }
     });

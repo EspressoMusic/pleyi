@@ -81,11 +81,39 @@
             <ol class="stu-hw-list">${list.map(homeworkCard).join("")}</ol>`
           : ""
       }
+      <section class="stu-board" id="stuBoard" aria-labelledby="stuBoardTitle">
+        <div class="stu-board-head">
+          <span class="stu-board-icon">${window.Leaderboard?.icon || ""}</span>
+          <h2 class="stu-board-title" id="stuBoardTitle">טבלת השיאים של הכיתה</h2>
+        </div>
+        <p class="stu-board-me" id="stuBoardMe"></p>
+        <div id="stuBoardBody"><p class="lb-empty">טוען את הטבלה…</p></div>
+        ${window.Leaderboard?.rulesHtml() || ""}
+      </section>
       <div class="stu-free">
         <h2 class="stu-free-title">רוצים לתרגל עוד?</h2>
-        <p>כל תרגול באתר נשמר אצל המורה.</p>
+        <p>כל תרגול באתר נשמר אצל המורה — וכל תשובה נכונה מוסיפה לכם נקודות.</p>
         <a class="btn btn-candy stu-btn stu-btn--again" href="/services/english?s=${encodeURIComponent(key)}">לכל הנושאים</a>
       </div>`;
+    renderBoard();
+  }
+
+  // The class leaderboard, and where the student stands in it.
+  async function renderBoard() {
+    const data = await window.StudentProgress?.leaderboard();
+    const body = document.getElementById("stuBoardBody");
+    if (!body) return;
+    if (!data) {
+      body.innerHTML = `<p class="lb-empty">לא הצלחנו לטעון את הטבלה. נסו לרענן את הדף.</p>`;
+      return;
+    }
+    const me = data.rows.find((row) => row.isMe);
+    if (me) {
+      const rank = 1 + data.rows.filter((row) => row.total > me.total).length;
+      const points = me.total === 1 ? "נקודה אחת" : `${me.total.toLocaleString("he-IL")} נקודות`;
+      document.getElementById("stuBoardMe").innerHTML = `יש לך <b>${esc(points)}</b>${me.total ? ` · מקום <b>${rank}</b> בכיתה` : ""}`;
+    }
+    window.Leaderboard.bind(body, data.rows, { limit: 10 });
   }
 
   function renderInvalid() {

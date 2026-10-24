@@ -72,9 +72,12 @@ window.StudentProgress = (() => {
     return profilePromise;
   }
 
+  // Resolves to { earned, points: { total, week } } once saved — the points
+  // this activity earned and the student's new totals — or null. Pages that
+  // show the totals listen for the "pleyi:points" event.
   async function record(activity) {
     const current = key();
-    if (!current) return false;
+    if (!current) return null;
     try {
       const res = await fetch("/api/progress", {
         method: "POST",
@@ -83,10 +86,28 @@ window.StudentProgress = (() => {
         keepalive: true,
       });
       if (res.status === 404) clear();
-      return res.ok;
+      if (!res.ok) return null;
+      const data = await res.json();
+      const result = { earned: data.earned || 0, points: data.points || null };
+      if (result.points) window.dispatchEvent(new CustomEvent("pleyi:points", { detail: result }));
+      return result;
     } catch (err) {
       console.warn("progress save failed", err);
-      return false;
+      return null;
+    }
+  }
+
+  // { rows: [{ name, total, week, isMe }], weekOf } for the student's class, or null.
+  async function leaderboard() {
+    const current = key();
+    if (!current) return null;
+    try {
+      const res = await fetch("/api/leaderboard", { headers: { "X-Student-Key": current } });
+      if (res.status === 404) clear();
+      const data = await res.json();
+      return data.ok ? { rows: data.rows || [], weekOf: data.weekOf } : null;
+    } catch {
+      return null;
     }
   }
 
@@ -99,6 +120,7 @@ window.StudentProgress = (() => {
     isLinked: () => !!key(),
     profile,
     record,
+    leaderboard,
     homeUrl: () => (key() ? `/s/${encodeURIComponent(key())}` : null),
   };
 })();

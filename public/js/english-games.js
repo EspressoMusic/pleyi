@@ -340,7 +340,8 @@
   }
 
   /* ── Results screen ──
-     r: { value, label, detail, stars, review: [words], recordScore } */
+     r: { value, label, detail, stars, correct, review: [words], recordScore }
+     correct: right answers, for the class leaderboard's points. */
 
   function finish(run, r) {
     run.clear();
@@ -353,6 +354,9 @@
       gameId: run.key,
       gameTitle: `${game.title} · ${ctx.topic.title}`,
       score: r.recordScore ?? r.value,
+      // Points on the class leaderboard: per right answer and per star.
+      correct: r.correct,
+      stars: r.stars,
       durationSec: Math.round((Date.now() - run.startedAt) / 1000),
     });
     run.sfx("finish");
@@ -531,6 +535,7 @@
         label: "movesLabel",
         detail: T("memoryResult", clockText(sec)),
         stars: moves <= pairs * 1.5 ? 3 : moves <= pairs * 2.25 ? 2 : 1,
+        correct: pairs,
         recordScore: T("movesCount", moves),
       });
     }
@@ -643,6 +648,7 @@
           label: "pointsLabel",
           detail: T("speedResult", score, wrong),
           stars: score >= 20 ? 3 : score >= 12 ? 2 : score >= 5 ? 1 : 0,
+          correct: score,
           review: [...st.missed.values()],
         });
       }, 1000);
@@ -834,6 +840,7 @@
           label: "pointsLabel",
           detail: T("balloonsResult", score),
           stars: score >= 20 ? 3 : score >= 10 ? 2 : score >= 4 ? 1 : 0,
+          correct: score,
           review: [...st.missed.values()],
         });
       }, 1400);
@@ -1036,6 +1043,8 @@
           detail: T("scrambleResult", st.clean, list.length),
           stars: ratio >= 0.9 ? 3 : ratio >= 0.65 ? 2 : ratio >= 0.35 ? 1 : 0,
           review: [...st.missed.values()],
+          // A word is worth 10, less for hints and wrong tries.
+          correct: Math.round(st.score / 10),
           recordScore: `${st.score}/${st.max}`,
         });
       }, 1500);

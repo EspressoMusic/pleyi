@@ -27,6 +27,11 @@
     listen: "האזנה",
     match: "התאמה",
     reading: "קטע קריאה",
+    "find-error": "מציאת טעות",
+    "sentence-choice": "בחירת משפט",
+    letters: "בניית מילה",
+    dictation: "הכתבה",
+    translate: "תרגום",
   };
 
   const ICONS = {
@@ -263,6 +268,40 @@
     return [...open, ...done];
   }
 
+  // Points this week and in all, as the class leaderboard counts them.
+  function pointsOf(s) {
+    return { total: s.pointsNow?.total || 0, week: s.pointsNow?.week || 0 };
+  }
+
+  function fmtNum(n) {
+    return Number(n || 0).toLocaleString("he-IL");
+  }
+
+  // The class leaderboard as the teacher sees it — full names (students see
+  // first names and an initial).
+  function boardCardHtml() {
+    if (!window.Leaderboard) return "";
+    return `
+      <div class="adm-card adm-board">
+        <div class="adm-board-head">
+          <span class="adm-board-icon">${window.Leaderboard.icon}</span>
+          <div>
+            <h3 class="adm-h3">טבלת השיאים</h3>
+            <p class="adm-muted">כל תשובה נכונה מזכה את התלמיד בנקודות, ובתרגילים קשים יותר בנקודות רבות יותר. התלמידים רואים את הטבלה בקישור האישי שלהם, עם שם פרטי ואות ראשונה של שם המשפחה.</p>
+          </div>
+        </div>
+        <div id="admBoard"></div>
+        ${window.Leaderboard.rulesHtml()}
+      </div>`;
+  }
+
+  function bindBoard() {
+    const box = $("#admBoard");
+    if (!box) return;
+    const rows = students.map((s) => ({ name: s.name, ...pointsOf(s), isMe: false }));
+    window.Leaderboard.bind(box, rows, { limit: 10 });
+  }
+
   function tile(label, value, note = "") {
     return `
       <div class="adm-tile">
@@ -381,6 +420,7 @@
     const list = filteredStudents();
     if (listSort === "name") return list.sort((a, b) => a.name.localeCompare(b.name, "he"));
     if (listSort === "avg") return list.sort((a, b) => (summarize(b).avg ?? -1) - (summarize(a).avg ?? -1));
+    if (listSort === "points") return list.sort((a, b) => pointsOf(b).total - pointsOf(a).total);
     return list;
   }
 
@@ -420,6 +460,7 @@
               ${tile("פעילים בשבוע האחרון", activeWeek)}
               ${tile("שיעורי בית שממתינים", openHomework)}
             </div>
+            ${boardCardHtml()}
             <div class="adm-list-tools">
               <label class="adm-search">
                 <span class="adm-sr">חיפוש תלמיד</span>
@@ -435,6 +476,7 @@
                   <option value="recent"${listSort === "recent" ? " selected" : ""}>פעילות אחרונה</option>
                   <option value="name"${listSort === "name" ? " selected" : ""}>שם</option>
                   <option value="avg"${listSort === "avg" ? " selected" : ""}>ציון ממוצע</option>
+                  <option value="points"${listSort === "points" ? " selected" : ""}>נקודות</option>
                 </select>
               </label>
             </div>
@@ -446,6 +488,7 @@
       }`;
 
     renderStudentRows();
+    bindBoard();
     $("#admCreateForm").addEventListener("submit", (e) => {
       e.preventDefault();
       withBusy(e.submitter, async () => {
@@ -523,6 +566,10 @@
             <span class="adm-student-stat">
               <span class="adm-stat-label">ציון ממוצע</span>
               <span class="adm-stat-value">${sum.avg == null ? "—" : `${sum.avg}%`}</span>
+            </span>
+            <span class="adm-student-stat">
+              <span class="adm-stat-label">נקודות</span>
+              <span class="adm-stat-value">${fmtNum(pointsOf(s).total)}</span>
             </span>
             <span class="adm-student-stat">
               <span class="adm-stat-label">פעילות אחרונה</span>
@@ -902,6 +949,7 @@
         ${tile("סבבי תרגול", counts.exercises)}
         ${tile("זמן תרגול", esc(fmtDuration(counts.practiceSec)))}
         ${tile("שיעורים ומשחקים", counts.lessons + counts.games)}
+        ${tile("נקודות", fmtNum(pointsOf(s).total), `השבוע: ${fmtNum(pointsOf(s).week)}`)}
       </div>
 
       <div class="adm-detail-grid">
