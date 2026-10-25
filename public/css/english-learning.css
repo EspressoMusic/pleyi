@@ -205,6 +205,14 @@ body.page-english .eng-section {
   height: 38px;
 }
 
+/* The vocabulary card shows a picture from its first topic. */
+.eng-topic-wide-icon img {
+  width: 48px;
+  height: 48px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .eng-topic-wide-text {
   flex: 1;
   min-width: 0;
@@ -291,32 +299,92 @@ body.page-english .eng-section {
   align-self: flex-start;
 }
 
-/* Back link on the start side, progress in the middle, sound / translation
-   toggles on the end side. Columns are pinned so the tools stay at the end
-   on the results screen, which has no progress. */
+/* Back link on the start side, the tools on the end side, the progress ring
+   centered between them (the results screen has no ring, and space-between
+   keeps the tools at the end). The bar is a size container: when it is too
+   narrow for the tools' labels they turn into icons (see the @container
+   rules below), and on the narrowest screens the tools wrap under the ring
+   instead of running over it. */
 .eng-runner-bar {
   align-self: stretch;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
 }
 
-.eng-runner-bar > .eng-back {
-  grid-column: 1;
-  justify-self: start;
-}
-
 .eng-runner-bar > .eng-progress {
-  grid-column: 2;
+  margin-inline: auto;
 }
 
 .eng-runner-tools {
-  grid-column: 3;
-  justify-self: end;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+/* The question card's color menu: a row of swatches under its button. */
+.eng-color-tool {
+  position: relative;
+}
+
+.eng-color-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  inset-inline-end: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(4, 34px);
+  gap: 10px;
+  padding: 12px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.eng-color-menu.hidden {
+  display: none;
+}
+
+.eng-color-swatch {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--card-color);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.eng-color-swatch:hover {
+  transform: scale(1.08);
+}
+
+.eng-color-swatch[aria-pressed="true"] {
+  box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--ink);
+}
+
+.eng-color-swatch--white { --card-color: #ffffff; }
+.eng-color-swatch--mint, .eng-card-color--mint { --card-color: #d9f7ea; }
+.eng-color-swatch--sky, .eng-card-color--sky { --card-color: #d9ecff; }
+.eng-color-swatch--lavender, .eng-card-color--lavender { --card-color: #e8e0ff; }
+.eng-color-swatch--pink, .eng-card-color--pink { --card-color: #ffdcea; }
+.eng-color-swatch--peach, .eng-card-color--peach { --card-color: #ffe3cc; }
+.eng-color-swatch--lemon, .eng-card-color--lemon { --card-color: #fff6b8; }
+.eng-color-swatch--sand, .eng-card-color--sand { --card-color: #f6ecd2; }
+
+/* A colored card; the sentence box inside turns see-through white so it
+   sits on the card's color instead of the default soft teal. */
+.eng-runner-card[class*="eng-card-color--"] {
+  background: var(--card-color);
+}
+
+.eng-runner-card[class*="eng-card-color--"] .eng-sentence {
+  background: rgb(255 255 255 / 0.6);
 }
 
 .eng-tool {
@@ -427,31 +495,20 @@ body.clean-site .eng-runner-title.font-cartoon {
   height: 34px;
 }
 
-.eng-lesson-text {
+.eng-lesson-title {
   flex: 1;
   min-width: 0;
-}
-
-.eng-lesson-title {
-  margin: 0 0 2px;
+  margin: 0;
   font-size: 1.3rem;
   font-weight: 900;
   color: var(--ink);
 }
 
-.eng-lesson-meta {
-  margin: 0 0 6px;
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: var(--body);
-}
-
-.eng-lesson-summary {
-  margin: 0;
-  font-size: 0.98rem;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--body);
+.eng-lesson-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 /* !important: .btn-candy / .btn-primary force a thicker 4px border and a larger
@@ -530,8 +587,7 @@ body.clean-site .eng-runner-title.font-cartoon {
   line-height: 1.25;
 }
 
-.eng-item-meta,
-.eng-ex-meta {
+.eng-item-meta {
   font-size: 0.86rem;
   font-weight: 700;
   color: var(--body);
@@ -548,9 +604,11 @@ body.clean-site .eng-runner-title.font-cartoon {
   font-weight: 900;
 }
 
+/* Every card in a grid is as tall as the tallest one. */
 .eng-ex-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: 14px;
 }
 
@@ -601,38 +659,27 @@ body.clean-site .eng-runner-title.font-cartoon {
   box-shadow: var(--eng-card-shadow-hover);
 }
 
-/* Each exercise type gets its own icon color so the list is easy to scan. */
-.eng-ex-card--truefalse .eng-ex-icon { background: #ffd4a3; }
-.eng-ex-card--write .eng-ex-icon { background: #ff9ec7; }
-.eng-ex-card--order .eng-ex-icon { background: #b9a4ff; }
-.eng-ex-card--picture .eng-ex-icon,
-.eng-ex-card--pick-picture .eng-ex-icon { background: #9be7ff; }
-.eng-ex-card--listen .eng-ex-icon { background: var(--memyellow); }
-.eng-ex-card--match .eng-ex-icon { background: #a6f0a0; }
-.eng-ex-card--print .eng-ex-icon { background: #ffd6f0; }
-.eng-ex-card--find-error .eng-ex-icon { background: #ffb3b3; }
-.eng-ex-card--sentence-choice .eng-ex-icon { background: #c4e3ff; }
-.eng-ex-card--letters .eng-ex-icon { background: #ffe9a6; }
-.eng-ex-card--dictation .eng-ex-icon { background: #d9c9ff; }
-.eng-ex-card--translate .eng-ex-icon { background: #b8f2e6; }
-
-/* "All sheets together" closes the printable worksheets grid at full width. */
-.eng-ex-card--print-all {
-  grid-column: 1 / -1;
+/* Practice exercise cards all share one icon (a notebook with the level
+   number) and the default teal; printable sheets and reading passages (by
+   level) keep their own colors. */
+.eng-ex-icon--level svg {
+  width: 30px;
+  height: 30px;
 }
 
-/* The help dialog's icon takes the same color as its exercise card's. */
-.eng-help-card--truefalse .eng-help-icon { background: #ffd4a3; }
-.eng-help-card--write .eng-help-icon { background: #ff9ec7; }
-.eng-help-card--order .eng-help-icon { background: #b9a4ff; }
-.eng-help-card--picture .eng-help-icon,
-.eng-help-card--pick-picture .eng-help-icon { background: #9be7ff; }
-.eng-help-card--listen .eng-help-icon { background: var(--memyellow); }
-.eng-help-card--match .eng-help-icon { background: #a6f0a0; }
-.eng-help-card--level-1 .eng-help-icon { background: var(--eng-level-1); }
-.eng-help-card--level-2 .eng-help-icon { background: var(--eng-level-2); }
-.eng-help-card--level-3 .eng-help-icon { background: var(--eng-level-3); }
-.eng-help-card--level-4 .eng-help-icon { background: var(--eng-level-4); }
+.eng-ex-num {
+  fill: currentColor;
+  stroke: none;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.eng-ex-card--print .eng-ex-icon { background: #ffd6f0; }
+.eng-ex-card--level-1 .eng-ex-icon { background: var(--eng-level-1); }
+.eng-ex-card--level-2 .eng-ex-icon { background: var(--eng-level-2); }
+.eng-ex-card--level-3 .eng-ex-icon { background: var(--eng-level-3); }
+.eng-ex-card--level-4 .eng-ex-icon { background: var(--eng-level-4); }
 
 @media (max-width: 420px) {
   .eng-ex-card {
@@ -650,6 +697,51 @@ body.clean-site .eng-runner-title.font-cartoon {
   font-size: 0.86rem;
   font-weight: 800;
   color: var(--eng-right);
+}
+
+/* "Done" / "in progress" on the side of an exercise card (statusHtml).
+   White, so it stands out on every card color. */
+.eng-status {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  padding-inline-start: 6px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.eng-status svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.eng-status--done svg { color: var(--eng-right); }
+.eng-status--progress svg { color: #f08c00; }
+
+/* On an exercise card the title keeps the whole row, so the status is a tag
+   on the card's top edge (taps go through it to the card), and the cards
+   are spaced for it. */
+.eng-ex-grid:has(.eng-status) {
+  row-gap: 24px;
+  padding-top: 10px;
+}
+
+.eng-ex-card .eng-status {
+  position: absolute;
+  top: -13px;
+  inset-inline-end: 18px;
+  z-index: 2;
+  pointer-events: none;
+  font-size: 0.82rem;
 }
 
 .eng-empty {
@@ -942,12 +1034,13 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
   }
 }
 
+/* On the page, above the question card. */
 .eng-instructions {
-  margin: 0 0 18px;
+  margin: 0 0 14px;
   text-align: center;
   font-size: 1.1rem;
   font-weight: 800;
-  color: var(--body);
+  color: var(--ink);
 }
 
 .eng-sentence {
@@ -2070,29 +2163,25 @@ body.eng-help-open {
   gap: 12px;
 }
 
-.eng-help-icon {
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: 50px;
-  height: 50px;
-  border: 3px solid var(--ink);
-  border-radius: 14px;
-  background: var(--memteal);
-}
-
-.eng-help-icon svg {
-  width: 26px;
-  height: 26px;
-}
-
 .eng-help-heading {
   flex: 1;
   min-width: 0;
 }
 
-.eng-help-kicker {
-  margin: 0;
+/* Level, size and best score — what the topic page cards leave out. */
+.eng-help-facts {
+  margin: 2px 0 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.eng-help-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 8px 0 0;
   font-size: 0.92rem;
   font-weight: 800;
   color: var(--body);
@@ -2582,11 +2671,6 @@ body.eng-help-open {
     padding: 14px 14px 16px;
   }
 
-  .eng-help-icon {
-    width: 44px;
-    height: 44px;
-  }
-
   .eng-help .eng-help-title {
     font-size: 1.18rem;
   }
@@ -2651,11 +2735,6 @@ body.eng-help-open {
   .eng-help-card {
     gap: 8px;
     padding-block: 12px 14px;
-  }
-
-  .eng-help-head .eng-help-icon {
-    width: 40px;
-    height: 40px;
   }
 
   .eng-help .eng-help-label {
@@ -2864,8 +2943,10 @@ body.eng-viewer-open {
   max-height: calc(100vh - 80px);
 }
 
-/* ── Reading runner: passage on one side, the task (marking / questions) on
-   the other; each side scrolls on its own if it has to, the page never does. ── */
+/* ── Reading runner: while marking, the passage on one side and the task on
+   the other; otherwise the passage, then the questions, one at a time (see
+   .eng-read--paged). Each box scrolls on its own if it has to, the page
+   never does. ── */
 
 .eng-exercise-view.is-reading {
   max-width: 1180px;
@@ -2887,6 +2968,7 @@ body.eng-viewer-open {
 }
 
 .eng-read-passage {
+  position: relative;
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
@@ -2972,6 +3054,137 @@ body.eng-viewer-open {
   animation: none;
 }
 
+/* "Translate words": a click on a word opens its meaning in a bubble. */
+.eng-read-text.is-dict .eng-tok[tabindex]:hover:not(.is-looked) {
+  background: #e3f1ff;
+}
+
+.eng-read .eng-tok.is-looked {
+  background: #bfe3ff;
+  box-shadow: inset 0 -3px 0 #3b8fd6;
+}
+
+.eng-dict-pop {
+  position: absolute;
+  z-index: 3;
+  width: max-content;
+  min-width: 140px;
+  max-width: min(300px, calc(100% - 12px));
+  padding: 8px 12px 10px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  color: var(--ink);
+  animation: eng-pop 0.2s ease;
+}
+
+.eng-dict-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.12rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.eng-dict-speak {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-width: 2px;
+}
+
+.eng-dict-speak svg {
+  width: 16px;
+  height: 16px;
+}
+
+.eng-dict-he {
+  margin: 6px 0 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.eng-dict-he b {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  color: var(--body);
+}
+
+.eng-dict-base,
+.eng-dict-none {
+  display: block;
+  margin: 2px 0 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--body);
+}
+
+.eng-dict-none {
+  margin-top: 6px;
+  font-size: 0.98rem;
+}
+
+/* Marking with "Translate words" on: a click translates instead of marking. */
+.eng-read-dict-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 6px 12px;
+  border: 2px dashed var(--ink);
+  border-radius: 12px;
+  background: #e3f1ff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.eng-read-dict-note svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+
+/* Phones: the passage box is short, so the bubble is smaller. */
+@media (max-width: 820px) {
+  .eng-dict-pop {
+    min-width: 120px;
+    max-width: min(250px, calc(100% - 12px));
+    padding: 6px 10px 8px;
+    border-width: 2px;
+    box-shadow: 2px 3px 0 0 var(--ink);
+  }
+
+  .eng-dict-head {
+    font-size: 1rem;
+  }
+
+  .eng-dict-speak {
+    width: 28px;
+    height: 28px;
+  }
+
+  .eng-dict-he {
+    margin-top: 3px;
+    font-size: 1rem;
+  }
+
+  .eng-read-dict-note {
+    margin-bottom: 6px;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+  }
+}
+
 /* Phones only (see the narrow-screen block at the end). */
 .eng-read-expand {
   display: none;
@@ -2993,6 +3206,75 @@ body.eng-viewer-open {
 .eng-read-expand svg {
   width: 18px;
   height: 18px;
+}
+
+/* Reading first, then the questions (.eng-read--paged): the passage and the
+   question take turns filling the card. "To the questions" / "Back to the
+   question" sit under the passage, "Back to the text" over the question. */
+.eng-exercise-view.is-reading:has(.eng-read--paged) {
+  max-width: 920px;
+}
+
+.eng-read--paged {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.eng-read--paged.is-read .eng-read-task,
+.eng-read--paged.is-questions:not(.is-text-open) .eng-read-side,
+.eng-read--paged.is-text-open .eng-read-task {
+  display: none;
+}
+
+.eng-read-go {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding-top: clamp(10px, 1.8dvh, 16px);
+}
+
+.eng-read-q-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-bottom: clamp(8px, 1.4dvh, 12px);
+}
+
+.eng-read-q-head .eng-read-step {
+  margin: 0;
+}
+
+.eng-read-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+  padding: 7px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #fffdf3;
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.eng-read-back svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.eng-read-back:hover {
+  background: var(--memyellow);
+}
+
+.eng-read-back:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
 }
 
 .eng-read-glossary {
@@ -3118,17 +3400,30 @@ body.eng-viewer-open {
   color: var(--ink);
 }
 
-.eng-read-task .eng-translation {
+/* "Hebrew questions": a question with a Hebrew version holds both languages
+   (.has-he), and the card shows one of them. */
+.eng-q-he {
   display: none;
-  margin: 0 0 10px;
-  font-size: 1rem;
-  font-weight: 800;
-  line-height: 1.5;
-  color: var(--body);
 }
 
-.eng-runner-card.is-translated .eng-read-task .eng-translation {
-  display: block;
+.eng-runner-card.is-he-q .has-he .eng-q-en {
+  display: none;
+}
+
+.eng-runner-card.is-he-q .has-he .eng-q-he {
+  display: inline;
+}
+
+.eng-read-q.has-he,
+.eng-read-option.has-he {
+  direction: ltr;
+  text-align: left;
+}
+
+.eng-runner-card.is-he-q .eng-read-q.has-he,
+.eng-runner-card.is-he-q .eng-read-option.has-he {
+  direction: rtl;
+  text-align: right;
 }
 
 .eng-read-options {
@@ -3306,8 +3601,12 @@ body.eng-viewer-open {
     text-align: center;
   }
 
+  .eng-lesson-actions {
+    align-self: stretch;
+  }
+
   .eng-lesson-card .eng-lesson-open {
-    width: 100%;
+    flex: 1;
   }
 
   .eng-option {
@@ -3379,62 +3678,6 @@ body.eng-viewer-open {
   .eng-slide-img {
     max-height: calc(100dvh - 120px);
   }
-}
-
-/* ── Practice by level (topic page): the exercises of each level under a
-   heading with how many points a right answer is worth there. ── */
-
-.eng-ex-level + .eng-ex-level {
-  margin-top: 26px;
-}
-
-.eng-ex-level-title {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 900;
-  color: var(--ink);
-}
-
-.eng-ex-level-title .eng-level-bars {
-  padding: 5px 7px;
-  border: 2px solid var(--ink);
-  border-radius: 10px;
-}
-
-.eng-ex-level--1 .eng-level-bars { background: var(--eng-level-1); }
-.eng-ex-level--2 .eng-level-bars { background: var(--eng-level-2); }
-.eng-ex-level--3 .eng-level-bars { background: var(--eng-level-3); }
-
-.eng-ex-level-points {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 12px 3px 10px;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--white);
-  font-size: 0.9rem;
-  font-weight: 800;
-}
-
-.eng-ex-level-points svg {
-  width: 17px;
-  height: 17px;
-  fill: var(--memyellow);
-  stroke: var(--ink);
-  stroke-width: 1.8;
-  stroke-linejoin: round;
-}
-
-.eng-ex-level-about {
-  margin: 4px 0 12px;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--body);
 }
 
 /* ── Picture true / false: the word is the picture's caption ── */
@@ -3858,7 +4101,8 @@ html.eng-runner-open .eng-results > * {
 }
 
 html.eng-runner-open .eng-instructions {
-  margin-bottom: clamp(8px, 2dvh, 18px);
+  flex-shrink: 0;
+  margin-bottom: clamp(8px, 1.6dvh, 14px);
   font-size: clamp(0.95rem, 2.4dvh, 1.1rem);
 }
 
@@ -4021,13 +4265,48 @@ html.eng-runner-open .eng-mistakes ul {
   line-height: 1.55;
 }
 
-@media (max-width: 420px) {
-  html.eng-runner-open .eng-tool {
-    padding: 7px 10px;
+/* A runner bar too narrow for the tools' labels: icons only (each keeps its
+   title tooltip and its name for screen readers). */
+@container (max-width: 699px) {
+  .eng-runner-tools {
+    gap: 6px;
   }
 
-  html.eng-runner-open .eng-tool span {
-    display: none;
+  .eng-tool {
+    padding: 7px 9px;
+  }
+
+  .eng-tool span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* Small phones: smaller icon buttons, so five tools still fit beside the ring. */
+@container (max-width: 380px) {
+  .eng-runner-tools {
+    gap: 5px;
+  }
+
+  .eng-tool {
+    padding: 6px 7px;
+  }
+
+  .eng-tool svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Too narrow even for that: the tools get their own row. */
+@container (max-width: 300px) {
+  .eng-runner-tools {
+    flex-basis: 100%;
+    justify-content: center;
   }
 }
 
@@ -4117,6 +4396,42 @@ html.eng-runner-open .eng-runner-card > .eng-read {
 
   .eng-read.is-text-open .eng-read-side {
     flex: 1 1 auto;
+  }
+
+  .eng-read--paged .eng-read-task {
+    flex: 1 1 auto;
+    max-height: none;
+  }
+
+  /* No expand button in the corner to keep clear of. */
+  .eng-read--paged .eng-read-title {
+    padding: 0;
+  }
+
+  .eng-read-go {
+    padding-top: 10px;
+  }
+
+  .eng-read-go .eng-check {
+    padding: 8px 24px;
+    font-size: 1rem;
+  }
+
+  .eng-read-q-head {
+    margin-bottom: 8px;
+  }
+
+  .eng-read-back {
+    gap: 6px;
+    padding: 5px 12px;
+    border-width: 2px;
+    box-shadow: 2px 3px 0 0 var(--ink);
+    font-size: 0.9rem;
+  }
+
+  .eng-read-back svg {
+    width: 18px;
+    height: 18px;
   }
 
   .eng-read-title {
@@ -4296,4 +4611,1104 @@ html.eng-runner-open .eng-picture-word {
    icons only. */
 html.eng-runner-open .eng-slow-btn span {
   display: inline;
+}
+
+/* ── "My mistakes" (mistake-bank.js): the card on the topics page, the line
+   on a topic's page, and the review round's header ── */
+
+.eng-review-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 760px;
+  margin: 0 auto 30px;
+  padding: clamp(14px, 3vw, 20px);
+  border: var(--eng-card-border);
+  border-radius: 22px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--eng-card-shadow);
+}
+
+.eng-review-card-icon,
+.eng-review-strip-icon,
+.eng-review-empty-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--memyellow);
+  color: var(--ink);
+}
+
+.eng-review-card-icon svg,
+.eng-review-strip-icon svg,
+.eng-review-empty-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.eng-review-card-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.eng-review-card .eng-review-card-title {
+  margin: 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.eng-review-card-text p {
+  margin: 4px 0 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.eng-review-card-go {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  font-size: 1.02rem;
+  text-decoration: none;
+}
+
+@media (max-width: 560px) {
+  .eng-review-card {
+    flex-wrap: wrap;
+  }
+
+  .eng-review-card-text {
+    flex-basis: calc(100% - 70px);
+  }
+
+  .eng-review-card-go {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.eng-review-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.eng-review-strip-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.eng-review-strip-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.eng-review-strip-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.eng-review-strip-go {
+  flex-shrink: 0;
+  padding: 7px 18px;
+  background: var(--memyellow);
+  color: var(--ink);
+  font-size: 0.98rem;
+  text-decoration: none;
+}
+
+/* Where a review question is from, and its right answers in a row. */
+.eng-review-from {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  white-space: normal;
+}
+
+.eng-review-dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.eng-review-dots i {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+}
+
+.eng-review-dots i.is-on {
+  background: var(--eng-right);
+}
+
+.eng-review-out {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 9px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 900;
+  animation: eng-pop 0.3s ease both;
+}
+
+.eng-review-out svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--ink);
+}
+
+.eng-mistakes-saved {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -2px 0 10px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--body);
+}
+
+.eng-mistakes-saved svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+/* The review screen with nothing to practice, or while it loads. */
+.eng-review-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.eng-review-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+}
+
+.eng-review-empty-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.eng-review-empty-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-review-empty-lead {
+  max-width: 30em;
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+.eng-review-empty .btn {
+  padding: 10px 26px;
+  text-decoration: none;
+}
+
+/* ── Reading exams (english-exams.js) ── */
+
+/* The exams tile sits under the reading library's, in its own color. */
+.eng-topic-card--exams .eng-topic-wide-icon {
+  background: var(--memyellow);
+}
+
+/* The Bagrut topic's way to the timed exams. */
+.eng-exam-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: var(--eng-card-border);
+  border-radius: 18px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: var(--eng-card-shadow);
+  text-decoration: none;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.eng-exam-link:hover,
+.eng-exam-link:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--eng-card-shadow-hover);
+}
+
+.eng-exam-link-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--memyellow);
+}
+
+.eng-exam-link-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.eng-exam-link-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.eng-exam-link-go {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  font-size: 0.98rem;
+}
+
+@media (max-width: 560px) {
+  .eng-exam-link {
+    flex-wrap: wrap;
+  }
+
+  .eng-exam-link-text {
+    flex-basis: calc(100% - 64px);
+  }
+
+  .eng-exam-link-go {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* The exams page: how an exam works, then a card per exam. */
+.eng-exam-how {
+  display: grid;
+  gap: 6px;
+  max-width: 760px;
+  margin: 0 auto 26px;
+  padding: 14px 18px;
+  border: 3px dashed var(--ink);
+  border-radius: 18px;
+  background: var(--white);
+  list-style: none;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.eng-exam-how li,
+.eng-exam-rules li {
+  position: relative;
+  padding-inline-start: 22px;
+}
+
+.eng-exam-how li::before,
+.eng-exam-rules li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 2px;
+  top: 0.55em;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--memteal);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+/* The first screen of an exam. */
+.eng-exam-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 1.6dvh, 14px);
+  text-align: center;
+}
+
+.eng-exam-intro-icon {
+  display: grid;
+  place-items: center;
+  width: clamp(54px, 9dvh, 76px);
+  height: clamp(54px, 9dvh, 76px);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: var(--memyellow);
+}
+
+.eng-exam-intro-icon svg {
+  width: 58%;
+  height: 58%;
+}
+
+.eng-exam-intro-title {
+  margin: 0;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.3rem, 3.4dvh, 1.8rem);
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-exam-facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eng-exam-facts li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px 5px 11px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--eng-soft);
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-exam-facts svg {
+  width: 19px;
+  height: 19px;
+}
+
+.eng-exam-resume-note {
+  margin: 0;
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: var(--memyellow);
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-exam-rules {
+  display: grid;
+  gap: 6px;
+  max-width: 34em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: start;
+  font-size: clamp(0.95rem, 2.3dvh, 1.05rem);
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.eng-exam-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eng-exam-start svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+/* The header: the answered-questions ring and the timer next to it. */
+.eng-exam-progress {
+  gap: 8px;
+}
+
+.eng-exam-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 9px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+.eng-exam-timer svg {
+  width: 19px;
+  height: 19px;
+}
+
+.eng-exam-timer.is-untimed {
+  background: var(--eng-soft);
+}
+
+.eng-exam-timer.is-low {
+  background: #ffd08a;
+}
+
+.eng-exam-timer.is-urgent {
+  background: var(--eng-wrong-soft);
+  border-color: var(--eng-wrong);
+  animation: eng-exam-pulse 1s ease-in-out infinite;
+}
+
+@keyframes eng-exam-pulse {
+  50% { transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-exam-timer.is-urgent {
+    animation: none;
+  }
+}
+
+/* The passage: numbered paragraphs, and sentences to click for a quote. */
+.eng-exam-para {
+  position: relative;
+  padding-left: 34px;
+}
+
+.eng-para-num {
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.eng-exam-para.is-pointed .eng-para-num {
+  background: var(--memyellow);
+  box-shadow: 0 0 0 3px var(--memyellow);
+}
+
+.eng-sent {
+  border-radius: 0.3em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.eng-exam-text.is-quoting .eng-sent {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.eng-exam-text.is-quoting .eng-sent:hover:not(.is-quoted) {
+  background: #e3f1ff;
+}
+
+.eng-exam-text.is-quoting .eng-sent:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.eng-sent.is-quoted {
+  background: #ffe14d;
+  box-shadow: inset 0 -3px 0 #e0b400;
+}
+
+.eng-sent.is-quote-right {
+  background: var(--eng-right-soft);
+  box-shadow: inset 0 -3px 0 var(--eng-right);
+}
+
+.eng-sent.is-quote-wrong {
+  background: var(--eng-wrong-soft);
+  text-decoration: line-through;
+  text-decoration-color: var(--eng-wrong);
+}
+
+/* The task side: question buttons, the question, its answer, prev / next. */
+.eng-exam-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 clamp(8px, 1.6dvh, 14px);
+}
+
+.eng-exam-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  direction: ltr;
+}
+
+.eng-exam-dot {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.eng-exam-dot.is-answered {
+  background: var(--memteal);
+}
+
+.eng-exam-dot.is-current {
+  box-shadow: 0 0 0 3px var(--memyellow), 0 0 0 5px var(--ink);
+}
+
+.eng-exam-dot:hover {
+  transform: translateY(-1px);
+}
+
+.eng-exam-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 11px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.eng-exam-submit svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-exam-submit:active {
+  transform: translate(2px, 3px);
+  box-shadow: none;
+}
+
+.eng-exam-step {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--body);
+}
+
+.eng-exam-blank {
+  display: inline-block;
+  width: 5em;
+  margin: 0 0.15em;
+  border-bottom: 3px solid var(--ink);
+  vertical-align: -0.1em;
+}
+
+.eng-exam-note {
+  display: flex;
+}
+
+/* A chosen answer stays marked until the exam is handed in. */
+.eng-read-option.eng-exam-choice.is-selected,
+.eng-tf-btn.eng-exam-choice.is-selected {
+  background: var(--memteal);
+  box-shadow: 0 0 0 3px var(--ink);
+}
+
+.eng-tf-btn.eng-exam-choice.is-selected svg {
+  color: var(--ink);
+}
+
+.eng-exam-box {
+  border-radius: 7px;
+  background: var(--white);
+}
+
+.eng-exam-box svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-exam-hint {
+  min-height: 1.2em;
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #a05400;
+}
+
+.eng-exam-word {
+  width: min(100%, 320px);
+}
+
+.eng-exam-quote {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff7c2;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.eng-exam-quote.is-empty {
+  border-style: dashed;
+  background: var(--white);
+  color: var(--body);
+}
+
+.eng-exam-quote-label {
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.eng-exam-quote-text {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  text-align: left;
+}
+
+.eng-exam-clear {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.eng-exam-answer {
+  display: flex;
+  flex-direction: column;
+}
+
+.eng-exam-seq {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 1.2dvh, 9px);
+}
+
+.eng-exam-seq-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: clamp(7px, 1.3dvh, 10px) 12px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  text-align: left;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1rem, 2.3dvh, 1.12rem);
+  font-weight: 700;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+.eng-exam-seq-item.is-placed {
+  background: var(--eng-soft);
+}
+
+.eng-exam-seq-num {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px dashed var(--ink);
+  border-radius: 50%;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.eng-exam-seq-item.is-placed .eng-exam-seq-num {
+  border-style: solid;
+  background: var(--memteal);
+}
+
+.eng-exam-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: clamp(10px, 2dvh, 18px);
+}
+
+.eng-exam-foot .eng-check {
+  margin: 0;
+}
+
+.eng-exam-prev:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Hand in? */
+.eng-exam-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(10px, 2dvh, 18px) 6px;
+  text-align: center;
+}
+
+.eng-exam-confirm-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--memyellow);
+}
+
+.eng-exam-confirm-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.eng-exam-confirm-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-exam-confirm-text {
+  max-width: 26em;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.eng-exam-confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.eng-exam-confirm-actions .btn {
+  padding: 10px 22px;
+}
+
+/* Results: the grade, how each kind of question went, and every answer. */
+.eng-exam-score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+}
+
+.eng-exam-score .eng-grade {
+  margin: 0;
+}
+
+.eng-exam-score-text p {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.eng-exam-score-text .eng-exam-timeup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  background: #ffd08a;
+}
+
+.eng-exam-timeup svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-exam-breakdown h4,
+.eng-exam-review h4 {
+  margin: clamp(10px, 2dvh, 16px) 0 8px;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-exam-breakdown ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eng-exam-brow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: #fff7c2;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.eng-exam-brow.is-right {
+  background: var(--eng-right-soft);
+}
+
+.eng-exam-brow.is-wrong {
+  background: var(--eng-wrong-soft);
+}
+
+.eng-exam-actions {
+  justify-content: flex-start;
+  margin-top: clamp(10px, 2dvh, 16px);
+}
+
+.eng-exam-actions .btn {
+  padding: 9px 20px;
+  font-size: 1rem;
+}
+
+.eng-exam-review ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eng-exam-ritem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--ink);
+}
+
+.eng-exam-ritem.is-wrong {
+  border-color: var(--eng-wrong);
+}
+
+.eng-exam-ritem.is-half {
+  border-color: #e0a100;
+}
+
+.eng-exam-rmark {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--white);
+}
+
+.eng-exam-rmark svg {
+  width: 17px;
+  height: 17px;
+}
+
+.eng-exam-ritem.is-right .eng-exam-rmark { background: var(--eng-right); }
+.eng-exam-ritem.is-wrong .eng-exam-rmark { background: var(--eng-wrong); }
+.eng-exam-ritem.is-half .eng-exam-rmark { background: #e0a100; }
+.eng-exam-ritem.is-half .eng-exam-rmark svg { fill: var(--white); }
+
+.eng-exam-rbody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eng-exam-rtype {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--body);
+}
+
+.eng-exam-rq {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.eng-exam-rq .has-he {
+  display: block;
+}
+
+.eng-runner-card:not(.is-he-q) .eng-exam-rq .has-he {
+  direction: ltr;
+  text-align: left;
+}
+
+.eng-exam-rline {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.eng-exam-rlabel {
+  font-weight: 900;
+}
+
+.eng-exam-rline bdi.is-none {
+  color: var(--body);
+  font-style: italic;
+}
+
+.eng-exam-rright {
+  color: #146b3a;
+}
+
+/* Phones: smaller question buttons and paragraph numbers. The step line
+   stays (the reading runner hides its own), since the ring here counts
+   answered questions, not which question this is. */
+@media (max-width: 820px) {
+  /* The passage is what the exam is about, so it keeps more of the card
+     than in the reading runner. */
+  .eng-exam .eng-read-side {
+    min-height: 36%;
+  }
+
+  .eng-exam .eng-read-task {
+    max-height: 62%;
+  }
+
+  /* One row of question buttons that scrolls sideways (the page never
+     does); the padding keeps the current button's ring from being cut. */
+  .eng-exam-nav {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .eng-exam-dots {
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    min-width: 0;
+    padding: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .eng-exam-dots::-webkit-scrollbar {
+    display: none;
+  }
+
+  .eng-exam-dot,
+  .eng-exam-submit {
+    flex-shrink: 0;
+  }
+
+  .eng-exam-para {
+    padding-left: 30px;
+  }
+
+  .eng-para-num {
+    width: 22px;
+    height: 22px;
+    font-size: 0.75rem;
+  }
+
+  .eng-exam-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }
+
+  .eng-exam-submit {
+    padding: 4px 11px 4px 9px;
+    font-size: 0.88rem;
+  }
+
+  .eng-exam-step {
+    margin-bottom: 2px;
+    font-size: 0.85rem;
+  }
+
+  .eng-exam-timer {
+    padding: 4px 10px 4px 7px;
+    font-size: 0.98rem;
+  }
+
+  .eng-exam-score .eng-grade {
+    min-width: 0;
+    padding: 4px 18px 6px;
+  }
+}
+
+@media (max-width: 420px) {
+  .eng-exam-progress .eng-ring {
+    width: 42px;
+    height: 42px;
+  }
 }

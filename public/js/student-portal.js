@@ -81,6 +81,7 @@
             <ol class="stu-hw-list">${list.map(homeworkCard).join("")}</ol>`
           : ""
       }
+      <div id="stuReview"></div>
       <section class="stu-board" id="stuBoard" aria-labelledby="stuBoardTitle">
         <div class="stu-board-head">
           <span class="stu-board-icon">${window.Leaderboard?.icon || ""}</span>
@@ -96,6 +97,23 @@
         <a class="btn btn-candy stu-btn stu-btn--again" href="/services/english?s=${encodeURIComponent(key)}">לכל הנושאים</a>
       </div>`;
     renderBoard();
+    renderReview();
+  }
+
+  // The questions waiting in the student's mistake bank (mistake-bank.js).
+  async function renderReview() {
+    const bank = window.MistakeBank;
+    if (!bank) return;
+    await bank.ready();
+    const box = document.getElementById("stuReview");
+    const count = bank.count();
+    if (!box || !count) return;
+    box.innerHTML = `
+      <div class="stu-free stu-review">
+        <h2 class="stu-free-title">החזרה האישית שלי</h2>
+        <p>${count === 1 ? "שאלה אחת שטעית בה מחכה לחזרה." : `${count} שאלות שטעית בהן מחכות לחזרה.`} כל שאלה יוצאת מהמאגר אחרי ${bank.GOAL} תשובות נכונות ברצף.</p>
+        <a class="btn btn-primary btn-candy stu-btn" href="/services/english?s=${encodeURIComponent(key)}#my-mistakes">לחזרה על הטעויות</a>
+      </div>`;
   }
 
   // The class leaderboard, and where the student stands in it.

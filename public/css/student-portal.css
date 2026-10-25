@@ -231,6 +231,14 @@ body.stu-body {
   font-weight: 700;
 }
 
+/* The mistakes waiting for review: a solid, brighter card. */
+.stu-free.stu-review {
+  margin-top: 28px;
+  border-style: solid;
+  background: var(--memyellow);
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
 @media (max-width: 560px) {
   .stu-hw {
     flex-wrap: wrap;

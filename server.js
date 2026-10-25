@@ -381,6 +381,10 @@ app.post("/api/progress", studentRoute(async (req) => {
 // The student's class leaderboard (every file of the same teacher).
 app.get("/api/leaderboard", studentRoute((req) => studentProgress.getLeaderboard(req.get("x-student-key"))));
 
+// The student's mistake bank ("my mistakes" on the Learn English page).
+app.get("/api/review", studentRoute((req) => studentProgress.getReview(req.get("x-student-key"))));
+app.post("/api/review", studentRoute((req) => studentProgress.recordReview(req.get("x-student-key"), req.body?.ops)));
+
 // Teacher side: signed in with Google. Every file belongs to the teacher who
 // opened it, so each call is scoped to the verified uid.
 const studentAdmin = express.Router();

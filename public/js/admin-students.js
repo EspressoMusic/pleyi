@@ -32,6 +32,8 @@
     letters: "בניית מילה",
     dictation: "הכתבה",
     translate: "תרגום",
+    exam: "מבחן הבנת הנקרא",
+    review: "חזרה על טעויות",
   };
 
   const ICONS = {
@@ -975,6 +977,11 @@
             ${weakSpotsHtml(s)}
           </div>
           <div class="adm-card">
+            <h3 class="adm-h3">החזרה האישית</h3>
+            <p class="adm-muted adm-card-lead">השאלות שהתלמיד טעה בהן ועדיין לא תרגל עד הסוף. שאלה יוצאת מהמאגר אחרי 3 תשובות נכונות ברצף.</p>
+            ${reviewBankHtml(s)}
+          </div>
+          <div class="adm-card">
             <h3 class="adm-h3">היסטוריית פעילות</h3>
             <div id="admHistory">${historyHtml(s)}</div>
           </div>
@@ -1291,6 +1298,40 @@
           )
           .join("")}
       </ul>`;
+  }
+
+  // The student's mistake bank (public/js/mistake-bank.js): what is still
+  // open, the most-missed first, and how close each one is to leaving.
+  const REVIEW_GOAL = 3;
+  const REVIEW_SHOWN = 12;
+
+  function reviewBankHtml(s) {
+    const entries = s.review?.entries || [];
+    const mastered = s.review?.mastered || 0;
+    if (!entries.length) {
+      return `<p class="adm-muted">${mastered ? `אין כרגע שאלות פתוחות. ${mastered === 1 ? "שאלה אחת כבר יצאה" : `${mastered} שאלות כבר יצאו`} מהמאגר.` : "עוד אין שאלות במאגר."}</p>`;
+    }
+    const list = [...entries].sort((a, b) => (b.wrong || 0) - (a.wrong || 0) || String(b.wrongAt).localeCompare(String(a.wrongAt)));
+    return `
+      <p class="adm-hw-summary">${entries.length === 1 ? "שאלה אחת פתוחה" : `${entries.length} שאלות פתוחות`}${mastered ? ` · ${mastered} יצאו מהמאגר` : ""}</p>
+      <ul class="adm-weak">
+        ${list
+          .slice(0, REVIEW_SHOWN)
+          .map((e) => {
+            const streak = Math.min(REVIEW_GOAL, e.streak || 0);
+            return `
+          <li class="adm-weak-item">
+            <span class="adm-weak-count">${e.wrong || 1}×</span>
+            <span class="adm-weak-text">
+              ${e.prompt ? `<span class="adm-weak-prompt" dir="auto">${esc(e.prompt)}</span>` : ""}
+              <span class="adm-weak-answer">תשובה נכונה: <strong dir="auto">${esc(e.answer)}</strong></span>
+              <span class="adm-weak-from">${esc(e.topicTitle)} · ${esc(e.exerciseTitle)} · ענה נכון ברצף: <span dir="ltr">${streak}/${REVIEW_GOAL}</span></span>
+            </span>
+          </li>`;
+          })
+          .join("")}
+      </ul>
+      ${entries.length > REVIEW_SHOWN ? `<p class="adm-muted adm-small">ועוד ${entries.length - REVIEW_SHOWN}.</p>` : ""}`;
   }
 
   function activityHtml(a) {

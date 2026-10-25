@@ -29,9 +29,10 @@ window.Leaderboard = (() => {
       rulesTitle: "איך צוברים נקודות?",
       rules: [
         "כל תשובה נכונה: 10 נקודות ברמה 1, 15 ברמה 2 ו-20 ברמה 3 (בקטעי קריאה ברמה 4: 25).",
+        "במבחני הבנת הנקרא כל תשובה נכונה שווה פי 2.",
         "סבב בלי אף טעות: עוד 20 נקודות בונוס.",
         "גם משחקים נותנים נקודות — לפי התשובות הנכונות והכוכבים.",
-        "תרגול הטעויות שווה חצי מהנקודות.",
+        "תרגול הטעויות (גם בחזרה האישית) שווה חצי מהנקודות.",
         "הנקודות של השבוע מתחילות מאפס בכל יום ראשון.",
       ],
       close: "סגירה",
@@ -52,9 +53,10 @@ window.Leaderboard = (() => {
       rulesTitle: "How do I earn points?",
       rules: [
         "Every right answer: 10 points on level 1, 15 on level 2 and 20 on level 3 (level 4 reading passages: 25).",
+        "In reading exams, every right answer is worth double.",
         "A round without a single mistake: a 20-point bonus.",
         "Games earn points too — for right answers and stars.",
-        "Practicing your mistakes earns half the points.",
+        "Practicing your mistakes (in your review too) earns half the points.",
         "This week's points start from zero every Sunday.",
       ],
       close: "Close",

@@ -5,7 +5,8 @@
 
    Routes (hash): ""                    → topic grid
                   "#<topic>"            → topic page
-                  "#<topic>/<exercise>" → exercise runner */
+                  "#<topic>/<exercise>" → exercise runner (a reading exam too)
+                  "#my-mistakes[/<topic>]" → a round from the mistake bank */
 
 (function () {
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -22,13 +23,13 @@
       open: "כניסה",
       back: "חזרה לנושאים",
       backToTopic: "חזרה לנושא",
-      stepLesson: "השיעור",
-      stepPractice: "תרגול",
       stepGames: "משחקים",
       backToLesson: "חזרה לשיעור",
       gamesLead: "משחקים עם המילים של הנושא — עם ניקוד, זמן ושיאים.",
       playGame: "לשחק",
       openLesson: "פתיחת השיעור",
+      lessonInfo: "מידע על השיעור",
+      lessonWhat: "מה לומדים בשיעור",
       lessonMeta: (slides, duration) => `${slides} שקופיות · ${duration}`,
       noExercises: "עוד אין תרגילים בנושא הזה.",
       view: "צפייה",
@@ -38,6 +39,9 @@
       words: (n) => `${n} מילים`,
       pairs: (n) => `${n} זוגות`,
       best: (s, t) => `השיא שלך: ${s}/${t}`,
+      statusDone: "בוצע",
+      statusProgress: "בתהליך",
+      statusCovered: (p) => `עברת על ${p}% מהתרגיל`,
       progress: (i, t) => `שאלה ${i} מתוך ${t}`,
       matchProgress: (m, t) => `${m} מתוך ${t} זוגות`,
       correct: "נכון!",
@@ -60,6 +64,8 @@
       matchDone: "כל הזוגות הותאמו!",
       sound: "צלילים",
       soundOn: "השתקת הצלילים",
+      cardColor: "צבע",
+      cardColorTitle: "צבע כרטיס השאלה",
       soundOff: "הפעלת הצלילים",
       translate: "תרגום",
       translateOn: "הסתרת התרגום",
@@ -90,26 +96,26 @@
       nextSlide: "שקופית הבאה",
       close: "סגירה",
       fullscreen: "מסך מלא",
-      stepReading: "קטע קריאה",
-      stepPrint: "דפי עבודה להדפסה",
       printLead: "דפי תרגול לכיתה או לבית — מדפיסים, פותרים בעיפרון ובודקים עם דף התשובות.",
       printSheet: (n) => `דף ${n}`,
-      printMeta: (n) => `${n} משימות · עמוד A4`,
       printAll: "כל הדפים יחד",
-      printAllMeta: (n) => `${n} עמודים · עם דף תשובות למורה`,
       printAction: "להדפסה",
-      readingLibraryLead: "קטעי קריאה עם שאלות — אמריקאיות, נכון / לא נכון ושאלות פתוחות. רמה 1 הכי קלה, רמה 4 הכי מאתגרת.",
       level: (n) => `רמה ${n}`,
       levelName: (n) => ["", "קל", "בינוני", "מתקדם", "מאתגר"][n] || "",
       readingMeta: (w, q) => `${w} מילים · ${q} שאלות`,
       readingTitle: (n) => `קטע קריאה · רמה ${n}`,
       readingCount: (n) => `${n} קטעי קריאה בארבע רמות`,
+      vocabHub: "אוצר מילים לפי נושאים",
+      vocabCount: (n) => `${n} נושאים עם תמונות`,
       markStep: "שלב 1: מסמנים בטקסט",
       markFoundLabel: "נמצאו",
       markOf: (t) => `מתוך ${t}`,
       markMisses: (n) => (n === 1 ? "סימון שגוי אחד" : `${n} סימונים שגויים`),
       markReveal: "הראו לי מה חסר",
       toQuestions: "לשאלות",
+      readStep: "קוראים את הקטע",
+      backToText: "חזרה לטקסט",
+      backToQuestion: "חזרה לשאלה",
       markAllFound: "מצאתם את כולן!",
       markRevealed: "המילים שחסרו מסומנות עכשיו בכתום.",
       questionNum: (i, t) => `שאלה ${i} מתוך ${t}`,
@@ -122,6 +128,15 @@
       readAloud: "הקראה",
       readAloudOn: "עצירת ההקראה",
       readAloudOff: "הקראת הטקסט בקול",
+      wordsTool: "תרגום מילים",
+      wordsToolOn: "כיבוי תרגום המילים",
+      wordsToolOff: "לחיצה על מילה בקטע מראה את התרגום שלה",
+      heQuestions: "שאלות בעברית",
+      heQuestionsOn: "הצגת השאלות באנגלית",
+      heQuestionsOff: "הצגת השאלות בעברית",
+      dictNone: "עוד אין לנו תרגום למילה הזו.",
+      dictFrom: (base) => `צורה של ${base}`,
+      dictMarkNote: "כדי לסמן מילים, כבו את „תרגום מילים”.",
       glossary: "מילים חשובות:",
       partMark: (s, t) => `סימון: ${s} מתוך ${t}`,
       partQuestions: (s, t) => `שאלות: ${s} מתוך ${t}`,
@@ -133,12 +148,12 @@
       helpButton: "הסבר ודוגמה",
       helpOpen: (name) => `הסבר ודוגמה: ${name}`,
       helpWhat: "מה עושים?",
-      helpExample: "דוגמה",
       helpStart: "להתחלת התרגיל",
       helpGotIt: "הבנתי",
       helpReadingWhat: "קוראים את הקטע באנגלית ועונים על השאלות.",
       helpReadingMarkWhat: "קוראים את הקטע באנגלית, מסמנים בו מילים ועונים על השאלות.",
       helpReadQuestions: "עונים על השאלות.",
+      helpReadTools: "צריכים עזרה? „תרגום מילים” מראה מה אומרת כל מילה שלוחצים עליה בקטע, ו„שאלות בעברית” מציג את השאלות בעברית.",
       helpTips: {
         choice: "לוחצים על התשובה הנכונה. במחשב אפשר גם להקיש על המספר שלה.",
         truefalse: "לוחצים על „נכון” או על „לא נכון”. כשהמשפט לא נכון, מופיע המשפט המתוקן.",
@@ -155,9 +170,6 @@
         dictation: "שומעים, כותבים באנגלית ולוחצים על „בדיקה” (או על Enter). הרמקול משמיע שוב, וכפתור „לאט” משמיע לאט יותר.",
         translate: "לוחצים על התרגום הנכון. במחשב אפשר גם להקיש על המספר שלו.",
       },
-      levelTitle: (n) => `רמה ${n} · ${["", "קל", "בינוני", "מתקדם"][n] || ""}`,
-      levelAbout: (n) => ["", "מזהים ובוחרים — מתחילים כאן", "משפטים, טעויות ואותיות", "כותבים לבד ושומעים"][n] || "",
-      levelPoints: (p) => `${p} נקודות לכל תשובה נכונה`,
       foundError: "מצאתם את הטעות!",
       fixWordLabel: "המילה הנכונה:",
       errorWas: "הטעות:",
@@ -175,18 +187,123 @@
       boardFull: "לטבלה המלאה",
       boardJoinTitle: "טבלת השיאים",
       boardJoin: "כל תשובה נכונה שווה נקודות! נכנסים דרך הקישור האישי מהמורה — והנקודות נשמרות ומופיעות בטבלת השיאים של הכיתה.",
+      loading: "טוען…",
+      reviewTitle: "חזרה על הטעויות שלי",
+      reviewCardTitle: "החזרה האישית שלי",
+      reviewCardText: (n) => (n === 1 ? "שאלה אחת שטעיתם בה מחכה לחזרה." : `${n} שאלות שטעיתם בהן מחכות לחזרה.`),
+      reviewRule: (g) => `כל שאלה יוצאת מהמאגר אחרי ${g} תשובות נכונות ברצף.`,
+      reviewCardDone: (m) => `אין כרגע טעויות לחזור עליהן — כל הכבוד! ${m === 1 ? "שאלה אחת כבר יצאה" : `${m} שאלות כבר יצאו`} מהמאגר.`,
+      reviewGo: "לחזרה על הטעויות",
+      reviewTopic: (n) => `${n === 1 ? "שאלה אחת" : `${n} שאלות`} מהנושא הזה מחכות לכם בחזרה האישית.`,
+      reviewTopicGo: "לחזרה",
+      reviewEmpty: "אין כרגע שאלות לחזור עליהן.",
+      reviewEmptyLead: "כל טעות בתרגול נשמרת כאן, כדי שתוכלו לחזור עליה עד שתדעו אותה.",
+      reviewStreak: (s, g) => `ענו נכון ${s} מתוך ${g} פעמים ברצף`,
+      reviewOut: "יצאה מהמאגר!",
+      reviewOutCount: (n) => (n === 1 ? "שאלה אחת יצאה מהמאגר" : `${n} שאלות יצאו מהמאגר`),
+      reviewLeft: (n) => (n ? `נשארו במאגר: ${n}` : "המאגר ריק — כל הכבוד!"),
+      reviewAgain: "סבב חזרה נוסף",
+      mistakesSaved: "הטעויות נשמרו בחזרה האישית שלכם, כדי שתוכלו לחזור עליהן גם בפעם אחרת.",
+      reviewPictureInstr: "מה רואים בתמונה? בחרו את המילה הנכונה.",
+      reviewPairInstr: "מה מתאים? בחרו את התשובה הנכונה.",
+      examTitle: (n) => `מבחן · רמה ${n}`,
+      examCount: (n) => `${n} מבחנים עם שעון, בארבע רמות`,
+      examsLead: "מבחני הבנת הנקרא כמו בכיתה: קטע באנגלית ושאלות מכל הסוגים, עם שעון. עונים על הכול, מגישים, ורק אז רואים ציון ותשובות נכונות.",
+      examHow: [
+        "אפשר לעבור בין השאלות ולשנות תשובות עד ההגשה.",
+        "התשובות נשמרות, וגם השעון ממשיך לרוץ כשיוצאים מהמבחן.",
+        "בסוף: ציון, פירוט לפי סוג השאלה ובדיקה של כל תשובה.",
+      ],
+      examMeta: (w, q, m) => `${w} מילים · ${q} שאלות · ${m} דקות`,
+      examBest: (g) => `הציון הכי גבוה שלך: ${g}`,
+      examFactTime: (m) => `${m} דקות`,
+      examFactQuestions: (n) => `${n} שאלות`,
+      examFactWords: (n) => `${n} מילים`,
+      examRules: [
+        "קוראים את הקטע ועונים על השאלות. הקטע נשאר על המסך כל הזמן.",
+        "אפשר לעבור בין השאלות ולשנות תשובות עד שמגישים.",
+        "כשהזמן נגמר, המבחן מוגש לבד.",
+      ],
+      examRulesHe: "בשאלות הפתוחות עונים בעברית.",
+      examRulesEn: "בשאלות הפתוחות עונים באנגלית.",
+      examStart: "להתחלת המבחן",
+      examStartUntimed: "בלי שעון",
+      examResume: "להמשיך את המבחן",
+      examRestart: "להתחיל מחדש",
+      examResumeNote: (time) => `התחלתם את המבחן הזה. ${time ? `נשארו ${time}.` : ""}`,
+      examTimeLeft: (time) => `נשארו ${time}`,
+      examElapsed: (time) => `עברו ${time}`,
+      examNavLabel: "מעבר בין השאלות",
+      examQuestionLabel: (i, answered) => `שאלה ${i}${answered ? " (נענתה)" : ""}`,
+      examPrev: "הקודמת",
+      examNext: "הבאה",
+      examSubmit: "להגשה",
+      examAnsweredOf: (a, n) => `ענית על ${a} מתוך ${n}`,
+      examConfirmTitle: "להגיש את המבחן?",
+      examConfirmMissing: (n) => (n === 1 ? "נשארה שאלה אחת בלי תשובה." : `נשארו ${n} שאלות בלי תשובה.`),
+      examConfirmAll: "עניתם על כל השאלות.",
+      examConfirmNote: "אחרי ההגשה כבר אי אפשר לשנות תשובות.",
+      examConfirmYes: "כן, להגיש",
+      examConfirmNo: "חזרה למבחן",
+      examTimeUp: "הזמן נגמר, והמבחן הוגש.",
+      examTypes: {
+        mc: "שאלות אמריקאיות",
+        tf: "נכון / לא נכון",
+        open: "שאלות פתוחות",
+        complete: "השלמת משפטים",
+        word: "אוצר מילים",
+        multi: "בחירת שתי תשובות",
+        quote: "ציטוט מהטקסט",
+        sequence: "סדר האירועים",
+      },
+      examTypeOne: {
+        mc: "שאלה אמריקאית",
+        tf: "נכון / לא נכון",
+        open: "שאלה פתוחה",
+        complete: "השלמת משפט",
+        word: "אוצר מילים",
+        multi: "בחירת שתי תשובות",
+        quote: "ציטוט מהטקסט",
+        sequence: "סדר האירועים",
+      },
+      examPickTwo: (n) => `בחרו ${n} תשובות.`,
+      examPickedMax: (n) => `כבר בחרתם ${n}. כדי להחליף, לחצו קודם על תשובה שבחרתם.`,
+      examQuoteHow: "לחצו בטקסט על המשפט המתאים.",
+      examQuoteNone: "עוד לא נבחר משפט.",
+      examQuoteChosen: "המשפט שבחרתם:",
+      examQuoteClear: "ביטול הבחירה",
+      examSequenceHow: "לחצו על האירועים לפי הסדר שבו קרו. לחיצה נוספת מבטלת.",
+      examSequenceClear: "להתחיל את הסידור מחדש",
+      examCompleteHow: "השלימו את המשפט באנגלית.",
+      examWordHow: "כתבו את המילה באנגלית, כמו שהיא כתובה בטקסט.",
+      examGrade: "הציון במבחן",
+      examTimeUsed: (time) => `זמן: ${time}`,
+      examByType: "לפי סוג השאלה",
+      examReview: "התשובות שלכם",
+      examYours: "התשובה שלכם:",
+      examRight: "התשובה הנכונה:",
+      examModel: "תשובה לדוגמה:",
+      examNoAnswer: "לא נענתה",
+      examPartial: "חצי נקודה",
+      examRetake: "לעשות שוב",
+      examAll: "לכל המבחנים",
+      examPassage: "לקטע",
+      examLink: "רוצים לבדוק את עצמכם במבחן אמיתי, עם שעון?",
+      examLinkGo: "למבחני הבנת הנקרא",
+      paragraph: (n) => `פסקה ${n}`,
+      minutesSeconds: (m, s) => `${m}:${String(s).padStart(2, "0")}`,
     },
     en: {
       open: "Open",
       back: "Back to topics",
       backToTopic: "Back to topic",
-      stepLesson: "The lesson",
-      stepPractice: "Practice",
       stepGames: "Games",
       backToLesson: "Back to the lesson",
       gamesLead: "Games with this topic's words — with points, timers and records.",
       playGame: "Play",
       openLesson: "Open the lesson",
+      lessonInfo: "About the lesson",
+      lessonWhat: "What the lesson teaches",
       lessonMeta: (slides, duration) => `${slides} slides · ${duration}`,
       noExercises: "No exercises for this topic yet.",
       view: "View",
@@ -196,6 +313,9 @@
       words: (n) => `${n} words`,
       pairs: (n) => `${n} pairs`,
       best: (s, t) => `Your best: ${s}/${t}`,
+      statusDone: "Done",
+      statusProgress: "In progress",
+      statusCovered: (p) => `You've been through ${p}% of it`,
       progress: (i, t) => `Question ${i} of ${t}`,
       matchProgress: (m, t) => `${m} of ${t} pairs`,
       correct: "Correct!",
@@ -218,6 +338,8 @@
       matchDone: "All pairs matched!",
       sound: "Sounds",
       soundOn: "Mute sounds",
+      cardColor: "Color",
+      cardColorTitle: "Question card color",
       soundOff: "Turn sounds on",
       translate: "Translation",
       translateOn: "Hide the translation",
@@ -248,26 +370,26 @@
       nextSlide: "Next slide",
       close: "Close",
       fullscreen: "Fullscreen",
-      stepReading: "Reading passage",
-      stepPrint: "Printable worksheets",
       printLead: "Practice pages for class or home — print them, solve with a pencil, and check with the answer key.",
       printSheet: (n) => `Sheet ${n}`,
-      printMeta: (n) => `${n} tasks · A4 page`,
       printAll: "All sheets together",
-      printAllMeta: (n) => `${n} pages · with a teacher answer key`,
       printAction: "Print",
-      readingLibraryLead: "Reading passages with questions — multiple choice, true / false and open questions. Level 1 is the easiest, level 4 the most challenging.",
       level: (n) => `Level ${n}`,
       levelName: (n) => ["", "Easy", "Medium", "Advanced", "Challenging"][n] || "",
       readingMeta: (w, q) => `${w} words · ${q} questions`,
       readingTitle: (n) => `Reading · Level ${n}`,
       readingCount: (n) => `${n} reading passages in four levels`,
+      vocabHub: "Vocabulary by topic",
+      vocabCount: (n) => `${n} topics with pictures`,
       markStep: "Step 1: Mark the text",
       markFoundLabel: "Found",
       markOf: (t) => `of ${t}`,
       markMisses: (n) => (n === 1 ? "1 wrong mark" : `${n} wrong marks`),
       markReveal: "Show me what's missing",
       toQuestions: "To the questions",
+      readStep: "Read the passage",
+      backToText: "Back to the text",
+      backToQuestion: "Back to the question",
       markAllFound: "You found them all!",
       markRevealed: "The missing words are now marked in orange.",
       questionNum: (i, t) => `Question ${i} of ${t}`,
@@ -280,6 +402,15 @@
       readAloud: "Read aloud",
       readAloudOn: "Stop reading",
       readAloudOff: "Read the text aloud",
+      wordsTool: "Translate words",
+      wordsToolOn: "Turn off word translation",
+      wordsToolOff: "Click a word in the text to see it in Hebrew",
+      heQuestions: "Hebrew questions",
+      heQuestionsOn: "Show the questions in English",
+      heQuestionsOff: "Show the questions in Hebrew",
+      dictNone: "No translation for this word yet.",
+      dictFrom: (base) => `A form of ${base}`,
+      dictMarkNote: "To mark words, turn off \"Translate words\".",
       glossary: "Key words:",
       partMark: (s, t) => `Marking: ${s} of ${t}`,
       partQuestions: (s, t) => `Questions: ${s} of ${t}`,
@@ -291,12 +422,12 @@
       helpButton: "How it works",
       helpOpen: (name) => `How it works: ${name}`,
       helpWhat: "What to do",
-      helpExample: "Example",
       helpStart: "Start the exercise",
       helpGotIt: "Got it",
       helpReadingWhat: "Read the passage in English and answer the questions.",
       helpReadingMarkWhat: "Read the passage in English, mark words in it, and answer the questions.",
       helpReadQuestions: "Answer the questions.",
+      helpReadTools: "Need help? \"Translate words\" shows what a word means when you click it in the text, and \"Hebrew questions\" shows the questions in Hebrew.",
       helpTips: {
         choice: "Click the right answer. On a computer you can also press its number.",
         truefalse: "Click \"True\" or \"False\". When the sentence is wrong, the corrected sentence appears.",
@@ -313,9 +444,6 @@
         dictation: "Listen, type it in English and click \"Check\" (or press Enter). The speaker plays it again, and \"Slow\" plays it slower.",
         translate: "Click the right translation. On a computer you can also press its number.",
       },
-      levelTitle: (n) => `Level ${n} · ${["", "Easy", "Medium", "Advanced"][n] || ""}`,
-      levelAbout: (n) => ["", "Recognize and choose — start here", "Sentences, mistakes and spelling", "Write it yourself and listen"][n] || "",
-      levelPoints: (p) => `${p} points per right answer`,
       foundError: "You found the mistake!",
       fixWordLabel: "The right word:",
       errorWas: "The mistake:",
@@ -333,6 +461,111 @@
       boardFull: "Full leaderboard",
       boardJoinTitle: "Leaderboard",
       boardJoin: "Every right answer earns points! Open the personal link from your teacher, and your points are saved and shown on your class leaderboard.",
+      loading: "Loading…",
+      reviewTitle: "My mistakes",
+      reviewCardTitle: "My mistakes to review",
+      reviewCardText: (n) => (n === 1 ? "1 question you got wrong is waiting for review." : `${n} questions you got wrong are waiting for review.`),
+      reviewRule: (g) => `A question leaves your list after ${g} right answers in a row.`,
+      reviewCardDone: (m) => `Nothing to review right now — well done! ${m === 1 ? "1 question has" : `${m} questions have`} already left your list.`,
+      reviewGo: "Review my mistakes",
+      reviewTopic: (n) => `${n === 1 ? "1 question" : `${n} questions`} from this topic ${n === 1 ? "is" : "are"} waiting in your review.`,
+      reviewTopicGo: "Review",
+      reviewEmpty: "There's nothing to review right now.",
+      reviewEmptyLead: "Every mistake you make in practice is saved here, so you can come back to it until you know it.",
+      reviewStreak: (s, g) => `Right ${s} of ${g} times in a row`,
+      reviewOut: "Off your list!",
+      reviewOutCount: (n) => (n === 1 ? "1 question left your list" : `${n} questions left your list`),
+      reviewLeft: (n) => (n ? `Still on your list: ${n}` : "Your list is empty — well done!"),
+      reviewAgain: "Another review round",
+      mistakesSaved: "Your mistakes were saved to your review, so you can practice them another time too.",
+      reviewPictureInstr: "What's in the picture? Choose the right word.",
+      reviewPairInstr: "What matches? Choose the right answer.",
+      examTitle: (n) => `Exam · Level ${n}`,
+      examCount: (n) => `${n} timed exams in four levels`,
+      examsLead: "Reading exams like in class: a passage in English and every kind of question, with a timer. Answer everything, hand it in, and only then see your grade and the right answers.",
+      examHow: [
+        "You can move between the questions and change answers until you hand it in.",
+        "Your answers are saved, and the timer keeps running when you leave the exam.",
+        "At the end: a grade, a breakdown by question type and a check of every answer.",
+      ],
+      examMeta: (w, q, m) => `${w} words · ${q} questions · ${m} minutes`,
+      examBest: (g) => `Your best grade: ${g}`,
+      examFactTime: (m) => `${m} minutes`,
+      examFactQuestions: (n) => `${n} questions`,
+      examFactWords: (n) => `${n} words`,
+      examRules: [
+        "Read the passage and answer the questions. The passage stays on the screen the whole time.",
+        "You can move between the questions and change answers until you hand the exam in.",
+        "When the time is up, the exam is handed in by itself.",
+      ],
+      examRulesHe: "Answer the open questions in Hebrew.",
+      examRulesEn: "Answer the open questions in English.",
+      examStart: "Start the exam",
+      examStartUntimed: "Without a timer",
+      examResume: "Continue the exam",
+      examRestart: "Start over",
+      examResumeNote: (time) => `You started this exam. ${time ? `${time} left.` : ""}`,
+      examTimeLeft: (time) => `${time} left`,
+      examElapsed: (time) => `${time} so far`,
+      examNavLabel: "Go to a question",
+      examQuestionLabel: (i, answered) => `Question ${i}${answered ? " (answered)" : ""}`,
+      examPrev: "Previous",
+      examNext: "Next",
+      examSubmit: "Hand in",
+      examAnsweredOf: (a, n) => `${a} of ${n} answered`,
+      examConfirmTitle: "Hand in the exam?",
+      examConfirmMissing: (n) => (n === 1 ? "1 question has no answer yet." : `${n} questions have no answer yet.`),
+      examConfirmAll: "You answered every question.",
+      examConfirmNote: "After you hand it in, you can't change your answers.",
+      examConfirmYes: "Yes, hand it in",
+      examConfirmNo: "Back to the exam",
+      examTimeUp: "Time is up, so the exam was handed in.",
+      examTypes: {
+        mc: "Multiple choice",
+        tf: "True / false",
+        open: "Open questions",
+        complete: "Complete the sentence",
+        word: "Vocabulary",
+        multi: "Choose two answers",
+        quote: "Quote from the text",
+        sequence: "Order of events",
+      },
+      examTypeOne: {
+        mc: "Multiple choice",
+        tf: "True / false",
+        open: "Open question",
+        complete: "Complete the sentence",
+        word: "Vocabulary",
+        multi: "Choose two answers",
+        quote: "Quote from the text",
+        sequence: "Order of events",
+      },
+      examPickTwo: (n) => `Choose ${n} answers.`,
+      examPickedMax: (n) => `You already chose ${n}. To change, first click an answer you chose.`,
+      examQuoteHow: "Click the right sentence in the text.",
+      examQuoteNone: "No sentence chosen yet.",
+      examQuoteChosen: "The sentence you chose:",
+      examQuoteClear: "Clear the choice",
+      examSequenceHow: "Click the events in the order they happened. Click again to undo.",
+      examSequenceClear: "Start the order over",
+      examCompleteHow: "Complete the sentence in English.",
+      examWordHow: "Type the English word as it is written in the text.",
+      examGrade: "Your exam grade",
+      examTimeUsed: (time) => `Time: ${time}`,
+      examByType: "By question type",
+      examReview: "Your answers",
+      examYours: "Your answer:",
+      examRight: "The right answer:",
+      examModel: "Sample answer:",
+      examNoAnswer: "Not answered",
+      examPartial: "Half a point",
+      examRetake: "Take it again",
+      examAll: "All exams",
+      examPassage: "Passage",
+      examLink: "Want to test yourself in a real exam, with a timer?",
+      examLinkGo: "To the reading exams",
+      paragraph: (n) => `Paragraph ${n}`,
+      minutesSeconds: (m, s) => `${m}:${String(s).padStart(2, "0")}`,
     },
   };
 
@@ -355,6 +588,8 @@
     back: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
     translate: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>`,
     reading: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C4.5 4 8 4 12 6c4-2 7.5-2 10-.5V19c-2.5-1.5-6-1.5-10 .5-4-2-7.5-2-10-.5V5.5Z"/><path d="M12 6v13.5"/><path d="M5 9h3.5M5 12h3.5M15.5 9H19M15.5 12H19"/></svg>`,
+    // A word with a speech bubble over it: "what does this word mean?"
+    wordMeaning: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2.5h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-5l-2 2.5-2-2.5H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2Z"/><path d="M8 6.5h8M8 9.5h5"/><path d="M3 18.5h4M10 18.5h4M17 18.5h4M3 21.5h6"/></svg>`,
     highlighter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 15 7.5-7.5a2.1 2.1 0 0 0-3-3L6 12l-1 4 4-1Z"/><path d="M4 20h7"/></svg>`,
     play: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M10 8.5v7l5.5-3.5L10 8.5Z" fill="currentColor"/></svg>`,
     stop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"/></svg>`,
@@ -371,6 +606,20 @@
   ICONS.dictation = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8v5h3l4 4V4L6 8H3Z"/><path d="M13.5 8.5a4 4 0 0 1 0 4"/><path d="M14 21h3l5-5-3-3-5 5v3Z"/></svg>`;
   ICONS.trophy = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11M17 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5M12 14v3.5M8 21h8M9.5 17.5h5l.5 3.5H9l.5-3.5Z"/></svg>`;
   ICONS.slow = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.5 10v4M20 10v4"/></svg>`;
+  // A clipboard with a checked line and a clock: a timed exam.
+  ICONS.exam = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H6.5A1.5 1.5 0 0 0 5 5.5v14A1.5 1.5 0 0 0 6.5 21H11"/><path d="M15 4h2.5A1.5 1.5 0 0 1 19 5.5V11"/><rect x="9" y="2.5" width="6" height="3" rx="1"/><path d="m8 10 1.5 1.5L12 9M8 15h3"/><circle cx="17.5" cy="17.5" r="4"/><path d="M17.5 15.6v2l1.3 1"/></svg>`;
+  // Two arrows going round: practice it again.
+  ICONS.review = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 20.5V16h-4.5"/></svg>`;
+  ICONS.clock = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
+  // An exercise's status on its card: a checked circle, a half-full one.
+  ICONS.statusDone = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="m7 12.5 3.3 3.3L17 9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  ICONS.statusProgress = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M12 6a6 6 0 0 1 0 12Z" fill="currentColor"/></svg>`;
+  ICONS.palette = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.3 0 2.1-.9 2.1-2 0-.6-.3-1-.6-1.4-.3-.4-.6-.9-.6-1.5 0-1.1.9-2 2-2h2.3A4.8 4.8 0 0 0 21 9.3C21 5.8 17 3 12 3Z"/><circle cx="7.5" cy="11.5" r="1.1" fill="currentColor"/><circle cx="9.5" cy="7.2" r="1.1" fill="currentColor"/><circle cx="14.5" cy="7.2" r="1.1" fill="currentColor"/></svg>`;
+  // A spiral notebook with the exercise's level on its page: every practice
+  // exercise card on a topic page.
+  const exerciseIcon = (level) =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.5" width="15" height="19" rx="2.5"/><path d="M3 7h4M3 12h4M3 17h4"/><text class="eng-ex-num" x="13" y="16.4" text-anchor="middle">${level}</text></svg>`;
+  ICONS.flag = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>`;
 
   function lang() {
     return window.I18n?.lang === "en" ? "en" : "he";
@@ -516,6 +765,31 @@
 
   const SOUND_KEY = "pleyi-english-sound";
   const TRANSLATE_KEY = "pleyi-english-translate";
+  // Reading passages: click a word to see it in Hebrew; questions in Hebrew.
+  const WORDS_KEY = "pleyi-english-read-words";
+  const HE_QUESTIONS_KEY = "pleyi-english-read-he";
+  // The question card's color. Light colors only, so the black text and the
+  // white answer buttons keep their contrast.
+  const CARD_COLOR_KEY = "pleyi-english-card-color";
+  const CARD_COLORS = [
+    { id: "white", he: "לבן", en: "White" },
+    { id: "mint", he: "מנטה", en: "Mint" },
+    { id: "sky", he: "שמיים", en: "Sky" },
+    { id: "lavender", he: "לבנדר", en: "Lavender" },
+    { id: "pink", he: "ורוד", en: "Pink" },
+    { id: "peach", he: "אפרסק", en: "Peach" },
+    { id: "lemon", he: "לימון", en: "Lemon" },
+    { id: "sand", he: "חול", en: "Sand" },
+  ];
+
+  function readCardColor() {
+    try {
+      const id = localStorage.getItem(CARD_COLOR_KEY);
+      return CARD_COLORS.some((c) => c.id === id) ? id : "white";
+    } catch {
+      return "white";
+    }
+  }
 
   function readFlag(key, fallback) {
     try {
@@ -537,6 +811,9 @@
   const prefs = {
     sound: readFlag(SOUND_KEY, true),
     translate: readFlag(TRANSLATE_KEY, false),
+    words: readFlag(WORDS_KEY, false),
+    heQuestions: readFlag(HE_QUESTIONS_KEY, false),
+    cardColor: readCardColor(),
   };
 
   /* ── Sound effects (Web Audio, no files) ── */
@@ -658,6 +935,9 @@
       bar.remove();
       board.forget();
       if (!views.topics()?.classList.contains("hidden")) renderBoardCard();
+      refreshReviewLinks();
+      fileFinished = new Set();
+      refreshTopicStatus();
     });
     const data = await board.load();
     const me = data?.rows.find((row) => row.isMe);
@@ -738,11 +1018,60 @@
     window.Leaderboard.bind(body, data.rows, { limit: 5 });
   }
 
+  /* ── "My mistakes" (mistake-bank.js): a card on the topics page and a line
+     on a topic's page, with how many questions wait for review. ── */
+
+  function reviewCardHtml() {
+    const bank = window.MistakeBank;
+    const count = bank.count();
+    const mastered = bank.mastered();
+    if (!count && !mastered) return "";
+    const text = count ? `${t("reviewCardText", count)} ${t("reviewRule", bank.GOAL)}` : t("reviewCardDone", mastered);
+    return `
+      <span class="eng-review-card-icon">${ICONS.review}</span>
+      <div class="eng-review-card-text">
+        <h2 class="eng-review-card-title">${esc(t("reviewCardTitle"))}</h2>
+        <p>${esc(text)}</p>
+      </div>
+      ${count ? `<a class="btn btn-primary btn-candy font-cartoon eng-review-card-go" href="#${REVIEW_ROUTE}">${esc(t("reviewGo"))}</a>` : ""}`;
+  }
+
+  // A div, not a section: styles.css pads every <section>.
+  function renderReviewCard() {
+    const host = $("#engTopicsView");
+    if (!host || !window.MistakeBank) return;
+    const html = reviewCardHtml();
+    let card = $("#engReviewCard");
+    if (!html) {
+      card?.remove();
+      return;
+    }
+    if (!card) {
+      card = document.createElement("div");
+      card.id = "engReviewCard";
+      card.className = "eng-review-card";
+      host.insertBefore(card, $("#engTopicGrid"));
+    }
+    card.innerHTML = html;
+  }
+
+  function reviewStripHtml(topic) {
+    const count = window.MistakeBank?.count(topic.id) || 0;
+    if (!count) return "";
+    return `
+      <div class="eng-review-strip" id="engReviewStrip">
+        <span class="eng-review-strip-icon">${ICONS.review}</span>
+        <span class="eng-review-strip-text">${esc(t("reviewTopic", count))}</span>
+        <a class="btn btn-candy font-cartoon eng-review-strip-go" href="#${REVIEW_ROUTE}/${esc(topic.id)}">${esc(t("reviewTopicGo"))}</a>
+      </div>`;
+  }
+
   // The topic grid is split into groups; a topic's `group` defaults to "grammar".
+  // The first group opens the page, so it has no heading.
   const GROUPS = [
-    { id: "grammar", title: "שיעורים לפי נושא", titleEn: "Lessons by topic" },
+    { id: "grammar" },
     { id: "reading", title: "הבנת הנקרא", titleEn: "Reading comprehension" },
-    { id: "vocab", title: "אוצר מילים לפי נושאים", titleEn: "Vocabulary by topic" },
+    { id: "vocab", title: "אוצר מילים", titleEn: "Vocabulary" },
   ];
 
   function topicGroup(topic) {
@@ -753,16 +1082,55 @@
     return (topic.exercises || []).filter((ex) => ex.type === "reading");
   }
 
+  // The reading exams (english-exams.js) and the "my mistakes" practice,
+  // which lives at #my-mistakes (or #my-mistakes/<topic> for one topic).
+  const EXAMS_TOPIC = "exams";
+  const REVIEW_ROUTE = "my-mistakes";
+  // The vocabulary topics sit behind one card, on their own page at #vocab.
+  const VOCAB_ROUTE = "vocab";
+
+  function vocabTopics() {
+    return TOPICS.filter((topic) => topicGroup(topic) === "vocab");
+  }
+
+  function vocabCardHtml(topics) {
+    const cover = topics.find((topic) => topic.cover)?.cover;
+    return `
+      <article class="eng-topic-card eng-topic-card--wide eng-topic-card--vocab">
+        <a class="eng-topic-tile eng-topic-tile--wide" href="#${VOCAB_ROUTE}">
+          <span class="eng-topic-wide-icon">${cover ? `<img src="${esc(imgUrl(cover))}" alt="" draggable="false" />` : ICONS.slides}</span>
+          <span class="eng-topic-wide-text">
+            <span class="eng-topic-title">${esc(t("vocabHub"))}</span>
+            <span class="eng-topic-sub">${esc(t("vocabCount", topics.length))}</span>
+          </span>
+          <span class="btn btn-primary btn-candy font-cartoon eng-topic-open">${esc(t("open"))}</span>
+        </a>
+      </article>`;
+  }
+
+  function renderVocabHub() {
+    const view = views.topic();
+    if (!view) return;
+    view.innerHTML = `
+      <div class="eng-topic-head">
+        <a class="eng-back" href="#" aria-label="${esc(t("back"))}" title="${esc(t("back"))}">${ICONS.back}</a>
+        <h2 class="font-cartoon eng-topic-heading">${esc(t("vocabHub"))}</h2>
+        ${lang() === "he" ? `<p class="eng-topic-heading-en" dir="ltr">Vocabulary by topic</p>` : ""}
+      </div>
+      <div class="eng-topic-grid">${vocabTopics().map(topicTileHtml).join("")}</div>`;
+  }
+
   function topicTileHtml(topic) {
     const sub = lang() === "en" ? "" : `<span class="eng-topic-sub" dir="ltr">${esc(topic.titleEn)}</span>`;
     if (topicGroup(topic) === "reading") {
+      const exams = topic.id === EXAMS_TOPIC;
       return `
-        <article class="eng-topic-card eng-topic-card--wide">
+        <article class="eng-topic-card eng-topic-card--wide${exams ? " eng-topic-card--exams" : ""}">
           <a class="eng-topic-tile eng-topic-tile--wide" href="#${esc(topic.id)}">
-            <span class="eng-topic-wide-icon">${ICONS.reading}</span>
+            <span class="eng-topic-wide-icon">${exams ? ICONS.exam : ICONS.reading}</span>
             <span class="eng-topic-wide-text">
               <span class="eng-topic-title">${esc(loc(topic, "title"))}</span>
-              <span class="eng-topic-sub">${esc(t("readingCount", readingUnits(topic).length))}</span>
+              <span class="eng-topic-sub">${esc(exams ? t("examCount", topic.exercises.length) : t("readingCount", readingUnits(topic).length))}</span>
             </span>
             <span class="btn btn-primary btn-candy font-cartoon eng-topic-open">${esc(t("open"))}</span>
           </a>
@@ -786,10 +1154,12 @@
     grid.innerHTML = GROUPS.map((group) => {
       const topics = TOPICS.filter((topic) => topicGroup(topic) === group.id);
       if (!topics.length) return "";
+      const wide = group.id === "reading" || group.id === "vocab";
+      const tiles = group.id === "vocab" ? vocabCardHtml(topics) : topics.map(topicTileHtml).join("");
       return `
         <div class="eng-topic-group">
-          <h2 class="eng-group-title">${esc(loc(group, "title"))}</h2>
-          <div class="eng-topic-grid${group.id === "reading" ? " eng-topic-grid--wide" : ""}">${topics.map(topicTileHtml).join("")}</div>
+          ${group.title ? `<h2 class="eng-group-title">${esc(loc(group, "title"))}</h2>` : ""}
+          <div class="eng-topic-grid${wide ? " eng-topic-grid--wide" : ""}">${tiles}</div>
         </div>`;
     }).join("");
   }
@@ -808,12 +1178,10 @@
     return minutes ? `${minutes[0]} min` : "";
   }
 
-  // Points per right answer on each level — the same as lib/student-progress.js.
-  const LEVEL_POINTS = { 1: 10, 2: 15, 3: 20, 4: 25 };
-
-  // Practice exercises have levels 1–3 (english-more.js); reading passages 1–4.
+  // Practice exercises have levels 1–3 (english-more.js); reading passages
+  // and exams 1–4.
   function exerciseLevel(ex) {
-    if (ex.type === "reading") return ex.level || 1;
+    if (ex.type === "reading" || ex.type === "exam") return ex.level || 1;
     return Math.min(3, Math.max(1, ex.level || window.ENGLISH_TYPE_LEVEL?.[ex.type] || 1));
   }
 
@@ -832,17 +1200,15 @@
       .filter((w) => /[A-Za-z0-9]/.test(w)).length;
   }
 
-  // A reading passage card: its level, how hard that is, and its title.
-  // Inside a topic the four cards are levels of one passage set, so the level
-  // leads; in the reading library the passage title leads.
+  // A reading library card: the passage title, its level and how hard that is.
   // The cards are not links themselves: their title link stretches over the
   // whole card, so the "i" help button can sit inside without nesting a
   // button in a link.
-  function levelCardHtml(topic, ex, best, levelFirst) {
+  function levelCardHtml(topic, ex, best, started) {
     const record = best[`${topic.id}/${ex.id}`];
     const bars = [1, 2, 3, 4].map((n) => `<i${n <= ex.level ? ' class="is-on"' : ""}></i>`).join("");
     return `
-      <div class="eng-level-card eng-level-card--${ex.level}${levelFirst ? "" : " is-library"}">
+      <div class="eng-level-card eng-level-card--${ex.level} is-library">
         <span class="eng-level-head">
           <span class="eng-level-name">${esc(t("level", ex.level))}</span>
           <span class="eng-level-bars" role="img" aria-label="${esc(t("levelName", ex.level))}">${bars}</span>
@@ -850,6 +1216,7 @@
         </span>
         <a class="eng-level-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}" dir="ltr">${esc(ex.passage.title)}</a>
         <span class="eng-level-meta">${esc(t("readingMeta", passageWordCount(ex), ex.questions.length))}</span>
+        ${statusHtml(exerciseStatus(topic, ex, best, started))}
         ${record ? `<span class="eng-ex-best">${esc(t("best", record.score, record.total))}</span>` : ""}
       </div>`;
   }
@@ -861,19 +1228,16 @@
     if (!pack?.sheets?.length) return "";
     const href = (sheet) =>
       `/services/english-worksheet?topic=${encodeURIComponent(topic.id)}${sheet ? `&sheet=${encodeURIComponent(sheet)}` : ""}`;
-    const card = (link, title, meta, extraClass = "") => `
-      <div class="eng-ex-card eng-ex-card--print${extraClass}">
+    const card = (link, title) => `
+      <div class="eng-ex-card eng-ex-card--print">
         <span class="eng-ex-icon">${ICONS.print}</span>
         <span class="eng-ex-text">
           <a class="eng-ex-title eng-card-link" href="${esc(link)}">${esc(title)}</a>
-          <span class="eng-ex-meta">${esc(meta)}</span>
         </span>
         <span class="eng-item-action" aria-hidden="true">${esc(t("printAction"))}</span>
       </div>`;
-    const sheets = pack.sheets
-      .map((sheet, i) => card(href(sheet.id), `${t("printSheet", i + 1)} · ${loc(sheet, "title")}`, t("printMeta", sheet.tasks.length)))
-      .join("");
-    return sheets + card(href(null), t("printAll"), t("printAllMeta", pack.sheets.length), " eng-ex-card--print-all");
+    const sheets = pack.sheets.map((sheet, i) => card(href(sheet.id), `${t("printSheet", i + 1)} · ${loc(sheet, "title")}`)).join("");
+    return sheets + card(href(null), t("printAll"));
   }
 
   /* ── Vocabulary games (english-games.js) — on the picture-vocabulary topics,
@@ -909,7 +1273,6 @@
             <span class="eng-ex-icon">${game.icon}</span>
             <span class="eng-ex-text">
               <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/game-${esc(game.id)}">${esc(loc(game, "title"))}</a>
-              <span class="eng-ex-meta">${esc(loc(game, "desc"))}</span>
               ${best ? `<span class="eng-ex-best">${esc(best)}</span>` : ""}
             </span>
             <span class="eng-item-action" aria-hidden="true">${esc(t("playGame"))}</span>
@@ -918,22 +1281,38 @@
       .join("");
   }
 
+  // Opens a topic's slide lesson (from its card or its "i" dialog).
+  function openTopicLesson(topic) {
+    const id = topic.lesson;
+    const raw = window.ReadyLessons?.catalog?.[id];
+    window.StudentProgress?.record({
+      kind: "lesson",
+      topicId: topic.id,
+      topicTitle: topic.title,
+      itemId: id,
+      itemTitle: raw?.namePart || raw?.name || id,
+    });
+    if (window.ReadyLessons?.openLesson) window.ReadyLessons.openLesson(id);
+    else window.location.href = `/services/ready-lessons?lesson=${encodeURIComponent(id)}`;
+  }
+
   function renderTopic(topic) {
     const view = views.topic();
     if (!view) return;
     const best = readBest();
+    const started = readStarted();
     const lesson = lessonFor(topic);
 
+    // The lesson's slide count, length and summary are in its "i" dialog.
     const lessonCard = lesson
       ? `
         <div class="eng-lesson-card">
           <span class="eng-lesson-icon">${ICONS.slides}</span>
-          <div class="eng-lesson-text">
-            <h4 class="eng-lesson-title">${esc(lesson.namePart || lesson.name)}</h4>
-            <p class="eng-lesson-meta">${esc(t("lessonMeta", lesson.slides?.length || 0, durationLabel(lesson.duration)))}</p>
-            <p class="eng-lesson-summary">${esc(loc(topic, "lessonSummary") || lesson.summary || "")}</p>
+          <h4 class="eng-lesson-title">${esc(lesson.namePart || lesson.name)}</h4>
+          <div class="eng-lesson-actions">
+            <button type="button" class="eng-info-btn" data-lesson-info aria-haspopup="dialog" aria-label="${esc(t("lessonInfo"))}" title="${esc(t("lessonInfo"))}">${ICONS.info}</button>
+            <button type="button" class="btn btn-primary btn-candy font-cartoon eng-lesson-open">${esc(t("openLesson"))}</button>
           </div>
-          <button type="button" class="btn btn-primary btn-candy font-cartoon eng-lesson-open" data-lesson="${esc(topic.lesson)}">${esc(t("openLesson"))}</button>
         </div>`
       : "";
 
@@ -951,56 +1330,45 @@
       )
       .join("");
 
+    // Exercise and reading passage cards: the title, and on the side whether
+    // the student did it already. The level, the question count and the best
+    // score are in the "i" dialog.
     const exerciseCard = (ex) => {
-      const record = best[`${topic.id}/${ex.id}`];
-      const bestLine = record ? `<span class="eng-ex-best">${esc(t("best", record.score, record.total))}</span>` : "";
+      const reading = ex.type === "reading";
       return `
-        <div class="eng-ex-card eng-ex-card--${esc(ex.type)}">
-          <span class="eng-ex-icon">${ICONS[ex.type] || ICONS.choice}</span>
+        <div class="eng-ex-card eng-ex-card--${esc(ex.type)}${reading ? ` eng-ex-card--level-${ex.level}` : ""}">
+          <span class="eng-ex-icon${reading ? "" : " eng-ex-icon--level"}">${reading ? ICONS.reading : exerciseIcon(exerciseLevel(ex))}</span>
           <span class="eng-ex-text">
-            <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${esc(loc(ex, "title"))}</a>
-            <span class="eng-ex-meta">${esc(exerciseCountLabel(ex))}</span>
-            ${bestLine}
+            <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${reading ? `<bdi dir="ltr">${esc(ex.passage.title)}</bdi>` : esc(loc(ex, "title"))}</a>
           </span>
+          ${statusHtml(exerciseStatus(topic, ex, best, started))}
           ${infoBtnHtml(ex)}
           <span class="eng-item-action" aria-hidden="true">${esc(t("practice"))}</span>
         </div>`;
     };
-    // Practice exercises grouped by level (english-more.js), easiest first.
-    const practice = (topic.exercises || []).filter((ex) => ex.type !== "reading");
-    const exercises = [1, 2, 3]
-      .map((level) => {
-        const list = practice.filter((ex) => exerciseLevel(ex) === level);
-        if (!list.length) return "";
-        return `
-          <div class="eng-ex-level eng-ex-level--${level}">
-            <h4 class="eng-ex-level-title">
-              <span class="eng-level-bars" aria-hidden="true">${[1, 2, 3].map((n) => `<i${n <= level ? ' class="is-on"' : ""}></i>`).join("")}</span>
-              <span class="eng-ex-level-name">${esc(t("levelTitle", level))}</span>
-              <span class="eng-ex-level-points">${ICONS.star}${esc(t("levelPoints", LEVEL_POINTS[level]))}</span>
-            </h4>
-            <p class="eng-ex-level-about">${esc(t("levelAbout", level))}</p>
-            <div class="eng-ex-grid">${list.map(exerciseCard).join("")}</div>
-          </div>`;
-      })
-      .join("");
+    // Practice exercises in level order (english-more.js), easiest first.
+    const practice = (topic.exercises || [])
+      .filter((ex) => ex.type !== "reading")
+      .sort((a, b) => exerciseLevel(a) - exerciseLevel(b));
+    const exercises = practice.length ? `<div class="eng-ex-grid">${practice.map(exerciseCard).join("")}</div>` : "";
 
     const printables = printCardsHtml(topic);
     const gameCards = gameCardsHtml(topic);
     const units = readingUnits(topic);
-    let stepNum = 0;
-    const step = (title, body) => `
-      <section class="eng-step">
-        <h3 class="eng-step-title"><span class="eng-step-num">${++stepNum}</span>${esc(title)}</h3>
-        ${body}
-      </section>`;
+    const step = (body) => `<section class="eng-step">${body}</section>`;
 
+    const backHref = topicGroup(topic) === "vocab" ? `#${VOCAB_ROUTE}` : "#";
     const head = `
       <div class="eng-topic-head">
-        <a class="eng-back" href="#" aria-label="${esc(t("back"))}" title="${esc(t("back"))}">${ICONS.back}</a>
+        <a class="eng-back" href="${backHref}" aria-label="${esc(t("back"))}" title="${esc(t("back"))}">${ICONS.back}</a>
         <h2 class="font-cartoon eng-topic-heading">${esc(loc(topic, "title"))}</h2>
         ${lang() === "he" ? `<p class="eng-topic-heading-en" dir="ltr">${esc(topic.titleEn)}</p>` : ""}
       </div>`;
+
+    if (topic.id === EXAMS_TOPIC) {
+      view.innerHTML = `${head}${examsPageHtml(topic, best, started)}`;
+      return;
+    }
 
     if (topicGroup(topic) === "reading") {
       // The reading library: every passage, grouped by level.
@@ -1011,21 +1379,20 @@
           return `
             <section class="eng-step">
               <h3 class="eng-step-title"><span class="eng-step-num eng-step-num--level-${level}">${level}</span>${esc(`${t("level", level)} · ${t("levelName", level)}`)}</h3>
-              <div class="eng-level-grid">${list.map((ex) => levelCardHtml(topic, ex, best, false)).join("")}</div>
+              <div class="eng-level-grid">${list.map((ex) => levelCardHtml(topic, ex, best, started)).join("")}</div>
             </section>`;
         })
         .join("");
-      view.innerHTML = `${head}<p class="eng-step-lead eng-step-lead--page">${esc(t("readingLibraryLead"))}</p>${levels}`;
+      view.innerHTML = `${head}${levels}`;
       bindHelpButtons(view, topic);
       return;
     }
 
     view.innerHTML = `
       ${head}
-      ${lessonCard || decks ? step(t("stepLesson"), `${lessonCard}${decks ? `<div class="eng-item-list">${decks}</div>` : ""}`) : ""}
+      ${lessonCard || decks ? step(`${lessonCard}${decks ? `<div class="eng-item-list">${decks}</div>` : ""}`) : ""}
       ${step(
-        t("stepPractice"),
-        `${exercises || (gameCards ? "" : `<p class="eng-empty">${esc(t("noExercises"))}</p>`)}${
+        `<div id="engReviewSlot">${reviewStripHtml(topic)}</div>${exercises || (gameCards ? "" : `<p class="eng-empty">${esc(t("noExercises"))}</p>`)}${
           gameCards
             ? `<div class="eng-practice-games">
                 <h4 class="eng-practice-sub">${esc(t("stepGames"))}</h4>
@@ -1038,27 +1405,17 @@
       ${
         units.length
           ? step(
-              t("stepReading"),
-              `<div class="eng-level-grid">${units.map((ex) => levelCardHtml(topic, ex, best, true)).join("")}</div>`
+              `<div class="eng-ex-grid">${units.map(exerciseCard).join("")}</div>${
+                topic.id === "bagrut" && findTopic(EXAMS_TOPIC) ? examLinkHtml() : ""
+              }`
             )
           : ""
       }
-      ${printables ? step(t("stepPrint"), `<p class="eng-step-lead">${esc(t("printLead"))}</p><div class="eng-ex-grid">${printables}</div>`) : ""}`;
+      ${printables ? step(`<p class="eng-step-lead">${esc(t("printLead"))}</p><div class="eng-ex-grid">${printables}</div>`) : ""}`;
 
     bindHelpButtons(view, topic);
-    $(".eng-lesson-open", view)?.addEventListener("click", (e) => {
-      const id = e.currentTarget.dataset.lesson;
-      const raw = window.ReadyLessons?.catalog?.[id];
-      window.StudentProgress?.record({
-        kind: "lesson",
-        topicId: topic.id,
-        topicTitle: topic.title,
-        itemId: id,
-        itemTitle: raw?.namePart || raw?.name || id,
-      });
-      if (window.ReadyLessons?.openLesson) window.ReadyLessons.openLesson(id);
-      else window.location.href = `/services/ready-lessons?lesson=${encodeURIComponent(id)}`;
-    });
+    $(".eng-lesson-open", view)?.addEventListener("click", () => openTopicLesson(topic));
+    $("[data-lesson-info]", view)?.addEventListener("click", (e) => help.openLesson(topic, e.currentTarget));
 
     $$("[data-presentation]", view).forEach((link) => {
       link.addEventListener("click", (e) => {
@@ -1098,6 +1455,10 @@
     state: null,
     startedAt: 0,
     recorded: false,
+    // A "my mistakes" round (startReview): where each question is from.
+    review: null,
+    // A reading exam in progress (startExam).
+    exam: null,
   };
 
   /* ── Seen items: a new round starts with the questions the student hasn't
@@ -1159,16 +1520,78 @@
 
   function buildRound(topic, ex) {
     // A passage's questions follow the text, so they keep their order.
-    if (ex.type === "reading") return [...ex.questions];
+    if (ex.type === "reading" || ex.type === "exam") return [...ex.questions];
     const seen = seenKeys(topic, ex);
     if (ex.type === "match") return [{ pairs: freshest(poolOf(ex), ex.boardSize || 6, seen) }];
     return freshest(poolOf(ex), ex.roundSize || 10, seen);
+  }
+
+  /* ── An exercise's status on its card: "done" once a whole round was
+     finished and every item of the exercise has come up (a round draws only
+     part of a big exercise), "in progress" from the moment it opens. Kept in
+     this browser; a student's file adds the rounds they finished on other
+     devices (fileFinished). ── */
+
+  const STARTED_KEY = "pleyi-english-started";
+  let fileFinished = new Set();
+
+  function readStarted() {
+    try {
+      return JSON.parse(localStorage.getItem(STARTED_KEY)) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function markStarted(topic, ex) {
+    const all = readStarted();
+    const id = `${topic.id}/${ex.id}`;
+    if (all[id]) return;
+    all[id] = 1;
+    try {
+      localStorage.setItem(STARTED_KEY, JSON.stringify(all));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // A passage, an exam, or an exercise whose items all fit in one round.
+  function fitsOneRound(ex) {
+    if (ex.type === "reading" || ex.type === "exam") return true;
+    return poolOf(ex).length <= (ex.type === "match" ? ex.boardSize || 6 : ex.roundSize || 10);
+  }
+
+  // The share of the exercise's items the student has had, 0–1.
+  function coverage(topic, ex) {
+    const pool = poolOf(ex);
+    if (!pool.length) return 1;
+    const seen = new Set(seenKeys(topic, ex));
+    return pool.filter((item) => seen.has(itemKey(item))).length / pool.length;
+  }
+
+  // "done", "progress" or "". An exam left in the middle is in progress
+  // even when an earlier one was handed in.
+  function exerciseStatus(topic, ex, best = readBest(), started = readStarted()) {
+    const id = `${topic.id}/${ex.id}`;
+    if (ex.type === "exam" && readExamSaves()[examSaveId(ex)]) return "progress";
+    const finished = !!best[id] || fileFinished.has(id);
+    if (finished && (fitsOneRound(ex) || coverage(topic, ex) >= 1)) return "done";
+    return finished || started[id] || seenKeys(topic, ex).length ? "progress" : "";
+  }
+
+  function statusHtml(status) {
+    if (!status) return "";
+    const done = status === "done";
+    return `<span class="eng-status eng-status--${status}">${done ? ICONS.statusDone : ICONS.statusProgress}<span>${esc(t(done ? "statusDone" : "statusProgress"))}</span></span>`;
   }
 
   // mode: "retry" — only the last round's mistakes; "new" — a round of new
   // items made by the server (see makeNewRound).
   function startExercise(topic, exercise, round = null, mode = round ? "retry" : "") {
     clearTimeout(runner.timer);
+    stopExamTimer();
+    runner.review = null;
+    runner.exam = null;
     runner.topic = topic;
     runner.exercise = exercise;
     runner.isRetry = mode === "retry";
@@ -1187,7 +1610,9 @@
     runner.earned = null;
     // A new reading passage counts as seen once it opens.
     if (exercise.key) markSeen(topic, exercise, [exercise.key]);
+    markStarted(topic, exercise);
     if (exercise.type === "reading") startReading();
+    else if (exercise.type === "exam") startExam();
     else renderQuestion();
   }
 
@@ -1393,6 +1818,9 @@
   function startGame(topic, game) {
     stopGame();
     clearTimeout(runner.timer);
+    stopExamTimer();
+    runner.review = null;
+    runner.exam = null;
     runner.topic = topic;
     runner.exercise = null;
     runner.phase = "game";
@@ -1419,27 +1847,96 @@
 
   // Sentence exercises whose questions carry a Hebrew translation (`he`).
   // Order exercises also have `he`, but there it is the prompt itself.
-  // Picture words in new sentences carry theirs in `sentenceHe`.
+  // Picture words in new sentences carry theirs in `sentenceHe`. Reading
+  // passages have their own switch, "Hebrew questions".
   function hasTranslation(exercise) {
     if (runner.round.some((q) => q?.sentenceHe)) return true;
-    return ["choice", "truefalse", "write", "reading", "find-error", "letters", "dictation"].includes(exercise.type) && !!exercise.questions?.some((q) => q.he);
+    return ["choice", "truefalse", "write", "find-error", "letters", "dictation"].includes(exercise.type) && !!exercise.questions?.some((q) => q.he);
   }
 
   function toolsHtml() {
+    const isReading = runner.exercise?.type === "reading";
+    const isExam = runner.exercise?.type === "exam";
     const showTranslate = runner.phase === "question" && hasTranslation(runner.exercise);
-    const showReadAloud = runner.exercise?.type === "reading" && runner.phase !== "results" && canSpeak();
+    const showReadAloud = isReading && runner.phase !== "results" && canSpeak();
+    const showWords = isReading && runner.phase !== "results";
+    const showHeQuestions =
+      ((isReading && runner.phase === "question") || (isExam && runner.phase === "exam")) && runner.round.some(hebrewQuestion);
     const tool = (id, on, icon, label, title) =>
       `<button type="button" class="eng-tool" id="${id}" aria-pressed="${on}" title="${esc(title)}">${icon}<span>${esc(label)}</span></button>`;
     return `
       ${showReadAloud ? tool("engReadAloud", readAloud.on, readAloud.on ? ICONS.stop : ICONS.play, t("readAloud"), t(readAloud.on ? "readAloudOn" : "readAloudOff")) : ""}
+      ${showWords ? tool("engWordsToggle", prefs.words, ICONS.wordMeaning, t("wordsTool"), t(prefs.words ? "wordsToolOn" : "wordsToolOff")) : ""}
+      ${showHeQuestions ? tool("engHeQuestions", prefs.heQuestions, ICONS.translate, t("heQuestions"), t(prefs.heQuestions ? "heQuestionsOn" : "heQuestionsOff")) : ""}
       ${showTranslate ? tool("engTranslateToggle", prefs.translate, ICONS.translate, t("translate"), t(prefs.translate ? "translateOn" : "translateOff")) : ""}
-      ${tool("engSoundToggle", prefs.sound, prefs.sound ? ICONS.listen : ICONS.soundOff, t("sound"), t(prefs.sound ? "soundOn" : "soundOff"))}`;
+      ${tool("engSoundToggle", prefs.sound, prefs.sound ? ICONS.listen : ICONS.soundOff, t("sound"), t(prefs.sound ? "soundOn" : "soundOff"))}
+      <div class="eng-color-tool">
+        <button type="button" class="eng-tool" id="engColorBtn" aria-haspopup="true" aria-expanded="false" aria-controls="engColorMenu" title="${esc(t("cardColorTitle"))}">${ICONS.palette}<span>${esc(t("cardColor"))}</span></button>
+        <div class="eng-color-menu hidden" id="engColorMenu" role="group" aria-label="${esc(t("cardColorTitle"))}">
+          ${CARD_COLORS.map(
+            (c) =>
+              `<button type="button" class="eng-color-swatch eng-color-swatch--${c.id}" data-card-color="${c.id}" aria-pressed="${c.id === prefs.cardColor}" aria-label="${esc(c[lang()] || c.he)}" title="${esc(c[lang()] || c.he)}"></button>`
+          ).join("")}
+        </div>
+      </div>`;
+  }
+
+  function cardColorClass() {
+    return prefs.cardColor === "white" ? "" : ` eng-card-color--${prefs.cardColor}`;
+  }
+
+  function closeColorMenu(focusButton) {
+    const menu = $("#engColorMenu");
+    if (!menu || menu.classList.contains("hidden")) return;
+    menu.classList.add("hidden");
+    $("#engColorBtn")?.setAttribute("aria-expanded", "false");
+    if (focusButton) $("#engColorBtn")?.focus({ preventScroll: true });
+  }
+
+  // A click anywhere outside the color menu closes it.
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest?.(".eng-color-tool")) closeColorMenu(false);
+  });
+
+  function bindColorTool() {
+    const btn = $("#engColorBtn");
+    const menu = $("#engColorMenu");
+    if (!btn || !menu) return;
+    btn.addEventListener("click", () => {
+      const open = menu.classList.toggle("hidden") === false;
+      btn.setAttribute("aria-expanded", String(open));
+      if (open) $('[aria-pressed="true"]', menu)?.focus({ preventScroll: true });
+    });
+    // Escape closes the menu without leaving the exercise.
+    menu.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      e.preventDefault();
+      e.stopPropagation();
+      closeColorMenu(true);
+    });
+    $$("[data-card-color]", menu).forEach((swatch) => {
+      swatch.addEventListener("click", () => {
+        prefs.cardColor = swatch.dataset.cardColor;
+        try {
+          localStorage.setItem(CARD_COLOR_KEY, prefs.cardColor);
+        } catch {
+          /* ignore */
+        }
+        const card = $(".eng-runner-card");
+        if (card) {
+          CARD_COLORS.forEach((c) => card.classList.remove(`eng-card-color--${c.id}`));
+          if (prefs.cardColor !== "white") card.classList.add(`eng-card-color--${prefs.cardColor}`);
+        }
+        $$("[data-card-color]", menu).forEach((s) => s.setAttribute("aria-pressed", String(s === swatch)));
+      });
+    });
   }
 
   function renderTools() {
     const box = $("#engRunnerTools");
     if (!box) return;
     box.innerHTML = toolsHtml();
+    bindColorTool();
     $("#engSoundToggle")?.addEventListener("click", () => {
       prefs.sound = !prefs.sound;
       saveFlag(SOUND_KEY, prefs.sound);
@@ -1459,6 +1956,22 @@
     $("#engReadAloud")?.addEventListener("click", () => {
       readAloud.toggle();
       $("#engReadAloud")?.focus({ preventScroll: true });
+    });
+    $("#engWordsToggle")?.addEventListener("click", () => {
+      prefs.words = !prefs.words;
+      saveFlag(WORDS_KEY, prefs.words);
+      refreshPassage();
+      renderTools();
+      $("#engWordsToggle")?.focus({ preventScroll: true });
+    });
+    // Both languages are already on the page, so switching never loses an
+    // answer in progress.
+    $("#engHeQuestions")?.addEventListener("click", () => {
+      prefs.heQuestions = !prefs.heQuestions;
+      saveFlag(HE_QUESTIONS_KEY, prefs.heQuestions);
+      $(".eng-runner-card")?.classList.toggle("is-he-q", prefs.heQuestions);
+      renderTools();
+      $("#engHeQuestions")?.focus({ preventScroll: true });
     });
   }
 
@@ -1505,25 +2018,62 @@
     },
   };
 
+  function runnerTitle() {
+    const { exercise } = runner;
+    if (runner.review) return t("reviewTitle");
+    if (exercise.type === "reading") return t("readingTitle", exercise.level);
+    if (exercise.type === "exam") return t("examTitle", exercise.level);
+    return loc(exercise, "title");
+  }
+
+  // The help dialog explains an exercise of the site; an exam explains itself
+  // on its first screen, and a review question shown in another form (a
+  // matching pair as a choice) has no exercise of its own.
+  function showsHelp() {
+    if (runner.phase === "results" || runner.exercise.type === "exam") return false;
+    return !runner.review || runner.review.items[runner.index]?.exercise === runner.review.items[runner.index]?.source;
+  }
+
+  // A review question: the topic and exercise it is from, and how close it
+  // is to leaving the bank.
+  function reviewFromHtml() {
+    const item = runner.review?.items[runner.index];
+    if (!item || runner.phase === "results") return "";
+    const goal = window.MistakeBank.GOAL;
+    const streak = Math.min(goal, window.MistakeBank.streakOf(item.id));
+    const dots = Array.from({ length: goal }, (_, i) => `<i${i < streak ? ' class="is-on"' : ""}></i>`).join("");
+    return `
+      <span class="eng-game-topic eng-review-from">
+        <span>${esc(loc(item.topic, "title"))} · ${esc(loc(item.source, "title"))}</span>
+        <span class="eng-review-dots" role="img" aria-label="${esc(t("reviewStreak", streak, goal))}" title="${esc(t("reviewStreak", streak, goal))}">${dots}</span>
+      </span>`;
+  }
+
   // `progress` sits in the header bar, outside the card.
   function renderRunnerShell(inner, progress = "") {
     const view = views.exercise();
     const { topic, exercise } = runner;
     const isReading = exercise.type === "reading";
-    view.classList.toggle("is-reading", isReading);
+    view.classList.toggle("is-reading", isReading || exercise.type === "exam");
+    const back = runner.review ? runner.review.back : `#${topic.id}`;
+    const backLabel = back === "#" ? t("back") : t("backToTopic");
     view.innerHTML = `
       <div class="eng-runner-head">
         <div class="eng-runner-title-row">
-          <h2 class="font-cartoon eng-runner-title">${esc(isReading ? t("readingTitle", exercise.level) : loc(exercise, "title"))}</h2>
-          ${runner.phase === "results" ? "" : infoBtnHtml(exercise)}
+          <h2 class="font-cartoon eng-runner-title">${esc(runnerTitle())}</h2>
+          ${showsHelp() ? infoBtnHtml(exercise) : ""}
+          ${reviewFromHtml()}
         </div>
         <div class="eng-runner-bar">
-          <a class="eng-back" href="#${esc(topic.id)}" aria-label="${esc(t("backToTopic"))}" title="${esc(t("backToTopic"))}">${ICONS.back}</a>
+          <a class="eng-back" href="${esc(back)}" aria-label="${esc(backLabel)}" title="${esc(backLabel)}">${ICONS.back}</a>
           ${progress}
           <div class="eng-runner-tools" id="engRunnerTools"></div>
         </div>
       </div>
-      <div class="eng-runner-card eng-runner-card--${esc(exercise.type)}${prefs.translate ? " is-translated" : ""}">${inner}</div>`;
+      <div class="eng-runner-card eng-runner-card--${esc(exercise.type)}${cardColorClass()}${prefs.translate ? " is-translated" : ""}${prefs.heQuestions ? " is-he-q" : ""}">${inner}</div>`;
+    // The instructions sit on the page above the card, not inside it.
+    const instructions = $(".eng-runner-card > .eng-instructions", view);
+    if (instructions) view.insertBefore(instructions, instructions.parentElement);
     renderTools();
     bindHelpButtons(view, topic);
     $$(".eng-speak", view).forEach((btn) => {
@@ -1624,10 +2174,56 @@
     runner.answered = false;
     runner.phase = "question";
     runner.state = null;
+    // A review round shows each question with its own topic and exercise.
+    const item = runner.review?.items[runner.index];
+    if (item) {
+      runner.topic = item.topic;
+      runner.exercise = item.exercise;
+    }
     const type = runner.exercise.type;
     const q = runner.round[runner.index];
-    if (!runner.isRetry) markSeen(runner.topic, runner.exercise, type === "match" ? q.pairs.map(itemKey) : [itemKey(q)]);
+    if (!runner.isRetry && !item) markSeen(runner.topic, runner.exercise, type === "match" ? q.pairs.map(itemKey) : [itemKey(q)]);
     (TYPES[type] || TYPES.choice).render(q);
+  }
+
+  /* ── Mistake bank (mistake-bank.js): every answer to a practice question
+     goes there. A wrong one keeps the question for "my mistakes"; a right one
+     counts toward taking it out. Reading passages and exams stay out, since
+     their questions need the whole text. ── */
+
+  // Where a question is from: in a review round its own topic, exercise and
+  // bank id; otherwise the runner's.
+  function bankContext(q) {
+    const item = runner.review?.items[runner.index];
+    if (item) return { id: item.id, topic: item.topic, exercise: item.source, item: item.item };
+    const { topic, exercise } = runner;
+    if (!topic || !exercise || exercise.type === "reading" || exercise.type === "exam") return null;
+    return { id: `${topic.id}/${exercise.id}/${itemKey(q)}`, topic, exercise, item: q };
+  }
+
+  // Returns true when this right answer took the question out of the bank.
+  function bankAnswer(q, right, given = "") {
+    const bank = window.MistakeBank;
+    const ctx = bank && q && bankContext(q);
+    if (!ctx) return false;
+    if (right) return bank.answer(ctx.id, true);
+    const { prompt, answer } = mistakeRecord(q, given);
+    bank.answer(ctx.id, false, {
+      topicId: ctx.topic.id,
+      exerciseId: ctx.exercise.id,
+      topicTitle: ctx.topic.title,
+      exerciseTitle: ctx.exercise.title,
+      type: ctx.exercise.type,
+      level: exerciseLevel(ctx.exercise),
+      item: ctx.item,
+      prompt,
+      answer,
+    });
+    return false;
+  }
+
+  function bankOutHtml() {
+    return `<span class="eng-review-out">${ICONS.star}<span>${esc(t("reviewOut"))}</span></span>`;
   }
 
   function answerButtons() {
@@ -1643,8 +2239,10 @@
   function onRight(message = t("correct"), delay = AUTO_NEXT_MS) {
     runner.score++;
     playSfx("right");
-    $("#engFeedback").innerHTML = `<span class="eng-feedback-msg is-right">${ICONS.check}<span>${esc(message)}</span></span>`;
-    runner.timer = setTimeout(goNext, delay);
+    const out = bankAnswer(runner.round[runner.index], true);
+    if (out && runner.review) runner.review.out++;
+    $("#engFeedback").innerHTML = `<span class="eng-feedback-msg is-right">${ICONS.check}<span>${esc(message)}</span></span>${out ? bankOutHtml() : ""}`;
+    runner.timer = setTimeout(goNext, delay + (out ? 500 : 0));
   }
 
   // A plain-text summary of a missed question for the teacher's progress page.
@@ -1669,6 +2267,7 @@
   function onWrong(question, messageHtml, given = "") {
     runner.mistakes.push(question);
     runner.mistakeLog.push(mistakeRecord(question, given));
+    bankAnswer(question, false, given);
     playSfx("wrong");
     const isLast = runner.index === runner.round.length - 1;
     $("#engFeedback").innerHTML = `
@@ -2046,6 +2645,7 @@
         const { board, errored } = runner.state;
         runner.score += board.pairs.length - errored.size;
         board.pairs.forEach((p, i) => {
+          bankAnswer(p, !errored.has(i));
           if (!errored.has(i)) return;
           runner.mistakes.push(p);
           runner.mistakeLog.push(mistakeRecord(p));
@@ -2436,9 +3036,10 @@
      A passage is a list of paragraphs in which [word] or [two words] marks a
      word the student has to find. Stage "mark" (only when the unit has
      `mark`): click every such word in the text — each one found is a point,
-     each wrong click takes one away. Stage "questions": multiple choice (mc),
-     true / false (tf) and open questions, one at a time, with the passage
-     still on screen. */
+     each wrong click takes one away; a unit without it starts with stage
+     "read", the passage alone. Stage "questions": multiple choice (mc),
+     true / false (tf) and open questions, one at a time and without the
+     passage — "Back to the text" shows it again for a moment. */
 
   const TOKEN_RE = /\[([^\]]+)\]|([A-Za-z0-9]+(?:['’][A-Za-z]+)*(?:-[A-Za-z0-9]+)*)|([^[A-Za-z0-9]+)/g;
   const OPTION_KEYS = ["a", "b", "c", "d", "e"];
@@ -2464,7 +3065,7 @@
       tokens,
       targets,
       marking,
-      stage: marking ? "mark" : "questions",
+      stage: marking ? "mark" : "read",
       found: new Set(),
       misses: new Set(),
       revealed: new Set(),
@@ -2472,7 +3073,13 @@
       qScore: 0,
     };
     runner.total = (marking ? targets.length : 0) + runner.round.length;
-    if (!marking) prepareQuestion();
+    renderReading();
+  }
+
+  function startQuestions() {
+    runner.read.stage = "questions";
+    runner.index = 0;
+    prepareQuestion();
     renderReading();
   }
 
@@ -2489,21 +3096,33 @@
     runner.state = { order: q.type === "mc" ? shuffle(q.options.map((_, i) => i)) : null };
   }
 
-  // One arc for the marking step plus one per question; the number in the
-  // middle is the question number (a highlighter while marking).
+  // One arc for the first step (reading the passage, or marking in it) plus
+  // one per question; the number in the middle is the question number (a
+  // book or a highlighter in the first step).
   function readingProgress() {
     const st = runner.read;
-    const steps = (st.marking ? 1 : 0) + runner.round.length;
-    const pos = st.stage === "mark" ? 0 : (st.marking ? 1 : 0) + runner.index;
+    const first = st.stage !== "questions";
+    const pos = first ? 0 : 1 + runner.index;
     const fresh = runner.ringIndex === pos ? -1 : pos - 1;
     runner.ringIndex = pos;
-    const label = st.stage === "mark" ? t("markStep") : t("questionNum", runner.index + 1, runner.round.length);
-    const num = st.stage === "mark" ? `<span class="eng-ring-icon">${ICONS.highlighter}</span>` : runner.index + 1;
-    return progressHtml({ label, num, total: steps, done: pos, current: pos, fresh });
+    const label = first ? t(st.stage === "mark" ? "markStep" : "readStep") : t("questionNum", runner.index + 1, runner.round.length);
+    const num = first ? `<span class="eng-ring-icon">${st.stage === "mark" ? ICONS.highlighter : ICONS.reading}</span>` : runner.index + 1;
+    return progressHtml({ label, num, total: 1 + runner.round.length, done: pos, current: pos, fresh });
   }
 
-  function passageHtml(interactive) {
+  // Words can be clicked while marking, or — with "Translate words" on — to
+  // see their meaning, in both stages (then a click doesn't mark).
+  function marking() {
+    return runner.read.stage === "mark" && !markComplete() && !prefs.words;
+  }
+
+  function passageClass() {
+    return `eng-read-text${marking() ? " is-marking" : ""}${prefs.words ? " is-dict" : ""}`;
+  }
+
+  function passageHtml() {
     const st = runner.read;
+    const markable = marking();
     const paras = [];
     st.tokens.forEach((tok, i) => {
       let html = esc(tok.text);
@@ -2516,37 +3135,61 @@
               ? " is-miss"
               : "";
         // Spans, not <button>s: a button is an atomic inline box, so a line
-        // could break between a word and the period after it.
-        html = interactive
-          ? `<span class="eng-tok${cls}" role="button" tabindex="0" data-t="${i}">${html}</span>`
-          : `<span class="eng-tok${cls}">${html}</span>`;
+        // could break between a word and the period after it. Numbers have
+        // nothing to translate.
+        html =
+          markable || (prefs.words && /[A-Za-z]/.test(tok.text))
+            ? `<span class="eng-tok${cls}" role="button" tabindex="0" data-t="${i}">${html}</span>`
+            : `<span class="eng-tok${cls}" data-t="${i}">${html}</span>`;
       }
       (paras[tok.p] ||= []).push(html);
     });
     return paras.map((p) => `<p>${p.join("")}</p>`).join("");
   }
 
+  // Redraws the passage's words after "Translate words" is switched; the
+  // task next to it stays as it is.
+  function refreshPassage() {
+    const text = $("#engReadText");
+    if (!text || !runner.read) return;
+    dict.close();
+    text.className = passageClass();
+    text.innerHTML = passageHtml();
+    $("#engDictNote")?.classList.toggle("hidden", !prefs.words || markComplete());
+  }
+
+  function clickWord(tok) {
+    if (prefs.words) dict.toggle(tok);
+    else markToken(tok);
+  }
+
   function renderReading() {
     const st = runner.read;
     const ex = runner.exercise;
-    runner.phase = st.stage === "mark" ? "mark" : "question";
-    const interactive = st.stage === "mark" && !markComplete();
+    runner.phase = st.stage === "questions" ? "question" : st.stage;
+    dict.at = -1;
     const glossary = ex.passage.glossary?.length
       ? `<p class="eng-read-glossary"><span class="eng-read-glossary-title" dir="auto">${esc(t("glossary"))}</span>${ex.passage.glossary
           .map((g) => `<span class="eng-read-gloss"><b>${esc(g.en)}</b> = <span dir="rtl" lang="he">${esc(g.he)}</span></span>`)
           .join("")}</p>`
       : "";
-    // Phones stack the passage over the task; the expand button gives the
-    // passage the whole card for a moment (the task comes back on a second tap).
+    // Marking: the passage and the task side by side (stacked on phones,
+    // where the expand button gives the passage the whole card for a
+    // moment). Otherwise one of them fills the card: the passage first, then
+    // the questions, with the passage a button away (.eng-read--paged).
+    const marking = st.stage === "mark";
+    const corner = marking
+      ? `<button type="button" class="eng-read-expand" id="engReadExpand" aria-pressed="false" aria-label="${esc(t("expandText"))}" title="${esc(t("expandText"))}">${ICONS.expand}</button>`
+      : `<div class="eng-read-go"><button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engReadGo">${esc(t(st.stage === "read" ? "toQuestions" : "backToQuestion"))}</button></div>`;
     renderRunnerShell(
-      `<div class="eng-read is-${st.stage}">
+      `<div class="eng-read is-${st.stage}${marking ? "" : " eng-read--paged"}">
         <div class="eng-read-side">
           <article class="eng-read-passage" id="engReadPassage" lang="en" dir="ltr">
             <h3 class="eng-read-title">${esc(ex.passage.title)}</h3>
-            <div class="eng-read-text${interactive ? " is-marking" : ""}" id="engReadText">${passageHtml(interactive)}</div>
+            <div class="${passageClass()}" id="engReadText">${passageHtml()}</div>
             ${glossary}
           </article>
-          <button type="button" class="eng-read-expand" id="engReadExpand" aria-pressed="false" aria-label="${esc(t("expandText"))}" title="${esc(t("expandText"))}">${ICONS.expand}</button>
+          ${corner}
         </div>
         <div class="eng-read-task" id="engReadTask"></div>
       </div>`,
@@ -2555,32 +3198,52 @@
     const text = $("#engReadText");
     text.addEventListener("click", (e) => {
       const tok = e.target.closest(".eng-tok[tabindex]");
-      if (tok) markToken(tok);
+      if (tok) clickWord(tok);
     });
     text.addEventListener("keydown", (e) => {
       const tok = e.target.closest?.(".eng-tok[tabindex]");
       if (!tok || (e.key !== "Enter" && e.key !== " ")) return;
       e.preventDefault();
-      markToken(tok);
+      clickWord(tok);
     });
-    $("#engReadExpand").addEventListener("click", (e) => {
-      const btn = e.currentTarget;
-      const open = $(".eng-read").classList.toggle("is-text-open");
+    $("#engReadExpand")?.addEventListener("click", () => setTextOpen(!$(".eng-read").classList.contains("is-text-open")));
+    $("#engReadGo")?.addEventListener("click", () => {
+      if (runner.read.stage === "read") startQuestions();
+      else setTextOpen(false);
+    });
+    renderReadingTask();
+  }
+
+  // Gives the passage the whole card (the task box hides), or brings the
+  // task back.
+  function setTextOpen(open) {
+    const read = $(".eng-read");
+    if (!read || read.classList.contains("is-text-open") === open) return;
+    dict.close();
+    read.classList.toggle("is-text-open", open);
+    const btn = $("#engReadExpand");
+    if (btn) {
       btn.setAttribute("aria-pressed", String(open));
       btn.innerHTML = open ? ICONS.collapse : ICONS.expand;
       btn.setAttribute("aria-label", t(open ? "collapseText" : "expandText"));
       btn.title = t(open ? "collapseText" : "expandText");
-    });
-    renderReadingTask();
+    }
+    if (!read.classList.contains("eng-read--paged")) return;
+    // Keyboard focus follows to the box that is now on screen; a question
+    // waiting for a typed answer gets its cursor back.
+    const input = $("#engInput");
+    if (open) $("#engReadGo")?.focus({ preventScroll: true });
+    else if (input && !runner.answered && window.matchMedia("(hover: hover)").matches) input.focus({ preventScroll: true });
+    else $("#engReadBack")?.focus({ preventScroll: true });
   }
 
   function renderReadingTask() {
     const box = $("#engReadTask");
     if (!box) return;
     // A new task brings the task box back if the passage was enlarged.
-    if ($(".eng-read")?.classList.contains("is-text-open")) $("#engReadExpand")?.click();
+    setTextOpen(false);
     if (runner.read.stage === "mark") renderMarkTask(box);
-    else renderQuestionTask(box);
+    else if (runner.read.stage === "questions") renderQuestionTask(box);
     box.scrollTop = 0;
   }
 
@@ -2609,6 +3272,7 @@
         <p class="eng-read-instr">${esc(loc(ex.mark, "text"))}</p>
         ${ex.mark.hint ? `<p class="eng-read-hint" dir="ltr">${esc(ex.mark.hint)}</p>` : ""}
       </div>
+      <p class="eng-read-dict-note${prefs.words && !done ? "" : " hidden"}" id="engDictNote">${ICONS.wordMeaning}<span>${esc(t("dictMarkNote"))}</span></p>
       <div class="eng-read-mark-foot">
         <div class="eng-read-count" id="engMarkCount" aria-live="polite">${markCountHtml()}</div>
         <div class="eng-read-actions">
@@ -2641,12 +3305,16 @@
   function updateMarkStatus() {
     $("#engMarkCount").innerHTML = markCountHtml();
     if (!markComplete()) return;
-    // Every word is found or shown: the text locks and the questions open.
+    // Every word is found or shown: the text locks and the questions open
+    // (its words still open their meaning when "Translate words" is on).
     $("#engReadText").classList.remove("is-marking");
-    $$("#engReadText .eng-tok[tabindex]").forEach((tok) => {
-      tok.removeAttribute("tabindex");
-      tok.removeAttribute("role");
-    });
+    if (!prefs.words) {
+      $$("#engReadText .eng-tok[tabindex]").forEach((tok) => {
+        tok.removeAttribute("tabindex");
+        tok.removeAttribute("role");
+      });
+    }
+    $("#engDictNote")?.classList.add("hidden");
     $("#engMarkReveal").classList.add("hidden");
     $("#engToQuestions").disabled = false;
     $("#engFeedback").innerHTML = markDoneHtml();
@@ -2688,41 +3356,250 @@
         given: wrong.length ? `סומנו בטעות: ${wrong.join(", ")}` : "",
       });
     }
-    st.stage = "questions";
-    runner.index = 0;
-    prepareQuestion();
-    renderReading();
+    startQuestions();
   }
+
+  /* Word translation: with "Translate words" on, clicking a word in the
+     passage opens a bubble with its Hebrew meaning — from the passage's own
+     `words` (passages written by the AI) or english-dict.js. A word that
+     is part of a phrase there ("wakes up", "a lot of") shows the phrase. */
+
+  const DICT = window.ENGLISH_DICT || {};
+  // "is there" is "is there…?" only at the start of a question ("The cat is
+  // there."), and "going to" is the future only before a verb ("going to the
+  // park"), so a phrase in the running text never starts with these. A
+  // marked group of words ([going to]) is still looked up as a whole.
+  const NO_PHRASE_START = new Set(["am", "is", "are", "was", "were", "will", "do", "does", "did", "be", "going"]);
+
+  const dictKey = (text) => text.toLowerCase().replace(/[’‘]/g, "'").replace(/\s+/g, " ").trim();
+
+  function dictGet(key) {
+    const own = runner.exercise?.passage?.words;
+    return (own && Object.hasOwn(own, key) && own[key]) || (Object.hasOwn(DICT, key) && DICT[key]) || "";
+  }
+
+  // Forms a word may come from: cats → cat, played → play, making → make,
+  // bigger → big, happily → happy. The likelier ones come first ("uses" is
+  // "use", not "us").
+  function baseForms(word) {
+    const out = [];
+    const add = (w) => {
+      if (w.length > 1 && w !== word && !out.includes(w)) out.push(w);
+    };
+    const strip = (suffix, ...ends) => {
+      if (!word.endsWith(suffix) || word.length < suffix.length + 2) return;
+      const stem = word.slice(0, -suffix.length);
+      ends.forEach((end) => add(stem + end));
+      if (/([b-df-hj-np-tv-z])\1$/.test(stem)) add(stem.slice(0, -1));
+    };
+    strip("ies", "y");
+    strip("s", "");
+    strip("es", "");
+    strip("ied", "y");
+    strip("ed", "e", "");
+    strip("ing", "e", "");
+    strip("ier", "y");
+    strip("iest", "y");
+    strip("er", "e", "");
+    strip("est", "e", "");
+    strip("ily", "y");
+    strip("ly", "");
+    return out;
+  }
+
+  // { he, base } for a word or phrase, or null; `base` is set when the
+  // meaning is another form's (played → play).
+  function lookup(text) {
+    const key = dictKey(text);
+    const he = dictGet(key);
+    if (he) return { he };
+    const owner = key.match(/^(.+)'s$/) || key.match(/^(.+s)'$/);
+    if (owner) {
+      const found = lookup(owner[1]);
+      return found ? { he: `של ${found.he}`, base: found.base } : null;
+    }
+    if (/[\s-]/.test(key)) return null;
+    for (const base of baseForms(key)) {
+      const baseHe = dictGet(base);
+      if (baseHe) return { he: baseHe, base };
+    }
+    return null;
+  }
+
+  // The longest phrase (up to three words in a row, inside one sentence)
+  // around word `i` that the dictionary has.
+  function phraseAt(i) {
+    const toks = runner.read.tokens;
+    const step = (j, dir) => {
+      const gap = toks[j + dir];
+      const k = j + 2 * dir;
+      return gap && !gap.word && /^\s+$/.test(gap.text) && toks[k]?.word && toks[k].p === toks[j].p ? k : -1;
+    };
+    const line = [i];
+    for (let j = i, n = 0; n < 2 && (j = step(j, -1)) >= 0; n++) line.unshift(j);
+    const at = line.length - 1;
+    for (let j = i, n = 0; n < 2 && (j = step(j, 1)) >= 0; n++) line.push(j);
+    for (const size of [3, 2]) {
+      for (let s = Math.max(0, at - size + 1); s <= at && s + size <= line.length; s++) {
+        const idx = line.slice(s, s + size);
+        const text = idx.map((k) => toks[k].text).join(" ");
+        if (NO_PHRASE_START.has(dictKey(toks[idx[0]].text))) continue;
+        const he = dictGet(dictKey(text));
+        if (he) return { idx, text, lines: [{ he }] };
+      }
+    }
+    return null;
+  }
+
+  function meaningOf(i) {
+    const tok = runner.read.tokens[i];
+    const phrase = phraseAt(i);
+    if (phrase) return phrase;
+    const found = lookup(tok.text);
+    if (found) return { idx: [i], text: tok.text, lines: [found] };
+    // A marked group of words ("is eating") with no entry of its own: the
+    // meaning of each word.
+    if (/\s/.test(tok.text)) {
+      const lines = tok.text.split(/\s+/).map((word) => ({ word, ...(lookup(word) || { he: "" }) }));
+      if (lines.some((l) => l.he)) return { idx: [i], text: tok.text, lines };
+    }
+    return { idx: [i], text: tok.text, lines: [] };
+  }
+
+  function dictBubbleHtml(m) {
+    const lines = m.lines.length
+      ? m.lines
+          .map(
+            (l) =>
+              `<p class="eng-dict-he" dir="rtl" lang="he">${l.word ? `<b dir="ltr" lang="en">${esc(l.word)}</b> ` : ""}${esc(l.he || "—")}${
+                l.base ? `<span class="eng-dict-base">${esc(t("dictFrom", l.base))}</span>` : ""
+              }</p>`
+          )
+          .join("")
+      : `<p class="eng-dict-none" dir="auto">${esc(t("dictNone"))}</p>`;
+    return `
+      <div class="eng-dict-head">
+        <span class="eng-dict-word">${esc(m.text)}</span>
+        ${speakBtn(m.text, "eng-dict-speak")}
+      </div>
+      ${lines}`;
+  }
+
+  // The bubble lives inside the passage box, under the word (over it when
+  // there's no room below), and scrolls with the text.
+  const dict = {
+    at: -1,
+    toggle(tok) {
+      const i = Number(tok.dataset.t);
+      if (this.at === i && $("#engDictPop")) this.close();
+      else this.open(i);
+    },
+    open(i) {
+      this.close();
+      const passage = $("#engReadPassage");
+      const tok = $(`#engReadText .eng-tok[data-t="${i}"]`);
+      if (!passage || !tok) return;
+      const m = meaningOf(i);
+      this.at = i;
+      m.idx.forEach((k) => $(`#engReadText .eng-tok[data-t="${k}"]`)?.classList.add("is-looked"));
+      const pop = document.createElement("div");
+      pop.className = "eng-dict-pop";
+      pop.id = "engDictPop";
+      pop.setAttribute("role", "status");
+      pop.innerHTML = dictBubbleHtml(m);
+      passage.appendChild(pop);
+      $(".eng-speak", pop)?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        speak(e.currentTarget.dataset.say);
+      });
+      this.place(pop, tok, passage);
+    },
+    place(pop, tok, passage) {
+      const box = passage.getBoundingClientRect();
+      const r = tok.getClientRects()[0] || tok.getBoundingClientRect();
+      const x = r.left - box.left - passage.clientLeft;
+      const y = r.top - box.top - passage.clientTop + passage.scrollTop;
+      const w = pop.offsetWidth;
+      const h = pop.offsetHeight;
+      const below = y + r.height + 6;
+      const above = y - h - 6;
+      const fitsBelow = below + h <= passage.scrollTop + passage.clientHeight;
+      const top = fitsBelow || above < passage.scrollTop ? below : above;
+      pop.style.left = `${Math.max(6, Math.min(x + r.width / 2 - w / 2, passage.clientWidth - w - 6))}px`;
+      pop.style.top = `${top}px`;
+      // Scroll the passage box (not scrollIntoView, which would also scroll
+      // the fixed page) so the word and its bubble are both in view.
+      const from = Math.min(top, y) - 6;
+      const to = Math.max(top + h, y + r.height) + 6;
+      if (to > passage.scrollTop + passage.clientHeight) passage.scrollTop = Math.min(from, to - passage.clientHeight);
+      else if (from < passage.scrollTop) passage.scrollTop = from;
+    },
+    close() {
+      $("#engDictPop")?.remove();
+      $$("#engReadText .eng-tok.is-looked").forEach((el) => el.classList.remove("is-looked"));
+      this.at = -1;
+    },
+  };
 
   /* Questions stage */
 
-  function readTranslationHtml(q) {
-    return q.he ? `<p class="eng-translation" dir="rtl" lang="he">${esc(q.he)}</p>` : "";
-  }
+  const OPTION_KEYS_HE = ["א", "ב", "ג", "ד", "ה"];
 
   function openQuestionText(q) {
     return lang() === "en" && q.qEn ? q.qEn : q.q;
+  }
+
+  // Whether a question has a Hebrew version for "Hebrew questions".
+  function hebrewQuestion(q) {
+    return !!(q?.he || (q?.type === "open" && q.lang === "he"));
+  }
+
+  // A question as it is normally shown (English; a level 1–2 open question
+  // in the page's language) and in Hebrew.
+  function questionTexts(q) {
+    if (q.type === "open") return { en: openQuestionText(q), he: q.lang === "he" ? q.q : q.he || "" };
+    return { en: q.q, he: q.he || "" };
+  }
+
+  // Both versions go on the page, and the card's "Hebrew questions" switch
+  // (.is-he-q) shows one — so switching never loses an answer in progress.
+  // The element around them needs the class "has-he".
+  function biText(en, he) {
+    return `<span class="eng-q-en" dir="ltr" lang="en">${esc(en)}</span><span class="eng-q-he" dir="rtl" lang="he">${esc(he)}</span>`;
+  }
+
+  function questionHtml(q) {
+    const { en, he } = questionTexts(q);
+    if (!he || he === en) return `<p class="eng-read-q" dir="${q.type === "open" ? "auto" : "ltr"}">${esc(en)}</p>`;
+    return `<p class="eng-read-q has-he">${biText(en, he)}</p>`;
+  }
+
+  function optionHe(q, i) {
+    return (q.he && q.optionsHe?.[i]) || "";
+  }
+
+  // The right option of a multiple-choice question.
+  function mcAnswerHtml(q) {
+    const he = optionHe(q, q.options.indexOf(q.answer));
+    return he ? `<span class="has-he">${biText(q.answer, he)}</span>` : `<span dir="ltr">${esc(q.answer)}</span>`;
   }
 
   function renderQuestionTask(box) {
     const q = runner.round[runner.index];
     let body;
     if (q.type === "mc") {
+      const option = (oi, k) => {
+        const he = optionHe(q, oi);
+        return he
+          ? `<button type="button" class="eng-read-option has-he js-answer" data-i="${oi}"><span class="eng-read-option-key">${biText(OPTION_KEYS[k], OPTION_KEYS_HE[k])}</span><span class="eng-read-option-text">${biText(q.options[oi], he)}</span></button>`
+          : `<button type="button" class="eng-read-option js-answer" data-i="${oi}" dir="ltr"><span class="eng-read-option-key">${OPTION_KEYS[k]}</span><span class="eng-read-option-text">${esc(q.options[oi])}</span></button>`;
+      };
       body = `
-        <p class="eng-read-q" dir="ltr">${esc(q.q)}</p>
-        ${readTranslationHtml(q)}
-        <div class="eng-read-options">
-          ${runner.state.order
-            .map(
-              (oi, k) =>
-                `<button type="button" class="eng-read-option js-answer" data-i="${oi}" dir="ltr"><span class="eng-read-option-key">${OPTION_KEYS[k]}</span><span class="eng-read-option-text">${esc(q.options[oi])}</span></button>`
-            )
-            .join("")}
-        </div>`;
+        ${questionHtml(q)}
+        <div class="eng-read-options">${runner.state.order.map(option).join("")}</div>`;
     } else if (q.type === "tf") {
       body = `
-        <p class="eng-read-q" dir="ltr">${esc(q.q)}</p>
-        ${readTranslationHtml(q)}
+        ${questionHtml(q)}
         <div class="eng-options eng-options--tf">
           <button type="button" class="eng-tf-btn eng-tf-btn--true js-answer" data-value="true">${ICONS.check}<span>${esc(t("trueBtn"))}</span></button>
           <button type="button" class="eng-tf-btn eng-tf-btn--false js-answer" data-value="false">${ICONS.cross}<span>${esc(t("falseBtn"))}</span></button>
@@ -2731,17 +3608,20 @@
       const inHebrew = q.lang === "he";
       const langNote = inHebrew ? (lang() === "he" ? t("answerHe") : t("answerAny")) : t("answerEn");
       body = `
-        <p class="eng-read-q" dir="auto">${esc(openQuestionText(q))}</p>
-        ${inHebrew ? "" : readTranslationHtml(q)}
+        ${questionHtml(q)}
         <p class="eng-read-lang">${ICONS.write}<span>${esc(langNote)}</span></p>
         <textarea class="eng-read-input" id="engInput" rows="2" dir="${inHebrew ? "auto" : "ltr"}" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("typeHere"))}" placeholder="${esc(t("typeHere"))}"></textarea>
         <div id="engModel"></div>
         <div class="eng-actions"><button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engCheck">${esc(t("check"))}</button></div>`;
     }
     box.innerHTML = `
-      <p class="eng-read-step">${esc(t("questionNum", runner.index + 1, runner.round.length))}</p>
+      <div class="eng-read-q-head">
+        <p class="eng-read-step">${esc(t("questionNum", runner.index + 1, runner.round.length))}</p>
+        <button type="button" class="eng-read-back" id="engReadBack">${ICONS.reading}<span>${esc(t("backToText"))}</span></button>
+      </div>
       ${body}
       <div class="eng-feedback eng-read-feedback" id="engFeedback" aria-live="polite"></div>`;
+    $("#engReadBack").addEventListener("click", () => setTextOpen(true));
 
     if (q.type === "mc") {
       answerButtons().forEach((btn) => btn.addEventListener("click", () => answerMc(q, Number(btn.dataset.i))));
@@ -2772,7 +3652,7 @@
       else if (i === chosen) btn.classList.add("is-wrong");
     });
     if (isRight) readRight();
-    else readWrong(q, `${esc(t("wrong", ""))}<span dir="ltr">${esc(q.answer)}</span>`, q.options[chosen]);
+    else readWrong(q, `${esc(t("wrong", ""))}${mcAnswerHtml(q)}`, q.options[chosen]);
   }
 
   function answerTf(q, value) {
@@ -2886,9 +3766,14 @@
       // Question and answer on separate lines: they are often in different
       // languages, and one mixed line would come out jumbled.
       const { q, given } = m;
-      const answer = q.type === "tf" ? t(q.answer ? "trueBtn" : "falseBtn") : q.type === "open" && lang() === "en" && q.answerEn ? q.answerEn : q.answer;
+      const { en, he } = questionTexts(q);
+      const question = he && he !== en ? `<span class="eng-review-line has-he">${biText(en, he)}</span>` : `<span class="eng-review-line" dir="auto">${esc(en)}</span>`;
+      const answer =
+        q.type === "mc"
+          ? mcAnswerHtml(q)
+          : `<bdi>${esc(q.type === "tf" ? t(q.answer ? "trueBtn" : "falseBtn") : lang() === "en" && q.answerEn ? q.answerEn : q.answer)}</bdi>`;
       const yours = q.type === "open" ? `<span class="eng-review-line eng-review-he"><span>${esc(t("yourAnswer"))}</span> <bdi>${esc(given)}</bdi></span>` : "";
-      return `<span class="eng-review-line" dir="auto">${esc(openQuestionText(q))}</span><span class="eng-review-line eng-review-answer">${ICONS.check}<bdi>${esc(answer)}</bdi></span>${yours}`;
+      return `${question}<span class="eng-review-line eng-review-answer">${ICONS.check}${answer}</span>${yours}`;
     },
   };
 
@@ -2898,7 +3783,7 @@
   function recordRound() {
     if (runner.recorded) return;
     runner.recorded = true;
-    const { score, total, topic, exercise, isRetry, isNew, mistakeLog, startedAt } = runner;
+    const { score, total, topic, exercise, isRetry, isNew, mistakeLog, startedAt, review } = runner;
     const activity = {
       kind: "exercise",
       topicId: topic.id,
@@ -2914,6 +3799,21 @@
       durationSec: Math.round((Date.now() - startedAt) / 1000),
       mistakes: mistakeLog,
     };
+    // A review round mixes many exercises: it is saved as practice of its
+    // own, and like any mistakes practice it earns half the points. Titles
+    // are in Hebrew, like the teacher's page.
+    if (review) {
+      const levels = review.items.map((item) => exerciseLevel(item.source));
+      Object.assign(activity, {
+        topicId: REVIEW_ROUTE,
+        topicTitle: STR.he.reviewCardTitle,
+        exerciseId: review.topicId || "all",
+        exerciseTitle: review.topicId ? `${STR.he.reviewTitle} · ${findTopic(review.topicId)?.title || review.topicId}` : STR.he.reviewTitle,
+        type: "review",
+        isRetry: true,
+        level: Math.round(levels.reduce((a, b) => a + b, 0) / Math.max(1, levels.length)) || 1,
+      });
+    }
     const round = runner.round;
     window.StudentProgress?.record(activity).then((result) => {
       // The student may have started another round meanwhile.
@@ -2944,9 +3844,18 @@
   }
 
   function renderResults() {
+    if (runner.review) {
+      renderReviewResults();
+      return;
+    }
+    if (runner.exercise.type === "exam") {
+      renderExamResults();
+      return;
+    }
     const { score, total, mistakes, topic, exercise, isRetry } = runner;
     runner.phase = "results";
     recordRound();
+    window.MistakeBank?.flush();
     const ratio = total ? score / total : 0;
     const grade = Math.round(ratio * 100);
     const stars = ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
@@ -2972,9 +3881,11 @@
       : t("score", score, total);
 
     const review = (TYPES[exercise.type] || TYPES.choice).review;
+    const savedNote = !isReading && window.MistakeBank ? `<p class="eng-mistakes-saved">${ICONS.review}<span>${esc(t("mistakesSaved"))}</span></p>` : "";
     const mistakesList = mistakes.length
       ? `<div class="eng-mistakes">
           <h3>${esc(t("mistakesTitle"))}</h3>
+          ${savedNote}
           <ul>${mistakes.map((q) => `<li>${review(q)}</li>`).join("")}</ul>
         </div>`
       : "";
@@ -3019,14 +3930,948 @@
     });
   }
 
+  /* ── "My mistakes": a round of questions from the mistake bank
+     (mistake-bank.js). Each question is shown with its own exercise, so its
+     options, words and instructions are the ones it was asked with. ── */
+
+  const REVIEW_SIZE = 10;
+  let reviewToken = 0;
+
+  // A bank entry as a runner question, or null when its exercise is no
+  // longer on the site. A matching pair comes back on its own: a word with a
+  // picture as "what's in the picture?", a text pair as a choice between the
+  // exercise's other answers.
+  function reviewItem(entry) {
+    const topic = findTopic(entry.topicId);
+    const source = findExercise(topic, entry.exerciseId);
+    const item = entry.item;
+    if (!source || !item || typeof item !== "object" || !TYPES[source.type] || source.type === "reading") return null;
+    const base = { id: entry.id, topic, source, item };
+    if (source.type !== "match") {
+      if (item.word && !VOCAB[item.word]) return null;
+      return { ...base, exercise: source, q: item };
+    }
+    if (item.word) {
+      const word = wordItem(item.word);
+      const words = source.words || [];
+      if (!word || words.length < 2) return null;
+      const exercise = { ...source, type: "picture", words, instructions: STR.he.reviewPictureInstr, instructionsEn: STR.en.reviewPictureInstr };
+      return { ...base, exercise, q: word };
+    }
+    const others = shuffle([...new Set((source.pairs || []).map((p) => p.b).filter((b) => b && b !== item.b))]).slice(0, 3);
+    if (!item.a || !item.b || !others.length) return null;
+    const exercise = { ...source, type: "choice", options: null, instructions: STR.he.reviewPairInstr, instructionsEn: STR.en.reviewPairInstr };
+    return { ...base, exercise, q: { text: `${item.a} → ___`, options: [item.b, ...others], answer: item.b } };
+  }
+
+  // The questions practiced longest ago come first, so each one gets some
+  // time between its reviews; the round itself is shuffled.
+  function buildReview(topicId) {
+    const entries = window.MistakeBank.list()
+      .filter((e) => !topicId || e.topicId === topicId)
+      .sort((a, b) => String(a.lastAt).localeCompare(String(b.lastAt)) || (a.streak || 0) - (b.streak || 0));
+    const items = [];
+    for (const entry of entries) {
+      if (items.length >= REVIEW_SIZE) break;
+      const item = reviewItem(entry);
+      if (item) items.push(item);
+    }
+    return shuffle(items);
+  }
+
+  // A linked student's bank comes from their file first.
+  async function openReview(topicId) {
+    const token = ++reviewToken;
+    const topic = findTopic(topicId);
+    renderReviewMessage(t("loading"), "", topic ? `#${topic.id}` : "#");
+    await window.MistakeBank?.ready();
+    if (token !== reviewToken || decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0] !== REVIEW_ROUTE) return;
+    startReview(topic ? topic.id : "");
+  }
+
+  function startReview(topicId = "") {
+    clearTimeout(runner.timer);
+    stopExamTimer();
+    runner.exam = null;
+    const back = topicId ? `#${topicId}` : "#";
+    const items = window.MistakeBank ? buildReview(topicId) : [];
+    if (!items.length) {
+      runner.review = null;
+      const mastered = window.MistakeBank?.mastered() || 0;
+      renderReviewMessage(t("reviewEmpty"), mastered ? t("reviewCardDone", mastered) : t("reviewEmptyLead"), back);
+      return;
+    }
+    runner.review = { topicId, items, out: 0, back };
+    runner.topic = items[0].topic;
+    runner.exercise = items[0].exercise;
+    runner.round = items.map((item) => item.q);
+    runner.total = runner.round.length;
+    runner.isRetry = false;
+    runner.isNew = false;
+    runner.newRequest = null;
+    runner.prepared = true;
+    runner.index = 0;
+    runner.ringIndex = 0;
+    runner.score = 0;
+    runner.mistakes = [];
+    runner.mistakeLog = [];
+    runner.startedAt = Date.now();
+    runner.recorded = false;
+    runner.earned = null;
+    renderQuestion();
+  }
+
+  // The review screen with nothing to practice (or while the bank loads).
+  // `lead` comes with a button back.
+  function renderReviewMessage(title, lead, back) {
+    runner.phase = "message";
+    const view = views.exercise();
+    view.classList.remove("is-reading");
+    const backLabel = back === "#" ? t("back") : t("backToTopic");
+    view.innerHTML = `
+      <div class="eng-runner-head">
+        <div class="eng-runner-title-row"><h2 class="font-cartoon eng-runner-title">${esc(t("reviewTitle"))}</h2></div>
+        <div class="eng-runner-bar">
+          <a class="eng-back" href="${esc(back)}" aria-label="${esc(backLabel)}" title="${esc(backLabel)}">${ICONS.back}</a>
+        </div>
+      </div>
+      <div class="eng-runner-card eng-review-empty">
+        <span class="eng-review-empty-icon">${lead ? ICONS.review : ICONS.spinner}</span>
+        <p class="eng-review-empty-title">${esc(title)}</p>
+        ${lead ? `<p class="eng-review-empty-lead">${esc(lead)}</p><a class="btn btn-primary btn-candy font-cartoon" href="${esc(back)}">${esc(backLabel)}</a>` : ""}
+      </div>`;
+  }
+
+  // Runs `fn` with a review question's exercise in the runner, for the
+  // helpers that read it (the results list shows each mistake its own way).
+  function withExercise(item, fn) {
+    const saved = runner.exercise;
+    runner.exercise = item.exercise;
+    try {
+      return fn();
+    } finally {
+      runner.exercise = saved;
+    }
+  }
+
+  function renderReviewResults() {
+    const { score, total, mistakes, review } = runner;
+    runner.phase = "results";
+    recordRound();
+    window.MistakeBank?.flush();
+    const ratio = total ? score / total : 0;
+    const stars = ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
+    const left = window.MistakeBank?.count(review.topicId) || 0;
+    const status = [review.out ? t("reviewOutCount", review.out) : "", t("reviewLeft", left)].filter(Boolean).join(" · ");
+    const list = mistakes
+      .map((q) => {
+        const item = review.items.find((it) => it.q === q);
+        return item ? `<li>${withExercise(item, () => (TYPES[item.exercise.type] || TYPES.choice).review(q))}</li>` : "";
+      })
+      .join("");
+    const backLabel = review.back === "#" ? t("back") : t("backToTopic");
+    renderRunnerShell(
+      `
+      <div class="eng-results">
+        <div class="eng-stars" aria-hidden="true">
+          ${[1, 2, 3].map((n) => `<span class="eng-star${n <= stars ? " is-on" : ""}">${ICONS.star}</span>`).join("")}
+        </div>
+        <div class="eng-grade">
+          <span class="eng-grade-label">${esc(t("gradeLabel"))}</span>
+          <p class="eng-score font-cartoon">${Math.round(ratio * 100)}</p>
+        </div>
+        <p class="eng-results-count">${esc(t("score", score, total))}</p>
+        <p class="eng-results-msg">${esc(status)}</p>
+        <div class="eng-results-actions">
+          ${left ? `<button type="button" class="btn btn-primary btn-candy font-cartoon" id="engReviewAgain">${esc(t("reviewAgain"))}</button>` : ""}
+          <a class="btn btn-candy font-cartoon eng-btn-secondary" href="${esc(review.back)}">${esc(backLabel)}</a>
+          ${homeworkButtonHtml()}
+        </div>
+        ${list ? `<div class="eng-mistakes"><h3>${esc(t("mistakesTitle"))}</h3><ul>${list}</ul></div>` : ""}
+      </div>`,
+      `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
+    );
+    $("#engReviewAgain")?.addEventListener("click", () => startReview(review.topicId));
+  }
+
+  /* ── Reading exams (english-exams.js): the passage on one side and one
+     question at a time on the other, as in the reading runner, but nothing
+     is checked until the student hands the exam in. Answers can change until
+     then and are kept in this browser with the timer's deadline, so leaving
+     the page and coming back continues the same exam (and a deadline that
+     passed meanwhile hands it in). A question is worth one point, or half
+     for one of two right picks or an order that is half right; the student's
+     file gets half-points, so the score there is a whole number. ── */
+
+  const EXAM_KEY = "pleyi-english-exams";
+  let examTimer = null;
+
+  function stopExamTimer() {
+    clearInterval(examTimer);
+    examTimer = null;
+  }
+
+  // Saved exams of whoever practices on this device: a student who opened
+  // their link, or the visitor.
+  function examSaveId(ex) {
+    const key = window.StudentProgress?.key() || "";
+    let h = 5381;
+    for (let i = 0; i < key.length; i++) h = (h * 33 + key.charCodeAt(i)) | 0;
+    return `${key ? (h >>> 0).toString(36) : "guest"}/${ex.id}`;
+  }
+
+  function readExamSaves() {
+    try {
+      return JSON.parse(localStorage.getItem(EXAM_KEY)) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function loadExamSave(ex) {
+    const save = readExamSaves()[examSaveId(ex)];
+    return save && Array.isArray(save.answers) && save.answers.length === ex.questions.length ? save : null;
+  }
+
+  function storeExamSave(ex, save) {
+    const all = readExamSaves();
+    if (save) all[examSaveId(ex)] = save;
+    else delete all[examSaveId(ex)];
+    try {
+      localStorage.setItem(EXAM_KEY, JSON.stringify(all));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function saveExam() {
+    const st = runner.exam;
+    if (!st?.answers) return;
+    const { answers, orders, timed, startedAt, deadline, current } = st;
+    storeExamSave(runner.exercise, { answers, orders, timed, startedAt, deadline, current });
+  }
+
+  // Sentences end at . ! or ? (with any closing quote) before a space and a
+  // capital letter, a digit or an opening quote — so a quote that ends with
+  // "!" inside a sentence (“Thank you!” said Ari.) stays one sentence.
+  function splitSentences(para) {
+    const out = [];
+    const re = /[.!?]+["”’)]*\s+(?=[A-Z0-9“"‘(])/g;
+    let start = 0;
+    let m;
+    while ((m = re.exec(para))) {
+      const end = m.index + m[0].length;
+      out.push(para.slice(start, end).trim());
+      start = end;
+    }
+    if (start < para.length) out.push(para.slice(start).trim());
+    return out;
+  }
+
+  function examClock(ms) {
+    const sec = Math.max(0, Math.ceil(ms / 1000));
+    return t("minutesSeconds", Math.floor(sec / 60), sec % 60);
+  }
+
+  // Options, picks and events show in an order of their own, kept for the
+  // whole exam. Events never start out in the right order.
+  function examOrder(q) {
+    if (q.type === "mc" || q.type === "multi") return shuffle(q.options.map((_, i) => i));
+    if (q.type !== "sequence") return null;
+    const ids = q.items.map((_, i) => i);
+    let order = shuffle(ids);
+    for (let tries = 0; tries < 8 && order.every((v, i) => v === i); tries++) order = shuffle(ids);
+    return order;
+  }
+
+  function examAnswered(i) {
+    const q = runner.round[i];
+    const a = runner.exam?.answers?.[i];
+    if (a == null) return false;
+    if (typeof a === "string") return !!a.trim();
+    if (Array.isArray(a)) return a.length === (q.type === "multi" ? q.answers.length : q.items.length);
+    return true;
+  }
+
+  function examAnsweredCount() {
+    return runner.round.filter((_, i) => examAnswered(i)).length;
+  }
+
+  function startExam() {
+    const ex = runner.exercise;
+    const sentences = ex.passage.text.flatMap(splitSentences);
+    const save = loadExamSave(ex);
+    runner.exam = { sentences, saved: save };
+    runner.phase = "intro";
+    if (save?.timed && save.deadline <= Date.now()) {
+      // The time ran out while the student was away: what they answered is
+      // handed in, and an exam with no answers starts over.
+      if (save.answers.some((a) => a != null && a !== "")) {
+        Object.assign(runner.exam, save, { timeUp: true });
+        finishExam();
+        return;
+      }
+      storeExamSave(ex, null);
+      runner.exam.saved = null;
+    }
+    renderExamIntro();
+  }
+
+  function renderExamIntro() {
+    runner.phase = "intro";
+    const ex = runner.exercise;
+    const save = runner.exam.saved;
+    const facts = [
+      [ICONS.clock, t("examFactTime", ex.minutes)],
+      [ICONS.choice, t("examFactQuestions", ex.questions.length)],
+      [ICONS.reading, t("examFactWords", passageWordCount(ex))],
+    ];
+    const rules = [...t("examRules"), t(ex.level <= 2 ? "examRulesHe" : "examRulesEn")];
+    const left = save?.timed ? examClock(save.deadline - Date.now()) : "";
+    const actions = save
+      ? `<button type="button" class="btn btn-primary btn-candy font-cartoon" id="engExamResume">${esc(t("examResume"))}</button>
+         <button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engExamRestart">${esc(t("examRestart"))}</button>`
+      : `<button type="button" class="btn btn-primary btn-candy font-cartoon eng-exam-start" id="engExamStart">${ICONS.clock}<span>${esc(t("examStart"))}</span></button>
+         <button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engExamUntimed">${esc(t("examStartUntimed"))}</button>`;
+    renderRunnerShell(`
+      <div class="eng-exam-intro">
+        <span class="eng-exam-intro-icon">${ICONS.exam}</span>
+        <h3 class="eng-exam-intro-title" dir="ltr">${esc(ex.passage.title)}</h3>
+        <ul class="eng-exam-facts">${facts.map(([icon, text]) => `<li>${icon}<span>${esc(text)}</span></li>`).join("")}</ul>
+        ${save ? `<p class="eng-exam-resume-note">${esc(t("examResumeNote", left))}</p>` : ""}
+        <ul class="eng-exam-rules">${rules.map((rule) => `<li>${esc(rule)}</li>`).join("")}</ul>
+        <div class="eng-results-actions eng-exam-intro-actions">${actions}</div>
+      </div>`);
+    $("#engExamStart")?.addEventListener("click", () => beginExam(true));
+    $("#engExamUntimed")?.addEventListener("click", () => beginExam(false));
+    $("#engExamResume")?.addEventListener("click", resumeExam);
+    $("#engExamRestart")?.addEventListener("click", () => {
+      storeExamSave(ex, null);
+      runner.exam.saved = null;
+      renderExamIntro();
+    });
+  }
+
+  function beginExam(timed) {
+    const ex = runner.exercise;
+    const now = Date.now();
+    Object.assign(runner.exam, {
+      answers: ex.questions.map(() => null),
+      orders: ex.questions.map(examOrder),
+      timed,
+      startedAt: now,
+      deadline: timed ? now + ex.minutes * 60000 : null,
+      current: 0,
+      saved: null,
+    });
+    runner.startedAt = now;
+    saveExam();
+    renderExam();
+  }
+
+  function resumeExam() {
+    const st = runner.exam;
+    Object.assign(st, st.saved, { saved: null });
+    // A save from before the orders were kept gets new ones.
+    if (!Array.isArray(st.orders)) st.orders = runner.round.map(examOrder);
+    st.current = Math.min(Math.max(0, st.current || 0), runner.round.length - 1);
+    runner.startedAt = st.startedAt;
+    renderExam();
+  }
+
+  function examPassageHtml() {
+    let s = 0;
+    return runner.exercise.passage.text
+      .map((para, p) => {
+        const sentences = splitSentences(para)
+          .map((text) => `<span class="eng-sent" data-s="${s++}">${esc(text)}</span>`)
+          .join(" ");
+        return `<p class="eng-exam-para" data-p="${p + 1}"><span class="eng-para-num" aria-label="${esc(t("paragraph", p + 1))}">${p + 1}</span>${sentences}</p>`;
+      })
+      .join("");
+  }
+
+  function examGlossaryHtml(ex) {
+    if (!ex.passage.glossary?.length) return "";
+    return `<p class="eng-read-glossary"><span class="eng-read-glossary-title" dir="auto">${esc(t("glossary"))}</span>${ex.passage.glossary
+      .map((g) => `<span class="eng-read-gloss"><b>${esc(g.en)}</b> = <span dir="rtl" lang="he">${esc(g.he)}</span></span>`)
+      .join("")}</p>`;
+  }
+
+  // The passage box and the expand button that gives it the whole card on a
+  // phone (as in the reading runner).
+  function examSideHtml() {
+    const ex = runner.exercise;
+    return `
+      <div class="eng-read-side">
+        <article class="eng-read-passage" id="engReadPassage" lang="en" dir="ltr">
+          <h3 class="eng-read-title">${esc(ex.passage.title)}</h3>
+          <div class="eng-read-text eng-exam-text" id="engExamText">${examPassageHtml()}</div>
+          ${examGlossaryHtml(ex)}
+        </article>
+        <button type="button" class="eng-read-expand" id="engReadExpand" aria-pressed="false" aria-label="${esc(t("expandText"))}" title="${esc(t("expandText"))}">${ICONS.expand}</button>
+      </div>`;
+  }
+
+  function bindExamExpand() {
+    $("#engReadExpand")?.addEventListener("click", (e) => {
+      const btn = e.currentTarget;
+      const open = $(".eng-read").classList.toggle("is-text-open");
+      btn.setAttribute("aria-pressed", String(open));
+      btn.innerHTML = open ? ICONS.collapse : ICONS.expand;
+      btn.setAttribute("aria-label", t(open ? "collapseText" : "expandText"));
+      btn.title = t(open ? "collapseText" : "expandText");
+    });
+  }
+
+  // One arc per question: answered ones filled, the current one tinted.
+  function examRingHtml() {
+    const n = runner.round.length;
+    const step = 360 / n;
+    const gap = n > 1 ? Math.min(10, 120 / n) : 0;
+    const len = ((RING_C * (step - gap)) / 360).toFixed(2);
+    const arc = (i, cls) =>
+      `<circle class="eng-ring-seg ${cls}" cx="24" cy="24" r="${RING_R}" stroke-dasharray="${len} ${RING_C.toFixed(2)}" transform="rotate(${(-90 + i * step + gap / 2).toFixed(2)} 24 24)" />`;
+    const current = runner.exam.current;
+    return (
+      runner.round.map((_, i) => arc(i, "eng-ring-track")).join("") +
+      runner.round.map((_, i) => (examAnswered(i) ? arc(i, "eng-ring-fill") : i === current ? arc(i, "eng-ring-fill is-current") : "")).join("")
+    );
+  }
+
+  function examProgressHtml() {
+    const n = runner.round.length;
+    return `
+      <div class="eng-progress eng-exam-progress" id="engProgress">
+        <span class="eng-ring" role="img" aria-label="${esc(t("examAnsweredOf", examAnsweredCount(), n))}">
+          <svg viewBox="0 0 48 48" aria-hidden="true">${examRingHtml()}</svg>
+          <span class="eng-ring-num" aria-hidden="true">${runner.exam.current + 1}</span>
+        </span>
+        <span class="eng-exam-timer${runner.exam.timed ? "" : " is-untimed"}" id="engExamTimer" role="timer">${ICONS.clock}<span id="engExamTime"></span></span>
+      </div>`;
+  }
+
+  function startExamClock() {
+    stopExamTimer();
+    tickExam();
+    examTimer = setInterval(tickExam, 1000);
+  }
+
+  function tickExam() {
+    const st = runner.exam;
+    if (!st?.answers || runner.phase !== "exam") {
+      stopExamTimer();
+      return;
+    }
+    const now = Date.now();
+    const time = $("#engExamTime");
+    const box = $("#engExamTimer");
+    if (!st.timed) {
+      const text = examClock(now - st.startedAt);
+      if (time) time.textContent = text;
+      box?.setAttribute("aria-label", t("examElapsed", text));
+      return;
+    }
+    const left = st.deadline - now;
+    if (left <= 0) {
+      st.timeUp = true;
+      finishExam();
+      return;
+    }
+    const text = examClock(left);
+    if (time) time.textContent = text;
+    box?.setAttribute("aria-label", t("examTimeLeft", text));
+    box?.classList.toggle("is-low", left <= 5 * 60000);
+    box?.classList.toggle("is-urgent", left <= 60000);
+  }
+
+  function renderExam() {
+    runner.phase = "exam";
+    runner.exam.confirming = false;
+    renderRunnerShell(`<div class="eng-read eng-exam is-questions">${examSideHtml()}<div class="eng-read-task eng-exam-task" id="engExamTask"></div></div>`, examProgressHtml());
+    const text = $("#engExamText");
+    const pick = (el) => {
+      const sent = el.closest?.(".eng-sent[tabindex]");
+      if (sent) chooseQuote(Number(sent.dataset.s));
+    };
+    text.addEventListener("click", (e) => pick(e.target));
+    text.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      if (!e.target.closest?.(".eng-sent[tabindex]")) return;
+      e.preventDefault();
+      pick(e.target);
+    });
+    bindExamExpand();
+    renderExamTask();
+    startExamClock();
+  }
+
+  // The header ring and the question buttons, after an answer changed or
+  // the student moved to another question.
+  function refreshExamChrome() {
+    const progress = $("#engProgress");
+    if (progress) progress.outerHTML = examProgressHtml();
+    tickExam();
+    const nav = $("#engExamNav");
+    if (nav) {
+      nav.outerHTML = examNavHtml();
+      bindExamNav();
+    }
+  }
+
+  // A quote question makes the passage's sentences clickable; a vocabulary
+  // question points at its paragraph.
+  function syncExamPassage() {
+    const text = $("#engExamText");
+    if (!text) return;
+    const st = runner.exam;
+    const q = runner.round[st.current];
+    const quoting = runner.phase === "exam" && !st.confirming && q?.type === "quote";
+    text.classList.toggle("is-quoting", quoting);
+    $$(".eng-sent", text).forEach((el) => {
+      const chosen = quoting && st.answers[st.current] === Number(el.dataset.s);
+      el.classList.toggle("is-quoted", chosen);
+      if (quoting) {
+        el.setAttribute("role", "button");
+        el.setAttribute("tabindex", "0");
+        el.setAttribute("aria-pressed", String(chosen));
+      } else {
+        el.removeAttribute("role");
+        el.removeAttribute("tabindex");
+        el.removeAttribute("aria-pressed");
+      }
+    });
+    const para = runner.phase === "exam" && !st.confirming && q?.type === "word" ? q.para : 0;
+    $$(".eng-exam-para", text).forEach((p) => p.classList.toggle("is-pointed", Number(p.dataset.p) === para));
+  }
+
+  function examNavHtml() {
+    const st = runner.exam;
+    const dots = runner.round
+      .map((_, i) => {
+        const done = examAnswered(i);
+        const cur = i === st.current && !st.confirming;
+        return `<button type="button" class="eng-exam-dot${done ? " is-answered" : ""}${cur ? " is-current" : ""}" data-go="${i}" aria-label="${esc(t("examQuestionLabel", i + 1, done))}"${cur ? ' aria-current="step"' : ""}>${i + 1}</button>`;
+      })
+      .join("");
+    return `
+      <div class="eng-exam-nav" id="engExamNav" role="group" aria-label="${esc(t("examNavLabel"))}">
+        <div class="eng-exam-dots">${dots}</div>
+        ${st.confirming ? "" : `<button type="button" class="eng-exam-submit" id="engExamSubmit">${ICONS.flag}<span>${esc(t("examSubmit"))}</span></button>`}
+      </div>`;
+  }
+
+  function bindExamNav() {
+    $$("#engExamNav [data-go]").forEach((btn) => btn.addEventListener("click", () => goExamQuestion(Number(btn.dataset.go))));
+    $("#engExamSubmit")?.addEventListener("click", confirmExam);
+    // On a phone the buttons scroll sideways: the current one comes into
+    // view (not scrollIntoView, which would also move the fixed page).
+    const dots = $("#engExamNav .eng-exam-dots");
+    const cur = $("#engExamNav .eng-exam-dot.is-current");
+    if (dots && cur && dots.scrollWidth > dots.clientWidth) {
+      dots.scrollLeft += cur.getBoundingClientRect().left - dots.getBoundingClientRect().left - (dots.clientWidth - cur.offsetWidth) / 2;
+    }
+  }
+
+  function goExamQuestion(i) {
+    const st = runner.exam;
+    st.current = Math.min(Math.max(0, i), runner.round.length - 1);
+    st.confirming = false;
+    saveExam();
+    renderExamTask();
+    refreshExamChrome();
+  }
+
+  function confirmExam() {
+    runner.exam.confirming = true;
+    renderExamTask();
+    refreshExamChrome();
+  }
+
+  // A complete-the-sentence question shows its blank as a line.
+  function examQuestionHtml(q) {
+    if (q.type !== "complete") return questionHtml(q);
+    const parts = esc(q.q).split("___");
+    return `<p class="eng-read-q" dir="ltr">${parts.join(`<span class="eng-exam-blank"></span>`)}</p>`;
+  }
+
+  function examNote(text) {
+    return `<p class="eng-read-lang eng-exam-note">${ICONS.write}<span>${esc(text)}</span></p>`;
+  }
+
+  function examAnswerHtml(q, i) {
+    const st = runner.exam;
+    const a = st.answers[i];
+    const order = st.orders[i];
+    const typed = (multiline, inHebrew) =>
+      multiline
+        ? `<textarea class="eng-read-input" id="engExamInput" rows="3" dir="${inHebrew ? "auto" : "ltr"}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${esc(t("typeHere"))}" placeholder="${esc(t("typeHere"))}">${esc(a || "")}</textarea>`
+        : `<input type="text" class="eng-input eng-exam-word" id="engExamInput" dir="ltr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" aria-label="${esc(t("typeHere"))}" placeholder="${esc(t("typeHere"))}" value="${esc(a || "")}" />`;
+    if (q.type === "mc") {
+      return `<div class="eng-read-options">${order
+        .map(
+          (oi, k) =>
+            `<button type="button" class="eng-read-option eng-exam-choice${a === oi ? " is-selected" : ""}" data-i="${oi}" aria-pressed="${a === oi}" dir="ltr"><span class="eng-read-option-key">${OPTION_KEYS[k]}</span><span class="eng-read-option-text">${esc(q.options[oi])}</span></button>`
+        )
+        .join("")}</div>`;
+    }
+    if (q.type === "tf") {
+      const btn = (value, cls, icon, label) =>
+        `<button type="button" class="eng-tf-btn ${cls} eng-exam-choice${a === value ? " is-selected" : ""}" data-value="${value}" aria-pressed="${a === value}">${icon}<span>${esc(t(label))}</span></button>`;
+      return `<div class="eng-options eng-options--tf">${btn(true, "eng-tf-btn--true", ICONS.check, "trueBtn")}${btn(false, "eng-tf-btn--false", ICONS.cross, "falseBtn")}</div>`;
+    }
+    if (q.type === "open") {
+      const inHebrew = q.lang === "he";
+      return `${examNote(inHebrew ? (lang() === "he" ? t("answerHe") : t("answerAny")) : t("answerEn"))}${typed(true, inHebrew)}`;
+    }
+    if (q.type === "complete") return `${examNote(t("examCompleteHow"))}${typed(true, false)}`;
+    if (q.type === "word") return `${examNote(t("examWordHow"))}${typed(false, false)}`;
+    if (q.type === "multi") {
+      const picks = a || [];
+      return `
+        ${examNote(t("examPickTwo", q.answers.length))}
+        <div class="eng-read-options">${order
+          .map((oi) => {
+            const on = picks.includes(oi);
+            return `<button type="button" class="eng-read-option eng-exam-choice eng-exam-check${on ? " is-selected" : ""}" data-i="${oi}" aria-pressed="${on}" dir="ltr"><span class="eng-read-option-key eng-exam-box">${on ? ICONS.check : ""}</span><span class="eng-read-option-text">${esc(q.options[oi])}</span></button>`;
+          })
+          .join("")}</div>
+        <p class="eng-exam-hint" id="engExamHint" aria-live="polite"></p>`;
+    }
+    if (q.type === "quote") {
+      const chosen = a == null ? "" : st.sentences[a];
+      return `
+        ${examNote(t("examQuoteHow"))}
+        <div class="eng-exam-quote${chosen ? "" : " is-empty"}">
+          ${chosen ? `<span class="eng-exam-quote-label">${esc(t("examQuoteChosen"))}</span><span class="eng-exam-quote-text" dir="ltr" lang="en">${esc(chosen)}</span>` : `<span>${esc(t("examQuoteNone"))}</span>`}
+        </div>
+        ${chosen ? `<button type="button" class="eng-text-btn eng-exam-clear" id="engExamClear">${esc(t("examQuoteClear"))}</button>` : ""}`;
+    }
+    // sequence
+    const placed = a || [];
+    return `
+      ${examNote(t("examSequenceHow"))}
+      <div class="eng-exam-seq">${order
+        .map((k) => {
+          const pos = placed.indexOf(k);
+          return `<button type="button" class="eng-exam-seq-item${pos >= 0 ? " is-placed" : ""}" data-k="${k}" aria-pressed="${pos >= 0}" dir="ltr"><span class="eng-exam-seq-num">${pos >= 0 ? pos + 1 : ""}</span><span class="eng-exam-seq-text">${esc(q.items[k])}</span></button>`;
+        })
+        .join("")}</div>
+      ${placed.length ? `<button type="button" class="eng-text-btn eng-exam-clear" id="engExamClear">${esc(t("examSequenceClear"))}</button>` : ""}`;
+  }
+
+  function setExamAnswer(i, value) {
+    const before = examAnswered(i);
+    runner.exam.answers[i] = value;
+    saveExam();
+    if (examAnswered(i) !== before) refreshExamChrome();
+  }
+
+  // Click answers redraw the answer area; typed ones only save, so the
+  // cursor stays where it is.
+  function renderExamAnswer() {
+    const st = runner.exam;
+    const i = st.current;
+    const q = runner.round[i];
+    const box = $("#engExamAnswer");
+    if (!box) return;
+    box.innerHTML = examAnswerHtml(q, i);
+    const redraw = (value) => {
+      setExamAnswer(i, value);
+      renderExamAnswer();
+    };
+    if (q.type === "mc") $$(".eng-exam-choice", box).forEach((btn) => btn.addEventListener("click", () => redraw(Number(btn.dataset.i))));
+    else if (q.type === "tf") $$(".eng-exam-choice", box).forEach((btn) => btn.addEventListener("click", () => redraw(btn.dataset.value === "true")));
+    else if (q.type === "multi") {
+      $$(".eng-exam-choice", box).forEach((btn) =>
+        btn.addEventListener("click", () => {
+          const oi = Number(btn.dataset.i);
+          const picks = st.answers[i] || [];
+          if (picks.includes(oi)) redraw(picks.filter((p) => p !== oi));
+          else if (picks.length >= q.answers.length) {
+            const hint = $("#engExamHint");
+            if (hint) hint.textContent = t("examPickedMax", q.answers.length);
+          } else redraw([...picks, oi]);
+        })
+      );
+    } else if (q.type === "sequence") {
+      $$(".eng-exam-seq-item", box).forEach((btn) =>
+        btn.addEventListener("click", () => {
+          const k = Number(btn.dataset.k);
+          const placed = st.answers[i] || [];
+          redraw(placed.includes(k) ? placed.filter((p) => p !== k) : [...placed, k]);
+        })
+      );
+      $("#engExamClear", box)?.addEventListener("click", () => redraw([]));
+    } else if (q.type === "quote") {
+      $("#engExamClear", box)?.addEventListener("click", () => {
+        redraw(null);
+        syncExamPassage();
+      });
+    } else {
+      const input = $("#engExamInput", box);
+      input.addEventListener("input", () => setExamAnswer(i, input.value));
+      input.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" || e.shiftKey) return;
+        e.preventDefault();
+        if (i < runner.round.length - 1) goExamQuestion(i + 1);
+        else confirmExam();
+      });
+      // Phones would pop the keyboard over the passage; let the student tap in.
+      if (window.matchMedia("(hover: hover)").matches) input.focus({ preventScroll: true });
+    }
+  }
+
+  function chooseQuote(s) {
+    const st = runner.exam;
+    if (runner.phase !== "exam" || st.confirming || runner.round[st.current]?.type !== "quote") return;
+    setExamAnswer(st.current, st.answers[st.current] === s ? null : s);
+    syncExamPassage();
+    renderExamAnswer();
+  }
+
+  function renderExamTask() {
+    const box = $("#engExamTask");
+    if (!box) return;
+    const st = runner.exam;
+    // A new task brings the task box back if the passage was enlarged.
+    if ($(".eng-read")?.classList.contains("is-text-open")) $("#engReadExpand")?.click();
+    const n = runner.round.length;
+    if (st.confirming) {
+      const missing = n - examAnsweredCount();
+      box.innerHTML = `
+        ${examNavHtml()}
+        <div class="eng-exam-confirm">
+          <span class="eng-exam-confirm-icon">${ICONS.flag}</span>
+          <h3 class="eng-exam-confirm-title">${esc(t("examConfirmTitle"))}</h3>
+          <p class="eng-exam-confirm-text">${esc(missing ? t("examConfirmMissing", missing) : t("examConfirmAll"))} ${esc(t("examConfirmNote"))}</p>
+          <div class="eng-exam-confirm-actions">
+            <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engExamYes">${esc(t("examConfirmYes"))}</button>
+            <button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engExamNo">${esc(t("examConfirmNo"))}</button>
+          </div>
+        </div>`;
+      bindExamNav();
+      $("#engExamYes").addEventListener("click", finishExam);
+      $("#engExamNo").addEventListener("click", () => goExamQuestion(st.current));
+      $("#engExamYes").focus({ preventScroll: true });
+      syncExamPassage();
+      return;
+    }
+    const i = st.current;
+    const q = runner.round[i];
+    const last = i === n - 1;
+    box.innerHTML = `
+      ${examNavHtml()}
+      <p class="eng-exam-step">${esc(t("questionNum", i + 1, n))} · ${esc(t("examTypeOne")[q.type] || "")}</p>
+      ${examQuestionHtml(q)}
+      <div class="eng-exam-answer" id="engExamAnswer"></div>
+      <div class="eng-exam-foot">
+        <button type="button" class="eng-read-reveal eng-exam-prev" id="engExamPrev"${i === 0 ? " disabled" : ""}>${esc(t("examPrev"))}</button>
+        <button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engExamNext">${esc(t(last ? "examSubmit" : "examNext"))}</button>
+      </div>`;
+    bindExamNav();
+    renderExamAnswer();
+    $("#engExamPrev").addEventListener("click", () => goExamQuestion(i - 1));
+    $("#engExamNext").addEventListener("click", () => (last ? confirmExam() : goExamQuestion(i + 1)));
+    syncExamPassage();
+    box.scrollTop = 0;
+  }
+
+  // { credit (0, ½ or 1), given, right, model } for one question: what the
+  // student answered and the right answer, as text.
+  function gradeExamQuestion(q, a) {
+    const sentences = runner.exam.sentences;
+    if (q.type === "mc") return { credit: a != null && q.options[a] === q.answer ? 1 : 0, given: a == null ? "" : q.options[a], right: q.answer };
+    if (q.type === "tf") return { credit: a === q.answer ? 1 : 0, given: a == null ? "" : t(a ? "trueBtn" : "falseBtn"), right: t(q.answer ? "trueBtn" : "falseBtn") };
+    if (q.type === "open" || q.type === "complete") {
+      const given = String(a || "").trim();
+      return { credit: given && openIsRight(q, given) ? 1 : 0, given, right: lang() === "en" && q.answerEn ? q.answerEn : q.answer, model: true };
+    }
+    if (q.type === "word") {
+      const given = String(a || "").trim();
+      const right = [q.answer, ...(q.accept || [])].map(normalize).includes(normalize(given));
+      return { credit: given && right ? 1 : 0, given, right: q.answer };
+    }
+    if (q.type === "multi") {
+      const picks = (a || []).slice(0, q.answers.length);
+      const hits = picks.filter((oi) => q.answers.includes(q.options[oi])).length;
+      return { credit: hits / q.answers.length, given: picks.map((oi) => q.options[oi]).join(" · "), right: q.answers.join(" · ") };
+    }
+    if (q.type === "quote") {
+      const rights = [].concat(q.answer);
+      const given = a == null ? "" : sentences[a] || "";
+      return { credit: given && rights.map(normalize).includes(normalize(given)) ? 1 : 0, given, right: rights[0] };
+    }
+    // sequence: all in place is a point; at least half in place, half a point.
+    const order = a || [];
+    const inPlace = order.filter((k, pos) => k === pos).length;
+    const n = q.items.length;
+    const credit = order.length === n && inPlace === n ? 1 : inPlace * 2 >= n ? 0.5 : 0;
+    return { credit, given: order.map((k) => q.items[k]).join(" → "), right: q.items.join(" → ") };
+  }
+
+  function finishExam() {
+    const st = runner.exam;
+    if (!st || runner.phase === "results") return;
+    stopExamTimer();
+    const now = Date.now();
+    st.usedMs = (st.timed ? Math.min(now, st.deadline) : now) - st.startedAt;
+    st.results = runner.round.map((q, i) => ({ q, i, ...gradeExamQuestion(q, st.answers[i]) }));
+    storeExamSave(runner.exercise, null);
+    runner.startedAt = st.startedAt;
+    runner.score = Math.round(st.results.reduce((sum, r) => sum + r.credit, 0) * 2);
+    runner.total = runner.round.length * 2;
+    runner.mistakes = [];
+    // What the teacher's page lists, in Hebrew where the question is.
+    runner.mistakeLog = st.results
+      .filter((r) => r.credit < 1)
+      .map((r) => ({ prompt: questionTexts(r.q).en, answer: r.right, given: r.given || "—" }));
+    renderResults();
+    playSfx("finish");
+  }
+
+  function examPoints(x) {
+    return Number.isInteger(x) ? String(x) : x.toFixed(1);
+  }
+
+  function renderExamResults() {
+    const st = runner.exam;
+    const { topic, exercise: ex } = runner;
+    runner.phase = "results";
+    recordRound();
+    saveBest(`${topic.id}/${ex.id}`, runner.score, runner.total);
+    const grade = Math.round((100 * runner.score) / runner.total);
+    const types = Object.keys(t("examTypes")).filter((type) => st.results.some((r) => r.q.type === type));
+    const rows = types
+      .map((type) => {
+        const list = st.results.filter((r) => r.q.type === type);
+        const got = list.reduce((sum, r) => sum + r.credit, 0);
+        const cls = got === list.length ? " is-right" : got === 0 ? " is-wrong" : "";
+        return `<li class="eng-exam-brow${cls}"><span>${esc(t("examTypes")[type])}</span><b dir="ltr">${examPoints(got)}/${list.length}</b></li>`;
+      })
+      .join("");
+    const items = st.results
+      .map((r) => {
+        const { en, he } = questionTexts(r.q);
+        const question = he && he !== en ? `<span class="has-he">${biText(en, he)}</span>` : `<span dir="auto">${esc(en)}</span>`;
+        const cls = r.credit === 1 ? "is-right" : r.credit > 0 ? "is-half" : "is-wrong";
+        const mark = r.credit === 1 ? ICONS.check : r.credit > 0 ? ICONS.star : ICONS.cross;
+        const showRight = r.credit < 1 || r.model;
+        return `
+          <li class="eng-exam-ritem ${cls}">
+            <span class="eng-exam-rmark">${mark}</span>
+            <div class="eng-exam-rbody">
+              <span class="eng-exam-rtype">${r.i + 1} · ${esc(t("examTypeOne")[r.q.type] || "")}${r.credit > 0 && r.credit < 1 ? ` · ${esc(t("examPartial"))}` : ""}</span>
+              <p class="eng-exam-rq">${question}</p>
+              <p class="eng-exam-rline"><span class="eng-exam-rlabel">${esc(t("examYours"))}</span> <bdi class="${r.given ? "" : "is-none"}">${esc(r.given || t("examNoAnswer"))}</bdi></p>
+              ${showRight ? `<p class="eng-exam-rline eng-exam-rright"><span class="eng-exam-rlabel">${esc(t(r.model ? "examModel" : "examRight"))}</span> <bdi>${esc(r.right)}</bdi></p>` : ""}
+            </div>
+          </li>`;
+      })
+      .join("");
+    renderRunnerShell(
+      `
+      <div class="eng-read eng-exam is-results">
+        ${examSideHtml()}
+        <div class="eng-read-task eng-exam-task">
+          <div class="eng-exam-score">
+            <div class="eng-grade">
+              <span class="eng-grade-label">${esc(t("examGrade"))}</span>
+              <p class="eng-score font-cartoon">${grade}</p>
+            </div>
+            <div class="eng-exam-score-text">
+              ${st.timeUp ? `<p class="eng-exam-timeup">${ICONS.clock}<span>${esc(t("examTimeUp"))}</span></p>` : ""}
+              <p class="eng-exam-used">${esc(t("examTimeUsed", examClock(st.usedMs)))}</p>
+            </div>
+          </div>
+          <div class="eng-exam-breakdown">
+            <h4>${esc(t("examByType"))}</h4>
+            <ul>${rows}</ul>
+          </div>
+          <div class="eng-results-actions eng-exam-actions">
+            <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engExamRetake">${esc(t("examRetake"))}</button>
+            <a class="btn btn-candy font-cartoon eng-btn-secondary" href="#${esc(topic.id)}">${esc(t("examAll"))}</a>
+            ${homeworkButtonHtml()}
+          </div>
+          <div class="eng-exam-review">
+            <h4>${esc(t("examReview"))}</h4>
+            <ol>${items}</ol>
+          </div>
+        </div>
+      </div>`,
+      `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
+    );
+    bindExamExpand();
+    // The right sentence of each quote question, and a wrong one picked.
+    st.results
+      .filter((r) => r.q.type === "quote")
+      .forEach((r) => {
+        const rights = [].concat(r.q.answer).map(normalize);
+        st.sentences.forEach((sent, s) => {
+          const el = $(`#engExamText .eng-sent[data-s="${s}"]`);
+          if (rights.includes(normalize(sent))) el?.classList.add("is-quote-right");
+          else if (st.answers[r.i] === s) el?.classList.add("is-quote-wrong");
+        });
+      });
+    $("#engExamRetake").addEventListener("click", () => startExercise(topic, ex));
+  }
+
+  // The exams topic: how an exam works, then the exams of each level.
+  function examsPageHtml(topic, best, started) {
+    const levels = [1, 2, 3, 4]
+      .map((level) => {
+        const list = topic.exercises.filter((ex) => ex.level === level);
+        if (!list.length) return "";
+        const cards = list
+          .map((ex) => {
+            const record = best[`${topic.id}/${ex.id}`];
+            const bars = [1, 2, 3, 4].map((n) => `<i${n <= ex.level ? ' class="is-on"' : ""}></i>`).join("");
+            return `
+              <div class="eng-level-card eng-level-card--${ex.level} eng-exam-card is-library">
+                <span class="eng-level-head">
+                  <span class="eng-level-name">${esc(t("level", ex.level))}</span>
+                  <span class="eng-level-bars" role="img" aria-label="${esc(t("levelName", ex.level))}">${bars}</span>
+                </span>
+                <a class="eng-level-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}" dir="ltr">${esc(ex.passage.title)}</a>
+                <span class="eng-level-meta">${esc(t("examMeta", passageWordCount(ex), ex.questions.length, ex.minutes))}</span>
+                ${statusHtml(exerciseStatus(topic, ex, best, started))}
+                ${record ? `<span class="eng-ex-best">${esc(t("examBest", Math.round((100 * record.score) / record.total)))}</span>` : ""}
+              </div>`;
+          })
+          .join("");
+        return `
+          <section class="eng-step">
+            <h3 class="eng-step-title"><span class="eng-step-num eng-step-num--level-${level}">${level}</span>${esc(`${t("level", level)} · ${t("levelName", level)}`)}</h3>
+            <div class="eng-level-grid">${cards}</div>
+          </section>`;
+      })
+      .join("");
+    return `
+      <p class="eng-step-lead eng-step-lead--page">${esc(t("examsLead"))}</p>
+      <ul class="eng-exam-how">${t("examHow").map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
+      ${levels}`;
+  }
+
+  // On the Bagrut topic: the way to the timed exams.
+  function examLinkHtml() {
+    return `
+      <a class="eng-exam-link" href="#${EXAMS_TOPIC}">
+        <span class="eng-exam-link-icon">${ICONS.exam}</span>
+        <span class="eng-exam-link-text">${esc(t("examLink"))}</span>
+        <span class="btn btn-primary btn-candy font-cartoon eng-exam-link-go">${esc(t("examLinkGo"))}</span>
+      </a>`;
+  }
+
   function bindRunnerKeys() {
     document.addEventListener("keydown", (e) => {
       if (views.exercise()?.classList.contains("hidden") || slideViewer.isOpen() || help.isOpen()) return;
       if (document.querySelector("#lessonPlayer:not(.hidden)")) return;
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (runner.phase !== "question") return;
+      // A reading question is hidden while its passage is open.
+      if ($(".eng-read.is-text-open")) return;
       // Typing exercises handle their own keys inside the input.
-      if (e.target.closest?.("input, textarea")) return;
+      if (e.target.closest?.("input, textarea, .eng-color-tool")) return;
       if (!runner.answered && runner.exercise?.type === "letters") {
         TYPES.letters.key(e);
         return;
@@ -3335,6 +5180,11 @@
       document.body.appendChild(root);
       root.addEventListener("click", (e) => {
         if (e.target.closest("[data-help-close]")) close();
+        if (e.target.closest("[data-help-lesson]")) {
+          const { topic } = current;
+          close(false);
+          openTopicLesson(topic);
+        }
         const speakBtn = e.target.closest(".eng-help-speak");
         if (speakBtn) speak(speakBtn.dataset.say);
       });
@@ -3359,10 +5209,46 @@
       });
     }
 
+    // A topic's slide lesson: its length and summary, and the way in.
+    function renderLesson() {
+      const lesson = lessonFor(current.topic);
+      if (!lesson) return;
+      const facts = t("lessonMeta", lesson.slides?.length || 0, durationLabel(lesson.duration));
+      const summary = loc(current.topic, "lessonSummary") || lesson.summary || "";
+      root.innerHTML = `
+        <div class="eng-help-backdrop" data-help-close></div>
+        <div class="eng-help-card eng-help-card--lesson">
+          <div class="eng-help-head">
+            <div class="eng-help-heading">
+              <h2 class="eng-help-title" id="engHelpTitle">${esc(lesson.namePart || lesson.name)}</h2>
+              <p class="eng-help-facts">${esc(facts)}</p>
+            </div>
+            <button type="button" class="eng-help-close" data-help-close aria-label="${esc(t("close"))}">${ICONS.cross}</button>
+          </div>
+          ${
+            summary
+              ? `<div class="eng-help-block">
+                  <h3 class="eng-help-label">${esc(t("lessonWhat"))}</h3>
+                  <p class="eng-help-what">${mixedText(summary)}</p>
+                </div>`
+              : ""
+          }
+          <div class="eng-help-actions">
+            <button type="button" class="btn btn-primary btn-candy font-cartoon eng-help-go" data-help-lesson>${esc(t("openLesson"))}</button>
+          </div>
+        </div>`;
+    }
+
     function render() {
+      if (current.lesson) return renderLesson();
       const { topic, ex, inRunner } = current;
       const isReading = ex.type === "reading";
-      const icon = isReading ? ICONS.reading : ICONS[ex.type] || ICONS.choice;
+      const level = exerciseLevel(ex);
+      const count = isReading ? t("readingMeta", passageWordCount(ex), ex.questions.length) : exerciseCountLabel(ex);
+      const record = readBest()[`${topic.id}/${ex.id}`];
+      // In progress on a big exercise: how much of it the rounds went through.
+      const status = exerciseStatus(topic, ex);
+      const covered = status === "progress" && !fitsOneRound(ex) ? Math.min(99, Math.floor(100 * coverage(topic, ex))) : 0;
       const what = isReading ? t(ex.mark ? "helpReadingMarkWhat" : "helpReadingWhat") : loc(ex, "instructions");
       // Library passages have nothing to mark, so the marking tip doesn't apply.
       const tip = !isReading || ex.mark ? t("helpTips")[ex.type] || t("helpTips").choice : "";
@@ -3373,10 +5259,12 @@
         <div class="eng-help-backdrop" data-help-close></div>
         <div class="eng-help-card eng-help-card--${esc(ex.type)}${isReading ? ` eng-help-card--level-${ex.level}` : ""}">
           <div class="eng-help-head">
-            <span class="eng-help-icon">${icon}</span>
             <div class="eng-help-heading">
-              <p class="eng-help-kicker">${esc(t("helpButton"))}</p>
-              <h2 class="eng-help-title" id="engHelpTitle">${isReading ? `<bdi dir="ltr">${esc(exerciseName(ex))}</bdi>` : esc(exerciseName(ex))}</h2>
+              <h2 class="eng-help-title" id="engHelpTitle">${esc(t("helpButton"))}</h2>
+              <p class="eng-help-facts">${esc(`${t("level", level)} · ${t("levelName", level)} · ${count}`)}${
+                record ? ` <span class="eng-ex-best">${esc(t("best", record.score, record.total))}</span>` : ""
+              }</p>
+              ${status ? `<p class="eng-help-status">${statusHtml(status)}${covered ? `<span>${esc(t("statusCovered", covered))}</span>` : ""}</p>` : ""}
             </div>
             <button type="button" class="eng-help-close" data-help-close aria-label="${esc(t("close"))}">${ICONS.cross}</button>
           </div>
@@ -3384,9 +5272,9 @@
             <h3 class="eng-help-label">${esc(t("helpWhat"))}</h3>
             <p class="eng-help-what">${mixedText(what)}</p>
             ${tip ? `<p class="eng-help-tip">${mixedText(tip)}</p>` : ""}
+            ${isReading ? `<p class="eng-help-tip">${mixedText(t("helpReadTools"))}</p>` : ""}
           </div>
           <div class="eng-help-block">
-            <h3 class="eng-help-label">${esc(t("helpExample"))}</h3>
             <div class="eng-help-example">${(HELP_EXAMPLES[ex.type] || HELP_EXAMPLES.choice)(ex)}</div>
           </div>
           <div class="eng-help-actions">${action}</div>
@@ -3394,8 +5282,16 @@
     }
 
     function open(topic, ex, inRunner, opener) {
+      show({ topic, ex, inRunner }, opener);
+    }
+
+    function openLesson(topic, opener) {
+      show({ topic, lesson: true }, opener);
+    }
+
+    function show(state, opener) {
       if (!root) build();
-      current = { topic, ex, inRunner };
+      current = state;
       lastFocus = opener || document.activeElement;
       render();
       root.classList.remove("hidden");
@@ -3411,7 +5307,9 @@
       window.speechSynthesis?.cancel?.();
       if (restoreFocus) {
         // A language switch may have re-rendered the button that opened the dialog.
-        const target = lastFocus?.isConnected ? lastFocus : $(`[data-help="${CSS.escape(current.ex.id)}"]`);
+        const target = lastFocus?.isConnected
+          ? lastFocus
+          : $(current.lesson ? "[data-lesson-info]" : `[data-help="${CSS.escape(current.ex.id)}"]`);
         target?.focus?.({ preventScroll: true });
       }
       current = null;
@@ -3427,7 +5325,7 @@
       $(".eng-help-go", root)?.focus({ preventScroll: true });
     }
 
-    return { open, close, isOpen, refresh };
+    return { open, openLesson, close, isOpen, refresh };
   })();
 
   /* ── Slide viewer (image-based presentations) ── */
@@ -3511,10 +5409,25 @@
   function route() {
     clearTimeout(runner.timer);
     stopGame();
+    stopExamTimer();
     readAloud.stop();
     window.speechSynthesis?.cancel?.();
     if (slideViewer.isOpen()) slideViewer.close();
     const [topicId, exerciseId] = decodeURIComponent(location.hash.replace(/^#/, "")).split("/");
+    if (topicId === REVIEW_ROUTE) {
+      if (gameLessonReturn) forgetLessonReturn();
+      showView("exercise");
+      openReview(exerciseId || "");
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    if (topicId === VOCAB_ROUTE) {
+      if (gameLessonReturn) forgetLessonReturn();
+      showView("topic");
+      renderVocabHub();
+      window.scrollTo({ top: 0 });
+      return;
+    }
     const topic = findTopic(topicId);
     const exercise = findExercise(topic, exerciseId);
     const game = !exercise && findGame(topic, exerciseId);
@@ -3534,8 +5447,37 @@
       showView("topics");
       renderTopicGrid();
       renderBoardCard();
+      renderReviewCard();
     }
     window.scrollTo({ top: 0 });
+  }
+
+  // The mistake bank changed (an answer, or a student's bank arriving from
+  // their file): the card on the topics page and the line on a topic's page
+  // follow.
+  function refreshReviewLinks() {
+    if (!views.topics()?.classList.contains("hidden")) renderReviewCard();
+    const slot = $("#engReviewSlot");
+    if (slot && !views.topic()?.classList.contains("hidden")) {
+      const topic = findTopic(decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0]);
+      if (topic) slot.innerHTML = reviewStripHtml(topic);
+    }
+  }
+
+  // The exercises the linked student finished, on any device, from their
+  // file: the open topic page redraws with them.
+  function loadFileFinished() {
+    window.StudentProgress?.profile().then((student) => {
+      if (!student?.finished?.length) return;
+      fileFinished = new Set(student.finished);
+      refreshTopicStatus();
+    });
+  }
+
+  function refreshTopicStatus() {
+    if (views.topic()?.classList.contains("hidden")) return;
+    const topic = findTopic(decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0]);
+    if (topic) renderTopic(topic);
   }
 
   function applyStaticLabels() {
@@ -3556,6 +5498,14 @@
       help.close(false);
       route();
     });
+    // A click anywhere but on the word bubble or another word (or Escape)
+    // closes the bubble.
+    document.addEventListener("pointerdown", (e) => {
+      if ($("#engDictPop") && !e.target.closest?.("#engDictPop, #engReadText .eng-tok[tabindex]")) dict.close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && $("#engDictPop")) dict.close();
+    });
     // Re-render on language switch. An exercise in progress keeps its place
     // instead of restarting; screens holding the student's own input (typed
     // text, placed words, matched pairs) or an answered question stay as they are.
@@ -3567,19 +5517,29 @@
         route();
       } else if (activeGame) {
         activeGame.relabel();
+      } else if (runner.phase === "message") {
+        // The "my mistakes" screen while it loads or has nothing to show.
+        route();
       } else if (runner.phase === "results") {
         renderResults();
+      } else if (runner.exercise?.type === "exam") {
+        // Every answer is saved as it is given, so the exam can redraw.
+        if (runner.phase === "intro") renderExamIntro();
+        else renderExam();
       } else if (runner.exercise?.type === "reading") {
-        // Marked words are kept in state, so the marking stage can always
-        // re-render; a question only before it is answered, and never one
-        // with typed text in it.
+        // Marked words are kept in state, so the reading and marking stages
+        // can always re-render; a question only before it is answered, and
+        // never one with typed text in it.
         const q = runner.round[runner.index];
-        if (runner.read.stage === "mark" || (!runner.answered && q?.type !== "open")) renderReading();
+        if (runner.read.stage !== "questions" || (!runner.answered && q?.type !== "open")) renderReading();
       } else if (!runner.answered && !["write", "order", "match", "listen", "letters", "dictation"].includes(runner.exercise?.type)) {
         renderQuestion();
       }
     });
     renderStudentBar();
+    loadFileFinished();
+    window.addEventListener("pleyi:mistakes", refreshReviewLinks);
+    window.MistakeBank?.ready();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
