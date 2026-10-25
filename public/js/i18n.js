@@ -1,7 +1,10 @@
 /* Pleyi — Hebrew / English UI strings */
 
 const I18n = {
-  lang: "en",
+  lang: "he",
+  // The whole site stays in Hebrew for now. Set to null to let visitors
+  // switch languages again (english-worksheet.js has its own copy of this).
+  locked: "he",
 
   strings: {
     he: {
@@ -429,7 +432,7 @@ const I18n = {
   },
 
   setLang(lang) {
-    this.lang = lang === "en" ? "en" : "he";
+    this.lang = this.locked || (lang === "en" ? "en" : "he");
     try {
       localStorage.setItem("pleyi-lang", this.lang);
     } catch {
@@ -487,7 +490,7 @@ const I18n = {
     } catch {
       /* ignore */
     }
-    this.setLang(saved || "en");
+    this.setLang(this.locked || saved || "en");
 
     if (!this._bound) {
       this._bound = true;

@@ -17,6 +17,14 @@ body.page-english {
   min-height: 100dvh;
 }
 
+/* No ligatures: the font joins "fi", "fl" and "ff" into one glyph, which
+   hides the separate letters from a student learning to read them.
+   Form controls get it too, since their UA font shorthand resets it. */
+body.page-english,
+body.page-english :is(button, input, textarea, select) {
+  font-variant-ligatures: none;
+}
+
 body.page-english main {
   flex: 1 0 auto;
 }

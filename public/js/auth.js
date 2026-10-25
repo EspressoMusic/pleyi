@@ -138,12 +138,15 @@ window.GameAuth = {
       } else if (!this._isTeacherPreview() && !this._devPreviewActive) {
         this._user = null;
       }
-      if (fbUser) await this._syncProfile(fbUser);
+      this._ready = true;
+      this.updateNav();
+      /* Background — a slow or failed Firestore write must not hide the signed-in UI */
+      if (fbUser) {
+        this._syncProfile(fbUser).catch((e) => console.warn("Profile sync failed:", e));
+      }
       if (fbUser && window.UserData?.ensureCreditsInitialized) {
         window.UserData.ensureCreditsInitialized().catch(() => {});
       }
-      this._ready = true;
-      this.updateNav();
 
       if (redirectWelcome && fbUser) {
         document.getElementById("loginModal")?.classList.add("hidden");
@@ -212,7 +215,7 @@ window.GameAuth = {
       "auth/cancelled-popup-request": "נסו שוב בעוד רגע",
       "auth/popup-blocked": "הדפדפן חסם את החלון — נסו שוב",
       "auth/network-request-failed": "בעיית רשת — בדקו חיבור לאינטרנט",
-      "auth/unauthorized-domain": "הדומיין לא מורשה ב-Firebase — הוסיפו localhost",
+      "auth/unauthorized-domain": `ההתחברות עוד לא הופעלה בכתובת ${location.hostname} — יש להוסיף אותה לדומיינים המורשים ב-Firebase`,
       "auth/operation-not-allowed": "Google Auth לא מופעל ב-Firebase Console",
     };
     return map[code] || err?.message || "שגיאה בהתחברות. נסו שוב";
@@ -243,11 +246,16 @@ window.GameAuth = {
     const userInitial = document.getElementById("authUserInitial");
     const dropdown = document.getElementById("authUserDropdown");
     const avatarBtn = document.getElementById("authUserAvatar");
+    const mobileUser = this._ensureMobileUserLinks();
 
     if (user) {
       loginBtn?.classList.add("hidden");
       userMenu?.classList.remove("hidden");
       document.getElementById("mobileLoginBtn")?.classList.add("hidden");
+      if (mobileUser) {
+        mobileUser.querySelector(".mobile-nav-user-name").textContent = user.name;
+        mobileUser.classList.remove("hidden");
+      }
       if (userName) userName.textContent = user.name;
 
       if (user.photoURL && userPhoto) {
@@ -265,6 +273,7 @@ window.GameAuth = {
       loginBtn?.classList.remove("hidden");
       userMenu?.classList.add("hidden");
       document.getElementById("mobileLoginBtn")?.classList.remove("hidden");
+      mobileUser?.classList.add("hidden");
       dropdown?.classList.add("hidden");
       avatarBtn?.setAttribute("aria-expanded", "false");
       if (userPhoto) {
@@ -273,6 +282,35 @@ window.GameAuth = {
       }
       userInitial?.classList.add("hidden");
     }
+  },
+
+  /* Phone menu: the avatar dropdown's links, shown in place of the login button */
+  _ensureMobileUserLinks() {
+    const existing = document.getElementById("mobileUserLinks");
+    if (existing) return existing;
+    const loginBtn = document.getElementById("mobileLoginBtn");
+    if (!loginBtn) return null;
+
+    const t = (key, fallback) => window.I18n?.t?.(key) || fallback;
+    const wrap = document.createElement("div");
+    wrap.id = "mobileUserLinks";
+    wrap.className = "hidden";
+    wrap.style.display = "contents";
+    wrap.innerHTML = `
+      <p class="mobile-nav-user-name" style="margin:8px 0 0;font-size:18px;font-weight:800;opacity:.75"></p>
+      <a href="/my-room" data-i18n="nav.myRoom"></a>
+      <a href="/admin/students" data-i18n="nav.students"></a>
+      <button type="button" class="mobile-nav-auth" id="mobileLogoutBtn" data-i18n="nav.logout"></button>`;
+    wrap.querySelector('[data-i18n="nav.myRoom"]').textContent = t("nav.myRoom", "החדר שלי");
+    wrap.querySelector('[data-i18n="nav.students"]').textContent = t("nav.students", "ניהול תלמידים");
+    wrap.querySelector("#mobileLogoutBtn").textContent = t("nav.logout", "יציאה");
+    wrap.querySelector("#mobileLogoutBtn").addEventListener("click", async () => {
+      document.getElementById("mobileNav")?.classList.remove("open");
+      await this.logout();
+      if (this._toastFn) this._toastFn("התנתקת בהצלחה");
+    });
+    loginBtn.after(wrap);
+    return wrap;
   },
 
   _closeUserDropdown() {

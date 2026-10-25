@@ -49,6 +49,9 @@
   const pack = PACKS[topicId];
   const topic = TOPICS.find((tp) => tp.id === topicId);
 
+  // Same lock as i18n.js: the site stays in Hebrew for now (null unlocks it).
+  const LOCKED_LANG = "he";
+
   const state = {
     lang: readLang(),
     sheet: params.get("sheet") || "all",
@@ -57,6 +60,7 @@
 
   // Same key and default as i18n.js, without its page-wide side effects.
   function readLang() {
+    if (LOCKED_LANG) return LOCKED_LANG;
     try {
       return localStorage.getItem("pleyi-lang") === "he" ? "he" : "en";
     } catch {
@@ -269,6 +273,7 @@
     $("#wsToolbarTitle").textContent = t("heading", topicTitle());
     $("#wsLang").textContent = t("langSwitch");
     $("#wsLang").setAttribute("aria-label", t("langLabel"));
+    $("#wsLang").hidden = !!LOCKED_LANG;
     $("#wsAnswersLabel").textContent = t("answers");
     $("#wsAnswers").checked = state.answers;
     $("#wsPrintLabel").textContent = t("print");

@@ -80,6 +80,10 @@ button {
   cursor: pointer;
 }
 
+.ws-lang[hidden] {
+  display: none;
+}
+
 .ws-back svg {
   width: 18px;
   height: 18px;
