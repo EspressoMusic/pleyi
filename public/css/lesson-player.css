@@ -1932,8 +1932,14 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   display: none;
 }
 
+/* Short words stay on one line; a sentence translation wraps instead of
+   running off a phone screen. */
+.lp-word-popup {
+  max-width: min(360px, calc(100vw - 16px));
+}
+
 .lp-word-popup-text {
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .lp-word-popup-speak {
@@ -2016,6 +2022,185 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   font-size: calc(var(--lp-fit, 1) * 0.95rem);
   font-weight: 900;
   color: var(--ink);
+}
+
+/* An English phrase inside a Hebrew slide line (ready-lessons.js
+   isolateInlineEnglish) — short ones stay on one line. */
+.lp-en {
+  unicode-bidi: isolate;
+}
+
+.lp-en--nowrap {
+  white-space: nowrap;
+}
+
+/* Quiz slide (type "quiz" in ready-lessons.js): one question at a time,
+   big answer buttons, instant right/wrong feedback. Everything scales with
+   --lp-fit so the slide never needs to scroll. */
+.lp-quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--lp-fit, 1) * clamp(8px, 1.8vh, 14px));
+  width: 100%;
+  max-width: 34rem;
+  margin-inline: auto;
+  color: var(--lp-ink, var(--ink));
+  text-align: center;
+}
+
+.lp-quiz p {
+  margin: 0;
+}
+
+.lp-quiz-count {
+  font-size: calc(var(--lp-fit, 1) * 0.95rem);
+  font-weight: 800;
+  opacity: 0.6;
+}
+
+.lp-quiz-hint {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.1rem, 3.2vh, 1.4rem));
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.lp-quiz-q {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.4rem, 4.4vh, 2rem));
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.lp-quiz-blank {
+  display: inline-block;
+  min-width: 3.2em;
+  margin-inline: 0.15em;
+  border-bottom: 3px solid currentColor;
+  line-height: 1.1;
+  vertical-align: baseline;
+}
+
+.lp-quiz-blank.is-filled {
+  min-width: 0;
+  padding-inline: 0.2em;
+  border-bottom-color: #2bb673;
+  color: #1e8a55;
+}
+
+.lp-quiz-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(var(--lp-fit, 1) * 10px);
+  width: 100%;
+}
+
+.lp-quiz-opt {
+  flex: 1 1 auto;
+  min-width: 5.5rem;
+  max-width: 16rem;
+  padding: calc(var(--lp-fit, 1) * 14px) 14px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fffef5;
+  color: #000;
+  font: inherit;
+  font-size: calc(var(--lp-fit, 1) * clamp(1.15rem, 3.4vh, 1.5rem));
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.12s;
+}
+
+.lp-quiz-opt:hover:not(:disabled) {
+  background: var(--memyellow);
+  transform: translateY(-2px);
+}
+
+.lp-quiz-opt:disabled {
+  cursor: default;
+}
+
+.lp-quiz-opt.is-correct {
+  background: #7ee08c;
+  animation: lp-quiz-pop 0.35s ease-out;
+}
+
+.lp-quiz-opt.is-wrong {
+  background: #ffb3b3;
+  opacity: 0.75;
+  animation: lp-quiz-shake 0.35s ease-in-out;
+}
+
+.lp-quiz-opt:disabled:not(.is-correct):not(.is-wrong) {
+  opacity: 0.55;
+}
+
+@keyframes lp-quiz-pop {
+  50% { transform: scale(1.08); }
+}
+
+@keyframes lp-quiz-shake {
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.lp-quiz-feedback {
+  min-height: 1.4em;
+  font-size: calc(var(--lp-fit, 1) * clamp(1.1rem, 3.2vh, 1.4rem));
+  font-weight: 900;
+}
+
+.lp-quiz-feedback.is-correct {
+  color: #1e8a55;
+}
+
+.lp-quiz-feedback.is-wrong {
+  color: #c62828;
+}
+
+.lp-quiz-next,
+.lp-quiz-retry {
+  padding: calc(var(--lp-fit, 1) * 10px) 22px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  color: #000;
+  font: inherit;
+  font-size: calc(var(--lp-fit, 1) * 1.1rem);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* Space for the button is kept before an answer, so it appearing never
+   pushes the slide past its fixed height. */
+.lp-quiz-next.is-pending {
+  visibility: hidden;
+}
+
+.lp-quiz-done-title {
+  font-size: calc(var(--lp-fit, 1) * clamp(2rem, 6vh, 3rem));
+  font-weight: 900;
+}
+
+.lp-quiz-done-score {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.15rem, 3.4vh, 1.5rem));
+  font-weight: 800;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-feedback.is-correct,
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-blank.is-filled {
+  color: #7ee08c;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-feedback.is-wrong {
+  color: #ff9a9a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-quiz-opt.is-correct,
+  .lp-quiz-opt.is-wrong {
+    animation: none;
+  }
 }
 
 /* Vocabulary lessons: the picture games (they open on the Learn English

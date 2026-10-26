@@ -205,6 +205,8 @@ body.clean-site .site-footer.section-yellow .footer-tagline.font-cartoon {
 
 body.clean-site .site-footer.section-yellow .footer-tagline {
   text-shadow: none;
+  /* On a phone it breaks into two even lines, not a lone last word. */
+  text-wrap: balance;
 }
 
 body.clean-site .site-footer.section-yellow .footer-tagline-accent {
@@ -1829,8 +1831,20 @@ body.in-room {
     scroll-margin-top: 0;
   }
 
+  /* The phone navbar is in the page flow (position: relative), so the title
+     only needs a small gap under the menu button, not a navbar's clearance. */
   body.clean-site .clean-hero-inner {
-    padding-top: 76px;
+    padding-top: 16px;
+  }
+
+  /* Inner pages (not the home page): the content starts close under the
+     title instead of a screen-height gap of section padding. */
+  body.clean-site section.clean-section.clean-section--hero:not(#home) {
+    padding-bottom: 20px;
+  }
+
+  body.clean-site section.clean-section--hero:not(#home) + section.clean-section {
+    padding-top: 12px;
   }
 
   .clean-section-shapes--soft,

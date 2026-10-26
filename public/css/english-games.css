@@ -25,12 +25,7 @@
 .eng-ex-card--game-balloons .eng-ex-icon { background: #9be7ff; }
 .eng-ex-card--game-scramble .eng-ex-icon { background: #b9a4ff; }
 
-/* ── Header: game title + topic, and the score pills in the bar ── */
-
-.eng-runner-head:has(.eng-game-topic) .eng-runner-title-row {
-  flex-wrap: wrap;
-  row-gap: 4px;
-}
+/* ── Header: game title + topic, and the score pills under them ── */
 
 .eng-game-topic {
   padding: 3px 12px;
@@ -43,12 +38,7 @@
   white-space: nowrap;
 }
 
-.eng-runner-bar--game {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-}
-
 .eng-game-hud {
-  grid-column: 2;
   display: flex;
   flex-wrap: wrap;
   align-items: center;

@@ -38,10 +38,66 @@ body.page-english section.clean-section.clean-section--hero {
   padding-bottom: 24px;
 }
 
-/* This page is standalone — no site navbar — so the hero doesn't need the
-   generic clean-site clearance for it. */
+/* This page is standalone — no site navbar, only the sign-in bar above the
+   hero — so the hero doesn't need the generic clean-site clearance for it. */
 body.page-english .clean-hero-inner {
-  padding-top: max(40px, calc(env(safe-area-inset-top, 0px) + 24px));
+  padding-top: 8px;
+}
+
+/* ── Sign-in bar: login button, or the avatar menu once signed in ── */
+
+/* !important: styles.css pins every direct child of body to z-index 1 with a
+   long :not() chain; the avatar menu has to drop over the hero below. */
+.eng-auth-bar {
+  position: relative;
+  z-index: 50 !important;
+  padding-top: max(14px, env(safe-area-inset-top, 0px));
+}
+
+.eng-auth-inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 52px;
+}
+
+/* A topic page's back arrow (dockBack): on the start side of the bar, across
+   from the sign-in button. */
+.eng-bar-back {
+  display: flex;
+  margin-inline-end: auto;
+}
+
+.eng-bar-back:empty {
+  display: none;
+}
+
+body.page-english #authLoginBtn {
+  padding: 10px 22px;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--ink);
+  background: var(--memyellow);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sticker);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+
+body.page-english #authLoginBtn:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .eng-auth-inner { padding: 0 16px; }
+
+  body.page-english #authLoginBtn {
+    padding: 8px 18px;
+    font-size: 16px;
+    box-shadow: 4px 5px 0 0 var(--ink);
+  }
 }
 
 body.page-english .eng-page-title.font-cartoon {
@@ -253,6 +309,47 @@ body.page-english .eng-section {
   }
 }
 
+/* Phones: the two columns fill the page width, and the tiles are a little
+   shorter, so long titles don't make towering tiles. */
+@media (max-width: 480px) {
+  .eng-topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .eng-topic-grid--wide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .eng-topic-tile {
+    min-height: 150px;
+    padding: 14px 8px 58px;
+    border-radius: 18px;
+  }
+
+  .eng-topic-tile:hover,
+  .eng-topic-tile:focus-visible {
+    transform: scale(1.03);
+  }
+
+  .eng-topic-title {
+    font-size: 1.2rem;
+  }
+
+  .eng-topic-sub {
+    font-size: 0.86rem;
+  }
+
+  .eng-topic-tile .eng-topic-open {
+    bottom: 10px;
+  }
+
+  .eng-topic-tile--wide {
+    min-height: 0;
+    padding: 16px;
+  }
+}
+
 /* ── Shared: back button (round arrow icon; the label lives in aria-label) ── */
 
 .eng-back {
@@ -263,7 +360,7 @@ body.page-english .eng-section {
   height: 48px;
   border: 3px solid var(--ink);
   border-radius: 50%;
-  background: var(--white);
+  background: var(--memyellow);
   color: var(--ink);
   text-decoration: none;
   box-shadow: 3px 4px 0 0 var(--ink);
@@ -281,7 +378,7 @@ body.page-english .eng-section {
 }
 
 .eng-back:hover {
-  background: var(--memyellow);
+  background: var(--memorange);
   transform: translateY(-1px);
 }
 
@@ -307,54 +404,198 @@ body.page-english .eng-section {
   align-self: flex-start;
 }
 
-/* Back link on the start side, the tools on the end side, the progress ring
-   centered between them (the results screen has no ring, and space-between
-   keeps the tools at the end). The bar is a size container: when it is too
-   narrow for the tools' labels they turn into icons (see the @container
-   rules below), and on the narrowest screens the tools wrap under the ring
-   instead of running over it. */
-.eng-runner-bar {
+/* The top row: the back arrow on the start side, the title in the middle and
+   the settings button on the end side. The two side columns are the same
+   width, so the title stays centered on the page. */
+.eng-runner-top {
   align-self: stretch;
-  container-type: inline-size;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
-}
-
-.eng-runner-bar > .eng-progress {
-  margin-inline: auto;
 }
 
 .eng-runner-tools {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: flex-end;
 }
 
-/* The question card's color menu: a row of swatches under its button. */
-.eng-color-tool {
+/* One settings button; its menu holds the switches (translation, sounds,
+   the reading tools) and the question card's colors. */
+.eng-settings {
   position: relative;
 }
 
-.eng-color-menu {
+.eng-settings-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+/* Black on the yellow button in every theme. */
+.eng-settings-btn svg {
+  width: 24px;
+  height: 24px;
+  color: #000;
+}
+
+.eng-settings-btn:hover,
+.eng-settings-btn[aria-expanded="true"] {
+  background: var(--memorange);
+}
+
+.eng-settings-btn:hover {
+  transform: translateY(-1px);
+}
+
+.eng-settings-btn:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.eng-settings-menu {
   position: absolute;
   top: calc(100% + 10px);
   inset-inline-end: 0;
   z-index: 30;
-  display: grid;
-  grid-template-columns: repeat(4, 34px);
-  gap: 10px;
-  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: max-content;
+  min-width: 250px;
+  max-width: calc(100vw - 32px);
+  padding: 8px;
   border: 3px solid var(--ink);
-  border-radius: 16px;
+  border-radius: 18px;
   background: var(--white);
   box-shadow: 3px 4px 0 0 var(--ink);
+  text-align: start;
 }
 
-.eng-color-menu.hidden {
+.eng-settings-menu.hidden {
   display: none;
+}
+
+.eng-setting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-align: start;
+  cursor: pointer;
+}
+
+.eng-setting:hover,
+.eng-setting:focus-visible {
+  background: var(--eng-soft);
+}
+
+.eng-setting svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.eng-setting-label {
+  flex: 1;
+}
+
+/* The on/off knob at the row's end. */
+.eng-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 26px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #e4e4e4;
+  transition: background 0.15s ease;
+}
+
+.eng-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  box-sizing: border-box;
+  transition: inset-inline-start 0.15s ease;
+}
+
+.eng-setting[aria-pressed="true"] .eng-switch {
+  background: var(--memteal);
+}
+
+.eng-setting[aria-pressed="true"] .eng-switch::after {
+  inset-inline-start: 20px;
+}
+
+/* The color row looks like the switches: the chosen color and an arrow at
+   its end; a click unfolds the swatches under it. */
+.eng-color-current {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--card-color);
+}
+
+.eng-color-chevron {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  margin-inline: 4px 6px;
+  border-right: 3px solid var(--ink);
+  border-bottom: 3px solid var(--ink);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+#engColorToggle[aria-expanded="true"] .eng-color-chevron {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+.eng-color-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 34px);
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 10px 10px;
+}
+
+.eng-color-swatches.hidden {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-switch,
+  .eng-switch::after,
+  .eng-color-chevron {
+    transition: none;
+  }
 }
 
 .eng-color-swatch {
@@ -499,8 +740,8 @@ body.clean-site .eng-runner-title.font-cartoon {
 }
 
 .eng-lesson-icon svg {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
 }
 
 .eng-lesson-title {
@@ -689,15 +930,91 @@ body.clean-site .eng-runner-title.font-cartoon {
 .eng-ex-card--level-3 .eng-ex-icon { background: var(--eng-level-3); }
 .eng-ex-card--level-4 .eng-ex-icon { background: var(--eng-level-4); }
 
-@media (max-width: 420px) {
+/* Two-line titles break into even lines, not one long line and one word. */
+.eng-ex-title,
+.eng-topic-title,
+.eng-lesson-title {
+  text-wrap: balance;
+}
+
+/* Phones: smaller icon, "i" and action pill, so the title gets most of the
+   row and usually fits on one line. */
+@media (max-width: 600px) {
+  .eng-ex-grid {
+    gap: 12px;
+  }
+
   .eng-ex-card {
     gap: 10px;
-    padding: 14px 12px;
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .eng-ex-card .eng-ex-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+  }
+
+  .eng-ex-card .eng-ex-icon--level svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .eng-ex-card .eng-ex-icon:not(.eng-ex-icon--level) svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .eng-ex-title {
+    font-size: 1.02rem;
   }
 
   .eng-ex-card .eng-info-btn {
     width: 32px;
     height: 32px;
+  }
+
+  .eng-ex-card .eng-info-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .eng-ex-card .eng-item-action {
+    padding: 4px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Narrow phones (360px): tighter still, so titles stay at two lines. */
+@media (max-width: 400px) {
+  .eng-ex-card {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .eng-ex-card .eng-ex-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .eng-ex-card .eng-ex-icon--level svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .eng-ex-title {
+    font-size: 0.98rem;
+  }
+
+  .eng-ex-card .eng-info-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .eng-ex-card .eng-item-action {
+    padding: 4px 10px;
+    font-size: 0.8rem;
   }
 }
 
@@ -916,6 +1233,7 @@ html.eng-runner-open body.page-english {
 }
 
 html.eng-runner-open .navbar,
+html.eng-runner-open .eng-auth-bar,
 html.eng-runner-open .mobile-nav,
 html.eng-runner-open .scroll-progress,
 html.eng-runner-open .site-footer {
@@ -971,84 +1289,111 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
   box-shadow: var(--shadow-candy);
 }
 
-/* Progress (in the header bar): a ring with one arc per question around the
-   question number — the ring alone says where the student is, so there is no
-   text label ("Question 1 of 10" lives only in the aria-label). The ring sits
-   on a white disc so the teal arcs read against the teal page. */
+/* Progress (under the title): a bar with one segment per question, filling
+   from the start side — the bar alone says where the student is, so there
+   is no text label ("Question 1 of 10" lives only in the aria-label). The
+   bar is white so the teal segments read against the teal page. */
 .eng-progress {
+  align-self: center;
+  width: min(100%, 420px);
   display: flex;
   align-items: center;
+  gap: 10px;
   min-width: 0;
 }
 
-.eng-ring {
-  position: relative;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border: 3px solid var(--ink);
-  border-radius: 50%;
+.eng-bar {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 3px;
+  height: 14px;
+  padding: 2px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
   background: var(--white);
-  color: var(--ink);
+  box-shadow: 1px 2px 0 0 var(--ink);
 }
 
-.eng-ring svg {
-  display: block;
-  width: 100%;
-  height: 100%;
+.eng-bar-seg {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e4e4e4;
 }
 
-.eng-ring-seg {
-  fill: none;
-  stroke-width: 5;
-}
-
-.eng-ring-track {
-  stroke: currentColor;
-  stroke-opacity: 0.12;
-}
-
-.eng-ring-fill {
-  stroke: var(--memteal);
-}
-
-.eng-ring-fill.is-current {
-  stroke-opacity: 0.4;
-}
-
-.eng-ring-fill.is-new {
-  animation: eng-ring-draw 0.5s ease-out both;
-}
-
-@keyframes eng-ring-draw {
-  from { stroke-dashoffset: var(--seg); }
-  to { stroke-dashoffset: 0; }
-}
-
-.eng-ring-num {
+.eng-bar-seg::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 1.05rem;
-  font-weight: 900;
-  line-height: 1;
-  color: var(--ink);
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 0;
+  background: var(--memteal);
+}
+
+.eng-bar-seg.is-done::after,
+.eng-bar-seg.is-current::after {
+  width: 100%;
+}
+
+.eng-bar-seg.is-current::after {
+  opacity: 0.35;
+}
+
+.eng-bar-seg.is-new::after {
+  animation: eng-bar-fill 0.5s ease-out both;
+}
+
+@keyframes eng-bar-fill {
+  from { width: 0; }
+  to { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eng-ring-fill.is-new {
+  .eng-bar-seg.is-new::after {
     animation: none;
   }
 }
 
-/* On the page, above the question card. */
+/* On the page, above the question card: the instructions in a plain box on
+   a soft fill. */
 .eng-instructions {
   margin: 0 0 14px;
-  text-align: center;
   font-size: 1.1rem;
   font-weight: 800;
   color: var(--ink);
+}
+
+.eng-instr {
+  position: relative;
+  z-index: 6;
+  width: min(100%, 640px);
+  text-align: start;
+}
+
+.eng-exercise-view.is-reading .eng-instr {
+  width: min(100%, 820px);
+}
+
+.eng-instr-main {
+  padding: 8px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #fff6d1;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.eng-instr-line {
+  margin: 0;
+  line-height: 1.45;
+}
+
+@media (max-width: 420px) {
+  .eng-instr-main {
+    padding: 6px 12px;
+  }
 }
 
 .eng-sentence {
@@ -1131,6 +1476,64 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
   font-size: 0.75em;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.6);
+}
+
+/* A vocabulary word in Hebrew letters ("פִישׁ"), shown by the "אב" switch
+   in the settings menu. */
+.eng-say-row,
+.eng-say-opt {
+  display: none;
+}
+
+.eng-runner-card.is-say .eng-say-row {
+  display: flex;
+  justify-content: center;
+}
+
+.eng-runner-card.is-say .eng-word-prompt {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.eng-word-prompt .eng-say-row {
+  flex-basis: 100%;
+}
+
+.eng-say-line {
+  display: inline-block;
+  padding: 2px 16px;
+  border-width: 2px;
+  border-radius: 12px;
+  background: var(--white);
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.eng-runner-card.is-say .eng-say-opt {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.8em;
+  font-weight: 700;
+  line-height: 1.3;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.eng-picture-he-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.eng-picture-he-row .eng-say-row {
+  flex-basis: 100%;
+}
+
+.eng-picture-box--small .eng-picture-he-row .eng-say-row {
+  flex-basis: auto;
 }
 
 .eng-fix {
@@ -1598,6 +2001,25 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
   color: var(--ink);
 }
 
+/* The word itself is the speaker: tapping it says the word. */
+.eng-word-tap {
+  padding: 0 10px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.eng-word-tap:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.eng-word-tap:active {
+  transform: scale(0.97);
+}
+
 .eng-pic-options {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1915,7 +2337,8 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
 }
 
 /* A device that opened a student's personal link: whose file the practice
-   is saved to. Hidden on the full-screen exercise screen. */
+   is saved to. On the full-screen exercise screen it is a slim strip on top
+   with just the name, the points and the link to the student's progress. */
 .eng-student-bar {
   display: flex;
   flex-wrap: wrap;
@@ -1933,8 +2356,88 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
   color: var(--ink);
 }
 
+.eng-student-bar-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.eng-student-bar-avatar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--electric);
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.eng-student-bar-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.eng-student-bar-text {
+  font-weight: 700;
+  color: var(--muted);
+}
+
 html.eng-runner-open .eng-student-bar {
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto clamp(6px, 1.4dvh, 12px);
+  padding: 4px 6px 4px 10px;
+  border-width: 2px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+}
+
+html.eng-runner-open .eng-student-bar-text,
+html.eng-runner-open .eng-student-bar-out {
   display: none;
+}
+
+html.eng-runner-open .eng-student-bar-me {
+  flex: 1 1 auto;
+  font-size: 1rem;
+}
+
+html.eng-runner-open .eng-student-bar-avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 0.92rem;
+}
+
+html.eng-runner-open .eng-student-bar-points,
+html.eng-runner-open .eng-student-bar-link {
+  flex-shrink: 0;
+  padding: 3px 12px;
+  white-space: nowrap;
+}
+
+html.eng-runner-open .eng-student-bar-points svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Narrow phones: the name keeps its room; the points show on the results screen. */
+@media (max-width: 420px) {
+  html.eng-runner-open .eng-student-bar-points {
+    display: none;
+  }
 }
 
 .eng-student-bar-link {
@@ -2103,12 +2606,14 @@ html.eng-runner-open .eng-student-bar {
   box-shadow: 1px 1px 0 0 var(--ink);
 }
 
-/* Exercise screen: the button sits right after the title. */
+/* Exercise screen: the title, and a review question's source pill beside it
+   (under it when there is no room). */
 .eng-runner-title-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 4px 12px;
   max-width: 100%;
 }
 
@@ -3228,6 +3733,7 @@ body.eng-viewer-open {
 }
 
 .eng-read--paged.is-read .eng-read-task,
+.eng-read--paged.is-mark .eng-read-task,
 .eng-read--paged.is-questions:not(.is-text-open) .eng-read-side,
 .eng-read--paged.is-text-open .eng-read-task {
   display: none;
@@ -3317,53 +3823,148 @@ body.eng-viewer-open {
   color: var(--body);
 }
 
+/* Marking: the instruction above the card, with what to look for under it
+   as chips (one per phrase, each kept on one line). */
+.eng-read-instructions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.eng-read-instructions .eng-read-chips {
+  justify-content: flex-start;
+}
+
 .eng-read-instr {
-  margin: 0 0 10px;
-  font-size: clamp(1.08rem, 2.5dvh, 1.25rem);
-  font-weight: 900;
+  margin: 0;
   line-height: 1.45;
+}
+
+.eng-read-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eng-read-chips li {
+  padding: 2px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
   color: var(--ink);
 }
 
-.eng-read-hint {
-  align-self: flex-start;
-  margin: 0 0 12px;
-  padding: 5px 14px;
-  border: 2px dashed var(--ink);
-  border-radius: 12px;
-  background: var(--white);
-  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
-  font-size: 1.12rem;
-  font-weight: 700;
-  color: var(--ink);
+.eng-read-instructions .eng-read-dict-note {
+  margin: 0;
+  text-align: start;
+}
+
+/* Reading and marking: the passage box is the only box on the screen; the
+   card around it steps back (it comes back for the questions). */
+html.eng-runner-open .eng-runner-card:has(> .eng-read--paged:is(.is-read, .is-mark, .is-text-open)) {
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.eng-read--paged:is(.is-read, .is-mark, .is-text-open) .eng-read-passage {
+  border-radius: 24px;
+  box-shadow: var(--shadow-candy);
+}
+
+/* Under the passage, small and to the side: the count (or, at the end, the
+   closing message) and the one button. */
+.eng-read-mark-foot {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: clamp(14px, 2.2dvh, 20px);
 }
 
 .eng-read-count {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 14px;
-  margin: 0 0 14px;
-  font-size: 1.05rem;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: 0.95rem;
   font-weight: 800;
   color: var(--ink);
 }
 
+.eng-read-count-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+}
+
 .eng-read-found b {
-  font-size: 1.6rem;
+  font-size: 1.05rem;
   font-weight: 900;
 }
 
 .eng-read-misses {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: var(--eng-wrong);
 }
 
-.eng-read-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 12px;
+.eng-read-meter {
+  display: block;
+  flex: 0 0 72px;
+  height: 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--white);
+  overflow: hidden;
+}
+
+.eng-read-meter i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #ffe14d;
+  transition: width 0.25s ease;
+}
+
+.eng-read-count .eng-feedback-msg {
+  gap: 6px;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.eng-read-count .eng-feedback-msg > svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-read-mark-foot .eng-read-reveal {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-width: 2px;
+  box-shadow: 2px 2px 0 0 var(--ink);
+  font-size: 0.85rem;
+}
+
+.eng-read-mark-foot .eng-check {
+  flex-shrink: 0;
+  padding: 6px 20px;
+  font-size: 0.95rem;
 }
 
 .eng-read-reveal {
@@ -3582,12 +4183,6 @@ body.eng-viewer-open {
   font-weight: 900;
 }
 
-.eng-ring-icon svg {
-  display: block;
-  width: 22px;
-  height: 22px;
-}
-
 /* ── Phones ── */
 
 @media (max-width: 768px) {
@@ -3606,11 +4201,42 @@ body.eng-viewer-open {
 
   .eng-lesson-card {
     flex-direction: column;
+    gap: 12px;
+    padding: 16px;
     text-align: center;
+  }
+
+  .eng-lesson-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+  }
+
+  .eng-lesson-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .eng-lesson-title {
+    font-size: 1.2rem;
   }
 
   .eng-lesson-actions {
     align-self: stretch;
+  }
+
+  .eng-step {
+    margin-bottom: 24px;
+  }
+
+  .eng-topic-head {
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  body.page-english .eng-section {
+    padding-top: 20px !important;
+    padding-bottom: 40px;
   }
 
   .eng-lesson-card .eng-lesson-open {
@@ -4088,11 +4714,27 @@ body.eng-viewer-open {
    question fits without scrolling. Kept last so it wins over the mobile rules. ── */
 
 html.eng-runner-open body.clean-site .eng-runner-title.font-cartoon {
-  font-size: clamp(1.35rem, min(5.5vw, 4.4dvh), 2.4rem);
+  font-size: clamp(1.2rem, min(5vw, 4.4dvh), 2.4rem);
 }
 
-html.eng-runner-open .eng-runner-tools {
-  flex-wrap: nowrap;
+/* Phones: smaller back and settings buttons leave the title room for one line. */
+@media (max-width: 560px) {
+  .eng-runner-top {
+    grid-template-columns: 42px minmax(0, 1fr) 42px;
+    gap: 8px;
+  }
+
+  .eng-runner-top .eng-back,
+  .eng-settings-btn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .eng-runner-top .eng-back svg,
+  .eng-settings-btn svg {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 /* The card shrinks to the space left under the header; the matching board
@@ -4112,6 +4754,12 @@ html.eng-runner-open .eng-instructions {
   flex-shrink: 0;
   margin-bottom: clamp(8px, 1.6dvh, 14px);
   font-size: clamp(0.95rem, 2.4dvh, 1.1rem);
+}
+
+/* Over the progress bar, the header's gap does the spacing. */
+.eng-runner-head > .eng-instructions,
+html.eng-runner-open .eng-runner-head > .eng-instructions {
+  margin: 0;
 }
 
 html.eng-runner-open .eng-sentence {
@@ -4197,6 +4845,33 @@ html.eng-runner-open .eng-match-item--img img {
   max-height: 58px;
 }
 
+/* The Hebrew-letter sound adds a line: tighter match cards, and a smaller
+   picture over the Hebrew word, so the screen still fits. */
+html.eng-runner-open .eng-runner-card.is-say .eng-match-item {
+  padding-block: 2px;
+  line-height: 1.15;
+}
+
+html.eng-runner-open .eng-match-item .eng-say-opt {
+  font-size: 0.75em;
+  line-height: 1.1;
+}
+
+html.eng-runner-open .eng-runner-card.is-say .eng-picture-box:not(.eng-picture-box--small):has(.eng-say-row) {
+  gap: 4px;
+}
+
+html.eng-runner-open .eng-runner-card.is-say .eng-picture-box:not(.eng-picture-box--small):has(.eng-say-row) .eng-picture-img {
+  width: clamp(72px, min(26vw, 13dvh), 170px);
+  height: clamp(72px, min(26vw, 13dvh), 170px);
+}
+
+html.eng-runner-open .eng-picture-box .eng-say-line {
+  padding: 0 12px;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
 /* A whole sentence on a matching board (new exercises): smaller text, and
    the button grows to fit it. */
 .eng-match-item--long {
@@ -4273,51 +4948,6 @@ html.eng-runner-open .eng-mistakes ul {
   line-height: 1.55;
 }
 
-/* A runner bar too narrow for the tools' labels: icons only (each keeps its
-   title tooltip and its name for screen readers). */
-@container (max-width: 699px) {
-  .eng-runner-tools {
-    gap: 6px;
-  }
-
-  .eng-tool {
-    padding: 7px 9px;
-  }
-
-  .eng-tool span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-}
-
-/* Small phones: smaller icon buttons, so five tools still fit beside the ring. */
-@container (max-width: 380px) {
-  .eng-runner-tools {
-    gap: 5px;
-  }
-
-  .eng-tool {
-    padding: 6px 7px;
-  }
-
-  .eng-tool svg {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-/* Too narrow even for that: the tools get their own row. */
-@container (max-width: 300px) {
-  .eng-runner-tools {
-    flex-basis: 100%;
-    justify-content: center;
-  }
-}
-
 /* Short phones: tighter picture tiles so the 2×2 picture grid still fits. */
 @media (max-height: 720px) {
   html.eng-runner-open .eng-pic-options {
@@ -4385,11 +5015,12 @@ html.eng-runner-open .eng-runner-card > .eng-read {
   }
 
   .eng-read-passage {
-    padding: 12px 14px;
+    padding: 0 14px 12px;
   }
 
   .eng-read-expand {
     display: grid;
+    z-index: 3;
   }
 
   .eng-read-task {
@@ -4413,7 +5044,7 @@ html.eng-runner-open .eng-runner-card > .eng-read {
 
   /* No expand button in the corner to keep clear of. */
   .eng-read--paged .eng-read-title {
-    padding: 0;
+    padding-inline: 14px;
   }
 
   .eng-read-go {
@@ -4442,9 +5073,16 @@ html.eng-runner-open .eng-runner-card > .eng-read {
     height: 18px;
   }
 
+  /* The title stays at the top of the box while the text scrolls under it,
+     so no line hides behind the expand button. */
   .eng-read-title {
-    padding: 0 34px;
-    font-size: 1.15rem;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0 -14px 4px;
+    padding: 10px 48px 8px;
+    background: #fffdf3;
+    font-size: 1.1rem;
   }
 
   /* The ring already shows the step / question number. */
@@ -4452,43 +5090,63 @@ html.eng-runner-open .eng-runner-card > .eng-read {
     display: none;
   }
 
-  /* Marking: the instruction and its words on one line, the count and the
-     buttons on the next, so the passage keeps most of the screen. */
-  .eng-read-mark-head,
-  .eng-read-mark-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px 10px;
+  /* Marking: a short instruction and small chips above the card, so the
+     passage keeps most of the screen. */
+  .eng-read-instructions {
+    gap: 6px;
+  }
+
+  .eng-read-chips {
+    gap: 5px 6px;
+  }
+
+  .eng-read-chips li {
+    padding: 0 9px;
+    font-size: 0.9rem;
+  }
+
+  /* A long list (a lesson's whole vocabulary) packs tighter. */
+  .eng-read-chips.is-many {
+    gap: 4px;
+  }
+
+  .eng-read-chips.is-many li {
+    padding: 0 8px;
+    border-width: 1.5px;
+    font-size: 0.84rem;
   }
 
   .eng-read-mark-foot {
-    justify-content: space-between;
-    margin-top: 2px;
-  }
-
-  .eng-read-mark-head .eng-read-instr,
-  .eng-read-mark-head .eng-read-hint,
-  .eng-read-mark-foot .eng-read-count {
-    margin: 0;
-  }
-
-  .eng-read-mark-head .eng-read-hint {
-    align-self: center;
-  }
-
-  .eng-read-mark-foot .eng-read-actions {
     gap: 8px;
+    padding-top: 14px;
   }
 
-  .eng-read-mark-foot .eng-read-reveal {
-    padding: 6px 12px;
+  .eng-read-count {
+    gap: 3px 8px;
     font-size: 0.88rem;
   }
 
+  .eng-read-meter {
+    flex-basis: 52px;
+  }
+
+  .eng-read-count .eng-feedback-msg {
+    font-size: 0.88rem;
+  }
+
+  .eng-read-mark-foot .eng-read-reveal {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
+
   .eng-read-mark-foot .eng-check {
-    padding: 7px 16px;
-    font-size: 0.98rem;
+    padding: 5px 16px;
+    font-size: 0.9rem;
+  }
+
+  .eng-read--paged:is(.is-read, .is-mark, .is-text-open) .eng-read-passage {
+    border-radius: 20px;
+    box-shadow: 5px 6px 0 0 var(--ink);
   }
 
   .eng-read-text {
@@ -4502,22 +5160,11 @@ html.eng-runner-open .eng-runner-card > .eng-read {
   }
 
   .eng-read-instr {
-    margin-bottom: 6px;
-    font-size: 1rem;
-  }
-
-  .eng-read-hint {
-    margin-bottom: 8px;
-    padding: 3px 10px;
-    font-size: 1rem;
-  }
-
-  .eng-read-count {
-    margin-bottom: 8px;
+    line-height: 1.4;
   }
 
   .eng-read-found b {
-    font-size: 1.3rem;
+    font-size: 1rem;
   }
 
   .eng-read-q {
@@ -4621,24 +5268,9 @@ html.eng-runner-open .eng-slow-btn span {
   display: inline;
 }
 
-/* ── "My mistakes" (mistake-bank.js): the card on the topics page, the line
-   on a topic's page, and the review round's header ── */
+/* ── "My mistakes" (mistake-bank.js): the line on a topic's page and the
+   review round's header ── */
 
-.eng-review-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  max-width: 760px;
-  margin: 0 auto 30px;
-  padding: clamp(14px, 3vw, 20px);
-  border: var(--eng-card-border);
-  border-radius: 22px;
-  background: var(--white);
-  color: var(--ink);
-  box-shadow: var(--eng-card-shadow);
-}
-
-.eng-review-card-icon,
 .eng-review-strip-icon,
 .eng-review-empty-icon {
   flex-shrink: 0;
@@ -4652,57 +5284,10 @@ html.eng-runner-open .eng-slow-btn span {
   color: var(--ink);
 }
 
-.eng-review-card-icon svg,
 .eng-review-strip-icon svg,
 .eng-review-empty-icon svg {
   width: 28px;
   height: 28px;
-}
-
-.eng-review-card-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.eng-review-card .eng-review-card-title {
-  margin: 0;
-  font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 1.3rem;
-  font-weight: 900;
-  line-height: 1.25;
-  color: var(--ink);
-  -webkit-text-stroke: 0;
-  text-shadow: none;
-}
-
-.eng-review-card-text p {
-  margin: 4px 0 0;
-  font-size: 1.02rem;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--ink);
-}
-
-.eng-review-card-go {
-  flex-shrink: 0;
-  padding: 10px 20px;
-  font-size: 1.02rem;
-  text-decoration: none;
-}
-
-@media (max-width: 560px) {
-  .eng-review-card {
-    flex-wrap: wrap;
-  }
-
-  .eng-review-card-text {
-    flex-basis: calc(100% - 70px);
-  }
-
-  .eng-review-card-go {
-    width: 100%;
-    text-align: center;
-  }
 }
 
 .eng-review-strip {
@@ -5055,7 +5640,7 @@ html.eng-runner-open .eng-slow-btn span {
   height: 1.2em;
 }
 
-/* The header: the answered-questions ring and the timer next to it. */
+/* The header: the answered-questions bar and the timer next to it. */
 .eng-exam-progress {
   gap: 8px;
 }
@@ -5714,9 +6299,3 @@ html.eng-runner-open .eng-slow-btn span {
   }
 }
 
-@media (max-width: 420px) {
-  .eng-exam-progress .eng-ring {
-    width: 42px;
-    height: 42px;
-  }
-}

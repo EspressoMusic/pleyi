@@ -693,7 +693,8 @@ body.hub-body .navbar.scrolled {
   border: 3px solid var(--ink);
   border-radius: 50%;
   overflow: hidden;
-  background: var(--memyellow);
+  /* Pink behind the initial; a photo covers it. */
+  background: #ff9ec0;
   cursor: pointer;
   box-shadow: var(--shadow-sticker);
   display: inline-flex;
@@ -1210,11 +1211,32 @@ button.nav-pill.active,
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
+  /* The navbar (menu button + avatar) stays on top of the menu — start the links below it */
+  padding: calc(max(16px, env(safe-area-inset-top, 0px)) + 84px) 0 calc(24px + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.35s, visibility 0.35s;
+}
+
+/* Centered when the links fit; on a short screen they start under the navbar and scroll,
+   instead of centering past the top edge behind the menu button */
+.mobile-nav::before,
+.mobile-nav::after {
+  content: "";
+  flex: 1 0 0;
+}
+
+.mobile-nav::before { margin-bottom: -16px; }
+.mobile-nav::after { margin-top: -16px; }
+
+@media (max-height: 700px) {
+  .mobile-nav { gap: 10px; }
+  .mobile-nav::before { margin-bottom: -10px; }
+  .mobile-nav::after { margin-top: -10px; }
 }
 
 .mobile-nav.open { opacity: 1; visibility: visible; }

@@ -231,6 +231,13 @@
     btn.innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     document.body.appendChild(btn);
+    // The button's styles are in clean-site.css. A page without them (the join
+    // page, the student page...) would show it as a giant arrow in the page
+    // flow under the footer, so it isn't added there.
+    if (getComputedStyle(btn).position !== "fixed") {
+      btn.remove();
+      return;
+    }
 
     let ticking = false;
     function updateVisibility() {

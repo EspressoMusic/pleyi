@@ -97,6 +97,108 @@ Object.assign(window.ENGLISH_VOCAB, {
   "ing-play": { en: "playing", he: "משחק", img: "act-play" },
 });
 
+/* How each vocabulary word sounds, in Hebrew letters — keyed by the English
+   word (lower case), so every exercise that shows the word can show it too.
+   th = ת' (or ד' when voiced), the "a" of cat = segol, as in the letter
+   exercises' `say`. */
+window.ENGLISH_SAY = {
+  // Early words, prepositions, clock times and -ing forms
+  cat: "קֶט", dog: "דוֹג", fish: "פִישׁ", bird: "בֶּרְד", apple: "אֶפֶּל", banana: "בְּנָנָה",
+  "ice cream": "אַייס קְרִים", book: "בּוּק", pencil: "פֶּנְסִיל", cup: "קַאפּ", clock: "קְלוֹק",
+  ball: "בּוֹל", house: "הַאוּס", car: "קָאר", umbrella: "אַמְבְּרֶלָה", tree: "טְרִי",
+  flower: "פְלַאוֶור", sun: "סַאן", moon: "מוּן", star: "סְטָאר",
+  in: "אִין", on: "אוֹן", under: "אַנְדֶר", "next to": "נֶקְסְט טוּ", between: "בִּיטְוִוין",
+  "one o'clock": "וַאן אוֹקְלוֹק", "three o'clock": "ת'רִי אוֹקְלוֹק", "six o'clock": "סִיקְס אוֹקְלוֹק",
+  "nine o'clock": "נַיין אוֹקְלוֹק", "twelve o'clock": "טְוֶולְב אוֹקְלוֹק",
+  "half past two": "הֶף פֶּסְט טוּ", "half past seven": "הֶף פֶּסְט סֶבֶן", "half past ten": "הֶף פֶּסְט טֶן",
+  "quarter past four": "קְווֹרְטֶר פֶּסְט פוֹר", "quarter past eight": "קְווֹרְטֶר פֶּסְט אֵייט",
+  "quarter to six": "קְווֹרְטֶר טוּ סִיקְס", "quarter to twelve": "קְווֹרְטֶר טוּ טְוֶולְב",
+  running: "רַאנִינְג", jumping: "גַ'אמְפִּינְג", swimming: "סְוִוימִינְג", eating: "אִיטִינְג",
+  drinking: "דְרִינְקִינְג", sleeping: "סְלִיפִּינְג", reading: "רִידִינְג", writing: "רַייטִינְג",
+  singing: "סִינְגִינְג", climbing: "קְלַיימִינְג", cooking: "קוּקִינְג", playing: "פְּלֵייִנְג",
+  // Animals, food
+  cow: "קַאוּ", horse: "הוֹרְס", pig: "פִּיג", duck: "דַאק", rabbit: "רֶבִּיט", lion: "לַיְאוֹן",
+  elephant: "אֶלֶפֶנְט", monkey: "מַאנְקִי",
+  orange: "אוֹרֶנְג'", carrot: "קֶרוֹט", bread: "בְּרֶד", cheese: "צִ'יז", egg: "אֶג", milk: "מִילְק",
+  water: "ווֹטֶר", pizza: "פִּיצָה", cake: "קֵייק",
+  // Colors, numbers
+  red: "רֶד", blue: "בְּלוּ", green: "גְרִין", yellow: "יֶלוֹ", purple: "פֶּרְפֶּל", pink: "פִּינְק",
+  brown: "בְּרַאוּן", black: "בְּלֶק", white: "ווַייט",
+  one: "וַאן", two: "טוּ", three: "ת'רִי", four: "פוֹר", five: "פַייב", six: "סִיקְס", seven: "סֶבֶן",
+  eight: "אֵייט", nine: "נַיין", ten: "טֶן",
+  // Body, clothes
+  head: "הֶד", hair: "הֵייר", eye: "אַיי", ear: "אִיר", nose: "נוֹז", mouth: "מַאוּת'", tooth: "טוּת'",
+  hand: "הֶנְד", arm: "אָרְם", leg: "לֶג", foot: "פוּט",
+  shirt: "שֶׁרְט", pants: "פֶּנְטְס", dress: "דְרֶס", skirt: "סְקֶרְט", coat: "קוֹט", hat: "הֶט",
+  shoes: "שׁוּז", socks: "סוֹקְס", scarf: "סְקָארְף", gloves: "גְלַאבְז",
+  // Family, school
+  family: "פֶמִילִי", mother: "מַאדֶ'ר", father: "פָאדֶ'ר", sister: "סִיסְטֶר", brother: "בְּרַאדֶ'ר",
+  baby: "בֵּייבִּי", grandmother: "גְרֶנְדְמַאדֶ'ר", grandfather: "גְרֶנְדְפָאדֶ'ר",
+  notebook: "נוֹטְבּוּק", pen: "פֶּן", eraser: "אִירֵייסֶר", ruler: "רוּלֶר", scissors: "סִיזֶרְז",
+  bag: "בֶּג", computer: "קוֹמְפְּיוּטֶר",
+  // Home, nature, transport
+  door: "דוֹר", window: "וִוינְדוֹ", bed: "בֶּד", table: "טֵייבֶּל", chair: "צֶ'ייר", sofa: "סוֹפָה",
+  lamp: "לֶמְפּ", bath: "בֶּת'", tv: "טִי וִי",
+  cloud: "קְלַאוּד", rain: "רֵיין", snow: "סְנוֹ", wind: "וִוינְד", rainbow: "רֵיינְבּוֹ",
+  bus: "בַּאס", truck: "טְרַאק", train: "טְרֵיין", plane: "פְּלֵיין", boat: "בּוֹט", bike: "בַּייק",
+  helicopter: "הֶלִיקוֹפְּטֶר",
+  // Feelings, opposites, actions
+  happy: "הֶפִּי", sad: "סֶד", angry: "אֶנְגְרִי", scared: "סְקֵירְד", tired: "טַיירְד",
+  surprised: "סֶרְפְּרַייזְד", hungry: "הַאנְגְרִי", sick: "סִיק",
+  big: "בִּיג", small: "סְמוֹל", hot: "הוֹט", cold: "קוֹלְד", fast: "פֶסְט", slow: "סְלוֹ", old: "אוֹלְד",
+  new: "נְיוּ", full: "פוּל", empty: "אֶמְפְּטִי", open: "אוֹפֶּן", closed: "קְלוֹזְד",
+  run: "רַאן", jump: "גַ'אמְפּ", swim: "סְוִוים", eat: "אִיט", drink: "דְרִינְק", sleep: "סְלִיפּ",
+  read: "רִיד", write: "רַייט", sing: "סִינְג", climb: "קְלַיים", cook: "קוּק", play: "פְּלֵיי",
+  // Places, jobs
+  school: "סְקוּל", hospital: "הוֹסְפִּיטַל", synagogue: "סִינֶגוֹג", library: "לַייבְּרֶרִי",
+  supermarket: "סוּפֶּרְמַרְקֶט", park: "פָּארְק", "post office": "פּוֹסְט אוֹפִיס",
+  "police station": "פּוֹלִיס סְטֵיישֶׁן", "fire station": "פַייר סְטֵיישֶׁן", restaurant: "רֶסְטוֹרַנְט",
+  bakery: "בֵּייקֶרִי", "bus stop": "בַּאס סְטוֹפּ",
+  doctor: "דוֹקְטוֹר", teacher: "טִיצֶ'ר", farmer: "פָארְמֶר", "police officer": "פּוֹלִיס אוֹפִיסֶר",
+  firefighter: "פַייר פַייטֶר", chef: "שֶׁף", pilot: "פַּיילוֹט", "bus driver": "בַּאס דְרַייבֶר",
+  builder: "בִּילְדֶר", "mail carrier": "מֵייל קֶרִיֶיר", dentist: "דֶנְטִיסְט", vet: "וֶט",
+  // Hobbies, holidays
+  football: "פוּטְבּוֹל", basketball: "בֶּסְקֶטְבּוֹל", tennis: "טֶנִיס", "ping-pong": "פִּינְג פּוֹנְג",
+  chess: "צֶ'ס", guitar: "גִיטָאר", drums: "דְרַאמְז", piano: "פְּיָאנוֹ", painting: "פֵּיינְטִינְג",
+  photography: "פֶטָאגְרֶפִי", skateboarding: "סְקֵייטְבּוֹרְדִינְג", fishing: "פִישִׁינְג",
+  candles: "קֶנְדֶלְז", challah: "חַלָּה", "kiddush cup": "קִידוּשׁ קַאפּ", "apple and honey": "אֶפֶּל אֶנְד הַאנִי",
+  shofar: "שׁוֹפָר", sukkah: "סוּכָּה", menorah: "מְנוֹרָה", dreidel: "דְרֵיידֶל", mask: "מֶסְק",
+  matzah: "מַצָּה", torah: "תּוֹרָה", flag: "פְלֶג",
+};
+
+// Each topic's lesson level, shown inside the lesson's screen icon: 1 easy,
+// 2 medium, 3 advanced (the same names as the exercise levels). Topics not
+// listed here — the vocabulary-by-topic ones — are level 1.
+window.ENGLISH_LESSON_LEVELS = {
+  letters: 1,
+  phonics: 1,
+  pronouns: 1,
+  possessives: 1,
+  verbs: 1,
+  tobe: 1,
+  "have-has": 1,
+  "there-is": 1,
+  vocabulary: 1,
+  calendar: 1,
+  prepositions: 1,
+  plurals: 1,
+  articles: 1,
+  "telling-time": 2,
+  connectors: 2,
+  quantifiers: 2,
+  comparatives: 2,
+  questions: 2,
+  negation: 2,
+  frequency: 2,
+  tenses: 2,
+  progressive: 2,
+  "going-to": 2,
+  "irregular-verbs": 3,
+  modals: 3,
+  "word-building": 3,
+  bagrut: 3,
+};
+
 window.ENGLISH_TOPICS = [
   {
     id: "letters",

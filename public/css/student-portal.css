@@ -23,6 +23,50 @@ body.stu-body {
   color: var(--ink);
 }
 
+/* The student's name on the start side of the header, the brand on the end. */
+.stu-top:has(.stu-me:not([hidden])) {
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.stu-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 4px 16px 4px 4px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  font-size: clamp(1.1rem, 4.4vw, 1.35rem);
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.stu-me[hidden] {
+  display: none;
+}
+
+.stu-me-avatar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.stu-me-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .stu-main {
   max-width: 760px;
   margin: 0 auto;
@@ -258,6 +302,240 @@ body.stu-body {
 
   .stu-hw:not(.is-done) .stu-hw-action .stu-btn {
     width: 100%;
+  }
+}
+
+/* "My progress": totals, then the finished exercises by topic. */
+.stu-mine {
+  margin-top: 34px;
+  padding: 20px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: var(--white);
+  box-shadow: var(--shadow-sticker);
+}
+
+.stu-mine-title {
+  margin: 0;
+  font-size: clamp(1.3rem, 5.6vw, 1.6rem);
+  font-weight: 900;
+  text-align: center;
+  color: var(--ink);
+}
+
+.stu-mine-last {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.stu-mine-empty {
+  margin: 12px auto 0;
+  max-width: 28rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.stu-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stu-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 8px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--clean-bg-how);
+  text-align: center;
+}
+
+.stu-stat-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 4px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+}
+
+.stu-stat-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.stu-stat-value {
+  font-size: clamp(1.6rem, 6vw, 2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.stu-stat-label {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.stu-stat-sub {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--body);
+}
+
+.stu-mine-sub {
+  margin: 24px 0 10px;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.stu-topics {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stu-topic {
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--clean-bg-cream);
+  overflow: hidden;
+}
+
+.stu-topic summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.stu-topic summary::-webkit-details-marker {
+  display: none;
+}
+
+.stu-topic-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.stu-topic-count {
+  flex-shrink: 0;
+  padding: 2px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.stu-topic-chevron {
+  flex-shrink: 0;
+  display: grid;
+  transition: transform 0.2s ease;
+}
+
+.stu-topic-chevron svg {
+  width: 22px;
+  height: 22px;
+}
+
+.stu-topic[open] .stu-topic-chevron {
+  transform: rotate(180deg);
+}
+
+.stu-ex-list {
+  margin: 0;
+  padding: 0 16px 8px;
+  list-style: none;
+}
+
+.stu-ex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 2px dashed rgba(0, 0, 0, 0.25);
+}
+
+.stu-ex-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.stu-ex-stars {
+  flex-shrink: 0;
+  display: inline-flex;
+  gap: 2px;
+}
+
+.stu-ex-stars span {
+  display: grid;
+  color: rgba(0, 0, 0, 0.18);
+}
+
+.stu-ex-stars span.is-on {
+  color: #f5b400;
+}
+
+.stu-ex-stars svg {
+  width: 20px;
+  height: 20px;
+}
+
+.stu-ex-stars span.is-on svg {
+  stroke: var(--ink);
+}
+
+.stu-ex-score {
+  flex-shrink: 0;
+  min-width: 3.2em;
+  font-size: 1rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .stu-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stu-mine {
+    padding: 18px 14px;
+  }
+
+  .stu-topic summary {
+    padding: 12px;
+  }
+
+  .stu-ex-list {
+    padding: 0 12px 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stu-topic-chevron {
+    transition: none;
   }
 }
 

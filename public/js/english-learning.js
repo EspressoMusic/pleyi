@@ -64,8 +64,8 @@
       matchDone: "כל הזוגות הותאמו!",
       sound: "צלילים",
       soundOn: "השתקת הצלילים",
-      cardColor: "צבע",
       cardColorTitle: "צבע כרטיס השאלה",
+      settings: "הגדרות",
       soundOff: "הפעלת הצלילים",
       translate: "תרגום",
       translateOn: "הסתרת התרגום",
@@ -87,8 +87,8 @@
       mistakesTitle: "מה כדאי לחזור עליו",
       copyLink: "העתקת קישור לתרגיל",
       copied: "הקישור הועתק!",
-      studentBar: (name) => `התרגול נשמר בתיק של ${name}`,
-      myHomework: "שיעורי הבית שלי",
+      studentBar: "התרגול שלך נשמר אצל המורה",
+      myProgress: "ההתקדמות שלי",
       backToHomework: "לשיעורי הבית",
       notMe: "זה לא אני",
       notMeConfirm: (name) => `להפסיק לשמור את התרגול בתיק של ${name} במכשיר הזה?`,
@@ -114,10 +114,12 @@
       markReveal: "הראו לי מה חסר",
       toQuestions: "לשאלות",
       readStep: "קוראים את הקטע",
+      readInstr: "קראו את הטקסט, ואחר כך עברו לשאלות.",
+      questionsInstr: "ענו על השאלות לפי הטקסט.",
       backToText: "חזרה לטקסט",
       backToQuestion: "חזרה לשאלה",
       markAllFound: "מצאתם את כולן!",
-      markRevealed: "המילים שחסרו מסומנות עכשיו בכתום.",
+      markRevealed: "מה שחסר מסומן בכתום.",
       questionNum: (i, t) => `שאלה ${i} מתוך ${t}`,
       answerHe: "ענו בעברית",
       answerEn: "Answer in English",
@@ -175,6 +177,9 @@
       errorWas: "הטעות:",
       shouldBe: "צריך:",
       soundsLike: "נשמע:",
+      sayTool: "איך קוראים בעברית",
+      sayToolOn: "הסתרת ההגייה באותיות עבריות",
+      sayToolOff: "הצגת איך המילה נשמעת, באותיות עבריות",
       slow: "לאט",
       slowLabel: "השמעה איטית",
       noSpeechWrite: "הדפדפן לא תומך בהשמעה — כתבו באנגלית:",
@@ -190,10 +195,7 @@
       loading: "טוען…",
       reviewTitle: "חזרה על הטעויות שלי",
       reviewCardTitle: "החזרה האישית שלי",
-      reviewCardText: (n) => (n === 1 ? "שאלה אחת שטעיתם בה מחכה לחזרה." : `${n} שאלות שטעיתם בהן מחכות לחזרה.`),
-      reviewRule: (g) => `כל שאלה יוצאת מהמאגר אחרי ${g} תשובות נכונות ברצף.`,
       reviewCardDone: (m) => `אין כרגע טעויות לחזור עליהן — כל הכבוד! ${m === 1 ? "שאלה אחת כבר יצאה" : `${m} שאלות כבר יצאו`} מהמאגר.`,
-      reviewGo: "לחזרה על הטעויות",
       reviewTopic: (n) => `${n === 1 ? "שאלה אחת" : `${n} שאלות`} מהנושא הזה מחכות לכם בחזרה האישית.`,
       reviewTopicGo: "לחזרה",
       reviewEmpty: "אין כרגע שאלות לחזור עליהן.",
@@ -338,8 +340,8 @@
       matchDone: "All pairs matched!",
       sound: "Sounds",
       soundOn: "Mute sounds",
-      cardColor: "Color",
       cardColorTitle: "Question card color",
+      settings: "Settings",
       soundOff: "Turn sounds on",
       translate: "Translation",
       translateOn: "Hide the translation",
@@ -361,8 +363,8 @@
       mistakesTitle: "Worth reviewing",
       copyLink: "Copy exercise link",
       copied: "Link copied!",
-      studentBar: (name) => `Your practice is saved for ${name}`,
-      myHomework: "My homework",
+      studentBar: "Your practice is saved for your teacher",
+      myProgress: "My progress",
       backToHomework: "Back to my homework",
       notMe: "Not me",
       notMeConfirm: (name) => `Stop saving practice for ${name} on this device?`,
@@ -388,10 +390,12 @@
       markReveal: "Show me what's missing",
       toQuestions: "To the questions",
       readStep: "Read the passage",
+      readInstr: "Read the text, then go on to the questions.",
+      questionsInstr: "Answer the questions about the text.",
       backToText: "Back to the text",
       backToQuestion: "Back to the question",
       markAllFound: "You found them all!",
-      markRevealed: "The missing words are now marked in orange.",
+      markRevealed: "What you missed is marked in orange.",
       questionNum: (i, t) => `Question ${i} of ${t}`,
       answerHe: "Answer in Hebrew",
       answerEn: "Answer in English",
@@ -449,6 +453,9 @@
       errorWas: "The mistake:",
       shouldBe: "Should be:",
       soundsLike: "Sounds:",
+      sayTool: "Say it in Hebrew letters",
+      sayToolOn: "Hide the Hebrew-letter sound",
+      sayToolOff: "Show how the word sounds, in Hebrew letters",
       slow: "Slow",
       slowLabel: "Play slowly",
       noSpeechWrite: "Your browser can't play audio — type it in English:",
@@ -464,10 +471,7 @@
       loading: "Loading…",
       reviewTitle: "My mistakes",
       reviewCardTitle: "My mistakes to review",
-      reviewCardText: (n) => (n === 1 ? "1 question you got wrong is waiting for review." : `${n} questions you got wrong are waiting for review.`),
-      reviewRule: (g) => `A question leaves your list after ${g} right answers in a row.`,
       reviewCardDone: (m) => `Nothing to review right now — well done! ${m === 1 ? "1 question has" : `${m} questions have`} already left your list.`,
-      reviewGo: "Review my mistakes",
       reviewTopic: (n) => `${n === 1 ? "1 question" : `${n} questions`} from this topic ${n === 1 ? "is" : "are"} waiting in your review.`,
       reviewTopicGo: "Review",
       reviewEmpty: "There's nothing to review right now.",
@@ -615,6 +619,9 @@
   ICONS.statusDone = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="m7 12.5 3.3 3.3L17 9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   ICONS.statusProgress = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M12 6a6 6 0 0 1 0 12Z" fill="currentColor"/></svg>`;
   ICONS.palette = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.3 0 2.1-.9 2.1-2 0-.6-.3-1-.6-1.4-.3-.4-.6-.9-.6-1.5 0-1.1.9-2 2-2h2.3A4.8 4.8 0 0 0 21 9.3C21 5.8 17 3 12 3Z"/><circle cx="7.5" cy="11.5" r="1.1" fill="currentColor"/><circle cx="9.5" cy="7.2" r="1.1" fill="currentColor"/><circle cx="14.5" cy="7.2" r="1.1" fill="currentColor"/></svg>`;
+  ICONS.settings = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  // Two Hebrew letters: the "how it sounds in Hebrew letters" switch.
+  ICONS.sayHe = `<svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="17.5" text-anchor="middle" direction="rtl" font-family="Arial, sans-serif" font-size="14" font-weight="800" fill="currentColor">אב</text></svg>`;
   // A spiral notebook with the exercise's level on its page: every practice
   // exercise card on a topic page.
   const exerciseIcon = (level) =>
@@ -643,6 +650,15 @@
       .replace(/"/g, "&quot;");
   }
 
+  // Each sentence of an explanation is a point of its own, so it gets its own
+  // line. "e.g." and a "Listen! —" mid-sentence don't end one.
+  function byLine(text, toHtml = esc) {
+    return String(text ?? "")
+      .split(/(?<=[.!?])(?<!\be\.g\.)\s+(?![—-])/)
+      .map(toHtml)
+      .join("<br>");
+  }
+
   function shuffle(list) {
     const arr = [...list];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -666,7 +682,12 @@
 
   function wordItem(id) {
     const v = VOCAB[id];
-    return v ? { word: id, en: v.en, he: v.he, img: imgUrl(v.img || id), accept: v.accept || [] } : null;
+    return v ? { word: id, en: v.en, he: v.he, say: sayOf(v.en), img: imgUrl(v.img || id), accept: v.accept || [] } : null;
+  }
+
+  // How an English vocabulary word sounds, in Hebrew letters ("" if unknown).
+  function sayOf(en) {
+    return window.ENGLISH_SAY?.[String(en || "").trim().toLowerCase()] || "";
   }
 
   // Typed answers: ignore case, extra spaces, trailing punctuation and
@@ -763,11 +784,14 @@
 
   /* ── Runner preferences (sound effects, translation) ── */
 
-  const SOUND_KEY = "pleyi-english-sound";
+  // "-v2": sounds start on again for everyone, even after an old "off".
+  const SOUND_KEY = "pleyi-english-sound-v2";
   const TRANSLATE_KEY = "pleyi-english-translate";
   // Reading passages: click a word to see it in Hebrew; questions in Hebrew.
   const WORDS_KEY = "pleyi-english-read-words";
   const HE_QUESTIONS_KEY = "pleyi-english-read-he";
+  // Vocabulary words: how each one sounds, in Hebrew letters.
+  const SAY_KEY = "pleyi-english-say";
   // The question card's color. Light colors only, so the black text and the
   // white answer buttons keep their contrast.
   const CARD_COLOR_KEY = "pleyi-english-card-color";
@@ -782,12 +806,15 @@
     { id: "sand", he: "חול", en: "Sand" },
   ];
 
+  // Default: a soft sky blue, not white. A saved choice (white too) wins.
+  const DEFAULT_CARD_COLOR = "sky";
+
   function readCardColor() {
     try {
       const id = localStorage.getItem(CARD_COLOR_KEY);
-      return CARD_COLORS.some((c) => c.id === id) ? id : "white";
+      return CARD_COLORS.some((c) => c.id === id) ? id : DEFAULT_CARD_COLOR;
     } catch {
-      return "white";
+      return DEFAULT_CARD_COLOR;
     }
   }
 
@@ -813,6 +840,7 @@
     translate: readFlag(TRANSLATE_KEY, false),
     words: readFlag(WORDS_KEY, false),
     heQuestions: readFlag(HE_QUESTIONS_KEY, false),
+    say: readFlag(SAY_KEY, false),
     cardColor: readCardColor(),
   };
 
@@ -911,10 +939,20 @@
     $("#engHero")?.classList.toggle("hidden", name !== "topics");
     // The exercise screen is a fixed, non-scrolling page without the site navbar or footer.
     document.documentElement.classList.toggle("eng-runner-open", name === "exercise");
+    settingsOpen = false;
+    $("#engBarBack")?.replaceChildren();
+  }
+
+  // A topic page's back arrow moves up into the top bar, on one row with the
+  // sign-in button, instead of taking a row of its own above the title.
+  function dockBack() {
+    const back = $(".eng-topic-head > .eng-back", views.topic());
+    if (back) $("#engBarBack")?.replaceChildren(back);
   }
 
   // Shown when this device opened a student's personal link: whose file the
-  // practice goes to, and the way back to their homework page.
+  // practice goes to, and the way to their page with their progress. On the
+  // exercise screen it shrinks to the name, points and that link.
   async function renderStudentBar() {
     $("#engStudentBar")?.remove();
     const student = await window.StudentProgress?.profile();
@@ -923,9 +961,13 @@
     bar.id = "engStudentBar";
     bar.className = "eng-student-bar";
     bar.innerHTML = `
-      <span class="eng-student-bar-text">${esc(t("studentBar", student.name))}</span>
+      <span class="eng-student-bar-me">
+        <span class="eng-student-bar-avatar" aria-hidden="true">${esc(Array.from(student.name.trim())[0] || "")}</span>
+        <span class="eng-student-bar-name">${esc(student.name)}</span>
+      </span>
+      <span class="eng-student-bar-text">${esc(t("studentBar"))}</span>
       <button type="button" class="eng-student-bar-points" id="engBarPoints" title="${esc(t("leaderboard"))}">${ICONS.trophy}<span id="engBarPointsNum">${esc(t("leaderboard"))}</span></button>
-      <a class="eng-student-bar-link" href="${esc(window.StudentProgress.homeUrl())}">${esc(t("myHomework"))}</a>
+      <a class="eng-student-bar-link" href="${esc(window.StudentProgress.homeUrl())}#progress">${esc(t("myProgress"))}</a>
       <button type="button" class="eng-student-bar-out" id="engNotMe">${esc(t("notMe"))}</button>`;
     $("#engMain .container")?.prepend(bar);
     $("#engBarPoints").addEventListener("click", () => window.Leaderboard?.open());
@@ -1018,42 +1060,8 @@
     window.Leaderboard.bind(body, data.rows, { limit: 5 });
   }
 
-  /* ── "My mistakes" (mistake-bank.js): a card on the topics page and a line
-     on a topic's page, with how many questions wait for review. ── */
-
-  function reviewCardHtml() {
-    const bank = window.MistakeBank;
-    const count = bank.count();
-    const mastered = bank.mastered();
-    if (!count && !mastered) return "";
-    const text = count ? `${t("reviewCardText", count)} ${t("reviewRule", bank.GOAL)}` : t("reviewCardDone", mastered);
-    return `
-      <span class="eng-review-card-icon">${ICONS.review}</span>
-      <div class="eng-review-card-text">
-        <h2 class="eng-review-card-title">${esc(t("reviewCardTitle"))}</h2>
-        <p>${esc(text)}</p>
-      </div>
-      ${count ? `<a class="btn btn-primary btn-candy font-cartoon eng-review-card-go" href="#${REVIEW_ROUTE}">${esc(t("reviewGo"))}</a>` : ""}`;
-  }
-
-  // A div, not a section: styles.css pads every <section>.
-  function renderReviewCard() {
-    const host = $("#engTopicsView");
-    if (!host || !window.MistakeBank) return;
-    const html = reviewCardHtml();
-    let card = $("#engReviewCard");
-    if (!html) {
-      card?.remove();
-      return;
-    }
-    if (!card) {
-      card = document.createElement("div");
-      card.id = "engReviewCard";
-      card.className = "eng-review-card";
-      host.insertBefore(card, $("#engTopicGrid"));
-    }
-    card.innerHTML = html;
-  }
+  /* ── "My mistakes" (mistake-bank.js): a line on a topic's page, with how
+     many questions wait for review. ── */
 
   function reviewStripHtml(topic) {
     const count = window.MistakeBank?.count(topic.id) || 0;
@@ -1169,6 +1177,19 @@
     const raw = topic.lesson && catalog?.[topic.lesson];
     if (!raw) return null;
     return window.ReadyLessons.localize ? window.ReadyLessons.localize(raw) : raw;
+  }
+
+  function lessonLevel(topic) {
+    return window.ENGLISH_LESSON_LEVELS?.[topic.id] || 1;
+  }
+
+  // The lesson's screen icon with its level written on the screen.
+  function lessonIconHtml(level) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M12 17v3M8 20h8"/><text x="12" y="10.3" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="900" fill="currentColor" stroke="none">${level}</text></svg>`;
+  }
+
+  function levelLabel(level) {
+    return `${t("level", level)} · ${t("levelName", level)}`;
   }
 
   // Lesson durations are stored in Hebrew ("25 דק'").
@@ -1307,7 +1328,7 @@
     const lessonCard = lesson
       ? `
         <div class="eng-lesson-card">
-          <span class="eng-lesson-icon">${ICONS.slides}</span>
+          <span class="eng-lesson-icon" role="img" aria-label="${esc(levelLabel(lessonLevel(topic)))}" title="${esc(levelLabel(lessonLevel(topic)))}">${lessonIconHtml(lessonLevel(topic))}</span>
           <h4 class="eng-lesson-title">${esc(lesson.namePart || lesson.name)}</h4>
           <div class="eng-lesson-actions">
             <button type="button" class="eng-info-btn" data-lesson-info aria-haspopup="dialog" aria-label="${esc(t("lessonInfo"))}" title="${esc(t("lessonInfo"))}">${ICONS.info}</button>
@@ -1601,7 +1622,7 @@
     runner.round = round || buildRound(topic, exercise);
     runner.total = exercise.type === "match" ? runner.round.reduce((n, b) => n + b.pairs.length, 0) : runner.round.length;
     runner.index = 0;
-    runner.ringIndex = 0;
+    runner.barIndex = 0;
     runner.score = 0;
     runner.mistakes = [];
     runner.mistakeLog = [];
@@ -1779,15 +1800,15 @@
     view.classList.remove("is-reading");
     view.innerHTML = `
       <div class="eng-runner-head">
-        <div class="eng-runner-title-row">
-          <h2 class="font-cartoon eng-runner-title">${esc(loc(game, "title"))}</h2>
-          <span class="eng-game-topic">${esc(loc(topic, "title"))}</span>
-        </div>
-        <div class="eng-runner-bar eng-runner-bar--game">
+        <div class="eng-runner-top">
           <a class="eng-back" id="engGameBack" href="#${esc(topic.id)}" aria-label="${esc(t(backLabel))}" title="${esc(t(backLabel))}">${ICONS.back}</a>
-          <div class="eng-game-hud" id="engGameHud">${hud}</div>
+          <div class="eng-runner-title-row">
+            <h2 class="font-cartoon eng-runner-title">${esc(loc(game, "title"))}</h2>
+            <span class="eng-game-topic">${esc(loc(topic, "title"))}</span>
+          </div>
           <div class="eng-runner-tools" id="engRunnerTools"></div>
         </div>
+        <div class="eng-game-hud" id="engGameHud">${hud}</div>
       </div>
       <div class="eng-runner-card eng-runner-card--game eng-runner-card--game-${esc(game.id)}">${inner}</div>`;
     if (gameLessonReturn) {
@@ -1858,25 +1879,33 @@
     const isReading = runner.exercise?.type === "reading";
     const isExam = runner.exercise?.type === "exam";
     const showTranslate = runner.phase === "question" && hasTranslation(runner.exercise);
+    const showSay = runner.phase === "question" && roundHasSay();
     const showReadAloud = isReading && runner.phase !== "results" && canSpeak();
     const showWords = isReading && runner.phase !== "results";
     const showHeQuestions =
       ((isReading && runner.phase === "question") || (isExam && runner.phase === "exam")) && runner.round.some(hebrewQuestion);
+    // Each switch is a row in the settings menu, with an on/off knob.
     const tool = (id, on, icon, label, title) =>
-      `<button type="button" class="eng-tool" id="${id}" aria-pressed="${on}" title="${esc(title)}">${icon}<span>${esc(label)}</span></button>`;
+      `<button type="button" class="eng-setting" id="${id}" aria-pressed="${on}" title="${esc(title)}">${icon}<span class="eng-setting-label">${esc(label)}</span><span class="eng-switch" aria-hidden="true"></span></button>`;
     return `
-      ${showReadAloud ? tool("engReadAloud", readAloud.on, readAloud.on ? ICONS.stop : ICONS.play, t("readAloud"), t(readAloud.on ? "readAloudOn" : "readAloudOff")) : ""}
-      ${showWords ? tool("engWordsToggle", prefs.words, ICONS.wordMeaning, t("wordsTool"), t(prefs.words ? "wordsToolOn" : "wordsToolOff")) : ""}
-      ${showHeQuestions ? tool("engHeQuestions", prefs.heQuestions, ICONS.translate, t("heQuestions"), t(prefs.heQuestions ? "heQuestionsOn" : "heQuestionsOff")) : ""}
-      ${showTranslate ? tool("engTranslateToggle", prefs.translate, ICONS.translate, t("translate"), t(prefs.translate ? "translateOn" : "translateOff")) : ""}
-      ${tool("engSoundToggle", prefs.sound, prefs.sound ? ICONS.listen : ICONS.soundOff, t("sound"), t(prefs.sound ? "soundOn" : "soundOff"))}
-      <div class="eng-color-tool">
-        <button type="button" class="eng-tool" id="engColorBtn" aria-haspopup="true" aria-expanded="false" aria-controls="engColorMenu" title="${esc(t("cardColorTitle"))}">${ICONS.palette}<span>${esc(t("cardColor"))}</span></button>
-        <div class="eng-color-menu hidden" id="engColorMenu" role="group" aria-label="${esc(t("cardColorTitle"))}">
-          ${CARD_COLORS.map(
-            (c) =>
-              `<button type="button" class="eng-color-swatch eng-color-swatch--${c.id}" data-card-color="${c.id}" aria-pressed="${c.id === prefs.cardColor}" aria-label="${esc(c[lang()] || c.he)}" title="${esc(c[lang()] || c.he)}"></button>`
-          ).join("")}
+      <div class="eng-settings">
+        <button type="button" class="eng-settings-btn" id="engSettingsBtn" aria-haspopup="true" aria-expanded="${settingsOpen}" aria-controls="engSettingsMenu" aria-label="${esc(t("settings"))}" title="${esc(t("settings"))}">${ICONS.settings}</button>
+        <div class="eng-settings-menu${settingsOpen ? "" : " hidden"}" id="engSettingsMenu" role="group" aria-label="${esc(t("settings"))}">
+          ${showReadAloud ? tool("engReadAloud", readAloud.on, readAloud.on ? ICONS.stop : ICONS.play, t("readAloud"), t(readAloud.on ? "readAloudOn" : "readAloudOff")) : ""}
+          ${showWords ? tool("engWordsToggle", prefs.words, ICONS.wordMeaning, t("wordsTool"), t(prefs.words ? "wordsToolOn" : "wordsToolOff")) : ""}
+          ${showHeQuestions ? tool("engHeQuestions", prefs.heQuestions, ICONS.translate, t("heQuestions"), t(prefs.heQuestions ? "heQuestionsOn" : "heQuestionsOff")) : ""}
+          ${showTranslate ? tool("engTranslateToggle", prefs.translate, ICONS.translate, t("translate"), t(prefs.translate ? "translateOn" : "translateOff")) : ""}
+          ${showSay ? tool("engSayToggle", prefs.say, ICONS.sayHe, t("sayTool"), t(prefs.say ? "sayToolOn" : "sayToolOff")) : ""}
+          ${tool("engSoundToggle", prefs.sound, prefs.sound ? ICONS.listen : ICONS.soundOff, t("sound"), t(prefs.sound ? "soundOn" : "soundOff"))}
+          <div class="eng-settings-colors">
+            <button type="button" class="eng-setting" id="engColorToggle" aria-expanded="${colorsOpen}" aria-controls="engColorSwatches">${ICONS.palette}<span class="eng-setting-label">${esc(t("cardColorTitle"))}</span><span class="eng-color-current eng-color-swatch--${prefs.cardColor}" aria-hidden="true"></span><span class="eng-color-chevron" aria-hidden="true"></span></button>
+            <div class="eng-color-swatches${colorsOpen ? "" : " hidden"}" id="engColorSwatches" role="group" aria-label="${esc(t("cardColorTitle"))}">
+              ${CARD_COLORS.map(
+                (c) =>
+                  `<button type="button" class="eng-color-swatch eng-color-swatch--${c.id}" data-card-color="${c.id}" aria-pressed="${c.id === prefs.cardColor}" aria-label="${esc(c[lang()] || c.he)}" title="${esc(c[lang()] || c.he)}"></button>`
+              ).join("")}
+            </div>
+          </div>
         </div>
       </div>`;
   }
@@ -1885,34 +1914,53 @@
     return prefs.cardColor === "white" ? "" : ` eng-card-color--${prefs.cardColor}`;
   }
 
-  function closeColorMenu(focusButton) {
-    const menu = $("#engColorMenu");
-    if (!menu || menu.classList.contains("hidden")) return;
-    menu.classList.add("hidden");
-    $("#engColorBtn")?.setAttribute("aria-expanded", "false");
-    if (focusButton) $("#engColorBtn")?.focus({ preventScroll: true });
+  // The settings menu stays open while its switches re-render the tools.
+  // The color row starts folded; a click on it shows the swatches.
+  let settingsOpen = false;
+  let colorsOpen = false;
+
+  function closeSettings(focusButton) {
+    if (!settingsOpen) return;
+    settingsOpen = false;
+    colorsOpen = false;
+    $("#engColorSwatches")?.classList.add("hidden");
+    $("#engColorToggle")?.setAttribute("aria-expanded", "false");
+    $("#engSettingsMenu")?.classList.add("hidden");
+    $("#engSettingsBtn")?.setAttribute("aria-expanded", "false");
+    if (focusButton) $("#engSettingsBtn")?.focus({ preventScroll: true });
   }
 
-  // A click anywhere outside the color menu closes it.
+  // A click anywhere outside the settings menu closes it.
   document.addEventListener("click", (e) => {
-    if (!e.target.closest?.(".eng-color-tool")) closeColorMenu(false);
+    if (!e.target.closest?.(".eng-settings")) closeSettings(false);
   });
 
-  function bindColorTool() {
-    const btn = $("#engColorBtn");
-    const menu = $("#engColorMenu");
+  function bindSettings() {
+    const btn = $("#engSettingsBtn");
+    const menu = $("#engSettingsMenu");
     if (!btn || !menu) return;
     btn.addEventListener("click", () => {
-      const open = menu.classList.toggle("hidden") === false;
-      btn.setAttribute("aria-expanded", String(open));
-      if (open) $('[aria-pressed="true"]', menu)?.focus({ preventScroll: true });
+      if (settingsOpen) {
+        closeSettings(false);
+        return;
+      }
+      settingsOpen = true;
+      menu.classList.remove("hidden");
+      btn.setAttribute("aria-expanded", "true");
+      $("button", menu)?.focus({ preventScroll: true });
     });
     // Escape closes the menu without leaving the exercise.
     menu.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
       e.preventDefault();
       e.stopPropagation();
-      closeColorMenu(true);
+      closeSettings(true);
+    });
+    const colorToggle = $("#engColorToggle", menu);
+    colorToggle?.addEventListener("click", () => {
+      colorsOpen = !colorsOpen;
+      $("#engColorSwatches", menu)?.classList.toggle("hidden", !colorsOpen);
+      colorToggle.setAttribute("aria-expanded", String(colorsOpen));
     });
     $$("[data-card-color]", menu).forEach((swatch) => {
       swatch.addEventListener("click", () => {
@@ -1928,6 +1976,8 @@
           if (prefs.cardColor !== "white") card.classList.add(`eng-card-color--${prefs.cardColor}`);
         }
         $$("[data-card-color]", menu).forEach((s) => s.setAttribute("aria-pressed", String(s === swatch)));
+        const current = $(".eng-color-current", menu);
+        if (current) current.className = `eng-color-current eng-color-swatch--${prefs.cardColor}`;
       });
     });
   }
@@ -1936,7 +1986,7 @@
     const box = $("#engRunnerTools");
     if (!box) return;
     box.innerHTML = toolsHtml();
-    bindColorTool();
+    bindSettings();
     $("#engSoundToggle")?.addEventListener("click", () => {
       prefs.sound = !prefs.sound;
       saveFlag(SOUND_KEY, prefs.sound);
@@ -1953,6 +2003,7 @@
       if (input && !runner.answered) input.focus({ preventScroll: true });
       else $("#engTranslateToggle")?.focus({ preventScroll: true });
     });
+    $("#engSayToggle")?.addEventListener("click", toggleSay);
     $("#engReadAloud")?.addEventListener("click", () => {
       readAloud.toggle();
       $("#engReadAloud")?.focus({ preventScroll: true });
@@ -2026,14 +2077,6 @@
     return loc(exercise, "title");
   }
 
-  // The help dialog explains an exercise of the site; an exam explains itself
-  // on its first screen, and a review question shown in another form (a
-  // matching pair as a choice) has no exercise of its own.
-  function showsHelp() {
-    if (runner.phase === "results" || runner.exercise.type === "exam") return false;
-    return !runner.review || runner.review.items[runner.index]?.exercise === runner.review.items[runner.index]?.source;
-  }
-
   // A review question: the topic and exercise it is from, and how close it
   // is to leaving the bank.
   function reviewFromHtml() {
@@ -2049,7 +2092,8 @@
       </span>`;
   }
 
-  // `progress` sits in the header bar, outside the card.
+  // The back arrow, the title and the settings button share the top row;
+  // `progress` is the bar under them, outside the card.
   function renderRunnerShell(inner, progress = "") {
     const view = views.exercise();
     const { topic, exercise } = runner;
@@ -2059,24 +2103,25 @@
     const backLabel = back === "#" ? t("back") : t("backToTopic");
     view.innerHTML = `
       <div class="eng-runner-head">
-        <div class="eng-runner-title-row">
-          <h2 class="font-cartoon eng-runner-title">${esc(runnerTitle())}</h2>
-          ${showsHelp() ? infoBtnHtml(exercise) : ""}
-          ${reviewFromHtml()}
-        </div>
-        <div class="eng-runner-bar">
+        <div class="eng-runner-top">
           <a class="eng-back" href="${esc(back)}" aria-label="${esc(backLabel)}" title="${esc(backLabel)}">${ICONS.back}</a>
-          ${progress}
+          <div class="eng-runner-title-row">
+            <h2 class="font-cartoon eng-runner-title">${esc(runnerTitle())}</h2>
+            ${reviewFromHtml()}
+          </div>
           <div class="eng-runner-tools" id="engRunnerTools"></div>
         </div>
+        ${progress}
       </div>
-      <div class="eng-runner-card eng-runner-card--${esc(exercise.type)}${cardColorClass()}${prefs.translate ? " is-translated" : ""}${prefs.heQuestions ? " is-he-q" : ""}">${inner}</div>`;
-    // The instructions sit on the page above the card, not inside it.
+      <div class="eng-runner-card eng-runner-card--${esc(exercise.type)}${cardColorClass()}${prefs.translate ? " is-translated" : ""}${prefs.heQuestions ? " is-he-q" : ""}${prefs.say ? " is-say" : ""}">${inner}</div>`;
+    // The instructions sit on the page above the card, not inside it — over
+    // the progress bar when there is one.
     const instructions = $(".eng-runner-card > .eng-instructions", view);
-    if (instructions) view.insertBefore(instructions, instructions.parentElement);
+    const bar = $(".eng-runner-head > .eng-progress", view);
+    if (bar && instructions) bar.before(instructions);
+    else if (instructions) view.insertBefore(instructions, instructions.parentElement);
     renderTools();
-    bindHelpButtons(view, topic);
-    $$(".eng-speak", view).forEach((btn) => {
+    $$(".eng-speak, .eng-word-tap", view).forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         speak(btn.dataset.say);
@@ -2084,50 +2129,44 @@
     });
   }
 
-  const RING_R = 20;
-  const RING_C = 2 * Math.PI * RING_R;
-
-  // One arc per question around the ring, starting at 12 o'clock: `done` arcs
-  // are filled, the `current` one is tinted, and the `fresh` one draws itself in.
-  function ringHtml(total, done, current = -1, fresh = -1) {
-    const step = 360 / total;
-    const gap = total > 1 ? Math.min(10, 120 / total) : 0;
-    const len = ((RING_C * (step - gap)) / 360).toFixed(2);
-    const arc = (i, cls, extra = "") =>
-      `<circle class="eng-ring-seg ${cls}" cx="24" cy="24" r="${RING_R}" stroke-dasharray="${len} ${RING_C.toFixed(2)}" transform="rotate(${(-90 + i * step + gap / 2).toFixed(2)} 24 24)"${extra} />`;
-    const arcs = Array.from({ length: total }, (_, i) => i);
-    return (
-      arcs.map((i) => arc(i, "eng-ring-track")).join("") +
-      arcs
-        .filter((i) => i < done || i === current)
-        .map((i) =>
-          i === current ? arc(i, "eng-ring-fill is-current") : arc(i, `eng-ring-fill${i === fresh ? " is-new" : ""}`, ` style="--seg:${len}px"`)
-        )
-        .join("")
-    );
+  // One segment per question along the bar, from the start side: `done`
+  // segments are filled, the `current` one is tinted, and the `fresh` one
+  // fills itself in.
+  function barHtml(total, done, current = -1, fresh = -1) {
+    return Array.from({ length: total }, (_, i) => {
+      const cls = i < done ? ` is-done${i === fresh ? " is-new" : ""}` : i === current ? " is-current" : "";
+      return `<span class="eng-bar-seg${cls}"></span>`;
+    }).join("");
   }
 
-  function progressHtml({ label, num, total, done, current = -1, fresh = -1 }) {
+  function progressHtml({ label, total, done, current = -1, fresh = -1 }) {
     return `
       <div class="eng-progress" id="engProgress" role="img" aria-label="${esc(label)}">
-        <span class="eng-ring" aria-hidden="true">
-          <svg viewBox="0 0 48 48" id="engRing">${ringHtml(total, done, current, fresh)}</svg>
-          <span class="eng-ring-num" id="engRingNum">${num}</span>
-        </span>
+        <div class="eng-bar" id="engBar" aria-hidden="true">${barHtml(total, done, current, fresh)}</div>
       </div>`;
   }
 
   function questionProgress() {
     const { index, round } = runner;
-    // Only a newly reached question animates its arc, not a re-render of the
-    // same one (e.g. on a language switch).
-    const fresh = runner.ringIndex === index ? -1 : index - 1;
-    runner.ringIndex = index;
-    return progressHtml({ label: t("progress", index + 1, round.length), num: index + 1, total: round.length, done: index, current: index, fresh });
+    // Only a newly reached question animates its segment, not a re-render of
+    // the same one (e.g. on a language switch).
+    const fresh = runner.barIndex === index ? -1 : index - 1;
+    runner.barIndex = index;
+    return progressHtml({ label: t("progress", index + 1, round.length), total: round.length, done: index, current: index, fresh });
+  }
+
+  // The instructions sit in a plain box on a soft fill.
+  function instrBoxHtml(body, textClass = "") {
+    return `
+      <div class="eng-instructions eng-instr">
+        <div class="eng-instr-main">
+          <div class="eng-instr-text${textClass}">${body}</div>
+        </div>
+      </div>`;
   }
 
   function instructionsHtml() {
-    return `<p class="eng-instructions">${esc(loc(runner.exercise, "instructions"))}</p>`;
+    return instrBoxHtml(`<p class="eng-instr-line">${byLine(loc(runner.exercise, "instructions"))}</p>`);
   }
 
   const feedbackHtml = `<div class="eng-feedback" id="engFeedback" aria-live="polite"></div>`;
@@ -2160,6 +2199,53 @@
     const chip = `<span class="eng-context">${esc(question.context)}</span>`;
     if (!question.say) return chip;
     return `<span class="eng-context-row" dir="rtl" lang="he">${chip}<span class="eng-context eng-say"><bdi class="eng-say-label">${esc(t("soundsLike"))}</bdi>${esc(question.say)}</span></span>`;
+  }
+
+  /* How a vocabulary word sounds in Hebrew letters ("פִישׁ" for fish). Always
+     rendered when the word has one; the runner card's is-say class decides
+     whether it shows, switched from the settings menu. */
+
+  // A row of its own under the word.
+  function sayRowHtml(en) {
+    const say = sayOf(en);
+    return say ? `<span class="eng-say-row" dir="rtl" lang="he"><span class="eng-say eng-say-line">${esc(say)}</span></span>` : "";
+  }
+
+  // Smaller, inside an answer button or a match card.
+  function sayOptHtml(en) {
+    const say = sayOf(en);
+    return say ? `<span class="eng-say-opt" dir="rtl" lang="he">${esc(say)}</span>` : "";
+  }
+
+  // A big English word and its sound line; tapping the word says it.
+  function wordPromptHtml(en) {
+    const word = canSpeak()
+      ? `<button type="button" class="eng-word-big eng-word-tap" data-say="${esc(en)}" aria-label="${esc(t("speakWord", en))}">${esc(en)}</button>`
+      : `<span class="eng-word-big">${esc(en)}</span>`;
+    return `<div class="eng-word-prompt" dir="ltr">${word}${sayRowHtml(en)}</div>`;
+  }
+
+  // The Hebrew word under a picture, with the sound line (beside the word
+  // in a small picture box, under it in a big one).
+  function pictureHeHtml(q) {
+    return `<span class="eng-picture-he-row"><span class="eng-picture-he">${esc(q.he)}</span>${sayRowHtml(q.en)}</span>`;
+  }
+
+  // Listening shows no word to sound out.
+  function roundHasSay() {
+    if (runner.exercise?.type === "listen") return false;
+    return runner.round.some((q) => q && (sayOf(q.en) || (q.img && sayOf(q.text)) || q.pairs?.some((p) => sayOf(p.a))));
+  }
+
+  function toggleSay() {
+    prefs.say = !prefs.say;
+    saveFlag(SAY_KEY, prefs.say);
+    $(".eng-runner-card")?.classList.toggle("is-say", prefs.say);
+    renderTools();
+    // A typing question keeps the cursor in its input.
+    const input = $("#engInput");
+    if (input && !runner.answered) input.focus({ preventScroll: true });
+    else $("#engSayToggle")?.focus({ preventScroll: true });
   }
 
   // Always rendered when the question has one; the runner card's
@@ -2341,7 +2427,7 @@
       render(q) {
         // The word is the picture's caption, and its fix shows under it.
         const prompt = q.img
-          ? `<div class="eng-picture-box eng-picture-box--tf"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><p class="eng-picture-word" id="engSentence" dir="ltr">${esc(q.text)}${speakBtn(q.text, "eng-speak--inline")}</p><div id="engFix" dir="ltr"></div></div>`
+          ? `<div class="eng-picture-box eng-picture-box--tf"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><p class="eng-picture-word" id="engSentence" dir="ltr">${esc(q.text)}${speakBtn(q.text, "eng-speak--inline")}</p>${sayRowHtml(q.text)}<div id="engFix" dir="ltr"></div></div>`
           : `<div class="eng-sentence" dir="ltr"><p id="engSentence">${esc(q.text)}</p><div id="engFix"></div>${translationHtml(q)}</div>`;
         renderRunnerShell(`
           ${instructionsHtml()}
@@ -2394,7 +2480,7 @@
         };
         // A picture word on its own, or (a new exercise) inside a sentence.
         const picture = q.word
-          ? `<div class="eng-picture-box${solo ? "" : " eng-picture-box--small"}"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><span class="eng-picture-he">${esc(q.he)}</span></div>`
+          ? `<div class="eng-picture-box${solo ? "" : " eng-picture-box--small"}"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" />${pictureHeHtml(q)}</div>`
           : "";
         const prompt = solo ? `${picture}<div class="eng-write-solo" dir="ltr">${input}<span id="engCorrection"></span></div>` : `${picture}${sentence(q.word ? q.sentenceHe : q.he)}`;
         renderRunnerShell(`
@@ -2523,7 +2609,7 @@
             ${options
               .map(
                 (o, i) =>
-                  `<button type="button" class="eng-option js-answer" data-word="${esc(o.word)}"><span class="eng-option-key">${i + 1}</span>${esc(o.en)}</button>`
+                  `<button type="button" class="eng-option js-answer" data-word="${esc(o.word)}"><span class="eng-option-key">${i + 1}</span>${esc(o.en)}${sayOptHtml(o.en)}</button>`
               )
               .join("")}
           </div>
@@ -2540,7 +2626,7 @@
         // A new exercise shows the word inside a sentence.
         const prompt = q.text
           ? wordSentenceHtml(q, true)
-          : `<div class="eng-word-prompt" dir="ltr"><span class="eng-word-big">${esc(q.en)}</span>${speakBtn(q.en)}</div>`;
+          : wordPromptHtml(q.en);
         renderRunnerShell(`
           ${instructionsHtml()}
           ${prompt}
@@ -2595,11 +2681,11 @@
           `
           ${instructionsHtml()}
           <div class="eng-match" dir="ltr">
-            <div class="eng-match-col">${sideA.map(({ p, i }) => `<button type="button" class="eng-match-item${long(p.a)}" data-side="a" data-i="${i}" dir="ltr">${esc(p.a)}</button>`).join("")}</div>
+            <div class="eng-match-col">${sideA.map(({ p, i }) => `<button type="button" class="eng-match-item${long(p.a)}" data-side="a" data-i="${i}" dir="ltr">${esc(p.a)}${sayOptHtml(p.a)}</button>`).join("")}</div>
             <div class="eng-match-col">${sideB.map(itemB).join("")}</div>
           </div>
           ${feedbackHtml}`,
-          progressHtml({ label: t("matchProgress", 0, total), num: 0, total, done: 0 })
+          progressHtml({ label: t("matchProgress", 0, total), total, done: 0 })
         );
         $$(".eng-match-item").forEach((item) => item.addEventListener("click", () => this.pick(item)));
       },
@@ -2625,8 +2711,7 @@
           const total = st.board.pairs.length;
           const done = st.matched.size;
           $("#engProgress").setAttribute("aria-label", t("matchProgress", done, total));
-          $("#engRingNum").textContent = done;
-          $("#engRing").innerHTML = ringHtml(total, done, -1, done - 1);
+          $("#engBar").innerHTML = barHtml(total, done, -1, done - 1);
           if (done === total) this.finish();
         } else {
           // The first item picked is the one the student was trying to match.
@@ -2764,7 +2849,7 @@
       }
       runner.state = { chars, slots, tiles, placed: [] };
       const prompt = q.word
-        ? `<div class="eng-picture-box eng-picture-box--small"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><span class="eng-picture-he">${esc(q.he)}</span></div>`
+        ? `<div class="eng-picture-box eng-picture-box--small"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" />${pictureHeHtml(q)}</div>`
         : `<div class="eng-sentence" dir="ltr"><p id="engSentence">${sentenceHtml(q)}</p>${translationHtml(q)}</div>`;
       renderRunnerShell(`
         ${instructionsHtml()}
@@ -2888,7 +2973,7 @@
       // The picture would give a word away, so it shows only after the answer
       // — or as the prompt, with the Hebrew, when the browser can't speak.
       const picture = q.word
-        ? `<div class="eng-picture-box eng-picture-box--small${spoken ? " hidden" : ""}" id="engDictPic"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><span class="eng-picture-he">${esc(q.he)}</span></div>`
+        ? `<div class="eng-picture-box eng-picture-box--small${spoken ? " hidden" : ""}" id="engDictPic"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" />${pictureHeHtml(q)}</div>`
         : "";
       const prompt = spoken
         ? `<div class="eng-listen-prompt eng-dict-prompt">
@@ -2962,7 +3047,7 @@
       const others = shuffle(runner.exercise.words.map(wordItem).filter((o) => o && label(o) !== label(q)));
       const options = shuffle([q, ...others.filter((o, i) => others.findIndex((x) => label(x) === label(o)) === i).slice(0, 3)]);
       const prompt = toHe
-        ? `<div class="eng-word-prompt" dir="ltr"><span class="eng-word-big">${esc(q.en)}</span>${speakBtn(q.en)}</div>`
+        ? wordPromptHtml(q.en)
         : `<div class="eng-word-prompt"><span class="eng-word-big eng-word-big--he" dir="rtl" lang="he">${esc(q.he)}</span></div>`;
       renderRunnerShell(`
         ${instructionsHtml()}
@@ -2971,7 +3056,7 @@
           ${options
             .map(
               (o, i) =>
-                `<button type="button" class="eng-option js-answer${toHe ? " eng-option--he" : ""}" data-word="${esc(o.word)}"${toHe ? ' lang="he"' : ""}><span class="eng-option-key">${i + 1}</span>${esc(label(o))}</button>`
+                `<button type="button" class="eng-option js-answer${toHe ? " eng-option--he" : ""}" data-word="${esc(o.word)}"${toHe ? ' lang="he"' : ""}><span class="eng-option-key">${i + 1}</span>${esc(label(o))}${toHe ? "" : sayOptHtml(o.en)}</button>`
             )
             .join("")}
         </div>
@@ -3096,18 +3181,16 @@
     runner.state = { order: q.type === "mc" ? shuffle(q.options.map((_, i) => i)) : null };
   }
 
-  // One arc for the first step (reading the passage, or marking in it) plus
-  // one per question; the number in the middle is the question number (a
-  // book or a highlighter in the first step).
+  // One segment for the first step (reading the passage, or marking in it)
+  // plus one per question.
   function readingProgress() {
     const st = runner.read;
     const first = st.stage !== "questions";
     const pos = first ? 0 : 1 + runner.index;
-    const fresh = runner.ringIndex === pos ? -1 : pos - 1;
-    runner.ringIndex = pos;
+    const fresh = runner.barIndex === pos ? -1 : pos - 1;
+    runner.barIndex = pos;
     const label = first ? t(st.stage === "mark" ? "markStep" : "readStep") : t("questionNum", runner.index + 1, runner.round.length);
-    const num = first ? `<span class="eng-ring-icon">${st.stage === "mark" ? ICONS.highlighter : ICONS.reading}</span>` : runner.index + 1;
-    return progressHtml({ label, num, total: 1 + runner.round.length, done: pos, current: pos, fresh });
+    return progressHtml({ label, total: 1 + runner.round.length, done: pos, current: pos, fresh });
   }
 
   // Words can be clicked while marking, or — with "Translate words" on — to
@@ -3173,28 +3256,38 @@
           .map((g) => `<span class="eng-read-gloss"><b>${esc(g.en)}</b> = <span dir="rtl" lang="he">${esc(g.he)}</span></span>`)
           .join("")}</p>`
       : "";
-    // Marking: the passage and the task side by side (stacked on phones,
-    // where the expand button gives the passage the whole card for a
-    // moment). Otherwise one of them fills the card: the passage first, then
-    // the questions, with the passage a button away (.eng-read--paged).
+    // Like every exercise, the instruction sits above the card. The card
+    // holds one thing at a time: first the passage (with the marking count
+    // and button under it), then the questions, with the passage a button
+    // away.
     const marking = st.stage === "mark";
-    const corner = marking
-      ? `<button type="button" class="eng-read-expand" id="engReadExpand" aria-pressed="false" aria-label="${esc(t("expandText"))}" title="${esc(t("expandText"))}">${ICONS.expand}</button>`
+    const under = marking
+      ? `<div class="eng-read-mark-foot">
+          <div class="eng-read-count" id="engMarkCount" aria-live="polite"></div>
+          <button type="button" class="eng-read-reveal${markComplete() ? " hidden" : ""}" id="engMarkReveal">${esc(t("markReveal"))}</button>
+          <button type="button" class="btn btn-primary btn-candy font-cartoon eng-check${markComplete() ? "" : " hidden"}" id="engToQuestions">${esc(t("toQuestions"))}</button>
+        </div>`
       : `<div class="eng-read-go"><button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engReadGo">${esc(t(st.stage === "read" ? "toQuestions" : "backToQuestion"))}</button></div>`;
     renderRunnerShell(
-      `<div class="eng-read is-${st.stage}${marking ? "" : " eng-read--paged"}">
+      `${readingInstructionsHtml()}
+      <div class="eng-read eng-read--paged is-${st.stage}">
         <div class="eng-read-side">
           <article class="eng-read-passage" id="engReadPassage" lang="en" dir="ltr">
             <h3 class="eng-read-title">${esc(ex.passage.title)}</h3>
             <div class="${passageClass()}" id="engReadText">${passageHtml()}</div>
             ${glossary}
           </article>
-          ${corner}
+          ${under}
         </div>
         <div class="eng-read-task" id="engReadTask"></div>
       </div>`,
       readingProgress()
     );
+    if (marking) {
+      showMarkCount();
+      $("#engMarkReveal").addEventListener("click", revealMarks);
+      $("#engToQuestions").addEventListener("click", finishMarking);
+    }
     const text = $("#engReadText");
     text.addEventListener("click", (e) => {
       const tok = e.target.closest(".eng-tok[tabindex]");
@@ -3206,7 +3299,6 @@
       e.preventDefault();
       clickWord(tok);
     });
-    $("#engReadExpand")?.addEventListener("click", () => setTextOpen(!$(".eng-read").classList.contains("is-text-open")));
     $("#engReadGo")?.addEventListener("click", () => {
       if (runner.read.stage === "read") startQuestions();
       else setTextOpen(false);
@@ -3214,21 +3306,12 @@
     renderReadingTask();
   }
 
-  // Gives the passage the whole card (the task box hides), or brings the
-  // task back.
+  // While answering, swaps the question for the passage, or back.
   function setTextOpen(open) {
     const read = $(".eng-read");
     if (!read || read.classList.contains("is-text-open") === open) return;
     dict.close();
     read.classList.toggle("is-text-open", open);
-    const btn = $("#engReadExpand");
-    if (btn) {
-      btn.setAttribute("aria-pressed", String(open));
-      btn.innerHTML = open ? ICONS.collapse : ICONS.expand;
-      btn.setAttribute("aria-label", t(open ? "collapseText" : "expandText"));
-      btn.title = t(open ? "collapseText" : "expandText");
-    }
-    if (!read.classList.contains("eng-read--paged")) return;
     // Keyboard focus follows to the box that is now on screen; a question
     // waiting for a typed answer gets its cursor back.
     const input = $("#engInput");
@@ -3242,19 +3325,33 @@
     if (!box) return;
     // A new task brings the task box back if the passage was enlarged.
     setTextOpen(false);
-    if (runner.read.stage === "mark") renderMarkTask(box);
-    else if (runner.read.stage === "questions") renderQuestionTask(box);
+    if (runner.read.stage === "questions") renderQuestionTask(box);
     box.scrollTop = 0;
   }
 
   /* Marking stage */
 
+  // The count with a bar that fills as words are found. Once every word is
+  // found or shown, the closing message takes its place, so nothing below
+  // it moves.
   function markCountHtml() {
     const st = runner.read;
+    if (markComplete()) return markDoneHtml();
     const misses = st.misses.size;
     return `
-      <span class="eng-read-found">${esc(t("markFoundLabel"))} <b>${st.found.size}</b> ${esc(t("markOf", st.targets.length))}</span>
-      ${misses ? `<span class="eng-read-misses">${esc(t("markMisses", misses))}</span>` : ""}`;
+      <span class="eng-read-count-line">
+        <span class="eng-read-found">${esc(t("markFoundLabel"))} <b>${st.found.size}</b> ${esc(t("markOf", st.targets.length))}</span>
+        ${misses ? `<span class="eng-read-misses">${esc(t("markMisses", misses))}</span>` : ""}
+      </span>
+      <span class="eng-read-meter" aria-hidden="true"><i></i></span>`;
+  }
+
+  function showMarkCount() {
+    const box = $("#engMarkCount");
+    const st = runner.read;
+    box.innerHTML = markCountHtml();
+    const bar = box.querySelector(".eng-read-meter i");
+    if (bar) bar.style.width = `${(100 * st.found.size) / st.targets.length}%`;
   }
 
   function markDoneHtml() {
@@ -3263,26 +3360,25 @@
       : `<span class="eng-feedback-msg is-right">${ICONS.check}<span>${esc(t("markAllFound"))}</span></span>`;
   }
 
-  function renderMarkTask(box) {
-    const ex = runner.exercise;
-    const done = markComplete();
-    box.innerHTML = `
-      <p class="eng-read-step">${esc(t("markStep"))}</p>
-      <div class="eng-read-mark-head">
-        <p class="eng-read-instr">${esc(loc(ex.mark, "text"))}</p>
-        ${ex.mark.hint ? `<p class="eng-read-hint" dir="ltr">${esc(ex.mark.hint)}</p>` : ""}
-      </div>
-      <p class="eng-read-dict-note${prefs.words && !done ? "" : " hidden"}" id="engDictNote">${ICONS.wordMeaning}<span>${esc(t("dictMarkNote"))}</span></p>
-      <div class="eng-read-mark-foot">
-        <div class="eng-read-count" id="engMarkCount" aria-live="polite">${markCountHtml()}</div>
-        <div class="eng-read-actions">
-          <button type="button" class="eng-read-reveal${done ? " hidden" : ""}" id="engMarkReveal">${esc(t("markReveal"))}</button>
-          <button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engToQuestions"${done ? "" : " disabled"}>${esc(t("toQuestions"))}</button>
-        </div>
-      </div>
-      <div class="eng-feedback eng-read-feedback" id="engFeedback" aria-live="polite">${done ? markDoneHtml() : ""}</div>`;
-    $("#engMarkReveal").addEventListener("click", revealMarks);
-    $("#engToQuestions").addEventListener("click", finishMarking);
+  // Above the card: what to do now. While marking, the instruction comes
+  // with what to look for as chips (one phrase each, never broken across
+  // lines).
+  function readingInstructionsHtml() {
+    const st = runner.read;
+    if (st.stage !== "mark") {
+      return instrBoxHtml(`<p class="eng-instr-line">${esc(t(st.stage === "read" ? "readInstr" : "questionsInstr"))}</p>`);
+    }
+    const mark = runner.exercise.mark;
+    const hints = mark.hint ? mark.hint.split(" · ") : [];
+    const chips = hints.length
+      ? `<ul class="eng-read-chips${hints.length > 10 ? " is-many" : ""}">${hints.map((h) => `<li dir="ltr" lang="en">${esc(h)}</li>`).join("")}</ul>`
+      : "";
+    return instrBoxHtml(
+      `<p class="eng-read-instr">${mixedText(loc(mark, "text"))}</p>
+        ${chips}
+        <p class="eng-read-dict-note${prefs.words && !markComplete() ? "" : " hidden"}" id="engDictNote">${ICONS.wordMeaning}<span>${esc(t("dictMarkNote"))}</span></p>`,
+      " eng-read-instructions"
+    );
   }
 
   function markToken(btn) {
@@ -3303,7 +3399,7 @@
   }
 
   function updateMarkStatus() {
-    $("#engMarkCount").innerHTML = markCountHtml();
+    showMarkCount();
     if (!markComplete()) return;
     // Every word is found or shown: the text locks and the questions open
     // (its words still open their meaning when "Translate words" is on).
@@ -3316,8 +3412,7 @@
     }
     $("#engDictNote")?.classList.add("hidden");
     $("#engMarkReveal").classList.add("hidden");
-    $("#engToQuestions").disabled = false;
-    $("#engFeedback").innerHTML = markDoneHtml();
+    $("#engToQuestions").classList.remove("hidden");
     $("#engToQuestions").focus({ preventScroll: true });
   }
 
@@ -4011,7 +4106,7 @@
     runner.newRequest = null;
     runner.prepared = true;
     runner.index = 0;
-    runner.ringIndex = 0;
+    runner.barIndex = 0;
     runner.score = 0;
     runner.mistakes = [];
     runner.mistakeLog = [];
@@ -4030,9 +4125,9 @@
     const backLabel = back === "#" ? t("back") : t("backToTopic");
     view.innerHTML = `
       <div class="eng-runner-head">
-        <div class="eng-runner-title-row"><h2 class="font-cartoon eng-runner-title">${esc(t("reviewTitle"))}</h2></div>
-        <div class="eng-runner-bar">
+        <div class="eng-runner-top">
           <a class="eng-back" href="${esc(back)}" aria-label="${esc(backLabel)}" title="${esc(backLabel)}">${ICONS.back}</a>
+          <div class="eng-runner-title-row"><h2 class="font-cartoon eng-runner-title">${esc(t("reviewTitle"))}</h2></div>
         </div>
       </div>
       <div class="eng-runner-card eng-review-empty">
@@ -4324,29 +4419,19 @@
     });
   }
 
-  // One arc per question: answered ones filled, the current one tinted.
-  function examRingHtml() {
-    const n = runner.round.length;
-    const step = 360 / n;
-    const gap = n > 1 ? Math.min(10, 120 / n) : 0;
-    const len = ((RING_C * (step - gap)) / 360).toFixed(2);
-    const arc = (i, cls) =>
-      `<circle class="eng-ring-seg ${cls}" cx="24" cy="24" r="${RING_R}" stroke-dasharray="${len} ${RING_C.toFixed(2)}" transform="rotate(${(-90 + i * step + gap / 2).toFixed(2)} 24 24)" />`;
+  // One segment per question: answered ones filled, the current one tinted.
+  function examBarHtml() {
     const current = runner.exam.current;
-    return (
-      runner.round.map((_, i) => arc(i, "eng-ring-track")).join("") +
-      runner.round.map((_, i) => (examAnswered(i) ? arc(i, "eng-ring-fill") : i === current ? arc(i, "eng-ring-fill is-current") : "")).join("")
-    );
+    return runner.round
+      .map((_, i) => `<span class="eng-bar-seg${examAnswered(i) ? " is-done" : i === current ? " is-current" : ""}"></span>`)
+      .join("");
   }
 
   function examProgressHtml() {
     const n = runner.round.length;
     return `
       <div class="eng-progress eng-exam-progress" id="engProgress">
-        <span class="eng-ring" role="img" aria-label="${esc(t("examAnsweredOf", examAnsweredCount(), n))}">
-          <svg viewBox="0 0 48 48" aria-hidden="true">${examRingHtml()}</svg>
-          <span class="eng-ring-num" aria-hidden="true">${runner.exam.current + 1}</span>
-        </span>
+        <div class="eng-bar" role="img" aria-label="${esc(t("examAnsweredOf", examAnsweredCount(), n))}">${examBarHtml()}</div>
         <span class="eng-exam-timer${runner.exam.timed ? "" : " is-untimed"}" id="engExamTimer" role="timer">${ICONS.clock}<span id="engExamTime"></span></span>
       </div>`;
   }
@@ -4406,7 +4491,7 @@
     startExamClock();
   }
 
-  // The header ring and the question buttons, after an answer changed or
+  // The header bar and the question buttons, after an answer changed or
   // the student moved to another question.
   function refreshExamChrome() {
     const progress = $("#engProgress");
@@ -4871,7 +4956,7 @@
       // A reading question is hidden while its passage is open.
       if ($(".eng-read.is-text-open")) return;
       // Typing exercises handle their own keys inside the input.
-      if (e.target.closest?.("input, textarea, .eng-color-tool")) return;
+      if (e.target.closest?.("input, textarea, .eng-settings, .eng-instr")) return;
       if (!runner.answered && runner.exercise?.type === "letters") {
         TYPES.letters.key(e);
         return;
@@ -5213,7 +5298,7 @@
     function renderLesson() {
       const lesson = lessonFor(current.topic);
       if (!lesson) return;
-      const facts = t("lessonMeta", lesson.slides?.length || 0, durationLabel(lesson.duration));
+      const facts = `${levelLabel(lessonLevel(current.topic))} · ${t("lessonMeta", lesson.slides?.length || 0, durationLabel(lesson.duration))}`;
       const summary = loc(current.topic, "lessonSummary") || lesson.summary || "";
       root.innerHTML = `
         <div class="eng-help-backdrop" data-help-close></div>
@@ -5270,7 +5355,7 @@
           </div>
           <div class="eng-help-block">
             <h3 class="eng-help-label">${esc(t("helpWhat"))}</h3>
-            <p class="eng-help-what">${mixedText(what)}</p>
+            <p class="eng-help-what">${byLine(what, mixedText)}</p>
             ${tip ? `<p class="eng-help-tip">${mixedText(tip)}</p>` : ""}
             ${isReading ? `<p class="eng-help-tip">${mixedText(t("helpReadTools"))}</p>` : ""}
           </div>
@@ -5425,6 +5510,7 @@
       if (gameLessonReturn) forgetLessonReturn();
       showView("topic");
       renderVocabHub();
+      dockBack();
       window.scrollTo({ top: 0 });
       return;
     }
@@ -5443,20 +5529,18 @@
     } else if (topic) {
       showView("topic");
       renderTopic(topic);
+      dockBack();
     } else {
       showView("topics");
       renderTopicGrid();
       renderBoardCard();
-      renderReviewCard();
     }
     window.scrollTo({ top: 0 });
   }
 
   // The mistake bank changed (an answer, or a student's bank arriving from
-  // their file): the card on the topics page and the line on a topic's page
-  // follow.
+  // their file): the line on a topic's page follows.
   function refreshReviewLinks() {
-    if (!views.topics()?.classList.contains("hidden")) renderReviewCard();
     const slot = $("#engReviewSlot");
     if (slot && !views.topic()?.classList.contains("hidden")) {
       const topic = findTopic(decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0]);
@@ -5477,7 +5561,10 @@
   function refreshTopicStatus() {
     if (views.topic()?.classList.contains("hidden")) return;
     const topic = findTopic(decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0]);
-    if (topic) renderTopic(topic);
+    if (topic) {
+      renderTopic(topic);
+      dockBack();
+    }
   }
 
   function applyStaticLabels() {

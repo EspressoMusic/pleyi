@@ -48,9 +48,13 @@
     open: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>`,
   };
   ICONS.presentation = ICONS.lesson;
-  ICONS.download = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>`;
-
-  const VIEW_KEY = "adm-list-view";
+  ICONS.info = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke-width="1.6"/><path d="M12 11v8.5"/></svg>`;
+  ICONS.cross = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
+  ICONS.chart = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M3 20h18M6 16v-4M11 16V6M16 16v-7"/></svg>`;
+  ICONS.flag = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4h12l-2.5 4L17 12H5"/></svg>`;
+  ICONS.note = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>`;
+  ICONS.user = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`;
+  ICONS.plus = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`;
 
   // The signed-in teacher ({ name, email, photoURL }), null when signed out.
   let account = null;
@@ -58,34 +62,11 @@
   // "local" means the server has no Firestore credential, so files live in a
   // file on the server that a redeploy wipes.
   let storage = "firestore";
-  let unclaimed = 0;
   let students = [];
   let current = null;
   let historyShown = HISTORY_PAGE;
-  let listQuery = "";
-  let listSort = "recent";
-  let listView = readStored(VIEW_KEY) === "table" ? "table" : "cards";
-  // Table view: key "" keeps the server order (most recently active first).
-  let tableSort = { key: "", dir: 1 };
 
   /* ── Helpers ── */
-
-  function readStored(key) {
-    try {
-      return localStorage.getItem(key) || "";
-    } catch {
-      return "";
-    }
-  }
-
-  function saveStored(key, value) {
-    try {
-      if (value) localStorage.setItem(key, value);
-      else localStorage.removeItem(key);
-    } catch {
-      /* ignore */
-    }
-  }
 
   function esc(str) {
     return String(str ?? "")
@@ -279,31 +260,6 @@
     return Number(n || 0).toLocaleString("he-IL");
   }
 
-  // The class leaderboard as the teacher sees it — full names (students see
-  // first names and an initial).
-  function boardCardHtml() {
-    if (!window.Leaderboard) return "";
-    return `
-      <div class="adm-card adm-board">
-        <div class="adm-board-head">
-          <span class="adm-board-icon">${window.Leaderboard.icon}</span>
-          <div>
-            <h3 class="adm-h3">טבלת השיאים</h3>
-            <p class="adm-muted">כל תשובה נכונה מזכה את התלמיד בנקודות, ובתרגילים קשים יותר בנקודות רבות יותר. התלמידים רואים את הטבלה בקישור האישי שלהם, עם שם פרטי ואות ראשונה של שם המשפחה.</p>
-          </div>
-        </div>
-        <div id="admBoard"></div>
-        ${window.Leaderboard.rulesHtml()}
-      </div>`;
-  }
-
-  function bindBoard() {
-    const box = $("#admBoard");
-    if (!box) return;
-    const rows = students.map((s) => ({ name: s.name, ...pointsOf(s), isMe: false }));
-    window.Leaderboard.bind(box, rows, { limit: 10 });
-  }
-
   function tile(label, value, note = "") {
     return `
       <div class="adm-tile">
@@ -374,7 +330,6 @@
       const data = await api("/api/admin/students");
       students = data.students || [];
       storage = data.storage || "firestore";
-      unclaimed = data.unclaimed || 0;
       renderList();
     } catch (e) {
       if (account) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
@@ -385,8 +340,7 @@
     return ["localhost", "127.0.0.1"].includes(location.hostname);
   }
 
-  // Shown above the list: a warning while the server can't keep files for
-  // good, and the one-time claim of files opened before Google sign-in.
+  // Shown above the list: a warning while the server can't keep files for good.
   function listNotices() {
     const parts = [];
     if (storage === "local" && !isLocalHost()) {
@@ -396,519 +350,264 @@
           <p>השרת עדיין לא מחובר למסד הנתונים של Firebase, ולכן התיקים נשמרים רק בקובץ זמני על השרת ועלולים להימחק בעדכון הבא של האתר. כדי שיישמרו לתמיד צריך להגדיר בשרת את <code dir="ltr">FIREBASE_SERVICE_ACCOUNT</code>.</p>
         </div>`);
     }
-    if (unclaimed) {
-      parts.push(`
-        <form class="adm-card adm-claim" id="admClaimForm">
-          <h3 class="adm-h3">${unclaimed === 1 ? "יש תיק אחד" : `יש ${unclaimed} תיקים`} מלפני הכניסה עם Google</h3>
-          <p class="adm-muted">הזינו את קוד המורה כדי לצרף אותם לחשבון שלכם. אחרי הצירוף הם יופיעו כאן עם כל ההתקדמות שנשמרה בהם.</p>
-          <div class="adm-claim-row">
-            <label class="adm-field">
-              <span>קוד מורה</span>
-              <input type="password" id="admClaimPin" required autocomplete="current-password" dir="ltr" />
-            </label>
-            <button type="submit" class="btn btn-primary btn-candy adm-create-btn">צירוף התיקים</button>
-          </div>
-        </form>`);
-    }
     return parts.join("");
-  }
-
-  function filteredStudents() {
-    const q = listQuery.trim().toLowerCase();
-    return students.filter((s) => !q || [s.name, s.grade].some((v) => String(v || "").toLowerCase().includes(q)));
-  }
-
-  function sortedStudents() {
-    const list = filteredStudents();
-    if (listSort === "name") return list.sort((a, b) => a.name.localeCompare(b.name, "he"));
-    if (listSort === "avg") return list.sort((a, b) => (summarize(b).avg ?? -1) - (summarize(a).avg ?? -1));
-    if (listSort === "points") return list.sort((a, b) => pointsOf(b).total - pointsOf(a).total);
-    return list;
   }
 
   function renderList() {
     const view = $("#admListView");
-    const weekAgo = Date.now() - 7 * DAY_MS;
-    const activeWeek = students.filter((s) => s.lastActive && new Date(s.lastActive).getTime() >= weekAgo).length;
-    const openHomework = students.reduce((n, s) => n + (s.homework || []).filter((hw) => !hw.doneAt).length, 0);
-
     view.innerHTML = `
       <div class="adm-page-head">
         <h2 class="adm-h1">התלמידים שלי</h2>
-        <p class="adm-muted">פותחים תיק לכל תלמיד ושולחים לו את הקישור האישי. כל מה שהוא פותר דרך הקישור נשמר בתיק — התלמיד לא צריך להירשם.</p>
       </div>
 
       ${listNotices()}
 
-      <form class="adm-card adm-create" id="admCreateForm">
-        <h3 class="adm-h3">פתיחת תיק חדש</h3>
+      ${foldToggleHtml("admAddToggle", "admCreateForm", ICONS.plus, "הוספת תלמיד")}
+
+      <form class="adm-card adm-create hidden" id="admCreateForm">
+        <div class="adm-fold-head">
+          <h3 class="adm-h3">הוספת תלמיד</h3>
+          ${foldCloseHtml()}
+        </div>
         <div class="adm-create-row">
           <label class="adm-field">
             <span>שם התלמיד</span>
-            <input type="text" id="admNewName" maxlength="80" required placeholder="למשל: נועה כהן" />
+            <input type="text" id="admNewName" maxlength="80" required placeholder="למשל: יוסי כהן" />
           </label>
           <label class="adm-field">
-            <span>כיתה / רמה (לא חובה)</span>
-            <input type="text" id="admNewGrade" maxlength="60" placeholder="למשל: כיתה ד׳" />
+            <span>מספר תלמיד</span>
+            <input type="text" id="admNewNumber" inputmode="numeric" pattern="[0-9]{1,6}" maxlength="6" required value="${nextNumber()}" />
           </label>
-          <button type="submit" class="btn btn-primary btn-candy adm-create-btn">פתיחת תיק</button>
+          <button type="submit" class="btn btn-primary btn-candy adm-create-btn">הוספה</button>
         </div>
       </form>
 
-      ${
-        students.length
-          ? `<div class="adm-tiles adm-tiles--3">
-              ${tile("תלמידים", students.length)}
-              ${tile("פעילים בשבוע האחרון", activeWeek)}
-              ${tile("שיעורי בית שממתינים", openHomework)}
-            </div>
-            ${boardCardHtml()}
-            <div class="adm-list-tools">
-              <label class="adm-search">
-                <span class="adm-sr">חיפוש תלמיד</span>
-                <input type="search" id="admSearch" placeholder="חיפוש לפי שם או כיתה" value="${esc(listQuery)}" />
-              </label>
-              <div class="adm-view-toggle" role="group" aria-label="תצוגת הרשימה">
-                <button type="button" data-view="cards" aria-pressed="${listView === "cards"}">כרטיסים</button>
-                <button type="button" data-view="table" aria-pressed="${listView === "table"}">טבלה</button>
-              </div>
-              <label class="adm-sort${listView === "table" ? " hidden" : ""}" id="admSortWrap">
-                <span>מיון:</span>
-                <select id="admSort">
-                  <option value="recent"${listSort === "recent" ? " selected" : ""}>פעילות אחרונה</option>
-                  <option value="name"${listSort === "name" ? " selected" : ""}>שם</option>
-                  <option value="avg"${listSort === "avg" ? " selected" : ""}>ציון ממוצע</option>
-                  <option value="points"${listSort === "points" ? " selected" : ""}>נקודות</option>
-                </select>
-              </label>
-            </div>
-            <div class="adm-students" id="admStudents"></div>`
-          : `<div class="adm-card adm-empty">
-              <h3 class="adm-h3">עוד אין תיקים</h3>
-              <p>פתחו תיק לתלמיד הראשון בטופס שלמעלה, ואז שלחו לו את הקישור שלו.</p>
-            </div>`
-      }`;
+      ${students.length ? `<div class="adm-students">${students.map(studentCardHtml).join("")}</div>` : ""}`;
 
-    renderStudentRows();
-    bindBoard();
+    bindFold($("#admAddToggle"), $("#admCreateForm"), "#admNewName");
+
     $("#admCreateForm").addEventListener("submit", (e) => {
       e.preventDefault();
       withBusy(e.submitter, async () => {
         const { student } = await api("/api/admin/students", {
           method: "POST",
-          body: { name: $("#admNewName").value, grade: $("#admNewGrade").value },
+          body: { name: $("#admNewName").value, number: $("#admNewNumber").value },
         });
         students = [student, ...students];
-        showToast("התיק נפתח — עכשיו אפשר לתת שיעורי בית ולשלוח את הקישור");
+        showToast("התלמיד נוסף — עכשיו אפשר לתת שיעורי בית ולשלוח את הקישור");
         location.hash = encodeURIComponent(student.id);
       });
     });
-    $("#admClaimForm")?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      withBusy(e.submitter, async () => {
-        const { claimed } = await api("/api/admin/students/claim", {
-          method: "POST",
-          headers: { "X-Teacher-Pin": $("#admClaimPin").value.trim() },
-        });
-        showToast(!claimed ? "אין תיקים לצרף" : claimed === 1 ? "תיק אחד צורף לחשבון שלכם" : `${claimed} תיקים צורפו לחשבון שלכם`);
-        loadList();
-      });
-    });
-    $("#admSearch")?.addEventListener("input", (e) => {
-      listQuery = e.target.value;
-      renderStudentRows();
-    });
-    $("#admSort")?.addEventListener("change", (e) => {
-      listSort = e.target.value;
-      renderStudentRows();
-    });
-    $$(".adm-view-toggle [data-view]").forEach((btn) =>
+
+    $$("[data-student-info]", view).forEach((btn) =>
       btn.addEventListener("click", () => {
-        listView = btn.dataset.view;
-        saveStored(VIEW_KEY, listView);
-        $$(".adm-view-toggle [data-view]").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-        $("#admSortWrap").classList.toggle("hidden", listView === "table");
-        renderStudentRows();
+        const s = students.find((st) => st.id === btn.dataset.studentInfo);
+        if (s) studentInfo.open(s, btn);
       })
     );
   }
 
-  function renderStudentRows() {
-    const box = $("#admStudents");
-    if (!box) return;
-    const list = listView === "table" ? filteredStudents() : sortedStudents();
-    if (!list.length) {
-      box.innerHTML = `<p class="adm-muted adm-no-match">לא נמצאו תלמידים לחיפוש הזה.</p>`;
-      return;
-    }
-    if (listView === "table") {
-      renderTable(box, list);
-      return;
-    }
-    box.innerHTML = list
-      .map((s) => {
-        const sum = summarize(s);
-        const open = sum.hwTotal - sum.hwDone;
-        return `
-          <a class="adm-student" href="#${encodeURIComponent(s.id)}">
-            ${avatarHtml(s)}
-            <span class="adm-student-id">
-              <span class="adm-student-name">${esc(s.name)}</span>
-              <span class="adm-student-sub">${esc(s.grade || "")}</span>
-            </span>
-            <span class="adm-student-stat">
-              <span class="adm-stat-label">שיעורי בית</span>
-              <span class="adm-stat-value adm-stat-value--sm">${sum.hwTotal ? `<span dir="ltr">${sum.hwDone}/${sum.hwTotal}</span> בוצעו${open ? ` · ${open === 1 ? "אחד ממתין" : `${open} ממתינים`}` : ""}` : "לא ניתנו"}</span>
-            </span>
-            <span class="adm-student-stat adm-student-progress">
-              <span class="adm-stat-label">תרגילים שהושלמו</span>
-              <span class="adm-stat-value"><span dir="ltr">${sum.completed}/${TOTAL_EXERCISES}</span></span>
-              ${meterHtml(sum.completed, TOTAL_EXERCISES, `${sum.completed} מתוך ${TOTAL_EXERCISES} תרגילים`)}
-            </span>
-            <span class="adm-student-stat">
-              <span class="adm-stat-label">ציון ממוצע</span>
-              <span class="adm-stat-value">${sum.avg == null ? "—" : `${sum.avg}%`}</span>
-            </span>
-            <span class="adm-student-stat">
-              <span class="adm-stat-label">נקודות</span>
-              <span class="adm-stat-value">${fmtNum(pointsOf(s).total)}</span>
-            </span>
-            <span class="adm-student-stat">
-              <span class="adm-stat-label">פעילות אחרונה</span>
-              <span class="adm-stat-value adm-stat-value--sm">${s.lastActive ? esc(relTime(s.lastActive)) : "עוד לא נכנס"}</span>
-            </span>
-            <span class="adm-student-go">${ICONS.chevron}</span>
-          </a>`;
-      })
-      .join("");
+  /* A card folded into a small rectangle until the teacher clicks it; the
+     card's [data-fold-close] button folds it back. */
+
+  function foldToggleHtml(id, panelId, icon, label) {
+    return `
+      <button type="button" class="adm-fold-toggle" id="${id}" aria-expanded="false" aria-controls="${panelId}">
+        <span class="adm-fold-icon">${icon}</span>
+        <span>${label}</span>
+      </button>`;
   }
 
-  /* ── Class table: one row per student, one column per topic ── */
+  function foldCloseHtml() {
+    return `<button type="button" class="adm-info-close" data-fold-close aria-label="סגירה">${ICONS.cross}</button>`;
+  }
 
-  // A topic's standing for one student: full rounds done there and their average best score.
-  function topicStats(s, topic) {
-    const best = s.best || {};
-    const recs = (topic.exercises || []).map((ex) => best[`${topic.id}/${ex.id}`]).filter(Boolean);
-    const full = recs.filter((r) => r.bestAt);
-    return {
-      done: full.length,
-      count: topic.exercises?.length || 0,
-      avg: full.length ? Math.round(full.reduce((n, r) => n + pct(r.score, r.total), 0) / full.length) : null,
-      started: recs.length > 0,
+  // The listener sits on the panel itself, so a close button in content
+  // that gets re-rendered (a new link) keeps working.
+  function bindFold(toggle, panel, focusSel) {
+    const setOpen = (open) => {
+      toggle.classList.toggle("hidden", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      panel.classList.toggle("hidden", !open);
+      (open ? $(focusSel, panel) : toggle).focus();
     };
-  }
-
-  // The topic of the exercise the student practiced most recently.
-  function lastTopicTitle(s) {
-    let latest = null;
-    Object.entries(s.best || {}).forEach(([key, rec]) => {
-      if (rec.lastAt && (!latest || rec.lastAt > latest.rec.lastAt)) latest = { key, rec };
-    });
-    if (!latest) return "";
-    const topicId = latest.key.split("/")[0];
-    return TOPICS.find((tp) => tp.id === topicId)?.title || latest.rec.topicTitle || "";
-  }
-
-  function tableRow(s) {
-    const today = todayKey();
-    return {
-      s,
-      sum: summarize(s),
-      late: (s.homework || []).filter((hw) => !hw.doneAt && hw.dueDate && hw.dueDate < today).length,
-      lastTopic: lastTopicTitle(s),
-      topics: TOPICS.map((topic) => topicStats(s, topic)),
-    };
-  }
-
-  const TABLE_SORTS = {
-    name: (r) => r.s.name,
-    active: (r) => (r.s.lastActive ? new Date(r.s.lastActive).getTime() : null),
-    hw: (r) => (r.sum.hwTotal ? r.sum.hwDone / r.sum.hwTotal : null),
-    done: (r) => r.sum.completed,
-    avg: (r) => r.sum.avg,
-  };
-
-  function sortValue(r, key) {
-    return key.startsWith("topic:") ? r.topics[Number(key.slice(6))].avg : TABLE_SORTS[key](r);
-  }
-
-  // Empty values (never active, no homework, topic not practiced) stay last either way.
-  function sortTableRows(rows) {
-    const { key, dir } = tableSort;
-    if (!key) return rows;
-    return [...rows].sort((a, b) => {
-      const va = sortValue(a, key);
-      const vb = sortValue(b, key);
-      if (va == null || vb == null) return (va == null) - (vb == null);
-      return (typeof va === "string" ? va.localeCompare(vb, "he") : va - vb) * dir;
+    toggle.addEventListener("click", () => setOpen(true));
+    panel.addEventListener("click", (e) => {
+      if (e.target.closest("[data-fold-close]")) setOpen(false);
     });
   }
 
-  function sortTh(key, label, cls = "") {
-    const sorted = tableSort.key === key;
+  // The create form suggests the number after the highest one in the list.
+  function nextNumber() {
+    return Math.max(0, ...students.map((s) => s.number || 0)) + 1;
+  }
+
+  /* One card per student with their overall score; its "i" dialog lists the
+     exercises they solved and the mistakes still open in their review bank. */
+
+  const CARD_EXERCISES = 5;
+  const CARD_MISTAKES = 4;
+  const EXERCISE_TITLES = new Map(TOPICS.flatMap((topic) => (topic.exercises || []).map((ex) => [`${topic.id}/${ex.id}`, ex.title])));
+
+  // Full rounds only, most recently practiced first.
+  function solvedExercises(s) {
+    return Object.entries(s.best || {})
+      .filter(([, e]) => e.bestAt)
+      .sort(([, a], [, b]) => String(b.lastAt || b.bestAt).localeCompare(String(a.lastAt || a.bestAt)))
+      .map(([key, e]) => ({ title: EXERCISE_TITLES.get(key) || e.title || key, score: e.score, total: e.total }));
+  }
+
+  // The list brings a preview of the bank ({ count, entries }); a file opened
+  // since then brings all of it.
+  function openMistakes(s) {
+    const entries = [...(s.review?.entries || [])].sort(
+      (a, b) => (b.wrong || 0) - (a.wrong || 0) || String(b.wrongAt || "").localeCompare(String(a.wrongAt || ""))
+    );
+    return { count: s.review?.count ?? entries.length, entries: entries.slice(0, CARD_MISTAKES) };
+  }
+
+  function moreHtml(n) {
+    return n > 0 ? `<p class="adm-card-more">ועוד ${n}</p>` : "";
+  }
+
+  // The card shows only the name and the overall score; the name link
+  // stretches over the whole card, and the "i" button above it opens the rest.
+  function studentCardHtml(s) {
+    const { avg } = summarize(s);
+    const lv = avg == null ? null : level(avg);
     return `
-      <th scope="col" class="${cls}"${sorted ? ` aria-sort="${tableSort.dir > 0 ? "ascending" : "descending"}"` : ""}>
-        <button type="button" class="adm-th-btn" data-sort="${esc(key)}"><span class="adm-th-label">${label}</span><span class="adm-sort-mark" aria-hidden="true"></span></button>
-      </th>`;
-  }
-
-  // A color-coded score cell; the number in it carries the meaning on its own.
-  function heatTd(avg, sub, attrs = "", emptyLabel = "—") {
-    const cls = avg != null ? level(avg).cls : "none";
-    return `
-      <td class="adm-heat"${attrs}>
-        <span class="adm-heat-box adm-heat--${cls}">
-          <span class="adm-heat-val">${avg != null ? `${avg}%` : emptyLabel}</span>
-          ${sub ? `<span class="adm-heat-sub">${sub}</span>` : ""}
-        </span>
-      </td>`;
-  }
-
-  function studentsLabel(n) {
-    return n === 1 ? "תלמיד אחד" : `${n} תלמידים`;
-  }
-
-  function tableRowHtml(r) {
-    const { s, sum } = r;
-    const idleDays = s.lastActive ? Math.round((startOfDay(Date.now()) - startOfDay(s.lastActive)) / DAY_MS) : 0;
-    const open = sum.hwTotal - sum.hwDone;
-    const active = s.lastActive
-      ? `<span class="adm-grid-val">${esc(relTime(s.lastActive))}</span>
-         ${r.lastTopic ? `<span class="adm-grid-sub">נושא: ${esc(r.lastTopic)}</span>` : ""}
-         ${idleDays >= 7 ? pill("low", `${idleDays} ימים בלי פעילות`) : ""}`
-      : pill("none", "עוד לא נכנס");
-    const homework = sum.hwTotal
-      ? `<span class="adm-grid-val"><span dir="ltr">${sum.hwDone}/${sum.hwTotal}</span> בוצעו</span>
-         ${r.late ? pill("low", `${r.late} באיחור`) : open ? `<span class="adm-grid-sub">${open === 1 ? "אחד ממתין" : `${open} ממתינים`}</span>` : ""}`
-      : `<span class="adm-grid-sub">לא ניתנו</span>`;
-    return `
-      <tr data-id="${esc(s.id)}">
-        <th scope="row" class="adm-grid-name-col">
-          <a class="adm-grid-name" href="#${encodeURIComponent(s.id)}">${esc(s.name)}</a>
-          ${s.grade ? `<span class="adm-grid-sub">${esc(s.grade)}</span>` : ""}
-        </th>
-        <td><span class="adm-grid-stack">${active}</span></td>
-        <td><span class="adm-grid-stack">${homework}</span></td>
-        <td>
-          <span class="adm-grid-stack">
-            <span class="adm-grid-val"><span dir="ltr">${sum.completed}/${TOTAL_EXERCISES}</span></span>
-            ${meterHtml(sum.completed, TOTAL_EXERCISES, `${sum.completed} מתוך ${TOTAL_EXERCISES} תרגילים`)}
-          </span>
-        </td>
-        ${heatTd(sum.avg, sum.avg != null ? level(sum.avg).label : "")}
-        ${r.topics
-          .map((t, i) => heatTd(t.avg, t.started ? `<span dir="ltr">${t.done}/${t.count}</span>` : "", ` data-topic="${i}"`, t.started ? "התחיל" : "—"))
-          .join("")}
-      </tr>`;
-  }
-
-  function tableFootHtml(rows) {
-    const mean = (vals) => (vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null);
-    const weekAgo = Date.now() - 7 * DAY_MS;
-    const activeWeek = rows.filter((r) => r.s.lastActive && new Date(r.s.lastActive).getTime() >= weekAgo).length;
-    const hwDone = rows.reduce((n, r) => n + r.sum.hwDone, 0);
-    const hwTotal = rows.reduce((n, r) => n + r.sum.hwTotal, 0);
-    const late = rows.reduce((n, r) => n + r.late, 0);
-    const avgs = rows.map((r) => r.sum.avg).filter((v) => v != null);
-    const avg = mean(avgs);
-    return `
-      <tr>
-        <th scope="row" class="adm-grid-name-col">
-          <span class="adm-grid-val">כל הכיתה</span>
-          <span class="adm-grid-sub">${studentsLabel(rows.length)}</span>
-        </th>
-        <td><span class="adm-grid-val">${activeWeek} פעילים השבוע</span></td>
-        <td>
-          <span class="adm-grid-stack">
-            ${hwTotal ? `<span class="adm-grid-val"><span dir="ltr">${hwDone}/${hwTotal}</span> בוצעו</span>` : `<span class="adm-grid-sub">לא ניתנו</span>`}
-            ${late ? pill("low", `${late} באיחור`) : ""}
-          </span>
-        </td>
-        <td>
-          <span class="adm-grid-stack">
-            <span class="adm-grid-val"><span dir="ltr">${mean(rows.map((r) => r.sum.completed))}/${TOTAL_EXERCISES}</span></span>
-            <span class="adm-grid-sub">בממוצע לתלמיד</span>
-          </span>
-        </td>
-        ${heatTd(avg, avgs.length ? studentsLabel(avgs.length) : "")}
-        ${TOPICS.map((_, i) => {
-          const vals = rows.map((r) => r.topics[i].avg).filter((v) => v != null);
-          return heatTd(mean(vals), vals.length ? studentsLabel(vals.length) : "");
-        }).join("")}
-      </tr>`;
-  }
-
-  function topicTipHtml(s, topic) {
-    const best = s.best || {};
-    const items = (topic.exercises || []).map((ex) => {
-      const rec = best[`${topic.id}/${ex.id}`];
-      const value = rec?.bestAt
-        ? `<span dir="ltr">${rec.score}/${rec.total}</span> · ${pct(rec.score, rec.total)}%`
-        : rec
-          ? "רק תרגול טעויות"
-          : "טרם תורגל";
-      return `<li${rec?.bestAt ? "" : ` class="is-untouched"`}><span dir="auto">${esc(ex.title)}</span><span class="adm-grid-tip-val">${value}</span></li>`;
-    });
-    return `<strong>${esc(s.name)} · ${esc(topic.title)}</strong><ul>${items.join("")}</ul>`;
-  }
-
-  function renderTable(box, list) {
-    const rows = sortTableRows(list.map(tableRow));
-    box.innerHTML = `
-      <div class="adm-card adm-grid-card">
-        <div class="adm-grid-head">
-          <div>
-            <h3 class="adm-h3">מבט על כל הכיתה</h3>
-            <p class="adm-muted adm-small">הציון בכל נושא הוא ממוצע התוצאות הטובות בתרגילים שהתלמיד סיים בו. לחיצה על כותרת ממיינת את הטבלה, ולחיצה על שורה פותחת את התיק.</p>
-          </div>
-          <button type="button" class="btn btn-outline btn-candy btn-sm adm-icon-label adm-btn-white" id="admExport">${ICONS.download}<span>הורדה לאקסל</span></button>
+      <div class="adm-student">
+        ${avatarHtml(s)}
+        <a class="adm-student-link" href="#${encodeURIComponent(s.id)}">
+          <span class="adm-student-name">${esc(s.name)}</span>
+        </a>
+        <div class="adm-student-score adm-score--${lv ? lv.cls : "none"}">
+          <span class="adm-student-score-val">${avg == null ? "—" : `${avg}%`}</span>
+          <span class="adm-student-score-label">${lv ? `ציון כללי · ${lv.label}` : "ציון כללי"}</span>
         </div>
-        <ul class="adm-legend" aria-label="מקרא הצבעים">
-          <li><span class="adm-legend-swatch adm-heat--good"></span>מצוין · <span dir="ltr">90%–100%</span></li>
-          <li><span class="adm-legend-swatch adm-heat--ok"></span>טוב · <span dir="ltr">70%–89%</span></li>
-          <li><span class="adm-legend-swatch adm-heat--low"></span>לחזור על זה · <span dir="ltr">0%–69%</span></li>
-          <li><span class="adm-legend-swatch adm-heat--none"></span>טרם תורגל</li>
-        </ul>
-        <div class="adm-grid-scroll">
-          <table class="adm-grid">
-            <thead>
-              <tr>
-                ${sortTh("name", "תלמיד", "adm-grid-name-col")}
-                ${sortTh("active", "פעילות אחרונה")}
-                ${sortTh("hw", "שיעורי בית")}
-                ${sortTh("done", "תרגילים שהושלמו")}
-                ${sortTh("avg", "ציון ממוצע", "adm-grid-heat-col")}
-                ${TOPICS.map((topic, i) => sortTh(`topic:${i}`, `${esc(topic.title)}<span class="adm-th-sub">${topic.exercises?.length || 0} תרגילים</span>`, "adm-grid-heat-col")).join("")}
-              </tr>
-            </thead>
-            <tbody>${rows.map(tableRowHtml).join("")}</tbody>
-            ${rows.length > 1 ? `<tfoot>${tableFootHtml(rows)}</tfoot>` : ""}
-          </table>
-        </div>
-        <div class="adm-grid-tip hidden" id="admGridTip" role="tooltip"></div>
+        <button type="button" class="adm-info-btn" data-student-info="${esc(s.id)}" aria-haspopup="dialog" aria-label="מידע על ${esc(s.name)}" title="מידע על התלמיד">${ICONS.info}</button>
       </div>`;
-    bindTable(box, rows);
   }
 
-  function bindTable(box, rows) {
-    const card = $(".adm-grid-card", box);
-    const tip = $("#admGridTip", box);
-    const tbody = $("tbody", box);
-    const byId = new Map(rows.map((r) => [r.s.id, r]));
-    const touch = matchMedia("(hover: none)").matches;
-    let tipCell = null;
+  /* The card's "i" dialog: the student's number and last visit, the exercises
+     they solved and the mistakes still open. */
 
-    function hideTip() {
-      tipCell = null;
-      tip.classList.add("hidden");
+  function studentInfoHtml(s) {
+    const solved = solvedExercises(s);
+    const mistakes = openMistakes(s);
+    const sub = [s.number ? `מספר ${s.number}` : "", s.lastActive ? `פעילות אחרונה: ${relTime(s.lastActive)}` : "עוד לא נכנס לקישור"].filter(Boolean).join(" · ");
+    return `
+      <div class="adm-info-backdrop" data-info-close></div>
+      <div class="adm-info-card">
+        <div class="adm-info-head">
+          ${avatarHtml(s)}
+          <div class="adm-student-id">
+            <h2 class="adm-info-title" id="admInfoTitle">${esc(s.name)}</h2>
+            <span class="adm-student-sub">${esc(sub)}</span>
+          </div>
+          <button type="button" class="adm-info-close" data-info-close aria-label="סגירה">${ICONS.cross}</button>
+        </div>
+
+        <div class="adm-student-block">
+          <h4 class="adm-student-block-title">תרגילים שפתר <span class="adm-student-count">${solved.length}</span></h4>
+          ${
+            solved.length
+              ? `<ul class="adm-card-list">
+                  ${solved
+                    .slice(0, CARD_EXERCISES)
+                    .map((ex) => {
+                      const p = pct(ex.score, ex.total);
+                      return `<li class="adm-card-ex"><span class="adm-card-ex-title">${esc(ex.title)}</span>${pill(level(p).cls, `<span dir="ltr">${ex.score}/${ex.total}</span>`)}</li>`;
+                    })
+                    .join("")}
+                </ul>
+                ${moreHtml(solved.length - CARD_EXERCISES)}`
+              : `<p class="adm-card-empty">עוד לא פתר תרגילים</p>`
+          }
+        </div>
+
+        <div class="adm-student-block">
+          <h4 class="adm-student-block-title">טעויות <span class="adm-student-count${mistakes.count ? " is-low" : ""}">${mistakes.count}</span></h4>
+          ${
+            mistakes.count
+              ? `<ul class="adm-card-list">
+                  ${mistakes.entries
+                    .map(
+                      (m) => `
+                    <li class="adm-card-mistake">
+                      ${m.prompt ? `<span class="adm-card-mistake-prompt" dir="auto">${esc(m.prompt)}</span>` : ""}
+                      <span class="adm-card-mistake-answer">נכון: <strong dir="auto">${esc(m.answer)}</strong>${(m.wrong || 1) > 1 ? ` · טעה ${m.wrong} פעמים` : ""}</span>
+                    </li>`
+                    )
+                    .join("")}
+                </ul>
+                ${moreHtml(mistakes.count - mistakes.entries.length)}`
+              : `<p class="adm-card-empty">אין טעויות פתוחות</p>`
+          }
+        </div>
+
+        <a class="btn btn-primary btn-candy adm-info-go" href="#${encodeURIComponent(s.id)}" data-info-close>פתיחת התיק</a>
+      </div>`;
+  }
+
+  const studentInfo = (() => {
+    let root = null;
+    let lastFocus = null;
+
+    function build() {
+      root = document.createElement("div");
+      root.className = "adm-info hidden";
+      root.setAttribute("role", "dialog");
+      root.setAttribute("aria-modal", "true");
+      root.setAttribute("aria-labelledby", "admInfoTitle");
+      document.body.appendChild(root);
+      root.addEventListener("click", (e) => {
+        if (e.target.closest("[data-info-close]")) close(!e.target.closest(".adm-info-go"));
+      });
+      document.addEventListener("keydown", (e) => {
+        if (!isOpen()) return;
+        if (e.key === "Escape") {
+          e.preventDefault();
+          close();
+        } else if (e.key === "Tab") {
+          // Keep keyboard focus inside the dialog.
+          const items = $$("button, a[href]", $(".adm-info-card", root));
+          const first = items[0];
+          const last = items[items.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      });
     }
 
-    // The tooltip lives inside the card (not on <body>), positioned against it.
-    function showTip(cell) {
-      const r = byId.get(cell.closest("tr").dataset.id);
-      const topic = TOPICS[Number(cell.dataset.topic)];
-      if (!r || !topic) return;
-      tipCell = cell;
-      tip.innerHTML = topicTipHtml(r.s, topic);
-      tip.classList.remove("hidden");
-      const cardBox = card.getBoundingClientRect();
-      const cellBox = cell.getBoundingClientRect();
-      const left = cellBox.left + cellBox.width / 2 - cardBox.left - card.clientLeft - tip.offsetWidth / 2;
-      const above = cellBox.top - cardBox.top - card.clientTop - tip.offsetHeight - 6;
-      tip.style.left = `${Math.max(8, Math.min(card.clientWidth - tip.offsetWidth - 8, left))}px`;
-      tip.style.top = `${above >= 0 ? above : cellBox.bottom - cardBox.top - card.clientTop + 6}px`;
+    function open(s, opener) {
+      if (!root) build();
+      lastFocus = opener;
+      root.innerHTML = studentInfoHtml(s);
+      root.classList.remove("hidden");
+      document.body.classList.add("adm-info-open");
+      $(".adm-info-go", root).focus({ preventScroll: true });
     }
 
-    $("thead", box).addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-sort]");
-      if (!btn) return;
-      const key = btn.dataset.sort;
-      // Names read best A→Z; numbers highest first, latest activity first.
-      tableSort = tableSort.key === key ? { key, dir: -tableSort.dir } : { key, dir: key === "name" ? 1 : -1 };
-      renderStudentRows();
-      $(`[data-sort="${key}"]`, box)?.focus();
-    });
+    // `restoreFocus` is false when the dialog's link opens the student's file.
+    function close(restoreFocus = true) {
+      if (!isOpen()) return;
+      root.classList.add("hidden");
+      document.body.classList.remove("adm-info-open");
+      if (restoreFocus && lastFocus?.isConnected) lastFocus.focus({ preventScroll: true });
+    }
 
-    tbody.addEventListener("pointerover", (e) => {
-      if (e.pointerType === "touch") return;
-      const cell = e.target.closest("[data-topic]");
-      if (!cell) hideTip();
-      else if (cell !== tipCell) showTip(cell);
-    });
-    tbody.addEventListener("pointerleave", hideTip);
-    $(".adm-grid-scroll", box).addEventListener("scroll", hideTip, { passive: true });
+    function isOpen() {
+      return !!root && !root.classList.contains("hidden");
+    }
 
-    tbody.addEventListener("click", (e) => {
-      if (e.target.closest("a")) return;
-      const cell = e.target.closest("[data-topic]");
-      // On a touch screen a tap on a topic shows its exercises; the name opens the file.
-      if (cell && touch) {
-        if (cell === tipCell) hideTip();
-        else showTip(cell);
-        return;
-      }
-      if (String(getSelection())) return;
-      const tr = e.target.closest("tr[data-id]");
-      if (tr) location.hash = encodeURIComponent(tr.dataset.id);
-    });
-    card.addEventListener("click", (e) => {
-      if (!e.target.closest("[data-topic]")) hideTip();
-    });
-
-    $("#admExport").addEventListener("click", () => exportCsv(rows));
-  }
-
-  /* CSV for Excel: a BOM so Hebrew opens correctly, one row per student. */
-
-  function csvCell(value) {
-    let text = value == null ? "" : String(value);
-    // Keep Excel from running a typed note as a formula.
-    if (typeof value === "string" && /^[=+\-@\t\r]/.test(text)) text = `'${text}`;
-    return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
-  }
-
-  function csvDate(iso) {
-    return iso ? `${dayKey(new Date(iso))} ${fmtTime(iso)}` : "";
-  }
-
-  function exportCsv(rows) {
-    const head = [
-      "שם",
-      "כיתה / רמה",
-      "פעילות אחרונה",
-      "נושא אחרון שתורגל",
-      "שיעורי בית שניתנו",
-      "שיעורי בית שבוצעו",
-      "שיעורי בית באיחור",
-      `תרגילים שהושלמו (מתוך ${TOTAL_EXERCISES})`,
-      "ציון ממוצע (%)",
-      ...TOPICS.flatMap((topic) => [`${topic.title} — תרגילים שהושלמו (מתוך ${topic.exercises?.length || 0})`, `${topic.title} — ציון ממוצע (%)`]),
-      "איפה אנחנו עומדים",
-    ];
-    const lines = rows.map((r) => [
-      r.s.name,
-      r.s.grade || "",
-      csvDate(r.s.lastActive),
-      r.lastTopic,
-      r.sum.hwTotal,
-      r.sum.hwDone,
-      r.late,
-      r.sum.completed,
-      r.sum.avg,
-      ...r.topics.flatMap((t) => [t.done, t.avg]),
-      r.s.focus || "",
-    ]);
-    const csv = [head, ...lines].map((line) => line.map(csvCell).join(",")).join("\r\n");
-    const url = URL.createObjectURL(new Blob([`﻿${csv}`], { type: "text/csv;charset=utf-8" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `תלמידים-${todayKey()}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showToast("הקובץ ירד — אפשר לפתוח אותו באקסל");
-  }
+    return { open, close };
+  })();
 
   /* ── One file ── */
 
@@ -937,12 +636,13 @@
         ${avatarHtml(s, "adm-avatar--lg")}
         <div class="adm-profile-text">
           <h2 class="adm-h1">${esc(s.name)}</h2>
-          ${s.grade ? `<p class="adm-profile-sub">${esc(s.grade)}</p>` : ""}
+          ${s.number ? `<p class="adm-profile-sub">מספר תלמיד: ${esc(s.number)}</p>` : ""}
           <p class="adm-muted">התיק נפתח: ${esc(fmtDate(s.createdAt))} · ${s.lastActive ? `פעילות אחרונה: ${esc(relTime(s.lastActive))}` : "עוד לא נכנס לקישור"}</p>
         </div>
       </div>
 
-      <div class="adm-card adm-link-card" id="admLinkCard">${linkCardHtml(s)}</div>
+      ${foldToggleHtml("admLinkToggle", "admLinkCard", ICONS.link, "הקישור האישי")}
+      <div class="adm-card adm-link-card hidden" id="admLinkCard">${linkCardHtml(s)}</div>
 
       <div class="adm-tiles">
         ${tile("שיעורי בית שבוצעו", sum.hwTotal ? `<span dir="ltr">${sum.hwDone}/${sum.hwTotal}</span>` : "—")}
@@ -962,8 +662,12 @@
             ${homeworkFormHtml()}
             <div id="admHomework">${homeworkListHtml(s)}</div>
           </div>
-          <div class="adm-card">
-            <h3 class="adm-h3">התקדמות לפי נושא</h3>
+          ${foldToggleHtml("admTopicsToggle", "admTopicsCard", ICONS.chart, "התקדמות לפי נושא")}
+          <div class="adm-card hidden" id="admTopicsCard">
+            <div class="adm-fold-head">
+              <h3 class="adm-h3">התקדמות לפי נושא</h3>
+              ${foldCloseHtml()}
+            </div>
             ${topicsHtml(s)}
           </div>
           <div class="adm-card">
@@ -988,8 +692,12 @@
         </div>
 
         <aside class="adm-detail-side">
-          <form class="adm-card" id="admFocusForm">
-            <h3 class="adm-h3">איפה אנחנו עומדים</h3>
+          ${foldToggleHtml("admFocusToggle", "admFocusForm", ICONS.flag, "איפה אנחנו עומדים")}
+          <form class="adm-card hidden" id="admFocusForm">
+            <div class="adm-fold-head">
+              <h3 class="adm-h3">איפה אנחנו עומדים</h3>
+              ${foldCloseHtml()}
+            </div>
             <p class="adm-muted adm-card-lead">על מה עובדים עכשיו ומה השלב הבא.</p>
             <textarea id="admFocus" rows="5" placeholder="למשל: סיימנו כינויי גוף, עכשיו עוברים לפועל להיות. לחזק כתיבה.">${esc(s.focus || "")}</textarea>
             <div class="adm-form-foot">
@@ -998,8 +706,12 @@
             </div>
           </form>
 
-          <div class="adm-card">
-            <h3 class="adm-h3">יומן הערות</h3>
+          ${foldToggleHtml("admNotesToggle", "admNotesCard", ICONS.note, "יומן הערות")}
+          <div class="adm-card hidden" id="admNotesCard">
+            <div class="adm-fold-head">
+              <h3 class="adm-h3">יומן הערות</h3>
+              ${foldCloseHtml()}
+            </div>
             <form id="admNoteForm" class="adm-note-form">
               <textarea id="admNoteText" rows="3" placeholder="הערה על השיעור או על התלמיד…" required></textarea>
               <button type="submit" class="btn btn-primary btn-candy btn-sm">הוספת הערה</button>
@@ -1007,15 +719,19 @@
             <ul class="adm-notes" id="admNotes">${notesHtml(s)}</ul>
           </div>
 
-          <form class="adm-card" id="admDetailsForm">
-            <h3 class="adm-h3">פרטי התלמיד</h3>
+          ${foldToggleHtml("admDetailsToggle", "admDetailsForm", ICONS.user, "פרטי התלמיד")}
+          <form class="adm-card hidden" id="admDetailsForm">
+            <div class="adm-fold-head">
+              <h3 class="adm-h3">פרטי התלמיד</h3>
+              ${foldCloseHtml()}
+            </div>
             <label class="adm-field">
               <span>שם התלמיד</span>
               <input type="text" id="admName" maxlength="80" required value="${esc(s.name)}" />
             </label>
             <label class="adm-field">
-              <span>כיתה / רמה</span>
-              <input type="text" id="admGrade" maxlength="60" value="${esc(s.grade || "")}" placeholder="למשל: כיתה ד׳, מתחילים" />
+              <span>מספר תלמיד</span>
+              <input type="text" id="admNumber" inputmode="numeric" pattern="[0-9]{1,6}" maxlength="6" required value="${esc(s.number || "")}" />
             </label>
             <div class="adm-form-foot">
               <span></span>
@@ -1036,17 +752,18 @@
     return `
       <div class="adm-link-head">
         <span class="adm-link-icon">${ICONS.link}</span>
-        <div>
+        <div class="adm-link-text">
           <h3 class="adm-h3">הקישור האישי של ${esc(s.name)}</h3>
           <p class="adm-muted adm-small">שלחו לתלמיד את הקישור. הוא יראה בו את שיעורי הבית, וכל מה שיפתור יישמר בתיק הזה. אין צורך בהרשמה או בסיסמה.</p>
         </div>
+        ${foldCloseHtml()}
       </div>
       <div class="adm-link-row">
         <input type="text" class="adm-link-input" id="admLinkInput" value="${esc(url)}" readonly dir="ltr" aria-label="הקישור האישי" />
         <div class="adm-link-actions">
           <button type="button" class="btn btn-primary btn-candy btn-sm adm-icon-label" id="admCopyLink">${ICONS.copy}<span>העתקה</span></button>
-          <a class="btn btn-outline btn-candy btn-sm adm-icon-label adm-btn-white" href="${esc(whatsappUrl(s))}" target="_blank" rel="noopener">${ICONS.chat}<span>שליחה בוואטסאפ</span></a>
-          <a class="btn btn-outline btn-candy btn-sm adm-icon-label adm-btn-white" href="${esc(url)}" target="_blank" rel="noopener">${ICONS.open}<span>תצוגה כמו התלמיד</span></a>
+          <a class="btn btn-outline btn-candy btn-sm adm-icon-label" href="${esc(whatsappUrl(s))}" target="_blank" rel="noopener">${ICONS.chat}<span>שליחה בוואטסאפ</span></a>
+          <a class="btn btn-outline btn-candy btn-sm adm-icon-label" href="${esc(url)}" target="_blank" rel="noopener">${ICONS.open}<span>תצוגה כמו התלמיד</span></a>
         </div>
       </div>
       <button type="button" class="adm-text-btn" id="admNewKey">הקישור דלף או נשלח בטעות? יצירת קישור חדש</button>`;
@@ -1062,7 +779,12 @@
         </optgroup>`;
     }).join("");
     return `
-      <form class="adm-hw-form" id="admHwForm">
+      ${foldToggleHtml("admHwToggle", "admHwForm", ICONS.plus, "הוספת שיעורי בית")}
+      <form class="adm-hw-form hidden" id="admHwForm">
+        <div class="adm-hw-form-head">
+          <span class="adm-hw-form-title">הוספת שיעורי בית</span>
+          ${foldCloseHtml()}
+        </div>
         <label class="adm-field adm-hw-pick">
           <span>מה לתרגל</span>
           <select id="admHwPick" required>
@@ -1124,12 +846,15 @@
       if ((a.kind === "lesson" || a.kind === "presentation") && a.topicId && !opened.has(a.topicId)) opened.set(a.topicId, a.at);
     });
 
-    const blocks = TOPICS.map((topic) => {
+    // Topics the student started show first; the rest wait behind a toggle.
+    const learned = [];
+    const notLearned = [];
+    TOPICS.forEach((topic) => {
       const rows = (topic.exercises || []).map((ex) => ({ ex, rec: best[`${topic.id}/${ex.id}`] }));
       const done = rows.filter((r) => r.rec?.bestAt).length;
       const lessonSeen = opened.get(topic.id);
       const started = done || rows.some((r) => r.rec) || lessonSeen;
-      return `
+      (started ? learned : notLearned).push(`
         <details class="adm-topic"${started ? " open" : ""}>
           <summary class="adm-topic-head">
             <span class="adm-topic-title">${esc(topic.title)}</span>
@@ -1138,20 +863,30 @@
           </summary>
           ${lessonSeen ? `<p class="adm-topic-lesson">השיעור נפתח לאחרונה: ${esc(fmtDate(lessonSeen))}</p>` : ""}
           <ul class="adm-ex-list">${rows.map(({ ex, rec }) => exerciseRowHtml(ex.title, ex.type, rec)).join("")}</ul>
-        </details>`;
+        </details>`);
     });
 
     // Exercises recorded under ids that are no longer on the site.
     const known = topicExerciseKeys();
     const extra = Object.entries(best).filter(([key]) => !known.has(key));
     if (extra.length) {
-      blocks.push(`
+      learned.push(`
         <details class="adm-topic">
           <summary class="adm-topic-head"><span class="adm-topic-title">תרגילים שהוסרו מהאתר</span><span class="adm-topic-count">${extra.length}</span></summary>
           <ul class="adm-ex-list">${extra.map(([key, rec]) => exerciseRowHtml(rec.title || key, rec.type, rec)).join("")}</ul>
         </details>`);
     }
-    return blocks.join("") || `<p class="adm-muted">אין נושאים באתר.</p>`;
+    if (!learned.length && !notLearned.length) return `<p class="adm-muted">אין נושאים באתר.</p>`;
+    return `
+      ${learned.length ? learned.join("") : `<p class="adm-muted">עוד לא התחלנו אף נושא.</p>`}
+      ${notLearned.length ? `
+        <details class="adm-topics-rest">
+          <summary class="adm-fold-toggle">
+            <span class="adm-fold-icon">${ICONS.plus}</span>
+            <span>נושאים שעוד לא למדנו (${notLearned.length})</span>
+          </summary>
+          ${notLearned.join("")}
+        </details>` : ""}`;
   }
 
   function exerciseRowHtml(title, type, rec) {
@@ -1486,6 +1221,12 @@
 
   function bindStudent() {
     const id = encodeURIComponent(current.id);
+    bindFold($("#admLinkToggle"), $("#admLinkCard"), "#admCopyLink");
+    bindFold($("#admHwToggle"), $("#admHwForm"), "#admHwPick");
+    bindFold($("#admTopicsToggle"), $("#admTopicsCard"), "[data-fold-close]");
+    bindFold($("#admFocusToggle"), $("#admFocusForm"), "#admFocus");
+    bindFold($("#admNotesToggle"), $("#admNotesCard"), "#admNoteText");
+    bindFold($("#admDetailsToggle"), $("#admDetailsForm"), "#admName");
     bindLinkCard();
 
     $("#admHwForm").addEventListener("submit", (e) => {
@@ -1540,9 +1281,9 @@
       withBusy(e.submitter, async () => {
         const res = await api(`/api/admin/students/${id}`, {
           method: "PATCH",
-          body: { name: $("#admName").value, grade: $("#admGrade").value },
+          body: { name: $("#admName").value, number: $("#admNumber").value },
         });
-        Object.assign(current, { name: res.name, grade: res.grade });
+        Object.assign(current, { name: res.name, number: res.number });
         syncListEntry();
         renderStudent();
         showToast("הפרטים נשמרו");
@@ -1595,6 +1336,7 @@
   /* ── Routing ── */
 
   function route() {
+    studentInfo.close(false);
     if (!account) {
       showGate(gateError);
       gateError = "";

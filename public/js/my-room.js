@@ -3,7 +3,6 @@
 (function () {
   const catalog = window.GAMES_CATALOG;
   const contentSection = document.getElementById("myRoomContent");
-  const myRoomName = document.getElementById("myRoomName");
 
   const SECTION_CONTAINERS = {
     favorites: document.getElementById("roomListFavorites"),
@@ -122,11 +121,6 @@
   function gameName(gameId) {
     const all = catalog?.allGamesList?.() || [...(catalog?.english || []), ...(catalog?.math || [])];
     return all.find((g) => g.id === gameId)?.title || gameId;
-  }
-
-  function updateHeader(user) {
-    const name = user?.name || window.I18n?.t("myRoom.defaultUser") || "משתמש";
-    if (myRoomName) myRoomName.textContent = (window.I18n?.t("myRoom.greeting") || "שלום! {name}").replace("{name}", name);
   }
 
   function emptyMessage(section) {
@@ -283,13 +277,11 @@
   function showRoom(user) {
     currentUser = user;
     contentSection?.classList.remove("hidden");
-    updateHeader(user);
     loadData();
   }
 
   window.addEventListener("gameclass:lang", () => {
     if (!currentUser) return;
-    updateHeader(currentUser);
     renderAllSections();
   });
 

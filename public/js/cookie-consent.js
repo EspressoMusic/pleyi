@@ -23,7 +23,7 @@
 
   if (!document.querySelector('script[src*="scroll-animations"]') && !document.body.classList.contains("play-body")) {
     var scrollScript = document.createElement("script");
-    scrollScript.src = "/js/scroll-animations.js?v=4";
+    scrollScript.src = "/js/scroll-animations.js?v=5";
     scrollScript.defer = true;
     (document.head || document.documentElement).appendChild(scrollScript);
   }

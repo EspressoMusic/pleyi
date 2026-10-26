@@ -75,8 +75,8 @@
       hint: "not · no · never · nobody · nothing · don't · doesn't · isn't · aren't",
     },
     plurals: {
-      text: "סמנו בטקסט את כל שמות העצם ברבים — מילים שמתארות יותר מדבר אחד (כמו cats, boxes, children).",
-      textEn: "Mark every plural noun — a word for more than one thing (like cats, boxes, children).",
+      text: "סמנו בטקסט את כל שמות העצם ברבים — מילים שמתארות יותר מדבר אחד.",
+      textEn: "Mark every plural noun — a word for more than one thing.",
       hint: "-s · -es · -ies · children · men · women · teeth · people",
     },
     articles: {
@@ -85,33 +85,33 @@
       hint: "this · that · these · those",
     },
     progressive: {
-      text: "סמנו בטקסט את כל הפעלים בהווה מתמשך — am, is או are יחד עם הפועל עם ing.",
-      textEn: "Mark every verb in the Present Progressive — am, is, or are together with the -ing verb.",
+      text: "סמנו בטקסט את כל הפעלים בהווה מתמשך.",
+      textEn: "Mark every verb in the Present Progressive.",
       hint: "am / is / are + -ing",
     },
     possessives: {
-      text: "סמנו בטקסט את כל כינויי השייכות (כמו my, his, their) ואת כל המילים עם 's (כמו Dan's).",
-      textEn: "Mark every possessive (like my, his, their) and every word with 's (like Dan's).",
+      text: "סמנו בטקסט את כל מילות השייכות — גם מילים עם 's.",
+      textEn: "Mark every possessive — and every word with 's.",
       hint: "my · your · his · its · our · their · 's",
     },
     "there-is": {
-      text: "סמנו בטקסט את כל הצירופים There is ו-There are — גם בשאלה (Is there) וגם בשלילה (There isn't).",
-      textEn: "Mark every There is and There are — in questions (Is there) and negatives (There isn't) too.",
+      text: "סמנו בטקסט את כל הצירופים של \"יש\" ו\"אין\" — גם בשאלות.",
+      textEn: "Mark every There is and There are — in questions and negatives too.",
       hint: "There is · There are · Is there · There isn't · There aren't",
     },
     quantifiers: {
-      text: "סמנו בטקסט את כל מילות הכמות: some, any, much, many ו-a lot of.",
-      textEn: "Mark every amount word: some, any, much, many, and a lot of.",
+      text: "סמנו בטקסט את כל מילות הכמות.",
+      textEn: "Mark every amount word.",
       hint: "some · any · much · many · a lot of",
     },
     comparatives: {
-      text: "סמנו בטקסט את כל מילות ההשוואה — תארים עם er או est (כמו bigger, fastest), צירופים עם more או most, ו-better, best.",
-      textEn: "Mark every comparing word — adjectives with -er or -est (like bigger, fastest), more or most + adjective, and better, best.",
+      text: "סמנו בטקסט את כל מילות ההשוואה.",
+      textEn: "Mark every comparing word.",
       hint: "-er · -est · more … · most … · better · best",
     },
     frequency: {
-      text: "סמנו בטקסט את כל מילות התדירות: always, usually, often, sometimes, never.",
-      textEn: "Mark every frequency word: always, usually, often, sometimes, never.",
+      text: "סמנו בטקסט את כל מילות התדירות.",
+      textEn: "Mark every frequency word.",
       hint: "always · usually · often · sometimes · never",
     },
     "going-to": {
@@ -120,8 +120,8 @@
       hint: "going to",
     },
     modals: {
-      text: "סמנו בטקסט את כל המילים של חובה, איסור ועצה: must, mustn't, should, shouldn't, have to, has to.",
-      textEn: "Mark every word for rules and advice: must, mustn't, should, shouldn't, have to, has to.",
+      text: "סמנו בטקסט את כל המילים של חובה, איסור ועצה.",
+      textEn: "Mark every word for rules and advice.",
       hint: "must · mustn't · should · shouldn't · have to · has to",
     },
     calendar: {
@@ -130,8 +130,8 @@
       hint: "Sunday · Monday … · January · February …",
     },
     "telling-time": {
-      text: "סמנו בטקסט את כל השעות — כמו seven o'clock או half past three.",
-      textEn: "Mark every time — like seven o'clock or half past three.",
+      text: "סמנו בטקסט את כל השעות.",
+      textEn: "Mark every time of day.",
       hint: "o'clock · half past · quarter past · quarter to",
     },
   };
@@ -149,8 +149,8 @@
   };
 
   const IRREGULAR_ALL = {
-    text: "סמנו בטקסט את כל הפעלים בעבר שלא מסתיימים ב-ed (כמו went, saw, was).",
-    textEn: "Mark every past verb that doesn't end in -ed (like went, saw, was).",
+    text: "סמנו בטקסט את כל הפעלים בעבר שלא מסתיימים ב-ed.",
+    textEn: "Mark every past verb that doesn't end in -ed.",
     hint: "went · saw · was · took · ...",
   };
 

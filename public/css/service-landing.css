@@ -1822,3 +1822,27 @@ body.page-game-builder .svc-custom-tile:active {
     max-width: 360px;
   }
 }
+
+/* Phones: the filters sit close under the page title, and the cards close
+   under the filters, instead of a screen of empty space between them. */
+@media (max-width: 600px) {
+  body.page-ready-lessons .svc-filter-bar,
+  body.page-game-builder .svc-filter-bar,
+  body.page-worksheets .svc-filter-bar {
+    margin-bottom: 28px;
+  }
+
+  body.page-worksheets #categories.clean-section--soft {
+    padding-top: 12px !important;
+  }
+
+  body.page-worksheets section.clean-section.clean-section--hero {
+    padding-bottom: 20px;
+  }
+}
+
+/* Card titles that wrap break into even lines, so a mixed title like
+   "פועל להיות (To Be)" keeps its English part together on the second line. */
+.svc-lesson-title-wrap :is(.svc-lesson-name, .svc-lesson-part) {
+  text-wrap: balance;
+}

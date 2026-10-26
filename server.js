@@ -70,8 +70,9 @@ app.get("/games", (_req, res) => {
   res.redirect(302, "/room");
 });
 
+// The teacher's page is the students list for now (my-room.html is kept for later).
 app.get("/my-room", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "my-room.html"));
+  res.redirect(302, "/admin/students");
 });
 
 app.get("/lesson-plans", (_req, res) => {
@@ -397,7 +398,7 @@ studentAdmin.get("/", studentRoute(async (req) => ({
 })));
 
 studentAdmin.post("/", studentRoute(async (req) => ({
-  student: await studentProgress.createStudent({ uid: req.uid, email: req.userEmail }, pick(req.body, ["name", "grade"])),
+  student: await studentProgress.createStudent({ uid: req.uid, email: req.userEmail }, pick(req.body, ["name", "number"])),
 })));
 
 // Files opened before Google sign-in have no owner; the teacher PIN proves
@@ -417,7 +418,7 @@ studentAdmin.get("/:id", studentRoute(async (req) => {
 }));
 
 studentAdmin.patch("/:id", studentRoute((req) =>
-  studentProgress.updateDetails(req.uid, req.params.id, pick(req.body, ["name", "grade", "focus"]))
+  studentProgress.updateDetails(req.uid, req.params.id, pick(req.body, ["name", "number", "focus"]))
 ));
 
 studentAdmin.delete("/:id", studentRoute(async (req) => {

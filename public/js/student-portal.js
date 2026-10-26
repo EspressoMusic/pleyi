@@ -1,6 +1,7 @@
-/* Student homework page (/s/<key>) — the personal link the teacher sends.
-   Shows the student's homework; opening it links this device to the
-   student's file, so whatever they solve on the site is saved there. */
+/* Student page (/s/<key>) — the personal link the teacher sends.
+   Shows the student's name on top, their homework and their progress;
+   opening it links this device to the student's file, so whatever they
+   solve on the site is saved there. */
 
 (function () {
   const app = document.getElementById("stuApp");
@@ -8,6 +9,10 @@
 
   const ICONS = {
     check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>`,
+    star: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9L12 2.8Z"/></svg>`,
+    target: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>`,
+    clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+    chevron: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`,
   };
 
   function esc(str) {
@@ -26,6 +31,26 @@
   function fmtDue(day) {
     const [y, m, d] = day.split("-").map(Number);
     return new Date(y, m - 1, d).toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" });
+  }
+
+  function fmtDay(iso) {
+    const d = new Date(iso);
+    const day = (x) => `${x.getFullYear()}-${x.getMonth()}-${x.getDate()}`;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (day(d) === day(new Date())) return "היום";
+    if (day(d) === day(yesterday)) return "אתמול";
+    return d.toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" });
+  }
+
+  function fmtNum(n) {
+    return Number(n || 0).toLocaleString("he-IL");
+  }
+
+  // Same thresholds as the stars on the exercise results screen.
+  function starsFor(score, total) {
+    const ratio = total ? score / total : 0;
+    return ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
   }
 
   function exerciseUrl(hw) {
@@ -59,7 +84,92 @@
       </li>`;
   }
 
+  // The student's name in the page header, so it is the first thing they see.
+  function renderMe(name) {
+    const me = document.getElementById("stuMe");
+    if (!me) return;
+    if (!name) {
+      me.hidden = true;
+      me.innerHTML = "";
+      return;
+    }
+    me.innerHTML = `
+      <span class="stu-me-avatar" aria-hidden="true">${esc(Array.from(name.trim())[0] || "")}</span>
+      <span class="stu-me-name">${esc(name)}</span>`;
+    me.hidden = false;
+    document.title = `${name} — Pleyi`;
+  }
+
+  function statTile({ icon, value, label, sub = "", id = "" }) {
+    return `
+      <li class="stu-stat">
+        <span class="stu-stat-icon">${icon}</span>
+        <span class="stu-stat-value"${id ? ` id="${id}"` : ""} dir="ltr">${esc(value)}</span>
+        <span class="stu-stat-label">${esc(label)}</span>
+        ${sub ? `<span class="stu-stat-sub">${esc(sub)}</span>` : ""}
+      </li>`;
+  }
+
+  function starsHtml(score, total) {
+    const stars = starsFor(score, total);
+    return `<span class="stu-ex-stars" role="img" aria-label="${stars} כוכבים מתוך 3">${[0, 1, 2]
+      .map((i) => `<span${i < stars ? ` class="is-on"` : ""}>${ICONS.star}</span>`)
+      .join("")}</span>`;
+  }
+
+  function topicHtml(topic, index) {
+    const count = topic.exercises.length;
+    const rows = topic.exercises
+      .map(
+        (ex) => `
+          <li class="stu-ex">
+            <span class="stu-ex-title">${esc(ex.title)}</span>
+            ${starsHtml(ex.score, ex.total)}
+            <span class="stu-ex-score" dir="ltr">${ex.score}/${ex.total}</span>
+          </li>`
+      )
+      .join("");
+    return `
+      <details class="stu-topic"${index === 0 ? " open" : ""}>
+        <summary>
+          <span class="stu-topic-title">${esc(topic.title)}</span>
+          <span class="stu-topic-count">${count === 1 ? "תרגיל אחד" : `${count} תרגילים`}</span>
+          <span class="stu-topic-chevron">${ICONS.chevron}</span>
+        </summary>
+        <ul class="stu-ex-list">${rows}</ul>
+      </details>`;
+  }
+
+  // "My progress": running totals and the best score of every exercise the
+  // student finished, by topic. Files from before points existed have no
+  // points yet — renderBoard fills them in from the leaderboard.
+  function progressHtml(p) {
+    if (!p) return "";
+    const started = p.finished || p.rounds || p.games || p.lessons;
+    const minutes = p.practiceMin || 0;
+    const time = minutes < 60
+      ? { value: fmtNum(minutes), label: "דקות תרגול" }
+      : { value: fmtNum(Math.round(minutes / 6) / 10), label: "שעות תרגול" };
+    const body = !started
+      ? `<p class="stu-mine-empty">עוד לא תרגלת. כל תרגיל שתסיים יופיע כאן — עם הציון הכי טוב שלך.</p>`
+      : `
+        <ul class="stu-stats">
+          ${statTile({ icon: ICONS.star, value: p.points ? fmtNum(p.points.total) : "…", label: "נקודות", sub: p.points?.week ? `השבוע: ${fmtNum(p.points.week)}` : "", id: "stuStatPoints" })}
+          ${statTile({ icon: ICONS.check, value: fmtNum(p.finished), label: p.finished === 1 ? "תרגיל הושלם" : "תרגילים הושלמו" })}
+          ${statTile({ icon: ICONS.target, value: p.average == null ? "—" : `${p.average}%`, label: "ציון ממוצע" })}
+          ${statTile({ icon: ICONS.clock, value: time.value, label: time.label })}
+        </ul>
+        ${p.topics?.length ? `<h3 class="stu-mine-sub">התרגילים שסיימתי</h3><div class="stu-topics">${p.topics.map(topicHtml).join("")}</div>` : ""}`;
+    return `
+      <section class="stu-mine" id="progress" aria-labelledby="stuMineTitle">
+        <h2 class="stu-mine-title" id="stuMineTitle">ההתקדמות שלי</h2>
+        ${p.lastActive ? `<p class="stu-mine-last">תרגלת לאחרונה: <b>${esc(fmtDay(p.lastActive))}</b></p>` : ""}
+        ${body}
+      </section>`;
+  }
+
   function render(student) {
+    renderMe(student.name);
     const list = sorted(student.homework || []);
     const done = list.filter((hw) => hw.doneAt).length;
     const open = list.length - done;
@@ -81,6 +191,7 @@
             <ol class="stu-hw-list">${list.map(homeworkCard).join("")}</ol>`
           : ""
       }
+      ${progressHtml(student.progress)}
       <div id="stuReview"></div>
       <section class="stu-board" id="stuBoard" aria-labelledby="stuBoardTitle">
         <div class="stu-board-head">
@@ -98,6 +209,9 @@
       </div>`;
     renderBoard();
     renderReview();
+    // The "my progress" link on the exercise screen lands here (#progress),
+    // but the section didn't exist yet when the browser looked for it.
+    if (location.hash === "#progress") document.getElementById("progress")?.scrollIntoView();
   }
 
   // The questions waiting in the student's mistake bank (mistake-bank.js).
@@ -130,11 +244,14 @@
       const rank = 1 + data.rows.filter((row) => row.total > me.total).length;
       const points = me.total === 1 ? "נקודה אחת" : `${me.total.toLocaleString("he-IL")} נקודות`;
       document.getElementById("stuBoardMe").innerHTML = `יש לך <b>${esc(points)}</b>${me.total ? ` · מקום <b>${rank}</b> בכיתה` : ""}`;
+      const stat = document.getElementById("stuStatPoints");
+      if (stat) stat.textContent = fmtNum(me.total);
     }
     window.Leaderboard.bind(body, data.rows, { limit: 10 });
   }
 
   function renderInvalid() {
+    renderMe("");
     app.innerHTML = `
       <h1 class="stu-hello">אופס!</h1>
       <p class="stu-lead">הקישור הזה לא תקין או שכבר לא פעיל. בקשו מהמורה קישור חדש.</p>`;

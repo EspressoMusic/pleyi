@@ -3211,7 +3211,7 @@
           type: "content",
           title: "**אותיות** ו**צלילים**",
           subtitle: "פתיחה",
-          body: "באנגלית יש 26 אותיות, ולכל אות יש שם וגם צליל.\n\nכשאומרים את הצלילים של האותיות אחד אחרי השני — קוראים מילה:\nc, a, t — cat\n\nהיום נכיר את האותיות, את התנועות — הניקוד של האנגלית — ונתחיל לקרוא מילים.",
+          body: "באנגלית יש 26 אותיות.\nלכל אות יש צליל.\n\nמחברים צלילים — ומקבלים מילה:\nc, a, t — cat",
         },
         {
           type: "content",
@@ -3220,10 +3220,9 @@
           items: [
             { en: "letter", he: "אות" },
             { en: "sound", he: "צליל" },
-            { en: "capital letter", he: "אות גדולה — למשל A" },
-            { en: "small letter", he: "אות קטנה — למשל a" },
-            { en: "vowel", he: "תנועה — a, e, i, o, u" },
-            { en: "consonant", he: "עיצור — כל שאר האותיות" },
+            { en: "capital letter", he: "אות גדולה (A)" },
+            { en: "small letter", he: "אות קטנה (a)" },
+            { en: "vowel", he: "תנועה (a, e, i, o, u)" },
             { en: "word", he: "מילה" },
             { en: "read", he: "לקרוא" },
           ],
@@ -3232,20 +3231,37 @@
           type: "content",
           title: "ה-**ABC**",
           subtitle: "26 אותיות",
-          body: "אלה כל האותיות באנגלית, לפי הסדר:\nA B C D E F G H I J K L M\nN O P Q R S T U V W X Y Z\n\nלכל אות יש צורה גדולה וצורה קטנה:\nA a, B b, C c, D d\n\nאות גדולה כותבים בתחילת משפט ובשמות של אנשים ומקומות:\nDanny lives in Israel.",
+          body: "אלה כל האותיות:\nA B C D E F G H I J K L M\nN O P Q R S T U V W X Y Z",
+        },
+        {
+          type: "content",
+          title: "אות **גדולה**, אות **קטנה**",
+          subtitle: "שתי צורות",
+          body: "לכל אות יש שתי צורות:\nA a, B b, C c, D d\n\nבשם של ילד או מקום — אות גדולה:\nDanny lives in Israel.",
         },
         {
           type: "content",
           title: "**שם** האות ו**צליל** האות",
-          subtitle: "שני דברים שונים",
-          body: "לכל אות יש שם — איך שקוראים לה ב-ABC — ויש לה צליל — איך שהיא נשמעת בתוך מילה.\n\nלאות b קוראים \"בִּי\", אבל בתוך מילה היא נשמעת \"בּ\":\nball, book, banana\n\nלאות m קוראים \"אֶם\", אבל בתוך מילה היא נשמעת \"מ\":\nmoon, milk, mom",
+          subtitle: "שני דברים",
+          body: "לאות b קוראים \"בִּי\".\nבתוך מילה היא עושה \"בּ\":\nball, book, banana\n\nלאות m קוראים \"אֶם\".\nבתוך מילה היא עושה \"מ\":\nmoon, milk, mom",
         },
-        { type: "content", title: "באיזו **אות** מתחילה כל מילה?", subtitle: "הצליל הראשון", pictures: vocabPictures("ball", "cat", "dog", "fish", "sun") },
         {
           type: "content",
-          title: "**התנועות** — הניקוד של האנגלית",
+          title: "באיזו **אות** מתחילה כל מילה?",
+          subtitle: "הצליל הראשון",
+          pictures: [
+            { en: "ball", he: "כדור", img: "/images/english/vocab/ball.svg" },
+            { en: "cat", he: "חתול", img: "/images/english/vocab/cat.svg" },
+            { en: "dog", he: "כלב", img: "/images/english/vocab/dog.svg" },
+            { en: "fish", he: "דג", img: "/images/english/vocab/fish.svg" },
+            { en: "sun", he: "שמש", img: "/images/english/vocab/sun.svg" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**התנועות**",
           subtitle: "a, e, i, o, u",
-          body: "בעברית מסמנים את התנועות בניקוד — סימנים קטנים מתחת לאותיות ומעליהן.\nבאנגלית אין ניקוד — התנועות הן חמש אותיות רגילות בתוך המילה:\na e i o u\n\nכמעט בכל מילה באנגלית יש לפחות תנועה אחת — היא נותנת למילה את הצליל שלה.\nכל שאר האותיות נקראות עיצורים.",
+          body: "חמש אותיות מיוחדות:\na e i o u\n\nהן כמו הניקוד בעברית.\nכמעט בכל מילה יש אחת מהן.",
         },
         {
           type: "content",
@@ -3263,25 +3279,35 @@
           type: "content",
           title: "קוראים **מילה**",
           subtitle: "מחברים צלילים",
-          body: "כדי לקרוא מילה, אומרים את הצליל של כל אות — ומחברים אותם יחד:\nc, a, t — cat\nd, o, g — dog\ns, u, n — sun\n\nמחליפים תנועה אחת — ומקבלים מילה חדשה:\nhat, hit, hot\npan, pen, pin",
+          body: "אומרים צליל ועוד צליל:\nd, o, g — dog\ns, u, n — sun\n\nמחליפים אות אחת — ויש מילה חדשה:\nhat, hit, hot",
         },
         {
           type: "content",
           title: "שתי אותיות — **צליל אחד**",
-          subtitle: "עובדה מעניינת",
-          body: "לפעמים שתי אותיות ביחד עושות צליל חדש אחד:\nsh — fish, shoe\nch — chair, lunch\nth — three, mother\n\nכשרואים את הזוגות האלה במילה — קוראים אותם כצליל אחד.",
+          subtitle: "sh, ch, th",
+          body: "לפעמים שתי אותיות עושות צליל אחד:\nsh — fish, shoe\nch — chair, lunch\nth — three, bath",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: להתבלבל בין b ל-d. טיפ: במילה bed האותיות נראות כמו מיטה — ה-b בצד אחד וה-d בצד השני:\nbed\n\nטעות נוספת: לקרוא את שמות האותיות במקום הצלילים שלהן. במילה cat לא אומרים \"סִי-אֵי-טִי\" — אומרים את הצלילים ומחברים:\ncat",
+          body: "האותיות b ו-d נראות דומה.\nבמילה bed הן כמו מיטה:\nbed\n\nלא קוראים את שמות האותיות.\nקוראים צלילים ומחברים:\ncat",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "המילה dog — באיזו אות היא מתחילה?", options: ["b", "d", "g"], answer: 1 },
+            { q: "איזו אות היא תנועה?", options: ["m", "a", "t"], answer: 1 },
+            { q: "מחברים s, u, n — מה יוצא?", options: ["sun", "bus", "nut"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "באיזו אות מתחיל השם שלכם באנגלית? איזה צליל היא עושה?\n\nבמה, לדעתכם, קריאה באנגלית שונה מקריאה בעברית?",
+          body: "באיזו אות מתחיל השם שלכם באנגלית? איזה צליל היא עושה?\n\nמה שונה בקריאה באנגלית מקריאה בעברית?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -3411,7 +3437,7 @@
           type: "content",
           title: "מה זה **כינוי גוף**?",
           subtitle: "פתיחה",
-          body: "כינוי גוף (Pronoun) הוא מילה קטנה שמחליפה שם של אדם, חיה או דבר — כדי שלא נצטרך לחזור על אותו שם שוב ושוב.\n\nבמקום להגיד את זה שוב ושוב:\nDanny is happy. Danny is playing. Danny is eating.\nאפשר להגיד:\nDanny is happy. He is playing. He is eating.\n\nהיום נכיר את שבעת כינויי הגוף באנגלית:\nI, you, he, she, it, we, they",
+          body: "מילה קטנה שבאה במקום שם.\n\nבמקום:\nDanny is happy. Danny is playing.\nאומרים:\nDanny is happy. He is playing.",
         },
         {
           type: "content",
@@ -3419,55 +3445,59 @@
           subtitle: "אוצר מושגים",
           items: [
             { en: "I", he: "אני" },
-            { en: "You", he: "אתה / את (וגם אתם / אתן, ברבים)" },
-            { en: "He", he: "הוא" },
-            { en: "She", he: "היא" },
-            { en: "It", he: "זה / זאת" },
-            { en: "We", he: "אנחנו" },
-            { en: "They", he: "הם / הן" },
+            { en: "you", he: "אתה / אתם" },
+            { en: "he", he: "הוא" },
+            { en: "she", he: "היא" },
+            { en: "it", he: "זה — חפץ או חיה" },
+            { en: "we", he: "אנחנו" },
+            { en: "they", he: "הם" },
           ],
         },
         {
           type: "content",
-          title: "**He**, **She** ו-**It**",
-          subtitle: "מי זה מי?",
-          body: "משתמשים ב-He כשמדברים על גבר או ילד, לדוגמה:\nDanny is tall. He is tall.\n\nמשתמשים ב-She כשמדברים על אישה או ילדה, לדוגמה:\nSarah is smart. She is smart.\n\nמשתמשים ב-It כשמדברים על חפץ, בעל חיים או דבר, לדוגמה:\nThe dog is cute. It is cute.",
+          title: "**He** ו-**She**",
+          subtitle: "הוא והיא",
+          body: "על ילד אומרים he\nDanny is tall. He is tall.\n\nעל ילדה אומרים she\nShe is happy.",
+        },
+        {
+          type: "content",
+          title: "**It** — חפץ או חיה",
+          subtitle: "זה",
+          body: "על חפץ או חיה אומרים it\nThe ball is red. It is red.\nThe dog is cute. It is cute.",
         },
         {
           type: "content",
           title: "**We** ו-**They**",
-          subtitle: "כשמדברים על יותר מאחד",
-          body: "We משמש כשאנחנו מדברים על עצמנו ועוד אנשים, לדוגמה:\nDanny and I are friends. We are friends.\n\nThey משמש כשמדברים על כמה אנשים או דברים אחרים, לדוגמה:\nDanny and Sarah are playing. They are playing.\n\nשימו לב: גם קבוצת חפצים או חיות יכולה להיות They, לדוגמה:\nThe cats are sleeping. They are sleeping.",
+          subtitle: "יותר מאחד",
+          body: "אני ועוד מישהו — we\nDanny and I are friends. We are friends.\n\nהם — they\nThe cats are sleeping. They are sleeping.",
         },
         {
           type: "content",
-          title: "**You** — יחיד ורבים",
-          subtitle: "מילה אחת, שתי משמעויות",
-          body: "באנגלית, You משמש גם ליחיד (את/אתה) וגם לרבים (אתם/אתן) — בניגוד לעברית שיש בה מילים שונות.\n\nלמשל, פונים לילד אחד:\nDanny, are you ready?\nופונים לקבוצת ילדים באותה מילה בדיוק:\nKids, are you ready?\n\nכדי לדעת אם מדובר ביחיד או ברבים, פשוט מבינים ממי מדברים — מהקשר המשפט.",
-        },
-        {
-          type: "content",
-          title: "כינויי גוף במקום שמות",
-          subtitle: "תרגול",
-          body: "דני אוהב כדורגל. הוא משחק כל יום:\nDanny loves soccer. He plays every day.\n\nשרה ואני חברות. אנחנו לומדות ביחד:\nSarah and I are friends. We study together.\n\nהילדים משחקים בחוץ. הם שמחים:\nThe kids are playing outside. They are happy.",
-        },
-        {
-          type: "content",
-          title: "כינויי מושא — בונוס",
-          subtitle: "עובדה מעניינת",
-          body: "לכל כינוי גוף יש גם \"תאום\" שנקרא כינוי מושא — משמש כשהמילה לא בתחילת המשפט: me, you, him, her, it, us, them.\n\nלדוגמה:\nHe likes her.\nHe הוא כינוי גוף, her הוא כינוי מושא.\n\nעוד נלמד על זה בהמשך — כרגע מספיק להכיר שהוא קיים!",
+          title: "**You** — אתה וגם אתם",
+          subtitle: "מילה אחת",
+          body: "you זה גם אתה וגם אתם.\n\nלילד אחד:\nDanny, are you ready?\nלהרבה ילדים:\nKids, are you ready?",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: להשתמש ב-it כשמדברים על אדם. הצורה הנכונה:\nHe is my brother.\nולא:\nIt is my brother.\n\nטעות נפוצה נוספת: לשכוח ש-they יכול להתייחס גם לחפצים ולא רק לאנשים.\n\nתרגול קטן וחזרה עוזרים לזכור בקלות איזה כינוי גוף מתאים למי.",
+          body: "על אדם לא אומרים it\nנכון:\nHe is my brother.\nלא נכון:\nIt is my brother.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "Danny is happy. ___ is playing.", options: ["He", "She", "It"], answer: 0 },
+            { q: "The ball is red. ___ is red.", options: ["He", "It", "They"], answer: 1 },
+            { q: "The cats are sleeping. ___ are sleeping.", options: ["It", "He", "They"], answer: 2 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "חשבו על בן משפחה או חבר/ה — איזה כינוי גוף (he/she) הייתם משתמשים בשבילו/ה?\n\nאיזה כינוי גוף הכי קשה לכם לזכור — you, it או they? למה?",
+          body: "תנו דוגמה: על מי אומרים he ועל מה אומרים it\n\nבעברית יש \"אתה\" ויש \"אתם\". מה יש באנגלית?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -3541,7 +3571,7 @@
             type: "content",
             title: "Object pronouns — bonus",
             subtitle: "Fun fact",
-            body: "Every pronoun has a \"twin\" called an object pronoun — used when the word isn't at the start of the sentence: me, you, him, her, it, us, them.\n\nFor example:\nHe likes her.\nHe is a subject pronoun, her is an object pronoun.\n\nWe'll learn more about this later — for now it's enough to know it exists!",
+            body: "Every pronoun has a \"twin\" called an object pronoun — used when the word isn't at the start of the sentence: me, you, him, her, it, us, them.\n\nFor example:\nHe helps them.\nHe is a subject pronoun, them is an object pronoun.\n\nWe'll learn more about this later — for now it's enough to know it exists!",
           },
           {
             type: "content",
@@ -3595,66 +3625,73 @@
           type: "content",
           title: "מה זה **פועל**?",
           subtitle: "פתיחה",
-          body: "פועל (Verb) הוא מילה שמתארת פעולה שמישהו עושה, או מצב שמישהו נמצא בו.\n\nלדוגמה:\nDanny runs.\nהמילה runs היא הפועל — היא מתארת מה דני עושה.\n\nהיום נכיר פעלי פעולה נפוצים, ונלמד איך בונים איתם משפט פשוט באנגלית.",
+          body: "פועל — מילה של פעולה.\nמה עושים?\n\nDanny runs.\nהמילה runs היא הפועל.",
         },
         {
           type: "content",
           title: "**מילים חשובות**",
           subtitle: "אוצר מושגים",
           items: [
-            { en: "Verb", he: "פועל — מילה שמתארת פעולה או מצב" },
-            { en: "Run", he: "לרוץ" },
-            { en: "Jump", he: "לקפוץ" },
-            { en: "Eat", he: "לאכול" },
-            { en: "Play", he: "לשחק" },
-            { en: "Read", he: "לקרוא" },
-            { en: "Write", he: "לכתוב" },
-            { en: "Sleep", he: "לישון" },
-            { en: "Swim", he: "לשחות" },
-            { en: "Watch", he: "לצפות" },
+            { en: "verb", he: "פועל — מילה של פעולה" },
+            { en: "run", he: "לרוץ" },
+            { en: "eat", he: "לאכול" },
+            { en: "play", he: "לשחק" },
+            { en: "read", he: "לקרוא" },
+            { en: "write", he: "לכתוב" },
+            { en: "sleep", he: "לישון" },
           ],
         },
         {
           type: "content",
-          title: "פעלי **פעולה**",
-          subtitle: "מה אנחנו עושים?",
-          body: "פעלי פעולה מתארים דברים שאנחנו עושים כל יום, כמו:\neat, play, read, run\n\nכל משפט באנגלית חייב פועל — בלי פועל, המשפט לא שלם. למשל, המשפט הבא אינו שלם:\nDanny a book.\nצריך להוסיף פועל:\nDanny reads a book.",
+          title: "בכל משפט יש **פועל**",
+          subtitle: "בלי פועל — אין משפט",
+          body: "כאן חסר פועל:\nDanny a book.\n\nעכשיו יש פועל:\nDanny reads a book.",
         },
         {
           type: "content",
-          title: "מבנה משפט: נושא + פועל",
-          subtitle: "החוקיה",
-          body: "משפט פשוט באנגלית בנוי מנושא (מי עושה את הפעולה) ואחריו פועל (מה הוא עושה), לדוגמה:\nI play. She reads. They swim.\n\nהסדר הזה — נושא ואז פועל — הוא כמעט תמיד קבוע באנגלית, בניגוד לעברית שבה לפעמים הסדר גמיש יותר.",
+          title: "**מי** — ואז **מה עושה**",
+          subtitle: "סדר המילים",
+          body: "קודם מי, ואחר כך מה הוא עושה:\nI play.\nWe read.\nThey swim.",
         },
         {
           type: "content",
-          title: "גוף שלישי יחיד — מוסיפים **s**",
-          subtitle: "he / she / it",
-          body: "כשהנושא הוא he, she או it, מוסיפים s בסוף הפועל בזמן הווה, לדוגמה:\nI play. She plays.\nI read. He reads.\nI watch. It watches.\n\nזו אחת הטעויות הכי נפוצות אצל תלמידים — לזכור להוסיף את ה-s!",
+          title: "עם he, she, it — מוסיפים **s**",
+          subtitle: "s בסוף",
+          body: "I play → He plays\nI read → She reads\nI run → It runs",
         },
         {
           type: "content",
-          title: "פעלים **לא רגילים**",
-          subtitle: "יוצאים מן הכלל",
-          body: "רוב הפעלים רק מוסיפים s בגוף שלישי, אבל כמה פעלים חשובים משתנים בצורה מיוחדת:\nHave becomes has.\nGo becomes goes.\nDo becomes does.\n\nכדאי לזכור אותם בעל פה — הם מופיעים כמעט בכל שיחה באנגלית.",
+          title: "פעלים **מיוחדים**",
+          subtitle: "לא רק s",
+          body: "יש פעלים שמשתנים קצת אחרת:\nI have → He has\nI go → He goes\nI do → He does",
         },
         {
           type: "content",
-          title: "פועל בשגרת היום",
-          subtitle: "חיבור לחיים",
-          body: "אפשר לתאר את כל היום שלנו רק עם פעלים:\nI wake up. I eat breakfast. I play. I read. I sleep.\n\nכל פעולה שאנחנו עושים — יש לה פועל באנגלית שמתאר אותה. ככל שנכיר יותר פעלים, כך נוכל לתאר יותר דברים שאנחנו עושים בכל יום.",
+          title: "היום שלי — **בפעלים**",
+          subtitle: "כל היום",
+          body: "I wake up.\nI eat breakfast.\nI play.\nI sleep.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לשכוח את ה-s בגוף שלישי. הצורה הנכונה:\nShe plays.\nולא:\nShe play.\n\nטעות נוספת: לבנות משפט בלי פועל בכלל — כל משפט חייב פועל.\n\nתרגול עם דוגמאות אמיתיות עוזר לזכור את החוקים בקלות.",
+          body: "עם she לא שוכחים את ה-s\nנכון:\nShe plays.\nלא נכון:\nShe play.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "He ___ football.", he: "הוא משחק כדורגל", options: ["play", "plays"], answer: 1 },
+            { q: "I ___ a book.", he: "אני קורא ספר", options: ["read", "reads"], answer: 0 },
+            { q: "He ___ a cat.", he: "יש לו חתול", options: ["have", "has"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "חשבו על 3 דברים שאתם עושים כל יום — אילו פעלים באנגלית מתארים אותם?\n\nאיזה פועל הכי קשה לכם לזכור? למה, לדעתכם?",
+          body: "אילו שלושה דברים אתם עושים כל יום? איך אומרים אותם באנגלית?\n\nאיזה פועל הכי קשה לכם לזכור?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -3790,80 +3827,86 @@
       slides: [
         {
           type: "content",
-          title: "מה זה פועל **To Be**?",
+          title: "פועל **To Be**",
           subtitle: "פתיחה",
-          body: "To Be (\"להיות\") הוא אחד הפעלים החשובים ביותר באנגלית — הוא מתאר מי אנחנו, מה אנחנו, ואיך אנחנו מרגישים.\n\nבזמן הווה, לפועל To Be יש שלוש צורות בלבד: am, is ו-are, לדוגמה:\nI am happy. She is tall. They are friends.",
+          body: "To Be — להיות.\nיש לו שלוש צורות:\nam, is, are\n\nI am happy.",
         },
         {
           type: "content",
           title: "**מילים חשובות**",
           subtitle: "אוצר מושגים",
           items: [
-            { en: "Am", he: "צורת \"להיות\" עבור I" },
-            { en: "Is", he: "צורת \"להיות\" עבור he/she/it" },
-            { en: "Are", he: "צורת \"להיות\" עבור you/we/they" },
-            { en: "I'm", he: "קיצור של I am" },
-            { en: "You're", he: "קיצור של You are" },
-            { en: "He's / She's / It's", he: "קיצור של He is / She is / It is" },
-            { en: "We're", he: "קיצור של We are" },
-            { en: "They're", he: "קיצור של They are" },
-            { en: "Isn't", he: "קיצור של Is not" },
-            { en: "Aren't", he: "קיצור של Are not" },
+            { en: "am", he: "עם I" },
+            { en: "is", he: "עם he, she, it" },
+            { en: "are", he: "עם you, we, they" },
+            { en: "was", he: "היה — עם I, he, she, it" },
+            { en: "were", he: "היו — עם you, we, they" },
+            { en: "not", he: "לא" },
           ],
         },
         {
           type: "content",
-          title: "**Am**, **Is** ו-**Are**",
-          subtitle: "מתי משתמשים בכל אחת?",
-          body: "משתמשים ב-am רק עם I, לדוגמה:\nI am ten years old.\n\nמשתמשים ב-is עם he, she ו-it, לדוגמה:\nHe is tall. The dog is cute.\n\nמשתמשים ב-are עם you, we ו-they, לדוגמה:\nWe are friends. You are kind.",
+          title: "**am**",
+          subtitle: "רק עם I",
+          body: "עם I אומרים am\nI am ten years old.\nI am happy.",
         },
         {
           type: "content",
-          title: "קיצורים (Contractions)",
-          subtitle: "מדברים מהר יותר",
-          body: "בשפה מדוברת, לרוב מקצרים את פועל ה-To Be:\nI am becomes I'm. You are becomes You're. He is becomes He's.\nShe is becomes She's. It is becomes It's. We are becomes We're. They are becomes They're.\n\nהקיצורים נפוצים מאוד בדיבור ובכתיבה לא רשמית.",
+          title: "**is**",
+          subtitle: "עם he, she, it",
+          body: "עם he, she, it אומרים is\nHe is tall.\nThe dog is cute.",
         },
         {
           type: "content",
-          title: "משפטי **שלילה**",
-          subtitle: "Negative",
-          body: "כדי לשלול, מוסיפים not אחרי am/is/are, לדוגמה:\nI am not tired. She is not here. They are not ready.\n\nגם לשלילה יש קיצורים:\nis not becomes isn't. are not becomes aren't.\n\nשימו לב: ל-am not אין קיצור נפוץ משלו — פשוט אומרים I'm not.",
+          title: "**are**",
+          subtitle: "עם you, we, they",
+          body: "עם you, we, they אומרים are\nWe are friends.\nThey are happy.",
         },
         {
           type: "content",
-          title: "שואלים **שאלות**",
-          subtitle: "Questions",
-          body: "כדי לשאול שאלה עם To Be, פשוט מחליפים את הסדר — הפועל בא לפני הנושא, לדוגמה:\nYou are ready becomes Are you ready?\nHe is happy becomes Is he happy?\nI am late becomes Am I late?",
+          title: "**קיצורים**",
+          subtitle: "מדברים מהר",
+          body: "אפשר לקצר:\nI am → I'm\nHe is → He's\nThey are → They're",
         },
         {
           type: "content",
-          title: "בעבר: **Was** ו-**Were**",
-          subtitle: "זמן עבר",
-          body: "בזמן עבר יש לפועל To Be רק שתי צורות: was ו-were.\n\nמשתמשים ב-was עם I, he, she ו-it, לדוגמה:\nI was at home yesterday. He was happy.\n\nמשתמשים ב-were עם you, we ו-they, לדוגמה:\nWe were at school. They were tired.",
+          title: "**not** — לא",
+          subtitle: "שלילה",
+          body: "שמים not אחרי am, is, are\nI am not tired.\nHe is not here.\nThey are not ready.",
         },
         {
           type: "content",
-          title: "**Wasn't**, **Weren't** ושאלות בעבר",
-          subtitle: "שלילה ושאלה בעבר",
-          body: "כדי לשלול בעבר מוסיפים not אחרי was או were, ובדיבור מקצרים:\nwas not becomes wasn't. were not becomes weren't.\nI wasn't late. They weren't at home.\n\nכדי לשאול בעבר מחליפים את הסדר, בדיוק כמו בהווה:\nWas he sick?\nWere you at the party?",
+          title: "**שאלה**",
+          subtitle: "מחליפים מקום",
+          body: "בשאלה — is או are באים ראשונים\nHe is happy. → Is he happy?\nYou are ready. → Are you ready?",
         },
         {
           type: "content",
-          title: "שימושים ב-**To Be**",
-          subtitle: "חיבור לחיים",
-          body: "משתמשים ב-To Be כדי לתאר מי אנחנו:\nI am Danny.\n\nגם כדי לתאר מאיפה אנחנו:\nI am from Israel.\n\nוגם כדי לתאר איך אנחנו מרגישים:\nI am happy today.\n\nזה אחד הפעלים שמשתמשים בו הכי הרבה בשיחה יומיומית באנגלית.",
+          title: "בעבר: **was** ו-**were**",
+          subtitle: "היה, היו",
+          body: "was — עם I, he, she, it\nI was at home.\n\nwere — עם you, we, they\nWe were at school.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: להשתמש בצורה הלא נכונה. הצורה הנכונה:\nShe is happy.\nולא:\nShe are happy.\n\nטעות נוספת: לשכוח לגמרי את פועל ה-To Be — בעברית אפשר להגיד \"אני עייף\" בלי מילת קישור, אבל באנגלית חייבים את המילה am/is/are:\nI am tired.\n\nזוהי טעות נפוצה מאוד אצל דוברי עברית שלומדים אנגלית!",
+          body: "בעברית אומרים: אני עייף\nבאנגלית חייבים את am\nנכון:\nI am tired.\nלא נכון:\nI tired.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "I ___ happy.", he: "אני שמח", options: ["am", "is", "are"], answer: 0 },
+            { q: "They ___ friends.", he: "הם חברים", options: ["am", "is", "are"], answer: 2 },
+            { q: "He ___ at home yesterday.", he: "הוא היה בבית אתמול", options: ["was", "were"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "תארו את עצמכם במשפט אחד עם am — מי אתם, מאיפה אתם, ואיך אתם מרגישים היום?\n\nאיזו צורה הכי קשה לכם לזכור — am, is או are? למה?",
+          body: "ספרו על עצמכם במשפט אחד עם I am\n\nמה הכי קשה לזכור — am, is או are — ולמה?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -4012,7 +4055,7 @@
           type: "content",
           title: "איך אומרים **יש לי**?",
           subtitle: "פתיחה",
-          body: "בעברית אומרים \"יש לי\", \"יש לו\", \"יש להם\". באנגלית משתמשים בפועל have — ולפעמים בצורה has.\n\nלמשל:\nI have a dog.\nShe has a cat.\n\nהיום נלמד מתי אומרים have ומתי has.",
+          body: "יש לי — I have\nI have a dog.\n\nיש לו — He has\nHe has a cat.",
         },
         {
           type: "content",
@@ -4020,63 +4063,58 @@
           subtitle: "אוצר מושגים",
           items: [
             { en: "I have", he: "יש לי" },
-            { en: "You have", he: "יש לך / יש לכם" },
-            { en: "He has", he: "יש לו" },
-            { en: "She has", he: "יש לה" },
-            { en: "It has", he: "יש לו / יש לה (לחפץ או לחיה)" },
-            { en: "We have", he: "יש לנו" },
-            { en: "They have", he: "יש להם / יש להן" },
-            { en: "don't have", he: "אין ל... (עם I, you, we, they)" },
-            { en: "doesn't have", he: "אין ל... (עם he, she, it)" },
+            { en: "he has", he: "יש לו" },
+            { en: "she has", he: "יש לה" },
+            { en: "we have", he: "יש לנו" },
+            { en: "don't have", he: "אין" },
+            { en: "doesn't have", he: "אין — עם he, she, it" },
           ],
         },
         {
           type: "content",
-          title: "**have** — עם I, you, we, they",
-          subtitle: "רוב כינויי הגוף",
-          body: "עם I, you, we, they אומרים have:\nI have a bike.\nYou have a nice bag.\nWe have a big garden.\nThey have two cats.\n\nגם עם כמה אנשים או כמה דברים אומרים have:\nMy friends have a ball.",
+          title: "**have**",
+          subtitle: "עם I, you, we, they",
+          body: "עם I, you, we, they אומרים have\nI have a bike.\nWe have a big garden.\nThey have two cats.",
         },
         {
           type: "content",
-          title: "**has** — עם he, she, it",
-          subtitle: "גוף שלישי יחיד",
-          body: "עם he, she, it אומרים has:\nHe has a red car.\nShe has long hair.\nIt has four legs.\n\nגם עם שם של אדם אחד, חיה אחת או דבר אחד אומרים has:\nDanny has a new phone.\nThe dog has a ball.",
+          title: "**has**",
+          subtitle: "עם he, she, it",
+          body: "עם he, she, it אומרים has\nHe has a red car.\nIt has four legs.\nDanny has a new phone.",
         },
         {
           type: "content",
-          title: "טריק **לזכירה**",
-          subtitle: "has מסתיים ב-s",
-          body: "זוכרים שעם he, she, it מוסיפים s לפועל?\nShe plays. He reads.\n\nגם have משתנה עם he, she, it — הוא הופך ל-has:\nI have — She has\nWe have — He has\n\nאם אפשר להחליף את מי שמדברים עליו ב-he, she או it — אומרים has.",
+          title: "**אין לי**",
+          subtitle: "don't have",
+          body: "אין לי — I don't have\nI don't have a pet.\n\nאין לו — He doesn't have\nHe doesn't have a bike.",
         },
         {
           type: "content",
-          title: "**אין לי** — don't have / doesn't have",
-          subtitle: "שלילה",
-          body: "כדי להגיד \"אין לי\" שמים don't או doesn't לפני have:\nI don't have a pet.\nThey don't have homework.\n\nעם he, she, it אומרים doesn't have — ולא doesn't has:\nShe doesn't have a brother.\nHe doesn't have a bike.",
-        },
-        {
-          type: "content",
-          title: "**יש לך?** — Do / Does",
+          title: "**יש לך?**",
           subtitle: "שאלה",
-          body: "כדי לשאול \"יש לך?\" מתחילים ב-Do או ב-Does:\nDo you have a pencil?\nYes, I do. / No, I don't.\n\nעם he, she, it שואלים עם Does — ואחריו תמיד have:\nDoes she have a cat?\nYes, she does. / No, she doesn't.",
-        },
-        {
-          type: "content",
-          title: "have — לא רק **יש לי**",
-          subtitle: "עובדה מעניינת",
-          body: "באנגלית משתמשים ב-have גם לארוחות ולשיעורים:\nI have breakfast at seven.\nWe have English on Monday.\n\nוגם כשמתארים איך מישהו נראה:\nShe has blue eyes.\nHe has short hair.",
+          body: "Do you have a pencil?\nYes, I do.\n\nDoes he have a dog?\nNo, he doesn't.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: להגיד have עם he או she. הצורה הנכונה:\nHe has a dog.\nולא:\nHe have a dog.\n\nטעות נוספת: להשאיר has אחרי doesn't. הצורה הנכונה:\nShe doesn't have a dog.\nולא:\nShe doesn't has a dog.",
+          body: "עם he לא אומרים have\nנכון:\nHe has a dog.\nלא נכון:\nHe have a dog.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "I ___ a ball.", he: "יש לי כדור", options: ["have", "has"], answer: 0 },
+            { q: "He ___ a bike.", he: "יש לו אופניים", options: ["have", "has"], answer: 1 },
+            { q: "He doesn't ___ a cat.", he: "אין לו חתול", options: ["have", "has"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "מה יש לכם בתיק היום? ספרו באנגלית עם I have.\n\nספרו על חבר או בן משפחה — מה יש לו או לה? השתמשו ב-He has או ב-She has.",
+          body: "מה יש לכם בתיק היום? אמרו באנגלית עם I have\n\nמה יש לחבר שיושב לידכם? אמרו עם He has",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -4202,38 +4240,104 @@
       slides: [
         {
           type: "content",
-          title: "לומדים **מילים** עם **תמונות**",
+          title: "לומדים **מילים**",
           subtitle: "פתיחה",
-          body: "היום נכיר 20 מילים חדשות באנגלית — לכל מילה יש תמונה.\n\nלחצו על כל מילה כדי לשמוע איך אומרים אותה, ונסו להגיד אותה בקול:\nLook, listen and say!",
+          body: "היום נכיר 20 מילים.\nלכל מילה יש תמונה.\n\nלוחצים, שומעים ואומרים בקול:\nLook, listen and say!",
         },
-        { type: "content", title: "**בעלי חיים**", subtitle: "Animals", pictures: vocabPictures("cat", "dog", "fish", "bird") },
-        { type: "content", title: "**אוכל**", subtitle: "Food", pictures: vocabPictures("apple", "banana", "icecream") },
-        { type: "content", title: "**בבית ובבית הספר**", subtitle: "At home and at school", pictures: vocabPictures("book", "pencil", "cup", "clock", "ball") },
-        { type: "content", title: "**בחוץ**", subtitle: "Outside", pictures: vocabPictures("house", "car", "umbrella", "tree", "flower") },
-        { type: "content", title: "**בשמיים**", subtitle: "In the sky", pictures: vocabPictures("sun", "moon", "star") },
         {
           type: "content",
-          title: "המשפט הראשון: **This is a**",
-          subtitle: "משפט ראשון",
-          body: "עם המילים החדשות אפשר כבר לבנות משפט שלם:\nThis is a cat.\nThis is a book.\n\nלפני מילה שמתחילה בתנועה (a, e, i, o, u) אומרים an במקום a:\nThis is an apple.\nThis is an umbrella.",
+          title: "**בעלי חיים**",
+          subtitle: "Animals",
+          pictures: [
+            { en: "cat", he: "חתול", img: "/images/english/vocab/cat.svg" },
+            { en: "dog", he: "כלב", img: "/images/english/vocab/dog.svg" },
+            { en: "fish", he: "דג", img: "/images/english/vocab/fish.svg" },
+            { en: "bird", he: "ציפור", img: "/images/english/vocab/bird.svg" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**אוכל**",
+          subtitle: "Food",
+          pictures: [
+            { en: "apple", he: "תפוח", img: "/images/english/vocab/apple.svg" },
+            { en: "banana", he: "בננה", img: "/images/english/vocab/banana.svg" },
+            { en: "ice cream", he: "גלידה", img: "/images/english/vocab/icecream.svg" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**בבית ובבית הספר**",
+          subtitle: "At home and at school",
+          pictures: [
+            { en: "book", he: "ספר", img: "/images/english/vocab/book.svg" },
+            { en: "pencil", he: "עיפרון", img: "/images/english/vocab/pencil.svg" },
+            { en: "cup", he: "כוס", img: "/images/english/vocab/cup.svg" },
+            { en: "clock", he: "שעון", img: "/images/english/vocab/clock.svg" },
+            { en: "ball", he: "כדור", img: "/images/english/vocab/ball.svg" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**בחוץ**",
+          subtitle: "Outside",
+          pictures: [
+            { en: "house", he: "בית", img: "/images/english/vocab/house.svg" },
+            { en: "car", he: "מכונית", img: "/images/english/vocab/car.svg" },
+            { en: "umbrella", he: "מטרייה", img: "/images/english/vocab/umbrella.svg" },
+            { en: "tree", he: "עץ", img: "/images/english/vocab/tree.svg" },
+            { en: "flower", he: "פרח", img: "/images/english/vocab/flower.svg" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**בשמיים**",
+          subtitle: "In the sky",
+          pictures: [
+            { en: "sun", he: "שמש", img: "/images/english/vocab/sun.svg" },
+            { en: "moon", he: "ירח", img: "/images/english/vocab/moon.svg" },
+            { en: "star", he: "כוכב", img: "/images/english/vocab/star.svg" },
+          ],
+        },
+        {
+          type: "content",
+          title: "**This is a**",
+          subtitle: "זה...",
+          body: "זה — This is a\nThis is a cat.\nThis is a book.",
+        },
+        {
+          type: "content",
+          title: "**a** או **an**",
+          subtitle: "לפני a, e, i, o, u",
+          body: "לפני a, e, i, o, u אומרים an\nThis is an apple.\nThis is an umbrella.",
         },
         {
           type: "content",
           title: "**יותר מאחד**",
           subtitle: "רבים",
-          body: "כשיש יותר מאחד, מוסיפים s בסוף המילה:\none cat, two cats\none book, three books\none star, many stars\n\nכך אפשר לספור כל דבר באנגלית!",
+          body: "מוסיפים s בסוף:\none cat, two cats\none book, three books",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לשכוח את a לפני המילה. הצורה הנכונה:\nThis is a dog.\nולא:\nThis is dog.\n\nטעות נוספת: להגיד a לפני מילה שמתחילה בתנועה. הצורה הנכונה:\nThis is an apple.",
+          body: "לא שוכחים את ה-a\nנכון:\nThis is a dog.\nלא נכון:\nThis is dog.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "This is ___ apple.", he: "זה תפוח", options: ["a", "an"], answer: 1 },
+            { q: "This is ___ dog.", he: "זה כלב", options: ["a", "an"], answer: 0 },
+            { q: "one cat, two ___", he: "חתול אחד, שני חתולים", options: ["cat", "cats"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "איזו מילה חדשה אהבתם הכי הרבה היום? איך אומרים אותה באנגלית?\n\nהסתכלו מסביב בכיתה — לאילו חפצים אתם כבר יודעים לקרוא בשם באנגלית?",
+          body: "איזו מילה חדשה אהבתם הכי הרבה היום?\n\nמה בכיתה אתם כבר יודעים להגיד באנגלית?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -4321,7 +4425,7 @@
           type: "content",
           title: "איפה זה **נמצא**?",
           subtitle: "פתיחה",
-          body: "מילות יחס (prepositions) הן מילים קטנות שאומרות איפה משהו נמצא — בתוך, על, מתחת או ליד.\n\nלמשל:\nThe cat is on the bed.\nThe ball is under the table.\n\nהיום נכיר שש מילות יחס חשובות.",
+          body: "מילים קטנות שאומרות איפה:\nin, on, under, next to\n\nThe cat is on the bed.",
         },
         {
           type: "content",
@@ -4336,48 +4440,69 @@
             { en: "between", he: "בין" },
           ],
         },
-        { type: "content", title: "איפה **הכדור**?", subtitle: "Where is the ball?", pictures: PREPOSITION_PICTURES },
         {
           type: "content",
-          title: "**in** ו-**on**",
-          subtitle: "בתוך ועל",
-          body: "in — בתוך, כשמשהו נמצא בפנים:\nThe ball is in the box.\nThe fish is in the water.\n\non — על, כשמשהו נמצא למעלה ונוגע:\nThe book is on the table.\nThe hat is on my head.",
+          title: "איפה **הכדור**?",
+          subtitle: "Where is the ball?",
+          pictures: [
+            { en: "in", he: "בתוך", img: "/images/english/vocab/prep-in.svg" },
+            { en: "on", he: "על", img: "/images/english/vocab/prep-on.svg" },
+            { en: "under", he: "מתחת", img: "/images/english/vocab/prep-under.svg" },
+            { en: "next to", he: "ליד", img: "/images/english/vocab/prep-next-to.svg" },
+            { en: "between", he: "בין", img: "/images/english/vocab/prep-between.svg" },
+          ],
         },
         {
           type: "content",
-          title: "**under**, **next to** ו-**between**",
-          subtitle: "מתחת, ליד ובין",
-          body: "under — מתחת:\nThe dog is under the table.\n\nnext to — ליד, קרוב מאוד:\nI sit next to Dan.\n\nbetween — בין שני דברים:\nThe ball is between the boxes.\nB is between A and C.",
+          title: "**in** — בתוך",
+          subtitle: "בפנים",
+          body: "משהו בפנים — in\nThe ball is in the box.\nThe fish is in the water.",
         },
         {
           type: "content",
-          title: "**at** — במקום או בשעה",
-          subtitle: "מילה מיוחדת",
-          body: "at אומרת באיזה מקום מישהו נמצא:\nI am at home.\nWe are at school.\nSomeone is at the door.\n\nוגם באיזו שעה משהו קורה:\nThe lesson starts at eight o'clock.",
+          title: "**on** — על",
+          subtitle: "למעלה",
+          body: "משהו למעלה — on\nThe book is on the table.\nThe hat is on my head.",
         },
         {
           type: "content",
-          title: "**ב** בעברית — **in** או **at**?",
-          subtitle: "עברית מול אנגלית",
-          body: "בעברית אומרים \"ב\" גם כשמשהו בתוך הקופסה וגם כשמישהו בבית הספר. באנגלית בוחרים לפי המשמעות:\nThe pencil is in my bag.\nI am at school.\n\nבתוך משהו — in. במקום מסוים או בשעה — at.",
+          title: "**under** — מתחת",
+          subtitle: "למטה",
+          body: "משהו למטה — under\nThe dog is under the table.\nThe ball is under the bed.",
         },
         {
           type: "content",
-          title: "מתארים את **הכיתה**",
-          subtitle: "חיבור לחיים",
-          body: "הסתכלו מסביב — אפשר לתאר כל דבר בכיתה:\nThe board is on the wall.\nMy bag is under my chair.\nThe teacher is next to the board.\nI sit between two friends.",
+          title: "**next to** ו-**between**",
+          subtitle: "ליד, בין",
+          body: "ליד — next to\nI sit next to Dan.\n\nבין — between\nB is between A and C.",
+        },
+        {
+          type: "content",
+          title: "**at** — ב...",
+          subtitle: "מקום ושעה",
+          body: "at — במקום:\nI am at home.\nWe are at school.\n\nat — בשעה:\nI wake up at seven.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לשכוח את to אחרי next. הצורה הנכונה:\nThe dog is next to the door.\nולא:\nThe dog is next the door.\n\nטעות נוספת: להגיד in לפני שעה. הצורה הנכונה:\nI wake up at seven.\nולא:\nI wake up in seven.",
+          body: "אחרי next תמיד בא to\nנכון:\nThe dog is next to the door.\nלא נכון:\nThe dog is next the door.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "The fish is ___ the water.", he: "הדג בתוך המים", options: ["in", "on", "under"], answer: 0 },
+            { q: "The hat is ___ my head.", he: "הכובע על הראש שלי", options: ["in", "on", "under"], answer: 1 },
+            { q: "The dog is ___ the table.", he: "הכלב מתחת לשולחן", options: ["on", "under", "next to"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "איפה נמצא התיק שלכם עכשיו? תארו באנגלית עם in, on, under או next to.\n\nליד מי אתם יושבים בכיתה? ובין מי למי? (I sit next to... / I sit between...)",
+          body: "איפה התיק שלכם עכשיו? אמרו באנגלית עם in, on או under\n\nליד מי אתם יושבים בכיתה?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -4498,9 +4623,9 @@
       slides: [
         {
           type: "content",
-          title: "מה זו **מילת קישור**?",
+          title: "מילים **שמחברות**",
           subtitle: "פתיחה",
-          body: "מילת קישור (connector) מחברת שני חלקים למשפט אחד — כמו דבק.\n\nבמקום שני משפטים קצרים:\nI like pizza. I like pasta.\nאפשר משפט אחד:\nI like pizza and pasta.\n\nהיום נכיר שש מילות קישור חשובות.",
+          body: "יש מילים שמחברות — כמו דבק.\n\nI like pizza. I like pasta.\nI like pizza and pasta.",
         },
         {
           type: "content",
@@ -4517,45 +4642,55 @@
         },
         {
           type: "content",
-          title: "**and** ו-**but**",
-          subtitle: "וגם, אבל",
-          body: "and מוסיפה עוד דבר — וגם:\nI have a cat and a dog.\nShe sings and dances.\n\nbut מראה ניגוד — משהו הפוך או מפתיע:\nI like apples, but I don't like bananas.\nIt is sunny, but it is cold.",
+          title: "**and** — ו...",
+          subtitle: "מוסיפים",
+          body: "I have a cat and a dog.\nI like red, blue and green.",
         },
         {
           type: "content",
-          title: "**because** ו-**so**",
-          subtitle: "סיבה ותוצאה",
-          body: "because אומרת למה — את הסיבה:\nI am happy because it is my birthday.\n\nso אומרת מה קורה בגלל זה — את התוצאה:\nIt is my birthday, so I am happy.\n\nאותו רעיון — אבל בסדר הפוך! אחרי because באה הסיבה, ואחרי so באה התוצאה.",
+          title: "**but** — אבל",
+          subtitle: "משהו הפוך",
+          body: "I like apples, but I don't like bananas.\nIt is sunny, but it is cold.",
+        },
+        {
+          type: "content",
+          title: "**because** — כי",
+          subtitle: "למה?",
+          body: "אחרי because — למה\nI am happy because it is my birthday.",
+        },
+        {
+          type: "content",
+          title: "**so** — אז",
+          subtitle: "מה קורה בגלל זה",
+          body: "אחרי so — מה קורה\nIt is my birthday, so I am happy.\nI am hungry, so I eat a sandwich.",
         },
         {
           type: "content",
           title: "**before** ו-**after**",
-          subtitle: "לפני ואחרי",
-          body: "before — לפני, משהו שקורה קודם:\nI wash my hands before I eat.\n\nafter — אחרי, משהו שקורה אחר כך:\nI do my homework after school.\nAfter dinner, we watch TV.",
-        },
-        {
-          type: "content",
-          title: "**and** — מילה נפרדת",
-          subtitle: "עברית מול אנגלית",
-          body: "בעברית, ו' החיבור נצמדת למילה שאחריה: חתול וכלב.\nבאנגלית and היא מילה נפרדת:\na cat and a dog\n\nכשיש רשימה, שמים פסיקים — ואת and רק לפני הדבר האחרון:\nI like red, blue and green.",
-        },
-        {
-          type: "content",
-          title: "מספרים **סיפור**",
-          subtitle: "מחברים הכול",
-          body: "עם מילות קישור אפשר לספר סיפור שלם:\nI wake up and I eat breakfast.\nI am tired, but I go to school.\nAfter school, I play football.\nI am hungry, so I eat a sandwich.",
+          subtitle: "לפני, אחרי",
+          body: "לפני — before\nI wash my hands before I eat.\n\nאחרי — after\nI do my homework after school.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: להתבלבל בין because ל-so. אחרי because באה הסיבה:\nI wear a coat because it is cold.\nולא:\nI wear a coat so it is cold.\n\nטעות נוספת: לשכוח פסיק לפני but או so כשהם מחברים שני משפטים:\nIt is late, so I go to bed.",
+          body: "אחרי because בא למה\nנכון:\nI wear a coat because it is cold.\nלא נכון:\nI wear a coat so it is cold.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "I like milk ___ cookies.", he: "אני אוהב חלב ועוגיות", options: ["and", "but", "so"], answer: 0 },
+            { q: "I am tired, ___ I go to bed.", he: "אני עייף, אז אני הולך לישון", options: ["because", "so"], answer: 1 },
+            { q: "I eat ___ I am hungry.", he: "אני אוכל כי אני רעב", options: ["because", "so"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "מה אתם עושים לפני בית הספר, ומה אחרי? ספרו באנגלית עם before ו-after.\n\nהשלימו בקול: I like ice cream because... — למה אתם אוהבים את מה שאתם אוהבים?",
+          body: "מה אתם עושים לפני בית הספר? ומה אחרי?\n\nהשלימו בקול את המשפט:\nI like ice cream because…",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -4677,9 +4812,9 @@
       slides: [
         {
           type: "content",
-          title: "מה זו **מילת שאלה**?",
+          title: "מילות **שאלה**",
           subtitle: "פתיחה",
-          body: "מילת שאלה היא מילה שבאה בתחילת השאלה ואומרת מה אנחנו רוצים לדעת.\n\nלמשל, כשרוצים לדעת איפה משהו נמצא, מתחילים ב-Where:\nWhere is my bag?\n\nהיום נכיר את מילות השאלה החשובות באנגלית.",
+          body: "מילה קטנה בתחילת השאלה.\nהיא אומרת מה רוצים לדעת.\n\nWhere is my bag?",
         },
         {
           type: "content",
@@ -4687,62 +4822,59 @@
           subtitle: "אוצר מושגים",
           items: [
             { en: "What", he: "מה" },
-            { en: "Where", he: "איפה" },
             { en: "Who", he: "מי" },
+            { en: "Where", he: "איפה" },
             { en: "When", he: "מתי" },
             { en: "Why", he: "למה" },
             { en: "How", he: "איך" },
-            { en: "How many", he: "כמה (כשסופרים)" },
-            { en: "Which", he: "איזה / איזו" },
+            { en: "How many", he: "כמה" },
           ],
         },
         {
           type: "content",
           title: "**What** ו-**Who**",
-          subtitle: "מה? ומי?",
-          body: "What שואלת על דבר או על פעולה, לדוגמה:\nWhat is this?\nWhat is your name?\n\nWho שואלת על אדם, לדוגמה:\nWho is she?\nWho is your teacher?",
+          subtitle: "מה? מי?",
+          body: "What — מה\nWhat is this?\nWhat is your name?\n\nWho — מי\nWho is he?",
         },
         {
           type: "content",
           title: "**Where** ו-**When**",
-          subtitle: "איפה? ומתי?",
-          body: "Where שואלת על מקום, לדוגמה:\nWhere is the cat?\nWhere do you live?\n\nWhen שואלת על זמן, לדוגמה:\nWhen is your birthday?\nWhen do you go to school?",
+          subtitle: "איפה? מתי?",
+          body: "Where — איפה\nWhere is the cat?\n\nWhen — מתי\nWhen is your birthday?",
         },
         {
           type: "content",
           title: "**Why** ו-**How**",
-          subtitle: "למה? ואיך?",
-          body: "Why שואלת על סיבה, ועונים עליה בדרך כלל עם because, לדוגמה:\nWhy are you happy?\nBecause it is my birthday!\n\nHow שואלת על דרך או על מצב, לדוגמה:\nHow are you?",
+          subtitle: "למה? איך?",
+          body: "Why — למה\nWhy are you happy?\nBecause it is my birthday!\n\nHow — איך\nHow are you?",
         },
         {
           type: "content",
-          title: "**How many** ו-**Which**",
-          subtitle: "כמה? ואיזה?",
-          body: "How many שואלת על מספר — כמה יש ממשהו, לדוגמה:\nHow many cats do you have?\n\nWhich שואלת על בחירה מתוך כמה אפשרויות, לדוגמה:\nWhich color do you like, red or blue?",
-        },
-        {
-          type: "content",
-          title: "**שאלה** ו**תשובה**",
-          subtitle: "תרגול",
-          body: "Where is the ball? It is under the bed.\n\nWho is he? He is my brother.\n\nWhen is the party? It is on Sunday.\n\nHow many books do you have? I have three books.",
-        },
-        {
-          type: "content",
-          title: "**סדר המילים** בשאלה",
-          subtitle: "שימו לב",
-          body: "באנגלית מילת השאלה באה תמיד בהתחלה, ואחריה הפועל:\nWhere is the dog?\nולא:\nThe dog is where?\n\nובסוף כל שאלה שמים סימן שאלה (?).",
+          title: "**How many** — כמה",
+          subtitle: "סופרים",
+          body: "How many cats do you have?\nI have three cats.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לבלבל בין Where ל-When. Where שואלת איפה, ו-When שואלת מתי:\nWhere is the party? At my house.\nWhen is the party? On Sunday.\n\nטעות נוספת: לבלבל בין Who ל-How — הן נשמעות דומה, אבל Who היא מי ו-How היא איך.",
+          body: "מילת השאלה — תמיד בהתחלה\nנכון:\nWhere is the dog?\nלא נכון:\nThe dog is where?",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "___ is your name?", he: "מה השם שלך?", options: ["What", "Where", "Who"], answer: 0 },
+            { q: "___ is the ball?", he: "איפה הכדור?", options: ["When", "Where", "Why"], answer: 1 },
+            { q: "___ is your birthday?", he: "מתי יום ההולדת שלך?", options: ["Who", "When", "How"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "איזו שאלה באנגלית הייתם שואלים תלמיד חדש בכיתה כדי להכיר אותו?\n\nאיזו מילת שאלה הכי קשה לכם לזכור — Where, When או Who? למה?",
+          body: "איזו שאלה באנגלית תשאלו ילד חדש בכיתה?\n\nאיזו מילת שאלה הכי קשה לכם לזכור? למה?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -4877,9 +5009,9 @@
       slides: [
         {
           type: "content",
-          title: "מה זה **משפט שלילה**?",
+          title: "איך אומרים **לא**?",
           subtitle: "פתיחה",
-          body: "משפט שלילה אומר שמשהו לא נכון או לא קורה — כמו המילה \"לא\" בעברית.\n\nלמשל:\nI am happy.\nI am not happy.\n\nבעברית מספיק להוסיף \"לא\", אבל באנגלית יש כמה דרכים לשלול — תלוי בפועל שבמשפט.",
+          body: "I am happy.\nI am not happy.\n\nבאנגלית יש כמה דרכים להגיד לא.",
         },
         {
           type: "content",
@@ -4887,63 +5019,64 @@
           subtitle: "אוצר מושגים",
           items: [
             { en: "not", he: "לא" },
-            { en: "no", he: "לא / אין" },
+            { en: "don't", he: "לא — עם I, you, we, they" },
+            { en: "doesn't", he: "לא — עם he, she, it" },
+            { en: "didn't", he: "לא — בעבר" },
             { en: "never", he: "אף פעם" },
-            { en: "nobody", he: "אף אחד" },
-            { en: "nothing", he: "שום דבר" },
-            { en: "don't", he: "לא (עם I/you/we/they)" },
-            { en: "doesn't", he: "לא (עם he/she/it)" },
-            { en: "didn't", he: "לא, בזמן עבר (עם כל הגופים)" },
-            { en: "isn't / aren't", he: "קיצור של is not / are not" },
+            { en: "nothing", he: "כלום" },
           ],
         },
         {
           type: "content",
-          title: "שלילה עם **am / is / are**",
-          subtitle: "פועל להיות",
-          body: "כשיש במשפט am, is או are, מוסיפים not אחריהם:\nI am not tired.\nShe is not here.\nWe are not ready.\n\nבדיבור מקצרים — is not הופך ל-isn't, ו-are not הופך ל-aren't:\nHe isn't hungry. They aren't at home.",
+          title: "**not**",
+          subtitle: "עם am, is, are",
+          body: "שמים not אחרי am, is, are\nI am not tired.\nWe are not ready.\nHe isn't hungry.",
         },
         {
           type: "content",
-          title: "שלילה עם **don't**",
-          subtitle: "פעלים רגילים",
-          body: "כשיש במשפט פועל רגיל כמו like, play או eat, מוסיפים don't לפני הפועל:\nI like milk.\nI don't like milk.\n\nמשתמשים ב-don't עם I, you, we ו-they:\nWe don't play outside. They don't eat fish.",
+          title: "**don't**",
+          subtitle: "עם I, you, we, they",
+          body: "שמים don't לפני הפועל\nI like milk.\nI don't like milk.",
         },
         {
           type: "content",
-          title: "שלילה עם **doesn't**",
-          subtitle: "he / she / it",
-          body: "עם he, she ו-it משתמשים ב-doesn't:\nShe likes cats.\nShe doesn't like cats.\n\nשימו לב: אחרי doesn't הפועל חוזר לצורה הרגילה — בלי s:\nHe doesn't play.\nולא:\nHe doesn't plays.",
+          title: "**doesn't**",
+          subtitle: "עם he, she, it",
+          body: "עם he, she, it — doesn't\nHe doesn't play.\nShe doesn't like cats.",
         },
         {
           type: "content",
-          title: "שלילה בעבר: **didn't**",
-          subtitle: "זמן עבר",
-          body: "בזמן עבר משתמשים ב-didn't (did not) עם כל הגופים: I, you, he, she, it, we, they.\n\nאחרי didn't הפועל חוזר לצורה הרגילה — בלי ed ובלי צורת עבר:\nI played. I didn't play.\nHe went home. He didn't go home.\n\nולא:\nHe didn't went home.",
+          title: "**didn't**",
+          subtitle: "בעבר",
+          body: "בעבר — didn't\nI didn't play.\nHe didn't go home.",
         },
         {
           type: "content",
-          title: "**no**, **never**, **nobody**, **nothing**",
-          subtitle: "עוד מילות שלילה",
-          body: "המילה no פירושה לא, או אין:\nI have no pencil.\n\nהמילה never פירושה אף פעם:\nI never eat fish.\n\nהמילה nobody פירושה אף אחד, והמילה nothing פירושה שום דבר:\nNobody is here. I see nothing.",
-        },
-        {
-          type: "content",
-          title: "**תשובות קצרות**",
-          subtitle: "לא, אני לא",
-          body: "על שאלה של כן או לא אפשר לענות בתשובה קצרה של שלילה:\nAre you tired? No, I am not.\nIs it cold? No, it isn't.\nDo you like pizza? No, I don't.\nDoes he swim? No, he doesn't.\nDid you see it? No, I didn't.",
+          title: "**never** ו-**nothing**",
+          subtitle: "אף פעם, כלום",
+          body: "אף פעם — never\nI never eat fish.\n\nכלום — nothing\nI see nothing.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לשים not לפני פועל רגיל. הצורה הנכונה:\nI don't like it.\nולא:\nI not like it.\n\nטעות נוספת: שתי מילות שלילה באותו משפט — באנגלית משתמשים רק באחת:\nI have nothing.\nולא:\nI don't have nothing.",
+          body: "לא שמים not לפני פועל רגיל\nנכון:\nI don't like it.\nלא נכון:\nI not like it.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "I ___ like fish.", he: "אני לא אוהב דגים", options: ["don't", "doesn't"], answer: 0 },
+            { q: "He ___ play football.", he: "הוא לא משחק כדורגל", options: ["don't", "doesn't"], answer: 1 },
+            { q: "I am ___ tired.", he: "אני לא עייף", options: ["not", "don't"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "איזה מאכל אתם לא אוהבים? איך אומרים את זה באנגלית עם don't?\n\nמה ההבדל בין שלילה בעברית לשלילה באנגלית, לדעתכם?",
+          body: "איזה אוכל אתם לא אוהבים? אמרו באנגלית עם I don't like\n\nמה אתם אף פעם לא עושים? אמרו עם never",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -5081,72 +5214,74 @@
       slides: [
         {
           type: "content",
-          title: "מה זה **זמן** של פועל?",
+          title: "**מתי** זה קורה?",
           subtitle: "פתיחה",
-          body: "באנגלית הפועל משתנה לפי הזמן — מתי הפעולה קורית.\n\nלמשל:\nI play.\nI played.\nI will play.\n\nהיום נלמד את שלושת הזמנים הבסיסיים: הווה, עבר ועתיד.",
+          body: "הפועל משתנה לפי הזמן:\nI play.\nI played.\nI will play.",
         },
         {
           type: "content",
           title: "**מילים חשובות**",
           subtitle: "אוצר מושגים",
           items: [
-            { en: "Present Simple", he: "הווה פשוט — מה שקורה תמיד או בהרגל" },
-            { en: "Past Simple", he: "עבר פשוט — מה שכבר קרה ונגמר" },
-            { en: "Future (will)", he: "עתיד — מה שעוד יקרה" },
             { en: "every day", he: "כל יום" },
             { en: "yesterday", he: "אתמול" },
             { en: "last week", he: "בשבוע שעבר" },
             { en: "tomorrow", he: "מחר" },
             { en: "next week", he: "בשבוע הבא" },
+            { en: "will", he: "מילה של עתיד" },
           ],
         },
         {
           type: "content",
-          title: "הווה פשוט — **Present Simple**",
-          subtitle: "מה קורה תמיד",
-          body: "משתמשים בהווה פשוט לדברים שקורים תמיד, או שאנחנו עושים בהרגל — כל יום, כל שבוע:\nI play football every day.\nWe eat breakfast at seven.\n\nזוכרים? עם he, she ו-it מוסיפים s לפועל:\nShe plays football every day.",
+          title: "**הווה** — כל יום",
+          subtitle: "מה עושים תמיד",
+          body: "I play football every day.\nHe plays football every day.\n\nעם he, she, it — מוסיפים s",
         },
         {
           type: "content",
-          title: "עבר פשוט — **Past Simple**",
+          title: "**עבר** — אתמול",
           subtitle: "מה כבר קרה",
-          body: "משתמשים בעבר פשוט לדברים שכבר קרו ונגמרו — אתמול, בשבוע שעבר:\nI played football yesterday.\nShe watched TV last night.\n\nלרוב הפעלים מוסיפים ed בסוף, ואותה צורה מתאימה לכל הגופים:\nI walked. He walked. They walked.",
+          body: "מוסיפים ed בסוף\nI played football yesterday.\nHe watched TV last night.",
         },
         {
           type: "content",
-          title: "פעלים **שמשתנים** בעבר",
+          title: "עבר **מיוחד**",
           subtitle: "בלי ed",
-          body: "יש פעלים שבעבר לא מקבלים ed, אלא משנים את הצורה שלהם:\ngo — went\neat — ate\nsee — saw\n\nלמשל:\nI went to school yesterday.\n\nאת הפעלים האלה נלמד לעומק בשיעור \"פעלים חשובים\".",
+          body: "יש פעלים שמשתנים אחרת:\ngo — went\neat — ate\nsee — saw",
         },
         {
           type: "content",
-          title: "עתיד — **will**",
+          title: "**עתיד** — מחר",
           subtitle: "מה עוד יקרה",
-          body: "משתמשים בעתיד לדברים שעוד לא קרו — מחר, בשבוע הבא. מוסיפים will לפני הפועל:\nI will play football tomorrow.\nShe will visit Grandma next week.\n\nאחרי will הפועל תמיד בצורה הבסיסית — בלי s ובלי ed:\nHe will play.",
+          body: "שמים will לפני הפועל\nI will play football tomorrow.\nHe will visit Grandpa next week.",
         },
         {
           type: "content",
-          title: "**מילות זמן** — הרמז שלנו",
-          subtitle: "איך יודעים איזה זמן?",
-          body: "מילות זמן במשפט עוזרות לדעת באיזה זמן להשתמש:\nהווה: every day, always, usually\nעבר: yesterday, last week, two days ago\nעתיד: tomorrow, next week, soon\n\nכשרואים מילת זמן — בודקים לאיזה זמן היא שייכת, ובוחרים את צורת הפועל המתאימה.",
-        },
-        {
-          type: "content",
-          title: "פועל אחד — **שלושה זמנים**",
-          subtitle: "השוואה",
-          body: "ככה נראה אותו פועל בשלושת הזמנים:\nI watch TV every day.\nI watched TV yesterday.\nI will watch TV tomorrow.\n\nבהווה — הפועל הבסיסי. בעבר — מוסיפים ed. בעתיד — מוסיפים will לפני הפועל.",
+          title: "**מילים** שעוזרות",
+          subtitle: "רמזים",
+          body: "every day — הווה\nyesterday — עבר\ntomorrow — עתיד",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: להוסיף s אחרי will. הצורה הנכונה:\nHe will play.\nולא:\nHe will plays.\n\nטעות נוספת: לשכוח את ה-ed בעבר. הצורה הנכונה:\nI watched TV yesterday.\nולא:\nI watch TV yesterday.",
+          body: "אחרי will — בלי s\nנכון:\nHe will play.\nלא נכון:\nHe will plays.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "I ___ football yesterday.", he: "שיחקתי כדורגל אתמול", options: ["play", "played", "will play"], answer: 1 },
+            { q: "I ___ TV tomorrow.", he: "אני אצפה בטלוויזיה מחר", options: ["watched", "will watch"], answer: 1 },
+            { q: "He ___ to school every day.", he: "הוא הולך לבית הספר כל יום", options: ["go", "goes"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "ספרו באנגלית על משהו אחד שעשיתם אתמול, ועל משהו אחד שתעשו מחר.\n\nגם בעברית הפועל משתנה לפי הזמן. מה דומה ומה שונה באנגלית, לדעתכם?",
+          body: "מה עשיתם אתמול? ומה תעשו מחר? אמרו באנגלית\n\nאיזה זמן הכי קל לכם? למה?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -5284,26 +5419,24 @@
           type: "content",
           title: "מה קורה **עכשיו**?",
           subtitle: "פתיחה",
-          body: "באנגלית יש זמן מיוחד לדברים שקורים עכשיו, ממש ברגע זה:\nI am reading.\nHe is playing.\n\nהיום נלמד את ההווה המתמשך — Present Progressive.",
+          body: "מה קורה ממש עכשיו:\nI am reading.\nHe is playing.",
         },
         {
           type: "content",
           title: "**מילים חשובות**",
           subtitle: "אוצר מושגים",
           items: [
-            { en: "Present Progressive", he: "הווה מתמשך — מה שקורה עכשיו" },
             { en: "now", he: "עכשיו" },
             { en: "right now", he: "ממש עכשיו" },
-            { en: "at the moment", he: "כרגע" },
             { en: "Look!", he: "תראו!" },
             { en: "Listen!", he: "תקשיבו!" },
           ],
         },
         {
           type: "content",
-          title: "איך בונים? **am / is / are + ing**",
-          subtitle: "המבנה",
-          body: "בונים את ההווה המתמשך משני חלקים: פועל להיות, ואחריו פועל עם ing.\n\nI am playing.\nHe is playing.\nThey are playing.\n\nאת am, is או are בוחרים בדיוק כמו בשיעור על פועל להיות.",
+          title: "**am / is / are** + ing",
+          subtitle: "איך בונים",
+          body: "am, is, are — ואז פועל עם ing\nI am playing.\nHe is playing.\nThey are playing.",
         },
         {
           type: "content",
@@ -5318,33 +5451,43 @@
         },
         {
           type: "content",
-          title: "**כללי כתיב** עם ing",
-          subtitle: "איך כותבים?",
-          body: "לרוב הפעלים פשוט מוסיפים ing:\nplay — playing\n\nפועל שנגמר ב-e — מורידים את ה-e:\nwrite — writing\n\nפועל קצר שנגמר בתנועה ועיצור — מכפילים את העיצור:\nrun — running\nswim — swimming",
+          title: "איך **כותבים**?",
+          subtitle: "ing",
+          body: "שימו לב לאותיות:\nplay — playing\nwrite — writing\nrun — running",
         },
         {
           type: "content",
-          title: "שלילה **ושאלה**",
+          title: "**לא** ו**שאלה**",
           subtitle: "not ושאלות",
-          body: "בשלילה מוסיפים not אחרי am, is או are:\nHe is not sleeping.\nThey aren't playing.\n\nבשאלה מעבירים את am, is או are לתחילת המשפט:\nIs he sleeping?\nWhat are you doing?",
+          body: "He is not sleeping.\nIs he sleeping?\nWhat are you doing?",
         },
         {
           type: "content",
-          title: "הווה פשוט או **הווה מתמשך**?",
+          title: "**כל יום** או **עכשיו**?",
           subtitle: "השוואה",
-          body: "הווה פשוט — מה שקורה תמיד או בהרגל:\nI play football every day.\n\nהווה מתמשך — מה שקורה עכשיו:\nI am playing football now.\n\nמילות רמז להווה מתמשך: now, right now, Look!, Listen!",
+          body: "כל יום:\nI play football every day.\n\nעכשיו:\nI am playing football now.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לשכוח את am, is או are. נכון:\nHe is playing.\nולא:\nHe playing.\n\nטעות נוספת: לשכוח את ה-ing. נכון:\nThey are swimming.\nולא:\nThey are swim.",
+          body: "לא שוכחים am, is, are\nנכון:\nHe is playing.\nלא נכון:\nHe playing.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "He ___ playing.", he: "הוא משחק עכשיו", options: ["am", "is", "are"], answer: 1 },
+            { q: "They are ___.", he: "הם שוחים עכשיו", options: ["swim", "swimming"], answer: 1 },
+            { q: "I ___ reading now.", he: "אני קורא עכשיו", options: ["am", "is"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "הסתכלו מסביב: מה קורה בכיתה עכשיו? תארו באנגלית שני דברים, למשל: The boy is writing.\n\nבעברית אומרים \"אני קורא\" גם על עכשיו וגם על כל יום. איך האנגלית מבדילה בין השניים?",
+          body: "מה קורה בכיתה עכשיו? אמרו משפט באנגלית, למשל:\nThe boy is writing.",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -5476,7 +5619,7 @@
           type: "content",
           title: "של **מי** זה?",
           subtitle: "פתיחה",
-          body: "בעברית אומרים: הספר שלי, התיק שלו.\nבאנגלית מילת השייכות באה לפני הדבר:\nmy book\nhis bag\n\nהיום נלמד את כינויי השייכות, ואת ה-'s.",
+          body: "בעברית: הספר שלי\nבאנגלית: my book\n\nבאנגלית המילה באה לפני הדבר!",
         },
         {
           type: "content",
@@ -5493,39 +5636,49 @@
         },
         {
           type: "content",
-          title: "כינוי גוף ← **כינוי שייכות**",
-          subtitle: "הטבלה",
-          body: "לכל כינוי גוף יש כינוי שייכות משלו:\nI — my\nyou — your\nhe — his\nshe — her\nit — its\nwe — our\nthey — their",
+          title: "אני — **my**",
+          subtitle: "של מי?",
+          body: "I — my\nyou — your\nhe — his\nshe — her\nit — its\nwe — our\nthey — their",
         },
         {
           type: "content",
-          title: "**'s** — של מישהו",
-          subtitle: "לפי שם",
-          body: "כשאומרים של מי משהו לפי שם, מוסיפים 's:\nDan's bike\nthe dog's ball\n\nבעברית: האופניים של דן, הכדור של הכלב.",
+          title: "**'s** — של",
+          subtitle: "של דן",
+          body: "Dan's bike\nthe dog's ball\n\nהאופניים של דן, הכדור של הכלב",
         },
         {
           type: "content",
-          title: "**Whose**? — של מי?",
+          title: "של **מי**? — Whose",
           subtitle: "שאלה",
-          body: "שואלים של מי משהו עם Whose:\nWhose bag is this?\n\nועונים עם 's או עם כינוי שייכות:\nIt is Ben's bag.\nIt is his bag.",
+          body: "Whose bag is this?\nIt is Ben's bag.\nIt is his bag.",
         },
         {
           type: "content",
-          title: "its או **it's**?",
-          subtitle: "שימו לב",
-          body: "its — של חיה או של חפץ:\nThe dog is eating its food.\n\nit's — קיצור של it is:\nIt's cold today.\n\nאם אפשר להגיד it is — כותבים it's.",
+          title: "**their** או **there**",
+          subtitle: "שומעים אותו דבר",
+          body: "their — שלהם\nThey love their dog.\n\nthere — שם\nThe park is there.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: כינוי גוף במקום כינוי שייכות. נכון:\nThis is my book.\nולא:\nThis is me book.\n\nטעות נוספת: their ו-there נשמעים אותו דבר. נכון:\nThey love their dog.",
+          body: "לא אומרים me book\nנכון:\nThis is my book.\nלא נכון:\nThis is me book.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "This is ___ book.", he: "זה הספר שלי", options: ["my", "me", "I"], answer: 0 },
+            { q: "Dan has a dog. It is ___ dog.", he: "זה הכלב שלו", options: ["his", "my", "our"], answer: 0 },
+            { q: "___ bag is this?", he: "של מי התיק הזה?", options: ["Who", "Whose"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "בחרו חפץ בכיתה ואמרו באנגלית של מי הוא, למשל: This is Dan's pencil.\n\nבעברית אומרים \"הספר שלי\". מה שונה בסדר המילים באנגלית?",
+          body: "בחרו חפץ בכיתה ואמרו של מי הוא, למשל:\nThis is Dan's pencil.\n\nמה שונה בסדר המילים באנגלית?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -5642,7 +5795,7 @@
           type: "content",
           title: "איך אומרים **יש**?",
           subtitle: "פתיחה",
-          body: "כדי להגיד שמשהו נמצא במקום, אומרים באנגלית There is או There are:\nThere is a cat on the sofa.\nThere are two books on the table.\n\nהיום נלמד מתי אומרים כל אחד.",
+          body: "יש — There is או There are\n\nThere is a cat on the sofa.\nThere are two books on the table.",
         },
         {
           type: "content",
@@ -5659,39 +5812,61 @@
         },
         {
           type: "content",
-          title: "**There is** או **There are**?",
-          subtitle: "יחיד ורבים",
-          body: "דבר אחד — There is:\nThere is a ball in the box.\n\nכמה דברים — There are:\nThere are three balls in the box.",
+          title: "**There is**",
+          subtitle: "דבר אחד",
+          body: "דבר אחד — There is\nThere is a ball in the box.\nThere is a dog.",
         },
         {
           type: "content",
-          title: "שלילה **ושאלה**",
-          subtitle: "not ושאלות",
-          body: "בשלילה מוסיפים not:\nThere isn't a cloud in the sky.\nThere aren't any shops here.\n\nבשאלה מחליפים את הסדר:\nIs there a park near here?\nAre there any apples?",
+          title: "**There are**",
+          subtitle: "הרבה דברים",
+          body: "הרבה — There are\nThere are three balls in the box.\nThere are two cats.",
         },
         {
           type: "content",
-          title: "**How many** … are there?",
-          subtitle: "כמה יש?",
-          body: "שואלים כמה יש עם How many:\nHow many boys are there in your class?\nThere are twenty boys.\n\nאחרי How many בא תמיד שם עצם ברבים.",
+          title: "**אין**",
+          subtitle: "מוסיפים not",
+          body: "אין — מוסיפים not\nThere isn't a cloud in the sky.\nThere aren't any shops here.",
         },
         {
           type: "content",
-          title: "there או **their**?",
-          subtitle: "שימו לב",
-          body: "there — שם, וגם בצירוף There is:\nThere is a dog.\n\ntheir — שלהם:\nThey love their dog.\n\nהן נשמעות אותו דבר, אבל נכתבות אחרת!",
+          title: "**יש?** — שאלה",
+          subtitle: "מחליפים מקום",
+          body: "בשאלה — Is there או Are there\nThere is a park. → Is there a park?\nAre there any apples?",
+        },
+        {
+          type: "content",
+          title: "**How many** — כמה",
+          subtitle: "סופרים",
+          body: "How many boys are there in your class?\nThere are twenty boys.",
+        },
+        {
+          type: "content",
+          title: "**there** או **their**",
+          subtitle: "שומעים אותו דבר",
+          body: "there — שם, יש\nThere is a dog.\n\ntheir — שלהם\nThey love their dog.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: There is עם רבים. נכון:\nThere are two cats.\nולא:\nThere is two cats.\n\nטעות נוספת: לתרגם \"יש\" ל-have. נכון:\nThere is a park in my town.",
+          body: "הרבה — There are\nנכון:\nThere are two cats.\nלא נכון:\nThere is two cats.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "___ a cat on the bed.", he: "יש חתול על המיטה", options: ["There is", "There are"], answer: 0 },
+            { q: "___ two books on the table.", he: "יש שני ספרים על השולחן", options: ["There is", "There are"], answer: 1 },
+            { q: "___ a park near here?", he: "יש פארק קרוב לכאן?", options: ["Is there", "There is"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "מה יש בכיתה שלנו? אמרו באנגלית שלושה משפטים עם There is ו-There are.\n\nבעברית אומרים \"יש\" גם על דבר אחד וגם על הרבה. למה באנגלית צריך לבחור?",
+          body: "מה יש בכיתה שלנו? אמרו משפט עם There is ומשפט עם There are\n\nבעברית אומרים \"יש\" על אחד ועל הרבה. ומה באנגלית?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -5807,7 +5982,7 @@
           type: "content",
           title: "**כמה** יש?",
           subtitle: "פתיחה",
-          body: "באנגלית יש מילים מיוחדות שמתארות כמות:\nsome apples\nmany friends\nmuch water\n\nהיום נלמד מתי משתמשים בכל אחת.",
+          body: "מילים שאומרות כמה:\nsome apples\nmany friends\nmuch water",
         },
         {
           type: "content",
@@ -5824,39 +5999,49 @@
         },
         {
           type: "content",
-          title: "**some** או **any**?",
-          subtitle: "חיוב, שאלה ושלילה",
-          body: "some — במשפט חיובי:\nI have some apples.\n\nany — בשאלה ובשלילה:\nDo you have any apples?\nI don't have any apples.",
+          title: "**some** או **any**",
+          subtitle: "יש או אין",
+          body: "some — כשיש\nI have some apples.\n\nany — בשאלה, וכשאין\nDo you have any apples?\nI don't have any apples.",
         },
         {
           type: "content",
-          title: "אפשר **לספור**?",
+          title: "סופרים או **לא סופרים**",
           subtitle: "שני סוגים",
-          body: "את רוב הדברים אפשר לספור:\none apple, two apples\n\nיש דברים שאי אפשר לספור:\nwater, milk, money, time\n\nלא אומרים two waters, אלא some water.",
+          body: "אפשר לספור:\none apple, two apples\n\nאי אפשר לספור:\nwater, milk, money",
         },
         {
           type: "content",
-          title: "**many** או **much**?",
+          title: "**many** או **much**",
           subtitle: "הרבה",
-          body: "many — עם דברים שאפשר לספור:\nmany books\nHow many books?\n\nmuch — עם דברים שאי אפשר לספור:\nmuch water\nHow much water?",
+          body: "סופרים — many\nmany books\n\nלא סופרים — much\nmuch water",
         },
         {
           type: "content",
-          title: "**a lot of** — תמיד מתאים",
-          subtitle: "טיפ",
-          body: "a lot of מתאים לשני הסוגים:\na lot of books\na lot of water\n\nבמשפט חיובי נוח להגיד a lot of. בשאלה ובשלילה — much ו-many.",
+          title: "**a lot of** — הרבה",
+          subtitle: "תמיד מתאים",
+          body: "a lot of books\na lot of water",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: some בשלילה. נכון:\nI don't have any money.\nולא:\nI don't have some money.\n\nטעות נוספת: How much עם דברים שסופרים. נכון:\nHow many books?",
+          body: "כשאין — any\nנכון:\nI don't have any money.\nלא נכון:\nI don't have some money.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "I have ___ apples.", he: "יש לי כמה תפוחים", options: ["some", "any"], answer: 0 },
+            { q: "I don't have ___ milk.", he: "אין לי חלב", options: ["some", "any"], answer: 1 },
+            { q: "How ___ books?", he: "כמה ספרים?", options: ["many", "much"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "מה יש לכם בתיק? אמרו באנגלית משפט אחד עם some ומשפט אחד עם any.\n\nתנו דוגמה לדבר שאפשר לספור ולדבר שאי אפשר לספור. איך יודעים?",
+          body: "מה יש לכם בתיק? אמרו משפט עם some\n\nמה אפשר לספור, ומה אי אפשר לספור?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -5971,9 +6156,9 @@
       slides: [
         {
           type: "content",
-          title: "גדול **יותר**, **הכי** גדול",
+          title: "גדול, **יותר** גדול, **הכי** גדול",
           subtitle: "פתיחה",
-          body: "כשמשווים בין דברים, התואר משתנה:\nbig — bigger — the biggest\n\nהיום נלמד איך משווים בין שני דברים, ואיך אומרים \"הכי\".",
+          body: "big — bigger — the biggest",
         },
         {
           type: "content",
@@ -5982,47 +6167,57 @@
           items: [
             { en: "bigger", he: "גדול יותר" },
             { en: "the biggest", he: "הכי גדול" },
-            { en: "than", he: "מאשר, מ-" },
-            { en: "more", he: "יותר (לתארים ארוכים)" },
-            { en: "the most", he: "הכי (לתארים ארוכים)" },
-            { en: "better / the best", he: "טוב יותר / הכי טוב" },
+            { en: "than", he: "מ- (בהשוואה)" },
+            { en: "more", he: "יותר (למילים ארוכות)" },
+            { en: "the most", he: "הכי (למילים ארוכות)" },
+            { en: "better / the best", he: "יותר טוב / הכי טוב" },
           ],
         },
         {
           type: "content",
-          title: "**-er** ו-**than**",
-          subtitle: "משווים בין שניים",
-          body: "לתואר קצר מוסיפים er, ואחריו than:\nA car is faster than a bike.\nMy brother is taller than me.",
+          title: "**er** — יותר",
+          subtitle: "משווים שניים",
+          body: "מוסיפים er ואחריו than\nA car is faster than a bike.\nMy brother is taller than me.",
         },
         {
           type: "content",
-          title: "**the -est**",
+          title: "**the est** — הכי",
           subtitle: "הכי",
-          body: "כדי להגיד \"הכי\", מוסיפים the לפני התואר ו-est בסופו:\nThe cheetah is the fastest animal.\nDan is the tallest boy in the class.",
+          body: "The cheetah is the fastest animal.\nDan is the tallest boy in the class.",
         },
         {
           type: "content",
-          title: "**more** ו-**the most**",
-          subtitle: "תארים ארוכים",
-          body: "לתואר ארוך לא מוסיפים er, אלא more או the most:\nbeautiful — more beautiful — the most beautiful\n\nThis book is more interesting than that one.",
+          title: "מילים **ארוכות**",
+          subtitle: "more, the most",
+          body: "במילה ארוכה — more ו-the most\nbeautiful — more beautiful — the most beautiful",
         },
         {
           type: "content",
-          title: "**כללי כתיב** ומילים מיוחדות",
-          subtitle: "שימו לב",
-          body: "big — bigger (מכפילים את העיצור)\nhappy — happier (y הופך ל-i)\nnice — nicer (רק r)\n\nתארים מיוחדים:\ngood — better — the best\nbad — worse — the worst",
+          title: "מילים **מיוחדות**",
+          subtitle: "זוכרים בעל פה",
+          body: "good — better — the best\nbad — worse — the worst",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: גם more וגם er. נכון:\nHe is taller than me.\nולא:\nHe is more taller than me.\n\nטעות נוספת: then במקום than. נכון:\nfaster than a car",
+          body: "לא שמים more וגם er ביחד\nנכון:\nHe is taller than me.\nלא נכון:\nHe is more taller than me.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "A car is ___ than a bike.", he: "מכונית מהירה יותר מאופניים", options: ["fast", "faster", "fastest"], answer: 1 },
+            { q: "He is the ___ boy in the class.", he: "הוא הילד הכי גבוה בכיתה", options: ["tall", "taller", "tallest"], answer: 2 },
+            { q: "This is the ___ day!", he: "זה היום הכי טוב!", options: ["good", "better", "best"], answer: 2 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "השוו באנגלית בין שני דברים בכיתה, למשל: The door is bigger than the window.\n\nמה החיה הכי מהירה, לדעתכם? ומה החיה הכי חזקה? ענו באנגלית.",
+          body: "השוו בין שני דברים בכיתה, למשל:\nThe door is bigger than the window.\n\nמה החיה הכי מהירה לדעתכם?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -6139,7 +6334,7 @@
           type: "content",
           title: "**כמה פעמים**?",
           subtitle: "פתיחה",
-          body: "כדי להגיד כמה פעמים עושים משהו, יש באנגלית מילים מיוחדות:\nI always eat breakfast.\nI never eat fish.\n\nהיום נלמד את מילות התדירות.",
+          body: "I always eat breakfast.\nI never eat fish.",
         },
         {
           type: "content",
@@ -6162,33 +6357,43 @@
         },
         {
           type: "content",
-          title: "**לפני** הפועל",
-          subtitle: "איפה במשפט?",
-          body: "מילת התדירות באה לפני הפועל:\nI always walk to school.\nHe often plays football.\n\nבדיוק כמו בעברית: אני תמיד הולך.",
+          title: "**איפה** במשפט?",
+          subtitle: "לפני הפועל",
+          body: "המילה באה לפני הפועל:\nI always walk to school.\nHe often plays football.",
         },
         {
           type: "content",
-          title: "**אחרי** am, is, are",
-          subtitle: "עם פועל להיות",
-          body: "עם פועל להיות, מילת התדירות באה אחריו:\nHe is always happy.\nWe are never late.",
+          title: "עם **am, is, are**",
+          subtitle: "אחרי",
+          body: "המילה באה אחרי am, is, are\nHe is always happy.\nWe are never late.",
         },
         {
           type: "content",
-          title: "**How often**?",
+          title: "**How often** — כל כמה זמן?",
           subtitle: "שאלה",
-          body: "שואלים כל כמה זמן עם How often:\nHow often do you play football?\n\nועונים:\nI usually play on Sunday.\nI play every day.",
+          body: "How often do you play football?\nI usually play on Sunday.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: מילת התדירות אחרי הפועל. נכון:\nI always eat breakfast.\nולא:\nI eat always breakfast.\n\nטעות נוספת: never יחד עם not. נכון:\nI never eat fish.",
+          body: "המילה באה לפני הפועל\nנכון:\nI always eat breakfast.\nלא נכון:\nI eat always breakfast.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "I ___ eat breakfast.", he: "אני תמיד אוכל ארוחת בוקר", options: ["always", "never"], answer: 0 },
+            { q: "He ___ eats fish.", he: "הוא אף פעם לא אוכל דגים", options: ["always", "never", "often"], answer: 1 },
+            { q: "איזה משפט נכון?", options: ["I always walk to school.", "I walk always to school."], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "מה אתם עושים תמיד, ומה אף פעם? אמרו באנגלית משפט עם always ומשפט עם never.\n\nכל כמה זמן אתם קוראים ספר? ענו באנגלית: I sometimes read…",
+          body: "מה אתם עושים תמיד? אמרו באנגלית עם always\n\nמה אתם אף פעם לא עושים? אמרו עם never",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -6304,7 +6509,7 @@
           type: "content",
           title: "מה **אתם עומדים** לעשות?",
           subtitle: "פתיחה",
-          body: "כשמתכננים משהו לעתיד, אומרים באנגלית going to:\nI am going to visit Grandpa.\nIt is going to rain.\n\nהיום נלמד איך מדברים על תוכניות.",
+          body: "תוכנית לעתיד — going to\nI am going to visit Grandpa.",
         },
         {
           type: "content",
@@ -6321,39 +6526,43 @@
         },
         {
           type: "content",
-          title: "**am / is / are + going to**",
-          subtitle: "המבנה",
-          body: "בונים את העתיד הזה משלושה חלקים:\nI am going to play.\nHe is going to play.\nThey are going to play.\n\nאחרי going to בא הפועל הבסיסי — בלי s ובלי ing.",
+          title: "**am / is / are** + going to",
+          subtitle: "איך בונים",
+          body: "I am going to play.\nHe is going to play.\nThey are going to play.",
         },
         {
           type: "content",
-          title: "**תוכניות** ו**סימנים**",
-          subtitle: "מתי משתמשים?",
-          body: "going to — לתוכנית שכבר החלטנו עליה:\nWe are going to travel to Eilat.\n\nוגם כשרואים סימן שמשהו יקרה:\nLook at the clouds! It is going to rain.",
+          title: "**רואים** מה יקרה",
+          subtitle: "סימנים",
+          body: "רואים עננים — יודעים שיהיה גשם:\nLook at the clouds! It is going to rain.",
         },
         {
           type: "content",
-          title: "שלילה **ושאלה**",
+          title: "**לא** ו**שאלה**",
           subtitle: "not ושאלות",
-          body: "בשלילה מוסיפים not:\nI am not going to watch TV.\n\nבשאלה מעבירים את am, is או are להתחלה:\nAre you going to come?\nWhat are you going to do?",
-        },
-        {
-          type: "content",
-          title: "going to או **will**?",
-          subtitle: "השוואה",
-          body: "going to — תוכנית או סימן:\nI am going to visit Grandpa on Friday.\n\nwill — החלטה של הרגע, או הבטחה:\nThe phone is ringing. I will answer it!",
+          body: "I am not going to watch TV.\nAre you going to come?\nWhat are you going to do?",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לשכוח את am, is או are. נכון:\nWe are going to play.\nולא:\nWe going to play.\n\nטעות נוספת: ing אחרי going to. נכון:\nI am going to play.",
+          body: "לא שוכחים am, is, are\nנכון:\nWe are going to play.\nלא נכון:\nWe going to play.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "I ___ going to swim.", he: "אני הולך לשחות", options: ["am", "is", "are"], answer: 0 },
+            { q: "He is going to ___ football.", he: "הוא הולך לשחק כדורגל", options: ["play", "plays", "playing"], answer: 0 },
+            { q: "Look at the clouds! It is going to ___.", he: "תראו את העננים! עומד לרדת גשם", options: ["rain", "rains"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "מה אתם עומדים לעשות בסוף השבוע? ספרו באנגלית: I am going to…\n\nמה ההבדל, לדעתכם, בין תוכנית לבין החלטה של הרגע?",
+          body: "מה אתם עומדים לעשות בסוף השבוע? אמרו באנגלית:\nI am going to…",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -6467,9 +6676,9 @@
       slides: [
         {
           type: "content",
-          title: "**חייבים**, **אסור** ו**כדאי**",
+          title: "**חייבים**, **אסור**, **כדאי**",
           subtitle: "פתיחה",
-          body: "באנגלית יש מילים מיוחדות לחוקים ולעצות:\nYou must wear a seatbelt.\nYou should drink water.\n\nהיום נלמד את must, should ו-have to.",
+          body: "You must wear a seatbelt.\nYou should drink water.",
         },
         {
           type: "content",
@@ -6488,37 +6697,41 @@
           type: "content",
           title: "**must** ו-**mustn't**",
           subtitle: "חוקים",
-          body: "must — חובה:\nYou must stop at a red light.\n\nmustn't — איסור:\nYou mustn't run near the pool.",
+          body: "must — חייבים\nYou must stop at a red light.\n\nmustn't — אסור\nYou mustn't run near the pool.",
         },
         {
           type: "content",
-          title: "**should** ו-**shouldn't**",
-          subtitle: "עצות",
-          body: "should — עצה טובה:\nYou should go to bed early.\n\nshouldn't — עצה לא לעשות משהו:\nYou shouldn't eat so much candy.",
+          title: "**should** — כדאי",
+          subtitle: "עצה טובה",
+          body: "should — כדאי\nYou should go to bed early.\n\nshouldn't — לא כדאי\nYou shouldn't eat so much candy.",
         },
         {
           type: "content",
-          title: "**have to** ו-**has to**",
-          subtitle: "צריך",
-          body: "have to — צריך, חייב:\nI have to clean my room.\n\nעם he, she, it — has to:\nHe has to take the bus.",
-        },
-        {
-          type: "content",
-          title: "mustn't או **don't have to**?",
-          subtitle: "שימו לב",
-          body: "mustn't — אסור:\nYou mustn't use your phone in the test.\n\ndon't have to — לא חייבים, אבל מותר:\nYou don't have to come. It's OK.",
+          title: "**have to** — צריך",
+          subtitle: "צריך לעשות",
+          body: "I have to clean my room.\n\nעם he, she, it — has to\nHe has to take the bus.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: to אחרי must או should. נכון:\nYou must go.\nולא:\nYou must to go.\n\nטעות נוספת: s אחרי must או should. נכון:\nHe should study.",
+          body: "אחרי must — בלי to\nנכון:\nYou must go.\nלא נכון:\nYou must to go.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "You ___ run near the pool.", he: "אסור לרוץ ליד הבריכה", options: ["must", "mustn't", "should"], answer: 1 },
+            { q: "You ___ drink water.", he: "כדאי לשתות מים", options: ["should", "mustn't"], answer: 0 },
+            { q: "He ___ to take the bus.", he: "הוא צריך לנסוע באוטובוס", options: ["have", "has"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "אילו חוקים יש בכיתה שלנו? אמרו באנגלית חוק אחד עם must וחוק אחד עם mustn't.\n\nתנו עצה באנגלית לחבר שעייף כל הזמן: You should…",
+          body: "איזה חוק יש בכיתה שלנו? אמרו באנגלית עם must\n\nתנו עצה לחבר עייף:\nYou should…",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -6635,7 +6848,7 @@
           type: "content",
           title: "**בונים** מילים",
           subtitle: "פתיחה",
-          body: "באנגלית אפשר לבנות מילה חדשה ממילה מוכרת — מוסיפים חלק בהתחלה או בסוף:\nhappy — unhappy\nteach — teacher\n\nמי שמכיר את החלקים האלה מבין הרבה מילים חדשות!",
+          body: "מוסיפים חלק קטן — ויש מילה חדשה!\nhappy — unhappy\nteach — teacher",
         },
         {
           type: "content",
@@ -6652,45 +6865,55 @@
         },
         {
           type: "content",
-          title: "**un-** ו-**dis-**",
-          subtitle: "הפכים",
-          body: "un- ו-dis- בתחילת מילה הופכים את המשמעות:\nhappy — unhappy\nfair — unfair\nagree — disagree\nlike — dislike",
+          title: "**un** ו-**dis** — לא",
+          subtitle: "הפוך",
+          body: "happy — unhappy\nfair — unfair\nlike — dislike",
         },
         {
           type: "content",
-          title: "**re-** — שוב",
+          title: "**re** — שוב",
           subtitle: "עושים שוב",
-          body: "re- בתחילת מילה פירושו \"שוב\":\nwrite — rewrite\nplay — replay\nuse — reuse",
+          body: "write — rewrite\nplay — replay",
         },
         {
           type: "content",
-          title: "**-er** — מי שעושה",
-          subtitle: "אנשים ומכונות",
-          body: "-er בסוף פועל אומרת מי (או מה) עושה את הפעולה:\nteach — teacher\nplay — player\nwash dishes — dishwasher",
+          title: "**er** — מי שעושה",
+          subtitle: "אנשים",
+          body: "teach — teacher\nplay — player",
         },
         {
           type: "content",
-          title: "**-ful** ו-**-less**",
-          subtitle: "מלא ובלי",
-          body: "-ful — מלא ב-:\ncareful, helpful, colorful\n\n-less — בלי:\ncareless, helpless, homeless",
+          title: "**ful** ו-**less**",
+          subtitle: "מלא, בלי",
+          body: "ful — מלא ב...\ncareful, helpful\n\nless — בלי\ncareless, homeless",
         },
         {
           type: "content",
-          title: "**-ly** — איך?",
-          subtitle: "תואר הפועל",
-          body: "-ly בסוף מילה מתארת איך עושים משהו:\nquick — quickly\nslow — slowly\n\nHe runs quickly.",
+          title: "**ly** — איך",
+          subtitle: "איך עושים",
+          body: "quick — quickly\nslow — slowly\nHe runs quickly.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לחשוב שכל מילה שמתחילה ב-un היא הפך. under ו-uncle הן מילים רגילות!\n\nהטיפ: מילה לא מוכרת בקטע? חפשו בתוכה מילה שאתם מכירים:\nunhelpful = un + help + ful",
+          body: "לא כל מילה עם un היא הפך.\nunder ו-uncle הן מילים רגילות.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "happy → ___", he: "לא שמח", options: ["unhappy", "rehappy"], answer: 0 },
+            { q: "teach → ___", he: "מורה", options: ["teacher", "teachful"], answer: 0 },
+            { q: "write → ___", he: "לכתוב שוב", options: ["rewrite", "unwrite"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "כמה מילים אתם יכולים לבנות מהמילה help? (helpful, helpless, helper…)\n\nאיך חלקי מילים יכולים לעזור לכם להבין קטע קריאה עם מילים חדשות?",
+          body: "המילה help — כמה מילים אפשר לבנות ממנה?\n\nאיך חלקי מילים עוזרים להבין מילה חדשה?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -6813,7 +7036,7 @@
           type: "content",
           title: "**שתי אותיות**, צליל אחד",
           subtitle: "פתיחה",
-          body: "לפעמים באנגלית שתי אותיות יחד עושות צליל אחד חדש:\nfish\nchair\nthree\n\nהיום נכיר את צירופי האותיות החשובים.",
+          body: "שתי אותיות — צליל אחד:\nfish\nchair\nthree",
         },
         {
           type: "content",
@@ -6830,38 +7053,48 @@
         {
           type: "content",
           title: "**sh** ו-**ch**",
-          subtitle: "ש ו-צ'",
-          body: "sh — נשמע כמו ש:\nfish, shoe, ship\n\nch — נשמע כמו צ':\nchair, cheese, lunch",
+          subtitle: "ש, צ'",
+          body: "sh — כמו ש\nfish, shoe, ship\n\nch — כמו צ'\nchair, cheese, lunch",
         },
         {
           type: "content",
           title: "**th**",
-          subtitle: "הלשון בין השיניים",
-          body: "th — מוציאים קצת את הלשון בין השיניים:\nthree, thank you, bath\n\nוגם במילים קטנות וחשובות:\nthe, this, that, they",
+          subtitle: "הלשון בחוץ",
+          body: "מוציאים קצת את הלשון:\nthree, thank you, bath",
         },
         {
           type: "content",
           title: "**ee** ו-**oo**",
-          subtitle: "תנועות ארוכות",
-          body: "ee — \"אי\" ארוך:\ntree, see, green\n\noo — \"או\" ארוך:\nmoon, food, school\n\nשימו לב: ב-book וב-good הוא קצר יותר.",
+          subtitle: "צליל ארוך",
+          body: "ee — אִי ארוך\ntree, see, green\n\noo — אוּ ארוך\nmoon, food, school",
         },
         {
           type: "content",
-          title: "**e** שקטה בסוף",
+          title: "**e** שקטה",
           subtitle: "magic e",
-          body: "e בסוף מילה לא נשמעת, אבל משנה את התנועה שלפניה:\nkit — kite\ncap — cape\nhop — hope\n\nהתנועה אומרת את השם שלה!",
+          body: "e בסוף המילה לא נשמעת.\nאבל היא משנה את המילה:\nkit — kite\ncap — cape",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לקרוא כל אות לבד. s ו-h ביחד הן לא \"ס-ה\", אלא sh:\nship\n\nטעות נוספת: לבטא th כמו ת. מוציאים קצת את הלשון:\nthank you",
+          body: "s ועוד h — זה לא ס-ה\nזה צליל אחד:\nship",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "איזה צירוף נשמע כמו ש?", options: ["sh", "ch", "th"], answer: 0 },
+            { q: "ch — באיזו מילה הוא נמצא?", options: ["chair", "ship", "three"], answer: 0 },
+            { q: "ee — באיזו מילה הוא נמצא?", options: ["moon", "tree", "cat"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "חשבו על מילה באנגלית עם sh ועל מילה עם ch. אמרו אותן בקול!\n\nאילו צלילים באנגלית לא קיימים בעברית, לדעתכם?",
+          body: "אמרו בקול מילה עם sh ומילה עם ch\n\nאיזה צליל באנגלית אין בעברית?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -6976,7 +7209,7 @@
           type: "content",
           title: "**ימים**, **חודשים** ועונות",
           subtitle: "פתיחה",
-          body: "היום נלמד להגיד באנגלית את ימי השבוע, את החודשים ואת העונות:\nToday is Sunday.\nMy birthday is in May.\nIt is hot in summer.",
+          body: "Today is Sunday.\nMy birthday is in May.\nIt is hot in summer.",
         },
         {
           type: "content",
@@ -7001,31 +7234,41 @@
           type: "content",
           title: "**החודשים**",
           subtitle: "Months",
-          body: "January, February, March, April, May, June\nJuly, August, September, October, November, December\n\nשמות של ימים ושל חודשים מתחילים תמיד באות גדולה!",
+          body: "January, February, March, April, May, June\nJuly, August, September, October, November, December\n\nתמיד באות גדולה!",
         },
         {
           type: "content",
           title: "**העונות**",
           subtitle: "Seasons",
-          body: "spring — אביב\nsummer — קיץ\nautumn — סתיו\nwinter — חורף\n\nבאמריקה קוראים לסתיו גם fall.",
+          body: "spring — אביב\nsummer — קיץ\nautumn — סתיו\nwinter — חורף",
         },
         {
           type: "content",
-          title: "**on** או **in**?",
-          subtitle: "מילות יחס",
-          body: "on — עם ימים:\non Sunday, on my birthday\n\nin — עם חודשים, עונות ושנים:\nin May, in summer, in 2026",
+          title: "**on** או **in**",
+          subtitle: "ביום, בחודש",
+          body: "on — עם יום\non Sunday\n\nin — עם חודש ועונה\nin May, in summer",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: יום או חודש באות קטנה. נכון:\nMonday, June\nולא:\nmonday, june\n\nטעות נוספת: in עם יום. נכון:\non Sunday",
+          body: "יום וחודש — באות גדולה\nנכון:\nMonday, June\nלא נכון:\nmonday, june",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "My birthday is ___ May.", he: "יום ההולדת שלי במאי", options: ["on", "in"], answer: 1 },
+            { q: "I play football ___ Sunday.", he: "אני משחק כדורגל ביום ראשון", options: ["on", "in"], answer: 0 },
+            { q: "איך כותבים נכון?", options: ["monday", "Monday"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "מה היום האהוב עליכם בשבוע, ולמה? ענו באנגלית: My favorite day is…\n\nבאיזה חודש יום ההולדת שלכם? ובאיזו עונה?",
+          body: "מה היום האהוב עליכם בשבוע? אמרו באנגלית:\nMy favorite day is…\n\nבאיזה חודש יום ההולדת שלכם?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -7142,7 +7385,7 @@
           type: "content",
           title: "**מה השעה**?",
           subtitle: "פתיחה",
-          body: "באנגלית שואלים:\nWhat time is it?\n\nהיום נלמד להגיד את השעה — שעה עגולה, וחצי, ורבע ורבע ל-.",
+          body: "What time is it?\n\nהיום נלמד להגיד את השעה.",
         },
         {
           type: "content",
@@ -7170,39 +7413,49 @@
         },
         {
           type: "content",
-          title: "**o'clock**",
+          title: "**o'clock** — בדיוק",
           subtitle: "שעה עגולה",
-          body: "כשהמחוג הארוך על 12 — אומרים o'clock:\n7:00 — seven o'clock\n12:00 — twelve o'clock",
+          body: "7:00 — seven o'clock\n12:00 — twelve o'clock",
         },
         {
           type: "content",
-          title: "**half past**",
-          subtitle: "וחצי",
-          body: "כשהמחוג הארוך על 6 — half past:\n7:30 — half past seven\n\npast פירושו \"אחרי\": חצי שעה אחרי שבע.",
+          title: "**half past** — וחצי",
+          subtitle: "חצי שעה",
+          body: "7:30 — half past seven",
         },
         {
           type: "content",
-          title: "**quarter past** ו-**quarter to**",
-          subtitle: "רבע",
-          body: "quarter past — רבע שעה אחרי:\n7:15 — quarter past seven\n\nquarter to — רבע שעה לפני:\n7:45 — quarter to eight",
+          title: "**quarter** — רבע",
+          subtitle: "רבע שעה",
+          body: "7:15 — quarter past seven\n7:45 — quarter to eight",
         },
         {
           type: "content",
           title: "**at** — בשעה",
-          subtitle: "שואלים ועונים",
-          body: "What time is it?\nIt is ten o'clock.\n\nכשאומרים מתי משהו קורה — at:\nSchool starts at eight o'clock.",
+          subtitle: "מתי?",
+          body: "School starts at eight o'clock.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: 7:45 זה לא quarter to seven! זה רבע לפני שמונה:\nquarter to eight\n\nטעות נוספת: o'clock יחד עם דקות. נכון:\nhalf past seven",
+          body: "7:45 זה רבע לשמונה:\nquarter to eight",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "7:30", he: "מה השעה?", options: ["half past seven", "seven o'clock"], answer: 0 },
+            { q: "3:00", he: "מה השעה?", options: ["half past three", "three o'clock"], answer: 1 },
+            { q: "4:15", he: "מה השעה?", options: ["quarter past four", "quarter to four"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "באיזו שעה אתם קמים בבוקר? ובאיזו שעה הולכים לישון? ענו באנגלית: I get up at…\n\nמה השעה עכשיו? מי יודע להגיד את זה באנגלית?",
+          body: "באיזו שעה אתם קמים בבוקר? אמרו באנגלית:\nI get up at…\n\nמה השעה עכשיו?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -7332,7 +7585,7 @@
           type: "content",
           title: "פעלים **חשובים**",
           subtitle: "פתיחה",
-          body: "רוב הפעלים באנגלית מקבלים ed בעבר:\nplay — played\n\nאבל לכמה מהפעלים הכי נפוצים יש צורת עבר מיוחדת, בלי ed:\ngo — went\n\nהיום נכיר אותם — הם מופיעים כמעט בכל סיפור באנגלית.",
+          body: "רוב הפעלים — ed בעבר\nplay — played\n\nאבל יש פעלים מיוחדים:\ngo — went",
         },
         {
           type: "content",
@@ -7345,57 +7598,59 @@
             { en: "can — could", he: "יכול — יכול היה" },
             { en: "have — had", he: "יש לי — היה לי" },
             { en: "do — did", he: "לעשות — עשה" },
-            { en: "come — came", he: "לבוא — בא" },
-            { en: "run — ran", he: "לרוץ — רץ" },
           ],
         },
         {
           type: "content",
-          title: "**go** / **went**",
+          title: "**go** — **went**",
           subtitle: "ללכת",
-          body: "הפועל go פירושו ללכת או לנסוע:\nI go to school every day.\n\nבעבר, go הופך ל-went:\nI went to the park yesterday.\nWe went to the beach last summer.",
+          body: "I go to school every day.\nI went to the park yesterday.",
         },
         {
           type: "content",
-          title: "**eat** / **ate**",
+          title: "**eat** — **ate**",
           subtitle: "לאכול",
-          body: "הפועל eat פירושו לאכול:\nI eat an apple every day.\n\nבעבר, eat הופך ל-ate:\nI ate pizza yesterday.\nShe ate a sandwich for lunch.",
+          body: "I eat an apple every day.\nI ate pizza yesterday.",
         },
         {
           type: "content",
-          title: "**see** / **saw**",
+          title: "**see** — **saw**",
           subtitle: "לראות",
-          body: "הפועל see פירושו לראות:\nI see a bird in the tree.\n\nבעבר, see הופך ל-saw:\nI saw a funny movie last night.\nWe saw a big dog in the park.",
+          body: "I see a bird in the tree.\nI saw a big dog in the park.",
         },
         {
           type: "content",
-          title: "**can** / **could**",
-          subtitle: "יכול / יודע",
-          body: "המילה can פירושה יכול, או יודע לעשות משהו:\nI can swim.\n\nבעבר, can הופך ל-could:\nWhen I was five, I could read.\n\nאחרי can ו-could בא פועל בצורה הבסיסית — בלי s:\nShe can swim.",
+          title: "**can** — **could**",
+          subtitle: "יכול",
+          body: "I can swim.\nWhen I was five, I could read.",
         },
         {
           type: "content",
           title: "עוד פעלים **חשובים**",
           subtitle: "כדאי לזכור",
-          body: "עוד פעלים נפוצים עם צורת עבר מיוחדת:\nhave — had\ndo — did\ncome — came\nrun — ran\n\nלמשל:\nI had a great day.",
-        },
-        {
-          type: "content",
-          title: "בעבר — **צורה אחת לכולם**",
-          subtitle: "בלי s",
-          body: "בזמן עבר הפועל לא משתנה לפי הגוף — אין s בגוף שלישי:\nI went. She went. They went.\nI ate. He ate. We ate.\n\nזה מה שהופך את זמן העבר לקל יותר — לומדים צורה אחת, ומשתמשים בה עם כולם.",
+          body: "have — had\ndo — did\ncome — came\nrun — ran",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: להוסיף ed לפועל עם צורת עבר מיוחדת. הצורה הנכונה:\nI went home.\nולא:\nI goed home.\n\nטעות נוספת: להוסיף s לפועל שאחרי can. הצורה הנכונה:\nHe can run.\nולא:\nHe can runs.",
+          body: "לפעלים האלה לא מוסיפים ed\nנכון:\nI went home.\nלא נכון:\nI goed home.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "Yesterday I ___ to the park.", he: "אתמול הלכתי לפארק", options: ["go", "went", "goed"], answer: 1 },
+            { q: "I ___ pizza yesterday.", he: "אכלתי פיצה אתמול", options: ["eat", "ate"], answer: 1 },
+            { q: "He can ___.", he: "הוא יכול לרוץ", options: ["run", "runs"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "מה אכלתם אתמול, ולאן הלכתם? ספרו באנגלית עם ate ו-went.\n\nלמה, לדעתכם, דווקא לפעלים הכי נפוצים יש צורות עבר מיוחדות?",
+          body: "מה אכלתם אתמול? אמרו באנגלית עם ate\n\nלאן הלכתם אתמול? אמרו עם went",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -7531,80 +7786,86 @@
       slides: [
         {
           type: "content",
-          title: "מה זה **יחיד** ומה זה **רבים**?",
+          title: "**אחד** או **הרבה**?",
           subtitle: "פתיחה",
-          body: "יחיד (singular) — דבר אחד. רבים (plural) — יותר מדבר אחד.\n\nבעברית אומרים ספר וספרים. באנגלית רוב המילים מקבלות s בסוף, לדוגמה:\none book, two books\n\nאבל יש גם מילים שמשתנות בדרך מיוחדת — והיום נכיר את כולן.",
+          body: "אחד — book\nהרבה — books\n\none book, two books",
         },
         {
           type: "content",
           title: "**מילים חשובות**",
           subtitle: "אוצר מושגים",
           items: [
-            { en: "singular", he: "יחיד — דבר אחד" },
-            { en: "plural", he: "רבים — יותר מדבר אחד" },
+            { en: "one", he: "אחד" },
+            { en: "two", he: "שניים" },
             { en: "book → books", he: "ספר → ספרים" },
             { en: "box → boxes", he: "קופסה → קופסאות" },
-            { en: "baby → babies", he: "תינוק → תינוקות" },
             { en: "child → children", he: "ילד → ילדים" },
-            { en: "man → men", he: "גבר → גברים" },
-            { en: "mouse → mice", he: "עכבר → עכברים" },
             { en: "foot → feet", he: "כף רגל → כפות רגליים" },
-            { en: "tooth → teeth", he: "שן → שיניים" },
           ],
         },
         {
           type: "content",
-          title: "כלל 1: מוסיפים **s**",
+          title: "מוסיפים **s**",
           subtitle: "רוב המילים",
-          body: "רוב המילים באנגלית מקבלות s בסוף כשהן ברבים, לדוגמה:\none cat, two cats\none bird, three birds\none apple, five apples\n\nזה הכלל הכי נפוץ — כשלא בטוחים, מתחילים ממנו.",
+          body: "one cat, two cats\none bird, three birds",
         },
         {
           type: "content",
-          title: "כלל 2: מוסיפים **es**",
+          title: "מוסיפים **es**",
           subtitle: "אחרי s, sh, ch, x",
-          body: "כשהמילה מסתיימת ב-s, sh, ch או x, מוסיפים es — כך קל יותר להגיד אותה, לדוגמה:\none bus, two buses\none dish, two dishes\none watch, two watches\none box, two boxes\n\nגם כמה מילים שמסתיימות ב-o מקבלות es:\ntomatoes, potatoes",
+          body: "one bus, two buses\none box, two boxes\none watch, two watches",
         },
         {
           type: "content",
-          title: "כלל 3: **y** הופכת ל-**ies**",
-          subtitle: "עיצור ואחריו y",
-          body: "כשלפני ה-y בסוף המילה יש עיצור, מוחקים את ה-y ומוסיפים ies, לדוגמה:\none baby, two babies\none city, two cities\none story, two stories\n\nאבל כשלפני ה-y יש תנועה (a, e, o, u), מוסיפים רק s:\none boy, two boys\none day, two days",
+          title: "**y** הופכת ל-**ies**",
+          subtitle: "baby — babies",
+          body: "one baby, two babies\none city, two cities\n\nאבל:\none boy, two boys",
         },
         {
           type: "content",
-          title: "כלל 4: **f** הופכת ל-**ves**",
-          subtitle: "מילים שמסתיימות ב-f או fe",
-          body: "בהרבה מילים שמסתיימות ב-f או ב-fe, ה-f הופכת ל-ves, לדוגמה:\none leaf, two leaves\none knife, two knives\none wolf, two wolves\none half, two halves",
+          title: "**f** הופכת ל-**ves**",
+          subtitle: "leaf — leaves",
+          body: "one leaf, two leaves\none knife, two knives",
         },
         {
           type: "content",
           title: "מילים **מיוחדות**",
-          subtitle: "רבים חריגים",
-          body: "יש מילים שלא מקבלות s בכלל — הן משתנות לגמרי. את המילים האלה פשוט זוכרים בעל פה:\nchild, children\nman, men\ngoose, geese\nfoot, feet\ntooth, teeth\nmouse, mice\nperson, people",
+          subtitle: "זוכרים בעל פה",
+          body: "child, children\nman, men\nfoot, feet\ntooth, teeth\nmouse, mice",
         },
         {
           type: "content",
-          title: "**אותה מילה** ביחיד וברבים",
-          subtitle: "מילים שלא משתנות",
-          body: "יש כמה מילים שנשארות בדיוק אותו דבר גם ברבים, לדוגמה:\none fish, two fish\none sheep, ten sheep\n\nאיך יודעים אם זה יחיד או רבים? לפי המספר, או לפי הפועל שבא אחרי המילה:\nThe sheep is white.\nThe sheep are white.",
+          title: "**אותה מילה**",
+          subtitle: "לא משתנה",
+          body: "one fish, two fish\none sheep, ten sheep",
         },
         {
           type: "content",
-          title: "רבים **בתוך משפט**",
-          subtitle: "is או are",
-          body: "כשמדברים על רבים, גם הפועל משתנה — is הופך ל-are, ו-this הופך ל-these, לדוגמה:\nThe book is new.\nThe books are new.\nThis is my friend.\nThese are my friends.\n\nושימו לב: אחרי כל מספר גדול מ-1 באים רבים:\ntwo dogs, three children",
+          title: "**is** או **are**",
+          subtitle: "אחד או הרבה",
+          body: "אחד — is\nThe book is new.\n\nהרבה — are\nThe books are new.",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לשכוח את ה-s אחרי מספר. הצורה הנכונה:\nI have two dogs.\nולא:\nI have two dog.\n\nטעות נוספת: להוסיף s למילה מיוחדת. הצורה הנכונה:\nThe children are here.\nולא:\nThe childs are here.",
+          body: "אחרי מספר — הרבה\nנכון:\nI have two dogs.\nלא נכון:\nI have two dog.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "one box, two ___", he: "קופסה אחת, שתי קופסאות", options: ["boxs", "boxes"], answer: 1 },
+            { q: "one baby, two ___", he: "תינוק אחד, שני תינוקות", options: ["babys", "babies"], answer: 1 },
+            { q: "one child, two ___", he: "ילד אחד, שני ילדים", options: ["childs", "children"], answer: 1 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "ספרו באנגלית כמה דברים יש לכם בתיק — ברבים, לדוגמה: I have three books…\n\nאיזו מילה מיוחדת (כמו children או teeth) הכי קשה לכם לזכור? איך אפשר לזכור אותה?",
+          body: "מה יש לכם בתיק? אמרו באנגלית, למשל:\nI have three books.\n\nאיזו מילה מיוחדת הכי קשה לזכור?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -7740,65 +8001,66 @@
           type: "content",
           title: "מילים **קטנות** וחשובות",
           subtitle: "פתיחה",
-          body: "לפני שם עצם באות לפעמים מילים קטנות שאומרות לנו על איזה דבר מדברים.\n\nמילות ההצבעה — this, that, these, those — אומרות אם הדבר קרוב או רחוק, ואם יש אחד או הרבה.\n\nמילות היידוע — a, an, the — אומרות אם מדברים על דבר כלשהו, או על דבר מסוים.",
+          body: "מילים קטנות שבאות לפני מילה:\nthis, that, these, those\na, an, the",
         },
         {
           type: "content",
           title: "**מילים חשובות**",
           subtitle: "אוצר מושגים",
           items: [
-            { en: "this", he: "זה / זאת — קרוב, אחד" },
-            { en: "that", he: "ההוא / ההיא — רחוק, אחד" },
-            { en: "these", he: "אלה — קרובים, הרבה" },
-            { en: "those", he: "ההם / ההן — רחוקים, הרבה" },
-            { en: "a", he: "סתם אחד — לפני עיצור" },
-            { en: "an", he: "סתם אחד — לפני תנועה" },
-            { en: "the", he: "ה' הידיעה — דבר מסוים" },
-            { en: "near", he: "קרוב" },
-            { en: "far", he: "רחוק" },
+            { en: "this", he: "זה — קרוב" },
+            { en: "that", he: "ההוא — רחוק" },
+            { en: "these", he: "אלה — קרובים" },
+            { en: "those", he: "ההם — רחוקים" },
+            { en: "a / an", he: "סתם אחד" },
+            { en: "the", he: "ה' הידיעה" },
           ],
         },
         {
           type: "content",
           title: "**This** ו-**That**",
-          subtitle: "דבר אחד",
-          body: "this — דבר אחד שקרוב אליי, לדוגמה:\nThis is my bag.\nI like this book.\n\nthat — דבר אחד שרחוק ממני, לדוגמה:\nThat is my school.\nLook at that bird!",
+          subtitle: "קרוב, רחוק",
+          body: "קרוב — this\nThis is my bag.\n\nרחוק — that\nThat is my school.",
         },
         {
           type: "content",
           title: "**These** ו-**Those**",
           subtitle: "הרבה דברים",
-          body: "these — כמה דברים שקרובים אליי, לדוגמה:\nThese are my shoes.\nI love these cookies.\n\nthose — כמה דברים שרחוקים ממני, לדוגמה:\nThose are big trees.\nWho are those children?",
+          body: "קרוב — these\nThese are my shoes.\n\nרחוק — those\nThose are big trees.",
         },
         {
           type: "content",
-          title: "איך **בוחרים**?",
-          subtitle: "קרוב או רחוק, אחד או הרבה",
-          body: "שואלים שתי שאלות: האם הדבר קרוב או רחוק? והאם יש אחד או הרבה?\n\nקרוב ואחד — this. רחוק ואחד — that.\nקרוב והרבה — these. רחוק והרבה — those.\n\nושימו לב לפועל: עם this ו-that בא is, ועם these ו-those בא are:\nThis is a cat. These are cats.",
-        },
-        {
-          type: "content",
-          title: "**A** ו-**An**",
+          title: "**a** ו-**an**",
           subtitle: "סתם אחד",
-          body: "a ו-an פירושן אחד, כשלא חשוב איזה בדיוק. בעברית אין להן מילה, אבל באנגלית חייבים לשים אותן לפני שם עצם ביחיד:\nI have a dog.\nHe is a teacher.\n\nלפני מילה שמתחילה בתנועה (a, e, i, o, u) אומרים an:\nan apple, an egg, an orange, an umbrella",
+          body: "a — לפני רוב המילים\na dog, a teacher\n\nan — לפני a, e, i, o, u\nan apple, an egg",
         },
         {
           type: "content",
-          title: "**The**",
-          subtitle: "ה' הידיעה",
-          body: "the היא כמו ה' הידיעה בעברית — מדברים על דבר מסוים, שכבר יודעים עליו:\nI have a cat. The cat is black.\n\nאומרים the גם כשיש רק אחד כזה בעולם:\nthe sun, the moon, the sky\n\nאת the אפשר לשים גם לפני מילה ברבים:\nthe books, the children",
+          title: "**the** — ה' הידיעה",
+          subtitle: "דבר מסוים",
+          body: "I have a cat. The cat is black.\n\nthe sun, the moon",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה אצל דוברי עברית: לשכוח את a. הצורה הנכונה:\nHe is a doctor.\nולא:\nHe is doctor.\n\nטעות נוספת: this לפני מילה ברבים. הצורה הנכונה:\nThese shoes are new.\nולא:\nThis shoes are new.",
+          body: "בעברית: הוא רופא\nבאנגלית חייבים את ה-a\nנכון:\nHe is a doctor.\nלא נכון:\nHe is doctor.",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "___ are my shoes.", he: "אלה הנעליים שלי", options: ["This", "These"], answer: 1 },
+            { q: "I have ___ apple.", he: "יש לי תפוח", options: ["a", "an"], answer: 1 },
+            { q: "He is ___ teacher.", he: "הוא מורה", options: ["a", "an"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "הצביעו על חפץ קרוב ועל חפץ רחוק בכיתה ותארו אותם באנגלית: This is… / That is…\n\nבעברית אין מילה כמו a — למה לדעתכם באנגלית צריך אותה?",
+          body: "הצביעו על חפץ קרוב ועל חפץ רחוק, ואמרו:\nThis is… / That is…\n\nבעברית אין את המילה a — אז למה באנגלית צריך אותה?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -7923,66 +8185,72 @@
           type: "content",
           title: "שאלות **בגרות**",
           subtitle: "פתיחה",
-          body: "במבחנים באנגלית, וגם בבגרות, קוראים קטע ועונים עליו על כמה סוגים של שאלות:\nשאלות אמריקאיות, נכון / לא נכון, שאלות פתוחות והשלמת משפטים.\n\nהיום נלמד איך עונים על כל סוג, ואיך מוצאים את התשובה בטקסט.",
+          body: "במבחן קוראים קטע ועונים על שאלות.\n\nהיום נלמד איך עונים על כל סוג.",
         },
         {
           type: "content",
-          title: "**מילים חשובות** בהוראות",
+          title: "**מילים חשובות**",
           subtitle: "אוצר מושגים",
           items: [
             { en: "circle", he: "הקיפו" },
             { en: "complete", he: "השלימו" },
             { en: "copy", he: "העתיקו" },
             { en: "answer", he: "ענו" },
-            { en: "explain", he: "הסבירו" },
             { en: "according to the text", he: "לפי הטקסט" },
-            { en: "paragraph", he: "פסקה" },
-            { en: "line", he: "שורה" },
-            { en: "main idea", he: "הרעיון המרכזי" },
             { en: "reason", he: "סיבה" },
           ],
         },
         {
           type: "content",
-          title: "מתחילים **מהשאלות**",
-          subtitle: "איך ניגשים לקטע",
-          body: "לפני שקוראים את כל הטקסט, קוראים את הכותרת ואת השאלות — כך יודעים מה לחפש.\n\nאחר כך קוראים את הטקסט ומסמנים בו את המקומות שעונים על השאלות.\n\nהשאלות מופיעות בדרך כלל לפי סדר הטקסט — מההתחלה ועד הסוף.",
+          title: "קודם **השאלות**",
+          subtitle: "איך מתחילים",
+          body: "קודם — קוראים את השאלות.\nאחר כך — קוראים את הקטע.\nבסוף — מסמנים את התשובות.",
         },
         {
           type: "content",
-          title: "שאלות **אמריקאיות**",
-          subtitle: "Multiple choice",
-          body: "ההוראה:\nCircle the number of the correct answer.\n\nקוראים את כל התשובות, מוחקים את אלה שבטוח לא נכונות, ובוחרים לפי מה שכתוב בטקסט — לא לפי מה שנשמע הגיוני.\n\nלפעמים התשובה כתובה במילים אחרות: בטקסט כתוב walks, והתשובה היא on foot.",
+          title: "שאלה **אמריקאית**",
+          subtitle: "בוחרים תשובה",
+          body: "ההוראה:\nCircle the number of the correct answer.\n\nבוחרים לפי מה שכתוב בקטע!",
         },
         {
           type: "content",
           title: "**נכון** או **לא נכון**",
-          subtitle: "True / False",
-          body: "ההוראה:\nWrite TRUE or FALSE.\n\nמוצאים בטקסט את המשפט שמדבר על אותו נושא, ומשווים מילה במילה. מילה קטנה אחת יכולה לשנות הכול — כמו always ו-never.\n\nלפעמים מבקשים גם להעתיק את המילים שמוכיחות את התשובה:\nCopy the words that support your answer.",
+          subtitle: "TRUE / FALSE",
+          body: "ההוראה:\nWrite TRUE or FALSE.\n\nבודקים בקטע מילה אחרי מילה.",
         },
         {
           type: "content",
-          title: "שאלות **פתוחות**",
-          subtitle: "Open questions",
-          body: "עונים באנגלית, בקצרה, ורק על מה שנשאל. מילת השאלה אומרת מה לחפש:\nWhere — מקום. When — זמן. Who — אדם. Why — סיבה.\n\nלדוגמה:\nWhy was Dan late?\nBecause he missed the bus.",
+          title: "שאלה **פתוחה**",
+          subtitle: "עונים במילים",
+          body: "Why was Dan late?\nBecause he missed the bus.\n\nעונים קצר — רק על מה ששאלו.",
         },
         {
           type: "content",
-          title: "**השלמת** משפטים",
-          subtitle: "Sentence completion",
-          body: "ההוראה:\nComplete the sentence.\n\nתחילת המשפט כבר כתובה. מוצאים אותה בטקסט, וממשיכים לפי מה שכתוב שם.\n\nבטקסט כתוב:\nBen was hungry, so he made a sandwich.\nהשלימו:\nBen made a sandwich because he…\nהתשובה: was hungry.",
+          title: "**משלימים** משפט",
+          subtitle: "השלמה",
+          body: "בקטע כתוב:\nBen was hungry, so he made a sandwich.\n\nמשלימים:\nBen made a sandwich because he…",
         },
         {
           type: "content",
           title: "טעויות נפוצות",
           subtitle: "שימו לב",
-          body: "טעות נפוצה: לענות ממה שאתם יודעים, ולא ממה שכתוב בקטע. התשובה תמיד לפי הטקסט!\n\nטעות נוספת: לא לענות על מה שנשאל — למשל, לכתוב מקום כשהשאלה מתחילה ב-When.\n\nועוד טיפ: לא משאירים שאלה ריקה. גם תשובה חלקית יכולה לקבל נקודות.",
+          body: "עונים לפי הקטע — לא לפי מה שאתם יודעים.\n\nלא משאירים שאלה ריקה!",
+        },
+        {
+          type: "quiz",
+          title: "בואו **נבדוק**",
+          subtitle: "שאלות",
+          questions: [
+            { q: "Circle the correct answer.", he: "מה צריך לעשות?", options: ["להקיף", "להעתיק", "לכתוב"], answer: 0 },
+            { q: "Copy the words.", he: "מה צריך לעשות?", options: ["להסביר", "להעתיק", "להקיף"], answer: 1 },
+            { q: "When is the party?", he: "על מה שואלים?", options: ["על זמן", "על מקום", "על סיבה"], answer: 0 },
+          ],
         },
         {
           type: "content",
           title: "דיון כיתתי",
           subtitle: "שאלות על השיעור",
-          body: "איזה סוג שאלה הכי קשה לכם — אמריקאית, נכון / לא נכון, פתוחה או השלמה? למה?\n\nמה אתם עושים כשיש בקטע מילה שאתם לא מכירים?",
+          body: "איזה סוג שאלה הכי קשה לכם? למה?\n\nמה עושים כשיש בקטע מילה שלא מכירים?",
         },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
@@ -8082,6 +8350,11 @@
   // and the games.
   function vocabCategoryLesson(cat) {
     const pictures = cat.words.map((w) => ({ en: w.en, he: w.he, img: `/images/english/vocab/${w.id}.svg` }));
+    // The sentences' translations also open from the popup (the English
+    // version of the slide shows the English lines alone).
+    if (window.LESSON_SENTENCES_HE) {
+      cat.sentences.forEach((s) => { window.LESSON_SENTENCES_HE[s.en] ??= s.he; });
+    }
     const perSlide = pictures.length % 5 === 0 ? 5 : 4;
     const groups = [];
     for (let i = 0; i < pictures.length; i += perSlide) groups.push(pictures.slice(i, i + perSlide));
@@ -9187,6 +9460,22 @@
     return `<button type="button" class="lp-speak-btn" data-say="${escAttr(text)}" aria-label="${escAttr(label)}">${LP_SPEAKER_ICON}</button>`;
   }
 
+  // English words inside a Hebrew line ("דבר אחד — There is") go in an LTR
+  // span: the phrase keeps its own order and, when short, never breaks
+  // across lines (a wrapped "There / is" reads backwards in RTL).
+  function isolateInlineEnglish(html) {
+    return html
+      .split(/(<[^>]+>)/)
+      .map((part) =>
+        part.startsWith("<")
+          ? part
+          : part.replace(/[A-Za-z](?:[A-Za-z'’]|[ ,/-]+(?=[A-Za-z]))*/g, (run) =>
+              `<span class="lp-en${run.length <= 24 ? " lp-en--nowrap" : ""}" dir="ltr">${run}</span>`
+            )
+      )
+      .join("");
+  }
+
   // Wraps standalone English lines and any curated `say` phrases in clickable
   // <span class="lp-say"> spans so tapping them opens the translation/explanation
   // popup (same one vocab words use), with a speaker button to hear it aloud.
@@ -9196,9 +9485,12 @@
     );
 
     function sayTag(display, speak, explain) {
+      // Without a curated explanation, the popup shows the line's Hebrew
+      // translation (lesson-sentences-he.js), so a student alone gets it.
+      const popupText = explain || window.LESSON_SENTENCES_HE?.[String(speak).trim()] || "";
       // dir="ltr": an English sentence inside a Hebrew (RTL) slide would
       // otherwise show its final period at the start of the line.
-      return `<span class="lp-say-wrap"><span class="lp-say" dir="ltr" data-say="${escAttr(speak)}" data-explain="${escAttr(explain || "")}">${display}</span>${renderSpeakBtn(speak)}</span>`;
+      return `<span class="lp-say-wrap"><span class="lp-say" dir="ltr" data-say="${escAttr(speak)}" data-explain="${escAttr(popupText)}">${display}</span>${renderSpeakBtn(speak)}</span>`;
     }
 
     return body
@@ -9228,7 +9520,7 @@
           result = result.slice(0, idx) + sayTag(entry.match, entry.speak, entry.explain) + result.slice(idx + entry.match.length);
           remaining.splice(i, 1);
         }
-        return result;
+        return containsHebrew(line) ? isolateInlineEnglish(result) : result;
       })
       .join("<br>");
   }
@@ -9492,8 +9784,11 @@
       const isTerm = btn.classList.contains("lp-term");
       const speakWordText = isWord ? btn.dataset.en : isTerm ? "" : btn.dataset.say;
       popup.dataset.word = speakWordText || "";
-      $(".lp-word-popup-text", popup).textContent =
+      const popupText =
         (isWord ? btn.dataset.he : isTerm ? btn.dataset.explain : btn.dataset.explain || btn.dataset.say) || "";
+      const popupTextEl = $(".lp-word-popup-text", popup);
+      popupTextEl.textContent = popupText;
+      popupTextEl.dir = containsHebrew(popupText) ? "rtl" : "ltr";
       $(".lp-word-popup-speak", popup).classList.toggle("hidden", !speakWordText);
       popup.classList.remove("hidden");
       positionWordPopup(btn);
@@ -9552,7 +9847,18 @@
         e.stopPropagation();
         popElement(sayEl);
         openWordPopup(sayEl);
+        return;
       }
+      const quizOpt = e.target.closest(".lp-quiz-opt");
+      if (quizOpt) {
+        answerQuiz(quizOpt);
+        return;
+      }
+      if (e.target.closest(".lp-quiz-next")) {
+        nextQuizQuestion();
+        return;
+      }
+      if (e.target.closest(".lp-quiz-retry")) restartQuiz();
     });
 
     document.addEventListener("click", () => closeWordPopup());
@@ -9603,6 +9909,116 @@
             <div class="lp-slide-games">${options}</div>
           </div>
         </div>`;
+    }
+
+    // Quiz slide: a few short questions, one at a time — the student picks an
+    // answer, sees right away if it's right, and a wrong pick can be retried.
+    let quizState = null;
+
+    function quizQuestionHtml() {
+      const en = curLang() === "en";
+      const { slide, i } = quizState;
+      const q = slide.questions[i];
+      const total = slide.questions.length;
+      const qHtml = escHtml(q.q).split("___").join('<span class="lp-quiz-blank"></span>');
+      const options = q.options
+        .map(
+          (o, k) =>
+            `<button type="button" class="lp-quiz-opt" data-k="${k}" dir="${containsHebrew(o) ? "rtl" : "ltr"}">${escHtml(o)}</button>`
+        )
+        .join("");
+      return `
+        <p class="lp-quiz-count">${en ? `Question ${i + 1} of ${total}` : `שאלה ${i + 1} מתוך ${total}`}</p>
+        ${q.he ? `<p class="lp-quiz-hint" dir="rtl">${escHtml(q.he)}</p>` : ""}
+        <p class="lp-quiz-q" dir="${containsHebrew(q.q) ? "rtl" : "ltr"}">${qHtml}</p>
+        <div class="lp-quiz-options">${options}</div>
+        <p class="lp-quiz-feedback" aria-live="polite"></p>
+        <button type="button" class="lp-quiz-next is-pending" tabindex="-1" aria-hidden="true">${
+          i + 1 < total ? (en ? "Next question" : "לשאלה הבאה") : en ? "Finish" : "סיום"
+        }</button>`;
+    }
+
+    function quizDoneHtml() {
+      const en = curLang() === "en";
+      const { slide, firstTry } = quizState;
+      const total = slide.questions.length;
+      return `
+        <p class="lp-quiz-done-title">${en ? "Well done!" : "כל הכבוד!"}</p>
+        <p class="lp-quiz-done-score">${
+          en
+            ? `${firstTry} of ${total} right on the first try`
+            : `${firstTry} מתוך ${total} נכון כבר בניסיון הראשון`
+        }</p>
+        <button type="button" class="lp-quiz-retry">${en ? "Try again" : "לנסות שוב"}</button>`;
+    }
+
+    function renderQuizSlide(slide) {
+      quizState = { slide, i: 0, firstTry: 0, missed: false, answered: false };
+      return `
+        <div class="lp-slide-inner lp-slide-inner--quiz">
+          <div class="lp-slide-text-col">
+            <div class="lp-slide-head">
+              <h2 class="lp-slide-title">${formatLessonText(slide.title || "")}</h2>
+            </div>
+            <div class="lp-slide-body-wrap">
+              <div class="lp-quiz">${quizQuestionHtml()}</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function setQuizHtml(html) {
+      const box = $(".lp-quiz", slideEl);
+      if (!box) return;
+      box.innerHTML = html;
+      fitSlideContent();
+    }
+
+    function answerQuiz(btn) {
+      if (!quizState || quizState.answered) return;
+      const en = curLang() === "en";
+      const q = quizState.slide.questions[quizState.i];
+      const box = btn.closest(".lp-quiz");
+      const feedback = $(".lp-quiz-feedback", box);
+      if (Number(btn.dataset.k) === q.answer) {
+        quizState.answered = true;
+        if (!quizState.missed) quizState.firstTry += 1;
+        btn.classList.add("is-correct");
+        $$(".lp-quiz-opt", box).forEach((b) => (b.disabled = true));
+        const blank = $(".lp-quiz-blank", box);
+        if (blank) {
+          blank.textContent = q.options[q.answer];
+          blank.classList.add("is-filled");
+        }
+        feedback.textContent = en ? "Correct! Well done" : "נכון! כל הכבוד";
+        feedback.className = "lp-quiz-feedback is-correct";
+        const next = $(".lp-quiz-next", box);
+        next.classList.remove("is-pending");
+        next.removeAttribute("tabindex");
+        next.removeAttribute("aria-hidden");
+        // The filled-in blank can make the question line wrap.
+        fitSlideContent();
+      } else {
+        quizState.missed = true;
+        btn.classList.add("is-wrong");
+        btn.disabled = true;
+        feedback.textContent = en ? "Not quite — try again" : "לא נכון — נסו שוב";
+        feedback.className = "lp-quiz-feedback is-wrong";
+      }
+    }
+
+    function nextQuizQuestion() {
+      if (!quizState?.answered) return;
+      quizState.i += 1;
+      quizState.missed = false;
+      quizState.answered = false;
+      setQuizHtml(quizState.i < quizState.slide.questions.length ? quizQuestionHtml() : quizDoneHtml());
+    }
+
+    function restartQuiz() {
+      if (!quizState) return;
+      Object.assign(quizState, { i: 0, firstTry: 0, missed: false, answered: false });
+      setQuizHtml(quizQuestionHtml());
     }
 
     function renderVolcanoMountainScene(modifierClass) {
@@ -9909,6 +10325,8 @@
       const html =
         slide.type === "games"
           ? renderGamesSlide(slide)
+          : slide.type === "quiz"
+            ? renderQuizSlide(slide)
           : slide.type === "pdf-image"
             ? renderPdfImageSlide(slide)
             : renderContentSlide(slide, { isLast: index === steps.length - 1 });

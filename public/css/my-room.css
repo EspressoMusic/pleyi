@@ -79,17 +79,6 @@
   text-underline-offset: 3px;
 }
 
-/* Hero */
-
-.room-hero {
-  text-align: center;
-  margin-bottom: clamp(16px, 3vw, 24px);
-}
-
-.room-hero .hub-title {
-  margin-top: 8px;
-}
-
 .room-greeting {
   margin: 8px 0 0;
   font-size: 16px;
