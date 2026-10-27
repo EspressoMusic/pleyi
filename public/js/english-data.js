@@ -1,12 +1,14 @@
 /* Learn English — topics, their lesson, and practice exercises.
 
-   Topic: { id, title, titleEn, lesson, lessonSummary?, lessonSummaryEn?, presentations?, exercises, group?, cover? }
+   Topic: { id, title, titleEn, lesson | lessons, lessonSummary?, lessonSummaryEn?, presentations?, exercises, group?, cover? }
    - group: the topic grid section — "grammar" (default), "vocab" (built at
      the end of this file from english-vocab.js) or "reading" (the reading
      library, added by english-reading.js). cover: a vocab picture id for the tile.
    - Reading passages ("reading" exercises) are added by english-reading.js.
    - lesson: id of a ready-lesson (ready-lessons.js LESSON_CATALOG) — opens in
      the same lesson player as the lessons library.
+   - lessons: the topic split into short numbered lessons, in order (instead
+     of `lesson`); each one's card shows "שיעור N" and its own summary.
    - presentations (optional): extra image-based decks for the slide viewer.
        { id, title, titleEn, slides: ["/images/english/<topic>/slide-1.png", ...] }
 
@@ -204,9 +206,7 @@ window.ENGLISH_TOPICS = [
     id: "letters",
     title: "אותיות וצלילים",
     titleEn: "Letters and Sounds",
-    lesson: "letters",
-    lessonSummary: "ה-ABC, התנועות a, e, i, o, u — הניקוד של האנגלית — וקריאת מילים קצרות.",
-    lessonSummaryEn: "The ABC, the vowels a, e, i, o, u — the \"niqqud\" of English — and reading short words.",
+    lessons: ["letters-1", "letters-2"],
     exercises: [
       {
         id: "letters-match",
@@ -379,9 +379,7 @@ window.ENGLISH_TOPICS = [
     id: "phonics",
     title: "צירופי אותיות: sh, ch, th, ee, oo",
     titleEn: "Letter Teams",
-    lesson: "phonics",
-    lessonSummary: "שתי אותיות, צליל אחד — sh, ch, th, ee, oo, ו-e שקטה בסוף המילה.",
-    lessonSummaryEn: "Two letters, one sound — sh, ch, th, ee, oo, and the silent e at the end of a word.",
+    lessons: ["phonics-1", "phonics-2"],
     exercises: [
       {
         id: "phonics-sh-ch-th",
@@ -519,8 +517,6 @@ window.ENGLISH_TOPICS = [
     title: "כינויי גוף",
     titleEn: "Pronouns",
     lesson: "pronouns",
-    lessonSummary: "כל כינויי הגוף, ומתי משתמשים בכל אחד.",
-    lessonSummaryEn: "All the pronouns, and when to use each one.",
     exercises: [
       {
         id: "subject-pronouns",
@@ -668,9 +664,7 @@ window.ENGLISH_TOPICS = [
     id: "possessives",
     title: "כינויי שייכות",
     titleEn: "Possessives",
-    lesson: "possessives",
-    lessonSummary: "של מי זה? my, your, his, our, their — ו-'s, כמו Dan's bag.",
-    lessonSummaryEn: "Whose is it? my, your, his, our, their — and 's, like Dan's bag.",
+    lessons: ["possessives-1", "possessives-2"],
     exercises: [
       {
         id: "possessives-choice",
@@ -826,9 +820,7 @@ window.ENGLISH_TOPICS = [
     id: "verbs",
     title: "פעלים בסיסיים",
     titleEn: "Basic Verbs",
-    lesson: "verbs",
-    lessonSummary: "פעלים נפוצים, ומשפט פשוט בהווה.",
-    lessonSummaryEn: "Common verbs, and a simple present sentence.",
+    lessons: ["verbs-1", "verbs-2"],
     exercises: [
       {
         id: "verbs-match",
@@ -987,9 +979,7 @@ window.ENGLISH_TOPICS = [
     id: "tobe",
     title: "פועל להיות",
     titleEn: "To Be",
-    lesson: "tobe",
-    lessonSummary: "מתי אומרים am, is או are — ובזמן עבר was או were.",
-    lessonSummaryEn: "When to say am, is, or are — and in the past, was or were.",
+    lessons: ["tobe-1", "tobe-2"],
     exercises: [
       {
         id: "tobe-choice",
@@ -1197,9 +1187,7 @@ window.ENGLISH_TOPICS = [
     id: "have-has",
     title: "יש לי, יש לו",
     titleEn: "Have / Has",
-    lesson: "have-has",
-    lessonSummary: "מתי אומרים have ומתי has — ואיך אומרים \"אין לי\" ושואלים \"יש לך?\".",
-    lessonSummaryEn: "When to say have and when to say has — and how to say \"I don't have\" and ask \"Do you have?\".",
+    lessons: ["have-has-1", "have-has-2"],
     exercises: [
       {
         id: "have-has-choice",
@@ -1366,9 +1354,7 @@ window.ENGLISH_TOPICS = [
     id: "there-is",
     title: "יש: There is / There are",
     titleEn: "There Is / There Are",
-    lesson: "there-is",
-    lessonSummary: "איך אומרים \"יש\" ו\"אין\" באנגלית — There is לדבר אחד, There are להרבה, ואיך שואלים Is there?",
-    lessonSummaryEn: "How to say what there is and isn't — There is for one thing, There are for many, and how to ask Is there?",
+    lessons: ["there-is-1", "there-is-2"],
     exercises: [
       {
         id: "there-choice",
@@ -1607,9 +1593,7 @@ window.ENGLISH_TOPICS = [
     id: "calendar",
     title: "ימים, חודשים ועונות",
     titleEn: "Days, Months and Seasons",
-    lesson: "calendar",
-    lessonSummary: "ימי השבוע, החודשים והעונות באנגלית — ומתי אומרים on ומתי in.",
-    lessonSummaryEn: "The days of the week, the months and the seasons — and when to say on and when to say in.",
+    lessons: ["calendar-1", "calendar-2"],
     exercises: [
       {
         id: "calendar-days",
@@ -1773,8 +1757,6 @@ window.ENGLISH_TOPICS = [
     title: "מה השעה?",
     titleEn: "Telling the Time",
     lesson: "telling-time",
-    lessonSummary: "איך אומרים את השעה באנגלית — o'clock, half past, quarter past ו-quarter to.",
-    lessonSummaryEn: "How to tell the time in English — o'clock, half past, quarter past, and quarter to.",
     exercises: [
       {
         id: "time-picture",
@@ -1906,9 +1888,7 @@ window.ENGLISH_TOPICS = [
     id: "prepositions",
     title: "מילות יחס ומיקום",
     titleEn: "Prepositions of Place",
-    lesson: "prepositions",
-    lessonSummary: "in, on, at, under, next to, between — איך אומרים איפה משהו נמצא.",
-    lessonSummaryEn: "in, on, at, under, next to, between — how to say where something is.",
+    lessons: ["prepositions-1", "prepositions-2"],
     exercises: [
       {
         id: "prepositions-picture",
@@ -2046,9 +2026,7 @@ window.ENGLISH_TOPICS = [
     id: "connectors",
     title: "מילות קישור",
     titleEn: "Connecting Words",
-    lesson: "connectors",
-    lessonSummary: "and, but, because, so, before, after — איך מחברים שני חלקים למשפט אחד.",
-    lessonSummaryEn: "and, but, because, so, before, after — how to join two parts into one sentence.",
+    lessons: ["connectors-1", "connectors-2"],
     exercises: [
       {
         id: "connectors-choice",
@@ -2200,9 +2178,7 @@ window.ENGLISH_TOPICS = [
     id: "plurals",
     title: "יחיד ורבים",
     titleEn: "Singular and Plural",
-    lesson: "plurals",
-    lessonSummary: "איך הופכים מילה לרבים: s, es, ies — ומילים מיוחדות כמו child / children.",
-    lessonSummaryEn: "How to make a word plural: s, es, ies — and special words like child / children.",
+    lessons: ["plurals-1", "plurals-2"],
     exercises: [
       {
         id: "plurals-choice",
@@ -2372,9 +2348,7 @@ window.ENGLISH_TOPICS = [
     id: "quantifiers",
     title: "כמויות: some, any, much, many",
     titleEn: "Some, Any, Much, Many",
-    lesson: "quantifiers",
-    lessonSummary: "איך אומרים כמה, קצת והרבה — some ו-any, much ו-many, ו-a lot of.",
-    lessonSummaryEn: "How to talk about amounts — some and any, much and many, and a lot of.",
+    lessons: ["quantifiers-1", "quantifiers-2"],
     exercises: [
       {
         id: "quantifiers-some-any",
@@ -2524,9 +2498,7 @@ window.ENGLISH_TOPICS = [
     id: "articles",
     title: "מילות הצבעה ויידוע",
     titleEn: "This, That and Articles",
-    lesson: "articles",
-    lessonSummary: "this, that, these, those — ומתי אומרים a, an או the.",
-    lessonSummaryEn: "this, that, these, those — and when to say a, an, or the.",
+    lessons: ["articles-1", "articles-2"],
     exercises: [
       {
         id: "articles-this-that",
@@ -2712,9 +2684,7 @@ window.ENGLISH_TOPICS = [
     id: "comparatives",
     title: "השוואה: bigger, the biggest",
     titleEn: "Comparatives and Superlatives",
-    lesson: "comparatives",
-    lessonSummary: "איך משווים — bigger than, the biggest, more beautiful, ו-better, the best.",
-    lessonSummaryEn: "How to compare — bigger than, the biggest, more beautiful, and better, the best.",
+    lessons: ["comparatives-1", "comparatives-2"],
     exercises: [
       {
         id: "comparatives-er",
@@ -2861,9 +2831,7 @@ window.ENGLISH_TOPICS = [
     id: "questions",
     title: "מילות שאלה",
     titleEn: "Question Words",
-    lesson: "questions",
-    lessonSummary: "מילות השאלה, ואיך שואלים איתן.",
-    lessonSummaryEn: "Question words, and how to ask with them.",
+    lessons: ["questions-1", "questions-2"],
     exercises: [
       {
         id: "questions-choice",
@@ -2988,11 +2956,9 @@ window.ENGLISH_TOPICS = [
 
   {
     id: "negation",
-    title: "מילות שלילה",
-    titleEn: "Negative Words",
-    lesson: "negation",
-    lessonSummary: "איך אומרים \"לא\" באנגלית — בהווה, וגם בעבר עם didn't.",
-    lessonSummaryEn: "How to say \"no\" in English — in the present, and in the past with didn't.",
+    title: "שלילה ושאלות",
+    titleEn: "Negatives and Questions",
+    lessons: ["negation-1", "negation-2"],
     exercises: [
       {
         id: "negation-dont-doesnt",
@@ -3185,8 +3151,6 @@ window.ENGLISH_TOPICS = [
     title: "תדירות: always, usually, never",
     titleEn: "Adverbs of Frequency",
     lesson: "frequency",
-    lessonSummary: "כמה פעמים? always, usually, often, sometimes, never — ואיפה הן באות במשפט.",
-    lessonSummaryEn: "How often? always, usually, often, sometimes, never — and where they go in the sentence.",
     exercises: [
       {
         id: "frequency-choice",
@@ -3304,9 +3268,7 @@ window.ENGLISH_TOPICS = [
     id: "tenses",
     title: "זמנים בסיסיים",
     titleEn: "Basic Tenses",
-    lesson: "tenses",
-    lessonSummary: "הווה, עבר ועתיד — ואיך יודעים באיזה זמן להשתמש.",
-    lessonSummaryEn: "Present, past, and future — and how to know which one to use.",
+    lessons: ["tenses-1", "tenses-2", "tenses-3", "tenses-4"],
     exercises: [
       {
         id: "tenses-choice",
@@ -3472,9 +3434,7 @@ window.ENGLISH_TOPICS = [
     id: "progressive",
     title: "הווה מתמשך",
     titleEn: "Present Progressive",
-    lesson: "progressive",
-    lessonSummary: "מה קורה עכשיו? am, is או are ופועל עם ing — ומה ההבדל מהווה פשוט.",
-    lessonSummaryEn: "What's happening now? am, is, or are and a verb with -ing — and how it differs from the Present Simple.",
+    lessons: ["progressive-1", "progressive-2"],
     exercises: [
       {
         id: "progressive-be",
@@ -3707,8 +3667,6 @@ window.ENGLISH_TOPICS = [
     title: "עתיד: going to",
     titleEn: "Future with Going To",
     lesson: "going-to",
-    lessonSummary: "איך מדברים על תוכניות — am, is, are going to ופועל, שלילה ושאלה, ומתי going to ומתי will.",
-    lessonSummaryEn: "How to talk about plans — am, is, are going to + verb, negatives and questions, and going to vs will.",
     exercises: [
       {
         id: "going-to-be",
@@ -3850,9 +3808,7 @@ window.ENGLISH_TOPICS = [
     id: "irregular-verbs",
     title: "פעלים חשובים",
     titleEn: "Important Verbs",
-    lesson: "irregular-verbs",
-    lessonSummary: "go/went, eat/ate, see/saw, can/could — ועוד פעלים עם צורת עבר מיוחדת.",
-    lessonSummaryEn: "go/went, eat/ate, see/saw, can/could — and more verbs with a special past form.",
+    lessons: ["irregular-verbs-1", "irregular-verbs-2"],
     exercises: [
       {
         id: "irregular-match",
@@ -4023,9 +3979,7 @@ window.ENGLISH_TOPICS = [
     id: "modals",
     title: "חובה ועצה: must, should, have to",
     titleEn: "Must, Should, Have To",
-    lesson: "modals",
-    lessonSummary: "חוקים ועצות — must ו-mustn't, should ו-shouldn't, have to ו-don't have to.",
-    lessonSummaryEn: "Rules and advice — must and mustn't, should and shouldn't, have to and don't have to.",
+    lessons: ["modals-1", "modals-2"],
     exercises: [
       {
         id: "modals-must",
@@ -4191,9 +4145,7 @@ window.ENGLISH_TOPICS = [
     id: "word-building",
     title: "בניית מילים: un-, re-, -er, -ful",
     titleEn: "Word Building",
-    lesson: "word-building",
-    lessonSummary: "איך בונים מילה חדשה ממילה מוכרת — un-, dis-, re- בהתחלה, ו--er, -ful, -less, -ly בסוף.",
-    lessonSummaryEn: "How to build a new word from one you know — un-, dis-, re- at the start, and -er, -ful, -less, -ly at the end.",
+    lessons: ["word-building-1", "word-building-2"],
     exercises: [
       {
         id: "word-building-opposites",
@@ -4341,9 +4293,7 @@ window.ENGLISH_TOPICS = [
     id: "bagrut",
     title: "שאלות בגרות",
     titleEn: "Exam Questions",
-    lesson: "bagrut",
-    lessonSummary: "איך עונים על שאלות אמריקאיות, נכון / לא נכון, שאלות פתוחות והשלמת משפטים — כמו במבחן ובבגרות.",
-    lessonSummaryEn: "How to answer multiple choice, true / false, open questions and sentence completion — like in a test and in the Bagrut.",
+    lessons: ["bagrut-1", "bagrut-2"],
     exercises: [
       {
         id: "bagrut-words",
@@ -4522,3 +4472,35 @@ window.ENGLISH_TOPICS = [
     ],
   });
 });
+
+// The learning path: every topic in teaching order, from the first letters to
+// reading a passage, in stages. The topic grid shows it stage by stage with a
+// running number on each topic. Vocabulary topics sit next to the grammar that
+// uses their words. "reading" and "exams" come from english-reading.js and
+// english-exams.js.
+window.ENGLISH_PATH = [
+  { title: "קוראים אותיות", titleEn: "Reading letters", topics: ["letters", "phonics"] },
+  {
+    title: "מילים ראשונות",
+    titleEn: "First words",
+    topics: ["vocabulary", "vocab-numbers", "vocab-colors", "vocab-animals", "vocab-family", "vocab-body", "vocab-school"],
+  },
+  { title: "משפט ראשון", titleEn: "A first sentence", topics: ["pronouns", "tobe", "vocab-feelings", "articles", "plurals"] },
+  {
+    title: "מה יש לי ואיפה",
+    titleEn: "What I have and where",
+    topics: ["possessives", "have-has", "vocab-food", "vocab-clothes", "there-is", "vocab-home", "prepositions", "vocab-places", "vocab-transport"],
+  },
+  {
+    title: "מה אני עושה",
+    titleEn: "What I do",
+    topics: ["verbs", "vocab-actions", "negation", "questions", "frequency", "vocab-hobbies", "vocab-jobs", "calendar", "telling-time"],
+  },
+  {
+    title: "עכשיו, אתמול ומחר",
+    titleEn: "Now, yesterday and tomorrow",
+    topics: ["progressive", "tenses", "irregular-verbs", "going-to", "modals", "vocab-nature", "vocab-holidays"],
+  },
+  { title: "משפטים ארוכים", titleEn: "Longer sentences", topics: ["connectors", "comparatives", "vocab-opposites", "quantifiers", "word-building"] },
+  { title: "קוראים ומבינים", titleEn: "Reading and understanding", topics: ["reading", "bagrut", "exams"] },
+];

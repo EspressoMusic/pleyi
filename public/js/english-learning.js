@@ -31,6 +31,7 @@
       lessonInfo: "מידע על השיעור",
       lessonWhat: "מה לומדים בשיעור",
       lessonMeta: (slides, duration) => `${slides} שקופיות · ${duration}`,
+      lessonNum: (n) => `שיעור ${n}`,
       noExercises: "עוד אין תרגילים בנושא הזה.",
       view: "צפייה",
       practice: "לתרגול",
@@ -106,6 +107,8 @@
       readingTitle: (n) => `קטע קריאה · רמה ${n}`,
       readingCount: (n) => `${n} קטעי קריאה בארבע רמות`,
       vocabHub: "אוצר מילים לפי נושאים",
+      stage: (n) => `שלב ${n}`,
+      nextTopic: "הנושא הבא",
       vocabCount: (n) => `${n} נושאים עם תמונות`,
       markStep: "שלב 1: מסמנים בטקסט",
       markFoundLabel: "נמצאו",
@@ -307,6 +310,7 @@
       lessonInfo: "About the lesson",
       lessonWhat: "What the lesson teaches",
       lessonMeta: (slides, duration) => `${slides} slides · ${duration}`,
+      lessonNum: (n) => `Lesson ${n}`,
       noExercises: "No exercises for this topic yet.",
       view: "View",
       practice: "Practice",
@@ -382,6 +386,8 @@
       readingTitle: (n) => `Reading · Level ${n}`,
       readingCount: (n) => `${n} reading passages in four levels`,
       vocabHub: "Vocabulary by topic",
+      stage: (n) => `Stage ${n}`,
+      nextTopic: "Next topic",
       vocabCount: (n) => `${n} topics with pictures`,
       markStep: "Step 1: Mark the text",
       markFoundLabel: "Found",
@@ -1086,6 +1092,32 @@
     return topic.group || "grammar";
   }
 
+  // The learning path (english-data.js): the topics in teaching order, in
+  // stages. When it is set, the topic grid shows it instead of the groups.
+  const PATH = window.ENGLISH_PATH || [];
+
+  function pathTopics() {
+    return PATH.flatMap((stage) => stage.topics).map(findTopic).filter(Boolean);
+  }
+
+  // The topic after this one on the path, for the "next topic" link.
+  function nextPathTopic(topic) {
+    const list = pathTopics();
+    const i = list.indexOf(topic);
+    return i >= 0 ? list[i + 1] || null : null;
+  }
+
+  function nextTopicHtml(topic) {
+    const next = nextPathTopic(topic);
+    if (!next) return "";
+    return `
+      <a class="eng-next-topic" href="#${esc(next.id)}">
+        <span class="eng-next-topic-label">${esc(t("nextTopic"))}</span>
+        <span class="eng-next-topic-title">${esc(loc(next, "title"))}</span>
+        <span class="eng-next-topic-arrow" aria-hidden="true">${ICONS.back}</span>
+      </a>`;
+  }
+
   function readingUnits(topic) {
     return (topic.exercises || []).filter((ex) => ex.type === "reading");
   }
@@ -1128,9 +1160,12 @@
       <div class="eng-topic-grid">${vocabTopics().map(topicTileHtml).join("")}</div>`;
   }
 
-  function topicTileHtml(topic) {
+  // `num`: the topic's place on the learning path — shown on the tile, and
+  // every path tile (reading and exams too) is a plain square tile.
+  function topicTileHtml(topic, num) {
     const sub = lang() === "en" ? "" : `<span class="eng-topic-sub" dir="ltr">${esc(topic.titleEn)}</span>`;
-    if (topicGroup(topic) === "reading") {
+    const badge = num ? `<span class="eng-path-num" aria-hidden="true">${num}</span>` : "";
+    if (topicGroup(topic) === "reading" && !num) {
       const exams = topic.id === EXAMS_TOPIC;
       return `
         <article class="eng-topic-card eng-topic-card--wide${exams ? " eng-topic-card--exams" : ""}">
@@ -1148,6 +1183,7 @@
     return `
       <article class="eng-topic-card">
         <a class="eng-topic-tile${img ? " has-img" : ""}" href="#${esc(topic.id)}">
+          ${badge}
           ${img}
           <span class="eng-topic-title">${esc(loc(topic, "title"))}</span>
           ${sub}
@@ -1159,6 +1195,22 @@
   function renderTopicGrid() {
     const grid = $("#engTopicGrid");
     if (!grid) return;
+    if (PATH.length) {
+      let num = 0;
+      grid.innerHTML = PATH.map((stage, i) => {
+        const tiles = stage.topics
+          .map(findTopic)
+          .filter(Boolean)
+          .map((topic) => topicTileHtml(topic, ++num))
+          .join("");
+        return `
+        <div class="eng-topic-group eng-path-stage">
+          <h2 class="eng-group-title eng-path-title"><span class="eng-path-stage-num">${esc(t("stage", i + 1))}</span>${esc(loc(stage, "title"))}</h2>
+          <div class="eng-topic-grid">${tiles}</div>
+        </div>`;
+      }).join("");
+      return;
+    }
     grid.innerHTML = GROUPS.map((group) => {
       const topics = TOPICS.filter((topic) => topicGroup(topic) === group.id);
       if (!topics.length) return "";
@@ -1172,11 +1224,26 @@
     }).join("");
   }
 
-  function lessonFor(topic) {
-    const catalog = window.ReadyLessons?.catalog;
-    const raw = topic.lesson && catalog?.[topic.lesson];
+  // A topic's slide lessons: `lessons` (split into short numbered lessons)
+  // or its one `lesson`.
+  function topicLessonIds(topic) {
+    const catalog = window.ReadyLessons?.catalog || {};
+    return (topic.lessons || (topic.lesson ? [topic.lesson] : [])).filter((id) => catalog[id]);
+  }
+
+  function lessonById(id) {
+    const raw = id && window.ReadyLessons?.catalog?.[id];
     if (!raw) return null;
     return window.ReadyLessons.localize ? window.ReadyLessons.localize(raw) : raw;
+  }
+
+  // The card title: "שיעור 2 – לא ושאלות" for a numbered lesson, else its name.
+  function lessonTitleHtml(topic, id) {
+    const ids = topicLessonIds(topic);
+    const lesson = lessonById(id);
+    if (ids.length < 2) return esc(lesson.namePart || lesson.name);
+    const num = t("lessonNum", ids.indexOf(id) + 1);
+    return lesson.partTitle ? `${esc(num)} – ${mixedText(lesson.partTitle)}` : esc(num);
   }
 
   function lessonLevel(topic) {
@@ -1303,8 +1370,7 @@
   }
 
   // Opens a topic's slide lesson (from its card or its "i" dialog).
-  function openTopicLesson(topic) {
-    const id = topic.lesson;
+  function openTopicLesson(topic, id = topicLessonIds(topic)[0]) {
     const raw = window.ReadyLessons?.catalog?.[id];
     window.StudentProgress?.record({
       kind: "lesson",
@@ -1322,20 +1388,25 @@
     if (!view) return;
     const best = readBest();
     const started = readStarted();
-    const lesson = lessonFor(topic);
+    const lessonIds = topicLessonIds(topic);
 
     // The lesson's slide count, length and summary are in its "i" dialog.
-    const lessonCard = lesson
-      ? `
-        <div class="eng-lesson-card">
-          <span class="eng-lesson-icon" role="img" aria-label="${esc(levelLabel(lessonLevel(topic)))}" title="${esc(levelLabel(lessonLevel(topic)))}">${lessonIconHtml(lessonLevel(topic))}</span>
-          <h4 class="eng-lesson-title">${esc(lesson.namePart || lesson.name)}</h4>
+    // A topic split into numbered lessons shows the number on the icon.
+    const lessonCard = lessonIds
+      .map((id, i) => {
+        const iconLabel = lessonIds.length > 1 ? t("lessonNum", i + 1) : levelLabel(lessonLevel(topic));
+        const iconNum = lessonIds.length > 1 ? i + 1 : lessonLevel(topic);
+        return `
+        <div class="eng-lesson-card" data-lesson-id="${esc(id)}">
+          <span class="eng-lesson-icon" role="img" aria-label="${esc(iconLabel)}" title="${esc(iconLabel)}">${lessonIconHtml(iconNum)}</span>
+          <h4 class="eng-lesson-title">${lessonTitleHtml(topic, id)}</h4>
           <div class="eng-lesson-actions">
-            <button type="button" class="eng-info-btn" data-lesson-info aria-haspopup="dialog" aria-label="${esc(t("lessonInfo"))}" title="${esc(t("lessonInfo"))}">${ICONS.info}</button>
-            <button type="button" class="btn btn-primary btn-candy font-cartoon eng-lesson-open">${esc(t("openLesson"))}</button>
+            <button type="button" class="eng-info-btn" data-lesson-info="${esc(id)}" aria-haspopup="dialog" aria-label="${esc(t("lessonInfo"))}" title="${esc(t("lessonInfo"))}">${ICONS.info}</button>
+            <button type="button" class="btn btn-primary btn-candy font-cartoon eng-lesson-open" data-lesson-id="${esc(id)}">${esc(t("openLesson"))}</button>
           </div>
-        </div>`
-      : "";
+        </div>`;
+      })
+      .join("");
 
     const decks = (topic.presentations || [])
       .map(
@@ -1378,7 +1449,8 @@
     const units = readingUnits(topic);
     const step = (body) => `<section class="eng-step">${body}</section>`;
 
-    const backHref = topicGroup(topic) === "vocab" ? `#${VOCAB_ROUTE}` : "#";
+    // A vocabulary topic on the path goes back to the path, not the hub.
+    const backHref = topicGroup(topic) === "vocab" && !PATH.length ? `#${VOCAB_ROUTE}` : "#";
     const head = `
       <div class="eng-topic-head">
         <a class="eng-back" href="${backHref}" aria-label="${esc(t("back"))}" title="${esc(t("back"))}">${ICONS.back}</a>
@@ -1404,7 +1476,7 @@
             </section>`;
         })
         .join("");
-      view.innerHTML = `${head}${levels}`;
+      view.innerHTML = `${head}${levels}${nextTopicHtml(topic)}`;
       bindHelpButtons(view, topic);
       return;
     }
@@ -1432,11 +1504,16 @@
             )
           : ""
       }
-      ${printables ? step(`<p class="eng-step-lead">${esc(t("printLead"))}</p><div class="eng-ex-grid">${printables}</div>`) : ""}`;
+      ${printables ? step(`<p class="eng-step-lead">${esc(t("printLead"))}</p><div class="eng-ex-grid">${printables}</div>`) : ""}
+      ${nextTopicHtml(topic)}`;
 
     bindHelpButtons(view, topic);
-    $(".eng-lesson-open", view)?.addEventListener("click", () => openTopicLesson(topic));
-    $("[data-lesson-info]", view)?.addEventListener("click", (e) => help.openLesson(topic, e.currentTarget));
+    $$(".eng-lesson-open", view).forEach((btn) =>
+      btn.addEventListener("click", () => openTopicLesson(topic, btn.dataset.lessonId))
+    );
+    $$("[data-lesson-info]", view).forEach((btn) =>
+      btn.addEventListener("click", (e) => help.openLesson(topic, e.currentTarget, btn.dataset.lessonInfo))
+    );
 
     $$("[data-presentation]", view).forEach((link) => {
       link.addEventListener("click", (e) => {
@@ -1998,6 +2075,7 @@
       saveFlag(TRANSLATE_KEY, prefs.translate);
       $(".eng-runner-card")?.classList.toggle("is-translated", prefs.translate);
       renderTools();
+      fitCard();
       // A typing question keeps the cursor in its input.
       const input = $("#engInput");
       if (input && !runner.answered) input.focus({ preventScroll: true });
@@ -2237,11 +2315,56 @@
     return runner.round.some((q) => q && (sayOf(q.en) || (q.img && sayOf(q.text)) || q.pairs?.some((p) => sayOf(p.a))));
   }
 
+  // The match buttons grow to fit what is in them; when the board then runs
+  // past the card, its text and pictures shrink a step at a time until it fits.
+  function fitMatchBoard() {
+    const board = $(".eng-match");
+    const card = board?.closest(".eng-runner-card");
+    if (!board || !card) return;
+    const items = $$(".eng-match-item", board);
+    const tooBig = () => card.scrollHeight > card.clientHeight + 1 || items.some((it) => it.scrollWidth > it.clientWidth + 1);
+    let fit = 1;
+    board.style.setProperty("--fit", fit);
+    while (fit > 0.6 && tooBig()) {
+      fit = Math.round((fit - 0.05) * 100) / 100;
+      board.style.setProperty("--fit", fit);
+    }
+  }
+
+  // Any other question card: when it runs past the screen (a long sentence
+  // with its translation, a small phone), everything in it shrinks a step at
+  // a time until it fits, so the next button never ends up under the edge.
+  function fitCard() {
+    const card = $(".eng-runner-card");
+    if (!card) return;
+    card.style.removeProperty("--card-fit");
+    if (!document.documentElement.classList.contains("eng-runner-open")) return;
+    if (card.matches(".eng-runner-card--game") || $(".eng-match, .eng-read, .eng-results", card)) return;
+    let fit = 1;
+    while (fit > 0.7 && card.scrollHeight > card.clientHeight + 1) {
+      fit = Math.round((fit - 0.05) * 100) / 100;
+      card.style.setProperty("--card-fit", fit);
+    }
+  }
+
+  function fitRunner() {
+    fitMatchBoard();
+    fitCard();
+  }
+
+  let fitFrame = 0;
+  window.addEventListener("resize", () => {
+    cancelAnimationFrame(fitFrame);
+    fitFrame = requestAnimationFrame(fitRunner);
+  });
+  document.fonts?.ready.then(fitRunner);
+
   function toggleSay() {
     prefs.say = !prefs.say;
     saveFlag(SAY_KEY, prefs.say);
     $(".eng-runner-card")?.classList.toggle("is-say", prefs.say);
     renderTools();
+    fitRunner();
     // A typing question keeps the cursor in its input.
     const input = $("#engInput");
     if (input && !runner.answered) input.focus({ preventScroll: true });
@@ -2270,6 +2393,7 @@
     const q = runner.round[runner.index];
     if (!runner.isRetry && !item) markSeen(runner.topic, runner.exercise, type === "match" ? q.pairs.map(itemKey) : [itemKey(q)]);
     (TYPES[type] || TYPES.choice).render(q);
+    fitCard();
   }
 
   /* ── Mistake bank (mistake-bank.js): every answer to a practice question
@@ -2328,6 +2452,7 @@
     const out = bankAnswer(runner.round[runner.index], true);
     if (out && runner.review) runner.review.out++;
     $("#engFeedback").innerHTML = `<span class="eng-feedback-msg is-right">${ICONS.check}<span>${esc(message)}</span></span>${out ? bankOutHtml() : ""}`;
+    fitCard();
     runner.timer = setTimeout(goNext, delay + (out ? 500 : 0));
   }
 
@@ -2361,6 +2486,7 @@
       <button type="button" class="btn btn-primary btn-candy font-cartoon eng-next" id="engNext">${esc(isLast ? t("finish") : t("next"))}</button>`;
     $("#engNext").addEventListener("click", goNext);
     $("#engNext").focus({ preventScroll: true });
+    fitCard();
   }
 
   function goNext() {
@@ -2688,6 +2814,7 @@
           progressHtml({ label: t("matchProgress", 0, total), total, done: 0 })
         );
         $$(".eng-match-item").forEach((item) => item.addEventListener("click", () => this.pick(item)));
+        fitMatchBoard();
       },
       pick(item) {
         const st = runner.state;
@@ -5266,9 +5393,9 @@
       root.addEventListener("click", (e) => {
         if (e.target.closest("[data-help-close]")) close();
         if (e.target.closest("[data-help-lesson]")) {
-          const { topic } = current;
+          const { topic, lessonId } = current;
           close(false);
-          openTopicLesson(topic);
+          openTopicLesson(topic, lessonId);
         }
         const speakBtn = e.target.closest(".eng-help-speak");
         if (speakBtn) speak(speakBtn.dataset.say);
@@ -5296,16 +5423,18 @@
 
     // A topic's slide lesson: its length and summary, and the way in.
     function renderLesson() {
-      const lesson = lessonFor(current.topic);
+      const { topic, lessonId } = current;
+      const lesson = lessonById(lessonId);
       if (!lesson) return;
-      const facts = `${levelLabel(lessonLevel(current.topic))} · ${t("lessonMeta", lesson.slides?.length || 0, durationLabel(lesson.duration))}`;
-      const summary = loc(current.topic, "lessonSummary") || lesson.summary || "";
+      const facts = `${levelLabel(lessonLevel(topic))} · ${t("lessonMeta", lesson.slides?.length || 0, durationLabel(lesson.duration))}`;
+      // A numbered lesson has its own summary; the topic's is for all of it.
+      const summary = (topicLessonIds(topic).length < 2 && loc(topic, "lessonSummary")) || lesson.summary || "";
       root.innerHTML = `
         <div class="eng-help-backdrop" data-help-close></div>
         <div class="eng-help-card eng-help-card--lesson">
           <div class="eng-help-head">
             <div class="eng-help-heading">
-              <h2 class="eng-help-title" id="engHelpTitle">${esc(lesson.namePart || lesson.name)}</h2>
+              <h2 class="eng-help-title" id="engHelpTitle">${lessonTitleHtml(topic, lessonId)}</h2>
               <p class="eng-help-facts">${esc(facts)}</p>
             </div>
             <button type="button" class="eng-help-close" data-help-close aria-label="${esc(t("close"))}">${ICONS.cross}</button>
@@ -5370,8 +5499,8 @@
       show({ topic, ex, inRunner }, opener);
     }
 
-    function openLesson(topic, opener) {
-      show({ topic, lesson: true }, opener);
+    function openLesson(topic, opener, lessonId = topicLessonIds(topic)[0]) {
+      show({ topic, lesson: true, lessonId }, opener);
     }
 
     function show(state, opener) {
@@ -5394,7 +5523,7 @@
         // A language switch may have re-rendered the button that opened the dialog.
         const target = lastFocus?.isConnected
           ? lastFocus
-          : $(current.lesson ? "[data-lesson-info]" : `[data-help="${CSS.escape(current.ex.id)}"]`);
+          : $(current.lesson ? `[data-lesson-info="${CSS.escape(current.lessonId)}"]` : `[data-help="${CSS.escape(current.ex.id)}"]`);
         target?.focus?.({ preventScroll: true });
       }
       current = null;

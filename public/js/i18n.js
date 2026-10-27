@@ -207,7 +207,7 @@ const I18n = {
       "worksheets.difficulty.medium": "בינוני",
       "worksheets.difficulty.hard": "קשה",
       "english.hero": "לומדים אנגלית!",
-      "english.lead": "בוחרים נושא — לומדים את השיעור ואז מתרגלים.",
+      "english.lead": "לומדים לפי הסדר — שלב אחרי שלב, עד שקוראים ומבינים.",
     },
     en: {
       "meta.title": "Pleyi — Learn Through Games for Teachers",
@@ -409,7 +409,7 @@ const I18n = {
       "worksheets.difficulty.medium": "Medium",
       "worksheets.difficulty.hard": "Hard",
       "english.hero": "Learn English!",
-      "english.lead": "Pick a topic — learn the lesson, then practice.",
+      "english.lead": "Learn in order — stage by stage, until you can read and understand.",
     },
   },
 

@@ -7,9 +7,28 @@ body:is(.page-ready-lessons, .lp-host) {
   --lesson-card-ink: #000000;
 }
 
+/* In Varela Round a capital I is a bare stick, so "עם I אומרים am" reads as
+   l. "Clear I" covers only that one letter (unicode-range) with Atkinson
+   Hyperlegible's I, which has serifs; every other letter stays Varela. */
+@font-face {
+  font-family: "Clear I";
+  src: url("/fonts/AtkinsonHyperlegible-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0049;
+}
+
+@font-face {
+  font-family: "Clear I";
+  src: url("/fonts/AtkinsonHyperlegible-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0049;
+}
+
 /* All lessons use the Varela Round font instead of the site-wide default. */
 .lesson-player {
-  font-family: "Varela Round", var(--font-sans, "Google Sans"), system-ui, sans-serif;
+  font-family: "Clear I", "Varela Round", var(--font-sans, "Google Sans"), system-ui, sans-serif;
 }
 
 body:is(.page-ready-lessons, .lp-host) .svc-lesson-grid {
@@ -1748,6 +1767,33 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   max-width: 100%;
 }
 
+/* An English sentence on its own line: a gap above it so stacked sentences
+   read as separate ones (a "~" translation under it stays close), a bit
+   smaller so it fits on one line, and an even split when it must wrap. */
+.lp-say-wrap--line {
+  margin-top: 0.55em;
+  font-size: 0.86em;
+}
+
+.lp-say-wrap--line:first-child {
+  margin-top: 0;
+}
+
+.lp-say-wrap--line .lp-say {
+  text-wrap: balance;
+}
+
+@media (max-width: 640px) {
+  .lp-slide-inner:has(.lp-say-wrap--line),
+  .lp-slide-body:has(.lp-say-wrap--line) {
+    padding-inline: 0;
+  }
+
+  .lp-say-wrap--line {
+    font-size: 0.75em;
+  }
+}
+
 .lp-say {
   display: inline;
   cursor: pointer;
@@ -1816,10 +1862,16 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   100% { transform: scale(1); }
 }
 
-/* Bold emphasis for key phrases in lesson titles and body */
+/* The slide's main word ("**לא**"): the same teal marker as .lp-key, so it
+   stands out even inside an already-bold line. */
 .lp-em {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
   font-weight: 900;
-  color: var(--ink);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 /* Glossary terms — underline + hover/click definition popup */
@@ -2034,6 +2086,43 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   white-space: nowrap;
 }
 
+/* Each English word in that phrase (inlineEnglishChip): a light chip, so it
+   reads as English at a glance; a tap opens its meaning. */
+.lp-en-word {
+  appearance: none;
+  margin: 0 0.08em;
+  padding: 0 0.3em;
+  border: 2px solid color-mix(in srgb, var(--memteal) 60%, #fff);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--memteal) 14%, #fff);
+  color: #000;
+  font: inherit;
+  font-weight: 900;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.lp-en-word:hover {
+  background: color-mix(in srgb, var(--memteal) 30%, #fff);
+}
+
+.lp-en-word.lp-en-word-active {
+  background: var(--memteal);
+  border-color: var(--memteal);
+}
+
+.lp-en-word.is-popped {
+  animation: lp-say-pop 0.4s ease;
+}
+
+/* Inside a marked "**am**" the marker is the chip's background already. */
+.lp-em .lp-en-word {
+  margin: 0;
+  border-color: transparent;
+  background: transparent;
+}
+
 /* Quiz slide (type "quiz" in ready-lessons.js): one question at a time,
    big answer buttons, instant right/wrong feedback. Everything scales with
    --lp-fit so the slide never needs to scroll. */
@@ -2102,7 +2191,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   padding: calc(var(--lp-fit, 1) * 14px) 14px;
   border: 3px solid var(--ink);
   border-radius: 14px;
-  background: #fffef5;
+  background: #dcecff;
   color: #000;
   font: inherit;
   font-size: calc(var(--lp-fit, 1) * clamp(1.15rem, 3.4vh, 1.5rem));
@@ -2158,6 +2247,25 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   color: #c62828;
 }
 
+/* Hebrew meaning under an English example line ("~ ..." in the slide body). */
+.lp-tr {
+  font-size: 0.78em;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-tr {
+  color: #cbd5e1;
+}
+
+.lp-quiz-why {
+  display: block;
+  margin-top: 0.3em;
+  font-size: 0.9em;
+  font-weight: 700;
+  color: #1f2937;
+}
+
 .lp-quiz-next,
 .lp-quiz-retry {
   padding: calc(var(--lp-fit, 1) * 10px) 22px;
@@ -2194,6 +2302,10 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-
 
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-feedback.is-wrong {
   color: #ff9a9a;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-why {
+  color: #f1f5f9;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3185,4 +3297,227 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
 
 .lp-slide-games-intro {
   font-size: calc(var(--lp-fit, 1) * 1rem);
+}
+
+/* Structured English slides (renderStepsBody in ready-lessons.js): short
+   lines, a from → to table, example cards and a wrong / right pair. Every
+   size scales with --lp-fit so dense slides shrink instead of scrolling. */
+.lp-steps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--lp-fit, 1) * clamp(8px, 2vh, 16px));
+  width: 100%;
+}
+
+.lp-steps-line {
+  margin: 0;
+  font-size: calc(var(--lp-fit, 1) * clamp(1.15rem, 3.6vh, 1.6rem));
+  font-weight: 700;
+  line-height: 1.4;
+  color: #1f2937;
+}
+
+.lp-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
+  font-weight: 900;
+}
+
+/* As wide as its longest cell (the rows' 1fr columns stay equal), at least
+   22rem so short "I → am" tables don't shrink to a sliver. */
+.lp-steps-table {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lp-fit, 1) * 8px);
+  min-width: min(100%, 22rem);
+  max-width: 100%;
+}
+
+.lp-steps-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: calc(var(--lp-fit, 1) * 8px) 14px;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  background: #fffef5;
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.lp-steps-cell {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.1rem, 3.4vh, 1.45rem));
+  font-weight: 800;
+  line-height: 1.3;
+  color: #000;
+  white-space: nowrap;
+}
+
+.lp-steps-arrow {
+  display: flex;
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+.lp-steps-arrow svg,
+.lp-ex-flow svg {
+  width: calc(var(--lp-fit, 1) * 24px);
+  height: calc(var(--lp-fit, 1) * 24px);
+}
+
+.lp-ex-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: calc(var(--lp-fit, 1) * 10px);
+  width: min(100%, 26rem);
+}
+
+.lp-ex-list.is-flow {
+  gap: calc(var(--lp-fit, 1) * 4px);
+}
+
+.lp-ex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--lp-fit, 1) * 2px);
+  padding: calc(var(--lp-fit, 1) * 10px) 16px;
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.lp-ex-en {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: calc(var(--lp-fit, 1) * clamp(1.25rem, 4vh, 1.75rem));
+  font-weight: 800;
+  line-height: 1.3;
+  color: #000;
+  cursor: pointer;
+}
+
+.lp-ex-en.is-popped {
+  animation: lp-say-pop 0.4s ease;
+}
+
+.lp-ex-speak {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--lp-fit, 1) * 26px);
+  height: calc(var(--lp-fit, 1) * 26px);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--memteal) 18%, transparent);
+  flex-shrink: 0;
+}
+
+.lp-ex-he {
+  font-size: calc(var(--lp-fit, 1) * clamp(0.95rem, 2.9vh, 1.2rem));
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.lp-ex-flow {
+  display: flex;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.lp-compare {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lp-fit, 1) * 10px);
+  width: min(100%, 26rem);
+}
+
+.lp-compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(var(--lp-fit, 1) * 10px) 16px;
+  border: 2.5px solid;
+  border-radius: 16px;
+}
+
+.lp-compare-row.is-wrong {
+  border-color: #c62828;
+  background: #fdecec;
+}
+
+.lp-compare-row.is-right {
+  border-color: #2e7d32;
+  background: #e8f5e9;
+}
+
+.lp-compare-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: calc(var(--lp-fit, 1) * clamp(0.95rem, 2.8vh, 1.15rem));
+  font-weight: 800;
+}
+
+.lp-compare-row.is-wrong .lp-compare-mark {
+  color: #b71c1c;
+}
+
+.lp-compare-row.is-right .lp-compare-mark {
+  color: #1b5e20;
+}
+
+.lp-compare-mark svg {
+  width: calc(var(--lp-fit, 1) * 24px);
+  height: calc(var(--lp-fit, 1) * 24px);
+}
+
+.lp-compare-text {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.25rem, 4vh, 1.75rem));
+  font-weight: 800;
+  color: #000;
+}
+
+.lp-compare-row.is-wrong .lp-compare-text {
+  text-decoration: line-through;
+  text-decoration-color: #c62828;
+  text-decoration-thickness: 2px;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-steps-line {
+  color: #f1f5f9;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-ex-flow {
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .lp-steps-row,
+  .lp-ex,
+  .lp-compare-row {
+    padding-inline: 10px;
+  }
+
+  .lp-steps-cell {
+    white-space: normal;
+  }
+
+  /* The "נכון / לא נכון" label above the sentence, so a long sentence
+     gets the whole row instead of a narrow column beside it. */
+  .lp-compare-row {
+    flex-direction: column;
+    gap: 2px;
+  }
 }
