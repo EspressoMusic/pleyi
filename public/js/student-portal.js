@@ -206,6 +206,12 @@
         <h2 class="stu-free-title">רוצים לתרגל עוד?</h2>
         <p>כל תרגול באתר נשמר אצל המורה — וכל תשובה נכונה מוסיפה לכם נקודות.</p>
         <a class="btn btn-candy stu-btn stu-btn--again" href="/services/english?s=${encodeURIComponent(key)}">לכל הנושאים</a>
+      </div>
+      <div class="stu-free stu-install" data-pwa-install>
+        <h2 class="stu-free-title">אייקון במסך הבית</h2>
+        <p>שיעורי הבית נפתחים בלחיצה אחת, כמו אפליקציה.</p>
+        <button type="button" class="btn btn-primary btn-candy stu-btn" data-pwa-install-btn aria-expanded="false">הוספה למסך הבית</button>
+        <div class="stu-install-help" data-pwa-help hidden></div>
       </div>`;
     renderBoard();
     renderReview();

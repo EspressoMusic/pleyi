@@ -1,0 +1,255 @@
+/* The English guide (/english, /english/<topic>, /english/reading/<id>) —
+   plain-text pages built by lib/seo.js on top of the blog's layout. */
+
+/* styles.css gives every <section> 80px of vertical padding. */
+.eg-page .blog-content {
+  background: #eaf5ff;
+  margin-bottom: 22px;
+  padding: clamp(20px, 4vw, 36px);
+}
+
+.eg-page .blog-content a,
+.eg-page .blog-related a,
+.eg-crumbs a {
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-color: var(--memteal);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
+}
+
+.eg-crumbs {
+  max-width: 780px;
+  margin: 0 auto 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.eg-crumb-sep {
+  margin: 0 4px;
+}
+
+/* Labels: bold black text on the slides' teal marker. */
+.eg-kicker {
+  max-width: 780px;
+  margin: 0 auto 8px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.eg-kicker span,
+.eg-page .blog-content h3 {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  width: fit-content;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  padding: 0 0.18em;
+  border-radius: 6px;
+}
+
+.blog-content .eg-kicker {
+  margin: 0 0 6px;
+}
+
+.eg-page main h1,
+.eg-page .blog-article-meta,
+.eg-lead {
+  max-width: 780px;
+  margin-inline: auto;
+}
+
+.eg-page main h1 {
+  color: var(--ink);
+}
+
+.eg-h1-en,
+.eg-h2-en {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.eg-lead {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.7;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.eg-lead + .blog-content,
+.eg-lead + .eg-lead + .blog-content {
+  margin-top: 14px;
+}
+
+.eg-summary {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.eg-slide {
+  border-top: 2px dashed rgba(0, 0, 0, 0.18);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.eg-slide h4 {
+  font-size: 1.05rem;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+
+.eg-slide p {
+  margin: 0 0 6px;
+}
+
+.eg-he {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.eg-he::before {
+  content: "– ";
+}
+
+.eg-page ul.eg-table,
+.eg-page ul.eg-examples,
+.eg-page ul.eg-words,
+.eg-page ul.eg-choices {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 12px;
+}
+
+.eg-table li,
+.eg-examples li {
+  margin: 0 0 4px;
+}
+
+.eg-table [lang="en"],
+.eg-examples [lang="en"],
+.eg-words [lang="en"],
+.eg-q [lang="en"],
+.eg-options [lang="en"] {
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.eg-arrow {
+  margin: 0 6px;
+  font-weight: 800;
+}
+
+.eg-page ul.eg-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eg-words li {
+  margin: 0;
+  padding: 4px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--memteal) 18%, #eaf5ff);
+  font-size: 15px;
+}
+
+.eg-compare {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-weight: 700;
+}
+
+.eg-wrong [lang="en"] {
+  text-decoration: line-through;
+  text-decoration-color: #e5484d;
+  text-decoration-thickness: 2px;
+}
+
+.eg-right [lang="en"] {
+  font-weight: 800;
+}
+
+.eg-quiz > li,
+.eg-questions ol > li {
+  margin-bottom: 14px;
+}
+
+.eg-q {
+  margin: 0 0 4px;
+}
+
+.eg-options {
+  margin: 0 0 4px;
+  color: var(--muted);
+}
+
+.eg-choices li {
+  margin: 0 0 2px;
+}
+
+.eg-choices li::before {
+  content: "○";
+  margin-inline-end: 8px;
+  color: var(--muted);
+}
+
+.eg-page details summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--ink);
+  width: fit-content;
+}
+
+.eg-page details p {
+  margin: 4px 0 0;
+}
+
+.eg-open {
+  margin: 16px 0 0;
+}
+
+.eg-topic-list > li {
+  margin-bottom: 12px;
+}
+
+.eg-topic-list p {
+  margin: 2px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.eg-passage {
+  text-align: left;
+  font-size: 18px;
+}
+
+.eg-para-num {
+  display: inline-block;
+  min-width: 1.6em;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.eg-cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.eg-page .btn.eg-btn-alt {
+  background: var(--memteal);
+}
+
+.eg-page .blog-cta {
+  background: color-mix(in srgb, var(--memteal) 22%, #eaf5ff);
+}
+
+.eg-neighbors {
+  margin-bottom: 8px;
+}

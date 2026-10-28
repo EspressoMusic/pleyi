@@ -3428,6 +3428,75 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
   color: #4b5563;
 }
 
+/* A Hebrew or math card (subject lessons) — same size as an English one. */
+.lp-ex-main {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.25rem, 4vh, 1.75rem));
+  font-weight: 800;
+  line-height: 1.3;
+  color: #000;
+}
+
+/* A stacked fraction: "{3|4}" in subject-lessons.js. */
+.lp-frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 0.12em;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.lp-frac-n,
+.lp-frac-d {
+  padding: 0 0.22em;
+}
+
+.lp-frac-n {
+  border-bottom: 0.1em solid currentColor;
+}
+
+/* A drawing from lesson-figures.js, under the slide's lines. */
+.lp-fig {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.lp-fig-svg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: calc(var(--lp-fit, 1) * clamp(120px, 27vh, 230px));
+  font-family: inherit;
+}
+
+/* A drawing with its one card beside it (a pie and its fraction). */
+.lp-fig-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--lp-fit, 1) * clamp(16px, 4vw, 40px));
+  width: 100%;
+}
+
+.lp-fig-row .lp-fig,
+.lp-fig-row .lp-ex-list {
+  width: auto;
+}
+
+.lp-fig-row .lp-ex {
+  padding: calc(var(--lp-fit, 1) * 12px) clamp(16px, 3vw, 28px);
+}
+
+.lp-fig-row .lp-ex-main {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.8rem, 6vh, 2.6rem));
+}
+
+.lp-fig-row .lp-ex-he {
+  white-space: nowrap;
+}
+
 .lp-ex-flow {
   display: flex;
   justify-content: center;

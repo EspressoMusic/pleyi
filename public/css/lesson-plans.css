@@ -81,14 +81,12 @@
 .lp-kicker {
   display: inline-block;
   margin: 0 0 12px;
-  padding: 6px 14px;
-  font-size: 13px;
+  padding: 0 0.18em;
+  font-size: 15px;
   font-weight: 900;
-  color: var(--ink);
-  background: var(--memyellow);
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  box-shadow: var(--shadow-sticker);
+  color: #000;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  border-radius: 6px;
 }
 
 .lp-hero h1 {

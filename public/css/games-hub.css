@@ -1284,6 +1284,7 @@
   color: var(--ink);
   margin: 0 0 10px;
   font-size: 15px;
+  text-align: center;
 }
 
 .navbar.scrolled .nav-user-name { color: var(--ink); }

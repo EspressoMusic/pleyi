@@ -110,16 +110,6 @@ body.page-english .eng-page-title .line {
   display: block;
 }
 
-.eng-hero-lead {
-  margin: 0 auto;
-  max-width: 34rem;
-  font-size: clamp(1.05rem, 3vw, 1.3rem);
-  font-weight: 800;
-  line-height: 1.5;
-  color: var(--body);
-  white-space: normal;
-}
-
 /* This page has no navbar, so the generic clean-section "clear the fixed
    navbar" top padding would only add an empty gap. */
 body.page-english .eng-section {
@@ -177,9 +167,11 @@ body.page-english .eng-section {
 }
 
 .eng-topic-title {
+  max-width: 100%;
   font-size: clamp(1.3rem, 4.8vw, 1.75rem);
   font-weight: 900;
   line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .eng-topic-sub {
@@ -224,12 +216,14 @@ body.page-english .eng-section {
   gap: 10px;
 }
 
+/* Bold with the lesson slides' teal marker (.lp-key). */
 .eng-path-stage-num {
-  padding: 3px 14px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
+  padding: 0 0.18em;
+  border-radius: 6px;
   background: var(--memyellow);
-  font-size: 0.7em;
+  color: #000;
+  font-size: 1em;
+  font-weight: 900;
   line-height: 1.3;
 }
 
@@ -244,7 +238,7 @@ body.page-english .eng-section {
   padding: 0 6px;
   border: 2.5px solid var(--ink);
   border-radius: 999px;
-  background: #fff;
+  background: var(--memyellow);
   color: #000;
   font-size: 1rem;
   font-weight: 900;
@@ -261,23 +255,21 @@ body.page-english .eng-section {
   padding: 14px 20px;
   border: 3px solid var(--ink);
   border-radius: 20px;
-  background: var(--memyellow);
+  background: #dccbff;
   box-shadow: var(--shadow-sticker);
   color: #000;
+  font-size: 1.2rem;
+  font-weight: 900;
   text-decoration: none;
 }
 
 .eng-next-topic-label {
   flex-shrink: 0;
-  font-size: 1rem;
-  font-weight: 800;
 }
 
 .eng-next-topic-title {
   flex: 1;
   min-width: 0;
-  font-size: 1.3rem;
-  font-weight: 900;
 }
 
 .eng-next-topic-arrow {
@@ -301,6 +293,12 @@ body.page-english .eng-section {
   padding-top: 12px;
 }
 
+/* A numbered tile starts its text below the corner number (8px + 32px),
+   so a long title never runs under it. */
+.eng-topic-tile.has-num {
+  padding-top: 46px;
+}
+
 .eng-topic-img {
   width: clamp(52px, 13vw, 74px);
   height: clamp(52px, 13vw, 74px);
@@ -309,97 +307,12 @@ body.page-english .eng-section {
   -webkit-user-drag: none;
 }
 
-/* The reading library is one wide tile. */
-.eng-topic-grid--wide {
-  grid-template-columns: minmax(0, calc(var(--eng-tile-size) * 2 + 22px));
-}
-
-@media (min-width: 760px) {
-  .eng-topic-grid--wide {
-    grid-template-columns: minmax(0, calc(var(--eng-tile-size) * 3 + 44px));
-  }
-}
-
-.eng-topic-tile--wide {
-  min-height: 0;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 16px;
-  padding: 18px 20px;
-  text-align: start;
-}
-
-.eng-topic-tile--wide:hover,
-.eng-topic-tile--wide:focus-visible {
-  transform: scale(1.02);
-}
-
-.eng-topic-wide-icon {
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border: 3px solid var(--ink);
-  border-radius: 18px;
-  background: var(--white);
-}
-
-.eng-topic-wide-icon svg {
-  width: 38px;
-  height: 38px;
-}
-
-/* The vocabulary card shows a picture from its first topic. */
-.eng-topic-wide-icon img {
-  width: 48px;
-  height: 48px;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.eng-topic-wide-text {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.eng-topic-tile--wide .eng-topic-open {
-  position: static;
-  transform: none;
-  flex-shrink: 0;
-  width: auto;
-  padding: 9px 24px;
-}
-
-@media (max-width: 520px) {
-  .eng-topic-tile--wide {
-    flex-wrap: wrap;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .eng-topic-wide-text {
-    flex-basis: calc(100% - 80px);
-  }
-
-  .eng-topic-tile--wide .eng-topic-open {
-    width: 100%;
-  }
-}
-
 /* Phones: the two columns fill the page width, and the tiles are a little
    shorter, so long titles don't make towering tiles. */
 @media (max-width: 480px) {
   .eng-topic-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-  }
-
-  .eng-topic-grid--wide {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .eng-topic-tile {
@@ -423,11 +336,6 @@ body.page-english .eng-section {
 
   .eng-topic-tile .eng-topic-open {
     bottom: 10px;
-  }
-
-  .eng-topic-tile--wide {
-    min-height: 0;
-    padding: 16px;
   }
 }
 
@@ -1111,7 +1019,7 @@ body.clean-site .eng-runner-title.font-cartoon {
 }
 
 /* "Done" / "in progress" on the side of an exercise card (statusHtml).
-   White, so it stands out on every card color. */
+   A soft tint of its icon's color, never plain white. */
 .eng-status {
   flex-shrink: 0;
   display: inline-flex;
@@ -1121,7 +1029,7 @@ body.clean-site .eng-runner-title.font-cartoon {
   padding-inline-start: 6px;
   border: 2px solid var(--ink);
   border-radius: 999px;
-  background: var(--white);
+  background: #ffefd2;
   color: var(--ink);
   font-size: 0.88rem;
   font-weight: 900;
@@ -1135,6 +1043,7 @@ body.clean-site .eng-runner-title.font-cartoon {
   height: 18px;
 }
 
+.eng-status--done { background: var(--eng-right-soft); }
 .eng-status--done svg { color: var(--eng-right); }
 .eng-status--progress svg { color: #f08c00; }
 
@@ -1149,7 +1058,7 @@ body.clean-site .eng-runner-title.font-cartoon {
 .eng-ex-card .eng-status {
   position: absolute;
   top: -13px;
-  inset-inline-end: 18px;
+  inset-inline-start: 18px;
   z-index: 2;
   pointer-events: none;
   font-size: 0.82rem;
@@ -2707,6 +2616,17 @@ html.eng-runner-open .eng-student-bar-points svg {
   min-width: 0;
 }
 
+/* A reading's or exam's level, on its own line under the title. */
+.eng-runner-sub {
+  flex-basis: 100%;
+  margin: -2px 0 0;
+  font-size: clamp(0.85rem, 2.2dvh, 1rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--ink);
+  text-align: center;
+}
+
 /* position/z-index need !important: styles.css forces position:relative on
    every direct child of <body> for the ambient background layering. */
 .eng-help {
@@ -2746,7 +2666,7 @@ body.eng-help-open {
   padding: 18px 20px 20px;
   border: 3px solid var(--ink);
   border-radius: 24px;
-  background: var(--white);
+  background: var(--eng-card);
   color: var(--ink);
   box-shadow: var(--shadow-candy);
   animation: eng-pop 0.22s ease;
@@ -2767,12 +2687,25 @@ body.eng-help-open {
   min-width: 0;
 }
 
-/* Level, size and best score — what the topic page cards leave out. */
+/* Level, size and best score — what the topic page cards leave out. Each
+   fact is a small tag (factsHtml), so a narrow screen wraps between them. */
 .eng-help-facts {
-  margin: 2px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--body);
+}
+
+.eng-help-fact {
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--eng-card-hover);
+  color: var(--ink);
+  white-space: nowrap;
 }
 
 .eng-help-status {
@@ -2786,13 +2719,20 @@ body.eng-help-open {
   color: var(--body);
 }
 
+/* Inline so the teal marker (.lp-key) hugs the words on every line. */
 .eng-help .eng-help-title {
+  display: inline;
   margin: 0;
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 1.35rem;
   font-weight: 900;
-  line-height: 1.25;
-  color: var(--ink);
+  line-height: 1.35;
+  color: #000;
   -webkit-text-stroke: 0;
   text-shadow: none;
 }
@@ -2807,7 +2747,7 @@ body.eng-help-open {
   padding: 0;
   border: 3px solid var(--ink);
   border-radius: 12px;
-  background: var(--white);
+  background: transparent;
   color: var(--ink);
   cursor: pointer;
 }
@@ -2828,17 +2768,17 @@ body.eng-help-open {
   gap: 8px;
 }
 
+/* Bold with the lesson slides' teal marker (.lp-key). */
 .eng-help .eng-help-label {
   align-self: flex-start;
   margin: 0;
-  padding: 2px 14px;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--memyellow);
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 900;
-  color: var(--ink);
+  color: #000;
 }
 
 .eng-help-what {
@@ -3782,29 +3722,6 @@ body.eng-viewer-open {
     padding: 4px 10px;
     font-size: 0.85rem;
   }
-}
-
-/* Phones only (see the narrow-screen block at the end). */
-.eng-read-expand {
-  display: none;
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--white);
-  color: var(--ink);
-  box-shadow: 2px 2px 0 0 var(--ink);
-  cursor: pointer;
-}
-
-.eng-read-expand svg {
-  width: 18px;
-  height: 18px;
 }
 
 /* Reading first, then the questions (.eng-read--paged): the passage and the
@@ -5135,11 +5052,6 @@ html.eng-runner-open .eng-runner-card > .eng-read {
     padding: 0 14px 12px;
   }
 
-  .eng-read-expand {
-    display: grid;
-    z-index: 3;
-  }
-
   .eng-read-task {
     flex: 0 1 auto;
     max-height: 68%;
@@ -5554,11 +5466,6 @@ html.eng-runner-open .eng-slow-btn span {
 
 /* ── Reading exams (english-exams.js) ── */
 
-/* The exams tile sits under the reading library's, in its own color. */
-.eng-topic-card--exams .eng-topic-wide-icon {
-  background: var(--memyellow);
-}
-
 /* The Bagrut topic's way to the timed exams. */
 .eng-exam-link {
   display: flex;
@@ -5757,8 +5664,10 @@ html.eng-runner-open .eng-slow-btn span {
   height: 1.2em;
 }
 
-/* The header: the answered-questions bar and the timer next to it. */
+/* The header: a button per question and the timer next to it. */
 .eng-exam-progress {
+  width: auto;
+  max-width: 100%;
   gap: 8px;
 }
 
@@ -5870,35 +5779,41 @@ html.eng-runner-open .eng-slow-btn span {
   text-decoration-color: var(--eng-wrong);
 }
 
-/* The task side: question buttons, the question, its answer, prev / next. */
-.eng-exam-nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 0 0 clamp(8px, 1.6dvh, 14px);
-}
-
+/* The question buttons sit in a white strip, like the progress bar of the
+   other exercises; too many for a narrow screen scroll sideways (the page
+   never does). */
 .eng-exam-dots {
+  flex: 0 1 auto;
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
+  min-width: 0;
+  padding: 3px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: 1px 2px 0 0 var(--ink);
+  overflow-x: auto;
+  scrollbar-width: none;
   direction: ltr;
 }
 
+.eng-exam-dots::-webkit-scrollbar {
+  display: none;
+}
+
 .eng-exam-dot {
+  flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border: 2px solid var(--ink);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--white);
   color: var(--ink);
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 900;
   cursor: pointer;
 }
@@ -5908,37 +5823,17 @@ html.eng-runner-open .eng-slow-btn span {
 }
 
 .eng-exam-dot.is-current {
-  box-shadow: 0 0 0 3px var(--memyellow), 0 0 0 5px var(--ink);
-}
-
-.eng-exam-dot:hover {
-  transform: translateY(-1px);
-}
-
-.eng-exam-submit {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px 6px 11px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
   background: var(--memyellow);
-  color: var(--ink);
-  box-shadow: 2px 3px 0 0 var(--ink);
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 900;
-  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--ink);
 }
 
-.eng-exam-submit svg {
-  width: 18px;
-  height: 18px;
+.eng-exam-timer {
+  flex-shrink: 0;
 }
 
-.eng-exam-submit:active {
-  transform: translate(2px, 3px);
-  box-shadow: none;
+/* The question card: the step line and "Back to the text" on one row. */
+.eng-read-q-head .eng-exam-step {
+  margin: 0;
 }
 
 .eng-exam-step {
@@ -6023,9 +5918,22 @@ html.eng-runner-open .eng-slow-btn span {
   text-align: left;
 }
 
+/* A quote question: the button that opens the passage to pick from, and
+   the undo next to it. */
+.eng-exam-quote-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 12px;
+}
+
+.eng-read-back.eng-exam-pick {
+  margin-inline-start: 0;
+}
+
 .eng-exam-clear {
   align-self: flex-start;
-  margin-top: 8px;
   padding: 0;
   border: 0;
   background: none;
@@ -6201,6 +6109,14 @@ html.eng-runner-open .eng-slow-btn span {
   color: var(--ink);
 }
 
+.eng-exam-review .eng-read-q-head {
+  margin-top: clamp(10px, 2dvh, 16px);
+}
+
+.eng-exam-review .eng-read-q-head h4 {
+  margin: 0;
+}
+
 .eng-exam-breakdown ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
@@ -6339,45 +6255,8 @@ html.eng-runner-open .eng-slow-btn span {
   color: #146b3a;
 }
 
-/* Phones: smaller question buttons and paragraph numbers. The step line
-   stays (the reading runner hides its own), since the ring here counts
-   answered questions, not which question this is. */
+/* Phones: smaller question buttons and paragraph numbers. */
 @media (max-width: 820px) {
-  /* The passage is what the exam is about, so it keeps more of the card
-     than in the reading runner. */
-  .eng-exam .eng-read-side {
-    min-height: 36%;
-  }
-
-  .eng-exam .eng-read-task {
-    max-height: 62%;
-  }
-
-  /* One row of question buttons that scrolls sideways (the page never
-     does); the padding keeps the current button's ring from being cut. */
-  .eng-exam-nav {
-    flex-wrap: nowrap;
-    gap: 6px;
-  }
-
-  .eng-exam-dots {
-    flex: 1 1 auto;
-    flex-wrap: nowrap;
-    min-width: 0;
-    padding: 5px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .eng-exam-dots::-webkit-scrollbar {
-    display: none;
-  }
-
-  .eng-exam-dot,
-  .eng-exam-submit {
-    flex-shrink: 0;
-  }
-
   .eng-exam-para {
     padding-left: 30px;
   }
@@ -6388,21 +6267,25 @@ html.eng-runner-open .eng-slow-btn span {
     font-size: 0.75rem;
   }
 
-  .eng-exam-dot {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    font-size: 0.85rem;
+  .eng-exam-dots {
+    gap: 3px;
   }
 
-  .eng-exam-submit {
-    padding: 4px 11px 4px 9px;
-    font-size: 0.88rem;
+  .eng-exam-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    font-size: 0.85rem;
   }
 
   .eng-exam-step {
-    margin-bottom: 2px;
     font-size: 0.85rem;
+  }
+
+  /* The header already marks which question this is, so the step line
+     keeps only the question type, on one row with "Back to the text". */
+  .eng-exam-step-num {
+    display: none;
   }
 
   .eng-exam-timer {

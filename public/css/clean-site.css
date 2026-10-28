@@ -769,6 +769,227 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
   color: var(--body);
 }
 
+/* מה חדש — one card at a time, newest first (js/news-carousel.js).
+   The cards share one grid cell, so the box keeps the tallest card's height
+   and nothing jumps when they change. The arrows sit beside the card, and
+   under it on phones. */
+.news-wrap {
+  max-width: 760px;
+}
+
+#news .clean-section-title {
+  font-size: clamp(2.5rem, 6.8vw, 3.75rem);
+  margin-bottom: 24px;
+}
+
+.news-carousel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "prev slides next"
+    ".    dots   .";
+  align-items: center;
+  gap: 16px 14px;
+}
+
+.news-list {
+  grid-area: slides;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.news-item {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #eaf5ff;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  padding: clamp(16px, 4vw, 24px) clamp(16px, 4vw, 28px) clamp(18px, 4vw, 24px);
+  box-shadow: var(--shadow-sticker);
+  color: #000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-14px);
+  transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s linear 0.35s;
+}
+
+.news-item.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.news-date {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 0 0.3em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  font-size: clamp(1rem, 2.8vw, 1.1rem);
+  font-weight: 900;
+}
+
+.news-title {
+  margin: 0 0 6px;
+  font-size: clamp(1.3rem, 3.8vw, 1.6rem);
+  font-weight: 900;
+  color: #000;
+}
+
+.news-text {
+  margin: 0;
+  font-size: clamp(1.05rem, 3.2vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.5;
+  color: #000;
+}
+
+/* "נסה עכשיו" sits at the bottom of every card, at the same height. */
+.news-try {
+  margin-top: auto;
+}
+
+.news-text + .news-try,
+.news-text + .news-install {
+  margin-top: 16px;
+}
+
+body.clean-site .news-try.btn {
+  padding: 10px 26px;
+  font-size: clamp(1.1rem, 3.2vw, 1.25rem);
+}
+
+/* The app card: the install button where the browser can install the site
+   (js/pwa.js sets html.pwa-can-install), else the way to the weekly report. */
+.news-install {
+  display: none;
+  margin-top: auto;
+}
+
+.pwa-can-install .news-install {
+  display: block;
+}
+
+.pwa-can-install .news-try--report {
+  display: none;
+}
+
+.news-install-help {
+  margin-top: 12px;
+  text-align: start;
+}
+
+.news-install-help .pwa-steps {
+  margin: 0;
+  padding-inline-start: 22px;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.news-install-help .pwa-share-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: -4px;
+}
+
+.news-install-help .pwa-note {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.news-arrow {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  box-shadow: 3px 3px 0 var(--ink);
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.news-arrow--prev {
+  grid-area: prev;
+}
+
+.news-arrow--next {
+  grid-area: next;
+}
+
+.news-arrow:hover {
+  transform: translateY(-2px);
+}
+
+.news-arrow:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.news-arrow svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.news-dots {
+  grid-area: dots;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.news-dot {
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #eaf5ff;
+  cursor: pointer;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.news-dot[aria-current="true"] {
+  width: 32px;
+  background: var(--memteal);
+}
+
+.news-carousel--single .news-arrow,
+.news-carousel--single .news-dots {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .news-carousel {
+    grid-template-areas:
+      "slides slides slides"
+      "prev   dots   next";
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-item,
+  .news-item.is-active {
+    transform: none;
+    transition: none;
+  }
+}
+
 .about-services {
   list-style: none;
   margin: 0 auto clamp(24px, 5vw, 36px);

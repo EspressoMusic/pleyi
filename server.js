@@ -15,6 +15,7 @@ const premiumLib = require("./lib/premium");
 const studentProgress = require("./lib/student-progress");
 const aiLesson = require("./lib/ai-lesson");
 const englishPractice = require("./lib/english-practice");
+const seo = require("./lib/seo");
 const { extractText } = require("./lib/extract-text");
 const { verifyIdToken } = require("./lib/firebase-admin");
 const multer = require("multer");
@@ -60,6 +61,9 @@ blogPosts.forEach((slug) => {
   });
 });
 
+// The English guide as plain HTML (/english/...), /sitemap.xml and /llms.txt.
+seo.mount(app);
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/join", (_req, res) => {
@@ -70,9 +74,8 @@ app.get("/games", (_req, res) => {
   res.redirect(302, "/room");
 });
 
-// The teacher's page is the students list for now (my-room.html is kept for later).
 app.get("/my-room", (_req, res) => {
-  res.redirect(302, "/admin/students");
+  res.sendFile(path.join(__dirname, "public", "my-room.html"));
 });
 
 app.get("/lesson-plans", (_req, res) => {
@@ -98,6 +101,39 @@ app.get("/admin/students", (_req, res) => {
 // A student's personal homework page — the link the teacher sends.
 app.get("/s/:key", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "student.html"));
+});
+
+// The app manifest (public/js/pwa.js). The installed app opens where it was
+// installed from — pwa.js names that page in ?start=; only a student's own
+// page, the English page (with the student's key) and the teacher's student
+// list are taken, and anything else opens the home page.
+function appStartUrl(start) {
+  const value = String(start || "");
+  const allowed = /^\/s\/[A-Za-z0-9_-]{20,64}$/.test(value)
+    || /^\/services\/english(\?s=[A-Za-z0-9_-]{20,64})?$/.test(value)
+    || value === "/admin/students";
+  return allowed ? value : "/";
+}
+
+app.get("/manifest.webmanifest", (req, res) => {
+  res.set("Cache-Control", "no-cache");
+  res.type("application/manifest+json").send(JSON.stringify({
+    id: "/",
+    name: "Pleyi — לימוד דרך משחקים",
+    short_name: "Pleyi",
+    lang: "he",
+    dir: "rtl",
+    start_url: appStartUrl(req.query.start),
+    scope: "/",
+    display: "standalone",
+    background_color: "#e0fbf8",
+    theme_color: "#00C9B7",
+    icons: [
+      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+    ],
+  }));
 });
 
 app.get("/play/:gameId", (req, res) => {
@@ -437,6 +473,11 @@ studentAdmin.post("/", studentRoute(async (req) => ({
 // Files opened before Google sign-in have no owner; the teacher PIN proves
 // it's the site owner taking them over. A wrong PIN is a 403, not 401 — the
 // teacher is still signed in.
+// The weekly report — before "/:id", which would take "report" for a file id.
+studentAdmin.get("/report", studentRoute(async (req) => ({
+  report: await studentProgress.weeklyReport(req.uid, req.query.week),
+})));
+
 studentAdmin.post("/claim", studentRoute((req) => {
   if (!bookingsLib.verifyTeacherPin(req.get("x-teacher-pin"))) {
     throw Object.assign(new Error("קוד מורה שגוי"), { status: 403 });

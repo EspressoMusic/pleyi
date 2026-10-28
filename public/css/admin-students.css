@@ -1529,6 +1529,172 @@ body.adm-info-open {
   height: 18px;
 }
 
+/* ── Weekly report (#report) ── */
+
+.adm-week {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 14px 0 0;
+}
+
+.adm-week-label {
+  padding: 6px 16px;
+  border: var(--adm-border);
+  border-radius: 999px;
+  background: var(--memyellow);
+  font-weight: 900;
+  text-align: center;
+}
+
+.adm-week-btn {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: var(--adm-border);
+  border-radius: 50%;
+  background: var(--adm-card);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.adm-week-btn:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.adm-week-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Earlier weeks are to the right, as Hebrew reads. */
+.adm-week-btn--prev svg {
+  transform: scaleX(-1);
+}
+
+.adm-week-btn.is-off {
+  opacity: 0.35;
+  box-shadow: none;
+}
+
+.adm-report-none {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.adm-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr));
+  align-items: start;
+  gap: 20px;
+}
+
+.adm-report-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adm-report-name {
+  font-weight: 900;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.adm-report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-report-block {
+  padding: 10px 14px 0;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--adm-soft);
+}
+
+.adm-report-rows {
+  padding: 0;
+}
+
+.adm-report-block .adm-report-rows {
+  padding-bottom: 4px;
+}
+
+.adm-report-rows > .adm-ex:first-child {
+  border-top: none;
+}
+
+.adm-report-block .adm-report-rows > .adm-ex:first-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.14);
+  margin-top: 6px;
+}
+
+.adm-report-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-report-chip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--adm-soft);
+}
+
+/* "Install as an app": shown only while the browser can install it
+   (public/js/pwa.js sets html.pwa-can-install). */
+.adm-install {
+  display: none;
+}
+
+.pwa-can-install .adm-install {
+  display: block;
+}
+
+.adm-install-help {
+  margin: -6px 0 18px;
+  max-width: 460px;
+}
+
+.pwa-steps {
+  margin: 0;
+  padding-inline-start: 22px;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.pwa-share-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: -4px;
+}
+
+.pwa-note {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
 /* ── Responsive ── */
 
 @media (max-width: 1020px) {

@@ -1190,6 +1190,26 @@
 
   const examTitle = (exam) => ({ title: `רמה ${exam.level} · ${exam.title}`, titleEn: `Level ${exam.level} · ${exam.title}` });
 
+  // Hebrew names of the exams, shown on the cards; the passage itself keeps its English title.
+  const TITLE_HE = {
+    "Peanut the Class Hamster": "פינאט, האוגר של הכיתה",
+    "Fishing with Grandpa": "דיג עם סבא",
+    "The Lost Kite": "העפיפון שהלך לאיבוד",
+    "Dad's Food Truck": "משאית האוכל של אבא",
+    "The Robot Club": "חוג הרובוטים",
+    "The Storks Are Coming": "החסידות מגיעות",
+    "The Lighthouse Keeper": "שומר המגדלור",
+    "Boxes of Kindness": "קופסאות של טוב לב",
+    "The Man Who Planted a Forest": "האיש ששתל יער",
+    "Two Wheels Through History": "שני גלגלים לאורך ההיסטוריה",
+    "Dogs with Important Jobs": "כלבים עם תפקידים חשובים",
+    "The Tunnel Under the City of David": "המנהרה מתחת לעיר דוד",
+    "The Power of Habits": "הכוח של הרגלים",
+    "Beresheet: A Small Country Aims for the Moon": "בראשית: מדינה קטנה מכוונת לירח",
+    "Should Phones Be Banned at School?": "האם לאסור טלפונים בבית הספר?",
+    "The Man Who Brought a Language Back to Life": "האיש שהחזיר שפה לחיים",
+  };
+
   TOPICS.push({
     id: "exams",
     group: "reading",
@@ -1201,7 +1221,7 @@
       level: exam.level,
       minutes: MINUTES[exam.level],
       ...examTitle(exam),
-      passage: { title: exam.title, text: exam.text, glossary: exam.glossary || null },
+      passage: { title: exam.title, titleHe: TITLE_HE[exam.title] || null, text: exam.text, glossary: exam.glossary || null },
       questions: exam.questions,
     })),
   });

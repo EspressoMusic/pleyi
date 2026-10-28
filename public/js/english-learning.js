@@ -22,15 +22,14 @@
     he: {
       open: "כניסה",
       back: "חזרה לנושאים",
+      backToSite: "חזרה לאתר",
       backToTopic: "חזרה לנושא",
       stepGames: "משחקים",
       backToLesson: "חזרה לשיעור",
-      gamesLead: "משחקים עם המילים של הנושא — עם ניקוד, זמן ושיאים.",
       playGame: "לשחק",
       openLesson: "פתיחת השיעור",
       lessonInfo: "מידע על השיעור",
       lessonWhat: "מה לומדים בשיעור",
-      lessonMeta: (slides, duration) => `${slides} שקופיות · ${duration}`,
       lessonNum: (n) => `שיעור ${n}`,
       noExercises: "עוד אין תרגילים בנושא הזה.",
       view: "צפייה",
@@ -104,12 +103,10 @@
       level: (n) => `רמה ${n}`,
       levelName: (n) => ["", "קל", "בינוני", "מתקדם", "מאתגר"][n] || "",
       readingMeta: (w, q) => `${w} מילים · ${q} שאלות`,
-      readingTitle: (n) => `קטע קריאה · רמה ${n}`,
-      readingCount: (n) => `${n} קטעי קריאה בארבע רמות`,
+      readingTitle: "קטע קריאה",
       vocabHub: "אוצר מילים לפי נושאים",
       stage: (n) => `שלב ${n}`,
       nextTopic: "הנושא הבא",
-      vocabCount: (n) => `${n} נושאים עם תמונות`,
       markStep: "שלב 1: מסמנים בטקסט",
       markFoundLabel: "נמצאו",
       markOf: (t) => `מתוך ${t}`,
@@ -148,8 +145,6 @@
       reviewMissed: "לא סומנו:",
       reviewWrongMarks: "סומנו בטעות:",
       yourAnswer: "כתבתם:",
-      expandText: "הגדלת הטקסט",
-      collapseText: "חזרה למשימה",
       helpButton: "הסבר ודוגמה",
       helpOpen: (name) => `הסבר ודוגמה: ${name}`,
       helpWhat: "מה עושים?",
@@ -211,8 +206,7 @@
       mistakesSaved: "הטעויות נשמרו בחזרה האישית שלכם, כדי שתוכלו לחזור עליהן גם בפעם אחרת.",
       reviewPictureInstr: "מה רואים בתמונה? בחרו את המילה הנכונה.",
       reviewPairInstr: "מה מתאים? בחרו את התשובה הנכונה.",
-      examTitle: (n) => `מבחן · רמה ${n}`,
-      examCount: (n) => `${n} מבחנים עם שעון, בארבע רמות`,
+      examTitle: "מבחן",
       examsLead: "מבחני הבנת הנקרא כמו בכיתה: קטע באנגלית ושאלות מכל הסוגים, עם שעון. עונים על הכול, מגישים, ורק אז רואים ציון ותשובות נכונות.",
       examHow: [
         "אפשר לעבור בין השאלות ולשנות תשובות עד ההגשה.",
@@ -243,7 +237,6 @@
       examPrev: "הקודמת",
       examNext: "הבאה",
       examSubmit: "להגשה",
-      examAnsweredOf: (a, n) => `ענית על ${a} מתוך ${n}`,
       examConfirmTitle: "להגיש את המבחן?",
       examConfirmMissing: (n) => (n === 1 ? "נשארה שאלה אחת בלי תשובה." : `נשארו ${n} שאלות בלי תשובה.`),
       examConfirmAll: "עניתם על כל השאלות.",
@@ -273,10 +266,10 @@
       },
       examPickTwo: (n) => `בחרו ${n} תשובות.`,
       examPickedMax: (n) => `כבר בחרתם ${n}. כדי להחליף, לחצו קודם על תשובה שבחרתם.`,
-      examQuoteHow: "לחצו בטקסט על המשפט המתאים.",
       examQuoteNone: "עוד לא נבחר משפט.",
       examQuoteChosen: "המשפט שבחרתם:",
       examQuoteClear: "ביטול הבחירה",
+      examQuotePick: "לבחור משפט בטקסט",
       examSequenceHow: "לחצו על האירועים לפי הסדר שבו קרו. לחיצה נוספת מבטלת.",
       examSequenceClear: "להתחיל את הסידור מחדש",
       examCompleteHow: "השלימו את המשפט באנגלית.",
@@ -292,7 +285,8 @@
       examPartial: "חצי נקודה",
       examRetake: "לעשות שוב",
       examAll: "לכל המבחנים",
-      examPassage: "לקטע",
+      examPassage: "לטקסט",
+      examBackToResults: "חזרה לתוצאות",
       examLink: "רוצים לבדוק את עצמכם במבחן אמיתי, עם שעון?",
       examLinkGo: "למבחני הבנת הנקרא",
       paragraph: (n) => `פסקה ${n}`,
@@ -301,15 +295,14 @@
     en: {
       open: "Open",
       back: "Back to topics",
+      backToSite: "Back to the site",
       backToTopic: "Back to topic",
       stepGames: "Games",
       backToLesson: "Back to the lesson",
-      gamesLead: "Games with this topic's words — with points, timers and records.",
       playGame: "Play",
       openLesson: "Open the lesson",
       lessonInfo: "About the lesson",
       lessonWhat: "What the lesson teaches",
-      lessonMeta: (slides, duration) => `${slides} slides · ${duration}`,
       lessonNum: (n) => `Lesson ${n}`,
       noExercises: "No exercises for this topic yet.",
       view: "View",
@@ -383,12 +376,10 @@
       level: (n) => `Level ${n}`,
       levelName: (n) => ["", "Easy", "Medium", "Advanced", "Challenging"][n] || "",
       readingMeta: (w, q) => `${w} words · ${q} questions`,
-      readingTitle: (n) => `Reading · Level ${n}`,
-      readingCount: (n) => `${n} reading passages in four levels`,
+      readingTitle: "Reading",
       vocabHub: "Vocabulary by topic",
       stage: (n) => `Stage ${n}`,
       nextTopic: "Next topic",
-      vocabCount: (n) => `${n} topics with pictures`,
       markStep: "Step 1: Mark the text",
       markFoundLabel: "Found",
       markOf: (t) => `of ${t}`,
@@ -427,8 +418,6 @@
       reviewMissed: "Not marked:",
       reviewWrongMarks: "Marked by mistake:",
       yourAnswer: "You wrote:",
-      expandText: "Enlarge the text",
-      collapseText: "Back to the task",
       helpButton: "How it works",
       helpOpen: (name) => `How it works: ${name}`,
       helpWhat: "What to do",
@@ -490,8 +479,7 @@
       mistakesSaved: "Your mistakes were saved to your review, so you can practice them another time too.",
       reviewPictureInstr: "What's in the picture? Choose the right word.",
       reviewPairInstr: "What matches? Choose the right answer.",
-      examTitle: (n) => `Exam · Level ${n}`,
-      examCount: (n) => `${n} timed exams in four levels`,
+      examTitle: "Exam",
       examsLead: "Reading exams like in class: a passage in English and every kind of question, with a timer. Answer everything, hand it in, and only then see your grade and the right answers.",
       examHow: [
         "You can move between the questions and change answers until you hand it in.",
@@ -522,7 +510,6 @@
       examPrev: "Previous",
       examNext: "Next",
       examSubmit: "Hand in",
-      examAnsweredOf: (a, n) => `${a} of ${n} answered`,
       examConfirmTitle: "Hand in the exam?",
       examConfirmMissing: (n) => (n === 1 ? "1 question has no answer yet." : `${n} questions have no answer yet.`),
       examConfirmAll: "You answered every question.",
@@ -552,10 +539,10 @@
       },
       examPickTwo: (n) => `Choose ${n} answers.`,
       examPickedMax: (n) => `You already chose ${n}. To change, first click an answer you chose.`,
-      examQuoteHow: "Click the right sentence in the text.",
       examQuoteNone: "No sentence chosen yet.",
       examQuoteChosen: "The sentence you chose:",
       examQuoteClear: "Clear the choice",
+      examQuotePick: "Choose a sentence in the text",
       examSequenceHow: "Click the events in the order they happened. Click again to undo.",
       examSequenceClear: "Start the order over",
       examCompleteHow: "Complete the sentence in English.",
@@ -571,7 +558,8 @@
       examPartial: "Half a point",
       examRetake: "Take it again",
       examAll: "All exams",
-      examPassage: "Passage",
+      examPassage: "The text",
+      examBackToResults: "Back to the results",
       examLink: "Want to test yourself in a real exam, with a timer?",
       examLinkGo: "To the reading exams",
       paragraph: (n) => `Paragraph ${n}`,
@@ -646,6 +634,11 @@
   function loc(obj, field) {
     if (lang() === "en" && obj[`${field}En`]) return obj[`${field}En`];
     return obj[field] || "";
+  }
+
+  // Cards name a passage in Hebrew; the reading screen keeps the English title.
+  function passageTitle(ex) {
+    return (lang() === "he" && ex.passage.titleHe) || ex.passage.title;
   }
 
   function esc(str) {
@@ -956,6 +949,12 @@
     if (back) $("#engBarBack")?.replaceChildren(back);
   }
 
+  // The topics page has no page above it here, so its arrow leaves to the site.
+  function dockSiteBack() {
+    const bar = $("#engBarBack");
+    if (bar) bar.innerHTML = `<a class="eng-back" href="/" aria-label="${esc(t("backToSite"))}" title="${esc(t("backToSite"))}">${ICONS.back}</a>`;
+  }
+
   // Shown when this device opened a student's personal link: whose file the
   // practice goes to, and the way to their page with their progress. On the
   // exercise screen it shrinks to the name, points and that link.
@@ -1133,16 +1132,17 @@
     return TOPICS.filter((topic) => topicGroup(topic) === "vocab");
   }
 
+  // A plain square tile, like a topic's, with a picture from the first topic.
   function vocabCardHtml(topics) {
     const cover = topics.find((topic) => topic.cover)?.cover;
+    const img = cover ? `<img class="eng-topic-img" src="${esc(imgUrl(cover))}" alt="" draggable="false" />` : "";
+    const sub = lang() === "en" ? "" : `<span class="eng-topic-sub" dir="ltr">Vocabulary by topic</span>`;
     return `
-      <article class="eng-topic-card eng-topic-card--wide eng-topic-card--vocab">
-        <a class="eng-topic-tile eng-topic-tile--wide" href="#${VOCAB_ROUTE}">
-          <span class="eng-topic-wide-icon">${cover ? `<img src="${esc(imgUrl(cover))}" alt="" draggable="false" />` : ICONS.slides}</span>
-          <span class="eng-topic-wide-text">
-            <span class="eng-topic-title">${esc(t("vocabHub"))}</span>
-            <span class="eng-topic-sub">${esc(t("vocabCount", topics.length))}</span>
-          </span>
+      <article class="eng-topic-card">
+        <a class="eng-topic-tile${img ? " has-img" : ""}" href="#${VOCAB_ROUTE}">
+          ${img}
+          <span class="eng-topic-title">${esc(t("vocabHub"))}</span>
+          ${sub}
           <span class="btn btn-primary btn-candy font-cartoon eng-topic-open">${esc(t("open"))}</span>
         </a>
       </article>`;
@@ -1160,29 +1160,15 @@
       <div class="eng-topic-grid">${vocabTopics().map(topicTileHtml).join("")}</div>`;
   }
 
-  // `num`: the topic's place on the learning path — shown on the tile, and
-  // every path tile (reading and exams too) is a plain square tile.
+  // `num`: the topic's place on the learning path, shown on the tile. Every
+  // topic (reading and exams too) is a plain square tile.
   function topicTileHtml(topic, num) {
     const sub = lang() === "en" ? "" : `<span class="eng-topic-sub" dir="ltr">${esc(topic.titleEn)}</span>`;
     const badge = num ? `<span class="eng-path-num" aria-hidden="true">${num}</span>` : "";
-    if (topicGroup(topic) === "reading" && !num) {
-      const exams = topic.id === EXAMS_TOPIC;
-      return `
-        <article class="eng-topic-card eng-topic-card--wide${exams ? " eng-topic-card--exams" : ""}">
-          <a class="eng-topic-tile eng-topic-tile--wide" href="#${esc(topic.id)}">
-            <span class="eng-topic-wide-icon">${exams ? ICONS.exam : ICONS.reading}</span>
-            <span class="eng-topic-wide-text">
-              <span class="eng-topic-title">${esc(loc(topic, "title"))}</span>
-              <span class="eng-topic-sub">${esc(exams ? t("examCount", topic.exercises.length) : t("readingCount", readingUnits(topic).length))}</span>
-            </span>
-            <span class="btn btn-primary btn-candy font-cartoon eng-topic-open">${esc(t("open"))}</span>
-          </a>
-        </article>`;
-    }
     const img = topic.cover ? `<img class="eng-topic-img" src="${esc(imgUrl(topic.cover))}" alt="" draggable="false" />` : "";
     return `
       <article class="eng-topic-card">
-        <a class="eng-topic-tile${img ? " has-img" : ""}" href="#${esc(topic.id)}">
+        <a class="eng-topic-tile${img ? " has-img" : ""}${badge ? " has-num" : ""}" href="#${esc(topic.id)}">
           ${badge}
           ${img}
           <span class="eng-topic-title">${esc(loc(topic, "title"))}</span>
@@ -1214,12 +1200,11 @@
     grid.innerHTML = GROUPS.map((group) => {
       const topics = TOPICS.filter((topic) => topicGroup(topic) === group.id);
       if (!topics.length) return "";
-      const wide = group.id === "reading" || group.id === "vocab";
-      const tiles = group.id === "vocab" ? vocabCardHtml(topics) : topics.map(topicTileHtml).join("");
+      const tiles = group.id === "vocab" ? vocabCardHtml(topics) : topics.map((topic) => topicTileHtml(topic)).join("");
       return `
         <div class="eng-topic-group">
           ${group.title ? `<h2 class="eng-group-title">${esc(loc(group, "title"))}</h2>` : ""}
-          <div class="eng-topic-grid${wide ? " eng-topic-grid--wide" : ""}">${tiles}</div>
+          <div class="eng-topic-grid">${tiles}</div>
         </div>`;
     }).join("");
   }
@@ -1259,11 +1244,9 @@
     return `${t("level", level)} · ${t("levelName", level)}`;
   }
 
-  // Lesson durations are stored in Hebrew ("25 דק'").
-  function durationLabel(duration) {
-    if (lang() !== "en") return duration || "";
-    const minutes = String(duration || "").match(/\d+/);
-    return minutes ? `${minutes[0]} min` : "";
+  // The info dialog's facts (level, size), each in its own small tag.
+  function factsHtml(facts) {
+    return facts.map((fact) => `<span class="eng-help-fact">${esc(fact)}</span>`).join("");
   }
 
   // Practice exercises have levels 1–3 (english-more.js); reading passages
@@ -1302,7 +1285,7 @@
           <span class="eng-level-bars" role="img" aria-label="${esc(t("levelName", ex.level))}">${bars}</span>
           ${infoBtnHtml(ex)}
         </span>
-        <a class="eng-level-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}" dir="ltr">${esc(ex.passage.title)}</a>
+        <a class="eng-level-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}" dir="auto">${esc(passageTitle(ex))}</a>
         <span class="eng-level-meta">${esc(t("readingMeta", passageWordCount(ex), ex.questions.length))}</span>
         ${statusHtml(exerciseStatus(topic, ex, best, started))}
         ${record ? `<span class="eng-ex-best">${esc(t("best", record.score, record.total))}</span>` : ""}
@@ -1431,7 +1414,7 @@
         <div class="eng-ex-card eng-ex-card--${esc(ex.type)}${reading ? ` eng-ex-card--level-${ex.level}` : ""}">
           <span class="eng-ex-icon${reading ? "" : " eng-ex-icon--level"}">${reading ? ICONS.reading : exerciseIcon(exerciseLevel(ex))}</span>
           <span class="eng-ex-text">
-            <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${reading ? `<bdi dir="ltr">${esc(ex.passage.title)}</bdi>` : esc(loc(ex, "title"))}</a>
+            <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${reading ? `<bdi>${esc(passageTitle(ex))}</bdi>` : esc(loc(ex, "title"))}</a>
           </span>
           ${statusHtml(exerciseStatus(topic, ex, best, started))}
           ${infoBtnHtml(ex)}
@@ -1489,7 +1472,6 @@
           gameCards
             ? `<div class="eng-practice-games">
                 <h4 class="eng-practice-sub">${esc(t("stepGames"))}</h4>
-                <p class="eng-step-lead">${esc(t("gamesLead"))}</p>
                 <div class="eng-ex-grid">${gameCards}</div>
               </div>`
             : ""
@@ -1887,7 +1869,7 @@
         </div>
         <div class="eng-game-hud" id="engGameHud">${hud}</div>
       </div>
-      <div class="eng-runner-card eng-runner-card--game eng-runner-card--game-${esc(game.id)}">${inner}</div>`;
+      <div class="eng-runner-card eng-runner-card--game eng-runner-card--game-${esc(game.id)}${cardColorClass()}">${inner}</div>`;
     if (gameLessonReturn) {
       $("#engGameBack").addEventListener("click", (e) => {
         e.preventDefault();
@@ -2150,9 +2132,16 @@
   function runnerTitle() {
     const { exercise } = runner;
     if (runner.review) return t("reviewTitle");
-    if (exercise.type === "reading") return t("readingTitle", exercise.level);
-    if (exercise.type === "exam") return t("examTitle", exercise.level);
+    if (exercise.type === "reading") return t("readingTitle");
+    if (exercise.type === "exam") return t("examTitle");
     return loc(exercise, "title");
+  }
+
+  // A reading or exam shows its level in small text under the title.
+  function runnerSubtitleHtml() {
+    const { exercise } = runner;
+    if (runner.review || (exercise.type !== "reading" && exercise.type !== "exam")) return "";
+    return `<p class="eng-runner-sub">${esc(t("level", exercise.level))}</p>`;
   }
 
   // A review question: the topic and exercise it is from, and how close it
@@ -2185,6 +2174,7 @@
           <a class="eng-back" href="${esc(back)}" aria-label="${esc(backLabel)}" title="${esc(backLabel)}">${ICONS.back}</a>
           <div class="eng-runner-title-row">
             <h2 class="font-cartoon eng-runner-title">${esc(runnerTitle())}</h2>
+            ${runnerSubtitleHtml()}
             ${reviewFromHtml()}
           </div>
           <div class="eng-runner-tools" id="engRunnerTools"></div>
@@ -4484,6 +4474,7 @@
       startedAt: now,
       deadline: timed ? now + ex.minutes * 60000 : null,
       current: 0,
+      stage: "read",
       saved: null,
     });
     runner.startedAt = now;
@@ -4497,6 +4488,8 @@
     // A save from before the orders were kept gets new ones.
     if (!Array.isArray(st.orders)) st.orders = runner.round.map(examOrder);
     st.current = Math.min(Math.max(0, st.current || 0), runner.round.length - 1);
+    // The passage was read before: straight back to the question.
+    st.stage = "questions";
     runner.startedAt = st.startedAt;
     renderExam();
   }
@@ -4520,9 +4513,9 @@
       .join("")}</p>`;
   }
 
-  // The passage box and the expand button that gives it the whole card on a
-  // phone (as in the reading runner).
-  function examSideHtml() {
+  // The passage box, with one button under it: "To the questions" while
+  // reading it first, then back to the question (or to the results).
+  function examSideHtml(goLabel) {
     const ex = runner.exercise;
     return `
       <div class="eng-read-side">
@@ -4531,34 +4524,36 @@
           <div class="eng-read-text eng-exam-text" id="engExamText">${examPassageHtml()}</div>
           ${examGlossaryHtml(ex)}
         </article>
-        <button type="button" class="eng-read-expand" id="engReadExpand" aria-pressed="false" aria-label="${esc(t("expandText"))}" title="${esc(t("expandText"))}">${ICONS.expand}</button>
+        <div class="eng-read-go"><button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engReadGo">${esc(t(goLabel))}</button></div>
       </div>`;
   }
 
-  function bindExamExpand() {
-    $("#engReadExpand")?.addEventListener("click", (e) => {
-      const btn = e.currentTarget;
-      const open = $(".eng-read").classList.toggle("is-text-open");
-      btn.setAttribute("aria-pressed", String(open));
-      btn.innerHTML = open ? ICONS.collapse : ICONS.expand;
-      btn.setAttribute("aria-label", t(open ? "collapseText" : "expandText"));
-      btn.title = t(open ? "collapseText" : "expandText");
-    });
+  // As in the reading runner, the card holds the passage or the question,
+  // never both: "Back to the text" swaps them, the button under the
+  // passage swaps back.
+  function setExamTextOpen(open) {
+    const read = $(".eng-read");
+    if (!read || read.classList.contains("is-text-open") === open) return;
+    read.classList.toggle("is-text-open", open);
+    $(open ? "#engReadGo" : "#engReadBack")?.focus({ preventScroll: true });
   }
 
-  // One segment per question: answered ones filled, the current one tinted.
-  function examBarHtml() {
-    const current = runner.exam.current;
-    return runner.round
-      .map((_, i) => `<span class="eng-bar-seg${examAnswered(i) ? " is-done" : i === current ? " is-current" : ""}"></span>`)
-      .join("");
+  // From reading the passage first to the questions.
+  function showExamQuestions() {
+    const st = runner.exam;
+    if (st.stage !== "read") return;
+    st.stage = "questions";
+    $(".eng-read")?.classList.replace("is-read", "is-questions");
+    const go = $("#engReadGo");
+    if (go) go.textContent = t("backToQuestion");
   }
 
+  // The header: a button per question (answered ones filled, the current
+  // one yellow) and the timer.
   function examProgressHtml() {
-    const n = runner.round.length;
     return `
       <div class="eng-progress eng-exam-progress" id="engProgress">
-        <div class="eng-bar" role="img" aria-label="${esc(t("examAnsweredOf", examAnsweredCount(), n))}">${examBarHtml()}</div>
+        ${examNavHtml()}
         <span class="eng-exam-timer${runner.exam.timed ? "" : " is-untimed"}" id="engExamTimer" role="timer">${ICONS.clock}<span id="engExamTime"></span></span>
       </div>`;
   }
@@ -4597,10 +4592,15 @@
     box?.classList.toggle("is-urgent", left <= 60000);
   }
 
+  // The passage alone first, then the questions one at a time.
   function renderExam() {
     runner.phase = "exam";
-    runner.exam.confirming = false;
-    renderRunnerShell(`<div class="eng-read eng-exam is-questions">${examSideHtml()}<div class="eng-read-task eng-exam-task" id="engExamTask"></div></div>`, examProgressHtml());
+    const st = runner.exam;
+    st.confirming = false;
+    renderRunnerShell(
+      `<div class="eng-read eng-read--paged eng-exam is-${st.stage}">${examSideHtml(st.stage === "read" ? "toQuestions" : "backToQuestion")}<div class="eng-read-task eng-exam-task" id="engExamTask"></div></div>`,
+      examProgressHtml()
+    );
     const text = $("#engExamText");
     const pick = (el) => {
       const sent = el.closest?.(".eng-sent[tabindex]");
@@ -4613,22 +4613,19 @@
       e.preventDefault();
       pick(e.target);
     });
-    bindExamExpand();
+    $("#engReadGo").addEventListener("click", () => (runner.exam.stage === "read" ? goExamQuestion(runner.exam.current) : setExamTextOpen(false)));
+    bindExamNav();
     renderExamTask();
     startExamClock();
   }
 
-  // The header bar and the question buttons, after an answer changed or
+  // The header's question buttons and timer, after an answer changed or
   // the student moved to another question.
   function refreshExamChrome() {
     const progress = $("#engProgress");
     if (progress) progress.outerHTML = examProgressHtml();
     tickExam();
-    const nav = $("#engExamNav");
-    if (nav) {
-      nav.outerHTML = examNavHtml();
-      bindExamNav();
-    }
+    bindExamNav();
   }
 
   // A quote question makes the passage's sentences clickable; a vocabulary
@@ -4638,7 +4635,8 @@
     if (!text) return;
     const st = runner.exam;
     const q = runner.round[st.current];
-    const quoting = runner.phase === "exam" && !st.confirming && q?.type === "quote";
+    const asking = runner.phase === "exam" && st.stage === "questions" && !st.confirming;
+    const quoting = asking && q?.type === "quote";
     text.classList.toggle("is-quoting", quoting);
     $$(".eng-sent", text).forEach((el) => {
       const chosen = quoting && st.answers[st.current] === Number(el.dataset.s);
@@ -4653,7 +4651,7 @@
         el.removeAttribute("aria-pressed");
       }
     });
-    const para = runner.phase === "exam" && !st.confirming && q?.type === "word" ? q.para : 0;
+    const para = asking && q?.type === "word" ? q.para : 0;
     $$(".eng-exam-para", text).forEach((p) => p.classList.toggle("is-pointed", Number(p.dataset.p) === para));
   }
 
@@ -4662,23 +4660,18 @@
     const dots = runner.round
       .map((_, i) => {
         const done = examAnswered(i);
-        const cur = i === st.current && !st.confirming;
+        const cur = i === st.current && st.stage === "questions" && !st.confirming;
         return `<button type="button" class="eng-exam-dot${done ? " is-answered" : ""}${cur ? " is-current" : ""}" data-go="${i}" aria-label="${esc(t("examQuestionLabel", i + 1, done))}"${cur ? ' aria-current="step"' : ""}>${i + 1}</button>`;
       })
       .join("");
-    return `
-      <div class="eng-exam-nav" id="engExamNav" role="group" aria-label="${esc(t("examNavLabel"))}">
-        <div class="eng-exam-dots">${dots}</div>
-        ${st.confirming ? "" : `<button type="button" class="eng-exam-submit" id="engExamSubmit">${ICONS.flag}<span>${esc(t("examSubmit"))}</span></button>`}
-      </div>`;
+    return `<div class="eng-exam-dots" id="engExamNav" role="group" aria-label="${esc(t("examNavLabel"))}">${dots}</div>`;
   }
 
   function bindExamNav() {
     $$("#engExamNav [data-go]").forEach((btn) => btn.addEventListener("click", () => goExamQuestion(Number(btn.dataset.go))));
-    $("#engExamSubmit")?.addEventListener("click", confirmExam);
-    // On a phone the buttons scroll sideways: the current one comes into
-    // view (not scrollIntoView, which would also move the fixed page).
-    const dots = $("#engExamNav .eng-exam-dots");
+    // On a phone the buttons may scroll sideways: the current one comes
+    // into view (not scrollIntoView, which would also move the fixed page).
+    const dots = $("#engExamNav");
     const cur = $("#engExamNav .eng-exam-dot.is-current");
     if (dots && cur && dots.scrollWidth > dots.clientWidth) {
       dots.scrollLeft += cur.getBoundingClientRect().left - dots.getBoundingClientRect().left - (dots.clientWidth - cur.offsetWidth) / 2;
@@ -4689,6 +4682,7 @@
     const st = runner.exam;
     st.current = Math.min(Math.max(0, i), runner.round.length - 1);
     st.confirming = false;
+    showExamQuestions();
     saveExam();
     renderExamTask();
     refreshExamChrome();
@@ -4753,11 +4747,13 @@
     if (q.type === "quote") {
       const chosen = a == null ? "" : st.sentences[a];
       return `
-        ${examNote(t("examQuoteHow"))}
         <div class="eng-exam-quote${chosen ? "" : " is-empty"}">
           ${chosen ? `<span class="eng-exam-quote-label">${esc(t("examQuoteChosen"))}</span><span class="eng-exam-quote-text" dir="ltr" lang="en">${esc(chosen)}</span>` : `<span>${esc(t("examQuoteNone"))}</span>`}
         </div>
-        ${chosen ? `<button type="button" class="eng-text-btn eng-exam-clear" id="engExamClear">${esc(t("examQuoteClear"))}</button>` : ""}`;
+        <div class="eng-exam-quote-actions">
+          <button type="button" class="eng-read-back eng-exam-pick" id="engExamPick">${ICONS.reading}<span>${esc(t("examQuotePick"))}</span></button>
+          ${chosen ? `<button type="button" class="eng-text-btn eng-exam-clear" id="engExamClear">${esc(t("examQuoteClear"))}</button>` : ""}
+        </div>`;
     }
     // sequence
     const placed = a || [];
@@ -4816,6 +4812,7 @@
       );
       $("#engExamClear", box)?.addEventListener("click", () => redraw([]));
     } else if (q.type === "quote") {
+      $("#engExamPick", box).addEventListener("click", () => setExamTextOpen(true));
       $("#engExamClear", box)?.addEventListener("click", () => {
         redraw(null);
         syncExamPassage();
@@ -4840,19 +4837,20 @@
     setExamAnswer(st.current, st.answers[st.current] === s ? null : s);
     syncExamPassage();
     renderExamAnswer();
+    // The chosen sentence lights up, then the question comes back with it.
+    if (st.answers[st.current] != null) setTimeout(() => setExamTextOpen(false), 450);
   }
 
   function renderExamTask() {
     const box = $("#engExamTask");
     if (!box) return;
     const st = runner.exam;
-    // A new task brings the task box back if the passage was enlarged.
-    if ($(".eng-read")?.classList.contains("is-text-open")) $("#engReadExpand")?.click();
+    // A new task brings the question back if the passage was open.
+    setExamTextOpen(false);
     const n = runner.round.length;
     if (st.confirming) {
       const missing = n - examAnsweredCount();
       box.innerHTML = `
-        ${examNavHtml()}
         <div class="eng-exam-confirm">
           <span class="eng-exam-confirm-icon">${ICONS.flag}</span>
           <h3 class="eng-exam-confirm-title">${esc(t("examConfirmTitle"))}</h3>
@@ -4862,7 +4860,6 @@
             <button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engExamNo">${esc(t("examConfirmNo"))}</button>
           </div>
         </div>`;
-      bindExamNav();
       $("#engExamYes").addEventListener("click", finishExam);
       $("#engExamNo").addEventListener("click", () => goExamQuestion(st.current));
       $("#engExamYes").focus({ preventScroll: true });
@@ -4873,16 +4870,18 @@
     const q = runner.round[i];
     const last = i === n - 1;
     box.innerHTML = `
-      ${examNavHtml()}
-      <p class="eng-exam-step">${esc(t("questionNum", i + 1, n))} · ${esc(t("examTypeOne")[q.type] || "")}</p>
+      <div class="eng-read-q-head">
+        <p class="eng-exam-step"><span class="eng-exam-step-num">${esc(t("questionNum", i + 1, n))} · </span>${esc(t("examTypeOne")[q.type] || "")}</p>
+        <button type="button" class="eng-read-back" id="engReadBack">${ICONS.reading}<span>${esc(t("backToText"))}</span></button>
+      </div>
       ${examQuestionHtml(q)}
       <div class="eng-exam-answer" id="engExamAnswer"></div>
       <div class="eng-exam-foot">
         <button type="button" class="eng-read-reveal eng-exam-prev" id="engExamPrev"${i === 0 ? " disabled" : ""}>${esc(t("examPrev"))}</button>
         <button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engExamNext">${esc(t(last ? "examSubmit" : "examNext"))}</button>
       </div>`;
-    bindExamNav();
     renderExamAnswer();
+    $("#engReadBack").addEventListener("click", () => setExamTextOpen(true));
     $("#engExamPrev").addEventListener("click", () => goExamQuestion(i - 1));
     $("#engExamNext").addEventListener("click", () => (last ? confirmExam() : goExamQuestion(i + 1)));
     syncExamPassage();
@@ -4983,8 +4982,8 @@
       .join("");
     renderRunnerShell(
       `
-      <div class="eng-read eng-exam is-results">
-        ${examSideHtml()}
+      <div class="eng-read eng-read--paged eng-exam is-questions">
+        ${examSideHtml("examBackToResults")}
         <div class="eng-read-task eng-exam-task">
           <div class="eng-exam-score">
             <div class="eng-grade">
@@ -5006,14 +5005,19 @@
             ${homeworkButtonHtml()}
           </div>
           <div class="eng-exam-review">
-            <h4>${esc(t("examReview"))}</h4>
+            <div class="eng-read-q-head">
+              <h4>${esc(t("examReview"))}</h4>
+              <button type="button" class="eng-read-back" id="engReadBack">${ICONS.reading}<span>${esc(t("examPassage"))}</span></button>
+            </div>
             <ol>${items}</ol>
           </div>
         </div>
       </div>`,
       `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
     );
-    bindExamExpand();
+    // The passage, with the quote answers marked, is a button away.
+    $("#engReadBack").addEventListener("click", () => setExamTextOpen(true));
+    $("#engReadGo").addEventListener("click", () => setExamTextOpen(false));
     // The right sentence of each quote question, and a wrong one picked.
     st.results
       .filter((r) => r.q.type === "quote")
@@ -5044,7 +5048,7 @@
                   <span class="eng-level-name">${esc(t("level", ex.level))}</span>
                   <span class="eng-level-bars" role="img" aria-label="${esc(t("levelName", ex.level))}">${bars}</span>
                 </span>
-                <a class="eng-level-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}" dir="ltr">${esc(ex.passage.title)}</a>
+                <a class="eng-level-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}" dir="auto">${esc(passageTitle(ex))}</a>
                 <span class="eng-level-meta">${esc(t("examMeta", passageWordCount(ex), ex.questions.length, ex.minutes))}</span>
                 ${statusHtml(exerciseStatus(topic, ex, best, started))}
                 ${record ? `<span class="eng-ex-best">${esc(t("examBest", Math.round((100 * record.score) / record.total)))}</span>` : ""}
@@ -5106,7 +5110,7 @@
      in it and a worked example taken from the exercise's own content. ── */
 
   function exerciseName(ex) {
-    return ex.type === "reading" ? ex.passage.title : loc(ex, "title");
+    return ex.type === "reading" ? passageTitle(ex) : loc(ex, "title");
   }
 
   function infoBtnHtml(ex) {
@@ -5426,7 +5430,7 @@
       const { topic, lessonId } = current;
       const lesson = lessonById(lessonId);
       if (!lesson) return;
-      const facts = `${levelLabel(lessonLevel(topic))} · ${t("lessonMeta", lesson.slides?.length || 0, durationLabel(lesson.duration))}`;
+      const facts = factsHtml([levelLabel(lessonLevel(topic)), t("slides", lesson.slides?.length || 0)]);
       // A numbered lesson has its own summary; the topic's is for all of it.
       const summary = (topicLessonIds(topic).length < 2 && loc(topic, "lessonSummary")) || lesson.summary || "";
       root.innerHTML = `
@@ -5435,7 +5439,7 @@
           <div class="eng-help-head">
             <div class="eng-help-heading">
               <h2 class="eng-help-title" id="engHelpTitle">${lessonTitleHtml(topic, lessonId)}</h2>
-              <p class="eng-help-facts">${esc(facts)}</p>
+              <p class="eng-help-facts">${facts}</p>
             </div>
             <button type="button" class="eng-help-close" data-help-close aria-label="${esc(t("close"))}">${ICONS.cross}</button>
           </div>
@@ -5475,7 +5479,7 @@
           <div class="eng-help-head">
             <div class="eng-help-heading">
               <h2 class="eng-help-title" id="engHelpTitle">${esc(t("helpButton"))}</h2>
-              <p class="eng-help-facts">${esc(`${t("level", level)} · ${t("levelName", level)} · ${count}`)}${
+              <p class="eng-help-facts">${factsHtml([levelLabel(level), count])}${
                 record ? ` <span class="eng-ex-best">${esc(t("best", record.score, record.total))}</span>` : ""
               }</p>
               ${status ? `<p class="eng-help-status">${statusHtml(status)}${covered ? `<span>${esc(t("statusCovered", covered))}</span>` : ""}</p>` : ""}
@@ -5663,6 +5667,7 @@
       showView("topics");
       renderTopicGrid();
       renderBoardCard();
+      dockSiteBack();
     }
     window.scrollTo({ top: 0 });
   }

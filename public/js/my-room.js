@@ -5,6 +5,7 @@
   const contentSection = document.getElementById("myRoomContent");
 
   const SECTION_CONTAINERS = {
+    lessons: document.getElementById("roomListLessons"),
     favorites: document.getElementById("roomListFavorites"),
     created: document.getElementById("roomListCreated"),
     recent: document.getElementById("roomListRecent"),
@@ -79,6 +80,16 @@
 
   let savedGames = [];
   let playHistory = [];
+  let savedLessonIds = [];
+
+  // Saved lessons are opened from the lessons library (?lesson= opens the slides).
+  const LESSON_OPEN_PATH = "/services/ready-lessons";
+
+  function lessonById(id) {
+    const lessons = window.ReadyLessons;
+    const lesson = lessons?.catalog?.[id];
+    return lesson ? lessons.localize(lesson) : null;
+  }
 
   function isGuestPreviewAllowed() {
     if (window.GameAuth?.isDevHost?.()) return true;
@@ -129,6 +140,9 @@
       const link = window.I18n?.t("myRoom.empty.createdLink") || "פתחו חדר חדש";
       return `${text} <a href="/room?create=1">${link}</a>`;
     }
+    if (section === "lessons") {
+      return `עדיין לא שמרת שיעורים.<br>לשמירה לוחצים על סימן השמירה בחלון המידע של השיעור.<br><a href="${LESSON_OPEN_PATH}">לספריית השיעורים</a>`;
+    }
     const messages = {
       favorites: window.I18n?.t("myRoom.empty.favorites") || "אין עדיין מועדפים.",
       recent: window.I18n?.t("myRoom.empty.recent") || "עדיין אין היסטוריה.",
@@ -158,6 +172,26 @@
       </div>`;
   }
 
+  const REMOVE_ICON_SVG =
+    '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
+  function lessonRowHtml(id) {
+    const lesson = lessonById(id);
+    const title = lesson.namePart ? `${lesson.nameMain} – ${lesson.namePart}` : lesson.nameMain || lesson.name;
+    const subject = window.ReadyLessons.subjectLabels?.[lesson.subject] || "";
+    return `
+      <div class="room-list-row">
+        <div class="room-list-info">
+          <p class="room-list-title">${escapeHtml(title)}</p>
+          ${subject ? `<p class="room-list-meta">${escapeHtml(subject)}</p>` : ""}
+        </div>
+        <div class="room-list-actions">
+          <a href="${LESSON_OPEN_PATH}?lesson=${encodeURIComponent(id)}" class="room-list-play">פתיחה</a>
+          <button type="button" class="room-list-delete" data-unsave-lesson="${escapeHtml(id)}" aria-label="הסרה מהשמורים" title="הסרה מהשמורים">${REMOVE_ICON_SVG}</button>
+        </div>
+      </div>`;
+  }
+
   function recentRowHtml(e) {
     const playLabel = window.I18n?.t("myRoom.play") || "שחק";
     const scoreLabel = window.I18n?.t("play.score") || "ניקוד";
@@ -175,6 +209,7 @@
   }
 
   function getSectionItems(section) {
+    if (section === "lessons") return { type: "lessons", items: savedLessonIds.filter(lessonById) };
     if (section === "favorites") return { type: "saved", items: savedGames.filter((g) => g.starred) };
     if (section === "created") return { type: "saved", items: savedGames };
     return { type: "recent", items: playHistory };
@@ -185,12 +220,17 @@
     if (!container) return;
     const { type, items } = getSectionItems(section);
 
+    // The games lists only show up for users who have games.
+    if (type !== "lessons") container.closest(".room-list-section")?.classList.toggle("hidden", !items.length);
+
     if (!items.length) {
       container.innerHTML = `<p class="room-list-empty">${emptyMessage(section)}</p>`;
       return;
     }
 
-    if (type === "saved") {
+    if (type === "lessons") {
+      container.innerHTML = items.map(lessonRowHtml).join("");
+    } else if (type === "saved") {
       const showDelete = section === "created";
       container.innerHTML = items.map((g) => savedRowHtml(g, { showStar: true, showDelete })).join("");
     } else {
@@ -202,6 +242,7 @@
 
   function renderAllSections() {
     Object.keys(SECTION_CONTAINERS).forEach(renderSection);
+    document.getElementById("roomFootLink")?.classList.toggle("hidden", !savedGames.length && !playHistory.length);
   }
 
   function bindSectionActions(container) {
@@ -231,6 +272,18 @@
       });
     });
 
+    container.querySelectorAll("[data-unsave-lesson]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const res = await UserData.toggleFavoriteLesson(btn.dataset.unsaveLesson);
+        if (!res.ok) {
+          showToast(res.error || "לא ניתן לעדכן");
+          return;
+        }
+        await loadData();
+        showToast("השיעור הוסר מהשמורים");
+      });
+    });
+
     container.querySelectorAll("[data-delete]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         if (!confirm(window.I18n?.t("myRoom.confirmDelete") || "למחוק את המשחק?")) return;
@@ -246,6 +299,7 @@
     if (usePreviewData()) {
       savedGames = PREVIEW_SAVED;
       playHistory = PREVIEW_HISTORY;
+      savedLessonIds = Object.keys(window.ReadyLessons?.catalog || {}).slice(0, 2);
       window.__myRoomPlayHistory = PREVIEW_HISTORY.map((e) => ({
         ...e,
         dateKey: UserData.dateKeyFromTimestamp(e.playedAt),
@@ -256,9 +310,10 @@
     }
 
     try {
-      [savedGames, playHistory] = await Promise.all([
+      [savedGames, playHistory, savedLessonIds] = await Promise.all([
         UserData.getSavedGames(),
         UserData.getPlayHistory(120),
+        UserData.getFavoriteLessons(),
       ]);
       window.__myRoomPlayHistory = playHistory.map((e) => ({
         ...e,

@@ -283,6 +283,40 @@ body.stu-body {
   box-shadow: 4px 5px 0 0 var(--ink);
 }
 
+/* "Add to the home screen": shown only while the phone can still add it
+   (public/js/pwa.js sets html.pwa-can-install). */
+.stu-install {
+  display: none;
+}
+
+.pwa-can-install .stu-install {
+  display: block;
+}
+
+.stu-install-help {
+  margin-top: 16px;
+  text-align: start;
+}
+
+.pwa-steps {
+  margin: 0;
+  padding-inline-start: 22px;
+  font-weight: 800;
+  line-height: 1.8;
+}
+
+.pwa-share-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: -4px;
+}
+
+.stu-install .pwa-note {
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
 @media (max-width: 560px) {
   .stu-hw {
     flex-wrap: wrap;

@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#00C9B7" />
+  <link rel="manifest" href="/manifest.webmanifest"/>
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml"/>
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"/>
+  <meta name="apple-mobile-web-app-title" content="Pleyi"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <script src="/js/pwa.js?v=1" defer></script>
   <title>שיעורים מוכנים — Pleyi</title>
   <meta name="description" content="ספריית שיעורי אנגלית מוכנים עם מערך שיעור פשוט — מוכן להצגה על הלוח כמו מצגת."/>
   <link rel="canonical" href="https://pleyschool.com/services/ready-lessons"/>
@@ -18,10 +25,10 @@
   <meta name="twitter:title" content="שיעורים מוכנים — Pleyi"/>
   <meta name="twitter:description" content="ספריית שיעורי אנגלית מוכנים עם מערך שיעור פשוט — מוכן להצגה על הלוח כמו מצגת."/>
   <meta name="twitter:image" content="https://pleyschool.com/images/pleyi-logo.png"/>
-  <link rel="stylesheet" href="/styles.css?v=67"/>
+  <link rel="stylesheet" href="/styles.css?v=69"/>
   <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=85"/>
-  <link rel="stylesheet" href="/css/lesson-player.css?v=94"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=87"/>
+  <link rel="stylesheet" href="/css/lesson-player.css?v=97"/>
   <link rel="stylesheet" href="/css/service-landing.css?v=56"/>
   <link rel="stylesheet" href="/css/premium.css"/>
   <link rel="stylesheet" href="/css/legal.css?v=2"/>
@@ -40,10 +47,10 @@
           <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false" data-i18n="nav.services">שירותים</button>
         </div>
         <a href="/#about" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
+        <a href="/#news" class="nav-pill">מה חדש</a>
         <a href="/#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
       </nav>
       <div class="nav-actions">
-        <button type="button" class="lang-toggle lang-toggle--sm" data-lang-toggle></button>
         <button type="button" class="nav-auth-btn" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
         <div class="nav-user hidden" id="authUserMenu">
           <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
@@ -52,6 +59,7 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
+            <a href="/my-room" class="nav-user-link" role="menuitem" data-i18n="nav.myRoom">החדר שלי</a>
             <a href="/admin/students" class="nav-user-link" role="menuitem" data-i18n="nav.students">ניהול תלמידים</a>
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem" data-i18n="nav.logout">יציאה</button>
           </div>
@@ -79,8 +87,8 @@
       </div>
     </div>
     <a href="/#about" data-i18n="nav.about">מי אנחנו</a>
+    <a href="/#news">מה חדש</a>
     <a href="/#contact" data-i18n="nav.contact">צור קשר</a>
-    <button type="button" class="lang-toggle" data-lang-toggle></button>
     <button type="button" class="mobile-nav-auth" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
   </nav>
 
@@ -105,6 +113,9 @@
             <ul class="svc-filter-menu hidden" id="filterSubjectMenu">
               <li><button type="button" data-subject="all" class="active">הכל</button></li>
               <li><button type="button" data-subject="english">אנגלית</button></li>
+              <li><button type="button" data-subject="math">חשבון</button></li>
+              <li><button type="button" data-subject="hebrew">עברית</button></li>
+              <li><button type="button" data-subject="science">מדעים</button></li>
               <li><button type="button" data-subject="lifeskills">כישורי חיים</button></li>
               <li><button type="button" data-subject="body">גוף האדם</button></li>
               <li><button type="button" data-subject="health">נפלאות הבריאה</button></li>
@@ -949,6 +960,42 @@
             </div>
           </article>
 
+          <article class="svc-lesson-card" data-lesson="fractions-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">חשבון</span>
+                <span class="svc-lesson-part">שברים – מה זה שבר</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="fractions-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="roots-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">עברית</span>
+                <span class="svc-lesson-part">שורש – מה זה שורש</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="roots-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="plants-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">מדעים</span>
+                <span class="svc-lesson-part">צמחים – חלקי הצמח</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="plants-1">פתיחה</button>
+            </div>
+          </article>
+
           <article class="svc-lesson-card" data-lesson="money">
             <div class="svc-lesson-preview">
               <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
@@ -1200,6 +1247,7 @@
       <p class="footer-tagline font-cartoon"><span>לימוד במשחקים — </span><span class="footer-tagline-accent">בכל שיעור!</span></p>
       <nav class="site-legal-nav" aria-label="מידע משפטי">
         <a href="/blog">בלוג</a>
+        <a href="/english">מדריך אנגלית</a>
         <a href="/legal/terms.html">תקנון</a>
         <a href="/legal/privacy.html">פרטיות</a>
         <a href="/legal/cookies.html">עוגיות</a>
@@ -1225,9 +1273,7 @@
       <p class="lesson-info-summary" id="lessonInfoSummary"></p>
       <dl class="lesson-info-meta">
         <div><dt data-i18n="readyLessons.info.subject">מקצוע</dt><dd id="lessonInfoSubject"></dd></div>
-        <div><dt data-i18n="readyLessons.info.grade">כיתות</dt><dd id="lessonInfoGrade"></dd></div>
-        <div><dt data-i18n="readyLessons.info.duration">משך</dt><dd id="lessonInfoDuration"></dd></div>
-      </dl>
+        <div><dt data-i18n="readyLessons.info.grade">כיתות</dt><dd id="lessonInfoGrade"></dd></div>      </dl>
       <div class="lesson-info-actions">
         <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" id="lessonInfoOpenBtn">פתיחה</button>
         <div class="lesson-info-share-wrap">
@@ -1342,7 +1388,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-app.js"></script>
   <script src="/js/i18n.js?v=7"></script>
-  <script src="/js/auth.js?v=4"></script>
+  <script src="/js/auth.js?v=5"></script>
   <script src="/js/user-data.js"></script>
   <script src="/js/credits.js"></script>
   <script src="/js/premium.js"></script>
@@ -1351,7 +1397,9 @@
   <script src="/js/lesson-sentences-he.js?v=5"></script>
   <script src="/js/english-dict.js?v=1"></script>
   <script src="/js/english-lessons.js?v=1"></script>
-  <script src="/js/ready-lessons.js?v=83"></script>
+  <script src="/js/lesson-figures.js?v=3"></script>
+  <script src="/js/subject-lessons.js?v=2"></script>
+  <script src="/js/ready-lessons.js?v=86"></script>
   <script src="/js/cookie-consent.js?v=4"></script>
 </body>
 </html>

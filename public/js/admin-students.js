@@ -55,6 +55,7 @@
   ICONS.note = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>`;
   ICONS.user = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`;
   ICONS.plus = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`;
+  ICONS.phone = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>`;
 
   // The signed-in teacher ({ name, email, photoURL }), null when signed out.
   let account = null;
@@ -366,6 +367,20 @@
       ${listNotices()}
 
       ${foldToggleHtml("admAddToggle", "admCreateForm", ICONS.plus, "הוספת תלמיד")}
+
+      ${students.length ? `
+        <a class="adm-fold-toggle adm-owner-link" href="#report">
+          <span class="adm-fold-icon">${ICONS.chart}</span>
+          <span>הדוח השבועי</span>
+        </a>` : ""}
+
+      <div class="adm-install" data-pwa-install>
+        <button type="button" class="adm-fold-toggle" data-pwa-install-btn aria-expanded="false">
+          <span class="adm-fold-icon">${ICONS.phone}</span>
+          <span>התקנה כאפליקציה</span>
+        </button>
+        <div class="adm-card adm-install-help" data-pwa-help hidden></div>
+      </div>
 
       ${isOwner ? `
         <a class="adm-fold-toggle adm-owner-link" href="/admin/math-lessons">
@@ -1342,6 +1357,218 @@
     });
   }
 
+  /* ── Weekly report (#report, or #report/<Sunday> for an earlier week):
+     who practiced, who got stuck and on what, and the class's topics and
+     common mistakes. Weeks run Sunday to Saturday, like the points. ── */
+
+  let report = null;
+
+  // A week's Sunday (YYYY-MM-DD) moved by `weeks`.
+  function shiftWeek(sunday, weeks) {
+    const [y, m, d] = sunday.split("-").map(Number);
+    return new Date(Date.UTC(y, m - 1, d + weeks * 7)).toISOString().slice(0, 10);
+  }
+
+  // "25–31 באוקטובר", or "29 בספטמבר – 5 באוקטובר" across two months.
+  function weekRange(sunday) {
+    const [y, m, d] = sunday.split("-").map(Number);
+    const start = new Date(y, m - 1, d);
+    const end = new Date(y, m - 1, d + 6);
+    const full = (date) => date.toLocaleDateString("he-IL", { day: "numeric", month: "long" });
+    return start.getMonth() === end.getMonth() ? `${d}–${full(end)}` : `${full(start)} – ${full(end)}`;
+  }
+
+  function weekHash(sunday) {
+    return sunday === report.current ? "#report" : `#report/${sunday}`;
+  }
+
+  async function loadReport(week) {
+    showOnly("admDetailView");
+    const view = $("#admDetailView");
+    view.innerHTML = `<p class="adm-loading">טוען את הדוח…</p>`;
+    try {
+      report = (await api(`/api/admin/students/report${week ? `?week=${encodeURIComponent(week)}` : ""}`)).report;
+      renderReport();
+    } catch (e) {
+      if (account) view.innerHTML = `<a class="adm-back" href="#">חזרה לכל התלמידים</a><p class="adm-error">${esc(e.message)}</p>`;
+    }
+  }
+
+  function renderReport() {
+    const r = report;
+    const t = r.totals;
+    const isCurrent = r.week === r.current;
+    const next = isCurrent
+      ? `<span class="adm-week-btn is-off" aria-hidden="true">${ICONS.chevron}</span>`
+      : `<a class="adm-week-btn" href="${weekHash(shiftWeek(r.week, 1))}" aria-label="השבוע הבא" title="השבוע הבא">${ICONS.chevron}</a>`;
+    $("#admDetailView").innerHTML = `
+      <a class="adm-back" href="#">חזרה לכל התלמידים</a>
+      <div class="adm-page-head">
+        <h2 class="adm-h1">הדוח השבועי</h2>
+      </div>
+      <nav class="adm-week" aria-label="בחירת שבוע">
+        <a class="adm-week-btn adm-week-btn--prev" href="${weekHash(shiftWeek(r.week, -1))}" aria-label="השבוע הקודם" title="השבוע הקודם">${ICONS.chevron}</a>
+        <span class="adm-week-label">${isCurrent ? "השבוע · " : ""}${esc(weekRange(r.week))}</span>
+        ${next}
+      </nav>
+      ${
+        t.students
+          ? `
+        <div class="adm-tiles">
+          ${tile("תרגלו", `<span dir="ltr">${t.practiced}/${t.students}</span>`, "תלמידים")}
+          ${tile("זמן תרגול", esc(fmtDuration(t.practiceSec)), "של כל הכיתה")}
+          ${tile("סבבי תרגול", fmtNum(t.rounds))}
+          ${tile("ציון ממוצע", t.average == null ? "—" : `${t.average}%`)}
+        </div>
+        <div class="adm-report-grid">
+          ${reportStuckHtml(r)}
+          ${reportIdleHtml(r)}
+          ${reportTopicsHtml(r)}
+          ${reportMistakesHtml(r)}
+          ${reportStudentsHtml(r)}
+        </div>`
+          : `<p class="adm-muted adm-report-none">עוד אין תלמידים ברשימה. הוסיפו תלמידים, והדוח יתמלא כשיתרגלו.</p>`
+      }`;
+  }
+
+  function reportCard(title, count, lead, body, countLow = false) {
+    return `
+      <div class="adm-card">
+        <h3 class="adm-h3 adm-report-title">${esc(title)}${count == null ? "" : ` <span class="adm-student-count${countLow ? " is-low" : ""}">${count}</span>`}</h3>
+        ${lead ? `<p class="adm-muted adm-card-lead">${esc(lead)}</p>` : ""}
+        ${body}
+      </div>`;
+  }
+
+  function studentLinkHtml(s) {
+    return `<a class="adm-report-name" href="#${encodeURIComponent(s.id)}">${esc(s.name)}</a>`;
+  }
+
+  function reportStuckHtml(r) {
+    const stuck = r.students.filter((s) => s.stuck.length).sort((a, b) => b.stuck.length - a.stuck.length);
+    const body = stuck.length
+      ? `<ul class="adm-report-list">
+          ${stuck
+            .map(
+              (s) => `
+            <li class="adm-report-block">
+              ${studentLinkHtml(s)}
+              <ul class="adm-ex-list adm-report-rows">
+                ${s.stuck
+                  .map(
+                    (ex) => `
+                  <li class="adm-ex">
+                    <span class="adm-ex-text">
+                      <span class="adm-ex-title">${esc(ex.title)}</span>
+                      <span class="adm-ex-meta">${esc(ex.topicTitle)}${ex.attempts > 1 ? ` · ${ex.attempts} ניסיונות` : ""}</span>
+                    </span>
+                    ${scorePill(ex.score, ex.total)}
+                  </li>`
+                  )
+                  .join("")}
+              </ul>
+            </li>`
+            )
+            .join("")}
+        </ul>`
+      : `<p class="adm-card-empty">${r.totals.practiced ? `אף אחד לא נתקע — כל התרגילים מעל ${r.low}%.` : "עוד לא תרגלו בשבוע הזה."}</p>`;
+    return reportCard("מי נתקע", stuck.length, `תרגילים שהציון הכי טוב בהם בשבוע הזה היה מתחת ל-${r.low}%.`, body, stuck.length > 0);
+  }
+
+  function reportIdleHtml(r) {
+    const idle = r.students.filter((s) => !s.practiced).sort((a, b) => b.homeworkLate - a.homeworkLate || a.name.localeCompare(b.name, "he"));
+    const body = idle.length
+      ? `<ul class="adm-report-chips">
+          ${idle
+            .map(
+              (s) => `
+            <li class="adm-report-chip">
+              ${studentLinkHtml(s)}
+              ${s.homeworkLate ? pill("low", `שיעורי בית באיחור: ${s.homeworkLate === 1 ? "תרגיל אחד" : `${s.homeworkLate} תרגילים`}`) : ""}
+            </li>`
+            )
+            .join("")}
+        </ul>`
+      : `<p class="adm-card-empty">כולם תרגלו בשבוע הזה.</p>`;
+    return reportCard("לא תרגלו", idle.length, "", body, idle.length > 0);
+  }
+
+  function reportTopicsHtml(r) {
+    const body = r.topics.length
+      ? `<ul class="adm-ex-list adm-report-rows">
+          ${r.topics
+            .map((topic) => {
+              const lv = level(topic.average);
+              return `
+            <li class="adm-ex">
+              <span class="adm-ex-text">
+                <span class="adm-ex-title">${esc(topic.title)}</span>
+                <span class="adm-ex-meta">${topic.students === 1 ? "תלמיד אחד" : `${topic.students} תלמידים`} · ${topic.rounds === 1 ? "סבב אחד" : `${topic.rounds} סבבים`}</span>
+              </span>
+              ${pill(lv.cls, `${topic.average}% · ${lv.label}`)}
+            </li>`;
+            })
+            .join("")}
+        </ul>`
+      : `<p class="adm-card-empty">לא תורגלו נושאים בשבוע הזה.</p>`;
+    return reportCard("נושאים", null, r.topics.length > 1 ? "הנושא הכי קשה — למעלה." : "", body);
+  }
+
+  function reportMistakesHtml(r) {
+    if (!r.mistakes.length) return reportCard("טעויות נפוצות", null, "", `<p class="adm-card-empty">אין טעויות רשומות בשבוע הזה.</p>`);
+    const body = `
+      <ul class="adm-weak">
+        ${r.mistakes
+          .map(
+            (m) => `
+          <li class="adm-weak-item">
+            <span class="adm-weak-count">${m.times}×</span>
+            <span class="adm-weak-text">
+              ${m.prompt ? `<span class="adm-weak-prompt" dir="auto">${esc(m.prompt)}</span>` : ""}
+              <span class="adm-weak-answer">תשובה נכונה: <strong dir="auto">${esc(m.answer)}</strong></span>
+              <span class="adm-weak-from">${esc(m.topicTitle)} · ${esc(m.exerciseTitle)} · ${m.students === 1 ? "תלמיד אחד" : `${m.students} תלמידים`}</span>
+            </span>
+          </li>`
+          )
+          .join("")}
+      </ul>`;
+    return reportCard("טעויות נפוצות", null, "כדאי לעבור עליהן בכיתה.", body);
+  }
+
+  // Everyone, the busiest first; those who didn't practice at the end.
+  function reportStudentsHtml(r) {
+    const list = [...r.students].sort(
+      (a, b) => Number(b.practiced) - Number(a.practiced) || b.practiceSec - a.practiceSec || b.rounds - a.rounds || a.name.localeCompare(b.name, "he")
+    );
+    const rows = list
+      .map((s) => {
+        const meta = s.practiced
+          ? [
+              s.days === 1 ? "יום אחד" : `${s.days} ימים`,
+              s.rounds === 1 ? "סבב אחד" : `${s.rounds} סבבים`,
+              s.practiceSec ? fmtDuration(s.practiceSec) : "",
+              s.lessons + s.games ? `${s.lessons + s.games} שיעורים ומשחקים` : "",
+              `${fmtNum(s.points)} נקודות`,
+            ].filter(Boolean)
+          : [];
+        const status = !s.practiced
+          ? pill("none", "לא תרגל")
+          : s.average == null
+            ? pill("none", "בלי ציון")
+            : pill(level(s.average).cls, `${s.average}% · ${level(s.average).label}`);
+        return `
+          <li class="adm-ex${s.practiced ? "" : " is-untouched"}">
+            <span class="adm-ex-text">
+              ${studentLinkHtml(s)}
+              ${meta.length ? `<span class="adm-ex-meta">${esc(meta.join(" · "))}</span>` : ""}
+            </span>
+            ${status}
+          </li>`;
+      })
+      .join("");
+    return reportCard("כל התלמידים", null, "", `<ul class="adm-ex-list adm-report-rows">${rows}</ul>`);
+  }
+
   /* ── Routing ── */
 
   function route() {
@@ -1352,7 +1579,9 @@
       return;
     }
     const id = decodeURIComponent(location.hash.replace(/^#/, ""));
-    if (id) loadStudent(id);
+    const week = id.match(/^report(?:\/(\d{4}-\d{2}-\d{2}))?$/);
+    if (week) loadReport(week[1]);
+    else if (id) loadStudent(id);
     else loadList();
     window.scrollTo({ top: 0 });
   }

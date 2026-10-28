@@ -298,8 +298,10 @@ window.GameAuth = {
     wrap.style.display = "contents";
     wrap.innerHTML = `
       <p class="mobile-nav-user-name" style="margin:8px 0 0;font-size:18px;font-weight:800;opacity:.75"></p>
+      <a href="/my-room" data-i18n="nav.myRoom"></a>
       <a href="/admin/students" data-i18n="nav.students"></a>
       <button type="button" class="mobile-nav-auth" id="mobileLogoutBtn" data-i18n="nav.logout"></button>`;
+    wrap.querySelector('[data-i18n="nav.myRoom"]').textContent = t("nav.myRoom", "החדר שלי");
     wrap.querySelector('[data-i18n="nav.students"]').textContent = t("nav.students", "ניהול תלמידים");
     wrap.querySelector("#mobileLogoutBtn").textContent = t("nav.logout", "יציאה");
     wrap.querySelector("#mobileLogoutBtn").addEventListener("click", async () => {

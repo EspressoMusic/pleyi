@@ -5,6 +5,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#00C9B7" />
+  <link rel="manifest" href="/manifest.webmanifest"/>
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml"/>
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"/>
+  <meta name="apple-mobile-web-app-title" content="Pleyi"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <script src="/js/pwa.js?v=1" defer></script>
   <title>מנוי פרימיום — Pleyi</title>
   <meta name="description" content="שדרגו למנוי פרימיום ב-Pleyi — עוד שיעורים, משחקים ותכונות למורים."/>
   <link rel="canonical" href="https://pleyschool.com/premium"/>
@@ -19,8 +26,8 @@
   <meta name="twitter:title" content="מנוי פרימיום — Pleyi"/>
   <meta name="twitter:description" content="שדרגו למנוי פרימיום ב-Pleyi — עוד שיעורים, משחקים ותכונות למורים."/>
   <meta name="twitter:image" content="https://pleyschool.com/images/pleyi-logo.png"/>
-  <link rel="stylesheet" href="/styles.css?v=67"/>
-  <link rel="stylesheet" href="/css/games-hub.css"/>
+  <link rel="stylesheet" href="/styles.css?v=69"/>
+  <link rel="stylesheet" href="/css/games-hub.css?v=2"/>
   <link rel="stylesheet" href="/css/premium.css" />
   <link rel="stylesheet" href="/css/credits.css" />
 </head>
@@ -40,6 +47,7 @@
           </button>
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
+            <a href="/my-room" class="nav-user-link" role="menuitem" data-i18n="nav.myRoom">החדר שלי</a>
             <a href="/admin/students" class="nav-user-link" role="menuitem" data-i18n="nav.students">ניהול תלמידים</a>
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem">יציאה</button>
           </div>
@@ -61,6 +69,7 @@
   <footer class="site-footer-mini">
     <nav class="site-legal-nav" aria-label="מידע משפטי">
       <a href="/blog">בלוג</a>
+      <a href="/english">מדריך אנגלית</a>
       <a href="/legal/terms.html">תקנון</a>
       <a href="/legal/privacy.html">פרטיות</a>
       <a href="/legal/cookies.html">עוגיות</a>
@@ -72,7 +81,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-app.js"></script>
-  <script src="/js/auth.js?v=4"></script>
+  <script src="/js/auth.js?v=5"></script>
   <script src="/js/user-data.js"></script>
   <script src="/js/credits.js"></script>
   <script src="/js/premium.js"></script>

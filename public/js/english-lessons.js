@@ -1,6 +1,6 @@
 /* Short English lessons — every grammar topic split into short lessons, one
    idea per slide, in very simple Hebrew. ready-lessons.js turns each entry
-   into a full lesson (shortEnglishLesson): it adds the quiz, the class
+   into a full lesson (shortLesson): it adds the quiz, the class
    discussion, the games and the end slides.
 
    Lesson: { id, topic, name, part?, summary, vocab, slides, quiz, discuss }

@@ -4,9 +4,25 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  const SUBJECT_LABELS = { english: "אנגלית", math: "חשבון", lifeskills: "כישורי חיים", health: "נפלאות הבריאה", body: "גוף האדם" };
-  const SUBJECT_LABELS_EN = { english: "English", math: "Math", lifeskills: "Life Skills", health: "Health Wonders", body: "Human Body" };
-  const ACTIVE_SUBJECTS = ["english", "lifeskills", "health", "body"];
+  const SUBJECT_LABELS = {
+    english: "אנגלית",
+    math: "חשבון",
+    hebrew: "עברית",
+    science: "מדעים",
+    lifeskills: "כישורי חיים",
+    health: "נפלאות הבריאה",
+    body: "גוף האדם",
+  };
+  const SUBJECT_LABELS_EN = {
+    english: "English",
+    math: "Math",
+    hebrew: "Hebrew",
+    science: "Science",
+    lifeskills: "Life Skills",
+    health: "Health Wonders",
+    body: "Human Body",
+  };
+  const ACTIVE_SUBJECTS = ["english", "math", "hebrew", "science", "lifeskills", "health", "body"];
   const LESSON_SHARE_PATH = "/services/ready-lessons.html";
   const LP_SPEAKER_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
 
@@ -32,12 +48,6 @@
   function formatGradeLabel(label) {
     if (curLang() !== "en") return label;
     return label === "כל הכיתות" ? "All grades" : label;
-  }
-
-  function formatDuration(duration) {
-    if (curLang() !== "en") return duration;
-    const m = String(duration).match(/(\d+)/);
-    return m ? `${m[1]} min` : duration;
   }
 
   // Merges a lesson's English overrides (lesson.en) on top of its Hebrew
@@ -3437,20 +3447,22 @@
     LESSON_CATALOG[`vocab-${cat.id}`] = vocabCategoryLesson(cat);
   });
 
-  // Short English lessons (english-lessons.js): a grammar topic split into
-  // short lessons. Each entry gets the slides every lesson ends with — the
-  // quiz, the class discussion, the games and the end slide. `num` / `count`
-  // number the lesson inside its topic ("פועל להיות 2 – לא ושאלות").
-  function shortEnglishLesson(entry, num, count) {
+  // Short lessons (english-lessons.js, and subject-lessons.js for the other
+  // subjects): a topic split into short lessons. Each entry gets the slides
+  // every lesson ends with — the quiz, the class discussion, the games and
+  // the end slide. `num` / `count` number the lesson inside its topic
+  // ("פועל להיות 2 – לא ושאלות").
+  function shortLesson(entry, num, count) {
+    const subject = entry.subject || "english";
     const numbered = count > 1 ? `${entry.name} ${num}` : entry.name;
     return {
       id: entry.id,
-      name: `אנגלית - ${numbered}`,
-      nameMain: "אנגלית",
-      namePart: count > 1 && entry.part ? `${numbered} – ${entry.part}` : entry.name,
+      name: `${SUBJECT_LABELS[subject]} - ${numbered}`,
+      nameMain: SUBJECT_LABELS[subject],
+      namePart: entry.part ? `${numbered} – ${entry.part}` : entry.name,
       partTitle: entry.part || "",
-      subject: "english",
-      grades: ["ag", "dv", "zh"],
+      subject,
+      grades: entry.grades || ["ag", "dv", "zh"],
       topic: entry.topic,
       gradeLabel: "כל הכיתות",
       duration: "15 דק'",
@@ -3478,9 +3490,11 @@
   }
 
   const shortLessons = window.ENGLISH_SHORT_LESSONS || [];
-  shortLessons.forEach((entry) => {
-    const siblings = shortLessons.filter((other) => other.topic === entry.topic);
-    LESSON_CATALOG[entry.id] = shortEnglishLesson(entry, siblings.indexOf(entry) + 1, siblings.length);
+  [shortLessons, window.SUBJECT_SHORT_LESSONS || []].forEach((list) => {
+    list.forEach((entry) => {
+      const siblings = list.filter((other) => other.topic === entry.topic);
+      LESSON_CATALOG[entry.id] = shortLesson(entry, siblings.indexOf(entry) + 1, siblings.length);
+    });
   });
   // The long lesson a split topic had kept its topic's id ("tobe"); old links
   // and saved progress open the topic's first short lesson. Not enumerable,
@@ -3604,21 +3618,17 @@
       ],
     },
     math: {
-      ag: [
-        { id: "addition", label: "חיבור" },
-        { id: "subtraction", label: "חיסור" },
-        { id: "shapes", label: "צורות" },
-      ],
-      dv: [
-        { id: "multiplication", label: "כפל" },
-        { id: "division", label: "חילוק" },
-        { id: "fractions", label: "שברים" },
-      ],
-      zh: [
-        { id: "equations", label: "משוואות" },
-        { id: "percentages", label: "אחוזים" },
-        { id: "geometry", label: "גאומטריה" },
-      ],
+      ag: [{ id: "fractions", label: "שברים" }],
+      dv: [{ id: "fractions", label: "שברים" }],
+    },
+    hebrew: {
+      ag: [{ id: "roots", label: "שורש" }],
+      dv: [{ id: "roots", label: "שורש" }],
+      zh: [{ id: "roots", label: "שורש" }],
+    },
+    science: {
+      ag: [{ id: "plants", label: "צמחים" }],
+      dv: [{ id: "plants", label: "צמחים" }],
     },
     health: {
       ag: [
@@ -4053,7 +4063,6 @@
     $("#lessonInfoTitle").textContent = lesson.nameMain || lesson.name;
     $("#lessonInfoSubject").textContent = subjectLabel(lesson.subject);
     $("#lessonInfoGrade").textContent = formatGradeLabel(lesson.gradeLabel);
-    $("#lessonInfoDuration").textContent = formatDuration(lesson.duration);
     $("#lessonInfoSummary").textContent = lesson.summary;
     $("#lessonInfoLearnedBadge")?.classList.toggle("hidden", !getLearnedLessons().includes(lessonId));
     $("#lessonInfoPremiumBadge")?.classList.toggle("hidden", !lesson.premium || !!window.PleyiPremium?.hasPremium?.());
@@ -4361,6 +4370,14 @@
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
+  }
+
+  // "{3|4}" in escaped text → a stacked fraction (subject-lessons.js).
+  function fracHtml(html) {
+    return html.replace(
+      /\{([^{}|]*)\|([^{}]*)\}/g,
+      '<span class="lp-frac" dir="ltr"><span class="lp-frac-n">$1</span><span class="lp-frac-d">$2</span></span>'
+    );
   }
 
   function isHebrewLetter(ch) {
@@ -5054,11 +5071,11 @@
       const { slide, i } = quizState;
       const q = slide.questions[i];
       const total = slide.questions.length;
-      const qHtml = escHtml(q.q).split("___").join('<span class="lp-quiz-blank"></span>');
+      const qHtml = fracHtml(escHtml(q.q)).split("___").join('<span class="lp-quiz-blank"></span>');
       const options = q.options
         .map(
           (o, k) =>
-            `<button type="button" class="lp-quiz-opt" data-k="${k}" dir="${containsHebrew(o) ? "rtl" : "ltr"}">${escHtml(o)}</button>`
+            `<button type="button" class="lp-quiz-opt" data-k="${k}" dir="${containsHebrew(o) ? "rtl" : "ltr"}">${fracHtml(escHtml(o))}</button>`
         )
         .join("");
       return `
@@ -5141,7 +5158,7 @@
         if (q.why && !en) {
           feedback.insertAdjacentHTML(
             "beforeend",
-            `<span class="lp-quiz-why" dir="rtl">${isolateInlineEnglish(escHtml(q.why), lesson?.vocab)}</span>`
+            `<span class="lp-quiz-why" dir="rtl">${isolateInlineEnglish(fracHtml(escHtml(q.why)), lesson?.vocab)}</span>`
           );
         }
         feedback.className = "lp-quiz-feedback is-wrong";
@@ -5328,14 +5345,21 @@
     const LP_WRONG_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M17 7 7 17M7 7l10 10"/></svg>`;
 
     function stepsEnglishHtml(text) {
-      return escHtml(text).replace(/\*\*(.+?)\*\*/g, '<b class="lp-key">$1</b>');
+      return fracHtml(escHtml(text).replace(/\*\*(.+?)\*\*/g, '<b class="lp-key">$1</b>'));
     }
 
     function stepsHebrewHtml(text) {
       return isolateInlineEnglish(
-        escHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong class="lp-em">$1</strong>'),
+        fracHtml(escHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong class="lp-em">$1</strong>')),
         lesson?.vocab
       );
+    }
+
+    // Right-to-left for Hebrew text, left-to-right for English and math.
+    function stepsTextHtml(text) {
+      return containsHebrew(text)
+        ? { dir: "rtl", html: stepsHebrewHtml(text) }
+        : { dir: "ltr", html: stepsEnglishHtml(text) };
     }
 
     function stepsCellHtml(text) {
@@ -5345,6 +5369,15 @@
     }
 
     function stepsExampleHtml(ex) {
+      // Hebrew or math cards (other subjects) have nothing to hear.
+      if (!containsLatinLetter(ex.en)) {
+        const main = stepsTextHtml(ex.en);
+        return `
+        <div class="lp-ex">
+          <span class="lp-ex-main" dir="${main.dir}">${main.html}</span>
+          ${ex.he ? `<span class="lp-ex-he" dir="rtl">${stepsHebrewHtml(ex.he)}</span>` : ""}
+        </div>`;
+      }
       const say = ex.en.replace(/\*\*/g, "");
       return `
         <div class="lp-ex">
@@ -5356,6 +5389,11 @@
     function renderStepsBody(slide) {
       const hebrew = isHebrewLesson();
       const parts = (slide.lines || []).map((line) => `<p class="lp-steps-line">${stepsHebrewHtml(line)}</p>`);
+      const figure = slide.fig && window.LESSON_FIGURES?.[slide.fig.kind];
+      const figHtml = figure ? `<div class="lp-fig">${figure(slide.fig)}</div>` : "";
+      // A drawing with a single card (a pie and its fraction) sits beside it.
+      const besideFig = figHtml && slide.examples?.length === 1 && !slide.table;
+      if (figHtml && !besideFig) parts.push(figHtml);
       if (slide.table?.length) {
         const arrow = `<span class="lp-steps-arrow">${LP_ARROW_ICON(hebrew ? "left" : "right")}</span>`;
         parts.push(
@@ -5366,14 +5404,18 @@
       }
       if (slide.examples?.length) {
         const joiner = slide.flow ? `<span class="lp-ex-flow">${LP_ARROW_ICON("down")}</span>` : "";
-        parts.push(`<div class="lp-ex-list${slide.flow ? " is-flow" : ""}">${slide.examples.map(stepsExampleHtml).join(joiner)}</div>`);
+        const list = `<div class="lp-ex-list${slide.flow ? " is-flow" : ""}">${slide.examples.map(stepsExampleHtml).join(joiner)}</div>`;
+        parts.push(besideFig ? `<div class="lp-fig-row">${figHtml}${list}</div>` : list);
       }
       if (slide.compare) {
-        const row = (kind, text, icon, label) => `
+        const row = (kind, text, icon, label) => {
+          const shown = stepsTextHtml(text);
+          return `
           <div class="lp-compare-row is-${kind}">
             <span class="lp-compare-mark">${icon}<span>${label}</span></span>
-            <span class="lp-compare-text" dir="ltr">${stepsEnglishHtml(text)}</span>
+            <span class="lp-compare-text" dir="${shown.dir}">${shown.html}</span>
           </div>`;
+        };
         parts.push(
           `<div class="lp-compare">${row("wrong", slide.compare.wrong, LP_WRONG_ICON, hebrew ? "לא נכון" : "Wrong")}${row(
             "right",
@@ -5390,7 +5432,7 @@
       let bodyHtml = "";
       let bodyLayout = "default";
 
-      if (slide.lines || slide.table || slide.examples || slide.compare) {
+      if (slide.lines || slide.fig || slide.table || slide.examples || slide.compare) {
         bodyHtml = renderStepsBody(slide);
       } else if (slide.pictures?.length) {
         bodyHtml = `<ul class="lp-picture-grid" data-count="${slide.pictures.length}">${slide.pictures

@@ -1,5 +1,14 @@
+# Search engines and AI assistants (GPTBot, ClaudeBot, PerplexityBot,
+# Google-Extended and others) are all welcome on the public pages.
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /admin
+Disallow: /s/
+Disallow: /my-room
+Disallow: /student.html
+Disallow: /admin-students.html
+Disallow: /phone-preview.html
+Disallow: /offline.html
 
 Sitemap: https://pleyschool.com/sitemap.xml
