@@ -62,6 +62,8 @@
   // "local" means the server has no Firestore credential, so files live in a
   // file on the server that a redeploy wipes.
   let storage = "firestore";
+  // The site owner also sees the link to their private math lessons.
+  let isOwner = false;
   let students = [];
   let current = null;
   let historyShown = HISTORY_PAGE;
@@ -330,6 +332,7 @@
       const data = await api("/api/admin/students");
       students = data.students || [];
       storage = data.storage || "firestore";
+      isOwner = !!data.isOwner;
       renderList();
     } catch (e) {
       if (account) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
@@ -363,6 +366,12 @@
       ${listNotices()}
 
       ${foldToggleHtml("admAddToggle", "admCreateForm", ICONS.plus, "הוספת תלמיד")}
+
+      ${isOwner ? `
+        <a class="adm-fold-toggle adm-owner-link" href="/admin/math-lessons">
+          <span class="adm-fold-icon">${ICONS.presentation}</span>
+          <span>שיעורי מתמטיקה – כיתה ח׳</span>
+        </a>` : ""}
 
       <form class="adm-card adm-create hidden" id="admCreateForm">
         <div class="adm-fold-head">
@@ -1375,6 +1384,7 @@
         : null;
       // A different teacher may sign in next on this device — drop the last one's files.
       students = [];
+      isOwner = false;
       current = null;
       renderAccount();
       route();

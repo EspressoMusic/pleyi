@@ -1,0 +1,1847 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>שיעורי מתמטיקה – כיתה ח׳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400..900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #62ebe0;
+    --teal: #00e5cc;
+    --teal-soft: #b8fff5;
+    --teal-deep: #00897b;
+    --yellow: #ffe135;
+    --yellow-soft: #fff3b0;
+    --cream: #fffef5;
+    --ink: #000;
+    --text: #1f2937;
+    --muted: #4b5563;
+    --green: #2e7d32;
+    --green-bg: #e8f5e9;
+    --red: #c62828;
+    --red-bg: #fdecec;
+    --orange: #ff7a00;
+    --fit: 1;
+  }
+
+  html,
+  body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Rubik", "Segoe UI", Arial, sans-serif;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* One fixed-size stage (landscape 1280×720 or portrait 600×1200) scaled to
+     the window, so a slide looks the same everywhere and never scrolls. */
+  #stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--W);
+    height: var(--H);
+    transform: translate(-50%, -50%) scale(var(--s, 1));
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 16px;
+    box-sizing: border-box;
+  }
+
+  .bar {
+    flex: 0 0 52px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .bar-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 26px;
+    font-weight: 900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar-count {
+    font-size: 22px;
+    font-weight: 800;
+    padding: 4px 14px;
+    border: 2.5px solid var(--ink);
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .icon-btn {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 2px 3px 0 var(--ink);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .icon-btn:hover {
+    background: var(--yellow);
+  }
+
+  .icon-btn svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .card {
+    flex: 1;
+    min-height: 0;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 28px;
+    box-shadow: 5px 6px 0 var(--ink);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .nav {
+    flex: 0 0 62px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 56px;
+    padding: 0 26px;
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    background: var(--yellow);
+    box-shadow: 2px 3px 0 var(--ink);
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .nav-btn.is-prev {
+    background: #fff;
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .nav-btn svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .dots {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: 2.5px solid var(--ink);
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .dot.is-done {
+    background: var(--teal-soft);
+  }
+
+  .dot.is-current {
+    background: var(--ink);
+  }
+
+  body.is-home .nav,
+  body.is-home #homeBtn,
+  body.is-home .bar-count {
+    display: none;
+  }
+
+  /* ---------- home ---------- */
+  .home {
+    height: 100%;
+    box-sizing: border-box;
+    padding: 26px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(var(--fit) * 20px);
+  }
+
+  .home-head {
+    text-align: center;
+  }
+
+  .home-title {
+    margin: 0;
+    font-size: calc(var(--fit) * 54px);
+    font-weight: 900;
+  }
+
+  .home-sub {
+    margin: 6px 0 0;
+    font-size: calc(var(--fit) * 26px);
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .home-back {
+    display: inline-block;
+    margin-top: calc(var(--fit) * 10px);
+    font-size: calc(var(--fit) * 22px);
+    font-weight: 800;
+    color: var(--ink);
+  }
+
+  /* Until the owner's sign-in is checked and the lessons arrive. */
+  .gate {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: var(--bg);
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  .gate a {
+    color: var(--ink);
+  }
+
+  .topic h2 {
+    margin: 0 0 calc(var(--fit) * 10px);
+    font-size: calc(var(--fit) * 30px);
+    font-weight: 900;
+  }
+
+  .topic-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .portrait .dot {
+    width: 13px;
+    height: 13px;
+  }
+
+  .portrait .dots {
+    gap: 6px;
+  }
+
+  .portrait .topic-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lesson-card {
+    min-height: calc(var(--fit) * 96px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 10px 14px;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    background: var(--teal);
+    box-shadow: 3px 4px 0 var(--ink);
+    color: #000;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.12s, background 0.12s;
+  }
+
+  .lesson-card:hover {
+    background: var(--yellow);
+    transform: translateY(-2px);
+  }
+
+  .lc-name {
+    font-size: calc(var(--fit) * 27px);
+    font-weight: 900;
+  }
+
+  .lc-part {
+    font-size: calc(var(--fit) * 23px);
+    font-weight: 700;
+  }
+
+  /* ---------- slide ---------- */
+  .slide {
+    height: 100%;
+    box-sizing: border-box;
+    padding: 20px 40px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--fit) * 12px);
+    overflow: hidden;
+  }
+
+  .portrait .slide {
+    padding: 26px 28px 28px;
+  }
+
+  .slide-title {
+    margin: 0;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: calc(var(--fit) * 54px);
+    font-weight: 900;
+    line-height: 1.15;
+  }
+
+  /* "safe" pushes any overflow to the bottom, where fitSlide can measure it. */
+  .slide-content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: safe center;
+    justify-content: safe center;
+    gap: 36px;
+    overflow: hidden;
+  }
+
+  .portrait .slide-content {
+    flex-direction: column;
+    justify-content: safe center;
+    gap: calc(var(--fit) * 22px);
+  }
+
+  .text-col {
+    display: flex;
+    flex-direction: column;
+    align-items: safe center;
+    gap: calc(var(--fit) * 18px);
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .has-fig .text-col {
+    flex: 1 1 0;
+  }
+
+  .portrait .has-fig .text-col {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .fig-col {
+    flex: 0 0 43%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .portrait .fig-col {
+    flex: 0 0 auto;
+    width: 100%;
+    height: calc(var(--fit) * 400px);
+  }
+
+  .fig-col svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .fig text {
+    font-family: inherit;
+    font-weight: 800;
+    fill: #000;
+  }
+
+  .line {
+    margin: 0;
+    text-align: center;
+    font-size: calc(var(--fit) * 34px);
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  .lines {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--fit) * 4px);
+  }
+
+  mark.key {
+    padding: 0 0.18em;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--teal) 45%, #fff);
+    color: #000;
+    font-weight: 900;
+  }
+
+  /* ---------- math ---------- */
+  .m {
+    direction: ltr;
+    unicode-bidi: isolate;
+    white-space: nowrap;
+  }
+
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 0.1em;
+    font-size: 0.86em;
+    line-height: 1.08;
+  }
+
+  .frac .fn {
+    padding: 0 0.16em 0.05em;
+    border-bottom: 0.075em solid currentColor;
+  }
+
+  .frac .fd {
+    padding: 0.05em 0.16em 0;
+  }
+
+  .rad {
+    padding: 0 0.08em;
+    border-top: 0.075em solid currentColor;
+  }
+
+  .math-list {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: calc(var(--fit) * 12px);
+    min-width: min(100%, 24rem);
+  }
+
+  .math-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: calc(var(--fit) * 10px) 28px;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 3px 4px 0 var(--ink);
+  }
+
+  .math-card .mm {
+    font-size: calc(var(--fit) * 44px);
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  .note {
+    font-size: calc(var(--fit) * 25px);
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .steps-card {
+    padding: calc(var(--fit) * 8px) 22px;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    background: var(--cream);
+    box-shadow: 3px 4px 0 var(--ink);
+  }
+
+  table.steps {
+    direction: ltr;
+    border-collapse: separate;
+    border-spacing: 0 calc(var(--fit) * 5px);
+    font-size: calc(var(--fit) * 40px);
+    font-weight: 800;
+  }
+
+  .steps td {
+    padding: calc(var(--fit) * 3px) 6px;
+    white-space: nowrap;
+    line-height: 1.3;
+  }
+
+  .steps td.l {
+    text-align: right;
+    padding-left: 14px;
+  }
+
+  .steps td.e {
+    text-align: center;
+  }
+
+  .steps td.r {
+    text-align: left;
+    padding-right: 14px;
+  }
+
+  .steps td.a {
+    padding-left: 16px;
+  }
+
+  .steps tr.is-answer td.l,
+  .steps tr.is-answer td.e,
+  .steps tr.is-answer td.r {
+    background: var(--yellow);
+  }
+
+  .steps tr.is-answer td.l {
+    border-radius: 12px 0 0 12px;
+  }
+
+  .steps tr.is-answer td.r {
+    border-radius: 0 12px 12px 0;
+  }
+
+  .act {
+    display: inline-block;
+    padding: 1px 12px;
+    border: 2.5px solid var(--ink);
+    border-radius: 999px;
+    background: var(--teal-soft);
+    font-size: 0.68em;
+    font-weight: 900;
+  }
+
+  .check,
+  .result {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: calc(var(--fit) * 8px) 22px;
+    border-radius: 16px;
+    font-size: calc(var(--fit) * 30px);
+    font-weight: 800;
+  }
+
+  .check {
+    border: 2.5px solid var(--green);
+    background: var(--green-bg);
+  }
+
+  .check svg {
+    width: 1.1em;
+    height: 1.1em;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  .result {
+    border: 3px solid var(--ink);
+    background: var(--yellow-soft);
+    font-size: calc(var(--fit) * 33px);
+    font-weight: 900;
+  }
+
+  /* from → to rows */
+  .arrow-table {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--fit) * 9px);
+    width: min(100%, 30rem);
+  }
+
+  .arow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: calc(var(--fit) * 8px) 18px;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    background: var(--cream);
+    box-shadow: 2px 3px 0 var(--ink);
+    font-size: calc(var(--fit) * 34px);
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .arow.is-head {
+    padding-block: 0;
+    border: none;
+    background: none;
+    box-shadow: none;
+    font-size: calc(var(--fit) * 24px);
+    color: var(--muted);
+  }
+
+  .arow svg {
+    width: calc(var(--fit) * 28px);
+    height: calc(var(--fit) * 28px);
+    color: #555;
+  }
+
+  table.dgrid {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 3px 4px 0 var(--ink);
+    font-size: calc(var(--fit) * 38px);
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .dgrid th,
+  .dgrid td {
+    min-width: 7.2rem;
+    padding: calc(var(--fit) * 8px) 26px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .dgrid th {
+    background: var(--teal-soft);
+    font-size: 0.8em;
+    font-weight: 900;
+  }
+
+  .dgrid th + th,
+  .dgrid td + td {
+    border-right: 2px solid var(--ink);
+  }
+
+  .dgrid tr:last-child td {
+    border-bottom: none;
+    background: var(--yellow-soft);
+  }
+
+  /* wrong / right and yes / no rows */
+  .compare,
+  .verdicts {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--fit) * 12px);
+    width: min(100%, 34rem);
+  }
+
+  .crow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: calc(var(--fit) * 10px) 20px;
+    border: 3px solid;
+    border-radius: 16px;
+  }
+
+  .crow.is-wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+  }
+
+  .crow.is-right {
+    border-color: var(--green);
+    background: var(--green-bg);
+  }
+
+  .cmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    font-size: calc(var(--fit) * 26px);
+    font-weight: 900;
+  }
+
+  .crow.is-wrong .cmark {
+    color: #b71c1c;
+  }
+
+  .crow.is-right .cmark {
+    color: #1b5e20;
+  }
+
+  .cmark svg {
+    width: calc(var(--fit) * 30px);
+    height: calc(var(--fit) * 30px);
+  }
+
+  .ctext {
+    font-size: calc(var(--fit) * 40px);
+    font-weight: 800;
+  }
+
+  .crow.is-wrong.is-strike .ctext {
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 3px;
+  }
+
+  .vbody {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  /* proof table */
+  table.proof {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 3px 4px 0 var(--ink);
+    font-size: calc(var(--fit) * 32px);
+    font-weight: 800;
+  }
+
+  .proof th,
+  .proof td {
+    padding: calc(var(--fit) * 7px) 24px;
+    border-bottom: 2px solid var(--ink);
+    text-align: center;
+  }
+
+  .proof th {
+    background: var(--teal-soft);
+    font-size: 0.85em;
+    font-weight: 900;
+  }
+
+  .proof th + th,
+  .proof td + td {
+    border-right: 2px solid var(--ink);
+  }
+
+  .proof tr:last-child td {
+    border-bottom: none;
+  }
+
+  .proof tr.is-final td {
+    background: var(--yellow-soft);
+  }
+
+  .proof td.claim {
+    font-size: 1.15em;
+  }
+
+  /* numbered steps and chips */
+  .points {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--fit) * 12px);
+  }
+
+  .points li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: calc(var(--fit) * 34px);
+    font-weight: 800;
+  }
+
+  .pnum {
+    width: calc(var(--fit) * 52px);
+    height: calc(var(--fit) * 52px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    background: var(--yellow);
+    font-size: 0.85em;
+    font-weight: 900;
+  }
+
+  .chips {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    width: min(100%, 52rem);
+  }
+
+  .portrait .chips {
+    grid-template-columns: 1fr;
+  }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(var(--fit) * 110px);
+    padding: 12px 20px;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    background: var(--teal);
+    box-shadow: 3px 4px 0 var(--ink);
+    font-size: calc(var(--fit) * 34px);
+    font-weight: 900;
+    text-align: center;
+  }
+
+  /* ---------- quiz ---------- */
+  .quiz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--fit) * 14px);
+    width: 100%;
+    max-width: 58rem;
+    text-align: center;
+  }
+
+  .quiz p {
+    margin: 0;
+  }
+
+  .quiz-count {
+    font-size: calc(var(--fit) * 22px);
+    font-weight: 800;
+    opacity: 0.6;
+  }
+
+  .quiz-q {
+    font-size: calc(var(--fit) * 36px);
+    font-weight: 900;
+    line-height: 1.35;
+  }
+
+  .quiz-math {
+    padding: calc(var(--fit) * 6px) 30px;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    background: var(--cream);
+    font-size: calc(var(--fit) * 46px);
+    font-weight: 800;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .quiz-options.is-long {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .quiz-opt {
+    min-width: 9rem;
+    padding: calc(var(--fit) * 12px) 22px;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    background: #dcecff;
+    box-shadow: 2px 3px 0 var(--ink);
+    font-size: calc(var(--fit) * 34px);
+    font-weight: 900;
+    cursor: pointer;
+    transition: background 0.12s, transform 0.12s;
+  }
+
+  .quiz-options.is-long .quiz-opt {
+    width: min(100%, 36rem);
+    font-size: calc(var(--fit) * 29px);
+  }
+
+  .quiz-opt:hover:not(:disabled) {
+    background: var(--yellow);
+    transform: translateY(-2px);
+  }
+
+  .quiz-opt:disabled {
+    cursor: default;
+  }
+
+  .quiz-opt.is-correct {
+    background: #7ee08c;
+    animation: pop 0.35s ease-out;
+  }
+
+  .quiz-opt.is-wrong {
+    background: #ffb3b3;
+    animation: shake 0.35s ease-in-out;
+  }
+
+  .quiz-opt:disabled:not(.is-correct):not(.is-wrong) {
+    opacity: 0.5;
+  }
+
+  @keyframes pop {
+    50% {
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes shake {
+    20%,
+    60% {
+      transform: translateX(-6px);
+    }
+    40%,
+    80% {
+      transform: translateX(6px);
+    }
+  }
+
+  .quiz-feedback {
+    min-height: 2.7em;
+    font-size: calc(var(--fit) * 28px);
+    font-weight: 900;
+    line-height: 1.35;
+  }
+
+  .quiz-feedback.is-correct {
+    color: #1e8a55;
+  }
+
+  .quiz-feedback.is-wrong {
+    color: var(--red);
+  }
+
+  .quiz-why {
+    display: block;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .quiz-next {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: calc(var(--fit) * 10px) 26px;
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    background: var(--yellow);
+    box-shadow: 2px 3px 0 var(--ink);
+    font-size: calc(var(--fit) * 26px);
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .quiz-next svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .quiz-next.is-pending {
+    visibility: hidden;
+  }
+
+  .quiz-done-title {
+    font-size: calc(var(--fit) * 64px);
+    font-weight: 900;
+  }
+
+  .quiz-done-score {
+    font-size: calc(var(--fit) * 34px);
+    font-weight: 800;
+  }
+
+  /* ---------- discussion, practice, end ---------- */
+  .bubbles {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--fit) * 20px);
+    width: min(100%, 56rem);
+  }
+
+  .bubble {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: calc(var(--fit) * 16px) 24px;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    background: var(--teal-soft);
+    box-shadow: 3px 4px 0 var(--ink);
+  }
+
+  .bubble p {
+    margin: 0;
+    font-size: calc(var(--fit) * 36px);
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .bubble-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: calc(var(--fit) * 54px);
+    height: calc(var(--fit) * 54px);
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  .bubble-icon svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  .book-list {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--fit) * 12px);
+    width: min(100%, 48rem);
+  }
+
+  .book-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: calc(var(--fit) * 10px) 22px;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    background: var(--cream);
+    box-shadow: 2px 3px 0 var(--ink);
+    font-size: calc(var(--fit) * 32px);
+    font-weight: 800;
+  }
+
+  .book-row svg {
+    width: calc(var(--fit) * 34px);
+    height: calc(var(--fit) * 34px);
+    flex-shrink: 0;
+    color: var(--teal-deep);
+  }
+
+  .outro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--fit) * 14px);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .outro-big {
+    margin: 0;
+    font-size: calc(var(--fit) * 96px);
+    font-weight: 900;
+    animation: outro-pop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .outro-small {
+    margin: 0;
+    font-size: calc(var(--fit) * 38px);
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  @keyframes outro-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.4) rotate(-6deg);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .confetti i {
+    position: absolute;
+    top: -20px;
+    width: 12px;
+    height: 18px;
+    border-radius: 3px;
+    animation: fall var(--d) ease-in var(--delay) both;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translate(var(--drift), 720px) rotate(var(--rot));
+      opacity: 0.2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .confetti {
+      display: none;
+    }
+    .outro-big,
+    .quiz-opt.is-correct,
+    .quiz-opt.is-wrong {
+      animation: none;
+    }
+  }
+
+  #report {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    padding: 16px;
+    background: #fff;
+    direction: ltr;
+    white-space: pre-wrap;
+    font: 14px/1.4 Consolas, monospace;
+    overflow: auto;
+    z-index: 10;
+  }
+</style>
+</head>
+<body class="is-home">
+<div class="gate" id="gate"><p id="gateText">טוען…</p></div>
+<div id="stage">
+  <header class="bar">
+    <button type="button" class="icon-btn" id="homeBtn" aria-label="לכל השיעורים" title="לכל השיעורים"></button>
+    <div class="bar-title" id="barTitle"></div>
+    <div class="bar-count" id="barCount" dir="ltr"></div>
+    <button type="button" class="icon-btn" id="fsBtn" aria-label="מסך מלא" title="מסך מלא"></button>
+  </header>
+  <main class="card" id="card"></main>
+  <footer class="nav">
+    <button type="button" class="nav-btn is-prev" id="prevBtn"></button>
+    <div class="dots" id="dots"></div>
+    <button type="button" class="nav-btn" id="nextBtn"></button>
+  </footer>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="/js/firebase-app.js?v=2"></script>
+<script>
+// Runs once the lessons have loaded (see the loader at the bottom).
+window.startMathPlayer = function () {
+  const $ = (sel, root = document) => root.querySelector(sel);
+
+  const svgIcon = (body, sw = 2.6) =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+  const ICON = {
+    next: svgIcon('<path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/>'),
+    prev: svgIcon('<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>'),
+    arrow: svgIcon('<path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/>', 2.4),
+    home: svgIcon('<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>', 2.3),
+    full: svgIcon('<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>', 2.4),
+    check: svgIcon('<path d="M5 12.5l4.2 4.2L19 7"/>', 3),
+    wrong: svgIcon('<path d="M6 6l12 12M18 6L6 18"/>', 3),
+    book: svgIcon('<path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/>', 2.2),
+    talk: svgIcon('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/>', 2.4),
+    retry: svgIcon('<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>', 2.6),
+  };
+
+  const TOPICS = window.MATH_TOPICS || [];
+  const LESSONS = window.MATH_SHORT_LESSONS || [];
+  const lessonById = (id) => LESSONS.find((l) => l.id === id);
+  const lessonTitle = (l) => `${l.name} – ${l.part}`;
+
+  /* ---------- text and math ---------- */
+  const esc = (s) =>
+    String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const keys = (s) => s.replace(/\*\*(.+?)\*\*/g, '<mark class="key">$1</mark>');
+  const hasHebrew = (s) => /[֐-׿]/.test(s);
+
+  // {a|b} → stacked fraction, √{n} → root with a bar, "-" → a real minus.
+  function mathInner(src) {
+    let s = esc(src).replace(/-/g, "−");
+    s = s.replace(/√\{([^{}]*)\}/g, '<span class="sqrt">√<span class="rad">$1</span></span>');
+    s = s.replace(/\{([^{}|]*)\|([^{}]*)\}/g, '<span class="frac"><span class="fn">$1</span><span class="fd">$2</span></span>');
+    return keys(s);
+  }
+  const math = (src) => `<bdi class="m" dir="ltr">${mathInner(src)}</bdi>`;
+  // Hebrew text where "$...$" marks a math bit.
+  const txt = (src) =>
+    String(src)
+      .split("$")
+      .map((part, i) => (i % 2 ? math(part) : keys(esc(part))))
+      .join("");
+  const auto = (s) => (hasHebrew(s) ? txt(s) : math(s));
+
+  /* ---------- figures ---------- */
+  const COL = { tq: "#b8fff5", yl: "#fff3b0", deep: "#00897b", orange: "#ff7a00", yellow: "#ffe135", blue: "#4da6ff", red: "#ff3b5c" };
+  const P = (x, y) => ({ x, y });
+  const V = {
+    sub: (a, b) => P(a.x - b.x, a.y - b.y),
+    add: (a, b) => P(a.x + b.x, a.y + b.y),
+    mul: (a, k) => P(a.x * k, a.y * k),
+    unit: (a) => {
+      const l = Math.hypot(a.x, a.y) || 1;
+      return P(a.x / l, a.y / l);
+    },
+    mid: (a, b) => P((a.x + b.x) / 2, (a.y + b.y) / 2),
+  };
+  const centroid = (pts) => P(pts.reduce((s, p) => s + p.x, 0) / pts.length, pts.reduce((s, p) => s + p.y, 0) / pts.length);
+  const f1 = (n) => +n.toFixed(1);
+
+  const poly = (pts, fill, w = 5) =>
+    `<polygon points="${pts.map((p) => `${f1(p.x)},${f1(p.y)}`).join(" ")}" fill="${fill}" stroke="#000" stroke-width="${w}" stroke-linejoin="round"/>`;
+  const seg = (A, B, color = "#000", w = 5, extra = "") =>
+    `<line x1="${f1(A.x)}" y1="${f1(A.y)}" x2="${f1(B.x)}" y2="${f1(B.y)}" stroke="${color}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
+  // Hebrew labels read right to left; math labels ("1 : 100") left to right.
+  const label = (x, y, t, size = 34) =>
+    `<text x="${f1(x)}" y="${f1(y)}" font-size="${size}" text-anchor="middle" dominant-baseline="central" direction="${hasHebrew(t) ? "rtl" : "ltr"}">${esc(t)}</text>`;
+
+  function ticks(A, B, n) {
+    let s = "";
+    const u = V.unit(V.sub(B, A));
+    const nn = P(-u.y, u.x);
+    const M = V.mid(A, B);
+    for (let k = 0; k < n; k++) {
+      const c = V.add(M, V.mul(u, (k - (n - 1) / 2) * 11));
+      s += seg(V.add(c, V.mul(nn, -13)), V.add(c, V.mul(nn, 13)), "#000", 4);
+    }
+    return s;
+  }
+
+  function arcs(T, A, B, n, r0 = 34) {
+    let s = "";
+    const a1 = Math.atan2(A.y - T.y, A.x - T.x);
+    const a2 = Math.atan2(B.y - T.y, B.x - T.x);
+    const sweep = (A.x - T.x) * (B.y - T.y) - (A.y - T.y) * (B.x - T.x) > 0 ? 1 : 0;
+    for (let k = 0; k < n; k++) {
+      const r = r0 + k * 9;
+      const p1 = P(T.x + r * Math.cos(a1), T.y + r * Math.sin(a1));
+      const p2 = P(T.x + r * Math.cos(a2), T.y + r * Math.sin(a2));
+      s += `<path d="M${f1(p1.x)} ${f1(p1.y)} A${r} ${r} 0 0 ${sweep} ${f1(p2.x)} ${f1(p2.y)}" fill="none" stroke="${COL.orange}" stroke-width="4.5" stroke-linecap="round"/>`;
+    }
+    return s;
+  }
+
+  function rightMark(T, A, B, size = 30, fill = "none") {
+    const u1 = V.mul(V.unit(V.sub(A, T)), size);
+    const u2 = V.mul(V.unit(V.sub(B, T)), size);
+    const p1 = V.add(T, u1);
+    const p2 = V.add(p1, u2);
+    const p3 = V.add(T, u2);
+    return `<path d="M${f1(T.x)} ${f1(T.y)} L${f1(p1.x)} ${f1(p1.y)} L${f1(p2.x)} ${f1(p2.y)} L${f1(p3.x)} ${f1(p3.y)} Z" fill="${fill}" stroke="none"/><path d="M${f1(p1.x)} ${f1(p1.y)} L${f1(p2.x)} ${f1(p2.y)} L${f1(p3.x)} ${f1(p3.y)}" fill="none" stroke="#000" stroke-width="3.5"/>`;
+  }
+
+  const vLabel = (T, cen, t, d = 30) => {
+    const p = V.add(T, V.mul(V.unit(V.sub(T, cen)), d));
+    return label(p.x, p.y, t, 34);
+  };
+
+  // A side's label, pushed out of the shape far enough to clear the line.
+  function sLabel(A, B, cen, t, size = 34) {
+    const M = V.mid(A, B);
+    const u = V.unit(V.sub(B, A));
+    let nn = P(-u.y, u.x);
+    if ((M.x - cen.x) * nn.x + (M.y - cen.y) * nn.y < 0) nn = V.mul(nn, -1);
+    const w = [...t].length * size * 0.6;
+    const d = 14 + (Math.abs(nn.x) * w) / 2 + (Math.abs(nn.y) * size) / 2;
+    const p = V.add(M, V.mul(nn, d));
+    return label(p.x, p.y, t, size);
+  }
+
+  const svg = (vb, body) => `<svg class="fig" viewBox="${vb}" role="img" aria-hidden="true">${body}</svg>`;
+
+  // Triangle with marks: sides [AB, BC, CA] get tick counts, angles [A, B, C]
+  // get arc counts; marked sides are drawn in deep teal.
+  function markedTri(pts, names, fill, marks) {
+    const [A, B, C] = pts;
+    const cen = centroid(pts);
+    const sides = [[A, B], [B, C], [C, A]];
+    let s = poly(pts, fill);
+    sides.forEach(([X, Y], i) => {
+      if (marks.sides?.[i]) s += seg(X, Y, COL.deep, 8);
+    });
+    sides.forEach(([X, Y], i) => {
+      if (marks.sides?.[i]) s += ticks(X, Y, marks.sides[i]);
+    });
+    const around = [[A, B, C], [B, C, A], [C, A, B]];
+    around.forEach(([T, X, Y], i) => {
+      if (marks.angles?.[i]) s += arcs(T, X, Y, marks.angles[i]);
+    });
+    if (names) pts.forEach((p, i) => (s += vLabel(p, cen, names[i])));
+    return s;
+  }
+
+  const PAIR_MARKS = {
+    none: {},
+    all: { sides: [1, 2, 3], angles: [1, 2, 3] },
+    sas: { sides: [1, 0, 2], angles: [1, 0, 0] },
+    asa: { sides: [1, 0, 0], angles: [1, 2, 0] },
+    sss: { sides: [1, 2, 3], angles: [0, 0, 0] },
+    // AB and the longer BC, with the angle across from BC (at A).
+    ssa: { sides: [1, 2, 0], angles: [1, 0, 0] },
+  };
+
+  const FIGURES = {
+    right(o) {
+      const R = P(90, 320), T = P(90, 80), Q = P(410, 320);
+      const cen = centroid([R, T, Q]);
+      let s = poly([R, T, Q], COL.tq);
+      if (o.hl) s += seg(T, Q, COL.orange, 9);
+      s += o.mark ? rightMark(R, T, Q, 44, COL.yellow) : rightMark(R, T, Q, 30);
+      if (o.mark) s += label(168, 262, "90°", 36);
+      if (o.a) s += sLabel(R, T, cen, o.a);
+      if (o.b) s += sLabel(R, Q, cen, o.b);
+      if (o.c) s += sLabel(T, Q, cen, o.c);
+      return svg("0 0 480 380", s);
+    },
+    ladder(o) {
+      const F = P(170, 320), B = P(350, 320), W = P(350, 80);
+      let s = `<rect x="350" y="40" width="34" height="280" fill="#e5e7eb" stroke="#000" stroke-width="4"/>`;
+      s += seg(P(30, 320), P(440, 320), "#000", 5);
+      for (let x = 40; x < 440; x += 26) s += seg(P(x, 324), P(x - 14, 340), "#000", 2.5);
+      s += rightMark(B, F, W, 28);
+      const u = V.unit(V.sub(W, F));
+      const nn = P(-u.y, u.x);
+      const off = V.mul(nn, 10);
+      s += seg(V.add(F, off), V.add(W, off), "#a0522d", 6) + seg(V.sub(F, off), V.sub(W, off), "#a0522d", 6);
+      for (let k = 1; k < 9; k++) {
+        const c = V.add(F, V.mul(V.sub(W, F), k / 9));
+        s += seg(V.add(c, off), V.sub(c, off), "#a0522d", 5);
+      }
+      s += label(228, 180, "5", 38) + label(262, 296, "3", 38) + label(415, 200, o.h || "?", 38);
+      return svg("0 0 460 370", s);
+    },
+    rect() {
+      const A = P(50, 310), B = P(410, 310), C = P(410, 50), D = P(50, 50);
+      let s = poly([A, B, C, D], "#fff");
+      s += poly([A, B, C], COL.tq);
+      s += seg(A, C, COL.orange, 9);
+      s += rightMark(B, A, C, 28);
+      s += label(230, 342, "8", 38) + label(440, 180, "6", 38) + label(205, 152, "d", 38);
+      return svg("0 0 470 370", s);
+    },
+    pair(o) {
+      const marks = PAIR_MARKS[o.marks || "none"];
+      const t1 = [P(60, 290), P(260, 290), P(110, 80)];
+      const t2 = t1.map((p) => P(p.x + 310, p.y));
+      return svg("0 0 640 340", markedTri(t1, ["A", "B", "C"], COL.tq, marks) + markedTri(t2, ["D", "E", "F"], COL.yl, marks));
+    },
+    aaa() {
+      const small = [P(50, 300), P(200, 300), P(90, 160)];
+      const big = small.map((p) => P(290 + (p.x - 50) * 1.6, 300 - (300 - p.y) * 1.6));
+      const marks = { angles: [1, 2, 3] };
+      return svg("0 0 560 330", markedTri(small, null, COL.tq, marks) + markedTri(big, null, COL.yl, marks));
+    },
+    kite(o) {
+      const A = P(240, 40), B = P(90, 160), C = P(240, 380), D = P(390, 160);
+      let s = poly([A, B, C], COL.tq) + poly([A, D, C], COL.yl);
+      s += seg(A, C, COL.orange, 8);
+      if (o.marks) s += ticks(A, B, 1) + ticks(A, D, 1) + ticks(C, B, 2) + ticks(C, D, 2);
+      if (o.angles) s += arcs(B, A, C, 1, 36) + arcs(D, A, C, 1, 36);
+      const cen = P(240, 200);
+      [[A, "A"], [B, "B"], [C, "C"], [D, "D"]].forEach(([p, n]) => (s += vLabel(p, cen, n, 30)));
+      return svg("0 0 480 420", s);
+    },
+    bowtie() {
+      const A = P(60, 60), B = P(60, 300), C = P(240, 180), D = P(420, 300), E = P(420, 60);
+      let s = poly([A, B, C], COL.tq) + poly([D, E, C], COL.yl);
+      s += arcs(C, A, B, 1, 44) + arcs(C, D, E, 1, 44);
+      s += vLabel(A, C, "A", 28) + vLabel(B, C, "B", 28) + vLabel(D, C, "D", 28) + vLabel(E, C, "E", 28);
+      s += label(240, 140, "C", 34);
+      return svg("0 0 480 360", s);
+    },
+    balance() {
+      let s = poly([P(196, 330), P(264, 330), P(230, 286)], "#e5e7eb", 4);
+      s += seg(P(230, 300), P(230, 112), "#000", 7);
+      s += seg(P(70, 110), P(390, 110), "#000", 8);
+      s += `<circle cx="230" cy="110" r="11" fill="${COL.yellow}" stroke="#000" stroke-width="4"/>`;
+      [110, 350].forEach((x) => {
+        s += seg(P(x, 110), P(x - 52, 204), "#000", 3) + seg(P(x, 110), P(x + 52, 204), "#000", 3);
+        s += `<path d="M${x - 62} 204 Q${x} 250 ${x + 62} 204 Z" fill="#fff" stroke="#000" stroke-width="4"/>`;
+      });
+      s += `<rect x="62" y="152" width="48" height="48" rx="6" fill="${COL.tq}" stroke="#000" stroke-width="4"/>` + label(86, 176, "x", 34);
+      const ball = (x, y) => `<circle cx="${x}" cy="${y}" r="12" fill="${COL.yellow}" stroke="#000" stroke-width="3"/>`;
+      s += ball(130, 188) + ball(156, 188);
+      s += ball(322, 188) + ball(348, 188) + ball(374, 188) + ball(335, 164) + ball(361, 164);
+      return svg("0 0 460 345", s);
+    },
+    balls(o) {
+      const row = (n, y, fill) => {
+        let s = "";
+        const gap = 84;
+        const x0 = 210 - ((n - 1) * gap) / 2;
+        for (let i = 0; i < n; i++) s += `<circle cx="${x0 + i * gap}" cy="${y}" r="32" fill="${fill}" stroke="#000" stroke-width="4"/>`;
+        return s;
+      };
+      return svg("0 0 420 250", row(o.a, 70, COL.blue) + row(o.b, 180, COL.yellow));
+    },
+    parts(o) {
+      const box = 88;
+      const row = (name, n, y, fill) => {
+        let s = label(495, y + 34, name, 34);
+        for (let i = 0; i < n; i++) {
+          const x = 430 - (i + 1) * box;
+          s += `<rect x="${x}" y="${y}" width="${box}" height="68" fill="${fill}" stroke="#000" stroke-width="4"/>` + label(x + box / 2, y + 34, o.each, 36);
+        }
+        return s;
+      };
+      return svg("0 0 560 250", row("יוסי", o.a, 20, COL.tq) + row("דני", o.b, 120, COL.yl) + label(280, 225, "ביחד 20 סוכריות", 28));
+    },
+    cross(o) {
+      let s = seg(P(150, 66), P(292, 178), COL.orange, 6, 'opacity="0.85"') + seg(P(150, 178), P(292, 66), COL.deep, 6, 'opacity="0.85"');
+      const t = (x, y, v) =>
+        `<text x="${x}" y="${y}" font-size="66" text-anchor="middle" dominant-baseline="central" direction="ltr" stroke="#fff" stroke-width="12" paint-order="stroke">${esc(v)}</text>`;
+      s += t(118, 64, o.a) + seg(P(84, 122), P(152, 122), "#000", 6) + t(118, 180, o.b);
+      s += t(222, 122, "=");
+      s += t(326, 64, o.c) + seg(P(292, 122), P(360, 122), "#000", 6) + t(326, 180, o.d);
+      return svg("0 0 440 250", s);
+    },
+    map() {
+      let s = `<rect x="20" y="20" width="420" height="300" rx="20" fill="#dff5d8" stroke="#000" stroke-width="4"/>`;
+      s += `<path d="M20 78 C110 30 170 120 260 74 S390 40 440 70" fill="none" stroke="${COL.blue}" stroke-width="12" stroke-linecap="round"/>`;
+      const A = P(95, 175), B = P(355, 205);
+      s += seg(A, B, "#000", 4, 'stroke-dasharray="12 10"');
+      [A, B].forEach((p) => (s += `<circle cx="${p.x}" cy="${p.y}" r="15" fill="${COL.red}" stroke="#000" stroke-width="4"/>`));
+      s += label(95, 140, "עיר א׳", 30) + label(355, 170, "עיר ב׳", 30) + label(225, 222, "5 ס״מ", 30);
+      s += `<rect x="250" y="258" width="172" height="44" rx="10" fill="#fff" stroke="#000" stroke-width="3"/>` + label(336, 280, "1 : 100,000", 28);
+      return svg("0 0 460 340", s);
+    },
+  };
+
+  const figHtml = (fig) => (fig && FIGURES[fig.kind] ? FIGURES[fig.kind](fig) : "");
+
+  /* ---------- slide bodies ---------- */
+  function stepsHtml(rows) {
+    const body = rows
+      .map(([row, act], i) => {
+        const at = row.indexOf("=");
+        const [l, r] = at < 0 ? [row, ""] : [row.slice(0, at).trim(), row.slice(at + 1).trim()];
+        const cls = i === rows.length - 1 ? ' class="is-answer"' : "";
+        return `<tr${cls}><td class="l">${mathInner(l)}</td><td class="e">${at < 0 ? "" : "="}</td><td class="r">${mathInner(r)}</td><td class="a">${act ? `<span class="act">/ ${mathInner(act)}</span>` : ""}</td></tr>`;
+      })
+      .join("");
+    return `<div class="steps-card"><table class="steps">${body}</table></div>`;
+  }
+
+  function contentBody(s) {
+    const parts = [];
+    if (s.lines) parts.push(`<div class="lines">${s.lines.map((l) => `<p class="line">${txt(l)}</p>`).join("")}</div>`);
+    if (s.math) {
+      parts.push(
+        `<div class="math-list">${s.math
+          .map((it) => {
+            const [m, note] = Array.isArray(it) ? it : [it, ""];
+            return `<div class="math-card"><span class="mm">${math(m)}</span>${note ? `<span class="note">${txt(note)}</span>` : ""}</div>`;
+          })
+          .join("")}</div>`
+      );
+    }
+    if (s.table) {
+      const head = s.tableHead ? `<div class="arow is-head"><span>${txt(s.tableHead[0])}</span><span></span><span>${txt(s.tableHead[1])}</span></div>` : "";
+      parts.push(
+        `<div class="arrow-table">${head}${s.table
+          .map(([a, b]) => `<div class="arow"><span>${auto(a)}</span>${ICON.arrow}<span>${auto(b)}</span></div>`)
+          .join("")}</div>`
+      );
+    }
+    if (s.grid) {
+      parts.push(
+        `<table class="dgrid"><tr>${s.grid.head.map((h) => `<th>${txt(h)}</th>`).join("")}</tr>${s.grid.rows
+          .map((r) => `<tr>${r.map((c) => `<td>${auto(c)}</td>`).join("")}</tr>`)
+          .join("")}</table>`
+      );
+    }
+    if (s.steps) parts.push(stepsHtml(s.steps));
+    if (s.check) parts.push(`<div class="check">${ICON.check}<span>בדיקה</span>${math(s.check)}</div>`);
+    if (s.compare) {
+      const row = (kind, m, icon, word) =>
+        `<div class="crow is-${kind}${kind === "wrong" ? " is-strike" : ""}"><span class="cmark">${icon}<span>${word}</span></span><span class="ctext">${math(m)}</span></div>`;
+      parts.push(`<div class="compare">${row("wrong", s.compare[0], ICON.wrong, "לא נכון")}${row("right", s.compare[1], ICON.check, "נכון")}</div>`);
+    }
+    if (s.verdicts) {
+      parts.push(
+        `<div class="verdicts">${s.verdicts
+          .map(
+            ([m, ok, note]) =>
+              `<div class="crow is-${ok ? "right" : "wrong"}"><span class="cmark">${ok ? ICON.check : ICON.wrong}<span>${ok ? "כן" : "לא"}</span></span><span class="vbody"><span class="ctext">${math(m)}</span><span class="note">${txt(note)}</span></span></div>`
+          )
+          .join("")}</div>`
+      );
+    }
+    if (s.proof) {
+      const last = s.proof.length - 1;
+      parts.push(
+        `<table class="proof"><tr><th>טענה</th><th>נימוק</th></tr>${s.proof
+          .map(([c, r], i) => `<tr${i === last && s.proof.length > 1 ? ' class="is-final"' : ""}><td class="claim">${math(c)}</td><td>${txt(r)}</td></tr>`)
+          .join("")}</table>`
+      );
+    }
+    if (s.points) parts.push(`<ol class="points">${s.points.map((p, i) => `<li><span class="pnum">${i + 1}</span><span>${txt(p)}</span></li>`).join("")}</ol>`);
+    if (s.chips) parts.push(`<div class="chips">${s.chips.map((c) => `<div class="chip">${txt(c)}</div>`).join("")}</div>`);
+    if (s.result) parts.push(`<div class="result">${txt(s.result)}</div>`);
+    return parts.join("");
+  }
+
+  function slideShell(title, inner, fig = "") {
+    return `<div class="slide"><h2 class="slide-title">${txt(title)}</h2><div class="slide-content${fig ? " has-fig" : ""}"><div class="text-col">${inner}</div>${
+      fig ? `<div class="fig-col">${fig}</div>` : ""
+    }</div></div>`;
+  }
+
+  /* ---------- quiz ---------- */
+  const quizState = {};
+
+  function shuffled(n) {
+    const a = [...Array(n).keys()];
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function getQuizState(lesson) {
+    if (!quizState[lesson.id]) {
+      quizState[lesson.id] = { i: 0, score: 0, picked: null, done: false, orders: lesson.quiz.map((q) => shuffled(q[2].length)) };
+    }
+    return quizState[lesson.id];
+  }
+
+  function quizHtml(lesson) {
+    const st = getQuizState(lesson);
+    const total = lesson.quiz.length;
+    if (st.done) {
+      return `<div class="quiz"><p class="quiz-done-title">כל הכבוד!</p><p class="quiz-done-score">עניתם נכון על ${st.score} מתוך ${total}</p><button type="button" class="quiz-next" data-act="quiz-retry">${ICON.retry}<span>שוב מההתחלה</span></button></div>`;
+    }
+    const [prompt, m, options, answer, why] = lesson.quiz[st.i];
+    const long = options.some((o) => o.length > 20);
+    const answered = st.picked !== null;
+    const opts = st.orders[st.i]
+      .map((oi) => {
+        let cls = "quiz-opt";
+        if (answered && oi === answer) cls += " is-correct";
+        else if (answered && oi === st.picked) cls += " is-wrong";
+        return `<button type="button" class="${cls}" data-act="quiz-pick" data-opt="${oi}"${answered ? " disabled" : ""}>${auto(options[oi])}</button>`;
+      })
+      .join("");
+    let feedback = "";
+    if (answered) {
+      const ok = st.picked === answer;
+      feedback = `<p class="quiz-feedback ${ok ? "is-correct" : "is-wrong"}">${ok ? "נכון!" : "לא בדיוק – התשובה הנכונה בירוק"}${why ? `<span class="quiz-why">${txt(why)}</span>` : ""}</p>`;
+    } else {
+      feedback = `<p class="quiz-feedback"></p>`;
+    }
+    const nextLabel = st.i === total - 1 ? "לתוצאה" : "לשאלה הבאה";
+    return `<div class="quiz"><p class="quiz-count">שאלה ${st.i + 1} מתוך ${total}</p><p class="quiz-q">${txt(prompt)}</p>${
+      m ? `<div class="quiz-math">${math(m)}</div>` : ""
+    }<div class="quiz-options${long ? " is-long" : ""}">${opts}</div>${feedback}<button type="button" class="quiz-next${answered ? "" : " is-pending"}" data-act="quiz-next"><span>${nextLabel}</span>${ICON.next}</button></div>`;
+  }
+
+  /* ---------- lesson slides ---------- */
+  function lessonSlides(lesson) {
+    return [
+      ...lesson.slides.map((s) => ({ kind: "content", s })),
+      { kind: "quiz" },
+      { kind: "discuss" },
+      { kind: "practice" },
+      { kind: "end" },
+    ];
+  }
+
+  function slideHtml(lesson, item) {
+    if (item.kind === "content") return slideShell(item.s.title, contentBody(item.s), figHtml(item.s.fig));
+    if (item.kind === "quiz") return slideShell("בואו **נבדוק**", quizHtml(lesson));
+    if (item.kind === "discuss") {
+      return slideShell(
+        "דיון **כיתתי**",
+        `<div class="bubbles">${lesson.discuss.map((q) => `<div class="bubble"><span class="bubble-icon">${ICON.talk}</span><p>${txt(q)}</p></div>`).join("")}</div>`
+      );
+    }
+    if (item.kind === "practice") {
+      return slideShell(
+        "תרגול **מהספר**",
+        `<div class="lines"><p class="line">מתמטיקה לכיתה ח׳ – חלק א׳</p></div><div class="book-list">${lesson.practice
+          .map((p) => `<div class="book-row">${ICON.book}<span>${txt(p)}</span></div>`)
+          .join("")}</div>${lesson.practiceNote ? `<div class="result">${txt(lesson.practiceNote)}</div>` : ""}`
+      );
+    }
+    return `<div class="slide"><div class="confetti" aria-hidden="true"></div><div class="slide-content"><div class="outro"><p class="outro-big">כל הכבוד!</p><p class="outro-small">סוף השיעור – תודה על ההשתתפות!</p></div></div></div>`;
+  }
+
+  /* ---------- layout ---------- */
+  let landscape = true;
+
+  function layoutStage() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    landscape = vw >= vh;
+    const W = landscape ? 1280 : 600;
+    const H = landscape ? 720 : 1200;
+    const stage = $("#stage");
+    stage.style.setProperty("--W", `${W}px`);
+    stage.style.setProperty("--H", `${H}px`);
+    stage.style.setProperty("--s", Math.min(vw / W, vh / H));
+    document.body.classList.toggle("portrait", !landscape);
+  }
+
+  // Shrinks a dense slide (--fit) until it fits its fixed size — never scrolls.
+  function fitSlide() {
+    const root = $("#card").firstElementChild;
+    if (!root) return 1;
+    const boxes = [root, ...root.querySelectorAll(".slide-content, .text-col")];
+    const over = () => boxes.some((el) => el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1);
+    let fit = 1;
+    root.style.setProperty("--fit", fit);
+    while (over() && fit > 0.56) {
+      fit = +(fit - 0.04).toFixed(2);
+      root.style.setProperty("--fit", fit);
+    }
+    root.dataset.fit = fit;
+    root.dataset.over = over() ? "1" : "";
+    return fit;
+  }
+
+  function spawnConfetti() {
+    const layer = $(".confetti");
+    if (!layer || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const colors = ["#ff3b5c", "#ffd23f", "#4da6ff", "#7ee08c", "#c792ff", "#ff9f43"];
+    for (let i = 0; i < 30; i++) {
+      const piece = document.createElement("i");
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[i % colors.length];
+      piece.style.setProperty("--d", `${1.8 + Math.random() * 1.4}s`);
+      piece.style.setProperty("--delay", `${Math.random() * 0.6}s`);
+      piece.style.setProperty("--drift", `${Math.random() * 80 - 40}px`);
+      piece.style.setProperty("--rot", `${(Math.random() > 0.5 ? 1 : -1) * (360 + Math.random() * 360)}deg`);
+      layer.appendChild(piece);
+    }
+  }
+
+  /* ---------- views ---------- */
+  let current = null; // { lesson, index }
+
+  function renderHome() {
+    current = null;
+    document.body.classList.add("is-home");
+    $("#barTitle").textContent = "";
+    $("#card").innerHTML = `<div class="home"><div class="home-head"><h1 class="home-title">שיעורי <mark class="key">מתמטיקה</mark> – כיתה ח׳</h1><p class="home-sub">לקראת המבחן ביום ראשון 1.11.2026 – במבחן מותר מחשבון</p><a class="home-back" href="/admin/students">חזרה לניהול תלמידים</a></div>${TOPICS.map(
+      (t) =>
+        `<div class="topic"><h2>${esc(t.name)}</h2><div class="topic-cards">${t.lessons
+          .map(lessonById)
+          .filter(Boolean)
+          .map((l) => `<a class="lesson-card" href="#${l.id}/1"><span class="lc-name">${esc(l.name)}</span><span class="lc-part">${esc(l.part)}</span></a>`)
+          .join("")}</div></div>`
+    ).join("")}</div>`;
+    const home = $(".home");
+    let fit = 1;
+    home.style.setProperty("--fit", fit);
+    while (home.scrollHeight > home.clientHeight + 1 && fit > 0.6) {
+      fit = +(fit - 0.04).toFixed(2);
+      home.style.setProperty("--fit", fit);
+    }
+    home.dataset.fit = fit;
+  }
+
+  function renderSlide() {
+    const { lesson, index } = current;
+    const slides = lessonSlides(lesson);
+    document.body.classList.remove("is-home");
+    $("#barTitle").textContent = lessonTitle(lesson);
+    $("#barCount").textContent = `${index + 1} / ${slides.length}`;
+    $("#card").innerHTML = slideHtml(lesson, slides[index]);
+    $("#dots").innerHTML = slides
+      .map((_, i) => `<button type="button" class="dot${i === index ? " is-current" : i < index ? " is-done" : ""}" data-go="${i}" aria-label="שקופית ${i + 1}"></button>`)
+      .join("");
+    $("#prevBtn").disabled = index === 0;
+    $("#nextBtn").innerHTML = index === slides.length - 1 ? `<span>לכל השיעורים</span>${ICON.home}` : `<span>הבא</span>${ICON.next}`;
+    fitSlide();
+    if (slides[index].kind === "end") spawnConfetti();
+  }
+
+  function route() {
+    const m = location.hash.match(/^#([\w-]+)\/(\d+)$/);
+    const lesson = m && lessonById(m[1]);
+    if (!lesson) return renderHome();
+    if (!current || current.lesson !== lesson) delete quizState[lesson.id];
+    const count = lessonSlides(lesson).length;
+    current = { lesson, index: Math.min(Math.max(+m[2] - 1, 0), count - 1) };
+    renderSlide();
+  }
+
+  function go(index) {
+    if (!current) return;
+    const count = lessonSlides(current.lesson).length;
+    if (index >= count) {
+      location.hash = "";
+      return;
+    }
+    if (index < 0) return;
+    location.hash = `#${current.lesson.id}/${index + 1}`;
+  }
+
+  /* ---------- events ---------- */
+  $("#homeBtn").innerHTML = ICON.home;
+  $("#fsBtn").innerHTML = ICON.full;
+  $("#prevBtn").innerHTML = `${ICON.prev}<span>הקודם</span>`;
+
+  $("#homeBtn").addEventListener("click", () => (location.hash = ""));
+  $("#prevBtn").addEventListener("click", () => current && go(current.index - 1));
+  $("#nextBtn").addEventListener("click", () => current && go(current.index + 1));
+  $("#fsBtn").addEventListener("click", () => {
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    else document.documentElement.requestFullscreen?.();
+  });
+  $("#dots").addEventListener("click", (e) => {
+    const dot = e.target.closest("[data-go]");
+    if (dot) go(+dot.dataset.go);
+  });
+
+  $("#card").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-act]");
+    if (!btn || !current) return;
+    const st = getQuizState(current.lesson);
+    if (btn.dataset.act === "quiz-pick" && st.picked === null) {
+      st.picked = +btn.dataset.opt;
+      if (st.picked === current.lesson.quiz[st.i][3]) st.score++;
+    } else if (btn.dataset.act === "quiz-next") {
+      if (st.i === current.lesson.quiz.length - 1) st.done = true;
+      else st.i++;
+      st.picked = null;
+    } else if (btn.dataset.act === "quiz-retry") {
+      delete quizState[current.lesson.id];
+    } else return;
+    renderSlide();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!current || e.altKey || e.ctrlKey || e.metaKey) return;
+    // Hebrew slides move right to left: the left arrow is "next".
+    if (["ArrowLeft", "PageDown", " "].includes(e.key)) {
+      e.preventDefault();
+      go(current.index + 1);
+    } else if (["ArrowRight", "PageUp"].includes(e.key)) {
+      e.preventDefault();
+      go(current.index - 1);
+    } else if (e.key === "Escape" && !document.fullscreenElement) {
+      location.hash = "";
+    }
+  });
+
+  let touchX = null;
+  document.addEventListener("touchstart", (e) => (touchX = e.touches[0].clientX), { passive: true });
+  document.addEventListener("touchend", (e) => {
+    if (touchX === null || !current) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+    if (Math.abs(dx) > 60) go(current.index + (dx > 0 ? 1 : -1));
+  });
+
+  window.addEventListener("resize", () => {
+    layoutStage();
+    if (current) renderSlide();
+    else renderHome();
+  });
+  window.addEventListener("hashchange", route);
+
+  /* ---------- self-check: index.html?check lists slides that had to shrink
+     a lot or still overflow (every quiz question too, answered). ---------- */
+  async function runCheck() {
+    await document.fonts?.ready;
+    const rows = [];
+    const note = (where) => {
+      const root = $("#card").firstElementChild;
+      const fit = +root.dataset.fit;
+      if (root.dataset.over || fit < 0.8) rows.push(`${root.dataset.over ? "OVERFLOW" : "small   "} fit=${fit.toFixed(2)}  ${where}`);
+    };
+    renderHome();
+    if (+$(".home").dataset.fit < 1) rows.push(`home fit=${$(".home").dataset.fit}`);
+    for (const lesson of LESSONS) {
+      const slides = lessonSlides(lesson);
+      for (let i = 0; i < slides.length; i++) {
+        current = { lesson, index: i };
+        if (slides[i].kind === "quiz") {
+          for (let q = 0; q < lesson.quiz.length; q++) {
+            const st = getQuizState(lesson);
+            Object.assign(st, { i: q, picked: (lesson.quiz[q][3] + 1) % lesson.quiz[q][2].length, done: false });
+            renderSlide();
+            note(`${lesson.id} quiz q${q + 1}`);
+          }
+          getQuizState(lesson).done = true;
+          renderSlide();
+          note(`${lesson.id} quiz done`);
+          delete quizState[lesson.id];
+        } else {
+          renderSlide();
+          note(`${lesson.id} slide ${i + 1}`);
+        }
+      }
+    }
+    const pre = document.createElement("pre");
+    pre.id = "report";
+    pre.textContent = `CHECK ${landscape ? "landscape" : "portrait"}  ${rows.length} issue(s)\n` + rows.join("\n");
+    document.body.appendChild(pre);
+    document.title = "CHECK DONE";
+  }
+
+  layoutStage();
+  if (new URLSearchParams(location.search).has("check")) runCheck();
+  else route();
+};
+</script>
+<script>
+// The lessons are private: the server hands them only to the site owner's
+// Google account, so wait for the sign-in and fetch them with its token.
+(async function () {
+  const gateText = document.getElementById("gateText");
+  const showGate = (html) => (gateText.innerHTML = html);
+  const signInLink = '<a href="/admin/students">להתחברות בניהול תלמידים</a>';
+
+  if (!(await window.FirebaseApp?.ready)) {
+    showGate("ההתחברות עם Google עדיין לא מוגדרת באתר");
+    return;
+  }
+  let started = false;
+  FirebaseApp.auth.onAuthStateChanged(async (user) => {
+    if (started) return;
+    if (!user) {
+      showGate(`צריך להתחבר כדי לראות את השיעורים<br />${signInLink}`);
+      return;
+    }
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch("/api/admin/math-lessons/data.js", { headers: { Authorization: `Bearer ${token}` } });
+      if (res.status === 401 || res.status === 403) {
+        showGate(`הדף הזה פתוח רק למנהל האתר<br />${signInLink}`);
+        return;
+      }
+      if (!res.ok) throw new Error(res.status);
+      const script = document.createElement("script");
+      script.textContent = await res.text();
+      document.head.appendChild(script);
+      started = true;
+      document.getElementById("gate").remove();
+      window.startMathPlayer();
+    } catch {
+      showGate("לא הצלחנו לטעון את השיעורים. נסו לרענן את הדף");
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -462,6 +462,10 @@ body.adm-body {
   box-shadow: 1px 1px 0 0 var(--ink);
 }
 
+.adm-owner-link {
+  text-decoration: none;
+}
+
 .adm-fold-icon {
   display: grid;
   place-items: center;

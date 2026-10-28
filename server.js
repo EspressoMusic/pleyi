@@ -170,8 +170,40 @@ async function requireAuth(req, res, next) {
   if (!decoded) return res.status(401).json({ ok: false, error: "יש להתחבר מחדש" });
   req.uid = decoded.uid;
   req.userEmail = decoded.email;
+  req.isOwner = isOwnerAccount(decoded);
   next();
 }
+
+// The site owner's private pages (the math lessons) open only for these
+// Google accounts — any other signed-in teacher gets a 403.
+const OWNER_EMAILS = (process.env.OWNER_EMAILS || "shilohdhd1@gmail.com")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+
+function isOwnerAccount(decoded) {
+  return !!decoded?.email && decoded.emailVerified && OWNER_EMAILS.includes(decoded.email.toLowerCase());
+}
+
+function requireOwner(req, res, next) {
+  requireAuth(req, res, () => {
+    if (!req.isOwner) return res.status(403).json({ ok: false, error: "הדף פתוח רק למנהל האתר" });
+    next();
+  });
+}
+
+// Lives outside public/, so the only way in is this owner-checked route.
+const PRIVATE_DIR = path.join(__dirname, "private");
+
+app.get("/admin/math-lessons", (_req, res) => {
+  res.sendFile(path.join(PRIVATE_DIR, "math-lessons", "index.html"));
+});
+
+app.get("/api/admin/math-lessons/data.js", requireOwner, (_req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  res.type("application/javascript");
+  res.sendFile(path.join(PRIVATE_DIR, "math-lessons", "math-lessons-data.js"));
+});
 
 app.get("/api/premium/status", requireAuth, async (req, res) => {
   res.json({ ok: true, ...(await premiumLib.getStatus(req.uid)) });
@@ -394,6 +426,7 @@ studentAdmin.use(requireAuth);
 studentAdmin.get("/", studentRoute(async (req) => ({
   students: await studentProgress.listStudents(req.uid),
   storage: studentProgress.storageMode(),
+  isOwner: req.isOwner,
   unclaimed: bookingsLib.getSettings().teacherPin ? await studentProgress.countUnowned() : 0,
 })));
 
