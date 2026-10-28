@@ -12,6 +12,8 @@
     lifeskills: "כישורי חיים",
     health: "נפלאות הבריאה",
     body: "גוף האדם",
+    geography: "גאוגרפיה",
+    history: "היסטוריה",
   };
   const SUBJECT_LABELS_EN = {
     english: "English",
@@ -21,8 +23,10 @@
     lifeskills: "Life Skills",
     health: "Health Wonders",
     body: "Human Body",
+    geography: "Geography",
+    history: "History",
   };
-  const ACTIVE_SUBJECTS = ["english", "math", "hebrew", "science", "lifeskills", "health", "body"];
+  const ACTIVE_SUBJECTS = ["english", "math", "hebrew", "science", "geography", "history", "lifeskills", "health", "body"];
   const LESSON_SHARE_PATH = "/services/ready-lessons.html";
   const LP_SPEAKER_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
 
@@ -3452,6 +3456,17 @@
   // every lesson ends with — the quiz, the class discussion, the games and
   // the end slide. `num` / `count` number the lesson inside its topic
   // ("פועל להיות 2 – לא ושאלות").
+  // Subject lessons are written with the right answer anywhere (usually
+  // first); the quiz moves it to a different place in each question, keeping
+  // the order of the other options around it.
+  const QUIZ_ANSWER_SLOTS = [1, 0, 2, 1, 2, 0];
+  function placeAnswer(options, answer, i) {
+    const n = options.length;
+    const target = QUIZ_ANSWER_SLOTS[i % QUIZ_ANSWER_SLOTS.length] % n;
+    const shift = (target - answer + n) % n;
+    return { options: options.map((_, j) => options[(j - shift + n) % n]), answer: target };
+  }
+
   function shortLesson(entry, num, count) {
     const subject = entry.subject || "english";
     const numbered = count > 1 ? `${entry.name} ${num}` : entry.name;
@@ -3480,7 +3495,14 @@
           type: "quiz",
           title: "בואו **נבדוק**",
           subtitle: "שאלות",
-          questions: entry.quiz.map(([q, he, options, answer, why]) => ({ q, ...(he && { he }), options, answer, why })),
+          // The second item is a Hebrew hint in English lessons, and the
+          // exercise itself (math, shown big under the question) in the others.
+          questions: entry.quiz.map(([q, second, options, answer, why], i) => ({
+            q,
+            ...(second && (subject === "english" ? { he: second } : { math: second })),
+            ...(subject === "english" ? { options, answer } : placeAnswer(options, answer, i)),
+            why,
+          })),
         },
         { type: "content", title: "דיון כיתתי", subtitle: "שאלות על השיעור", body: entry.discuss.join("\n\n") },
         { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
@@ -3618,17 +3640,68 @@
       ],
     },
     math: {
-      ag: [{ id: "fractions", label: "שברים" }],
-      dv: [{ id: "fractions", label: "שברים" }],
+      ag: [
+        { id: "fractions", label: "שברים" },
+        { id: "multiplication", label: "לוח הכפל" },
+        { id: "shapes", label: "צורות, היקף ושטח" },
+      ],
+      dv: [
+        { id: "fractions", label: "שברים" },
+        { id: "multiplication", label: "לוח הכפל" },
+        { id: "shapes", label: "צורות, היקף ושטח" },
+        { id: "percent", label: "אחוזים" },
+        { id: "equations", label: "משוואות" },
+      ],
+      zh: [
+        { id: "percent", label: "אחוזים" },
+        { id: "equations", label: "משוואות" },
+        { id: "ratio", label: "יחס ופרופורציה" },
+        { id: "pythagoras", label: "משפט פיתגורס" },
+        { id: "congruence", label: "משולשים חופפים" },
+      ],
     },
     hebrew: {
-      ag: [{ id: "roots", label: "שורש" }],
-      dv: [{ id: "roots", label: "שורש" }],
-      zh: [{ id: "roots", label: "שורש" }],
+      ag: [
+        { id: "roots", label: "שורש ובניין" },
+        { id: "he-tenses", label: "זמנים" },
+        { id: "writing", label: "ניסוח ופיסוק" },
+        { id: "reading", label: "הבנת הנקרא" },
+      ],
+      dv: [
+        { id: "roots", label: "שורש ובניין" },
+        { id: "he-tenses", label: "זמנים" },
+        { id: "writing", label: "ניסוח ופיסוק" },
+        { id: "reading", label: "הבנת הנקרא" },
+      ],
+      zh: [
+        { id: "roots", label: "שורש ובניין" },
+        { id: "writing", label: "ניסוח ופיסוק" },
+        { id: "reading", label: "הבנת הנקרא" },
+      ],
     },
     science: {
-      ag: [{ id: "plants", label: "צמחים" }],
-      dv: [{ id: "plants", label: "צמחים" }],
+      ag: [
+        { id: "plants", label: "צמחים" },
+        { id: "animals", label: "בעלי חיים" },
+        { id: "electricity", label: "חשמל" },
+        { id: "human-body", label: "גוף האדם" },
+      ],
+      dv: [
+        { id: "plants", label: "צמחים" },
+        { id: "animals", label: "בעלי חיים" },
+        { id: "electricity", label: "חשמל" },
+        { id: "human-body", label: "גוף האדם" },
+      ],
+    },
+    geography: {
+      ag: [{ id: "israel-map", label: "מפת ארץ ישראל" }],
+      dv: [{ id: "israel-map", label: "מפת ארץ ישראל" }],
+      zh: [{ id: "israel-map", label: "מפת ארץ ישראל" }],
+    },
+    history: {
+      ag: [{ id: "jewish-history", label: "תולדות עם ישראל" }],
+      dv: [{ id: "jewish-history", label: "תולדות עם ישראל" }],
+      zh: [{ id: "jewish-history", label: "תולדות עם ישראל" }],
     },
     health: {
       ag: [
@@ -4380,6 +4453,33 @@
     );
   }
 
+  // Math in the other subjects' lessons, read left to right even inside a
+  // Hebrew line: {a|b} a fraction, √{n} a root with a bar, "-" a real minus,
+  // ** the key part.
+  function mathHtml(src) {
+    const inner = fracHtml(
+      escHtml(src)
+        .replace(/-/g, "−")
+        .replace(/√\{([^{}]*)\}/g, '<span class="lp-sqrt">√<span class="lp-rad">$1</span></span>')
+    ).replace(/\*\*(.+?)\*\*/g, '<b class="lp-key">$1</b>');
+    return `<bdi class="lp-math" dir="ltr">${inner}</bdi>`;
+  }
+
+  // Hebrew text of a subject lesson, where "$...$" marks a math bit.
+  function subjectTextHtml(src) {
+    return String(src)
+      .split("$")
+      .map((part, i) =>
+        i % 2 ? mathHtml(part) : fracHtml(escHtml(part)).replace(/\*\*(.+?)\*\*/g, '<strong class="lp-em">$1</strong>')
+      )
+      .join("");
+  }
+
+  // A cell, card or answer of a subject lesson: Hebrew text or plain math.
+  function subjectAutoHtml(src) {
+    return containsHebrew(src) ? { dir: "rtl", html: subjectTextHtml(src) } : { dir: "ltr", html: mathHtml(src) };
+  }
+
   function isHebrewLetter(ch) {
     return /[\u0590-\u05FF]/.test(ch);
   }
@@ -5071,17 +5171,19 @@
       const { slide, i } = quizState;
       const q = slide.questions[i];
       const total = slide.questions.length;
-      const qHtml = fracHtml(escHtml(q.q)).split("___").join('<span class="lp-quiz-blank"></span>');
+      const subject = isSubjectLesson();
+      const qHtml = (subject ? subjectTextHtml(q.q) : fracHtml(escHtml(q.q))).split("___").join('<span class="lp-quiz-blank"></span>');
       const options = q.options
-        .map(
-          (o, k) =>
-            `<button type="button" class="lp-quiz-opt" data-k="${k}" dir="${containsHebrew(o) ? "rtl" : "ltr"}">${fracHtml(escHtml(o))}</button>`
-        )
+        .map((o, k) => {
+          const shown = subject ? subjectAutoHtml(o) : { dir: containsHebrew(o) ? "rtl" : "ltr", html: fracHtml(escHtml(o)) };
+          return `<button type="button" class="lp-quiz-opt" data-k="${k}" dir="${shown.dir}">${shown.html}</button>`;
+        })
         .join("");
       return `
         <p class="lp-quiz-count">${en ? `Question ${i + 1} of ${total}` : `שאלה ${i + 1} מתוך ${total}`}</p>
         ${q.he ? `<p class="lp-quiz-hint" dir="rtl">${escHtml(q.he)}</p>` : ""}
         <p class="lp-quiz-q" dir="${containsHebrew(q.q) ? "rtl" : "ltr"}">${qHtml}</p>
+        ${q.math ? `<p class="lp-quiz-math">${mathHtml(q.math)}</p>` : ""}
         <div class="lp-quiz-options">${options}</div>
         <p class="lp-quiz-feedback" aria-live="polite"></p>
         <button type="button" class="lp-quiz-next is-pending" tabindex="-1" aria-hidden="true">${
@@ -5156,10 +5258,8 @@
         feedback.textContent = en ? "Not quite — try again" : "לא נכון — נסו שוב";
         // A short "why" under the feedback, so a student alone sees the rule.
         if (q.why && !en) {
-          feedback.insertAdjacentHTML(
-            "beforeend",
-            `<span class="lp-quiz-why" dir="rtl">${isolateInlineEnglish(fracHtml(escHtml(q.why)), lesson?.vocab)}</span>`
-          );
+          const why = isSubjectLesson() ? subjectTextHtml(q.why) : isolateInlineEnglish(fracHtml(escHtml(q.why)), lesson?.vocab);
+          feedback.insertAdjacentHTML("beforeend", `<span class="lp-quiz-why" dir="rtl">${why}</span>`);
         }
         feedback.className = "lp-quiz-feedback is-wrong";
         fitSlideContent();
@@ -5217,6 +5317,12 @@
 
     function isHebrewLesson() {
       return curLang() !== "en";
+    }
+
+    // Math, Hebrew, science… (subject-lessons.js): Latin letters there are
+    // math ("x = 12"), never English words to hear or translate.
+    function isSubjectLesson() {
+      return !!lesson?.subject && lesson.subject !== "english";
     }
 
     function renderVolcanoOutputScene(hebrew = true) {
@@ -5349,6 +5455,7 @@
     }
 
     function stepsHebrewHtml(text) {
+      if (isSubjectLesson()) return subjectTextHtml(text);
       return isolateInlineEnglish(
         fracHtml(escHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong class="lp-em">$1</strong>')),
         lesson?.vocab
@@ -5357,20 +5464,20 @@
 
     // Right-to-left for Hebrew text, left-to-right for English and math.
     function stepsTextHtml(text) {
+      if (isSubjectLesson()) return subjectAutoHtml(text);
       return containsHebrew(text)
         ? { dir: "rtl", html: stepsHebrewHtml(text) }
         : { dir: "ltr", html: stepsEnglishHtml(text) };
     }
 
     function stepsCellHtml(text) {
-      return containsHebrew(text)
-        ? `<span class="lp-steps-cell" dir="rtl">${stepsHebrewHtml(text)}</span>`
-        : `<span class="lp-steps-cell" dir="ltr">${stepsEnglishHtml(text)}</span>`;
+      const shown = stepsTextHtml(text);
+      return `<span class="lp-steps-cell" dir="${shown.dir}">${shown.html}</span>`;
     }
 
     function stepsExampleHtml(ex) {
       // Hebrew or math cards (other subjects) have nothing to hear.
-      if (!containsLatinLetter(ex.en)) {
+      if (isSubjectLesson() || !containsLatinLetter(ex.en)) {
         const main = stepsTextHtml(ex.en);
         return `
         <div class="lp-ex">
@@ -5386,21 +5493,70 @@
         </div>`;
     }
 
+    // Parts of a worked exercise (subject lessons). A drawing next to any of
+    // them gets a column of its own beside the text, and wraps under it on a
+    // narrow screen.
+    const LP_SIDE_FIG_PARTS = ["math", "steps", "check", "grid", "verdicts", "proof", "points", "chips", "result", "table", "compare"];
+
     function renderStepsBody(slide) {
       const hebrew = isHebrewLesson();
       const parts = (slide.lines || []).map((line) => `<p class="lp-steps-line">${stepsHebrewHtml(line)}</p>`);
       const figure = slide.fig && window.LESSON_FIGURES?.[slide.fig.kind];
-      const figHtml = figure ? `<div class="lp-fig">${figure(slide.fig)}</div>` : "";
+      const figHtml = figure ? `<div class="lp-fig${figure.tall ? " lp-fig--tall" : ""}">${figure(slide.fig)}</div>` : "";
+      const sideFig = figHtml && (figure.tall || LP_SIDE_FIG_PARTS.some((key) => slide[key]));
       // A drawing with a single card (a pie and its fraction) sits beside it.
-      const besideFig = figHtml && slide.examples?.length === 1 && !slide.table;
-      if (figHtml && !besideFig) parts.push(figHtml);
+      const besideFig = figHtml && !sideFig && slide.examples?.length === 1;
+      if (figHtml && !besideFig && !sideFig) parts.push(figHtml);
+      // Big math cards: "x + 2 = 5" or ["3 : 2", "קוראים: 3 ל־2"] with a note.
+      if (slide.math?.length) {
+        parts.push(
+          `<div class="lp-math-list">${slide.math
+            .map((item) => {
+              const [m, note] = Array.isArray(item) ? item : [item, ""];
+              return `<div class="lp-math-card"><span class="lp-math-main">${mathHtml(m)}</span>${
+                note ? `<span class="lp-math-note" dir="rtl">${subjectTextHtml(note)}</span>` : ""
+              }</div>`;
+            })
+            .join("")}</div>`
+        );
+      }
       if (slide.table?.length) {
         const arrow = `<span class="lp-steps-arrow">${LP_ARROW_ICON(hebrew ? "left" : "right")}</span>`;
+        const head = slide.tableHead
+          ? `<div class="lp-steps-row is-head">${stepsCellHtml(slide.tableHead[0])}<span></span>${stepsCellHtml(slide.tableHead[1])}</div>`
+          : "";
         parts.push(
-          `<div class="lp-steps-table">${slide.table
+          `<div class="lp-steps-table">${head}${slide.table
             .map(([from, to]) => `<div class="lp-steps-row">${stepsCellHtml(from)}${arrow}${stepsCellHtml(to)}</div>`)
             .join("")}</div>`
         );
+      }
+      // A data table: { head: [...], rows: [[...], ...] }; the last row is the
+      // one with the unknown.
+      if (slide.grid) {
+        parts.push(
+          `<table class="lp-grid" dir="rtl"><tr>${slide.grid.head.map((h) => `<th>${subjectTextHtml(h)}</th>`).join("")}</tr>${slide.grid.rows
+            .map((row) => `<tr>${row.map((cell) => `<td>${stepsTextHtml(cell).html}</td>`).join("")}</tr>`)
+            .join("")}</table>`
+        );
+      }
+      // Solving steps lined up on "=": [[row, action?], ...]. The action is
+      // what both sides get ("·3" shows as "/ ·3"); the last row is the answer.
+      if (slide.steps?.length) {
+        const last = slide.steps.length - 1;
+        const rows = slide.steps
+          .map(([row, act], i) => {
+            const at = row.indexOf("=");
+            const [l, r] = at < 0 ? [row, ""] : [row.slice(0, at).trim(), row.slice(at + 1).trim()];
+            return `<tr${i === last ? ' class="is-answer"' : ""}><td class="lp-st-l">${mathHtml(l)}</td><td class="lp-st-e">${
+              at < 0 ? "" : "="
+            }</td><td class="lp-st-r">${mathHtml(r)}</td><td class="lp-st-a">${act ? `<span class="lp-st-act">/ ${mathHtml(act)}</span>` : ""}</td></tr>`;
+          })
+          .join("");
+        parts.push(`<div class="lp-st-card"><table class="lp-st" dir="ltr">${rows}</table></div>`);
+      }
+      if (slide.check) {
+        parts.push(`<div class="lp-check" dir="rtl">${LP_RIGHT_ICON}<span>בדיקה</span>${mathHtml(slide.check)}</div>`);
       }
       if (slide.examples?.length) {
         const joiner = slide.flow ? `<span class="lp-ex-flow">${LP_ARROW_ICON("down")}</span>` : "";
@@ -5425,6 +5581,44 @@
           )}</div>`
         );
       }
+      // Yes / no checks: [[math, ok, note], ...].
+      if (slide.verdicts?.length) {
+        parts.push(
+          `<div class="lp-compare">${slide.verdicts
+            .map(
+              ([m, ok, note]) => `
+          <div class="lp-compare-row is-${ok ? "right" : "wrong"}">
+            <span class="lp-compare-mark">${ok ? LP_RIGHT_ICON : LP_WRONG_ICON}<span>${ok ? "כן" : "לא"}</span></span>
+            <span class="lp-verdict-body"><span class="lp-compare-text" dir="ltr">${mathHtml(m)}</span><span class="lp-math-note" dir="rtl">${subjectTextHtml(note)}</span></span>
+          </div>`
+            )
+            .join("")}</div>`
+        );
+      }
+      // A proof: [[claim, reason], ...] under טענה / נימוק.
+      if (slide.proof?.length) {
+        const last = slide.proof.length - 1;
+        parts.push(
+          `<table class="lp-proof" dir="rtl"><tr><th>טענה</th><th>נימוק</th></tr>${slide.proof
+            .map(
+              ([claim, reason], i) =>
+                `<tr${i === last && last > 0 ? ' class="is-final"' : ""}><td class="lp-proof-claim">${mathHtml(claim)}</td><td>${subjectTextHtml(reason)}</td></tr>`
+            )
+            .join("")}</table>`
+        );
+      }
+      if (slide.points?.length) {
+        parts.push(
+          `<ol class="lp-points" dir="rtl">${slide.points
+            .map((p, i) => `<li><span class="lp-points-num">${i + 1}</span><span>${subjectTextHtml(p)}</span></li>`)
+            .join("")}</ol>`
+        );
+      }
+      if (slide.chips?.length) {
+        parts.push(`<div class="lp-chips" dir="rtl">${slide.chips.map((c) => `<div class="lp-chip">${subjectTextHtml(c)}</div>`).join("")}</div>`);
+      }
+      if (slide.result) parts.push(`<div class="lp-result" dir="rtl">${subjectTextHtml(slide.result)}</div>`);
+      if (sideFig) return `<div class="lp-steps lp-steps--side"><div class="lp-steps-col">${parts.join("")}</div>${figHtml}</div>`;
       return `<div class="lp-steps">${parts.join("")}</div>`;
     }
 
@@ -5432,7 +5626,7 @@
       let bodyHtml = "";
       let bodyLayout = "default";
 
-      if (slide.lines || slide.fig || slide.table || slide.examples || slide.compare) {
+      if (slide.lines || slide.fig || slide.examples || LP_SIDE_FIG_PARTS.some((key) => slide[key])) {
         bodyHtml = renderStepsBody(slide);
       } else if (slide.pictures?.length) {
         bodyHtml = `<ul class="lp-picture-grid" data-count="${slide.pictures.length}">${slide.pictures

@@ -2160,6 +2160,16 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   line-height: 1.4;
 }
 
+/* The exercise of a math question, big under it (subject lessons). */
+.lp-quiz-math {
+  padding: calc(var(--lp-fit, 1) * 4px) 24px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #fffef5;
+  font-size: calc(var(--lp-fit, 1) * clamp(1.5rem, 5vh, 2.2rem));
+  font-weight: 800;
+}
+
 .lp-quiz-blank {
   display: inline-block;
   min-width: 3.2em;
@@ -3564,6 +3574,344 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
   text-decoration-thickness: 2px;
 }
 
+/* Worked math (subject lessons): math inside Hebrew, math cards, solving
+   steps, a check, a data table, yes / no checks, a proof, numbered steps,
+   chips and the answer line. */
+.lp-math {
+  direction: ltr;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+
+.lp-sqrt {
+  white-space: nowrap;
+}
+
+.lp-rad {
+  padding: 0 0.08em;
+  border-top: 0.08em solid currentColor;
+}
+
+/* A drawing beside a worked exercise, under it when the slide is narrow. */
+/* Side by side on a wide slide; the drawing drops under the text only on a
+   narrow (phone) screen, where a row would leave both too small. */
+.lp-steps--side {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--lp-fit, 1) * clamp(12px, 3vw, 36px));
+}
+
+.lp-steps-col {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--lp-fit, 1) * clamp(8px, 2vh, 16px));
+  /* Never narrower than its widest exercise: the drawing gives way. */
+  min-width: min-content;
+  max-width: 34rem;
+}
+
+/* The drawing takes the room the text leaves, between about a third and a
+   half of the slide. */
+.lp-steps--side > .lp-fig {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 36%;
+  max-width: 50%;
+}
+
+@media (max-width: 640px) {
+  .lp-steps--side {
+    flex-wrap: wrap;
+  }
+
+  .lp-steps-col {
+    flex-basis: 100%;
+  }
+
+  .lp-steps--side > .lp-fig {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
+
+.lp-steps--side .lp-fig-svg {
+  height: calc(var(--lp-fit, 1) * clamp(150px, 36vh, 300px));
+}
+
+/* A tall drawing (the map) beside a few short lines can stand taller. */
+.lp-steps--side .lp-fig--tall .lp-fig-svg {
+  height: calc(var(--lp-fit, 1) * clamp(180px, 48vh, 420px));
+}
+
+.lp-math-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: calc(var(--lp-fit, 1) * 10px);
+  min-width: min(100%, 20rem);
+  max-width: 100%;
+}
+
+.lp-math-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: calc(var(--lp-fit, 1) * 8px) 22px;
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  background: #eaf5ff;
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.lp-math-main {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.4rem, 4.6vh, 2.1rem));
+  font-weight: 800;
+  line-height: 1.3;
+  color: #000;
+}
+
+.lp-math-note {
+  font-size: calc(var(--lp-fit, 1) * clamp(0.95rem, 2.9vh, 1.2rem));
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.lp-steps-row.is-head {
+  padding-block: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+.lp-steps-row.is-head .lp-steps-cell {
+  font-size: calc(var(--lp-fit, 1) * clamp(0.9rem, 2.6vh, 1.1rem));
+  color: #4b5563;
+  text-align: center;
+}
+
+.lp-st-card {
+  max-width: 100%;
+  padding: calc(var(--lp-fit, 1) * 6px) 18px;
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  background: #fffef5;
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.lp-st {
+  border-collapse: separate;
+  border-spacing: 0 calc(var(--lp-fit, 1) * 4px);
+  font-size: calc(var(--lp-fit, 1) * clamp(1.3rem, 4.2vh, 1.9rem));
+  font-weight: 800;
+  color: #000;
+}
+
+.lp-st td {
+  padding: calc(var(--lp-fit, 1) * 2px) 5px;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.lp-st-l {
+  text-align: right;
+  padding-left: 12px !important;
+}
+
+.lp-st-e {
+  text-align: center;
+}
+
+.lp-st-r {
+  text-align: left;
+  padding-right: 12px !important;
+}
+
+.lp-st-a {
+  padding-left: 12px !important;
+}
+
+.lp-st tr.is-answer .lp-st-l,
+.lp-st tr.is-answer .lp-st-e,
+.lp-st tr.is-answer .lp-st-r {
+  background: #ffe135;
+}
+
+.lp-st tr.is-answer .lp-st-l {
+  border-radius: 10px 0 0 10px;
+}
+
+.lp-st tr.is-answer .lp-st-r {
+  border-radius: 0 10px 10px 0;
+}
+
+.lp-st-act {
+  display: inline-block;
+  padding: 0 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--memteal) 30%, #fff);
+  font-size: 0.68em;
+  font-weight: 900;
+}
+
+.lp-check,
+.lp-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: calc(var(--lp-fit, 1) * 6px) 18px;
+  border-radius: 14px;
+  font-size: calc(var(--lp-fit, 1) * clamp(1.1rem, 3.4vh, 1.45rem));
+  font-weight: 800;
+  color: #000;
+}
+
+.lp-check {
+  border: 2.5px solid #2e7d32;
+  background: #e8f5e9;
+}
+
+.lp-check svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  color: #2e7d32;
+}
+
+.lp-result {
+  border: 2.5px solid var(--ink);
+  background: #fff6cc;
+  font-weight: 900;
+}
+
+.lp-grid,
+.lp-proof {
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  background: #fffef5;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: calc(var(--lp-fit, 1) * clamp(1.15rem, 3.6vh, 1.6rem));
+  font-weight: 800;
+  text-align: center;
+  color: #000;
+}
+
+.lp-grid th,
+.lp-grid td,
+.lp-proof th,
+.lp-proof td {
+  padding: calc(var(--lp-fit, 1) * 6px) 22px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.lp-grid th,
+.lp-proof th {
+  background: color-mix(in srgb, var(--memteal) 30%, #fff);
+  font-size: 0.82em;
+  font-weight: 900;
+}
+
+.lp-grid th + th,
+.lp-grid td + td,
+.lp-proof th + th,
+.lp-proof td + td {
+  border-right: 2px solid var(--ink);
+}
+
+.lp-grid tr:last-child td,
+.lp-proof tr:last-child td {
+  border-bottom: none;
+}
+
+.lp-grid td {
+  min-width: 5.5rem;
+}
+
+.lp-grid tr:last-child td,
+.lp-proof tr.is-final td {
+  background: #fff6cc;
+}
+
+.lp-proof-claim {
+  font-size: 1.1em;
+}
+
+.lp-verdict-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.lp-points {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lp-fit, 1) * 10px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-points li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: calc(var(--lp-fit, 1) * clamp(1.15rem, 3.6vh, 1.6rem));
+  font-weight: 800;
+  color: #000;
+}
+
+.lp-points-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.8em;
+  height: 1.8em;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: #ffe135;
+  font-size: 0.85em;
+  font-weight: 900;
+  color: #000;
+}
+
+.lp-chips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--lp-fit, 1) * 12px);
+  width: min(100%, 40rem);
+}
+
+.lp-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(var(--lp-fit, 1) * clamp(64px, 14vh, 100px));
+  padding: 10px 16px;
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  background: var(--memteal);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: calc(var(--lp-fit, 1) * clamp(1.1rem, 3.6vh, 1.55rem));
+  font-weight: 900;
+  text-align: center;
+  color: #000;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-points li {
+  color: #f1f5f9;
+}
+
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-steps-line {
   color: #f1f5f9;
 }
@@ -3581,6 +3929,17 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-ex-fl
 
   .lp-steps-cell {
     white-space: normal;
+  }
+
+  .lp-chips {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-grid th,
+  .lp-grid td,
+  .lp-proof th,
+  .lp-proof td {
+    padding-inline: 12px;
   }
 
   /* The "נכון / לא נכון" label above the sentence, so a long sentence
