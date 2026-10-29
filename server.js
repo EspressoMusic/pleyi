@@ -42,6 +42,15 @@ servicePages.forEach((slug) => {
   });
 });
 
+// The school subjects' learning areas — one page, which reads the subject
+// from its address (public/js/subject-practice.js).
+const subjectPages = ["math", "hebrew", "science", "geography", "history"];
+subjectPages.forEach((slug) => {
+  app.get(`/services/${slug}`, (_req, res) => {
+    res.sendFile(path.join(__dirname, "public", "services", "subject.html"));
+  });
+});
+
 const blogPosts = [
   "english-games-for-classroom",
   "quick-lesson-plan-guide",

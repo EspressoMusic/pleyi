@@ -6299,3 +6299,51 @@ html.eng-runner-open .eng-slow-btn span {
   }
 }
 
+
+/* ── School subject pages (services/subject.html): Hebrew questions with a
+   drawing from lesson-figures.js and a big math line. ── */
+
+.eng-fig {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto clamp(8px, 1.8dvh, 16px);
+}
+
+.eng-fig svg {
+  width: auto;
+  max-width: 100%;
+  height: clamp(110px, 22dvh, 210px);
+}
+
+.eng-fig--tall svg {
+  height: clamp(150px, 30dvh, 280px);
+}
+
+.eng-q-text {
+  display: block;
+}
+
+.eng-math-line {
+  display: block;
+  margin-top: 0.2em;
+  font-size: 1.15em;
+  direction: ltr;
+}
+
+.eng-q-text + .eng-math-line {
+  margin-top: 0.35em;
+}
+
+/* A blank or an answer box inside a fraction is as narrow as a digit or two. */
+.lp-frac .eng-input {
+  width: 2.2em;
+}
+
+.lp-frac .eng-blank {
+  min-width: 1.4em;
+}
+
+.eng-option .lp-frac,
+.eng-match-item .lp-frac {
+  font-size: 0.92em;
+}

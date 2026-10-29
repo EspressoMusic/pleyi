@@ -27,6 +27,16 @@
     history: "History",
   };
   const ACTIVE_SUBJECTS = ["english", "math", "hebrew", "science", "geography", "history", "lifeskills", "health", "body"];
+  // Subjects with a learning area of their own (a path of topics, lessons and
+  // practice exercises): English, and the school subjects (subject-practice.js).
+  const SUBJECT_AREAS = {
+    english: "/services/english",
+    math: "/services/math",
+    hebrew: "/services/hebrew",
+    science: "/services/science",
+    geography: "/services/geography",
+    history: "/services/history",
+  };
   const LESSON_SHARE_PATH = "/services/ready-lessons.html";
   const LP_SPEAKER_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
 
@@ -3815,14 +3825,19 @@
     const topicValue = $("#filterTopicValue");
     const cards = $$(".svc-lesson-card[data-lesson]");
     const empty = $("#lessonEmptyState");
-    // The English practice area (/services/english) lives here as a card
-    // instead of a separate menu item.
+    // The English lessons live in the English area (/services/english), so
+    // the library shows it as one card instead of a card per lesson.
     const practiceCard = $("#englishPracticeCard");
     if (!filtersRoot || !topicMenu || !cards.length) return;
 
-    practiceCard?.addEventListener("click", () => {
-      window.location.href = "/services/english";
-    });
+    // Capture: the card's "פתיחה" button stops its click from bubbling up.
+    practiceCard?.addEventListener(
+      "click",
+      () => {
+        window.location.href = SUBJECT_AREAS.english;
+      },
+      true
+    );
 
     const state = { subject: "all", grade: "all", topic: "all" };
     let openDropdown = null;
@@ -3866,7 +3881,8 @@
     }
 
     function getTopicOptions() {
-      const subjects = state.subject === "all" ? ACTIVE_SUBJECTS : [state.subject];
+      // The English topics are in the English area, not in the grid.
+      const subjects = state.subject === "all" ? ACTIVE_SUBJECTS.filter((s) => s !== "english") : [state.subject];
       const grades = state.grade === "all" ? ["ag", "dv", "zh"] : [state.grade];
       const seen = new Map();
       subjects.forEach((subject) => {
@@ -3933,7 +3949,7 @@
         card.classList.toggle("hidden", !show);
         if (show) visible += 1;
       });
-      const showPractice = (state.subject === "all" || state.subject === "english") && state.topic === "all";
+      const showPractice = state.subject === "all" && state.topic === "all";
       practiceCard?.classList.toggle("hidden", !showPractice);
       if (showPractice) visible += 1;
       empty?.classList.toggle("hidden", visible > 0);
@@ -4022,6 +4038,16 @@
       $("#filterSubjectTrigger"),
       $("#filterSubjectMenu"),
       (btn) => {
+        // English and the school subjects have their own area (learning
+        // path, exercises): choosing one goes straight there instead of
+        // filtering the cards.
+        const area = SUBJECT_AREAS[btn.dataset.subject];
+        if (area) {
+          btn.classList.remove("active");
+          $(`#filterSubjectMenu button[data-subject="${state.subject}"]`)?.classList.add("active");
+          window.location.href = area;
+          return;
+        }
         state.subject = btn.dataset.subject;
         if (subjectValue) subjectValue.textContent = btn.textContent;
         renderTopicMenu();
@@ -6031,5 +6057,10 @@
     openLesson: (lessonId) => openLessonSlides?.(lessonId),
     resumeLesson: (lessonId, slideIndex) => resumeLessonSlides?.(lessonId, slideIndex),
     localize: localizeLesson,
+    // The subject lessons' math markup, for their practice exercises
+    // (english-learning.js on a subject page).
+    mathHtml,
+    textHtml: subjectTextHtml,
+    autoHtml: (src) => subjectAutoHtml(src).html,
   };
 })();

@@ -12,8 +12,13 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  const TOPICS = window.ENGLISH_TOPICS || [];
+  // A school subject's page (services/subject.html) runs this same engine on
+  // its own topics and path (subject-practice.js): Hebrew questions, read
+  // right to left, with math bits in them.
+  const SUBJECT = window.LEARN_SUBJECT || null;
+  const TOPICS = SUBJECT ? SUBJECT.topics : window.ENGLISH_TOPICS || [];
   const VOCAB = window.ENGLISH_VOCAB || {};
+  const TEXT_DIR = SUBJECT ? "rtl" : "ltr";
   const BEST_KEY = "pleyi-english-best";
   const AUTO_NEXT_MS = 1100;
   const AUTO_NEXT_WITH_FIX_MS = 2200;
@@ -36,6 +41,7 @@
       practice: "לתרגול",
       slides: (n) => `${n} שקופיות`,
       sentences: (n) => `${n} משפטים`,
+      questionsCount: (n) => `${n} שאלות`,
       words: (n) => `${n} מילים`,
       pairs: (n) => `${n} זוגות`,
       best: (s, t) => `השיא שלך: ${s}/${t}`,
@@ -46,6 +52,7 @@
       matchProgress: (m, t) => `${m} מתוך ${t} זוגות`,
       correct: "נכון!",
       wrong: (a) => `התשובה הנכונה: ${a}`,
+      wrongLabel: "התשובה הנכונה:",
       next: "הבא",
       finish: "לתוצאות",
       check: "בדיקה",
@@ -309,6 +316,7 @@
       practice: "Practice",
       slides: (n) => `${n} slides`,
       sentences: (n) => `${n} sentences`,
+      questionsCount: (n) => `${n} questions`,
       words: (n) => `${n} words`,
       pairs: (n) => `${n} pairs`,
       best: (s, t) => `Your best: ${s}/${t}`,
@@ -319,6 +327,7 @@
       matchProgress: (m, t) => `${m} of ${t} pairs`,
       correct: "Correct!",
       wrong: (a) => `The right answer: ${a}`,
+      wrongLabel: "The right answer:",
       next: "Next",
       finish: "See results",
       check: "Check",
@@ -567,6 +576,12 @@
     },
   };
 
+  // On a subject page the answer is typed in Hebrew or as a number.
+  if (SUBJECT) {
+    STR.he.helpTips.write = "כותבים את התשובה ולוחצים על „בדיקה” (או על Enter).";
+    STR.en.helpTips.write = "Type the answer and click “Check” (or press Enter).";
+  }
+
   const ICONS = {
     slides: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>`,
     choice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="2"/><rect x="3" y="13" width="18" height="5" rx="2"/><path d="m14 6.5 1.5 1.5 3-3"/></svg>`,
@@ -649,6 +664,37 @@
       .replace(/"/g, "&quot;");
   }
 
+  // A question, an answer, an option or a match card: English as it is, or on
+  // a subject page Hebrew where "$...$" is math and {a|b} a fraction — or
+  // plain math ("x = 4", "6 × 7 = 42"), which reads left to right. Drawn by
+  // ready-lessons.js, like the lessons.
+  function aHtml(str) {
+    return SUBJECT && window.ReadyLessons?.autoHtml ? window.ReadyLessons.autoHtml(String(str ?? "")) : esc(str);
+  }
+  const qHtml = aHtml;
+
+  // Plain text for the teacher's page: no math marks.
+  function plainText(str) {
+    if (!SUBJECT) return str;
+    return String(str ?? "")
+      .replace(/\{([^{}|]*)\|([^{}]*)\}/g, "$1/$2")
+      .replace(/√\{([^{}]*)\}/g, "√$1")
+      .replace(/\$|\*\*/g, "");
+  }
+
+  // A subject question's drawing (lesson-figures.js) and its big math line,
+  // where "___" is the blank (`blank`: what goes there).
+  function figHtml(q) {
+    const draw = q?.fig && window.LESSON_FIGURES?.[q.fig.kind];
+    return draw ? `<div class="eng-fig${draw.tall ? " eng-fig--tall" : ""}">${draw(q.fig)}</div>` : "";
+  }
+
+  function mathLineHtml(q, blank = "") {
+    if (!q?.math || !window.ReadyLessons?.mathHtml) return "";
+    const parts = window.ReadyLessons.mathHtml(q.math).split("___");
+    return `<span class="eng-math-line" dir="ltr">${parts.length < 2 ? parts[0] : `${parts[0]}${blank}${parts.slice(1).join("___")}`}</span>`;
+  }
+
   // Each sentence of an explanation is a point of its own, so it gets its own
   // line. "e.g." and a "Listen! —" mid-sentence don't end one.
   function byLine(text, toHtml = esc) {
@@ -692,12 +738,28 @@
   // Typed answers: ignore case, extra spaces, trailing punctuation and
   // curly/backtick apostrophes that phone keyboards insert.
   function normalize(str) {
-    return String(str || "")
+    const out = String(str || "")
       .toLowerCase()
       .replace(/[’‘`´]/g, "'")
       .replace(/\s+/g, " ")
       .replace(/[.!?]+$/, "")
       .trim();
+    // A subject answer: a long minus or a dash is a minus, "1,000" is 1000,
+    // spaces and Hebrew vowel marks don't count.
+    if (!SUBJECT) return out;
+    return out
+      .replace(/[−–]/g, "-")
+      .replace(/(\d),(?=\d{3}\b)/g, "$1")
+      .replace(/[֑-ׇ]/g, "")
+      .replace(/\s+/g, "");
+  }
+
+  // Two typed numbers that are the same number ("2.50" and "2.5").
+  function sameNumber(a, b) {
+    const num = (s) => (/^-?\d*\.?\d+$/.test(s) ? Number(s) : NaN);
+    const x = num(normalize(a));
+    const y = num(normalize(b));
+    return !Number.isNaN(x) && !Number.isNaN(y) && Math.abs(x - y) < 1e-9;
   }
 
   function readBest() {
@@ -1093,7 +1155,7 @@
 
   // The learning path (english-data.js): the topics in teaching order, in
   // stages. When it is set, the topic grid shows it instead of the groups.
-  const PATH = window.ENGLISH_PATH || [];
+  const PATH = SUBJECT ? SUBJECT.path : window.ENGLISH_PATH || [];
 
   function pathTopics() {
     return PATH.flatMap((stage) => stage.topics).map(findTopic).filter(Boolean);
@@ -1163,7 +1225,7 @@
   // `num`: the topic's place on the learning path, shown on the tile. Every
   // topic (reading and exams too) is a plain square tile.
   function topicTileHtml(topic, num) {
-    const sub = lang() === "en" ? "" : `<span class="eng-topic-sub" dir="ltr">${esc(topic.titleEn)}</span>`;
+    const sub = lang() === "en" || !topic.titleEn ? "" : `<span class="eng-topic-sub" dir="ltr">${esc(topic.titleEn)}</span>`;
     const badge = num ? `<span class="eng-path-num" aria-hidden="true">${num}</span>` : "";
     const img = topic.cover ? `<img class="eng-topic-img" src="${esc(imgUrl(topic.cover))}" alt="" draggable="false" />` : "";
     return `
@@ -1261,7 +1323,7 @@
     // Picture true / false asks about every word twice.
     if (ex.questions?.[0]?.img) return t("words", new Set(ex.questions.map((q) => q.word)).size);
     if (ex.words) return t("words", ex.words.length);
-    return t("sentences", ex.questions.length);
+    return t(SUBJECT ? "questionsCount" : "sentences", ex.questions.length);
   }
 
   function passageWordCount(ex) {
@@ -1438,7 +1500,7 @@
       <div class="eng-topic-head">
         <a class="eng-back" href="${backHref}" aria-label="${esc(t("back"))}" title="${esc(t("back"))}">${ICONS.back}</a>
         <h2 class="font-cartoon eng-topic-heading">${esc(loc(topic, "title"))}</h2>
-        ${lang() === "he" ? `<p class="eng-topic-heading-en" dir="ltr">${esc(topic.titleEn)}</p>` : ""}
+        ${lang() === "he" && topic.titleEn ? `<p class="eng-topic-heading-en" dir="ltr">${esc(topic.titleEn)}</p>` : ""}
       </div>`;
 
     if (topic.id === EXAMS_TOPIC) {
@@ -1710,6 +1772,7 @@
   // Sent when a round ends: the server gets new items ready while the
   // student looks at the results, so the button rarely has to wait.
   function preparePractice(topic, ex) {
+    if (SUBJECT) return;
     practiceRequest("/api/english/practice/prepare", topic, ex).catch(() => {});
   }
 
@@ -2252,11 +2315,17 @@
     const options = question.options || runner.exercise?.options || [];
     const letterCls = options.length && options.every((opt) => opt.length === 1) ? " is-letter" : "";
     const blank = filled
-      ? `<span class="eng-blank${letterCls} is-${state}" dir="ltr">${esc(filled)}</span>`
+      ? `<span class="eng-blank${letterCls} is-${state}"${SUBJECT ? "" : ' dir="ltr"'}>${aHtml(filled)}</span>`
       : `<span class="eng-blank${letterCls}">&nbsp;</span>`;
     const hint = question.hint ? ` <span class="eng-hint">(${esc(question.hint)})</span>` : "";
-    const parts = esc(question.text).split("___");
-    if (parts.length < 2) return `${esc(question.text)} ${blank}${hint}`;
+    // A subject question with its exercise on a big math line: the blank is
+    // there, and the question has none when the options answer it as a whole.
+    if (question.math) {
+      const text = question.text ? `<span class="eng-q-text">${qHtml(question.text)}</span>` : "";
+      return `${text}${mathLineHtml(question, question.math.includes("___") ? blank : "")}`;
+    }
+    const parts = qHtml(question.text).split("___");
+    if (parts.length < 2) return SUBJECT ? parts[0] : `${parts[0]} ${blank}${hint}`;
     return `${parts[0]}${blank}${hint}${parts.slice(1).join("___")}`;
   }
 
@@ -2430,6 +2499,17 @@
     return $$(".js-answer", views.exercise());
   }
 
+  // "The right answer: …" — on a subject page the answer may be math.
+  function wrongHtml(answer) {
+    return SUBJECT ? `${esc(t("wrongLabel"))} ${aHtml(answer)}` : esc(t("wrong", answer));
+  }
+
+  // Whether the question has a blank for its answer (in its math line, or
+  // in its text when it has none).
+  function hasBlank(q) {
+    return String(q.math || q.text || "").includes("___");
+  }
+
   function lockAnswers() {
     answerButtons().forEach((btn) => {
       btn.disabled = true;
@@ -2449,6 +2529,13 @@
   // A plain-text summary of a missed question for the teacher's progress page.
   // Stored in Hebrew, since that page is Hebrew-only.
   function mistakeRecord(q, given) {
+    const record = mistakeRecordOf(q, given);
+    if (!SUBJECT) return record;
+    const prompt = runner.exercise.type === "match" ? record.prompt : [q.text, q.math].filter(Boolean).join(" ");
+    return { prompt: plainText(prompt), answer: plainText(record.answer), given: plainText(record.given) };
+  }
+
+  function mistakeRecordOf(q, given) {
     const type = runner.exercise.type;
     if (type === "match") return { prompt: q.a, answer: q.b || VOCAB[q.word]?.he || "", given: "" };
     if (type === "truefalse") {
@@ -2508,12 +2595,13 @@
         const options = q.options ? shuffle(q.options) : runner.exercise.options;
         renderRunnerShell(`
           ${instructionsHtml()}
-          <div class="eng-sentence" dir="ltr"><p id="engSentence">${sentenceHtml(q)}</p>${contextHtml(q)}${translationHtml(q)}</div>
-          <div class="eng-options" dir="ltr">
+          ${figHtml(q)}
+          <div class="eng-sentence" dir="${TEXT_DIR}"><p id="engSentence">${sentenceHtml(q)}</p>${contextHtml(q)}${translationHtml(q)}</div>
+          <div class="eng-options" dir="${TEXT_DIR}">
             ${options
               .map(
                 (opt, i) =>
-                  `<button type="button" class="eng-option js-answer" data-option="${esc(opt)}"><span class="eng-option-key">${i + 1}</span>${esc(opt)}</button>`
+                  `<button type="button" class="eng-option js-answer" data-option="${esc(opt)}"><span class="eng-option-key">${i + 1}</span>${aHtml(opt)}</button>`
               )
               .join("")}
           </div>
@@ -2533,9 +2621,12 @@
         });
         $("#engSentence").innerHTML = sentenceHtml(q, q.answer, isRight ? "right" : "wrong");
         if (isRight) onRight();
-        else onWrong(q, esc(t("wrong", q.answer)), choice);
+        else onWrong(q, wrongHtml(q.answer), choice);
       },
-      review: (q) => `<span dir="ltr">${sentenceHtml(q, q.answer, "right")}${q.context ? ` <span class="eng-context-inline">${esc(q.context)}</span>` : ""}</span>`,
+      review: (q) =>
+        SUBJECT
+          ? `<span dir="rtl">${sentenceHtml(q, q.answer, "right")}${hasBlank(q) ? "" : ` ← <strong>${aHtml(q.answer)}</strong>`}</span>`
+          : `<span dir="ltr">${sentenceHtml(q, q.answer, "right")}${q.context ? ` <span class="eng-context-inline">${esc(q.context)}</span>` : ""}</span>`,
     },
 
     truefalse: {
@@ -2544,7 +2635,7 @@
         // The word is the picture's caption, and its fix shows under it.
         const prompt = q.img
           ? `<div class="eng-picture-box eng-picture-box--tf"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" /><p class="eng-picture-word" id="engSentence" dir="ltr">${esc(q.text)}${speakBtn(q.text, "eng-speak--inline")}</p>${sayRowHtml(q.text)}<div id="engFix" dir="ltr"></div></div>`
-          : `<div class="eng-sentence" dir="ltr"><p id="engSentence">${esc(q.text)}</p><div id="engFix"></div>${translationHtml(q)}</div>`;
+          : `${figHtml(q)}<div class="eng-sentence" dir="${TEXT_DIR}"><p id="engSentence">${SUBJECT ? sentenceHtml(q) : esc(q.text)}</p><div id="engFix"></div>${translationHtml(q)}</div>`;
         renderRunnerShell(`
           ${instructionsHtml()}
           ${prompt}
@@ -2569,7 +2660,7 @@
         });
         if (!q.correct && q.fix) {
           $("#engSentence").classList.add("is-struck");
-          $("#engFix").innerHTML = `<p class="eng-fix">${ICONS.check}<span>${esc(q.fix)}</span></p>`;
+          $("#engFix").innerHTML = `<p class="eng-fix">${ICONS.check}<span>${aHtml(q.fix)}</span></p>`;
         }
         if (isRight) onRight(t("correct"), q.correct ? AUTO_NEXT_MS : AUTO_NEXT_WITH_FIX_MS);
         else onWrong(q, esc(q.correct ? t("sentenceWasRight") : t("sentenceWasWrong")), value);
@@ -2579,6 +2670,12 @@
           const word = q.correct ? q.text : q.fix;
           return `<span class="eng-review-word"><img src="${esc(q.img)}" alt="" /><span dir="ltr">${esc(word)}</span> — ${esc(VOCAB[q.word]?.he || "")}</span>`;
         }
+        if (SUBJECT) {
+          const said = `${q.text ? aHtml(q.text) : ""}${q.math ? ` ${mathLineHtml(q)}` : ""}`;
+          return q.correct || !q.fix
+            ? `<span dir="rtl">${said} <span class="eng-review-tag">${esc(t(q.correct ? "trueBtn" : "falseBtn"))}</span></span>`
+            : `<span dir="rtl"><s class="eng-review-wrong">${said}</s> ← <strong>${aHtml(q.fix)}</strong></span>`;
+        }
         return q.correct
           ? `<span dir="ltr">${esc(q.text)}</span> <span class="eng-review-tag">${esc(t("trueBtn"))}</span>`
           : `<span dir="ltr"><s class="eng-review-wrong">${esc(q.text)}</s> → <strong>${esc(q.fix || "")}</strong></span>`;
@@ -2587,8 +2684,30 @@
 
     write: {
       render(q) {
-        const solo = q.word && !q.text;
-        const input = `<input type="text" class="eng-input" id="engInput" dir="ltr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("typeHere"))}" placeholder="${esc(solo ? t("typeHere") : "")}" />`;
+        const solo = (q.word && !q.text) || (SUBJECT && !hasBlank(q));
+        // A subject answer that is a plain number gets the number keyboard
+        // (not a negative one: that keyboard has no minus on some phones).
+        const numeric = SUBJECT && /^\d+(\.\d+)?$/.test(String(q.answer)) ? ' inputmode="decimal"' : "";
+        const input = `<input type="text" class="eng-input" id="engInput" dir="${SUBJECT ? "auto" : "ltr"}"${numeric} autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("typeHere"))}" placeholder="${esc(solo ? t("typeHere") : "")}" />`;
+        if (SUBJECT) {
+          // The answer goes in the blank of the math line or the question; a
+          // question without one gets the box under it.
+          const wrap = `<span class="eng-input-wrap">${input}<span id="engCorrection"></span></span>`;
+          let body = qHtml(q.text);
+          if (q.math) body = `${q.text ? `<span class="eng-q-text">${qHtml(q.text)}</span>` : ""}${mathLineHtml(q, solo ? "" : wrap)}`;
+          else if (!solo) body = body.split("___").map((part, i) => (i === 1 ? wrap + part : part)).join("");
+          renderRunnerShell(`
+            ${instructionsHtml()}
+            ${figHtml(q)}
+            <div class="eng-sentence" dir="rtl"><p id="engSentence">${body}</p></div>
+            ${solo ? `<div class="eng-write-solo">${wrap}</div>` : ""}
+            <div class="eng-actions"><button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engCheck">${esc(t("check"))}</button></div>
+            ${feedbackHtml}`,
+            questionProgress()
+          );
+          this.bind(q);
+          return;
+        }
         const sentence = (he) => {
           const parts = esc(q.text).split("___");
           const hint = q.hint ? ` <span class="eng-hint">(${esc(q.hint)})</span>` : "";
@@ -2606,6 +2725,9 @@
           ${feedbackHtml}`,
           questionProgress()
         );
+        this.bind(q);
+      },
+      bind(q) {
         const inputEl = $("#engInput");
         inputEl.addEventListener("keydown", (e) => {
           if (e.key !== "Enter") return;
@@ -2629,22 +2751,24 @@
         }
         runner.answered = true;
         const answer = q.word ? q.en : q.answer;
-        const accepted = [answer, ...(q.accept || [])].map(normalize);
-        const isRight = accepted.includes(normalize(inputEl.value));
+        const accepted = [answer, ...(q.accept || [])];
+        const isRight =
+          accepted.map(normalize).includes(normalize(inputEl.value)) || (SUBJECT && accepted.some((a) => sameNumber(a, inputEl.value)));
         inputEl.readOnly = true;
         inputEl.classList.add(isRight ? "is-right" : "is-wrong");
         $(".eng-actions", views.exercise())?.classList.add("hidden");
         if (isRight) {
           onRight();
         } else {
-          $("#engCorrection").innerHTML = `<span class="eng-correction">${esc(answer)}</span>`;
-          onWrong(q, esc(t("wrong", answer)), inputEl.value.trim());
+          $("#engCorrection").innerHTML = `<span class="eng-correction">${aHtml(answer)}</span>`;
+          onWrong(q, wrongHtml(answer), inputEl.value.trim());
         }
       },
-      review: (q) =>
-        q.word
-          ? `<span class="eng-review-word"><img src="${esc(q.img)}" alt="" /><span dir="ltr">${esc(q.en)}</span> — ${esc(q.he)}</span>`
-          : `<span dir="ltr">${sentenceHtml(q, q.answer, "right")}</span>`,
+      review: (q) => {
+        if (q.word) return `<span class="eng-review-word"><img src="${esc(q.img)}" alt="" /><span dir="ltr">${esc(q.en)}</span> — ${esc(q.he)}</span>`;
+        if (SUBJECT) return TYPES.choice.review(q);
+        return `<span dir="ltr">${sentenceHtml(q, q.answer, "right")}</span>`;
+      },
     },
 
     order: {
@@ -2658,8 +2782,8 @@
         renderRunnerShell(`
           ${instructionsHtml()}
           ${q.he ? `<p class="eng-order-he">${esc(q.he)}</p>` : ""}
-          <div class="eng-order-line" id="engOrderLine" dir="ltr"></div>
-          <div class="eng-order-bank" id="engOrderBank" dir="ltr"></div>
+          <div class="eng-order-line" id="engOrderLine" dir="${TEXT_DIR}"></div>
+          <div class="eng-order-bank" id="engOrderBank" dir="${TEXT_DIR}"></div>
           <div class="eng-actions"><button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engCheck" disabled>${esc(t("check"))}</button></div>
           ${feedbackHtml}`,
           questionProgress()
@@ -2709,9 +2833,9 @@
         $(".eng-actions", views.exercise())?.classList.add("hidden");
         $("#engOrderLine").classList.add(isRight ? "is-right" : "is-wrong");
         if (isRight) onRight();
-        else onWrong(q, `${esc(t("fixLabel"))} <span dir="ltr">${esc(q.answer)}</span>`, placed.map((i) => tokens[i]).join(" "));
+        else onWrong(q, `${esc(t("fixLabel"))} <span dir="${TEXT_DIR}">${esc(q.answer)}</span>`, placed.map((i) => tokens[i]).join(" "));
       },
-      review: (q) => `<span dir="ltr">${esc(q.answer)}</span>${q.he ? ` <span class="eng-review-he">${esc(q.he)}</span>` : ""}`,
+      review: (q) => `<span dir="${TEXT_DIR}">${esc(q.answer)}</span>${q.he ? ` <span class="eng-review-he">${esc(q.he)}</span>` : ""}`,
     },
 
     picture: {
@@ -2787,17 +2911,18 @@
         const sideB = shuffle(board.pairs.map((p, i) => ({ p, i })));
         runner.state = { board, selected: null, matched: new Set(), errored: new Set() };
         // Whole sentences (new exercises) get smaller text and their own height.
-        const long = (text) => (text.includes("___") || text.length > 26 ? " eng-match-item--long" : "");
+        // A subject's Hebrew explanations are longer words than English ones.
+        const long = (text) => (text.includes("___") || text.length > (SUBJECT ? 40 : 26) ? " eng-match-item--long" : "");
         const itemB = ({ p, i }) =>
           p.img
             ? `<button type="button" class="eng-match-item eng-match-item--img" data-side="b" data-i="${i}"><img src="${esc(p.img)}" alt="" draggable="false" /></button>`
-            : `<button type="button" class="eng-match-item${long(p.b)}" data-side="b" data-i="${i}" dir="auto">${esc(p.b)}</button>`;
+            : `<button type="button" class="eng-match-item${long(p.b)}" data-side="b" data-i="${i}" dir="auto">${aHtml(p.b)}</button>`;
         const total = board.pairs.length;
         renderRunnerShell(
           `
           ${instructionsHtml()}
-          <div class="eng-match" dir="ltr">
-            <div class="eng-match-col">${sideA.map(({ p, i }) => `<button type="button" class="eng-match-item${long(p.a)}" data-side="a" data-i="${i}" dir="ltr">${esc(p.a)}${sayOptHtml(p.a)}</button>`).join("")}</div>
+          <div class="eng-match" dir="${TEXT_DIR}">
+            <div class="eng-match-col">${sideA.map(({ p, i }) => `<button type="button" class="eng-match-item${long(p.a)}" data-side="a" data-i="${i}" dir="${SUBJECT ? "auto" : "ltr"}">${aHtml(p.a)}${sayOptHtml(p.a)}</button>`).join("")}</div>
             <div class="eng-match-col">${sideB.map(itemB).join("")}</div>
           </div>
           ${feedbackHtml}`,
@@ -2858,7 +2983,7 @@
       review: (p) =>
         p.img
           ? `<span class="eng-review-word"><img src="${esc(p.img)}" alt="" /><span dir="ltr">${esc(p.a)}</span></span>`
-          : `<span dir="ltr">${esc(p.a)}</span> — <span dir="auto">${esc(p.b)}</span>`,
+          : `<span dir="${SUBJECT ? "auto" : "ltr"}">${aHtml(p.a)}</span> — <span dir="auto">${aHtml(p.b)}</span>`,
     },
   };
   TYPES["pick-picture"].review = TYPES.picture.review;
@@ -4114,7 +4239,7 @@
         <p class="eng-results-count">${esc(countLine)}</p>
         <p class="eng-results-msg" aria-live="polite">${esc(runner.newRequest ? t("makingNewNote") : message)}</p>
         <div class="eng-results-actions">
-          ${exercise.derived ? "" : newButtonHtml()}
+          ${exercise.derived || SUBJECT ? "" : newButtonHtml()}
           <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engAgain">${esc(t("again"))}</button>
           ${mistakes.length && !isReading ? `<button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engRetryMistakes">${esc(t("retryMistakes"))}</button>` : ""}
           ${homeworkButtonHtml()}
@@ -4273,7 +4398,10 @@
     window.MistakeBank?.flush();
     const ratio = total ? score / total : 0;
     const stars = ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
-    const left = window.MistakeBank?.count(review.topicId) || 0;
+    // A subject page counts only its own topics' questions (the bank keeps
+    // English ones too).
+    const bank = window.MistakeBank;
+    const left = (SUBJECT && !review.topicId ? TOPICS.reduce((n, tp) => n + (bank?.count(tp.id) || 0), 0) : bank?.count(review.topicId)) || 0;
     const status = [review.out ? t("reviewOutCount", review.out) : "", t("reviewLeft", left)].filter(Boolean).join(" · ");
     const list = mistakes
       .map((q) => {
@@ -5164,7 +5292,17 @@
   // The sentence with its blank filled by `answer`, styled by `cls`.
   function helpSentence(q, answer, cls) {
     // A missing letter inside a word ("___og") gets a letter-wide fill.
-    const fill = `<span class="${cls}${answer.length === 1 ? " is-letter" : ""}">${esc(answer)}</span>`;
+    const fill = `<span class="${cls}${answer.length === 1 ? " is-letter" : ""}">${aHtml(answer)}</span>`;
+    if (SUBJECT) {
+      // A typed answer without a blank to go in shows on a line of its own.
+      const typed = !hasBlank(q) && cls === "eng-help-typed" ? `<p class="eng-help-sentence">${fill}</p>` : "";
+      if (q.math) {
+        const text = q.text ? `<p class="eng-help-q" dir="rtl">${qHtml(q.text)}</p>` : "";
+        return `${text}<p class="eng-help-sentence" dir="ltr">${mathLineHtml(q, q.math.includes("___") ? fill : "")}</p>${typed}`;
+      }
+      const parts = qHtml(q.text).split("___");
+      return `<p class="eng-help-sentence" dir="rtl">${parts.length < 2 ? parts[0] : `${parts[0]}${fill}${parts.slice(1).join("___")}`}</p>${typed}`;
+    }
     const hint = q.hint ? ` <span class="eng-help-hint">(${esc(q.hint)})</span>` : "";
     const parts = esc(q.text).split("___");
     const body = parts.length < 2 ? `${esc(q.text)} ${fill}${hint}` : `${parts[0]}${fill}${hint}${parts.slice(1).join("___")}`;
@@ -5177,8 +5315,8 @@
   }
 
   function helpOptions(options, answer) {
-    return `<div class="eng-help-options" dir="ltr">${options
-      .map((o) => (o === answer ? `<span class="eng-help-opt is-right">${ICONS.check}${esc(o)}</span>` : `<span class="eng-help-opt">${esc(o)}</span>`))
+    return `<div class="eng-help-options" dir="${TEXT_DIR}">${options
+      .map((o) => (o === answer ? `<span class="eng-help-opt is-right">${ICONS.check}${aHtml(o)}</span>` : `<span class="eng-help-opt">${aHtml(o)}</span>`))
       .join("")}</div>`;
   }
 
@@ -5231,11 +5369,12 @@
       }
       const right = ex.questions.find((q) => q.correct);
       const wrong = ex.questions.find((q) => !q.correct && q.fix) || ex.questions.find((q) => !q.correct);
+      const said = (q) => (SUBJECT ? `${qHtml(q.text)}${q.math ? ` ${mathLineHtml(q)}` : ""}` : esc(q.text));
       const row = (q) => `
         <div class="eng-help-tf-row">
-          <p class="eng-help-sentence" dir="ltr">${esc(q.text)}</p>
+          <p class="eng-help-sentence" dir="${TEXT_DIR}">${said(q)}</p>
           ${helpBadge(q.correct)}
-          ${!q.correct && q.fix ? `<p class="eng-help-fix"><span>${esc(t("fixLabel"))}</span><b dir="ltr">${esc(q.fix)}</b></p>` : ""}
+          ${!q.correct && q.fix ? `<p class="eng-help-fix"><span>${esc(t("fixLabel"))}</span><b dir="${TEXT_DIR}">${aHtml(q.fix)}</b></p>` : ""}
         </div>`;
       return `<div class="eng-help-tf">${[right, wrong].filter(Boolean).map(row).join("")}</div>`;
     },
@@ -5252,7 +5391,7 @@
     order(ex) {
       const q = ex.questions.find((item) => item.answer.split(" ").length >= 3) || ex.questions[0];
       const tokens = q.answer.split(" ");
-      const chips = (list, cls = "") => `<div class="eng-help-chips" dir="ltr">${list.map((w) => `<span class="eng-help-chip${cls}">${esc(w)}</span>`).join("")}</div>`;
+      const chips = (list, cls = "") => `<div class="eng-help-chips" dir="${TEXT_DIR}">${list.map((w) => `<span class="eng-help-chip${cls}">${esc(w)}</span>`).join("")}</div>`;
       return `
         ${q.he ? `<p class="eng-help-tr eng-help-tr--prompt" dir="rtl" lang="he">${esc(q.he)}</p>` : ""}
         ${chips(scrambleWords(tokens))}
@@ -5286,13 +5425,13 @@
     match(ex) {
       const pairs = (ex.pairs || ex.words.map((id) => ({ a: VOCAB[id]?.en, img: imgUrl(id) }))).slice(0, 3);
       return `
-        <div class="eng-help-pairs" dir="ltr">${pairs
+        <div class="eng-help-pairs" dir="${TEXT_DIR}">${pairs
           .map(
             (p) => `
               <div class="eng-help-pair">
-                <span class="eng-help-chip is-right">${esc(p.a)}</span>
+                <span class="eng-help-chip is-right">${aHtml(p.a)}</span>
                 <span class="eng-help-pair-line"></span>
-                ${p.img ? `<span class="eng-help-pic is-right eng-help-pic--small"><img src="${esc(p.img)}" alt="" draggable="false" /></span>` : `<span class="eng-help-chip is-right" dir="auto">${esc(p.b)}</span>`}
+                ${p.img ? `<span class="eng-help-pic is-right eng-help-pic--small"><img src="${esc(p.img)}" alt="" draggable="false" /></span>` : `<span class="eng-help-chip is-right" dir="auto">${aHtml(p.b)}</span>`}
               </div>`
           )
           .join("")}</div>`;
