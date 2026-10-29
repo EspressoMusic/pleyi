@@ -3555,6 +3555,10 @@
         { id: "irregular-verbs", label: "פעלים חשובים" },
         { id: "modals", label: "חובה ועצה: must, should, have to" },
         { id: "word-building", label: "בניית מילים: un-, re-, -er, -ful" },
+        { id: "present-perfect", label: "הווה מושלם: have done" },
+        { id: "conditionals", label: "משפטי תנאי: if" },
+        { id: "passive", label: "סביל: is made, was built" },
+        { id: "reported-speech", label: "דיבור עקיף: said that" },
         { id: "bagrut", label: "שאלות בגרות" },
         { id: "vocab-topics", label: "אוצר מילים לפי נושאים", labelEn: "Vocabulary by topic" },
       ],
@@ -3585,6 +3589,10 @@
         { id: "irregular-verbs", label: "פעלים חשובים" },
         { id: "modals", label: "חובה ועצה: must, should, have to" },
         { id: "word-building", label: "בניית מילים: un-, re-, -er, -ful" },
+        { id: "present-perfect", label: "הווה מושלם: have done" },
+        { id: "conditionals", label: "משפטי תנאי: if" },
+        { id: "passive", label: "סביל: is made, was built" },
+        { id: "reported-speech", label: "דיבור עקיף: said that" },
         { id: "bagrut", label: "שאלות בגרות" },
         { id: "vocab-topics", label: "אוצר מילים לפי נושאים", labelEn: "Vocabulary by topic" },
       ],
@@ -3615,6 +3623,10 @@
         { id: "irregular-verbs", label: "פעלים חשובים" },
         { id: "modals", label: "חובה ועצה: must, should, have to" },
         { id: "word-building", label: "בניית מילים: un-, re-, -er, -ful" },
+        { id: "present-perfect", label: "הווה מושלם: have done" },
+        { id: "conditionals", label: "משפטי תנאי: if" },
+        { id: "passive", label: "סביל: is made, was built" },
+        { id: "reported-speech", label: "דיבור עקיף: said that" },
         { id: "bagrut", label: "שאלות בגרות" },
         { id: "vocab-topics", label: "אוצר מילים לפי נושאים", labelEn: "Vocabulary by topic" },
       ],
@@ -3651,6 +3663,11 @@
         { id: "shapes", label: "צורות, היקף ושטח" },
         { id: "percent", label: "אחוזים" },
         { id: "equations", label: "משוואות" },
+        { id: "decimals", label: "מספרים עשרוניים" },
+        { id: "negatives", label: "מספרים שליליים" },
+        { id: "circle", label: "מעגל" },
+        { id: "probability", label: "הסתברות" },
+        { id: "graphs", label: "גרפים" },
       ],
       zh: [
         { id: "percent", label: "אחוזים" },
@@ -3658,6 +3675,11 @@
         { id: "ratio", label: "יחס ופרופורציה" },
         { id: "pythagoras", label: "משפט פיתגורס" },
         { id: "congruence", label: "משולשים חופפים" },
+        { id: "decimals", label: "מספרים עשרוניים" },
+        { id: "negatives", label: "מספרים שליליים" },
+        { id: "circle", label: "מעגל" },
+        { id: "probability", label: "הסתברות" },
+        { id: "graphs", label: "גרפים" },
       ],
     },
     hebrew: {
@@ -3675,6 +3697,7 @@
       ],
       zh: [
         { id: "roots", label: "שורש ובניין" },
+        { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
       ],
@@ -3691,12 +3714,27 @@
         { id: "animals", label: "בעלי חיים" },
         { id: "electricity", label: "חשמל" },
         { id: "human-body", label: "גוף האדם" },
+        { id: "matter", label: "מצבי צבירה" },
+        { id: "energy", label: "אנרגיה" },
+        { id: "solar-system", label: "מערכת השמש" },
+      ],
+      zh: [
+        { id: "matter", label: "מצבי צבירה" },
+        { id: "cells", label: "התא" },
+        { id: "energy", label: "אנרגיה" },
+        { id: "solar-system", label: "מערכת השמש" },
       ],
     },
     geography: {
       ag: [{ id: "israel-map", label: "מפת ארץ ישראל" }],
-      dv: [{ id: "israel-map", label: "מפת ארץ ישראל" }],
-      zh: [{ id: "israel-map", label: "מפת ארץ ישראל" }],
+      dv: [
+        { id: "israel-map", label: "מפת ארץ ישראל" },
+        { id: "world-map", label: "מפת העולם" },
+      ],
+      zh: [
+        { id: "israel-map", label: "מפת ארץ ישראל" },
+        { id: "world-map", label: "מפת העולם" },
+      ],
     },
     history: {
       ag: [{ id: "jewish-history", label: "תולדות עם ישראל" }],
@@ -3777,7 +3815,14 @@
     const topicValue = $("#filterTopicValue");
     const cards = $$(".svc-lesson-card[data-lesson]");
     const empty = $("#lessonEmptyState");
+    // The English practice area (/services/english) lives here as a card
+    // instead of a separate menu item.
+    const practiceCard = $("#englishPracticeCard");
     if (!filtersRoot || !topicMenu || !cards.length) return;
+
+    practiceCard?.addEventListener("click", () => {
+      window.location.href = "/services/english";
+    });
 
     const state = { subject: "all", grade: "all", topic: "all" };
     let openDropdown = null;
@@ -3888,6 +3933,9 @@
         card.classList.toggle("hidden", !show);
         if (show) visible += 1;
       });
+      const showPractice = (state.subject === "all" || state.subject === "english") && state.topic === "all";
+      practiceCard?.classList.toggle("hidden", !showPractice);
+      if (showPractice) visible += 1;
       empty?.classList.toggle("hidden", visible > 0);
     }
 

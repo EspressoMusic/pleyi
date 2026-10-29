@@ -3935,11 +3935,16 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-ex-fl
     grid-template-columns: 1fr;
   }
 
+  /* 5+ chips in one column shrink the whole slide's text — keep two. */
+  .lp-chips:has(> :nth-child(5)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .lp-grid th,
   .lp-grid td,
   .lp-proof th,
   .lp-proof td {
-    padding-inline: 12px;
+    padding-inline: 8px;
   }
 
   /* The "נכון / לא נכון" label above the sentence, so a long sentence

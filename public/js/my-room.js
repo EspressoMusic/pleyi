@@ -134,21 +134,8 @@
     return all.find((g) => g.id === gameId)?.title || gameId;
   }
 
-  function emptyMessage(section) {
-    if (section === "created") {
-      const text = window.I18n?.t("myRoom.empty.createdText") || "עדיין לא יצרת משחקים.";
-      const link = window.I18n?.t("myRoom.empty.createdLink") || "פתחו חדר חדש";
-      return `${text} <a href="/room?create=1">${link}</a>`;
-    }
-    if (section === "lessons") {
-      return `עדיין לא שמרת שיעורים.<br>לשמירה לוחצים על סימן השמירה בחלון המידע של השיעור.<br><a href="${LESSON_OPEN_PATH}">לספריית השיעורים</a>`;
-    }
-    const messages = {
-      favorites: window.I18n?.t("myRoom.empty.favorites") || "אין עדיין מועדפים.",
-      recent: window.I18n?.t("myRoom.empty.recent") || "עדיין אין היסטוריה.",
-    };
-    return messages[section] || "";
-  }
+  // Shown only when every list is empty.
+  const EMPTY_ALL_HTML = `עדיין לא שמרת שיעורים.<br>לשמירה לוחצים על סימן השמירה בחלון המידע של השיעור.<br><a href="${LESSON_OPEN_PATH}">לספריית השיעורים</a>`;
 
   function savedRowHtml(g, { showStar = true, showDelete = false } = {}) {
     const playLabel = window.I18n?.t("myRoom.play") || "שחק";
@@ -217,15 +204,15 @@
 
   function renderSection(section) {
     const container = SECTION_CONTAINERS[section];
-    if (!container) return;
+    if (!container) return false;
     const { type, items } = getSectionItems(section);
 
-    // The games lists only show up for users who have games.
-    if (type !== "lessons") container.closest(".room-list-section")?.classList.toggle("hidden", !items.length);
+    // An empty list is hidden, heading and all.
+    container.closest(".room-list-section")?.classList.toggle("hidden", !items.length);
 
     if (!items.length) {
-      container.innerHTML = `<p class="room-list-empty">${emptyMessage(section)}</p>`;
-      return;
+      container.innerHTML = "";
+      return false;
     }
 
     if (type === "lessons") {
@@ -238,10 +225,16 @@
     }
 
     bindSectionActions(container, section);
+    return true;
   }
 
   function renderAllSections() {
-    Object.keys(SECTION_CONTAINERS).forEach(renderSection);
+    const anyShown = Object.keys(SECTION_CONTAINERS).map(renderSection).some(Boolean);
+    const emptyAll = document.getElementById("roomEmptyAll");
+    if (emptyAll) {
+      emptyAll.innerHTML = EMPTY_ALL_HTML;
+      emptyAll.classList.toggle("hidden", anyShown);
+    }
     document.getElementById("roomFootLink")?.classList.toggle("hidden", !savedGames.length && !playHistory.length);
   }
 
@@ -309,20 +302,26 @@
       return;
     }
 
-    try {
-      [savedGames, playHistory, savedLessonIds] = await Promise.all([
-        UserData.getSavedGames(),
-        UserData.getPlayHistory(120),
-        UserData.getFavoriteLessons(),
-      ]);
-      window.__myRoomPlayHistory = playHistory.map((e) => ({
-        ...e,
-        dateKey: UserData.dateKeyFromTimestamp(e.playedAt),
-      }));
-      window.MyRoomCalendar?.setHistory(window.__myRoomPlayHistory);
-      renderAllSections();
-    } catch (err) {
-      console.error(err);
+    // Each list loads on its own, so one failed query (e.g. a missing index) doesn't blank the others.
+    const names = ["savedGames", "playHistory", "favoriteLessons"];
+    const results = await Promise.allSettled([
+      UserData.getSavedGames(),
+      UserData.getPlayHistory(120),
+      UserData.getFavoriteLessons(),
+    ]);
+    results.forEach((r, i) => {
+      if (r.status === "rejected") console.error(`my-room: ${names[i]} failed to load`, r.reason);
+    });
+    [savedGames, playHistory, savedLessonIds] = results.map((r) => (r.status === "fulfilled" ? r.value : []));
+
+    window.__myRoomPlayHistory = playHistory.map((e) => ({
+      ...e,
+      dateKey: UserData.dateKeyFromTimestamp(e.playedAt),
+    }));
+    window.MyRoomCalendar?.setHistory(window.__myRoomPlayHistory);
+    renderAllSections();
+
+    if (results.every((r) => r.status === "rejected")) {
       showToast(window.I18n?.t("myRoom.loadError") || "לא הצלחנו לטעון נתונים");
     }
   }

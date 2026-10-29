@@ -189,6 +189,15 @@
   border-top: 3px solid var(--ink);
 }
 
+/* A short page: the footer sits at the bottom of the screen instead of
+   leaving the background showing under it. body has min-height: 100vh, so
+   sticky can't push it past body's end; on a long page it stays in place.
+   !important: styles.css pins every direct child of body to relative. */
+.site-footer-mini {
+  position: sticky !important;
+  top: 100vh;
+}
+
 .site-footer-mini .site-legal-nav {
   margin-top: 0;
 }

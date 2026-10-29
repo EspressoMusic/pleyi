@@ -73,6 +73,11 @@ body.adm-body {
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
+.adm-link-btn--danger {
+  background: var(--adm-low);
+  color: #fff;
+}
+
 .adm-home:hover,
 .adm-link-btn:hover,
 .adm-back:hover,
@@ -392,6 +397,7 @@ body.adm-body {
   border: var(--adm-border);
   border-radius: 18px;
   background: var(--adm-card);
+  box-shadow: 5px 6px 0 0 var(--ink);
 }
 
 .adm-tile-label {
@@ -462,8 +468,45 @@ body.adm-body {
   box-shadow: 1px 1px 0 0 var(--ink);
 }
 
+/* "Add homework" sits inside a card of the same aqua: a flat, deeper tint. */
+#admHwToggle,
+#admHwToggle:hover,
+#admHwToggle:focus-visible,
+#admHwToggle:active {
+  background: var(--adm-soft);
+  box-shadow: none;
+}
+
+#admHwToggle:hover,
+#admHwToggle:focus-visible {
+  background: #6fe3d5;
+}
+
 .adm-owner-link {
   text-decoration: none;
+}
+
+/* "Add student" is as big as a student card: it sits in one column of the
+   same grid and takes the card's padding, corners and shadow. */
+.adm-add-row > .adm-fold-toggle {
+  width: auto;
+  min-height: 104px;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  font-size: 1.35rem;
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.adm-add-row .adm-fold-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.adm-add-row .adm-fold-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 .adm-fold-icon {
@@ -488,23 +531,50 @@ body.adm-body {
   margin: 0;
 }
 
+/* The side column's folded cards: small squares in one row. */
+.adm-fold-squares {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 140px));
+  gap: 14px;
+}
+
+.adm-fold-squares > .adm-fold-toggle {
+  flex-direction: column;
+  justify-content: center;
+  width: auto;
+  aspect-ratio: 1;
+  margin: 0;
+  padding: 10px 8px;
+  font-size: 1rem;
+  line-height: 1.25;
+  text-align: center;
+}
+
 /* Topics not started yet, behind a rectangle whose "+" turns into an "x". */
 .adm-topics-rest > summary {
   margin: 14px 0 0;
   list-style: none;
 }
 
-.adm-topics-rest > summary::-webkit-details-marker {
+.adm-topics-rest > summary::-webkit-details-marker,
+.adm-advanced > summary::-webkit-details-marker {
   display: none;
 }
 
-.adm-topics-rest[open] .adm-fold-icon svg {
+.adm-topics-rest[open] .adm-fold-icon svg,
+.adm-advanced[open] > summary .adm-fold-icon svg {
   transform: rotate(45deg);
+}
+
+/* A student's file: the main things up top, the rest behind "מתקדם". */
+.adm-advanced > summary {
+  margin: 24px auto 18px;
+  list-style: none;
 }
 
 .adm-create-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 12px;
 }
@@ -787,7 +857,7 @@ body.adm-info-open {
   padding: 18px 20px 20px;
   border: var(--adm-border);
   border-radius: 24px;
-  background: var(--white);
+  background: var(--adm-bg);
   color: var(--ink);
   box-shadow: 6px 7px 0 0 var(--ink);
 }
@@ -858,6 +928,153 @@ body.adm-info-open {
 
 /* ── Student page ── */
 
+/* Back and the personal link share the first row. */
+.adm-file-top {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.adm-file-top > .adm-back,
+.adm-file-top > .adm-fold-toggle {
+  margin: 0;
+}
+
+.adm-solved-head {
+  margin: 26px 0 16px;
+}
+
+/* One rectangle per solved exercise, all the same size. */
+.adm-solved {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 18px;
+}
+
+.adm-solved-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: var(--adm-border);
+  border-radius: 18px;
+  background: var(--adm-card);
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.adm-solved-card:hover,
+.adm-solved-card:focus-visible {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 8px 0 0 var(--ink);
+}
+
+.adm-solved-card:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.adm-solved-card:active {
+  transform: translate(1px, 2px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.adm-solved-topic {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+.adm-solved-title {
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.adm-solved-card .adm-pill {
+  margin-top: auto;
+}
+
+.adm-rounds {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-round {
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--adm-card);
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.adm-round-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.adm-round-when {
+  font-weight: 900;
+}
+
+.adm-round-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-round-mistake {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--adm-field);
+}
+
+/* English prompts too line up on the right, with the Hebrew lines. */
+.adm-round-prompt {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-weight: 800;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.adm-round-answer {
+  font-size: 0.92rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.adm-round-given {
+  color: var(--adm-low);
+}
+
+.adm-round-note {
+  margin: 8px 0 0;
+  font-weight: 800;
+}
+
 .adm-profile {
   display: flex;
   align-items: center;
@@ -868,12 +1085,6 @@ body.adm-info-open {
   min-width: 0;
 }
 
-.adm-profile-sub {
-  margin: 4px 0;
-  font-weight: 800;
-  color: var(--body);
-  overflow-wrap: anywhere;
-}
 
 /* Personal link */
 
@@ -1011,10 +1222,6 @@ body.adm-info-open {
   font-weight: 900;
 }
 
-.adm-hw-empty {
-  margin-top: 14px;
-}
-
 .adm-hw-list {
   display: flex;
   flex-direction: column;
@@ -1032,6 +1239,7 @@ body.adm-info-open {
   border: 2px solid var(--ink);
   border-radius: 14px;
   background: var(--adm-field);
+  box-shadow: 3px 4px 0 0 var(--ink);
 }
 
 .adm-hw.is-done {
@@ -1094,6 +1302,7 @@ body.adm-info-open {
   border: 2px solid var(--ink);
   border-radius: 14px;
   background: var(--adm-soft);
+  box-shadow: 3px 4px 0 0 var(--ink);
 }
 
 .adm-topic-head {
@@ -1272,6 +1481,7 @@ body.adm-info-open {
   border: 2px solid var(--ink);
   border-radius: 14px;
   background: var(--adm-soft);
+  box-shadow: 3px 4px 0 0 var(--ink);
 }
 
 .adm-weak-count {
@@ -1298,8 +1508,7 @@ body.adm-info-open {
   font-weight: 800;
 }
 
-.adm-weak-answer,
-.adm-weak-given {
+.adm-weak-answer {
   font-size: 0.92rem;
 }
 
@@ -1458,6 +1667,7 @@ body.adm-info-open {
   border: 2px solid var(--ink);
   border-radius: 14px;
   background: var(--adm-ok-soft);
+  box-shadow: 3px 4px 0 0 var(--ink);
 }
 
 .adm-note-head {
@@ -1621,6 +1831,7 @@ body.adm-info-open {
   border: 2px solid var(--ink);
   border-radius: 14px;
   background: var(--adm-soft);
+  box-shadow: 3px 4px 0 0 var(--ink);
 }
 
 .adm-report-rows {
@@ -1757,6 +1968,11 @@ body.adm-info-open {
   .adm-tiles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+  }
+
+  /* An odd last tile takes the whole row instead of sitting alone. */
+  .adm-tile:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 
   .adm-tile-value {

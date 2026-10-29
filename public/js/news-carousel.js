@@ -5,7 +5,7 @@
      and they never turn under prefers-reduced-motion. */
 
 (function () {
-  const AUTO_MS = 7000;
+  const AUTO_MS = 5000;
   const SWIPE_PX = 40;
 
   const root = document.querySelector("[data-news-carousel]");

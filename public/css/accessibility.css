@@ -300,8 +300,10 @@ html.a11y-grayscale .a11y-widget-root {
 
 /* Cookie consent banner */
 
+/* !important: styles.css pins every direct child of body to relative, which
+   left the banner in the page flow under the footer. */
 .cookie-banner {
-  position: fixed;
+  position: fixed !important;
   z-index: 10040;
   bottom: 0;
   left: 0;

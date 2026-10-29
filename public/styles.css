@@ -3769,12 +3769,13 @@ body.in-room .game-actions .btn {
 /* Toast */
 .toast {
   /* !important: needed to beat the ambient-bg sibling rule that forces
-     position:relative on direct children of <body> (see .modal-overlay above). */
+     position:relative and z-index:1 on direct children of <body> (see .modal-overlay above).
+     Without it the footer, a later body child, covers the toast. */
   position: fixed !important;
   bottom: 28px;
   right: 50%;
   transform: translateX(50%);
-  z-index: 600;
+  z-index: 600 !important;
   padding: 14px 24px;
   border-radius: 999px;
   background: var(--heading);

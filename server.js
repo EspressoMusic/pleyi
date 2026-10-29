@@ -467,7 +467,7 @@ studentAdmin.get("/", studentRoute(async (req) => ({
 })));
 
 studentAdmin.post("/", studentRoute(async (req) => ({
-  student: await studentProgress.createStudent({ uid: req.uid, email: req.userEmail }, pick(req.body, ["name", "number"])),
+  student: await studentProgress.createStudent({ uid: req.uid, email: req.userEmail }, pick(req.body, ["name"])),
 })));
 
 // Files opened before Google sign-in have no owner; the teacher PIN proves
@@ -492,7 +492,7 @@ studentAdmin.get("/:id", studentRoute(async (req) => {
 }));
 
 studentAdmin.patch("/:id", studentRoute((req) =>
-  studentProgress.updateDetails(req.uid, req.params.id, pick(req.body, ["name", "number", "focus"]))
+  studentProgress.updateDetails(req.uid, req.params.id, pick(req.body, ["name", "focus"]))
 ));
 
 studentAdmin.delete("/:id", studentRoute(async (req) => {

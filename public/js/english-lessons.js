@@ -2218,7 +2218,450 @@ window.ENGLISH_SHORT_LESSONS = [
     discuss: ["תנו מילה עם er – מי עושה מה?", "איך אתם הולכים לבית הספר? ענו עם מילה שנגמרת ב־ly"],
   },
 
-  /* ---------- Stage 8: reading and understanding ---------- */
+  /* ---------- Stage 8: advanced sentences ---------- */
+  {
+    id: "present-perfect-1",
+    topic: "present-perfect",
+    name: "הווה מושלם",
+    part: "have / has + פועל",
+    summary: "משהו שכבר קרה – והתוצאה רואים עכשיו: I have finished",
+    vocab: [["have finished", "סיימתי"], ["has cleaned", "ניקה"], ["eaten", "אכל (have eaten)"], ["seen", "ראה (have seen)"], ["gone", "הלך (have gone)"], ["done", "עשה (have done)"], ["haven't", "לא (have not)"]],
+    slides: [
+      {
+        title: "**כבר** עשיתי",
+        lines: ["משהו שקרה – ועכשיו רואים את התוצאה"],
+        examples: [["I **have finished** my homework.", "סיימתי את שיעורי הבית – ועכשיו אני חופשי"]],
+      },
+      {
+        title: "**have** / **has** + פועל",
+        table: [["I, you, we, they", "**have** finished"], ["he, she, it", "**has** finished"]],
+      },
+      {
+        title: "פועל רגיל – **ed**",
+        lines: ["בפעלים רגילים מוסיפים ed – כמו בעבר"],
+        examples: [["I **have cleaned** my room.", "ניקיתי את החדר שלי"], ["He **has washed** the car.", "הוא שטף את המכונית"]],
+      },
+      {
+        title: "פעלים **מיוחדים**",
+        lines: ["יש פעלים עם צורה משלהם"],
+        table: [["eat", "**eaten**"], ["see", "**seen**"], ["go", "**gone**"], ["do", "**done**"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["I **have eaten** lunch.", "אכלתי ארוחת צהריים"], ["He **has lost** his key.", "הוא איבד את המפתח שלו"]],
+      },
+      {
+        title: "**haven't** / **hasn't**",
+        lines: ["לא עשיתי – haven't"],
+        examples: [["I **haven't** seen this movie.", "לא ראיתי את הסרט הזה"], ["He **hasn't** done his homework.", "הוא לא הכין את שיעורי הבית"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["עם he – has"],
+        compare: ["He have finished.", "He **has** finished."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["אני, אתה, אנחנו", "**have** + פועל"], ["הוא", "**has** + פועל"], ["לא", "**haven't** / **hasn't**"]],
+      },
+    ],
+    quiz: [
+      ["I ___ finished my work.", "סיימתי את העבודה שלי", ["have", "has"], 0, "עם I – have"],
+      ["He ___ cleaned his room.", "הוא ניקה את החדר שלו", ["have", "has"], 1, "עם he – has"],
+      ["We have ___ pizza.", "אכלנו פיצה", ["ate", "eaten", "eat"], 1, "eat – eaten"],
+      ["Dan ___ seen this movie.", "דן לא ראה את הסרט הזה", ["hasn't", "haven't"], 0, "עם Dan – hasn't"],
+    ],
+    discuss: ["מה כבר עשיתם היום? ענו עם I have", "איזה סרט עוד לא ראיתם? ענו עם I haven't seen"],
+  },
+  {
+    id: "present-perfect-2",
+    topic: "present-perfect",
+    name: "הווה מושלם",
+    part: "ever / never",
+    summary: "שואלים אם פעם עשית משהו – Have you ever – ועונים עם never",
+    vocab: [["ever", "אי פעם"], ["never", "אף פעם"], ["been", "היה (have been)"], ["Have you ever", "האם אי פעם"], ["flown", "טס (have flown)"], ["snow", "שלג"]],
+    slides: [
+      {
+        title: "**פעם** בחיים",
+        lines: ["Have you ever – האם אי פעם"],
+        examples: [["**Have** you **ever** been to Eilat?", "היית פעם באילת?"]],
+      },
+      {
+        title: "**שאלה**",
+        lines: ["Have קופץ להתחלה"],
+        flow: true,
+        examples: [["You **have** seen a lion.", "ראית אריה"], ["**Have** you seen a lion?", "ראית אריה?"]],
+      },
+      {
+        title: "**ever** – אי פעם",
+        lines: ["ever בא לפני הפועל"],
+        examples: [["Have you **ever** eaten sushi?", "אכלת פעם סושי?"], ["Has he **ever** flown in a plane?", "הוא טס פעם במטוס?"]],
+      },
+      {
+        title: "**תשובה** קצרה",
+        examples: [["Yes, I **have**.", "כן"], ["No, I **haven't**.", "לא"]],
+      },
+      {
+        title: "**never** – אף פעם",
+        lines: ["never – אף פעם לא"],
+        examples: [["I have **never** seen snow.", "אף פעם לא ראיתי שלג"], ["He has **never** been to London.", "הוא אף פעם לא היה בלונדון"]],
+      },
+      {
+        title: "**been** – הייתי",
+        lines: ["been – הייתי במקום"],
+        examples: [["I have **been** to Jerusalem.", "הייתי בירושלים"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["never כבר אומר לא", "לא מוסיפים עוד not"],
+        compare: ["I haven't never seen it.", "I have **never** seen it."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["אי פעם?", "**Have** you **ever**"], ["אף פעם", "**never**"], ["הייתי ב־", "**been** to"]],
+      },
+    ],
+    quiz: [
+      ["___ you ever seen a camel?", "ראית פעם גמל?", ["Have", "Has"], 0, "עם you – Have"],
+      ["Has he ever ___ to Paris?", "הוא היה פעם בפריז?", ["be", "been", "was"], 1, "be – been"],
+      ["I have ___ eaten snails.", "אף פעם לא אכלתי חלזונות", ["ever", "never"], 1, "אף פעם – never"],
+      ["Have you ever ridden a horse? Yes, I ___.", "רכבת פעם על סוס? כן", ["did", "has", "have"], 2, "עונים עם have"],
+    ],
+    discuss: ["שאלו חבר: Have you ever been to Eilat", "ספרו משהו שאף פעם לא עשיתם – עם I have never"],
+  },
+  {
+    id: "conditionals-1",
+    topic: "conditionals",
+    name: "משפטי תנאי",
+    part: "If + will",
+    summary: "אם יקרה דבר אחד – יקרה דבר אחר: If it rains, I will stay home",
+    vocab: [["if", "אם"], ["will", "עתיד – יקרה"], ["rain", "גשם, לרדת גשם"], ["stay home", "להישאר בבית"], ["pass", "לעבור (מבחן)"], ["hungry", "רעב"]],
+    slides: [
+      {
+        title: "**if** – אם",
+        lines: ["משפט עם תנאי"],
+        examples: [["**If** it rains, I will stay home.", "אם ירד גשם, אשאר בבית"]],
+      },
+      {
+        title: "**שני** חלקים",
+        lines: ["חלק אחד – התנאי", "חלק שני – מה יקרה"],
+        table: [["התנאי", "**If** it rains"], ["מה יקרה", "I **will** stay home"]],
+      },
+      {
+        title: "**if** + הווה",
+        lines: ["אחרי if – פועל בהווה", "גם כשמדברים על מחר"],
+        examples: [["If he **comes** tomorrow, we will play.", "אם הוא יבוא מחר, נשחק"]],
+      },
+      {
+        title: "**will** – מה יקרה",
+        lines: ["בחלק השני – will ועוד פועל"],
+        examples: [["If you study, you **will** pass the test.", "אם תלמד, תעבור את המבחן"], ["If he is hungry, he **will** eat.", "אם הוא יהיה רעב, הוא יאכל"]],
+      },
+      {
+        title: "**if** באמצע",
+        lines: ["אפשר להתחיל בחלק השני", "ואז אין פסיק"],
+        flow: true,
+        examples: [["If it is hot, we will swim.", "אם יהיה חם, נשחה"], ["We will swim **if** it is hot.", "נשחה אם יהיה חם"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי if – בלי will"],
+        compare: ["If it will rain, I will stay home.", "If it **rains**, I will stay home."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["התנאי", "**If** + הווה"], ["מה יקרה", "**will** + פועל"]],
+      },
+    ],
+    quiz: [
+      ["If it ___, we will play inside.", "אם ירד גשם, נשחק בפנים", ["rains", "will rain"], 0, "אחרי if – הווה"],
+      ["If you eat too much, you ___ sick.", "אם תאכל יותר מדי, תהיה חולה", ["are", "will be"], 1, "מה יקרה – will"],
+      ["If he ___ hungry, he will eat.", "אם הוא יהיה רעב, הוא יאכל", ["will be", "is"], 1, "אחרי if – בלי will"],
+      ["I will help you ___ you call me.", "אעזור לך אם תתקשר אליי", ["if", "will", "is"], 0, "if – אם"],
+    ],
+    discuss: ["מה תעשו אם ירד גשם מחר? ענו עם If it rains", "השלימו בקול: If I have time"],
+  },
+  {
+    id: "conditionals-2",
+    topic: "conditionals",
+    name: "משפטי תנאי",
+    part: "עובדות והרגלים",
+    summary: "דברים שקורים תמיד – הווה בשני החלקים: If you heat ice, it melts",
+    vocab: [["heat", "לחמם"], ["melt", "להימס"], ["freeze", "לקפוא"], ["mix", "לערבב"], ["get", "לקבל"], ["when", "כש־"]],
+    slides: [
+      {
+        title: "**תמיד** קורה",
+        lines: ["יש דברים שקורים כל פעם", "עובדות מהמדע ומהחיים"],
+        examples: [["If you heat ice, it **melts**.", "אם מחממים קרח, הוא נמס"]],
+      },
+      {
+        title: "**הווה** + **הווה**",
+        lines: ["בשני החלקים – הווה", "כי זה קורה כל פעם"],
+        table: [["התנאי", "If you **heat** ice"], ["מה קורה", "it **melts**"]],
+      },
+      {
+        title: "**עובדות** מהמדע",
+        examples: [["If you mix blue and yellow, you **get** green.", "אם מערבבים כחול וצהוב, מקבלים ירוק"], ["If water gets very cold, it **freezes**.", "אם מים מתקררים מאוד, הם קופאים"]],
+      },
+      {
+        title: "**הרגלים** שלי",
+        lines: ["גם דברים שקורים לי כל פעם"],
+        examples: [["If I am tired, I **go** to bed early.", "כשאני עייף, אני הולך לישון מוקדם"], ["If my dog is hungry, he **barks**.", "כשהכלב שלי רעב, הוא נובח"]],
+      },
+      {
+        title: "**when** – כש",
+        lines: ["כאן אפשר להגיד גם when"],
+        examples: [["**When** it rains, the street gets wet.", "כשיורד גשם, הרחוב נרטב"]],
+      },
+      {
+        title: "**תמיד** או **מחר**",
+        examples: [["If you heat ice, it **melts**.", "תמיד – הווה"], ["If it rains, I **will** stay home.", "פעם אחת, מחר – will"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["עם he, she, it – s בסוף הפועל"],
+        compare: ["If he is cold, he wear a coat.", "If he is cold, he **wears** a coat."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["תמיד", "**If** + הווה, הווה"], ["פעם אחת", "**If** + הווה, **will**"]],
+      },
+    ],
+    quiz: [
+      ["If you heat water, it ___.", "אם מחממים מים, הם רותחים", ["boils", "boiled"], 0, "עובדה – הווה"],
+      ["If you mix red and white, you ___ pink.", "אם מערבבים אדום ולבן, מקבלים ורוד", ["got", "get"], 1, "תמיד – הווה"],
+      ["If my cat is hungry, it ___.", "כשהחתול שלי רעב, הוא מיילל", ["meow", "meows"], 1, "עם it – s בסוף"],
+      ["If it rains tomorrow, I ___ stay home.", "אם ירד גשם מחר, אשאר בבית", ["will", "am"], 0, "מחר – will"],
+    ],
+    discuss: ["מה קורה אם שמים קרח בשמש?", "מה אתם עושים כשאתם עייפים? ענו עם If I am tired"],
+  },
+  {
+    id: "passive-1",
+    topic: "passive",
+    name: "סביל",
+    part: "is / are made",
+    summary: "לא חשוב מי עושה – חשוב מה קורה לדבר: The room is cleaned every day",
+    vocab: [["is made", "עשוי, מיוצר"], ["is cleaned", "מנוקה"], ["is spoken", "מדברים בה"], ["are grown", "מגדלים אותם"], ["made of", "עשוי מ־"], ["wood", "עץ (חומר)"], ["glass", "זכוכית"]],
+    slides: [
+      {
+        title: "**מי** עושה?",
+        lines: ["לפעמים לא חשוב מי עושה", "חשוב מה קורה לדבר"],
+        flow: true,
+        examples: [["Someone **cleans** the room every day.", "מישהו מנקה את החדר כל יום"], ["The room **is cleaned** every day.", "החדר מנוקה כל יום"]],
+      },
+      {
+        title: "**is** / **are** + פועל",
+        table: [["דבר אחד", "**is** cleaned"], ["הרבה דברים", "**are** cleaned"]],
+      },
+      {
+        title: "פועל רגיל – **ed**",
+        lines: ["כמו בעבר – מוסיפים ed"],
+        examples: [["The shops **are closed** on Shabbat.", "החנויות סגורות בשבת"], ["The car **is washed** on Friday.", "שוטפים את המכונית ביום שישי"]],
+      },
+      {
+        title: "פעלים **מיוחדים**",
+        table: [["make", "**made**"], ["write", "**written**"], ["speak", "**spoken**"], ["grow", "**grown**"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["English **is spoken** in many countries.", "מדברים אנגלית בהרבה ארצות"], ["Oranges **are grown** in Israel.", "מגדלים תפוזים בישראל"]],
+      },
+      {
+        title: "**ממה** זה עשוי?",
+        lines: ["made of – עשוי מ־"],
+        examples: [["The table **is made of** wood.", "השולחן עשוי מעץ"], ["Bottles **are made of** glass.", "בקבוקים עשויים מזכוכית"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אסור לשכוח is / are"],
+        compare: ["The room cleaned every day.", "The room **is** cleaned every day."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["דבר אחד", "**is** + פועל"], ["הרבה דברים", "**are** + פועל"], ["עשוי מ־", "**made of**"]],
+      },
+    ],
+    quiz: [
+      ["The shop ___ closed on Shabbat.", "החנות סגורה בשבת", ["is", "are"], 0, "דבר אחד – is"],
+      ["Oranges are ___ in Israel.", "מגדלים תפוזים בישראל", ["grow", "grown", "growing"], 1, "grow – grown"],
+      ["Many books ___ written in English.", "הרבה ספרים כתובים באנגלית", ["is", "are"], 1, "הרבה ספרים – are"],
+      ["The chair is made ___ wood.", "הכיסא עשוי מעץ", ["at", "on", "of"], 2, "עשוי מ־ – made of"],
+    ],
+    discuss: ["ממה עשוי השולחן שלכם? ענו עם It is made of", "אילו שפות מדברים בישראל? ענו עם is spoken"],
+  },
+  {
+    id: "passive-2",
+    topic: "passive",
+    name: "סביל",
+    part: "was built / by",
+    summary: "סביל בעבר – was / were – ומי עשה את זה עם by",
+    vocab: [["was built", "נבנה"], ["was broken", "נשבר"], ["were eaten", "נאכלו"], ["was written", "נכתב"], ["by", "על ידי"], ["found", "נמצא (was found)"]],
+    slides: [
+      {
+        title: "סביל **בעבר**",
+        lines: ["משהו שנעשה פעם – was / were"],
+        examples: [["The Temple **was built** in Jerusalem.", "בית המקדש נבנה בירושלים"]],
+      },
+      {
+        title: "**was** / **were**",
+        table: [["דבר אחד", "**was** built"], ["הרבה דברים", "**were** built"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["The window **was broken** yesterday.", "החלון נשבר אתמול"], ["The cookies **were eaten**.", "העוגיות נאכלו"]],
+      },
+      {
+        title: "**by** – על ידי",
+        lines: ["רוצים להגיד מי עשה? מוסיפים by"],
+        examples: [["The book **was written by** Dan.", "הספר נכתב על ידי דן"], ["The cake **was made by** my grandpa.", "העוגה הוכנה על ידי סבא שלי"]],
+      },
+      {
+        title: "**הופכים** משפט",
+        lines: ["הדבר שקרה לו – עובר להתחלה"],
+        flow: true,
+        examples: [["Dan **painted** the wall.", "דן צבע את הקיר"], ["The wall **was painted by** Dan.", "הקיר נצבע על ידי דן"]],
+      },
+      {
+        title: "**עוד** פעלים מיוחדים",
+        table: [["build", "**built**"], ["break", "**broken**"], ["find", "**found**"], ["give", "**given**"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["הרבה דברים – were"],
+        compare: ["The cookies was eaten.", "The cookies **were** eaten."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["היום", "**is** / **are** + פועל"], ["בעבר", "**was** / **were** + פועל"], ["מי עשה", "**by**"]],
+      },
+    ],
+    quiz: [
+      ["The window ___ broken yesterday.", "החלון נשבר אתמול", ["was", "were"], 0, "דבר אחד – was"],
+      ["The letters ___ written by Ben.", "המכתבים נכתבו על ידי בן", ["was", "were"], 1, "הרבה מכתבים – were"],
+      ["The house was built ___ my grandpa.", "הבית נבנה על ידי סבא שלי", ["of", "by", "from"], 1, "על ידי – by"],
+      ["The keys were ___ under the bed.", "המפתחות נמצאו מתחת למיטה", ["found", "find"], 0, "find – found"],
+    ],
+    discuss: ["מתי נבנה בית הספר שלכם? ענו עם It was built", "מה נשבר פעם אצלכם בבית? ענו עם was broken"],
+  },
+  {
+    id: "reported-speech-1",
+    topic: "reported-speech",
+    name: "דיבור עקיף",
+    part: "said that",
+    summary: "מספרים מה מישהו אמר: Dan said that he was tired",
+    vocab: [["said", "אמר"], ["said that", "אמר ש־"], ["was", "היה (am / is)"], ["were", "היו (are)"], ["would", "will אחרי said"], ["tired", "עייף"]],
+    slides: [
+      {
+        title: "**מה** הוא אמר?",
+        lines: ["מספרים מה מישהו אמר", "בלי מירכאות"],
+        flow: true,
+        examples: [["Dan: “I am tired.”", "דן: אני עייף"], ["Dan **said that** he **was** tired.", "דן אמר שהוא עייף"]],
+      },
+      {
+        title: "**said that** – אמר ש־",
+        lines: ["said that – אמר ש־"],
+        examples: [["He **said that** he liked pizza.", "הוא אמר שהוא אוהב פיצה"]],
+      },
+      {
+        title: "**I** הופך **he**",
+        lines: ["מי שדיבר – הופך ל־he"],
+        flow: true,
+        examples: [["Tom: “I am hungry.”", "תום: אני רעב"], ["Tom said that **he** was hungry.", "תום אמר שהוא רעב"]],
+      },
+      {
+        title: "**צעד** אחורה בזמן",
+        lines: ["הפועל זז צעד אחד אחורה"],
+        table: [["am / is", "**was**"], ["are", "**were**"], ["like", "**liked**"], ["will", "**would**"]],
+      },
+      {
+        title: "**דוגמה**",
+        flow: true,
+        examples: [["Ben: “I like football.”", "בן: אני אוהב כדורגל"], ["Ben said that he **liked** football.", "בן אמר שהוא אוהב כדורגל"]],
+      },
+      {
+        title: "**will** הופך **would**",
+        flow: true,
+        examples: [["Dad: “I will help you.”", "אבא: אני אעזור לך"], ["Dad said that he **would** help me.", "אבא אמר שהוא יעזור לי"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי said – זזים אחורה בזמן"],
+        compare: ["He said that he is tired.", "He said that he **was** tired."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["אמר ש־", "**said that**"], ["I", "**he**"], ["am / is", "**was**"], ["will", "**would**"]],
+      },
+    ],
+    quiz: [
+      ["Dan said that he ___ happy.", "דן אמר שהוא שמח", ["is", "was"], 1, "אחרי said – was"],
+      ["Tom: “I am cold.” Tom said that ___ was cold.", "תום אמר שקר לו", ["he", "I"], 0, "I הופך he"],
+      ["Ben said that he ___ pizza.", "בן אמר שהוא אוהב פיצה", ["likes", "liked"], 1, "like – liked"],
+      ["Dad said that he ___ help me.", "אבא אמר שהוא יעזור לי", ["will", "would"], 1, "will – would"],
+    ],
+    discuss: ["מה המורה אמר לכם היום? ענו עם The teacher said that", "טלפון שבור: אחד אומר משפט, והשני מספר עם He said that"],
+  },
+  {
+    id: "reported-speech-2",
+    topic: "reported-speech",
+    name: "דיבור עקיף",
+    part: "told / asked",
+    summary: "מספרים על בקשה ועל שאלה – told me to / asked me",
+    vocab: [["told me to", "אמר לי ל־"], ["told me not to", "אמר לי לא ל־"], ["asked", "שאל"], ["asked me if", "שאל אותי אם"], ["where I lived", "איפה אני גר"], ["sit down", "לשבת"]],
+    slides: [
+      {
+        title: "**בקשה** – told me to",
+        lines: ["told me to – אמר לי ל־"],
+        flow: true,
+        examples: [["Dad: “Sit down.”", "אבא: שב"], ["Dad **told me to** sit down.", "אבא אמר לי לשבת"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["The teacher **told us to** open our books.", "המורה אמר לנו לפתוח את הספרים"], ["Grandpa **told me to** wear a coat.", "סבא אמר לי ללבוש מעיל"]],
+      },
+      {
+        title: "**לא** לעשות",
+        lines: ["told me not to – אמר לי לא ל־"],
+        flow: true,
+        examples: [["Dad: “Don't run.”", "אבא: אל תרוץ"], ["Dad told me **not to** run.", "אבא אמר לי לא לרוץ"]],
+      },
+      {
+        title: "**שאלה** – asked",
+        lines: ["asked – שאל"],
+        flow: true,
+        examples: [["Tom: “Where do you live?”", "תום: איפה אתה גר?"], ["Tom **asked** me where I **lived**.", "תום שאל אותי איפה אני גר"]],
+      },
+      {
+        title: "**כן** או **לא** – if",
+        lines: ["שאלה בלי מילת שאלה – if"],
+        flow: true,
+        examples: [["Ben: “Are you hungry?”", "בן: אתה רעב?"], ["Ben asked me **if** I **was** hungry.", "בן שאל אותי אם אני רעב"]],
+      },
+      {
+        title: "**סדר** רגיל",
+        lines: ["אחרי asked – לא הופכים את הסדר", "ואין סימן שאלה בסוף"],
+        examples: [["He asked me where **I lived**.", "הוא שאל אותי איפה אני גר"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי asked – סדר רגיל"],
+        compare: ["He asked where did I live?", "He asked where **I lived**."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["בקשה", "**told** me **to**"], ["לא לעשות", "told me **not to**"], ["שאלה", "**asked** me where / if"]],
+      },
+    ],
+    quiz: [
+      ["The teacher told us ___ be quiet.", "המורה אמר לנו לשמור על שקט", ["to", "that", "if"], 0, "בקשה – told us to"],
+      ["Dad told me ___ to run.", "אבא אמר לי לא לרוץ", ["don't", "not"], 1, "לא לעשות – not to"],
+      ["He asked me where I ___.", "הוא שאל אותי איפה אני גר", ["do live", "lived"], 1, "סדר רגיל, וזמן עבר"],
+      ["Ben asked me ___ I was hungry.", "בן שאל אותי אם אני רעב", ["that", "to", "if"], 2, "שאלת כן או לא – if"],
+    ],
+    discuss: ["מה ההורים אמרו לכם לעשות הבוקר? ענו עם They told me to", "שאלו חבר שאלה, ואחר כך ספרו לכיתה עם I asked him"],
+  },
+
+  /* ---------- Stage 9: reading and understanding ---------- */
   {
     id: "bagrut-1",
     topic: "bagrut",

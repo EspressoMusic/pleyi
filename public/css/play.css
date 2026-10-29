@@ -59,10 +59,13 @@
   align-items: center;
 }
 
+/* Never narrower than its widest pill: with min-width: 0 the score pill
+   overflowed under the action buttons on narrow screens. Now the actions
+   wrap to their own row instead. */
 .play-top-strip-stats {
   display: flex;
   flex: 1;
-  min-width: 0;
+  min-width: auto;
   position: relative;
   z-index: 1;
   pointer-events: none;
@@ -115,6 +118,7 @@
   z-index: 2;
   flex-shrink: 0;
   width: auto;
+  max-width: 100%;
 }
 
 .play-root {
