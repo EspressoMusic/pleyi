@@ -827,86 +827,13 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lesson-player
   animation: none;
 }
 
-/* Fullscreen has far more room than the windowed modal — make the text
-   itself bigger and clearer instead of just leaving it small and centered. */
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner {
-  max-width: 46rem;
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-visual {
-  max-width: min(64rem, 92vw);
-  padding-inline: clamp(20px, 4vw, 48px);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-visual .lp-slide-text-col {
-  max-width: min(34rem, 52%);
-  padding-inline: clamp(14px, 2.5vw, 28px);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-video {
-  max-width: min(64rem, 92vw);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-video .lp-slide-text-col {
-  max-width: min(34rem, 52%);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner.has-video .lp-slide-video {
-  max-width: min(480px, 46%);
-  width: min(480px, 46%);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-title {
-  font-size: calc(var(--lp-fit, 1) * clamp(2.2rem, 7vh, 4.4rem));
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-body {
-  font-size: calc(var(--lp-fit, 1) * clamp(1.4rem, 4vh, 2.15rem));
-  max-width: 46rem;
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner--outro .lp-slide-title {
-  font-size: calc(var(--lp-fit, 1) * clamp(3rem, 9vh, 5.6rem));
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-inner--outro .lp-slide-body {
-  font-size: calc(var(--lp-fit, 1) * clamp(1.9rem, 5.5vh, 2.6rem));
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-list {
-  max-width: 420px;
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-list li {
-  padding: calc(var(--lp-fit, 1) * 14px) 18px;
-  font-size: calc(var(--lp-fit, 1) * 1.2rem);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-list li span:last-child {
-  font-size: calc(var(--lp-fit, 1) * 1.1rem);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-word {
-  font-size: calc(var(--lp-fit, 1) * 1.3rem);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-slide-games-intro {
-  font-size: 1.2rem;
-  max-width: 34rem;
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-volcano-scene:not(.lp-volcano-scene--output) {
-  width: clamp(200px, 22vw, 320px);
-  height: clamp(200px, 22vw, 320px);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-volcano-scene--output {
-  min-width: clamp(260px, 28vw, 380px);
-}
-
-body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-volcano-output-badge {
-  font-size: clamp(1.1rem, 2.6vh, 1.35rem);
-  padding: 14px 22px;
+/* Fullscreen: the windowed slide, scaled up as one piece — --lp-zoom is set
+   by fitSlideContent() in ready-lessons.js. */
+body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lesson-player-slide {
+  flex-shrink: 0;
+  width: calc(100% / var(--lp-zoom, 1));
+  min-height: calc(100% / var(--lp-zoom, 1));
+  transform: scale(var(--lp-zoom, 1));
 }
 
 /* PDF-slide lessons: let the page image fill the whole stage instead of
@@ -3202,25 +3129,6 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
   font-size: calc(var(--lp-fit, 1) * 0.98rem);
   font-weight: 800;
   color: color-mix(in srgb, var(--ink) 65%, transparent);
-}
-
-/* Fullscreen on a wide screen: bigger pictures (phones keep their compact grid). */
-@media (min-width: 601px) {
-  body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-picture-card {
-    flex-basis: calc(var(--lp-fit, 1) * 200px);
-  }
-
-  body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-picture-grid[data-count="5"] {
-    max-width: calc(var(--lp-fit, 1) * 680px);
-  }
-
-  body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-picture-img {
-    width: min(100%, calc(var(--lp-fit, 1) * clamp(80px, 17vh, 150px)));
-  }
-
-  body:is(.page-ready-lessons, .lp-host) .lesson-player.is-expanded .lp-picture-card .lp-word {
-    font-size: calc(var(--lp-fit, 1) * 1.5rem);
-  }
 }
 
 /* Long word lists (7+ words) split into two columns, so they fit the slide

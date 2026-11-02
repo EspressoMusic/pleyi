@@ -1031,11 +1031,66 @@
     return svg("0 0 720 324", s);
   }
 
+  /* ---------- angles and directions ---------- */
+
+  // One angle of `deg` degrees: a ray to the right and one turned up from it,
+  // its size written inside (label: other text, or false for none). A right
+  // angle gets the small square instead of an arc.
+  function angle({ deg = 60, label: text }) {
+    const T = P(180, 206);
+    const A = P(340, 206);
+    const r = (deg * Math.PI) / 180;
+    const B = P(T.x + 156 * Math.cos(r), T.y - 156 * Math.sin(r));
+    let s = deg === 90 ? rightMark(T, A, B, 34, COL.yellow) : arcs(T, A, B, 1, 48);
+    s += seg(T, A, "#000", 6) + seg(T, B, "#000", 6);
+    s += `<circle cx="${T.x}" cy="${T.y}" r="7" fill="#000"/>`;
+    if (text !== false) {
+      const m = r / 2;
+      s += label(T.x + 88 * Math.cos(m), T.y - 88 * Math.sin(m) - (deg > 150 ? 18 : 0), text || `${deg}°`, 32, COL.deep);
+    }
+    return svg("0 0 360 230", s);
+  }
+
+  // A triangle with its three angles written in the corners: a = [bottom
+  // right, top, bottom left], numbers (degrees) or "?".
+  function tri({ a = [60, 60, 60] }) {
+    const pts = [P(340, 250), P(150, 40), P(30, 250)];
+    const cen = centroid(pts);
+    let s = poly(pts, COL.tq, 6);
+    pts.forEach((p, i) => {
+      const q = pts[(i + 1) % 3];
+      const o = pts[(i + 2) % 3];
+      s += arcs(p, q, o, 1, 34);
+      const toward = V.unit(V.sub(cen, p));
+      const at = V.add(p, V.mul(toward, i === 1 ? 74 : 70));
+      const t = a[i] === "?" ? "?" : `${a[i]}°`;
+      s += label(at.x, at.y, t, 28, a[i] === "?" ? COL.red : "#000");
+    });
+    return svg("0 0 370 280", s);
+  }
+
+  // The four directions on a map; hl: "n" | "s" | "e" | "w" in red.
+  function compass({ hl = "" }) {
+    const C = P(170, 170);
+    const dirs = { n: [0, -1, "צפון"], e: [1, 0, "מזרח"], s: [0, 1, "דרום"], w: [-1, 0, "מערב"] };
+    let s = `<circle cx="${C.x}" cy="${C.y}" r="104" fill="${SOFT}" stroke="#000" stroke-width="4"/>`;
+    Object.entries(dirs).forEach(([id, [dx, dy, t]]) => {
+      const tip = P(C.x + dx * 96, C.y + dy * 96);
+      const side1 = P(C.x - dy * 22, C.y + dx * 22);
+      const side2 = P(C.x + dy * 22, C.y - dx * 22);
+      s += poly([tip, side1, C, side2], hl === id ? COL.red : id === "n" ? TEAL : COL.yl, 4);
+      s += label(C.x + dx * 156, C.y + dy * 140, t, hl === id ? 32 : 28, hl === id ? "#b71c1c" : "#000");
+    });
+    s += `<circle cx="${C.x}" cy="${C.y}" r="9" fill="#000"/>`;
+    return svg("-30 0 400 340", s);
+  }
+
   window.LESSON_FIGURES = {
     pie, equal, bars, hundred, groups, shapes, shape, area,
     right, ladder, diag, pair, aaa, kite, bowtie, balance, balls, parts, cross, scalemap,
     numline, thermo, circle, dice, axes, bargraph, linegraph,
     plant, growth, circuit, states, cell, planets, earth,
     israel, timeline, world,
+    angle, tri, compass,
   };
 })();

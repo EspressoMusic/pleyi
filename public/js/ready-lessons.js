@@ -3559,8 +3559,11 @@
         { id: "questions", label: "מילות שאלה" },
         { id: "negation", label: "שלילה ושאלות" },
         { id: "frequency", label: "תדירות: always, usually, never" },
+        { id: "present-simple", label: "הווה פשוט (Present Simple)" },
+        { id: "progressive", label: "הווה ממושך (Present Progressive)" },
+        { id: "past-simple", label: "עבר פשוט (Past Simple)" },
+        { id: "future-simple", label: "עתיד פשוט (Future Simple)" },
         { id: "tenses", label: "זמנים בסיסיים" },
-        { id: "progressive", label: "הווה מתמשך" },
         { id: "going-to", label: "עתיד: going to" },
         { id: "irregular-verbs", label: "פעלים חשובים" },
         { id: "modals", label: "חובה ועצה: must, should, have to" },
@@ -3593,8 +3596,11 @@
         { id: "questions", label: "מילות שאלה" },
         { id: "negation", label: "שלילה ושאלות" },
         { id: "frequency", label: "תדירות: always, usually, never" },
+        { id: "present-simple", label: "הווה פשוט (Present Simple)" },
+        { id: "progressive", label: "הווה ממושך (Present Progressive)" },
+        { id: "past-simple", label: "עבר פשוט (Past Simple)" },
+        { id: "future-simple", label: "עתיד פשוט (Future Simple)" },
         { id: "tenses", label: "זמנים בסיסיים" },
-        { id: "progressive", label: "הווה מתמשך" },
         { id: "going-to", label: "עתיד: going to" },
         { id: "irregular-verbs", label: "פעלים חשובים" },
         { id: "modals", label: "חובה ועצה: must, should, have to" },
@@ -3627,8 +3633,11 @@
         { id: "questions", label: "מילות שאלה" },
         { id: "negation", label: "שלילה ושאלות" },
         { id: "frequency", label: "תדירות: always, usually, never" },
+        { id: "present-simple", label: "הווה פשוט (Present Simple)" },
+        { id: "progressive", label: "הווה ממושך (Present Progressive)" },
+        { id: "past-simple", label: "עבר פשוט (Past Simple)" },
+        { id: "future-simple", label: "עתיד פשוט (Future Simple)" },
         { id: "tenses", label: "זמנים בסיסיים" },
-        { id: "progressive", label: "הווה מתמשך" },
         { id: "going-to", label: "עתיד: going to" },
         { id: "irregular-verbs", label: "פעלים חשובים" },
         { id: "modals", label: "חובה ועצה: must, should, have to" },
@@ -3666,10 +3675,14 @@
         { id: "fractions", label: "שברים" },
         { id: "multiplication", label: "לוח הכפל" },
         { id: "shapes", label: "צורות, היקף ושטח" },
+        { id: "addition", label: "חיבור וחיסור" },
+        { id: "division", label: "חילוק" },
       ],
       dv: [
         { id: "fractions", label: "שברים" },
         { id: "multiplication", label: "לוח הכפל" },
+        { id: "division", label: "חילוק" },
+        { id: "order-ops", label: "סדר פעולות חשבון" },
         { id: "shapes", label: "צורות, היקף ושטח" },
         { id: "percent", label: "אחוזים" },
         { id: "equations", label: "משוואות" },
@@ -3678,6 +3691,8 @@
         { id: "circle", label: "מעגל" },
         { id: "probability", label: "הסתברות" },
         { id: "graphs", label: "גרפים" },
+        { id: "angles", label: "זוויות" },
+        { id: "average", label: "ממוצע" },
       ],
       zh: [
         { id: "percent", label: "אחוזים" },
@@ -3690,6 +3705,10 @@
         { id: "circle", label: "מעגל" },
         { id: "probability", label: "הסתברות" },
         { id: "graphs", label: "גרפים" },
+        { id: "order-ops", label: "סדר פעולות חשבון" },
+        { id: "angles", label: "זוויות" },
+        { id: "average", label: "ממוצע" },
+        { id: "algebra", label: "ביטויים אלגבריים" },
       ],
     },
     hebrew: {
@@ -3698,18 +3717,23 @@
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
+        { id: "grammar", label: "דקדוק" },
+        { id: "words", label: "אוצר מילים" },
       ],
       dv: [
         { id: "roots", label: "שורש ובניין" },
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
+        { id: "grammar", label: "דקדוק" },
+        { id: "words", label: "אוצר מילים" },
       ],
       zh: [
         { id: "roots", label: "שורש ובניין" },
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
+        { id: "words", label: "אוצר מילים" },
       ],
     },
     science: {
@@ -3718,6 +3742,9 @@
         { id: "animals", label: "בעלי חיים" },
         { id: "electricity", label: "חשמל" },
         { id: "human-body", label: "גוף האדם" },
+        { id: "water", label: "המים בטבע" },
+        { id: "light-sound", label: "אור וקול" },
+        { id: "ecology", label: "הסביבה שלנו" },
       ],
       dv: [
         { id: "plants", label: "צמחים" },
@@ -3727,29 +3754,51 @@
         { id: "matter", label: "מצבי צבירה" },
         { id: "energy", label: "אנרגיה" },
         { id: "solar-system", label: "מערכת השמש" },
+        { id: "water", label: "המים בטבע" },
+        { id: "forces", label: "כוחות ותנועה" },
+        { id: "light-sound", label: "אור וקול" },
+        { id: "ecology", label: "הסביבה שלנו" },
       ],
       zh: [
         { id: "matter", label: "מצבי צבירה" },
         { id: "cells", label: "התא" },
         { id: "energy", label: "אנרגיה" },
         { id: "solar-system", label: "מערכת השמש" },
+        { id: "forces", label: "כוחות ותנועה" },
       ],
     },
     geography: {
-      ag: [{ id: "israel-map", label: "מפת ארץ ישראל" }],
+      ag: [
+        { id: "israel-map", label: "מפת ארץ ישראל" },
+        { id: "map-skills", label: "קוראים מפה" },
+      ],
       dv: [
         { id: "israel-map", label: "מפת ארץ ישראל" },
         { id: "world-map", label: "מפת העולם" },
+        { id: "map-skills", label: "קוראים מפה" },
       ],
       zh: [
         { id: "israel-map", label: "מפת ארץ ישראל" },
         { id: "world-map", label: "מפת העולם" },
+        { id: "map-skills", label: "קוראים מפה" },
       ],
     },
     history: {
-      ag: [{ id: "jewish-history", label: "תולדות עם ישראל" }],
-      dv: [{ id: "jewish-history", label: "תולדות עם ישראל" }],
-      zh: [{ id: "jewish-history", label: "תולדות עם ישראל" }],
+      ag: [
+        { id: "jewish-history", label: "תולדות עם ישראל" },
+        { id: "second-temple", label: "ימי בית שני" },
+        { id: "zionism", label: "הציונות ומדינת ישראל" },
+      ],
+      dv: [
+        { id: "jewish-history", label: "תולדות עם ישראל" },
+        { id: "second-temple", label: "ימי בית שני" },
+        { id: "zionism", label: "הציונות ומדינת ישראל" },
+      ],
+      zh: [
+        { id: "jewish-history", label: "תולדות עם ישראל" },
+        { id: "second-temple", label: "ימי בית שני" },
+        { id: "zionism", label: "הציונות ומדינת ישראל" },
+      ],
     },
     health: {
       ag: [
@@ -4898,10 +4947,32 @@
     // throughout lesson-player.css) instead of letting the slide scroll.
     const LP_FIT_MIN = 0.45;
     const LP_FIT_STEP = 0.03;
+
+    // Fullscreen shows the very same slide as the windowed player, scaled up
+    // (--lp-zoom) to fill the screen, so text, drawings and cards all grow
+    // together. The bars around the slide are the same size in both modes.
+    // Phones skip it: their windowed player already fills most of the screen.
+    function slideZoom() {
+      if (!player.classList.contains("is-expanded")) return 1;
+      if (window.matchMedia("(max-width: 640px)").matches) return 1;
+      const pad = Math.min(32, Math.max(16, window.innerWidth * 0.04));
+      const winW = Math.min(900, player.clientWidth - 2 * pad) - 6;
+      const winH = Math.min(window.innerHeight * 0.68, 600, window.innerHeight - 48) - 6;
+      const wrapW = slideWrapEl.clientWidth;
+      const wrapH = slideWrapEl.clientHeight;
+      const winWrapW = winW - (shell.clientWidth - wrapW);
+      const winWrapH = winH - (shell.clientHeight - wrapH);
+      if (winWrapW <= 0 || winWrapH <= 0) return 1;
+      return Math.max(1, Math.min(wrapW / winWrapW, wrapH / winWrapH));
+    }
+
     function fitSlideContent() {
       if (!slideWrapEl) return;
       slideEl.style.removeProperty("--lp-fit");
-      const available = slideWrapEl.clientHeight;
+      const zoom = slideZoom();
+      if (zoom > 1) slideEl.style.setProperty("--lp-zoom", zoom.toFixed(3));
+      else slideEl.style.removeProperty("--lp-zoom");
+      const available = slideWrapEl.clientHeight / zoom;
       if (!available) return;
       let scale = 1;
       while (scale > LP_FIT_MIN + 1e-6 && slideEl.scrollHeight > available) {
