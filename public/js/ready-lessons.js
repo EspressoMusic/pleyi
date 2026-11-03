@@ -3677,6 +3677,8 @@
         { id: "shapes", label: "צורות, היקף ושטח" },
         { id: "addition", label: "חיבור וחיסור" },
         { id: "division", label: "חילוק" },
+        { id: "measure", label: "מידות" },
+        { id: "solids", label: "גופים" },
       ],
       dv: [
         { id: "fractions", label: "שברים" },
@@ -3693,6 +3695,9 @@
         { id: "graphs", label: "גרפים" },
         { id: "angles", label: "זוויות" },
         { id: "average", label: "ממוצע" },
+        { id: "measure", label: "מידות" },
+        { id: "divisibility", label: "התחלקות" },
+        { id: "solids", label: "גופים ונפח" },
       ],
       zh: [
         { id: "percent", label: "אחוזים" },
@@ -3709,6 +3714,10 @@
         { id: "angles", label: "זוויות" },
         { id: "average", label: "ממוצע" },
         { id: "algebra", label: "ביטויים אלגבריים" },
+        { id: "divisibility", label: "התחלקות" },
+        { id: "solids", label: "גופים ונפח" },
+        { id: "powers", label: "חזקות ושורשים" },
+        { id: "linear", label: "פונקציה קווית" },
       ],
     },
     hebrew: {
@@ -3719,6 +3728,7 @@
         { id: "reading", label: "הבנת הנקרא" },
         { id: "grammar", label: "דקדוק" },
         { id: "words", label: "אוצר מילים" },
+        { id: "text-types", label: "סוגי טקסטים" },
       ],
       dv: [
         { id: "roots", label: "שורש ובניין" },
@@ -3727,6 +3737,8 @@
         { id: "reading", label: "הבנת הנקרא" },
         { id: "grammar", label: "דקדוק" },
         { id: "words", label: "אוצר מילים" },
+        { id: "sentence", label: "תחביר: נושא, נשוא ותיאורים" },
+        { id: "text-types", label: "סוגי טקסטים" },
       ],
       zh: [
         { id: "roots", label: "שורש ובניין" },
@@ -3734,6 +3746,9 @@
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
         { id: "words", label: "אוצר מילים" },
+        { id: "grammar", label: "דקדוק" },
+        { id: "sentence", label: "תחביר: נושא, נשוא ותיאורים" },
+        { id: "text-types", label: "סוגי טקסטים" },
       ],
     },
     science: {
@@ -3745,6 +3760,9 @@
         { id: "water", label: "המים בטבע" },
         { id: "light-sound", label: "אור וקול" },
         { id: "ecology", label: "הסביבה שלנו" },
+        { id: "weather", label: "מזג אוויר" },
+        { id: "magnets", label: "מגנטים" },
+        { id: "earth", label: "כדור הארץ" },
       ],
       dv: [
         { id: "plants", label: "צמחים" },
@@ -3758,6 +3776,10 @@
         { id: "forces", label: "כוחות ותנועה" },
         { id: "light-sound", label: "אור וקול" },
         { id: "ecology", label: "הסביבה שלנו" },
+        { id: "weather", label: "מזג אוויר" },
+        { id: "magnets", label: "מגנטים" },
+        { id: "earth", label: "כדור הארץ" },
+        { id: "substances", label: "חומרים" },
       ],
       zh: [
         { id: "matter", label: "מצבי צבירה" },
@@ -3765,22 +3787,27 @@
         { id: "energy", label: "אנרגיה" },
         { id: "solar-system", label: "מערכת השמש" },
         { id: "forces", label: "כוחות ותנועה" },
+        { id: "earth", label: "כדור הארץ" },
+        { id: "substances", label: "חומרים" },
       ],
     },
     geography: {
       ag: [
         { id: "israel-map", label: "מפת ארץ ישראל" },
         { id: "map-skills", label: "קוראים מפה" },
+        { id: "settlements", label: "יישובים בארץ" },
       ],
       dv: [
         { id: "israel-map", label: "מפת ארץ ישראל" },
         { id: "world-map", label: "מפת העולם" },
         { id: "map-skills", label: "קוראים מפה" },
+        { id: "settlements", label: "יישובים בארץ" },
       ],
       zh: [
         { id: "israel-map", label: "מפת ארץ ישראל" },
         { id: "world-map", label: "מפת העולם" },
         { id: "map-skills", label: "קוראים מפה" },
+        { id: "settlements", label: "יישובים בארץ" },
       ],
     },
     history: {
@@ -3788,16 +3815,21 @@
         { id: "jewish-history", label: "תולדות עם ישראל" },
         { id: "second-temple", label: "ימי בית שני" },
         { id: "zionism", label: "הציונות ומדינת ישראל" },
+        { id: "first-temple", label: "ימי בית ראשון" },
       ],
       dv: [
         { id: "jewish-history", label: "תולדות עם ישראל" },
         { id: "second-temple", label: "ימי בית שני" },
         { id: "zionism", label: "הציונות ומדינת ישראל" },
+        { id: "first-temple", label: "ימי בית ראשון" },
+        { id: "diaspora", label: "עם ישראל בגולה" },
       ],
       zh: [
         { id: "jewish-history", label: "תולדות עם ישראל" },
         { id: "second-temple", label: "ימי בית שני" },
         { id: "zionism", label: "הציונות ומדינת ישראל" },
+        { id: "first-temple", label: "ימי בית ראשון" },
+        { id: "diaspora", label: "עם ישראל בגולה" },
       ],
     },
     health: {

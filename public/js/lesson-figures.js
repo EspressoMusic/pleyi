@@ -545,7 +545,9 @@
 
   // Axes with a grid from min to max on both; points: [[x, y, name], ...];
   // walk: dashed steps from the origin to the first point (right, then up).
-  function axes({ min = 0, max = 6, points = [], walk = false }) {
+  // line: [[x1, y1], [x2, y2]] — a straight line through the points (a
+  // linear function's graph), drawn under them.
+  function axes({ min = 0, max = 6, points = [], walk = false, line }) {
     const n = max - min;
     const u = Math.min(52, 330 / n);
     const pad = 46;
@@ -568,6 +570,7 @@
       const dash = 'stroke-dasharray="10 8"';
       s += seg(P(X(0), Y(0)), P(X(px), Y(0)), COL.orange, 6, dash) + seg(P(X(px), Y(0)), P(X(px), Y(py)), COL.orange, 6, dash);
     }
+    if (line) s += seg(P(X(line[0][0]), Y(line[0][1])), P(X(line[1][0]), Y(line[1][1])), COL.deep, 6);
     points.forEach(([px, py, name]) => {
       s += `<circle cx="${f1(X(px))}" cy="${f1(Y(py))}" r="9" fill="${COL.red}" stroke="#000" stroke-width="3"/>`;
       if (name) s += label(X(px) + (px < max - 1 ? 20 : -20), Y(py) - 22, name, 26, "#b71c1c");
@@ -1085,6 +1088,153 @@
     return svg("-30 0 400 340", s);
   }
 
+  /* ---------- measures and solids ---------- */
+
+  // A ruler from 0 to max cm and a bar len cm long on it, from 0.
+  function ruler({ len = 6, max = 10 }) {
+    const u = 50;
+    const x0 = 34;
+    const W = 2 * x0 + max * u;
+    const end = x0 + len * u;
+    let s = `<rect x="${x0}" y="20" width="${len * u}" height="32" rx="8" fill="${TEAL}" stroke="#000" stroke-width="5"/>`;
+    s += seg(P(end, 56), P(end, 84), COL.orange, 5, 'stroke-dasharray="7 6"');
+    s += `<rect x="${x0 - 22}" y="86" width="${max * u + 44}" height="80" rx="10" fill="${COL.yl}" stroke="#000" stroke-width="5"/>`;
+    for (let i = 0; i <= max * 10; i++) {
+      const x = x0 + (i * u) / 10;
+      const long = i % 10 === 0;
+      s += seg(P(x, 86), P(x, 86 + (long ? 30 : i % 5 === 0 ? 21 : 12)), "#000", long ? 3.5 : 2);
+    }
+    for (let c = 0; c <= max; c++) s += label(x0 + c * u, 144, c, 24, c === len ? "#b71c1c" : "#000");
+    return svg(`0 0 ${W} 178`, s);
+  }
+
+  // A box (a cuboid) w long, h high and d deep, drawn at a slant. labels:
+  // true writes w, h and d on its edges, [w, h, d] other text, false none;
+  // grid: the unit cubes' lines on its faces.
+  function box({ w = 3, h = 2, d = 2, labels = true, grid = false }) {
+    const k = 0.42;
+    const u = Math.min(64, 280 / (w + d * k), 190 / (h + d * k));
+    const dx = d * u * k;
+    const ox = 50;
+    const oy = 24 + dx + h * u;
+    const fx = ox + w * u;
+    const top = oy - h * u;
+    let s = poly([P(ox, oy), P(fx, oy), P(fx, top), P(ox, top)], TEAL);
+    s += poly([P(ox, top), P(fx, top), P(fx + dx, top - dx), P(ox + dx, top - dx)], COL.tq);
+    s += poly([P(fx, oy), P(fx + dx, oy - dx), P(fx + dx, top - dx), P(fx, top)], "#00bfa8");
+    if (grid) {
+      const g = (A, B) => seg(A, B, "#000", 2);
+      for (let i = 1; i < w; i++) s += g(P(ox + i * u, oy), P(ox + i * u, top)) + g(P(ox + i * u, top), P(ox + i * u + dx, top - dx));
+      for (let j = 1; j < h; j++) s += g(P(ox, oy - j * u), P(fx, oy - j * u)) + g(P(fx, oy - j * u), P(fx + dx, oy - j * u - dx));
+      for (let t = 1; t < d; t++) {
+        const e = (dx * t) / d;
+        s += g(P(ox + e, top - e), P(fx + e, top - e)) + g(P(fx + e, oy - e), P(fx + e, top - e));
+      }
+    }
+    if (labels) {
+      const [lw, lh, ld] = Array.isArray(labels) ? labels : [w, h, d];
+      s += label((ox + fx) / 2, oy + 26, lw, 30) + label(ox - 24, (oy + top) / 2, lh, 30) + label(fx + dx / 2 + 24, oy - dx / 2 + 12, ld, 30);
+    }
+    return svg(`0 0 ${f1(fx + dx + 56)} ${f1(oy + 48)}`, s);
+  }
+
+  // Five solids in a row (the first on the right), names under them; hl
+  // shows one: "cube" | "box" | "cylinder" | "pyramid" | "sphere".
+  function solids({ hl = "" }) {
+    const prism = (x, y, w, h, dd) =>
+      poly([P(x, y), P(x + w, y), P(x + w, y + h), P(x, y + h)], TEAL, 4) +
+      poly([P(x, y), P(x + w, y), P(x + w + dd, y - dd), P(x + dd, y - dd)], COL.tq, 4) +
+      poly([P(x + w, y), P(x + w + dd, y - dd), P(x + w + dd, y + h - dd), P(x + w, y + h)], "#00bfa8", 4);
+    const hidden = 'stroke-dasharray="7 6"';
+    const draw = {
+      cube: (x) => prism(x + 14, 40, 72, 72, 28),
+      box: (x) => prism(x + 4, 58, 92, 54, 26),
+      cylinder: (x) => {
+        const cx = x + 60;
+        return (
+          `<path d="M${cx - 42} 26 L${cx - 42} 104 A42 14 0 0 0 ${cx + 42} 104 L${cx + 42} 26 Z" fill="${TEAL}" stroke="#000" stroke-width="4" stroke-linejoin="round"/>` +
+          `<path d="M${cx - 42} 104 A42 14 0 0 1 ${cx + 42} 104" fill="none" stroke="#000" stroke-width="2.5" ${hidden}/>` +
+          `<ellipse cx="${cx}" cy="26" rx="42" ry="14" fill="${COL.tq}" stroke="#000" stroke-width="4"/>`
+        );
+      },
+      pyramid: (x) => {
+        const [A, B, C, D, T] = [P(x + 6, 112), P(x + 84, 112), P(x + 114, 90), P(x + 36, 90), P(x + 58, 12)];
+        return seg(D, A, "#000", 2.5, hidden) + seg(D, C, "#000", 2.5, hidden) + seg(D, T, "#000", 2.5, hidden) + poly([A, B, T], TEAL, 4) + poly([B, C, T], "#00bfa8", 4);
+      },
+      sphere: (x) => {
+        const cx = x + 60;
+        return (
+          `<circle cx="${cx}" cy="62" r="50" fill="${TEAL}" stroke="#000" stroke-width="4"/>` +
+          `<path d="M${cx - 50} 62 A50 15 0 0 0 ${cx + 50} 62" fill="none" stroke="#000" stroke-width="3"/>` +
+          `<path d="M${cx - 50} 62 A50 15 0 0 1 ${cx + 50} 62" fill="none" stroke="#000" stroke-width="2.5" ${hidden}/>`
+        );
+      },
+    };
+    const names = { cube: "קובייה", box: "תיבה", cylinder: "גליל", pyramid: "פירמידה", sphere: "כדור" };
+    const order = Object.keys(draw);
+    let s = "";
+    order.forEach((id, i) => {
+      const x = 10 + (order.length - 1 - i) * 140;
+      s += `<g${hl && hl !== id ? ' opacity="0.3"' : ""}>${draw[id](x)}${label(x + 60, 150, names[id], 26)}</g>`;
+    });
+    return svg("0 0 710 172", s);
+  }
+
+  /* ---------- magnets and the earth ---------- */
+
+  // Bar magnets, N in red and S in blue. mode: "one", "clips" (paper clips
+  // hanging on its ends), "attract" (S N  S N, arrows toward each other) or
+  // "repel" (S N  N S, arrows apart).
+  function magnet({ mode = "one" }) {
+    const bar = (x, y, flip) => {
+      const [a, b] = flip ? [["S", COL.blue], ["N", COL.red]] : [["N", COL.red], ["S", COL.blue]];
+      return (
+        `<rect x="${x}" y="${y}" width="100" height="60" fill="${a[1]}"/><rect x="${x + 100}" y="${y}" width="100" height="60" fill="${b[1]}"/>` +
+        `<rect x="${x}" y="${y}" width="200" height="60" rx="6" fill="none" stroke="#000" stroke-width="5"/>` +
+        label(x + 50, y + 31, a[0], 34, "#fff") +
+        label(x + 150, y + 31, b[0], 34, "#fff")
+      );
+    };
+    const arrow = (x1, x2, y) => {
+      const dir = Math.sign(x2 - x1);
+      return seg(P(x1, y), P(x2 - dir * 10, y), "#000", 5) + poly([P(x2, y), P(x2 - dir * 16, y - 10), P(x2 - dir * 16, y + 10)], "#000", 2);
+    };
+    if (mode === "attract") return svg("0 0 500 120", bar(14, 30, true) + bar(286, 30, true) + arrow(224, 246, 60) + arrow(276, 254, 60));
+    if (mode === "repel") return svg("0 0 540 120", bar(14, 30, true) + bar(326, 30, false) + arrow(258, 230, 60) + arrow(282, 310, 60));
+    let s = bar(60, 24, false);
+    if (mode === "clips") {
+      const clip = (x, y) =>
+        `<rect x="${x}" y="${y}" width="18" height="44" rx="9" fill="none" stroke="#555" stroke-width="4"/><rect x="${x + 5}" y="${y + 8}" width="8" height="28" rx="4" fill="none" stroke="#555" stroke-width="3"/>`;
+      [[64, 84], [86, 84], [72, 124], [234, 84], [218, 84]].forEach(([x, y]) => (s += clip(x, y)));
+      return svg("0 0 320 176", s);
+    }
+    return svg("0 0 320 108", s);
+  }
+
+  // The earth cut open: crust, mantle, outer and inner core, named on the
+  // right. hl: "crust" | "mantle" | "outer" | "inner" | "core" (both cores).
+  function layers({ hl = "" }) {
+    const cx = 150;
+    const cy = 150;
+    const list = [
+      ["crust", "קרום", 140, "#a1887f", -50, 134, 40],
+      ["mantle", "מעטפת", 128, COL.orange, -14, 101, 112],
+      ["outer", "גלעין חיצוני", 74, COL.yellow, 22, 56, 184],
+      ["inner", "גלעין פנימי", 38, COL.red, 58, 18, 256],
+    ];
+    const on = (id) => !hl || hl === id || (hl === "core" && (id === "outer" || id === "inner"));
+    let s = "";
+    list.forEach(([id, , r, fill]) => (s += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="#000" stroke-width="4"${on(id) ? "" : ' opacity="0.3"'}/>`));
+    list.forEach(([id, name, , , deg, rr, ty]) => {
+      const a = (deg * Math.PI) / 180;
+      const from = P(cx + rr * Math.cos(a), cy + rr * Math.sin(a));
+      const big = hl && on(id);
+      s += `<circle cx="${f1(from.x)}" cy="${f1(from.y)}" r="5" fill="#000"/>` + seg(from, P(352, ty), "#000", 3);
+      s += label(440, ty, name, big ? 30 : 26, big ? "#b71c1c" : "#000");
+    });
+    return svg("0 0 530 300", s);
+  }
+
   window.LESSON_FIGURES = {
     pie, equal, bars, hundred, groups, shapes, shape, area,
     right, ladder, diag, pair, aaa, kite, bowtie, balance, balls, parts, cross, scalemap,
@@ -1092,5 +1242,6 @@
     plant, growth, circuit, states, cell, planets, earth,
     israel, timeline, world,
     angle, tri, compass,
+    ruler, box, solids, magnet, layers,
   };
 })();
