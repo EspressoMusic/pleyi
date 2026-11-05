@@ -1008,6 +1008,118 @@ window.ENGLISH_SHORT_LESSONS = [
     discuss: ["מה חבר שלכם עושה אחרי בית הספר? ענו במשפט שמתחיל ב־He", "מה הכלב או החתול עושה? ענו במשפט שמתחיל ב־It"],
   },
   {
+    id: "object-pronouns-1",
+    topic: "object-pronouns",
+    name: "אותי, אותו, אותם",
+    part: "me, him, them",
+    summary: "מילים כמו me, him ו־them באות אחרי הפועל",
+    vocab: [["me", "אותי, לי"], ["him", "אותו, לו"], ["her", "אותה, לה"], ["us", "אותנו, לנו"], ["them", "אותם, להם"], ["it", "את זה"]],
+    slides: [
+      {
+        title: "מי עושה **ולמי**?",
+        lines: ["מי עושה – I, he, they", "למי עושים – me, him, them"],
+        examples: [["**I** see Dan.", "אני רואה את דן"], ["Dan sees **me**.", "דן רואה אותי"]],
+      },
+      {
+        title: "**שתי** רשימות",
+        table: [["I", "**me**"], ["he", "**him**"], ["she", "**her**"], ["we", "**us**"], ["they", "**them**"]],
+      },
+      {
+        title: "**me** / **him**",
+        examples: [["He helps **me**.", "הוא עוזר לי"], ["I help **him**.", "אני עוזר לו"]],
+      },
+      {
+        title: "**us** / **them**",
+        examples: [["Dad calls **us**.", "אבא קורא לנו"], ["We call **them**.", "אנחנו קוראים להם"]],
+      },
+      {
+        title: "**you** / **it**",
+        lines: ["המילים you ו־it לא משתנות"],
+        examples: [["I see **you**.", "אני רואה אותך"], ["I like **it**.", "אני אוהב את זה"]],
+      },
+      {
+        title: "**אחרי** הפועל",
+        lines: ["במקום שם – מילה קצרה"],
+        flow: true,
+        examples: [["I see **the boys**.", "אני רואה את הבנים"], ["I see **them**.", "אני רואה אותם"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי הפועל לא כותבים I"],
+        compare: ["He helps I.", "He helps **me**."],
+      },
+      {
+        title: "**לסיכום**",
+        lines: ["לפני הפועל – he", "אחרי הפועל – him"],
+        examples: [["**He** sees **me**.", "הוא רואה אותי"], ["**I** see **him**.", "אני רואה אותו"]],
+      },
+    ],
+    quiz: [
+      ["Dan helps ___.", "דן עוזר לי", ["I", "me", "my"], 1, "אחרי הפועל – me"],
+      ["I see ___ every day.", "אני רואה אותו כל יום", ["he", "him"], 1, "he הופך ל־him"],
+      ["Dad calls ___.", "אבא קורא לנו", ["us", "we"], 0, "we הופך ל־us"],
+      ["We like ___.", "אנחנו אוהבים אותם", ["they", "them", "their"], 1, "they הופך ל־them"],
+      ["This is my bag. I like ___.", "זה התיק שלי. אני אוהב אותו", ["it", "they"], 0, "על דבר אחד – it"],
+      ["The boys are here. I see ___.", "הבנים כאן. אני רואה אותם", ["they", "them"], 1, "אחרי הפועל – them"],
+    ],
+    discuss: ["אמרו משפט על חבר עם המילה him", "מי עוזר לכם בבית? ענו עם helps me"],
+  },
+  {
+    id: "object-pronouns-2",
+    topic: "object-pronouns",
+    name: "אותי, אותו, אותם",
+    part: "with me, to him, for them",
+    summary: "המילים האלה באות גם אחרי with, to ו־for",
+    vocab: [["with me", "איתי"], ["with him", "איתו"], ["to me", "אליי"], ["to us", "אלינו"], ["for him", "בשבילו"], ["for them", "בשבילם"]],
+    slides: [
+      {
+        title: "**אחרי** מילים קטנות",
+        lines: ["גם אחרי with, to, for"],
+        examples: [["Come **with me**.", "בוא איתי"], ["This is **for him**.", "זה בשבילו"]],
+      },
+      {
+        title: "**with**",
+        table: [["איתי", "with **me**"], ["איתו", "with **him**"], ["איתנו", "with **us**"], ["איתם", "with **them**"]],
+      },
+      {
+        title: "**to**",
+        table: [["אליי", "to **me**"], ["אליו", "to **him**"], ["אלינו", "to **us**"], ["אליהם", "to **them**"]],
+      },
+      {
+        title: "**for**",
+        table: [["בשבילי", "for **me**"], ["בשבילו", "for **him**"], ["בשבילנו", "for **us**"], ["בשבילם", "for **them**"]],
+      },
+      {
+        title: "**מחליפים** שם",
+        lines: ["במקום שם – מילה קצרה"],
+        table: [["Dan", "**him**"], ["Dan and Ben", "**them**"], ["the book", "**it**"], ["Ben and I", "**us**"]],
+      },
+      {
+        title: "**דוגמה**",
+        flow: true,
+        examples: [["I play with **Dan**.", "אני משחק עם דן"], ["I play with **him**.", "אני משחק איתו"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי with לא כותבים I"],
+        compare: ["Come with I.", "Come with **me**."],
+      },
+      {
+        title: "**לסיכום**",
+        examples: [["He sits **with us**.", "הוא יושב איתנו"], ["I wrote **to them**.", "כתבתי אליהם"], ["This is **for me**.", "זה בשבילי"]],
+      },
+    ],
+    quiz: [
+      ["Come with ___.", "בוא איתי", ["I", "me"], 1, "אחרי with – me"],
+      ["This cake is for ___.", "העוגה הזאת בשבילו", ["him", "he"], 0, "אחרי for – him"],
+      ["He talks to ___.", "הוא מדבר אלינו", ["we", "us"], 1, "אחרי to – us"],
+      ["I play with Dan and Ben. I play with ___.", "אני משחק עם דן ובן. אני משחק איתם", ["them", "they", "him"], 0, "שני בנים – them"],
+      ["I read the book. I read ___.", "קראתי את הספר. קראתי אותו", ["him", "it"], 1, "ספר הוא דבר – it"],
+      ["Grandpa sits with Ben and me. He sits with ___.", "סבא יושב איתי ועם בן. הוא יושב איתנו", ["us", "them", "we"], 0, "אני ועוד מישהו – us"],
+    ],
+    discuss: ["עם מי אתם יושבים בכיתה? ענו עם with", "למי כדאי לתת מתנה? ענו עם for him או for them"],
+  },
+  {
     id: "negation-1",
     topic: "negation",
     name: "שלילה ושאלות",
@@ -2174,6 +2286,233 @@ window.ENGLISH_SHORT_LESSONS = [
     discuss: ["מה אתם יודעים לעשות? ענו עם I can", "מה לא יכולתם לעשות כשהייתם קטנים? ענו עם I couldn't"],
   },
   {
+    id: "past-progressive-1",
+    topic: "past-progressive",
+    name: "עבר ממושך",
+    part: "מה קרה באותו רגע?",
+    summary: "משהו שנמשך בעבר – was, were ועוד פועל עם ing",
+    vocab: [["was playing", "שיחק (באותו רגע)"], ["were playing", "שיחקו (באותו רגע)"], ["was reading", "קרא (באותו רגע)"], ["wasn't sleeping", "לא ישן (באותו רגע)"], ["Were you", "האם היית"], ["yesterday", "אתמול"]],
+    slides: [
+      {
+        title: "מה קרה **באותו רגע**?",
+        lines: ["משהו שנמשך בעבר", "was, were ועוד פועל עם ing"],
+        examples: [["At eight I **was** read**ing**.", "בשמונה קראתי"]],
+      },
+      {
+        title: "**was** / **were** + **ing**",
+        table: [["I, he, she, it", "**was** play**ing**"], ["you, we, they", "**were** play**ing**"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["He **was** eat**ing** lunch.", "הוא אכל ארוחת צהריים"], ["They **were** play**ing** football.", "הם שיחקו כדורגל"]],
+      },
+      {
+        title: "**מהווה** לעבר",
+        lines: ["רק am, is, are מתחלפים"],
+        table: [["I **am** reading.", "I **was** reading."], ["He **is** reading.", "He **was** reading."], ["We **are** reading.", "We **were** reading."]],
+      },
+      {
+        title: "**לא** – not",
+        lines: ["מוסיפים not אחרי was או were"],
+        examples: [["I **wasn't** sleeping.", "לא ישנתי"], ["They **weren't** playing.", "הם לא שיחקו"]],
+      },
+      {
+        title: "**שאלה**",
+        lines: ["was או were קופצים להתחלה"],
+        flow: true,
+        examples: [["You **were** reading.", "קראת"], ["**Were** you reading?", "קראת?"]],
+      },
+      {
+        title: "תשובה **קצרה**",
+        examples: [["**Was** he eating?", "הוא אכל?"], ["Yes, he **was**.", "כן"], ["No, he **wasn't**.", "לא"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אסור לשכוח was או were"],
+        compare: ["He playing at five.", "He **was** playing at five."],
+      },
+    ],
+    quiz: [
+      ["I ___ reading at eight.", "קראתי בשמונה", ["was", "were", "am"], 0, "עם I בעבר – was"],
+      ["They ___ playing football.", "הם שיחקו כדורגל", ["was", "were"], 1, "עם they – were"],
+      ["He was ___ lunch.", "הוא אכל ארוחת צהריים", ["eat", "eating", "eats"], 1, "אחרי was – פועל עם ing"],
+      ["We ___ sleeping.", "לא ישנו", ["wasn't", "weren't"], 1, "עם we – weren't"],
+      ["___ you reading?", "קראת?", ["Was", "Were", "Did"], 1, "עם you – Were"],
+      ["Was he eating? Yes, he ___.", "הוא אכל? כן", ["was", "were", "did"], 0, "שואלים עם Was ועונים עם was"],
+    ],
+    discuss: ["מה עשיתם אתמול בשעה שמונה בערב? ענו עם I was", "שאלו חבר: Were you sleeping"],
+  },
+  {
+    id: "past-progressive-2",
+    topic: "past-progressive",
+    name: "עבר ממושך",
+    part: "when ו־while",
+    summary: "דבר אחד נמשך ודבר אחר קרה באמצע – when, while ועבר פשוט",
+    vocab: [["when", "כאשר"], ["while", "בזמן ש"], ["was walking", "הלך (באותו רגע)"], ["came", "בא"], ["saw", "ראה"], ["all morning", "כל הבוקר"]],
+    slides: [
+      {
+        title: "**שני** דברים בעבר",
+        lines: ["דבר אחד נמשך", "ודבר אחר קרה **באמצע**"],
+        examples: [["I **was reading** when Dad **came**.", "קראתי כשאבא בא"]],
+      },
+      {
+        title: "**when**",
+        lines: ["אחרי when – עבר פשוט"],
+        examples: [["We were eating **when** Dad came.", "אכלנו כשאבא בא"]],
+      },
+      {
+        title: "**while**",
+        lines: ["אחרי while – was, were ועוד ing"],
+        examples: [["**While** I was walking, I saw a dog.", "בזמן שהלכתי, ראיתי כלב"]],
+      },
+      {
+        title: "**שניים** ביחד",
+        lines: ["שני דברים שנמשכו באותו זמן"],
+        examples: [["I was reading **while** he was playing.", "קראתי בזמן שהוא שיחק"]],
+      },
+      {
+        title: "**נגמר** או **נמשך**?",
+        lines: ["נגמר – עבר פשוט", "נמשך – was, were ועוד ing"],
+        examples: [["I **played** football yesterday.", "שיחקתי כדורגל אתמול"], ["I **was playing** at five.", "בחמש שיחקתי"]],
+      },
+      {
+        title: "מילים **שעוזרות**",
+        table: [["כאשר", "**when**"], ["בזמן ש", "**while**"], ["בחמש", "**at five**"], ["כל הבוקר", "**all morning**"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי was – פועל עם ing"],
+        compare: ["I was read when Dad came.", "I was **reading** when Dad came."],
+      },
+      {
+        title: "**לסיכום**",
+        lines: ["הדבר הארוך – was, were ועוד ing", "הדבר הקצר – עבר פשוט"],
+        examples: [["He **was sleeping** when I **came**.", "הוא ישן כשבאתי"]],
+      },
+    ],
+    quiz: [
+      ["I was reading ___ Dad came.", "קראתי כשאבא בא", ["when", "while"], 0, "אחרי when – עבר פשוט"],
+      ["___ I was walking, I saw a dog.", "בזמן שהלכתי, ראיתי כלב", ["When", "While"], 1, "אחרי while – was ועוד ing"],
+      ["We were eating when Dad ___.", "אכלנו כשאבא בא", ["came", "was coming"], 0, "הדבר הקצר – עבר פשוט"],
+      ["He ___ when I came.", "הוא ישן כשבאתי", ["slept", "was sleeping"], 1, "הדבר הארוך – was ועוד ing"],
+      ["I ___ football yesterday.", "שיחקתי כדורגל אתמול", ["played", "was play"], 0, "משהו שנגמר – עבר פשוט"],
+      ["I was reading while he ___.", "קראתי בזמן שהוא שיחק", ["were playing", "was playing"], 1, "עם he – was"],
+    ],
+    discuss: ["מה עשיתם כשהמורה נכנס לכיתה? ענו עם I was", "ספרו על משהו שראיתם בזמן שהלכתם ברחוב – While I was walking"],
+  },
+  {
+    id: "used-to-1",
+    topic: "used-to",
+    name: "פעם – used to",
+    part: "מה היה פעם?",
+    summary: "משהו שהיה קורה פעם והיום כבר לא – used to ועוד פועל",
+    vocab: [["used to", "פעם (היה קורה)"], ["used to play", "פעם שיחק"], ["used to live", "פעם גר"], ["used to go", "פעם הלך"], ["now", "עכשיו"], ["little", "קטן"]],
+    slides: [
+      {
+        title: "**פעם** כן – היום לא",
+        lines: ["משהו שהיה קורה פעם", "והיום כבר לא"],
+        examples: [["I **used to** live in Haifa.", "פעם גרתי בחיפה"]],
+      },
+      {
+        title: "**used to** ועוד פועל",
+        lines: ["אחרי used to – פועל רגיל"],
+        table: [["play", "used to **play**"], ["live", "used to **live**"], ["go", "used to **go**"]],
+      },
+      {
+        title: "**אותו** דבר לכולם",
+        table: [["I", "**used to** play"], ["he, she, it", "**used to** play"], ["you, we, they", "**used to** play"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["He **used to** walk to school.", "פעם הוא הלך לבית הספר ברגל"], ["We **used to** live in Eilat.", "פעם גרנו באילת"]],
+      },
+      {
+        title: "**פעם** והיום",
+        examples: [["I **used to** like milk.", "פעם אהבתי חלב"], ["Now I like juice.", "עכשיו אני אוהב מיץ"]],
+      },
+      {
+        title: "**used to be**",
+        lines: ["גם אפשר לתאר איך משהו היה"],
+        examples: [["He **used to be** small.", "פעם הוא היה קטן"], ["It **used to be** a shop.", "פעם זו הייתה חנות"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי used to – בלי s ובלי ed"],
+        compare: ["He used to plays.", "He used to **play**."],
+      },
+      {
+        title: "**לסיכום**",
+        lines: ["פעם – used to ועוד פועל רגיל"],
+        examples: [["They **used to** play here.", "פעם הם שיחקו כאן"]],
+      },
+    ],
+    quiz: [
+      ["I ___ live in Haifa.", "פעם גרתי בחיפה", ["used to", "use"], 0, "פעם – used to"],
+      ["He used to ___ to school.", "פעם הוא הלך לבית הספר", ["walks", "walk", "walked"], 1, "אחרי used to – פועל רגיל"],
+      ["They used to ___ here.", "פעם הם שיחקו כאן", ["play", "played"], 0, "בלי ed"],
+      ["We ___ to live in Eilat.", "פעם גרנו באילת", ["used", "use", "using"], 0, "כותבים used to"],
+      ["He used to ___ small.", "פעם הוא היה קטן", ["is", "be", "was"], 1, "אחרי used to – be"],
+      ["Ben ___ to go there.", "פעם בן הלך לשם", ["used", "uses"], 0, "used to – אותו דבר לכולם"],
+    ],
+    discuss: ["מה אהבתם לעשות כשהייתם קטנים? ענו עם I used to", "איפה גרתם פעם? מה השתנה?"],
+  },
+  {
+    id: "used-to-2",
+    topic: "used-to",
+    name: "פעם – used to",
+    part: "לא, שאלות, ועבר פשוט",
+    summary: "didn't use to ו־Did you use to – ומתי בוחרים בעבר פשוט",
+    vocab: [["didn't use to", "פעם לא (היה קורה)"], ["Did you use to", "האם פעם"], ["years ago", "לפני שנים"], ["when I was little", "כשהייתי קטן"], ["not anymore", "כבר לא"], ["every summer", "כל קיץ"]],
+    slides: [
+      {
+        title: "**לא** – didn't use to",
+        lines: ["אחרי didn't – use to בלי d"],
+        examples: [["I **didn't use to** like fish.", "פעם לא אהבתי דגים"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["He **didn't use to** read.", "פעם הוא לא קרא"], ["We **didn't use to** have a car.", "פעם לא הייתה לנו מכונית"]],
+      },
+      {
+        title: "**שאלה**",
+        lines: ["Did בהתחלה", "ואחר כך use to בלי d"],
+        flow: true,
+        examples: [["You **used to** play.", "פעם שיחקת"], ["**Did** you **use to** play?", "פעם שיחקת?"]],
+      },
+      {
+        title: "תשובה **קצרה**",
+        examples: [["**Did** he **use to** swim?", "פעם הוא שחה?"], ["Yes, he **did**.", "כן"], ["No, he **didn't**.", "לא"]],
+      },
+      {
+        title: "**used to** או עבר פשוט?",
+        lines: ["קרה פעם אחת – עבר פשוט", "קרה הרבה פעמים – used to"],
+        examples: [["I **went** to Eilat last year.", "נסעתי לאילת בשנה שעברה"], ["I **used to** go every summer.", "פעם נסעתי כל קיץ"]],
+      },
+      {
+        title: "מילים **שעוזרות**",
+        table: [["כשהייתי קטן", "**when I was little**"], ["לפני שנים", "**years ago**"], ["כל קיץ", "**every summer**"], ["כבר לא", "**not anymore**"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי didn't – בלי d בסוף"],
+        compare: ["I didn't used to play.", "I didn't **use to** play."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["כן", "I **used to** play."], ["לא", "I **didn't use to** play."], ["שאלה", "**Did** you **use to** play?"]],
+      },
+    ],
+    quiz: [
+      ["I didn't ___ like fish.", "פעם לא אהבתי דגים", ["used to", "use to"], 1, "אחרי didn't – use to"],
+      ["___ you use to play here?", "פעם שיחקת כאן?", ["Did", "Do", "Was"], 0, "שואלים עם Did"],
+      ["Did he use to swim? No, he ___.", "פעם הוא שחה? לא", ["didn't", "doesn't"], 0, "שואלים עם Did ועונים עם didn't"],
+      ["I ___ to Eilat last year.", "נסעתי לאילת בשנה שעברה", ["used to go", "went"], 1, "קרה פעם אחת – עבר פשוט"],
+      ["I ___ to Eilat every summer.", "פעם נסעתי לאילת כל קיץ", ["used to go", "went to go"], 0, "קרה הרבה פעמים – used to"],
+      ["We ___ use to have a car.", "פעם לא הייתה לנו מכונית", ["didn't", "weren't"], 0, "שלילה – didn't use to"],
+    ],
+    discuss: ["שאלו חבר: Did you use to play with toys", "מה לא אהבתם פעם ועכשיו אתם אוהבים? ענו עם I didn't use to"],
+  },
+  {
     id: "going-to",
     topic: "going-to",
     name: "עתיד: going to",
@@ -3098,6 +3437,119 @@ window.ENGLISH_SHORT_LESSONS = [
       ["Ben asked me ___ I was hungry.", "בן שאל אותי אם אני רעב", ["that", "to", "if"], 2, "שאלת כן או לא – if"],
     ],
     discuss: ["מה ההורים אמרו לכם לעשות הבוקר? ענו עם They told me to", "שאלו חבר שאלה, ואחר כך ספרו לכיתה עם I asked him"],
+  },
+  {
+    id: "relative-clauses-1",
+    topic: "relative-clauses",
+    name: "משפטי זיקה",
+    part: "who – על אנשים",
+    summary: "מחברים שני משפטים בעזרת who – ש על אנשים",
+    vocab: [["who", "ש (על אנשים)"], ["a boy who", "ילד ש"], ["a friend who", "חבר ש"], ["the man who", "האיש ש"], ["lives", "גר"], ["next door", "בבית הסמוך"]],
+    slides: [
+      {
+        title: "**שני** משפטים",
+        lines: ["אפשר לחבר אותם למשפט אחד"],
+        flow: true,
+        examples: [["I have a friend. He lives in Haifa.", "יש לי חבר. הוא גר בחיפה"], ["I have a friend **who** lives in Haifa.", "יש לי חבר שגר בחיפה"]],
+      },
+      {
+        title: "**who** – על אנשים",
+        lines: ["המילה who אומרת ש", "והיא באה אחרי אדם"],
+        examples: [["a boy **who** sings", "ילד ששר"]],
+      },
+      {
+        title: "**במקום** he",
+        lines: ["who בא במקום he או they"],
+        table: [["The boy. **He** sings.", "the boy **who** sings"], ["The boys. **They** sing.", "the boys **who** sing"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["a teacher **who** helps me", "מורה שעוזר לי"], ["boys **who** play football", "בנים שמשחקים כדורגל"]],
+      },
+      {
+        title: "**באמצע** משפט",
+        examples: [["The man **who** lives here is a doctor.", "האיש שגר כאן הוא רופא"]],
+      },
+      {
+        title: "**בסוף** משפט",
+        examples: [["I know a boy **who** can swim.", "אני מכיר ילד שיודע לשחות"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי who לא כותבים שוב he"],
+        compare: ["a boy who he plays", "a boy **who** plays"],
+      },
+      {
+        title: "**לסיכום**",
+        lines: ["אדם ואחריו who ואז הפועל"],
+        examples: [["The boy **who** sits here is my friend.", "הילד שיושב כאן הוא חבר שלי"]],
+      },
+    ],
+    quiz: [
+      ["I have a friend ___ lives in Haifa.", "יש לי חבר שגר בחיפה", ["who", "he"], 0, "על אדם – who"],
+      ["The man ___ lives here is a doctor.", "האיש שגר כאן הוא רופא", ["he", "who"], 1, "who בא במקום he"],
+      ["I know a boy who ___ swim.", "אני מכיר ילד שיודע לשחות", ["can", "he can"], 0, "אחרי who לא כותבים שוב he"],
+      ["boys who ___ football", "בנים שמשחקים כדורגל", ["plays", "play"], 1, "boys זה רבים – play"],
+      ["a boy who ___", "ילד ששר", ["sings", "sing"], 0, "boy זה יחיד – sings"],
+      ["a teacher ___ helps me", "מורה שעוזר לי", ["who", "they", "he"], 0, "על אדם – who"],
+    ],
+    discuss: ["תארו חבר עם who: I have a friend who", "מי בכיתה? השלימו: The boy who sits next to me"],
+  },
+  {
+    id: "relative-clauses-2",
+    topic: "relative-clauses",
+    name: "משפטי זיקה",
+    part: "which ו־that",
+    summary: "which על דברים וחיות, ו־that גם וגם",
+    vocab: [["which", "ש (על דברים וחיות)"], ["that", "ש (על הכול)"], ["the book which", "הספר ש"], ["a dog which", "כלב ש"], ["the bus that", "האוטובוס ש"], ["the boy that", "הילד ש"]],
+    slides: [
+      {
+        title: "**which** – על דברים",
+        lines: ["המילה which אומרת ש", "והיא באה אחרי דבר או חיה"],
+        examples: [["the book **which** is on the table", "הספר שעל השולחן"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["I have a dog **which** runs fast.", "יש לי כלב שרץ מהר"], ["This is the bus **which** goes to Haifa.", "זה האוטובוס שנוסע לחיפה"]],
+      },
+      {
+        title: "**who** או **which**?",
+        table: [["אנשים", "**who**"], ["דברים וחיות", "**which**"]],
+      },
+      {
+        title: "**that** – גם וגם",
+        lines: ["המילה that מתאימה לשניהם"],
+        examples: [["the boy **that** sings", "הילד ששר"], ["the book **that** I read", "הספר שקראתי"]],
+      },
+      {
+        title: "**מחברים** משפטים",
+        flow: true,
+        examples: [["This is a bag. It is big.", "זה תיק. הוא גדול"], ["This is a bag **which** is big.", "זה תיק שהוא גדול"]],
+      },
+      {
+        title: "**במקום** it",
+        lines: ["which בא במקום it"],
+        table: [["The cat. **It** sleeps.", "the cat **which** sleeps"], ["The car. **It** is red.", "the car **which** is red"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי דבר לא כותבים who"],
+        compare: ["the book who I read", "the book **which** I read"],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["על אנשים", "**who**"], ["על דברים וחיות", "**which**"], ["על הכול", "**that**"]],
+      },
+    ],
+    quiz: [
+      ["the book ___ is on the table", "הספר שעל השולחן", ["which", "who"], 0, "על דבר – which"],
+      ["I have a dog ___ runs fast.", "יש לי כלב שרץ מהר", ["who", "which"], 1, "על חיה – which"],
+      ["the boy ___ sings", "הילד ששר", ["which", "that"], 1, "על אדם – who או that"],
+      ["This is the bus ___ goes to Haifa.", "זה האוטובוס שנוסע לחיפה", ["that", "who"], 0, "על דבר – that או which"],
+      ["This is a bag which ___ big.", "זה תיק שהוא גדול", ["is", "it is"], 0, "אחרי which לא כותבים שוב it"],
+      ["The man ___ lives here is kind.", "האיש שגר כאן נחמד", ["which", "who"], 1, "על אדם – who"],
+    ],
+    discuss: ["תארו חפץ בכיתה עם which: This is the", "איזה סרט או ספר אתם אוהבים? השלימו: The book that I like"],
   },
 
   /* ---------- Stage 9: reading and understanding ---------- */

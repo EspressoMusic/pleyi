@@ -547,7 +547,7 @@
   // walk: dashed steps from the origin to the first point (right, then up).
   // line: [[x1, y1], [x2, y2]] — a straight line through the points (a
   // linear function's graph), drawn under them.
-  function axes({ min = 0, max = 6, points = [], walk = false, line }) {
+  function axes({ min = 0, max = 6, points = [], walk = false, line, line2 }) {
     const n = max - min;
     const u = Math.min(52, 330 / n);
     const pad = 46;
@@ -571,6 +571,7 @@
       s += seg(P(X(0), Y(0)), P(X(px), Y(0)), COL.orange, 6, dash) + seg(P(X(px), Y(0)), P(X(px), Y(py)), COL.orange, 6, dash);
     }
     if (line) s += seg(P(X(line[0][0]), Y(line[0][1])), P(X(line[1][0]), Y(line[1][1])), COL.deep, 6);
+    if (line2) s += seg(P(X(line2[0][0]), Y(line2[0][1])), P(X(line2[1][0]), Y(line2[1][1])), COL.orange, 6);
     points.forEach(([px, py, name]) => {
       s += `<circle cx="${f1(X(px))}" cy="${f1(Y(py))}" r="9" fill="${COL.red}" stroke="#000" stroke-width="3"/>`;
       if (name) s += label(X(px) + (px < max - 1 ? 20 : -20), Y(py) - 22, name, 26, "#b71c1c");
@@ -1235,6 +1236,116 @@
     return svg("0 0 530 300", s);
   }
 
+  /* ---------- symmetry, moving shapes, similar triangles, short multiplication ---------- */
+
+  const axisLine = (A, B) => seg(A, B, COL.orange, 6, 'stroke-dasharray="14 10"');
+
+  // A shape with its lines of symmetry.
+  function sym({ k = "house" }) {
+    const c = P(150, 130);
+    let s = "";
+    if (k === "house") {
+      s = poly([P(150, 24), P(250, 104), P(250, 236), P(50, 236), P(50, 104)], TEAL, 6) + axisLine(P(150, 6), P(150, 254));
+    }
+    if (k === "butterfly") {
+      const wings = [
+        [P(150, 116), P(244, 40), P(276, 112), P(150, 136)],
+        [P(150, 136), P(250, 148), P(220, 222), P(150, 160)],
+      ];
+      wings.forEach((w) => {
+        s += poly(w, TEAL, 5) + poly(w.map((p) => P(300 - p.x, p.y)), TEAL, 5);
+      });
+      s += `<ellipse cx="150" cy="134" rx="11" ry="46" fill="${COL.yl}" stroke="#000" stroke-width="5"/>` + axisLine(P(150, 8), P(150, 252));
+    }
+    if (k === "rect") {
+      s = poly([P(40, 70), P(260, 70), P(260, 190), P(40, 190)], TEAL, 6) + axisLine(P(150, 40), P(150, 220)) + axisLine(P(14, 130), P(286, 130));
+    }
+    if (k === "square") {
+      s = poly([P(60, 40), P(240, 40), P(240, 220), P(60, 220)], TEAL, 6);
+      s += axisLine(P(150, 12), P(150, 248)) + axisLine(P(34, 130), P(266, 130)) + axisLine(P(40, 20), P(260, 240)) + axisLine(P(260, 20), P(40, 240));
+    }
+    if (k === "tri") {
+      const R = 112;
+      const pts = [-90, 30, 150].map((d) => P(150 + R * Math.cos((d * Math.PI) / 180), 148 + R * Math.sin((d * Math.PI) / 180)));
+      s = poly(pts, TEAL, 6);
+      const cen = P(150, 148);
+      pts.forEach((p) => {
+        const u = V.unit(V.sub(cen, p));
+        s += axisLine(V.add(p, V.mul(u, -18)), V.add(cen, V.mul(u, R * 0.5 + 22)));
+      });
+    }
+    if (k === "circle") {
+      s = `<circle cx="150" cy="130" r="100" fill="${TEAL}" stroke="#000" stroke-width="6"/>`;
+      [0, 45, 90, 135].forEach((d) => {
+        const u = P(Math.cos((d * Math.PI) / 180), Math.sin((d * Math.PI) / 180));
+        s += axisLine(V.add(c, V.mul(u, -118)), V.add(c, V.mul(u, 118)));
+      });
+    }
+    if (k === "none") s = poly([P(40, 220), P(270, 220), P(90, 50)], TEAL, 6);
+    return svg("0 0 300 260", s);
+  }
+
+  // A shape on a grid and where it goes. mode: reflect (with `dist`, the
+  // distance from the mirror line), translate or rotate.
+  function transform({ mode = "reflect", dist = false }) {
+    const u = 40;
+    const G = ([x, y]) => P(10 + x * u, 10 + y * u);
+    const shape = [[1, 1], [3, 1], [3, 2], [2, 2], [2, 4], [1, 4]];
+    const move = {
+      reflect: ([x, y]) => [12 - x, y],
+      translate: ([x, y]) => [x + 7, y + 3],
+      rotate: ([x, y]) => [12 - x, 8 - y],
+    }[mode];
+    let s = "";
+    for (let x = 0; x <= 12; x++) s += seg(G([x, 0]), G([x, 8]), "#c7d2dc", 2);
+    for (let y = 0; y <= 8; y++) s += seg(G([0, y]), G([12, y]), "#c7d2dc", 2);
+    s += poly(shape.map(G), TEAL) + poly(shape.map(move).map(G), COL.yl);
+    if (mode === "reflect") {
+      s += axisLine(G([6, 0]), G([6, 8]));
+      if (dist) {
+        s += seg(G([3, 1]), G([9, 1]), COL.red, 5);
+        s += label(G([4.5, 0.5]).x, G([4.5, 0.5]).y, "3", 28, "#b71c1c") + label(G([7.5, 0.5]).x, G([7.5, 0.5]).y, "3", 28, "#b71c1c");
+      }
+    }
+    if (mode === "translate") {
+      const from = G([3.2, 2.2]);
+      const to = G([7.6, 4.4]);
+      s += seg(from, to, COL.orange, 7) + arrowHead(V.add(to, V.mul(V.unit(V.sub(to, from)), 12)), from);
+    }
+    if (mode === "rotate") s += `<circle cx="${G([6, 4]).x}" cy="${G([6, 4]).y}" r="11" fill="${COL.red}" stroke="#000" stroke-width="3.5"/>`;
+    return svg("0 0 500 340", s);
+  }
+
+  // A small and a big similar triangle (3-4-5 and twice that). sides: labels of
+  // [bottom, side, long side] of each one; angles: mark the equal angles.
+  function similar({ small = [], big = [], angles = false }) {
+    const t1 = [P(40, 300), P(200, 300), P(200, 180)];
+    const t2 = [P(310, 300), P(630, 300), P(630, 60)];
+    const marks = angles ? { angles: [1, 2, 3] } : {};
+    let s = markedTri(t1, ["A", "B", "C"], COL.tq, marks) + markedTri(t2, ["D", "E", "F"], COL.yl, marks);
+    [[t1, small], [t2, big]].forEach(([t, sides]) => {
+      const cen = centroid(t);
+      sides.forEach((text, i) => {
+        if (text !== "") s += sLabel(t[i], t[(i + 1) % 3], cen, String(text), 30);
+      });
+    });
+    return svg("0 0 700 350", s);
+  }
+
+  // The square of (a + b) cut into its four parts.
+  function binom({ a = "a", b = "b" }) {
+    const A = 170;
+    const B = 90;
+    const x0 = 60;
+    const y0 = 50;
+    const box = (x, y, w, h, fill, t, size = 32) =>
+      `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="#000" stroke-width="5"/>` + label(x + w / 2, y + h / 2, t, size);
+    let s = box(x0, y0, A, A, TEAL, `${a}²`) + box(x0 + A, y0, B, A, COL.yl, `${a}${b}`) + box(x0, y0 + A, A, B, COL.yl, `${a}${b}`) + box(x0 + A, y0 + A, B, B, COL.tq, `${b}²`);
+    s += label(x0 + A / 2, y0 - 24, a, 30) + label(x0 + A + B / 2, y0 - 24, b, 30);
+    s += label(x0 - 26, y0 + A / 2, a, 30) + label(x0 - 26, y0 + A + B / 2, b, 30);
+    return svg("0 0 340 330", s);
+  }
+
   window.LESSON_FIGURES = {
     pie, equal, bars, hundred, groups, shapes, shape, area,
     right, ladder, diag, pair, aaa, kite, bowtie, balance, balls, parts, cross, scalemap,
@@ -1243,5 +1354,6 @@
     israel, timeline, world,
     angle, tri, compass,
     ruler, box, solids, magnet, layers,
+    sym, transform, similar, binom,
   };
 })();
