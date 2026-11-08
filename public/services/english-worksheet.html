@@ -14,7 +14,7 @@
   <title>דפי עבודה להדפסה — Pleyi</title>
   <meta name="description" content="דפי עבודה באנגלית להדפסה לפי נושא — עם דף תשובות למורה." />
   <link rel="stylesheet" href="/css/fonts.css?v=3" />
-  <link rel="stylesheet" href="/css/english-worksheet.css?v=7" />
+  <link rel="stylesheet" href="/css/english-worksheet.css?v=8" />
 </head>
 <body>
   <header class="ws-toolbar" id="wsToolbar">
@@ -33,7 +33,11 @@
         <span class="ws-switch-track" aria-hidden="true"></span>
         <span id="wsAnswersLabel">דף תשובות</span>
       </label>
-      <button type="button" class="ws-print-btn" id="wsPrint">
+      <button type="button" class="ws-print-btn" id="wsDownload">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>
+        <span id="wsDownloadLabel">הורדת PDF</span>
+      </button>
+      <button type="button" class="ws-print-btn ws-print-btn--plain" id="wsPrint">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>
         <span id="wsPrintLabel">הדפסה</span>
       </button>
@@ -46,7 +50,10 @@
   </main>
 
   <script src="/js/english-printables.js?v=5"></script>
-  <script src="/js/english-data.js?v=20"></script>
-  <script src="/js/english-worksheet.js?v=5"></script>
+  <script src="/js/english-vocab.js?v=4"></script>
+  <script src="/js/english-data.js?v=22"></script>
+  <script src="/js/english-more.js?v=2"></script>
+  <script src="/js/english-exercise-sheets.js?v=1"></script>
+  <script src="/js/english-worksheet.js?v=6"></script>
 </body>
 </html>

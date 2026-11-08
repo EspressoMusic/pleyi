@@ -1,11 +1,13 @@
 /* Class leaderboard — every student file of the same teacher, ranked by the
    points they earned practicing (lib/student-progress.js). Shown on the
-   Learn English page and the student's homework page (/s/<key>), for the
-   student whose link this device opened, and on the teacher's students page.
+   Learn English page, for the student whose link this device opened. The
+   leader gets confetti and a colorful name.
 
    Leaderboard.boardHtml(rows, { period, limit })
-     rows: [{ name, total, week, isMe }]; period: "week" | "total";
+     rows: [{ name, total, week, isMe, stats }]; period: "week" | "total";
      limit: show only the top `limit` (and the student's own row below them).
+     stats ({ finished, rounds, practiceSec, games }) open under the row when
+     the name is clicked.
    Leaderboard.bind(box, rows, opts) — renders the board with week / all-time
      tabs into `box`, and switches between them.
    Leaderboard.open() — the linked student's full board in a dialog.
@@ -38,6 +40,23 @@ window.Leaderboard = (() => {
       close: "סגירה",
       loading: "טוען את הטבלה…",
       error: "לא הצלחנו לטעון את הטבלה. בדקו את החיבור ונסו שוב.",
+      showDetails: "לחצו לפירוט",
+      statsSince: "סך הכול מאז ההתחלה",
+      statFinished: "תרגילים שפתר",
+      statRounds: "סבבי תרגול",
+      statTime: "זמן תרגול",
+      statGames: "משחקים",
+      duration: (sec) => {
+        const min = Math.round(sec / 60);
+        if (!sec) return "0 דקות";
+        if (min < 1) return "פחות מדקה";
+        const h = Math.floor(min / 60);
+        const m = min % 60;
+        if (!h) return m === 1 ? "דקה אחת" : `${m} דקות`;
+        const hours = h === 1 ? "שעה" : h === 2 ? "שעתיים" : `${h} שעות`;
+        if (!m) return hours;
+        return m === 1 ? `${hours} ודקה` : `${hours} ו-${m} דקות`;
+      },
     },
     en: {
       title: "Leaderboard",
@@ -62,12 +81,28 @@ window.Leaderboard = (() => {
       close: "Close",
       loading: "Loading the leaderboard…",
       error: "We couldn't load the leaderboard. Check your connection and try again.",
+      showDetails: "Click for details",
+      statsSince: "All-time totals",
+      statFinished: "Exercises finished",
+      statRounds: "Practice rounds",
+      statTime: "Practice time",
+      statGames: "Games",
+      duration: (sec) => {
+        const min = Math.round(sec / 60);
+        if (!sec) return "0 min";
+        if (min < 1) return "under a minute";
+        const h = Math.floor(min / 60);
+        const m = min % 60;
+        if (!h) return `${m} min`;
+        return m ? `${h} h ${m} min` : `${h} h`;
+      },
     },
   };
 
   const ICONS = {
     trophy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11M17 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5M12 14v3.5M8 21h8M9.5 17.5h5l.5 3.5H9l.5-3.5Z"/></svg>`,
     cross: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
+    chevron: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`,
   };
 
   function lang() {
@@ -109,14 +144,80 @@ window.Leaderboard = (() => {
     return sorted.map((row) => ({ ...row, points: row[period], rank: 1 + sorted.filter((r) => r[period] > row[period]).length }));
   }
 
+  // Confetti falling behind the leader's row: [left %, color, delay s, fall s, shape].
+  const CONFETTI = [
+    [4, "#e63946", 0, 2.6, "bar"], [11, "#ffb703", 1.1, 3.1, "dot"], [18, "#2a9d8f", 0.5, 2.4, "bar"],
+    [26, "#3a86ff", 1.7, 2.9, "bar"], [33, "#8338ec", 0.2, 3.3, "dot"], [40, "#ff006e", 1.3, 2.5, "bar"],
+    [47, "#06d6a0", 0.8, 3.0, "bar"], [54, "#ffb703", 2.0, 2.7, "bar"], [61, "#e63946", 0.4, 3.2, "dot"],
+    [68, "#3a86ff", 1.5, 2.6, "bar"], [75, "#ff006e", 0.9, 2.9, "bar"], [82, "#2a9d8f", 0.1, 3.4, "dot"],
+    [89, "#8338ec", 1.9, 2.5, "bar"], [95, "#06d6a0", 0.6, 3.0, "bar"],
+  ];
+
+  function confettiHtml() {
+    return `<span class="lb-confetti" aria-hidden="true">${CONFETTI.map(
+      ([x, color, delay, fall, shape], i) =>
+        `<i class="lb-confetti-${shape}" style="--x:${x}%;--c:${color};--d:${delay}s;--f:${fall}s;--y:${(i * 37) % 80 + 6}%"></i>`
+    ).join("")}</span>`;
+  }
+
+  // The leader's name, a different color for every letter.
+  function rainbowHtml(name) {
+    return Array.from(name)
+      .map((ch, i) => (ch.trim() ? `<span style="--i:${i}">${esc(ch)}</span>` : esc(ch)))
+      .join("");
+  }
+
+  // A student's practice totals, opened by a click on their name.
+  let detailSeq = 0;
+
+  function statsHtml(stats, id) {
+    const num = (n) => Number(n || 0).toLocaleString(lang() === "en" ? "en-US" : "he-IL");
+    const tiles = [
+      ["statFinished", num(stats.finished)],
+      ["statRounds", num(stats.rounds)],
+      ["statTime", t("duration", stats.practiceSec || 0)],
+      ["statGames", num(stats.games)],
+    ];
+    return `
+      <div class="lb-detail" id="${id}" hidden>
+        <span class="lb-detail-label">${esc(t("statsSince"))}</span>
+        <dl class="lb-stats">
+          ${tiles.map(([key, value]) => `<div class="lb-stat"><dt>${esc(t(key))}</dt><dd>${esc(value)}</dd></div>`).join("")}
+        </dl>
+      </div>`;
+  }
+
   function rowHtml(row) {
     const medal = row.points > 0 && row.rank <= 3 ? ` is-rank-${row.rank}` : "";
+    const leader = row.points > 0 && row.rank === 1;
+    const name = leader ? `<span class="lb-name-rainbow">${rainbowHtml(row.name)}</span>` : esc(row.name);
+    const detailId = row.stats ? `lbDetail${++detailSeq}` : "";
     return `
       <li class="lb-row${row.isMe ? " is-me" : ""}${medal}">
+        ${leader ? confettiHtml() : ""}
         <span class="lb-rank" aria-label="${esc(t("rank", row.rank))}">${row.rank}</span>
-        <span class="lb-name">${esc(row.name)}${row.isMe ? ` <span class="lb-me">${esc(t("me"))}</span>` : ""}</span>
+        <span class="lb-name">${
+          row.stats
+            ? `<button type="button" class="lb-name-btn" aria-expanded="false" aria-controls="${detailId}" title="${esc(t("showDetails"))}">${name}<span class="lb-more">${ICONS.chevron}</span></button>`
+            : name
+        }${row.isMe ? ` <span class="lb-me">${esc(t("me"))}</span>` : ""}</span>
         <span class="lb-points" aria-label="${esc(t("pointsFull", row.points))}">${esc(t("points", row.points))}</span>
+        ${row.stats ? statsHtml(row.stats, detailId) : ""}
       </li>`;
+  }
+
+  // One student's details are open at a time.
+  function toggleDetail(box, btn) {
+    const opening = btn.getAttribute("aria-expanded") !== "true";
+    box.querySelectorAll('.lb-name-btn[aria-expanded="true"]').forEach((other) => {
+      other.setAttribute("aria-expanded", "false");
+      document.getElementById(other.getAttribute("aria-controls"))?.setAttribute("hidden", "");
+    });
+    if (!opening) return;
+    btn.setAttribute("aria-expanded", "true");
+    const detail = document.getElementById(btn.getAttribute("aria-controls"));
+    detail?.removeAttribute("hidden");
+    detail?.scrollIntoView({ block: "nearest" });
   }
 
   function boardHtml(rows, { period = "week", limit = 0 } = {}) {
@@ -171,6 +272,7 @@ window.Leaderboard = (() => {
           box.querySelector(`.lb-tab[data-period="${period}"]`)?.focus({ preventScroll: true });
         })
       );
+      box.querySelectorAll(".lb-name-btn").forEach((btn) => btn.addEventListener("click", () => toggleDetail(box, btn)));
     };
     draw();
   }

@@ -219,6 +219,125 @@ window.ENGLISH_SHORT_LESSONS = [
 
   /* ---------- Stage 3: first sentence ---------- */
   {
+    id: "greetings-1",
+    topic: "greetings",
+    name: "ברכות והיכרות",
+    part: "Hello, Goodbye",
+    summary: "אומרים שלום, בוקר טוב, להתראות, תודה וסליחה באנגלית",
+    vocab: [["Hello", "שלום"], ["Good morning", "בוקר טוב"], ["Good night", "לילה טוב"], ["Goodbye", "להתראות"], ["Thank you", "תודה"], ["Please", "בבקשה"], ["Sorry", "סליחה"]],
+    slides: [
+      {
+        title: "אומרים **שלום**",
+        lines: ["כשפוגשים מישהו"],
+        examples: [["**Hello**!", "שלום"], ["**Hi**!", "היי"]],
+      },
+      {
+        title: "**בוקר**, צהריים וערב",
+        lines: ["הברכה משתנה לפי השעה"],
+        examples: [["Good **morning**", "בוקר טוב"], ["Good **afternoon**", "צהריים טובים"], ["Good **evening**", "ערב טוב"]],
+      },
+      {
+        title: "**לילה** טוב",
+        lines: ["אומרים לפני שהולכים לישון"],
+        examples: [["Good **night**", "לילה טוב"]],
+      },
+      {
+        title: "**נפרדים**",
+        lines: ["כשהולכים הביתה"],
+        examples: [["**Goodbye**!", "להתראות"], ["**Bye**!", "ביי"], ["See you **tomorrow**!", "נתראה מחר"]],
+      },
+      {
+        title: "**תודה** ובבקשה",
+        examples: [["**Please**", "בבקשה"], ["**Thank you**", "תודה"], ["You're **welcome**", "על לא דבר"]],
+      },
+      {
+        title: "**סליחה**",
+        lines: ["יש שתי דרכים להגיד"],
+        examples: [["**Sorry**!", "סליחה, טעיתי"], ["**Excuse me**", "סליחה, אפשר לשאול?"]],
+      },
+      {
+        title: "**שיחה** קצרה",
+        examples: [["Good morning, Ben!", "בוקר טוב, בן"], ["Hi, Dan!", "היי, דן"], ["Bye, Dan!", "ביי, דן"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["בבוקר לא אומרים Good night"],
+        compare: ["Good night, Dan!", "Good **morning**, Dan!"],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["נפגשים", "**Hello**"], ["בוקר", "**Good morning**"], ["נפרדים", "**Goodbye**"], ["תודה", "**Thank you**"]],
+      },
+    ],
+    quiz: [
+      ["___, Dan!", "בוקר טוב, דן!", ["Good morning", "Good night"], 0, "בבוקר אומרים Good morning"],
+      ["___, Grandpa. See you tomorrow!", "לילה טוב, סבא. נתראה מחר!", ["Hello", "Good night"], 1, "לפני השינה אומרים Good night"],
+      ["___! See you tomorrow!", "להתראות! נתראה מחר!", ["Goodbye", "Good morning"], 0, "כשנפרדים אומרים Goodbye"],
+      ["___ you, Ben!", "תודה, בן!", ["Please", "Thank"], 1, "תודה – Thank you"],
+      ["Thank you! — You're ___.", "תודה! – על לא דבר.", ["welcome", "sorry"], 0, "עונים You're welcome"],
+      ["___! I am late.", "סליחה! אני מאחר.", ["Please", "Sorry"], 1, "טעיתי – Sorry"],
+    ],
+    discuss: ["איך אתם אומרים בוקר טוב למורה באנגלית?", "מתי אומרים Sorry ומתי Excuse me"],
+  },
+  {
+    id: "greetings-2",
+    topic: "greetings",
+    name: "ברכות והיכרות",
+    part: "My name is, How are you",
+    summary: "מציגים את עצמנו: איך קוראים לי, מה שלומי, בן כמה אני ומאיפה אני",
+    vocab: [["My name is", "קוראים לי"], ["What is your name", "איך קוראים לך"], ["How are you", "מה שלומך"], ["fine", "בסדר"], ["How old are you", "בן כמה אתה"], ["from", "מ־"], ["Nice to meet you", "נעים להכיר"]],
+    slides: [
+      {
+        title: "איך **קוראים** לך?",
+        examples: [["What is your **name**?", "איך קוראים לך?"]],
+      },
+      {
+        title: "**קוראים** לי",
+        lines: ["יש שתי דרכים לענות"],
+        examples: [["**My name is** Dan.", "קוראים לי דן"], ["**I am** Ben.", "אני בן"]],
+      },
+      {
+        title: "**נעים** להכיר",
+        examples: [["**Nice to meet you**.", "נעים להכיר"], ["Nice to meet you **too**.", "גם לי נעים להכיר"]],
+      },
+      {
+        title: "מה **שלומך**?",
+        examples: [["**How are you**?", "מה שלומך?"], ["I am **fine**, thank you.", "אני בסדר, תודה"], ["I am **good**.", "טוב לי"]],
+      },
+      {
+        title: "בן **כמה** אתה?",
+        lines: ["עונים רק עם המספר"],
+        examples: [["How **old** are you?", "בן כמה אתה?"], ["I am **ten**.", "אני בן עשר"]],
+      },
+      {
+        title: "**מאיפה** אתה?",
+        examples: [["Where are you **from**?", "מאיפה אתה?"], ["I am **from** Israel.", "אני מישראל"]],
+      },
+      {
+        title: "**שיחה** קצרה",
+        examples: [["Hi! What is your name?", "היי! איך קוראים לך?"], ["My name is Ben. And you?", "קוראים לי בן. ואתה?"], ["I am Dan. Nice to meet you.", "אני דן. נעים להכיר"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אסור לשכוח את המילה is"],
+        compare: ["My name Dan.", "My name **is** Dan."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["השם", "**My name is** Dan"], ["מה שלומי", "**I am fine**"], ["בן כמה", "**I am ten**"], ["מאיפה", "**I am from** Israel"]],
+      },
+    ],
+    quiz: [
+      ["My name ___ Dan.", "קוראים לי דן.", ["is", "am"], 0, "My name is"],
+      ["What is your ___?", "איך קוראים לך?", ["old", "name"], 1, "שם – name"],
+      ["How ___ you?", "מה שלומך?", ["are", "is"], 0, "How are you"],
+      ["I am ___, thank you.", "אני בסדר, תודה.", ["ten", "fine"], 1, "בסדר – fine"],
+      ["How ___ are you? — I am ten.", "בן כמה אתה? – אני בן עשר.", ["old", "from"], 0, "בן כמה – How old"],
+      ["I am ___ Israel.", "אני מישראל.", ["from", "in the"], 0, "מ־ – from"],
+    ],
+    discuss: ["הציגו את עצמכם באנגלית: שם, גיל ומאיפה אתם", "שאלו את החבר ליד: How are you"],
+  },
+  {
     id: "pronouns",
     topic: "pronouns",
     name: "כינויי גוף",
@@ -644,6 +763,65 @@ window.ENGLISH_SHORT_LESSONS = [
       ["The boys play with ___ ball.", "הבנים משחקים עם הכדור שלהם", ["their", "there"], 0, "שלהם – their"],
     ],
     discuss: ["הרימו חפץ של חבר ואמרו This is Tom's", "שאלו חבר: Whose bag is this"],
+  },
+  {
+    id: "possessives-3",
+    topic: "possessives",
+    name: "כינויי שייכות",
+    part: "mine, yours",
+    summary: "כשאין שם אחרי המילה: This book is mine – הספר הזה שלי",
+    vocab: [["mine", "שלי"], ["yours", "שלך"], ["his", "שלו"], ["ours", "שלנו"], ["theirs", "שלהם"]],
+    slides: [
+      {
+        title: "**שלי** – בלי שם אחריה",
+        lines: ["my בא לפני שם", "mine עומד לבד"],
+        flow: true,
+        examples: [["This is **my** book.", "זה הספר שלי"], ["This book is **mine**.", "הספר הזה שלי"]],
+      },
+      {
+        title: "**אני** ואתה",
+        table: [["my", "**mine**"], ["your", "**yours**"]],
+        examples: [["The bag is **yours**.", "התיק שלך"]],
+      },
+      {
+        title: "**הוא** והיא",
+        lines: ["his נשאר בדיוק אותו דבר"],
+        table: [["his", "**his**"], ["her", "**hers**"]],
+        examples: [["The bike is **his**.", "האופניים שלו"]],
+      },
+      {
+        title: "**אנחנו** והם",
+        table: [["our", "**ours**"], ["their", "**theirs**"]],
+        examples: [["The house is **ours**.", "הבית שלנו"]],
+      },
+      {
+        title: "**של מי** זה?",
+        lines: ["עונים על Whose בקצרה"],
+        examples: [["Whose bag is it?", "של מי התיק?"], ["It is **mine**.", "הוא שלי"]],
+      },
+      {
+        title: "שני **חלקים**",
+        examples: [["This pen is **mine**, and that pen is **yours**.", "העט הזה שלי, והעט ההוא שלך"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["לפני שם – my, your", "בלי שם – mine, yours"],
+        compare: ["This is mine book.", "This is **my** book."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["my", "**mine**"], ["your", "**yours**"], ["his", "**his**"], ["our", "**ours**"], ["their", "**theirs**"]],
+      },
+    ],
+    quiz: [
+      ["This book is ___.", "הספר הזה שלי.", ["mine", "my"], 0, "בלי שם אחרי המילה – mine"],
+      ["This is ___ book.", "זה הספר שלי.", ["mine", "my"], 1, "יש שם אחרי המילה – my"],
+      ["The bag is ___.", "התיק שלך.", ["yours", "your"], 0, "בלי שם – yours"],
+      ["The house is ___.", "הבית שלנו.", ["our", "ours"], 1, "בלי שם – ours"],
+      ["The bike is ___.", "האופניים שלו.", ["his", "he"], 0, "his נשאר אותו דבר"],
+      ["The toys are ___.", "הצעצועים שלהם.", ["their", "theirs"], 1, "בלי שם – theirs"],
+    ],
+    discuss: ["הראו חפץ בכיתה ואמרו של מי הוא: It is mine", "מה ההבדל בין my book לבין mine"],
   },
   {
     id: "have-has-1",
@@ -1212,6 +1390,68 @@ window.ENGLISH_SHORT_LESSONS = [
     discuss: ["שאלו חבר: Do you like pizza", "ענו בתשובה קצרה – Yes, I do או No, I don't"],
   },
   {
+    id: "imperatives-1",
+    topic: "imperatives",
+    name: "ציווי ו־Let's",
+    part: "Sit down, Don't run, Let's play",
+    summary: "אומרים מה לעשות, מה לא לעשות, ומציעים לעשות משהו ביחד",
+    vocab: [["Sit down", "שב"], ["Stand up", "קום"], ["Open", "פתח"], ["Close", "סגור"], ["Listen", "הקשב"], ["Don't", "אל"], ["Let's", "בואו"]],
+    slides: [
+      {
+        title: "**אומרים** מה לעשות",
+        lines: ["מתחילים ישר בפועל", "בלי you"],
+        examples: [["**Sit** down.", "שב"], ["**Open** your book.", "פתח את הספר"]],
+      },
+      {
+        title: "**בכיתה**",
+        lines: ["המורה אומר כל יום"],
+        examples: [["**Stand** up.", "קום"], ["**Listen** to me.", "הקשב לי"], ["**Close** the door.", "סגור את הדלת"]],
+      },
+      {
+        title: "**אל** תעשה – Don't",
+        lines: ["מוסיפים Don't לפני הפועל"],
+        examples: [["**Don't** run.", "אל תרוץ"], ["**Don't** talk.", "אל תדבר"]],
+      },
+      {
+        title: "**בבקשה**",
+        lines: ["עם please זה נשמע יפה יותר"],
+        examples: [["**Please** sit down.", "בבקשה שב"], ["Close the door, **please**.", "סגור את הדלת, בבקשה"]],
+      },
+      {
+        title: "**בואו** – Let's",
+        lines: ["מציעים לעשות משהו ביחד"],
+        examples: [["**Let's** play.", "בואו נשחק"], ["**Let's** go home.", "בואו נלך הביתה"]],
+      },
+      {
+        title: "**עוד** דוגמאות",
+        examples: [["Let's **read** a book.", "בואו נקרא ספר"], ["Let's **sing** a song.", "בואו נשיר שיר"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי Don't בא הפועל, בלי שום תוספת"],
+        compare: ["Not run.", "**Don't** run."],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי Let's אין to"],
+        compare: ["Let's to play.", "**Let's** play."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["עשה", "**Sit** down."], ["אל תעשה", "**Don't** run."], ["בואו נעשה", "**Let's** play."]],
+      },
+    ],
+    quiz: [
+      ["___ down, please.", "שב, בבקשה.", ["Sit", "Sits"], 0, "מתחילים בפועל, בלי s"],
+      ["___ your book.", "פתח את הספר שלך.", ["Opens", "Open"], 1, "מתחילים בפועל, בלי s"],
+      ["___ run!", "אל תרוץ!", ["Don't", "Not"], 0, "אל – Don't"],
+      ["Don't ___ now.", "אל תדבר עכשיו.", ["talks", "talk"], 1, "אחרי Don't בא הפועל, בלי s"],
+      ["___ play football.", "בואו נשחק כדורגל.", ["Let's", "Don't"], 0, "בואו – Let's"],
+      ["Let's ___ home.", "בואו נלך הביתה.", ["to go", "go"], 1, "אחרי Let's אין to"],
+    ],
+    discuss: ["אילו הוראות המורה אומר הכי הרבה? אמרו אותן באנגלית", "הציעו לחבר משהו לעשות ביחד. התחילו עם Let's"],
+  },
+  {
     id: "questions-1",
     topic: "questions",
     name: "מילות שאלה",
@@ -1435,6 +1675,66 @@ window.ENGLISH_SHORT_LESSONS = [
     discuss: ["מתי יום ההולדת שלכם? ענו עם My birthday is in", "איזו עונה אתם הכי אוהבים? למה?"],
   },
   {
+    id: "ordinals-1",
+    topic: "ordinals",
+    name: "מספרים סודרים",
+    part: "first, second, third",
+    summary: "ראשון, שני, שלישי באנגלית – כדי להגיד באיזה מקום, באיזו כיתה ובאיזו קומה",
+    vocab: [["first", "ראשון"], ["second", "שני"], ["third", "שלישי"], ["fourth", "רביעי"], ["fifth", "חמישי"], ["tenth", "עשירי"]],
+    slides: [
+      {
+        title: "**כמה** או **באיזה מקום**?",
+        lines: ["one, two – כמה", "first, second – באיזה מקום"],
+        examples: [["**one** boy", "ילד אחד"], ["the **first** boy", "הילד הראשון"]],
+      },
+      {
+        title: "**שלושת** הראשונים",
+        lines: ["הם מיוחדים – פשוט זוכרים"],
+        table: [["one", "**first**"], ["two", "**second**"], ["three", "**third**"]],
+      },
+      {
+        title: "מ־4 – מוסיפים **th**",
+        table: [["four", "four**th**"], ["six", "six**th**"], ["seven", "seven**th**"], ["ten", "ten**th**"]],
+      },
+      {
+        title: "**קצת** שונים",
+        lines: ["גם כאן th בסוף, אבל האיות משתנה"],
+        table: [["five", "**fifth**"], ["eight", "**eighth**"], ["nine", "**ninth**"], ["twelve", "**twelfth**"]],
+      },
+      {
+        title: "**the** לפני המספר",
+        examples: [["Dan is **the first**.", "דן הראשון"], ["This is **the second** door.", "זאת הדלת השנייה"]],
+      },
+      {
+        title: "**כיתה** וקומה",
+        examples: [["I am in **the fifth** grade.", "אני בכיתה ה"], ["We live on **the third** floor.", "אנחנו גרים בקומה השלישית"]],
+      },
+      {
+        title: "**בקיצור**",
+        lines: ["הספרה ועוד שתי אותיות"],
+        table: [["1st", "**first**"], ["2nd", "**second**"], ["3rd", "**third**"], ["4th", "**fourth**"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["באיזה מקום? לא one, two"],
+        compare: ["This is the two door.", "This is the **second** door."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["1, 2, 3", "**first, second, third**"], ["מ־4 ומעלה", "עם **th**"], ["לפני המספר", "**the**"]],
+      },
+    ],
+    quiz: [
+      ["Dan is the ___ in the race.", "דן הראשון במרוץ.", ["first", "one"], 0, "באיזה מקום – first"],
+      ["This is the ___ door.", "זאת הדלת השנייה.", ["two", "second"], 1, "באיזה מקום – second"],
+      ["We live on the ___ floor.", "אנחנו גרים בקומה השלישית.", ["third", "three"], 0, "שלישי – third"],
+      ["I am in the ___ grade.", "אני בכיתה ה.", ["fiveth", "fifth"], 1, "five – fifth"],
+      ["It is his ___ book.", "זה הספר הרביעי שלו.", ["fourth", "four"], 0, "מ־4 מוסיפים th"],
+      ["2nd means ___.", "הקיצור של המילה שני", ["two", "second"], 1, "2nd – second"],
+    ],
+    discuss: ["באיזו כיתה אתם? ענו עם I am in the", "באיזו קומה אתם גרים? ענו עם We live on the"],
+  },
+  {
     id: "telling-time",
     topic: "telling-time",
     name: "מה השעה?",
@@ -1485,6 +1785,65 @@ window.ENGLISH_SHORT_LESSONS = [
   },
 
   /* ---------- Stage 6: now, yesterday and tomorrow ---------- */
+  {
+    id: "time-prepositions-1",
+    topic: "time-prepositions",
+    name: "מתי? at, on, in",
+    part: "at, on, in של זמן",
+    summary: "שלוש מילים קטנות אומרות מתי: at לשעה, on ליום, in לחודש, לעונה ולשנה",
+    vocab: [["at seven", "בשבע"], ["on Sunday", "ביום ראשון"], ["in May", "במאי"], ["in summer", "בקיץ"], ["in the morning", "בבוקר"], ["at night", "בלילה"]],
+    slides: [
+      {
+        title: "**מתי**?",
+        lines: ["שלוש מילים קטנות אומרות מתי"],
+        chips: ["at", "on", "in"],
+      },
+      {
+        title: "**at** – שעה",
+        examples: [["I wake up **at** seven.", "אני קם בשבע"], ["School starts **at** eight.", "הלימודים מתחילים בשמונה"]],
+      },
+      {
+        title: "**on** – יום",
+        examples: [["I go to school **on** Sunday.", "אני הולך לבית הספר ביום ראשון"], ["We rest **on** Shabbat.", "אנחנו נחים בשבת"]],
+      },
+      {
+        title: "**in** – חודש, עונה ושנה",
+        examples: [["My birthday is **in** May.", "יום ההולדת שלי במאי"], ["We swim **in** summer.", "אנחנו שוחים בקיץ"], ["He was born **in** 2015.", "הוא נולד ב־2015"]],
+      },
+      {
+        title: "**in** – חלקי היום",
+        examples: [["**in** the morning", "בבוקר"], ["**in** the afternoon", "אחר הצהריים"], ["**in** the evening", "בערב"]],
+      },
+      {
+        title: "**at** – בלילה",
+        lines: ["הלילה יוצא דופן – at night"],
+        examples: [["I sleep **at** night.", "אני ישן בלילה"]],
+      },
+      {
+        title: "**on** – יום מיוחד",
+        lines: ["גם יום מיוחד הוא יום"],
+        examples: [["**on** my birthday", "ביום ההולדת שלי"], ["**on** Friday morning", "ביום שישי בבוקר"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["יום בשבוע – תמיד on"],
+        compare: ["I go to school in Sunday.", "I go to school **on** Sunday."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["שעה ובלילה", "**at** seven, **at** night"], ["יום", "**on** Sunday"], ["חודש, עונה, שנה", "**in** May, **in** summer"], ["חלק מהיום", "**in** the morning"]],
+      },
+    ],
+    quiz: [
+      ["School starts ___ eight.", "הלימודים מתחילים בשמונה.", ["at", "on"], 0, "שעה – at"],
+      ["We rest ___ Shabbat.", "אנחנו נחים בשבת.", ["in", "on"], 1, "יום – on"],
+      ["My birthday is ___ May.", "יום ההולדת שלי במאי.", ["in", "at"], 0, "חודש – in"],
+      ["I read a book ___ the evening.", "אני קורא ספר בערב.", ["on", "in"], 1, "חלק מהיום – in"],
+      ["I sleep ___ night.", "אני ישן בלילה.", ["at", "in"], 0, "at night"],
+      ["We have math ___ Monday.", "יש לנו חשבון ביום שני.", ["at", "on"], 1, "יום – on"],
+    ],
+    discuss: ["ספרו על היום שלכם: מתי אתם קמים? ענו עם at", "באיזה חודש יום ההולדת שלכם? ענו עם in"],
+  },
   {
     id: "present-simple-1",
     topic: "present-simple",
@@ -3108,6 +3467,60 @@ window.ENGLISH_SHORT_LESSONS = [
     discuss: ["שאלו חבר: Have you ever been to Eilat", "ספרו משהו שאף פעם לא עשיתם – עם I have never"],
   },
   {
+    id: "present-perfect-3",
+    topic: "present-perfect",
+    name: "הווה מושלם",
+    part: "for / since",
+    summary: "משהו שהתחיל פעם ועדיין קורה: for אומר כמה זמן, since אומר ממתי",
+    vocab: [["for", "במשך"], ["since", "מאז"], ["How long", "כמה זמן"], ["have lived", "גר כבר"], ["have known", "מכיר כבר"], ["have been", "נמצא כבר"]],
+    slides: [
+      {
+        title: "**התחיל** ועדיין קורה",
+        lines: ["התחלתי לגור כאן לפני שנתיים", "ואני עדיין גר כאן"],
+        examples: [["I **have lived** here for two years.", "אני גר כאן כבר שנתיים"]],
+      },
+      {
+        title: "**for** – כמה זמן",
+        examples: [["**for** two years", "במשך שנתיים"], ["**for** ten minutes", "במשך עשר דקות"], ["**for** a long time", "הרבה זמן"]],
+      },
+      {
+        title: "**since** – ממתי",
+        examples: [["**since** Monday", "מאז יום שני"], ["**since** 2020", "מאז 2020"], ["**since** eight o'clock", "מאז שמונה"]],
+      },
+      {
+        title: "**for** או **since**",
+        table: [["כמה זמן", "**for** two days"], ["נקודה בזמן", "**since** Sunday"]],
+      },
+      {
+        title: "**דוגמאות**",
+        examples: [["He **has been** sick since Monday.", "הוא חולה מאז יום שני"], ["I **have known** Dan for two weeks.", "אני מכיר את דן כבר שבועיים"]],
+      },
+      {
+        title: "**כמה** זמן?",
+        lines: ["שואלים עם How long"],
+        examples: [["**How long** have you lived here?", "כמה זמן אתה גר כאן?"], ["For two years.", "כבר שנתיים"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["בעברית אומרים – אני גר", "באנגלית – have lived"],
+        compare: ["I live here for two years.", "I **have lived** here for two years."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["כמה זמן", "**for** two years"], ["ממתי", "**since** 2020"], ["שאלה", "**How long** have you"]],
+      },
+    ],
+    quiz: [
+      ["I have lived here ___ two years.", "אני גר כאן כבר שנתיים.", ["for", "since"], 0, "כמה זמן – for"],
+      ["He has been sick ___ Monday.", "הוא חולה מאז יום שני.", ["for", "since"], 1, "ממתי – since"],
+      ["We have known him ___ a long time.", "אנחנו מכירים אותו הרבה זמן.", ["for", "since"], 0, "כמה זמן – for"],
+      ["They have been here ___ eight o'clock.", "הם כאן מאז שמונה.", ["for", "since"], 1, "ממתי – since"],
+      ["___ have you lived here?", "כמה זמן אתה גר כאן?", ["How long", "How old"], 0, "כמה זמן – How long"],
+      ["I ___ here for two years.", "אני גר כאן כבר שנתיים.", ["live", "have lived"], 1, "התחיל ועדיין קורה – have lived"],
+    ],
+    discuss: ["כמה זמן אתם גרים בבית שלכם? ענו עם I have lived", "ממתי אתם מכירים את החבר הכי טוב שלכם? ענו עם since"],
+  },
+  {
     id: "conditionals-1",
     topic: "conditionals",
     name: "משפטי תנאי",
@@ -3212,6 +3625,66 @@ window.ENGLISH_SHORT_LESSONS = [
       ["If it rains tomorrow, I ___ stay home.", "אם ירד גשם מחר, אשאר בבית", ["will", "am"], 0, "מחר – will"],
     ],
     discuss: ["מה קורה אם שמים קרח בשמש?", "מה אתם עושים כשאתם עייפים? ענו עם If I am tired"],
+  },
+  {
+    id: "conditionals-3",
+    topic: "conditionals",
+    name: "משפטי תנאי",
+    part: "If I were, I would",
+    summary: "מדמיינים משהו שלא באמת קורה: If I had a bike, I would ride to school",
+    vocab: [["would", "הייתי (עושה)"], ["If I were", "אם הייתי"], ["If I had", "אם היה לי"], ["If I knew", "אם הייתי יודע"], ["rich", "עשיר"]],
+    slides: [
+      {
+        title: "מדמיינים – **לא באמת**",
+        lines: ["אין לי אופניים", "אבל אני מדמיין"],
+        examples: [["If I **had** a bike, I **would** ride to school.", "אם היו לי אופניים, הייתי רוכב לבית הספר"]],
+      },
+      {
+        title: "**שני** החלקים",
+        table: [["התנאי", "**If** + עבר"], ["מה היה קורה", "**would** + פועל"]],
+      },
+      {
+        title: "**would** – הייתי",
+        lines: ["עם כולם אותו דבר, והפועל בלי תוספת"],
+        examples: [["I **would** help.", "הייתי עוזר"], ["He **would** eat.", "הוא היה אוכל"]],
+      },
+      {
+        title: "**If I were**",
+        lines: ["כאן אומרים were – גם עם I וגם עם he"],
+        examples: [["If I **were** a bird, I would fly.", "אם הייתי ציפור, הייתי עף"], ["If he **were** tall, he would play basketball.", "אם הוא היה גבוה, הוא היה משחק כדורסל"]],
+      },
+      {
+        title: "**עצה**",
+        lines: ["If I were you – אם הייתי במקומך"],
+        examples: [["If I **were** you, I would ask the teacher.", "אם הייתי במקומך, הייתי שואל את המורה"]],
+      },
+      {
+        title: "**עוד** דוגמאות",
+        examples: [["If I **knew** the answer, I would tell you.", "אם הייתי יודע את התשובה, הייתי אומר לך"], ["If we **lived** near the sea, we would swim every day.", "אם היינו גרים ליד הים, היינו שוחים כל יום"]],
+      },
+      {
+        title: "**יכול** לקרות או **דמיון**?",
+        examples: [["If it rains, I **will** stay home.", "זה יכול לקרות – will"], ["If I were a bird, I **would** fly.", "זה דמיון – would"]],
+      },
+      {
+        title: "שימו **לב**",
+        lines: ["אחרי If אין would"],
+        compare: ["If I would have a bike, I would ride.", "If I **had** a bike, I would ride."],
+      },
+      {
+        title: "**לסיכום**",
+        table: [["יכול לקרות", "If + הווה, **will**"], ["דמיון", "If + עבר, **would**"], ["להיות", "**If I were**"]],
+      },
+    ],
+    quiz: [
+      ["If I ___ a bike, I would ride to school.", "אם היו לי אופניים, הייתי רוכב לבית הספר.", ["had", "have"], 0, "דמיון – עבר אחרי If"],
+      ["If I had money, I ___ buy a book.", "אם היה לי כסף, הייתי קונה ספר.", ["will", "would"], 1, "דמיון – would"],
+      ["If I ___ a bird, I would fly.", "אם הייתי ציפור, הייתי עף.", ["were", "am"], 0, "If I were"],
+      ["If I were you, I ___ ask the teacher.", "אם הייתי במקומך, הייתי שואל את המורה.", ["will", "would"], 1, "דמיון – would"],
+      ["If I ___ the answer, I would tell you.", "אם הייתי יודע את התשובה, הייתי אומר לך.", ["knew", "know"], 0, "דמיון – עבר אחרי If"],
+      ["If it rains, I ___ stay home.", "אם ירד גשם, אשאר בבית.", ["would", "will"], 1, "זה יכול לקרות – will"],
+    ],
+    discuss: ["מה הייתם עושים אם היה לכם הרבה כסף? ענו עם If I had", "אם הייתם ציפור, לאן הייתם עפים? ענו עם If I were"],
   },
   {
     id: "passive-1",

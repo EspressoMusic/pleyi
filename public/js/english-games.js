@@ -31,6 +31,7 @@
     memory: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="10" height="14" rx="2"/><path d="M8.5 4.6 9 4a2 2 0 0 1 1.6-.6l8.4.9a2 2 0 0 1 1.8 2.2l-1.2 11.2a2 2 0 0 1-2.2 1.8l-2.4-.3"/><path d="M5.9 11a1.7 1.7 0 1 1 2.4 1.5c-.5.3-.8.7-.8 1.2v.3"/><circle cx="7.5" cy="16.6" r=".6" fill="currentColor"/></svg>`,
     speed: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13.5" r="8"/><path d="M12 9.5v4l2.6 2.2M9.5 2.5h5M12 2.5v3M19.4 5.6l1.4 1.4"/></svg>`,
     balloons: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5c-3.7 0-6.5 2.9-6.5 6.7 0 4.2 3.3 7.7 6.5 7.7s6.5-3.5 6.5-7.7c0-3.8-2.8-6.7-6.5-6.7Z"/><path d="m10.8 16.8-.9 1.6h4.2l-.9-1.6"/><path d="M12 18.4c0 1.7-1.6 1.9-1.6 3.4"/><path d="M8.8 7.4a3.6 3.6 0 0 1 2.4-2"/></svg>`,
+    hunt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5.5 5.5"/><path d="M8 8.5a3.2 3.2 0 0 1 2.4-1.2"/></svg>`,
     scramble: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="9" width="6" height="7" rx="1.5"/><rect x="9" y="5" width="6" height="7" rx="1.5"/><rect x="16" y="11" width="6" height="7" rx="1.5"/><path d="M4 20.5c2.5 1 5 1 7.5 0M11 3.2c-1.8-.9-4-.6-5.5.8"/></svg>`,
     heart: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.6s-8-4.8-8-10.5a4.4 4.4 0 0 1 8-2.6 4.4 4.4 0 0 1 8 2.6c0 5.7-8 10.5-8 10.5Z"/></svg>`,
     moves: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5a8 8 0 0 1 13.6-5.2L20 8.6M20 3.5v5.1h-5.1"/><path d="M20 12.5a8 8 0 0 1-13.6 5.2L4 15.4M4 20.5v-5.1h5.1"/></svg>`,
@@ -91,6 +92,15 @@
       tryAgain: "כמעט! נסו שוב",
       slotLabel: (n) => `אות ${n}`,
       scrambleResult: (clean, total) => `${clean} מתוך ${total} מילים בלי עזרה`,
+
+      huntHow: "בתמונה יש המון דברים, ורק חלק מהם שייכים לנושא.\nלחצו על מה ששייך לנושא: תשמעו איך אומרים אותו ותראו איך כותבים אותו.\nכל מה שתמצאו נאסף לסרגל למטה. אספו את כולם!",
+      huntFind: "מצאו בתמונה:",
+      huntFindTray: "מצאו בתמונה את מה שבסרגל למטה",
+      huntMiss: "זה לא מה שמחפשים. נסו משהו אחר",
+      huntThing: (n) => `חפץ ${n}`,
+      huntSlot: (n) => `מקום ${n} בסרגל, עדיין ריק`,
+      hudFound: "נמצאו",
+      huntResult: (time, misses) => `סיימתם בזמן ${time} · ${misses === 0 ? "בלי טעויות" : misses === 1 ? "טעות אחת" : `${misses} טעויות`}`,
     },
     en: {
       start: "Start!",
@@ -140,6 +150,15 @@
       tryAgain: "Almost! Try again",
       slotLabel: (n) => `Letter ${n}`,
       scrambleResult: (clean, total) => `${clean} of ${total} words without help`,
+
+      huntHow: "The picture is full of things, and only some of them belong to the topic.\nClick what belongs: you'll hear how to say it and see how to write it.\nEverything you find goes to the bar at the bottom. Collect them all!",
+      huntFind: "Find in the picture:",
+      huntFindTray: "Find the things from the bar below",
+      huntMiss: "That's not what we're looking for. Try something else",
+      huntThing: (n) => `Thing ${n}`,
+      huntSlot: (n) => `Place ${n} in the bar, still empty`,
+      hudFound: "Found",
+      huntResult: (time, misses) => `Finished in ${time} · ${misses === 0 ? "no mistakes" : misses === 1 ? "1 mistake" : `${misses} mistakes`}`,
     },
   };
 
@@ -321,11 +340,12 @@
         ${best ? `<p class="eng-game-best">${ICONS.trophy}<span>${esc(best)}</span></p>` : ""}
         <button type="button" class="btn btn-primary btn-candy font-cartoon eng-game-start" id="engGameStart">${esc(T("start"))}</button>
       </div>`);
-    // Pictures load while the student reads the how-to.
-    run.words.forEach((w) => {
+    // Pictures and sounds load while the student reads the how-to.
+    (game.pictures?.(run) || run.words.map((w) => w.img)).forEach((src) => {
       const img = new Image();
-      img.src = w.img;
+      img.src = src;
     });
+    window.PleyiSpeech?.preload(run.words.map((w) => w.en));
     const btn = $("#engGameStart");
     btn.addEventListener("click", () => begin(run));
     btn.focus({ preventScroll: true });
@@ -1075,7 +1095,282 @@
 
   /* ── Catalog ── */
 
+  /* ════════ Game 5: Find them in the picture — a busy picture (scenes in
+     english-hunt-scenes.js), and the topic's things are somewhere in it ════════ */
+
+  const SCENE_W = 1000;
+  const SCENE_H = 625;
+  // On a phone the picture stays this wide and pans sideways, so that things
+  // are still big enough to tap.
+  const SCENE_MIN_WIDTH = 600;
+  const HUNT_MAX_WORDS = 12;
+
+  function huntSetup(run) {
+    const { topics } = window.ENGLISH_HUNT;
+    return topics[run.ctx.topic.id] || topics.vocabulary;
+  }
+
+  function vocabPicture(name) {
+    return `/images/english/vocab/${name}.svg`;
+  }
+
+  // Sets everything on the scene's spots: the topic's words first, then the
+  // extras for as long as there are free spots.
+  function huntItems(setup, words) {
+    const scene = window.ENGLISH_HUNT.scenes[setup.scene];
+    const open = {};
+    Object.entries(scene.spots).forEach(([group, spots]) => {
+      open[group] = shuffle(spots);
+    });
+    const place = { ...scene.place, ...setup.place };
+    const items = [];
+    const add = (name, img, word) => {
+      const spot = open[place[name]]?.pop() || open.any.pop();
+      if (spot) items.push({ img, word, x: spot[0], y: spot[1], size: spot[2] * (setup.scale || 1) });
+    };
+    words.forEach((w) => add(w.word, w.img, w));
+    const taken = new Set(words.map((w) => w.word));
+    shuffle(setup.extras)
+      .filter((name) => !taken.has(name))
+      .forEach((name) => add(name, vocabPicture(name)));
+    return items;
+  }
+
+  function playHunt(run) {
+    const setup = huntSetup(run);
+    const chosen = run.words.length > HUNT_MAX_WORDS ? shuffle(run.words).slice(0, HUNT_MAX_WORDS) : run.words;
+    const items = huntItems(setup, chosen);
+    const targets = items.filter((item) => item.word).map((item) => item.word);
+    const total = targets.length;
+    const topicTitle = loc(run.ctx.topic, "title");
+    const st = { found: 0, misses: 0, hints: 0, hinted: new Set(), wordHtml: "", backTimer: 0 };
+
+    const itemHtml = (item, i) => {
+      const left = ((item.x - item.size / 2) / SCENE_W) * 100;
+      const top = ((item.y - item.size) / SCENE_H) * 100;
+      const width = (item.size / SCENE_W) * 100;
+      return `<button type="button" class="eng-hunt-item" data-i="${i}" style="left:${left.toFixed(2)}%;top:${top.toFixed(2)}%;width:${width.toFixed(2)}%;z-index:${item.y}" aria-label="${esc(T("huntThing", i + 1))}"><img src="${esc(item.img)}" alt="" draggable="false" /></button>`;
+    };
+    const slotHtml = (w, i) => `
+      <button type="button" class="eng-hunt-slot" data-slot="${i}" disabled aria-label="${esc(T("huntSlot", i + 1))}">
+        <img src="${esc(w.img)}" alt="" draggable="false" />
+        <span class="eng-hunt-slot-word" lang="en" dir="ltr" style="--len:${Math.max(4, w.en.length)}"></span>
+      </button>`;
+
+    st.wordHtml = setup.byTray
+      ? `<span class="eng-hunt-find">${esc(T("huntFindTray"))}</span>`
+      : `<span class="eng-hunt-find">${esc(T("huntFind"))} <b>${esc(topicTitle)}</b></span>`;
+
+    const card = run.shell(
+      `
+      <div class="eng-hunt-bar">
+        <div class="eng-hunt-word" id="engHuntWord" aria-live="polite">${st.wordHtml}</div>
+        <button type="button" class="eng-tool eng-hunt-hint" id="engHuntHint">${ICONS.hint}<span>${esc(T("hint"))}</span></button>
+      </div>
+      <div class="eng-game-stage eng-hunt-stage" id="engGameStage" dir="ltr">
+        <div class="eng-hunt-scene" id="engHuntScene" style="background-image:url('${esc(window.ENGLISH_HUNT.sceneUrl(setup.scene))}')">${items.map(itemHtml).join("")}</div>
+      </div>
+      <div class="eng-hunt-tray" id="engHuntTray" dir="ltr" style="--slots:${total}">${targets.map(slotHtml).join("")}</div>`,
+      pillHtml("engHudFound", ICONS.hunt, T("hudFound"), `0/${total}`) + pillHtml("engHudScore", run.ctx.icons.star, T("hudScore"), 0)
+    );
+
+    const stage = $("#engGameStage");
+    const scene = $("#engHuntScene");
+    const wordBox = $("#engHuntWord");
+    const hintBtn = $("#engHuntHint");
+    const itemEl = (i) => $(`.eng-hunt-item[data-i="${i}"]`);
+
+    let centered = false;
+    const fit = () => {
+      const W = stage.clientWidth;
+      const H = stage.clientHeight;
+      if (!W || !H) return;
+      const byHeight = Math.floor(((H - 10) * SCENE_W) / SCENE_H);
+      const whole = Math.min(W - 10, byHeight);
+      const width = whole >= SCENE_MIN_WIDTH ? whole : Math.max(byHeight, SCENE_MIN_WIDTH);
+      scene.style.width = `${width}px`;
+      if (!centered) {
+        centered = true;
+        stage.scrollLeft = (stage.scrollWidth - W) / 2;
+      }
+    };
+    fit();
+    run.observe(stage, fit);
+
+    function setScore() {
+      setPill("engHudScore", Math.max(0, st.found * 10 - st.misses * 2 - st.hints * 3));
+    }
+
+    function wordLine(w) {
+      const say = w.say ? `<span class="eng-say-row" dir="rtl" lang="he"><span class="eng-say eng-say-line">${esc(w.say)}</span></span>` : "";
+      return `
+        <span class="eng-hunt-word-en" lang="en" dir="ltr">${esc(w.en)}</span>
+        ${speakBtnHtml(run, w.en)}
+        <span class="eng-hunt-word-he">${esc(w.he)}${say}</span>`;
+    }
+
+    function showWord(w) {
+      run.cancel(st.backTimer);
+      st.wordHtml = wordLine(w);
+      wordBox.innerHTML = st.wordHtml;
+    }
+
+    // Says what was clicked, and floats the word above the thing for a moment.
+    function bubble(item, w) {
+      const el = document.createElement("span");
+      el.className = "eng-hunt-bubble";
+      el.lang = "en";
+      el.dir = "ltr";
+      el.textContent = w.en;
+      const top = (item.y - item.size) / SCENE_H;
+      el.style.left = `${Math.min(90, Math.max(10, (item.x / SCENE_W) * 100))}%`;
+      if (top < 0.14) {
+        el.style.top = `${(item.y / SCENE_H) * 100}%`;
+        el.classList.add("is-below");
+      } else {
+        el.style.top = `${top * 100}%`;
+      }
+      scene.appendChild(el);
+      run.later(() => el.remove(), 1300);
+    }
+
+    function collect(el, item) {
+      const w = item.word;
+      const slotIndex = targets.indexOf(w);
+      const slot = $(`.eng-hunt-slot[data-slot="${slotIndex}"]`);
+      st.found++;
+      el.disabled = true;
+      el.classList.remove("is-hint");
+      el.classList.add("is-found");
+      setPill("engHudFound", `${st.found}/${total}`);
+      bumpPill("engHudFound");
+      setScore();
+      run.sfx("right");
+      run.speak(w.en);
+      showWord(w);
+      bubble(item, w);
+
+      const fill = () => {
+        slot.classList.add("is-filled");
+        slot.disabled = false;
+        slot.setAttribute("aria-label", w.en);
+        $(".eng-hunt-slot-word", slot).textContent = w.en;
+      };
+      run.later(() => {
+        const from = $("img", el).getBoundingClientRect();
+        const to = $("img", slot).getBoundingClientRect();
+        el.classList.add("is-gone");
+        const fly = $("img", el).cloneNode();
+        fly.className = "eng-hunt-fly";
+        fly.style.cssText = `left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px`;
+        card.appendChild(fly);
+        fly.animate(
+          [
+            { transform: "translate(0, 0) scale(1)" },
+            { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(${to.width / from.width})` },
+          ],
+          { duration: 480, easing: "cubic-bezier(0.45, -0.1, 0.35, 1)", fill: "forwards" }
+        );
+        run.later(() => {
+          fly.remove();
+          fill();
+        }, 480);
+      }, 420);
+      if (st.found === total) {
+        hintBtn.disabled = true;
+        run.later(done, 1900);
+      }
+    }
+
+    function miss(el) {
+      el.classList.remove("is-miss");
+      void el.offsetWidth;
+      el.classList.add("is-miss");
+      run.sfx("miss");
+      // The same thing clicked again costs nothing more.
+      if (!el.dataset.missed) {
+        el.dataset.missed = "1";
+        st.misses++;
+        setScore();
+      }
+      wordBox.innerHTML = `<span class="eng-hunt-miss">${esc(T("huntMiss"))}</span>`;
+      run.cancel(st.backTimer);
+      st.backTimer = run.later(() => {
+        wordBox.innerHTML = st.wordHtml;
+      }, 1500);
+    }
+
+    function hint() {
+      const left = items.map((item, i) => ({ item, i })).filter(({ item, i }) => item.word && !itemEl(i).disabled);
+      if (!left.length) return;
+      const { item, i } = pickOne(left);
+      st.hints++;
+      st.hinted.add(item.word);
+      setScore();
+      run.sfx("flip");
+      const el = itemEl(i);
+      el.classList.add("is-hint");
+      el.scrollIntoView?.({ block: "nearest", inline: "center", behavior: "smooth" });
+      hintBtn.disabled = true;
+      run.later(() => {
+        el.classList.remove("is-hint");
+        hintBtn.disabled = false;
+      }, 2400);
+    }
+
+    function done() {
+      const sec = Math.round((Date.now() - run.startedAt) / 1000);
+      const value = Math.max(0, total * 10 - st.misses * 2 - st.hints * 3);
+      const slips = st.misses + st.hints;
+      finish(run, {
+        value,
+        label: "pointsLabel",
+        detail: T("huntResult", clockText(sec), st.misses),
+        stars: slips === 0 ? 3 : slips <= 3 ? 2 : 1,
+        correct: total,
+        recordScore: T("points", value),
+        review: [...st.hinted],
+      });
+    }
+
+    run.on(scene, "click", (e) => {
+      const el = e.target.closest(".eng-hunt-item");
+      if (!el || el.disabled) return;
+      const i = Number(el.dataset.i);
+      const item = items[i];
+      if (item.word) collect(el, item);
+      else miss(el);
+    });
+    // A word in the tray: hear it and see it again.
+    run.on($("#engHuntTray"), "click", (e) => {
+      const slot = e.target.closest(".eng-hunt-slot");
+      if (!slot || slot.disabled) return;
+      const w = targets[Number(slot.dataset.slot)];
+      run.speak(w.en);
+      showWord(w);
+    });
+    run.on(wordBox, "click", (e) => {
+      const btn = e.target.closest(".eng-speak");
+      if (btn) run.speak(btn.dataset.say);
+    });
+    run.on(hintBtn, "click", hint);
+  }
+
   const GAMES = [
+    {
+      id: "hunt",
+      title: "מצאו בתמונה",
+      titleEn: "Find Them in the Picture",
+      desc: "מוצאים בתמונה מלאת חפצים את כל הדברים של הנושא",
+      descEn: "Find all the topic's things in a picture full of objects",
+      icon: ICONS.hunt,
+      bestValue: (v) => T("points", v),
+      pictures: (run) => {
+        const setup = huntSetup(run);
+        return [window.ENGLISH_HUNT.sceneUrl(setup.scene), ...run.words.map((w) => w.img), ...setup.extras.map(vocabPicture)];
+      },
+      play: playHunt,
+    },
     {
       id: "memory",
       title: "משחק הזיכרון",

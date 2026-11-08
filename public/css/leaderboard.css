@@ -1,6 +1,5 @@
 /* Class leaderboard (public/js/leaderboard.js) — the board, its week /
-   all-time tabs, and the dialog. Used on the Learn English page, the
-   student's homework page and the teacher's students page. */
+   all-time tabs, and the dialog. Used on the Learn English page. */
 
 .lb-tabs {
   display: flex;
@@ -46,8 +45,9 @@
 
 .lb-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 10px 12px;
   min-height: 52px;
   padding: 8px 14px;
   border: 3px solid var(--ink);
@@ -83,6 +83,89 @@
   font-size: 1.2rem;
 }
 
+/* The leader: confetti falls behind the row and the name is colorful. */
+.lb-row.is-rank-1 {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.lb-row.is-rank-1 > :not(.lb-confetti) {
+  position: relative;
+  z-index: 1;
+}
+
+.lb-confetti {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.lb-confetti i {
+  position: absolute;
+  top: -14px;
+  left: var(--x);
+  width: 6px;
+  height: 11px;
+  border-radius: 2px;
+  background: var(--c);
+  opacity: 0.85;
+  animation: lb-confetti-fall var(--f) linear var(--d) infinite;
+  animation-fill-mode: backwards;
+}
+
+.lb-confetti i.lb-confetti-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+@keyframes lb-confetti-fall {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(90px) rotate(400deg); }
+}
+
+.lb-name-rainbow {
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+/* Room for the letters' little jump — .lb-name clips its overflow. */
+.lb-row.is-rank-1 .lb-name {
+  padding-block: 4px;
+}
+
+.lb-name-rainbow > span {
+  display: inline-block;
+  animation: lb-name-wave 1.6s ease-in-out calc(var(--i) * 0.12s) infinite;
+}
+
+.lb-name-rainbow > span:nth-child(6n + 1) { color: #e63946; }
+.lb-name-rainbow > span:nth-child(6n + 2) { color: #f77f00; }
+.lb-name-rainbow > span:nth-child(6n + 3) { color: #1a9e5c; }
+.lb-name-rainbow > span:nth-child(6n + 4) { color: #1d6fe0; }
+.lb-name-rainbow > span:nth-child(6n + 5) { color: #8338ec; }
+.lb-name-rainbow > span:nth-child(6n + 6) { color: #d62598; }
+
+@keyframes lb-name-wave {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-3px); }
+}
+
+/* Without motion the confetti stays scattered over the row. */
+@media (prefers-reduced-motion: reduce) {
+  .lb-confetti i {
+    top: var(--y);
+    animation: none;
+    transform: rotate(35deg);
+  }
+
+  .lb-name-rainbow > span {
+    animation: none;
+  }
+}
+
 .lb-row.is-rank-2 .lb-rank {
   background: #d7dee6;
 }
@@ -100,6 +183,118 @@
   line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* The name opens the student's totals. .lb-name clips its overflow, so it
+   gets a few pixels of padding (taken back by the margin) for the focus ring. */
+.lb-name:has(.lb-name-btn) {
+  margin: -4px;
+  padding: 4px;
+}
+
+.lb-name-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.lb-name-btn:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.lb-name-btn:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.lb-more {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: #000;
+}
+
+.lb-more svg {
+  width: 13px;
+  height: 13px;
+  transition: transform 0.2s ease;
+}
+
+.lb-name-btn[aria-expanded="true"] .lb-more svg {
+  transform: rotate(180deg);
+}
+
+.lb-detail {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px 0 4px;
+}
+
+.lb-detail[hidden] {
+  display: none;
+}
+
+.lb-detail-label {
+  width: fit-content;
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.lb-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
+  margin: 0;
+}
+
+.lb-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 7px 8px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--eng-card, #eaf5ff);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  color: #000;
+  text-align: center;
+}
+
+.lb-stat dt {
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.lb-stat dd {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
 }
 
 .lb-me {

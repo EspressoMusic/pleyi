@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 625">
+<defs>
+<pattern id="floor" width="90" height="90" patternUnits="userSpaceOnUse"><rect width="90" height="90" fill="#EEF4F7"/><rect width="45" height="45" fill="#D6E3EA"/><rect x="45" y="45" width="45" height="45" fill="#D6E3EA"/></pattern>
+</defs>
+<g stroke="#1b1b1b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<rect width="1000" height="460" fill="#DFF3FF" stroke="none"/>
+<rect y="460" width="1000" height="165" fill="url(#floor)" stroke="none"/>
+<path d="M0 460H1000" fill="none"/>
+<rect x="30" y="26" width="290" height="250" rx="8" fill="#FFF3D6"/>
+<rect x="355" y="26" width="290" height="250" rx="8" fill="#FFE3EC"/>
+<rect x="680" y="26" width="290" height="250" rx="8" fill="#E4E0FF"/>
+<path d="M175 26v-12M500 26v-12M825 26v-12" fill="none"/>
+<rect x="30" y="330" width="330" height="175" fill="#F4FBFF"/>
+<path d="M30 408H360" fill="none"/>
+<rect x="405" y="390" width="235" height="12" rx="3" fill="#C98A4E"/><path d="M421 402v14M624 402v14" stroke="#9C6B3C" stroke-width="7"/>
+<path d="M635 450H980V500H635Z" fill="#8FD3C7"/>
+<path d="M635 450Q660 410 730 420V450Z" fill="#F4FBFF"/>
+<rect x="650" y="500" width="16" height="100" fill="#9AA6B0"/>
+<rect x="950" y="500" width="16" height="100" fill="#9AA6B0"/>
+</g>
+</svg>

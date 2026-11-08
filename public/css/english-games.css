@@ -1008,3 +1008,312 @@ html.eng-runner-open .eng-runner-card--game > .eng-balloon-sky {
     animation: none;
   }
 }
+
+/* ── Game 5: find them in the picture. Top to bottom: the line with the word,
+   the picture (takes what is left, and pans on a phone), the tray ── */
+
+.eng-ex-card--game-hunt .eng-ex-icon,
+.eng-game-badge--hunt { background: #9fe0a0; }
+
+.eng-game-howto { white-space: pre-line; }
+
+html.eng-runner-open .eng-runner-card.eng-runner-card--game-hunt:has(.eng-hunt-stage) {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, 1.2dvh, 10px);
+  padding: clamp(6px, 1.4dvh, 12px);
+  overflow: hidden;
+}
+
+/* While playing, the head is one row: the title is in the line above the
+   picture anyway, and the picture gets the height. */
+html.eng-runner-open .eng-exercise-view:has(.eng-hunt-stage) {
+  max-width: 1120px;
+}
+
+html.eng-runner-open .eng-exercise-view:has(.eng-hunt-stage) .eng-runner-head {
+  position: relative;
+  margin-bottom: clamp(6px, 1.2dvh, 12px);
+}
+
+.eng-exercise-view:has(.eng-hunt-stage) .eng-runner-title-row {
+  visibility: hidden;
+}
+
+.eng-exercise-view:has(.eng-hunt-stage) .eng-game-hud {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  flex-wrap: nowrap;
+  transform: translate(-50%, -50%);
+}
+
+.eng-hunt-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  min-height: clamp(42px, 7dvh, 58px);
+}
+
+.eng-hunt-word {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px 12px;
+  min-width: 0;
+  color: var(--ink);
+  text-align: center;
+}
+
+.eng-hunt-find {
+  font-size: clamp(1.02rem, 2.8dvh, 1.35rem);
+  font-weight: 800;
+}
+
+.eng-hunt-find b { font-weight: 900; }
+
+.eng-hunt-miss {
+  font-size: clamp(1rem, 2.6dvh, 1.25rem);
+  font-weight: 900;
+  color: var(--eng-wrong);
+  animation: eng-pop 0.26s ease;
+}
+
+.eng-hunt-word-en {
+  font-size: clamp(1.5rem, 4.6dvh, 2.3rem);
+  font-weight: 900;
+  line-height: 1.1;
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-hunt-word-he {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: clamp(1.02rem, 2.8dvh, 1.35rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.eng-hunt-word .eng-speak {
+  flex: none;
+}
+
+.eng-hunt-hint {
+  flex: none;
+}
+
+.eng-hunt-hint:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* The stage scrolls only when the picture is kept wider than the screen. */
+html.eng-runner-open .eng-runner-card--game-hunt > .eng-hunt-stage {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 150px;
+  padding: 3px 5px 6px 3px;
+  overflow: auto;
+  scrollbar-width: none;
+  touch-action: pan-x pan-y;
+}
+
+.eng-hunt-stage::-webkit-scrollbar { display: none; }
+
+.eng-hunt-scene {
+  position: relative;
+  flex: none;
+  margin: auto;
+  aspect-ratio: 1000 / 625;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #eaf5ff center / 100% 100% no-repeat;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.eng-hunt-item {
+  position: absolute;
+  aspect-ratio: 1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform 0.14s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.eng-hunt-item:hover,
+.eng-hunt-item:focus-visible {
+  transform: scale(1.1);
+}
+
+.eng-hunt-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.18));
+}
+
+.eng-hunt-item.is-found {
+  z-index: 900 !important;
+  cursor: default;
+  animation: eng-hunt-found 0.42s ease both;
+}
+
+.eng-hunt-item.is-gone { visibility: hidden; }
+
+.eng-hunt-item.is-miss { animation: eng-hunt-shake 0.4s ease; }
+
+.eng-hunt-item.is-hint {
+  z-index: 800 !important;
+  animation: eng-hunt-hint 0.8s ease 3;
+}
+
+@keyframes eng-hunt-found {
+  50% { transform: scale(1.45); }
+  100% { transform: scale(1.3); }
+}
+
+@keyframes eng-hunt-shake {
+  20% { transform: translateX(-6px) rotate(-5deg); }
+  40% { transform: translateX(6px) rotate(5deg); }
+  60% { transform: translateX(-4px) rotate(-3deg); }
+  80% { transform: translateX(4px) rotate(3deg); }
+}
+
+@keyframes eng-hunt-hint {
+  50% {
+    transform: scale(1.35);
+    filter: drop-shadow(0 0 10px #ffd400) drop-shadow(0 0 4px #ffd400);
+  }
+}
+
+.eng-hunt-bubble {
+  position: absolute;
+  z-index: 1000;
+  padding: 2px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #eaf5ff;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  color: var(--ink);
+  font-size: clamp(1.05rem, 3dvh, 1.45rem);
+  font-weight: 900;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  animation: eng-hunt-bubble 1.3s ease both;
+}
+
+.eng-hunt-bubble.is-below { transform: translate(-50%, 0); }
+
+@keyframes eng-hunt-bubble {
+  0% { opacity: 0; scale: 0.6; }
+  14%, 80% { opacity: 1; scale: 1; }
+  100% { opacity: 0; scale: 1; }
+}
+
+.eng-hunt-fly {
+  position: fixed;
+  z-index: 1100;
+  margin: 0;
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+/* The tray: an empty place shows the thing's shadow, a full one its picture
+   and word. On a phone twelve places take two rows. */
+.eng-hunt-tray {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(var(--slots), minmax(0, 92px));
+  justify-content: center;
+  gap: clamp(4px, 0.8dvh, 7px);
+  padding: 0 4px 4px 2px;
+}
+
+.eng-hunt-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 0;
+  height: clamp(58px, 11dvh, 84px);
+  margin: 0;
+  padding: 3px 2px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #eaf5ff;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  color: var(--ink);
+  container-type: inline-size;
+}
+
+.eng-hunt-slot:disabled {
+  background: #d7e6f2;
+  box-shadow: 1px 2px 0 0 var(--ink);
+  cursor: default;
+}
+
+.eng-hunt-slot:not(:disabled) { cursor: pointer; }
+
+.eng-hunt-slot img {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  filter: brightness(0);
+  opacity: 0.2;
+}
+
+.eng-hunt-slot.is-filled {
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-hunt-slot.is-filled img {
+  filter: none;
+  opacity: 1;
+}
+
+.eng-hunt-slot-word {
+  flex: none;
+  width: 100%;
+  overflow: hidden;
+  font-size: min(0.84rem, calc(100cqw / (var(--len) * 0.56)));
+  font-weight: 900;
+  line-height: 1.15;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.eng-hunt-slot-word:empty { display: none; }
+
+@media (max-width: 720px) {
+  .eng-hunt-tray { grid-template-columns: repeat(min(var(--slots), 6), minmax(0, 1fr)); }
+
+  .eng-hunt-slot { height: clamp(44px, 7.4dvh, 62px); }
+
+  html.eng-runner-open .eng-hunt-hint span { display: none; }
+}
+
+/* A low phone on its side: the tray is one row, and the picture pans. */
+@media (max-height: 480px) {
+  .eng-hunt-tray { grid-template-columns: repeat(var(--slots), minmax(0, 1fr)); }
+
+  .eng-hunt-slot { height: 40px; }
+
+  .eng-hunt-slot-word { display: none; }
+}

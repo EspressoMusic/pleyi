@@ -2275,8 +2275,8 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-
 
 .lp-game-options--wide {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  max-width: 680px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  max-width: 800px;
 }
 
 /* Two per row on a narrow slide (phones). */
@@ -2315,6 +2315,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-
 .lp-game-btn--speed .lp-game-btn-icon { background: #ff9ec7; }
 .lp-game-btn--balloons .lp-game-btn-icon { background: #9be7ff; }
 .lp-game-btn--scramble .lp-game-btn-icon { background: #b9a4ff; }
+.lp-game-btn--hunt .lp-game-btn-icon { background: #9fe0a0; }
 
 .lesson-player-dots {
   flex: 0 0 auto;
@@ -3500,6 +3501,11 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
   border-top: 0.08em solid currentColor;
 }
 
+/* A root on top of a fraction: its bar stays clear of the card's border. */
+.lp-frac-n:has(.lp-sqrt) {
+  padding-top: 0.25em;
+}
+
 /* A drawing beside a worked exercise, under it when the slide is narrow. */
 /* Side by side on a wide slide; the drawing drops under the text only on a
    narrow (phone) screen, where a row would leave both too small. */
@@ -3829,6 +3835,10 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-ex-fl
 }
 
 @media (max-width: 600px) {
+  .lp-math-card {
+    padding-inline: 10px;
+  }
+
   .lp-steps-row,
   .lp-ex,
   .lp-compare-row {

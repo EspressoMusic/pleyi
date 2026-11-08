@@ -2268,22 +2268,20 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
   text-decoration: none;
 }
 
-/* "Create new exercises": new items written by the server. */
-.eng-btn-new {
+/* "New round": a spinner while the server's new items load. */
+.eng-btn-again {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--memyellow);
-  color: var(--ink);
 }
 
-.eng-btn-new svg {
+.eng-btn-again svg {
   width: 1.25em;
   height: 1.25em;
   flex-shrink: 0;
 }
 
-.eng-results-actions .eng-btn-new:disabled {
+.eng-results-actions .eng-btn-again:disabled {
   opacity: 1;
   cursor: progress;
 }
@@ -2298,6 +2296,138 @@ html.eng-runner-open .eng-runner-card::-webkit-scrollbar {
 
 @media (prefers-reduced-motion: reduce) {
   .eng-spin { animation-duration: 2.5s; }
+}
+
+/* A grade of 90 and up: confetti over the whole screen, and the student's
+   name on top of the results. The confetti layer is a child of <body>, which
+   styles.css forces to position: relative, hence the !important. */
+.eng-confetti {
+  position: fixed !important;
+  inset: 0;
+  z-index: 3000;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.eng-confetti i {
+  position: absolute;
+  top: -16px;
+  left: var(--x, 50%);
+  width: 9px;
+  height: 15px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: eng-confetti-fall var(--dur, 3s) var(--delay, 0s) cubic-bezier(0.3, 0.6, 0.5, 1) forwards;
+}
+
+.eng-confetti i.is-round {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+@keyframes eng-confetti-fall {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--drift, 0px), 105vh) rotate(var(--rot, 540deg)); }
+}
+
+.eng-cheer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--ink);
+}
+
+.eng-cheer-lead {
+  font-size: 1.1rem;
+  font-weight: 900;
+  animation: eng-cheer-in 0.4s ease both;
+}
+
+.eng-cheer-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  line-height: 1.15;
+}
+
+/* The teal marker sweeps in, then the letters jump onto it one by one and
+   wave twice. */
+.eng-cheer-letters {
+  display: inline-block;
+  padding: 0 0.22em;
+  border-radius: 10px;
+  background: linear-gradient(color-mix(in srgb, var(--memteal) 45%, #fff), color-mix(in srgb, var(--memteal) 45%, #fff)) no-repeat right / 0% 100%;
+  color: #000;
+  animation: eng-cheer-marker 0.45s ease 0.15s forwards;
+}
+
+.eng-cheer-letters span {
+  display: inline-block;
+  animation:
+    eng-cheer-letter 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) calc(0.4s + var(--i) * 0.08s) both,
+    eng-cheer-wave 1s ease-in-out calc(1.4s + var(--i) * 0.08s) 2;
+}
+
+.eng-cheer-spark svg {
+  display: block;
+  width: 0.62em;
+  height: 0.62em;
+  fill: var(--memyellow);
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  animation: eng-cheer-twinkle 1.2s ease-in-out 0.6s infinite alternate both;
+}
+
+.eng-cheer-spark:last-child svg {
+  animation-delay: 1.2s;
+}
+
+@keyframes eng-cheer-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes eng-cheer-marker {
+  to { background-size: 100% 100%; }
+}
+
+@keyframes eng-cheer-letter {
+  0% { opacity: 0; transform: translateY(0.7em) scale(0.3); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes eng-cheer-wave {
+  0%, 100% { transform: none; }
+  50% { transform: translateY(-0.2em); }
+}
+
+@keyframes eng-cheer-twinkle {
+  0% { transform: scale(0.75) rotate(0deg); }
+  100% { transform: scale(1.15) rotate(25deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-cheer-lead,
+  .eng-cheer-letters span,
+  .eng-cheer-spark svg {
+    animation: none;
+  }
+
+  .eng-cheer-letters {
+    animation: none;
+    background-size: 100% 100%;
+  }
+}
+
+/* In an exam the name sits over the grade row. */
+.eng-exam-task > .eng-cheer {
+  margin-bottom: 10px;
 }
 
 /* A picture word inside a new sentence: a smaller picture over the
@@ -4942,6 +5072,14 @@ html.eng-runner-open .eng-grade-label {
 
 html.eng-runner-open .eng-score.font-cartoon {
   font-size: clamp(2rem, 6.5dvh, 4.4rem);
+}
+
+html.eng-runner-open .eng-cheer-lead {
+  font-size: clamp(0.92rem, 2.2dvh, 1.1rem);
+}
+
+html.eng-runner-open .eng-cheer-name {
+  font-size: clamp(1.8rem, 6.4dvh, 3.2rem);
 }
 
 html.eng-runner-open .eng-results-count {

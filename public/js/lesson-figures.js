@@ -459,7 +459,10 @@
   // A number line from `from` to `to` in steps of `step` (left to right, as
   // in math). labels: the values to name (all when left out); hl: values
   // marked with a red dot; jump: [a, b] — an arrow from a to b over the line.
-  function numline({ from = -5, to = 5, step = 1, labels, hl = [], jump }) {
+  // ray: { at, dir, open } — the numbers from `at` on, to the right (dir 1) or
+  // to the left (dir -1); open: `at` itself is not one of them. size: of the
+  // numbers, for a line with few of them.
+  function numline({ from = -5, to = 5, step = 1, labels, hl = [], jump, ray, size = 26 }) {
     const n = Math.round((to - from) / step);
     const u = Math.min(60, 600 / n);
     const x0 = 44;
@@ -474,7 +477,7 @@
       const x = at(v);
       const zero = same(v, 0);
       s += seg(P(x, y - 13), P(x, y + 13), "#000", zero ? 6 : 4);
-      if (!labels || labels.some((l) => same(l, v))) s += label(x, y + 40, num(v), 26, zero ? COL.deep : "#000");
+      if (!labels || labels.some((l) => same(l, v))) s += label(x, y + Math.round(22 + size * 0.7), num(v), size, zero ? COL.deep : "#000");
     }
     if (jump) {
       const [a, b] = jump.map(at);
@@ -484,8 +487,14 @@
       s += `<path d="M${f1(a)} ${y - 16} Q${f1(c.x)} ${f1(c.y)} ${f1(b)} ${y - 30}" fill="none" stroke="${COL.orange}" stroke-width="6" stroke-linecap="round"/>`;
       s += arrowHead(tip, P(b - Math.sign(b - a) * 6, y - 40), COL.orange, 16);
     }
+    if (ray) {
+      const end = ray.dir > 0 ? W - x0 + 26 : x0 - 26;
+      s += seg(P(at(ray.at), y), P(end, y), COL.orange, 11);
+      s += arrowHead(P(end + ray.dir * 12, y), P(at(ray.at), y), COL.orange, 20);
+      s += `<circle cx="${f1(at(ray.at))}" cy="${y}" r="12" fill="${ray.open ? SOFT : COL.orange}" stroke="#000" stroke-width="4.5"/>`;
+    }
     hl.forEach((v) => (s += `<circle cx="${f1(at(v))}" cy="${y}" r="11" fill="${COL.red}" stroke="#000" stroke-width="3.5"/>`));
-    return svg(jump ? `0 0 ${f1(W)} 160` : `0 64 ${f1(W)} 96`, s);
+    return svg(jump ? `0 0 ${f1(W)} 160` : `0 64 ${f1(W)} ${Math.round(65 + size * 1.2)}`, s);
   }
 
   // A thermometer from min to max degrees, filled up to t; 0 is marked.
@@ -1346,6 +1355,188 @@
     return svg("0 0 340 330", s);
   }
 
+  /* ---------- written multiplication and division, quadrilaterals, mixed numbers ---------- */
+
+  const COL_W = 46;
+  const ROW_H = 58;
+
+  // An exercise written in columns. upto: how many digits of the answer are
+  // already written, from the right (the newest one in orange, its column
+  // marked); with a two-digit multiplier, how many rows (the last one is the
+  // sum). hide: the exercise alone, to solve.
+  function vmult({ a = 23, b = 4, upto = Infinity, hide = false }) {
+    const aDigits = [...String(a)].reverse().map(Number);
+    const bDigits = [...String(b)].reverse().map(Number);
+    const two = bDigits.length > 1;
+    const product = String(a * b);
+    const shown = hide ? 0 : upto;
+    const cols = Math.max(product.length, String(a).length, bDigits.length + 1) + 1;
+    const X = (col) => 14 + (cols - col - 0.5) * COL_W;
+    const digits = (t, row, color = "#000", first = 0, count = t.length) =>
+      [...t]
+        .reverse()
+        .map((d, c) => (c >= first && c < first + count ? label(X(c), row * ROW_H + 30, d, 38, color) : ""))
+        .join("");
+    const rule = (row) => seg(P(10, row * ROW_H + 2), P(X(0) + COL_W / 2 + 4, row * ROW_H + 2), "#000", 5);
+    let s = "";
+    let row = 1;
+    if (!two && Number.isFinite(shown) && shown > 0 && shown <= aDigits.length) {
+      s += `<rect x="${X(shown - 1) - COL_W / 2}" y="${ROW_H}" width="${COL_W}" height="${ROW_H}" rx="8" fill="${COL.yl}"/>`;
+      s += `<rect x="${X(0) - COL_W / 2}" y="${2 * ROW_H}" width="${COL_W}" height="${ROW_H}" rx="8" fill="${COL.yl}"/>`;
+    }
+    s += digits(String(a), row);
+    row += 1;
+    s += digits(String(b), row) + label(X(cols - 1), row * ROW_H + 30, "×", 36);
+    row += 1;
+    s += rule(row);
+    if (two) {
+      bDigits.forEach((d, i) => {
+        if (shown <= i) return;
+        const part = String(a * d) + "0".repeat(i);
+        s += digits(part, row, shown === i + 1 ? COL.orange : "#000", i) + digits(part, row, COL.deep, 0, i);
+        row += 1;
+      });
+      if (shown > 2) {
+        s += rule(row) + digits(product, row, COL.orange);
+        row += 1;
+      }
+      if (shown === 0) row += 1;
+    } else {
+      // The digit carried over sits small above the next column.
+      let carry = 0;
+      aDigits.forEach((d, c) => {
+        carry = Math.floor((d * b + carry) / 10);
+        if (carry && c + 1 < aDigits.length && c < shown) s += label(X(c + 1), 36, carry, 28, COL.orange);
+      });
+      const done = Math.min(shown, product.length);
+      if (done) {
+        const finished = !Number.isFinite(shown);
+        s += digits(product, row, "#000", 0, finished ? done : done - 1);
+        if (!finished) s += digits(product, row, COL.orange, done - 1, 1);
+      }
+      row += 1;
+    }
+    return svg(`0 8 ${f1(cols * COL_W + 28)} ${row * ROW_H + 4}`, s);
+  }
+
+  // Long division with its bar: the divisor on the left, the answer above.
+  // Every digit of the answer is 3 stages: write it, multiply and subtract,
+  // bring the next digit down. upto: the stages already done (the newest in
+  // orange).
+  function vdiv({ n = 84, d = 4, upto = Infinity }) {
+    const digits = [...String(n)].map(Number);
+    const steps = [];
+    let cur = 0;
+    digits.forEach((digit, i) => {
+      cur = cur * 10 + digit;
+      if (!steps.length && cur < d && i < digits.length - 1) return;
+      const q = Math.floor(cur / d);
+      steps.push({ i, q, prod: q * d, rem: cur - q * d });
+      cur -= q * d;
+    });
+    const lead = String(d).length * COL_W + 22;
+    const X = (i) => 14 + lead + (i + 0.5) * COL_W;
+    const barY = ROW_H + 2;
+    const right = (t, end, row, color) =>
+      [...String(t)]
+        .reverse()
+        .map((c, k) => label(X(end - k), row * ROW_H + 30, c, 38, color))
+        .join("");
+    const last = digits.length - 1;
+    let s = seg(P(lead + 8, barY), P(X(last) + COL_W / 2 + 6, barY), "#000", 5);
+    s += `<path d="M${lead + 8} ${barY} Q${lead + 26} ${barY + ROW_H / 2} ${lead + 8} ${barY + ROW_H}" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/>`;
+    s += label(lead / 2 + 2, ROW_H + 30, d, 38);
+    digits.forEach((digit, i) => (s += label(X(i), ROW_H + 30, digit, 38)));
+    let row = 2;
+    let stage = 0;
+    for (let k = 0; k < steps.length; k++) {
+      const st = steps[k];
+      const fresh = (at) => (upto === at ? COL.orange : "#000");
+      stage += 1;
+      if (upto < stage) break;
+      s += label(X(st.i), 30, st.q, 38, fresh(stage));
+      stage += 1;
+      if (upto < stage) break;
+      const width = String(st.prod).length;
+      s += right(st.prod, st.i, row, fresh(stage));
+      s += label(X(st.i - width) + 14, row * ROW_H + 30, "−", 34, fresh(stage));
+      row += 1;
+      s += seg(P(X(st.i - width + 1) - COL_W / 2 - 4, row * ROW_H + 2), P(X(st.i) + COL_W / 2 + 2, row * ROW_H + 2), "#000", 4);
+      s += right(st.rem, st.i, row, fresh(stage));
+      row += 1;
+      if (k === steps.length - 1) break;
+      stage += 1;
+      if (upto < stage) break;
+      s += label(X(st.i + 1), (row - 1) * ROW_H + 30, digits[st.i + 1], 38, upto === stage ? COL.orange : COL.deep);
+    }
+    return svg(`0 0 ${f1(X(last) + COL_W / 2 + 16)} ${Math.max(row, 2) * ROW_H + 4}`, s);
+  }
+
+  // A quadrilateral or a triangle. base, top, h: names or lengths written on
+  // the bottom side, the top side and the height (dashed); parallel: arrows on
+  // the parallel sides; equal: marks on equal sides; half: the triangle inside
+  // its rectangle.
+  const QUADS = {
+    square: [P(70, 20), P(230, 20), P(230, 180), P(70, 180)],
+    rect: [P(30, 50), P(270, 50), P(270, 170), P(30, 170)],
+    parallelogram: [P(80, 40), P(300, 40), P(230, 180), P(10, 180)],
+    rhombus: [P(155, 10), P(285, 100), P(155, 190), P(25, 100)],
+    trapezoid: [P(90, 40), P(230, 40), P(300, 180), P(10, 180)],
+    triangle: [P(110, 20), P(290, 180), P(10, 180)],
+  };
+  function quad({ k = "parallelogram", base, top, h, parallel = false, equal = false, half = false }) {
+    const pts = QUADS[k];
+    const [A, B, C, D] = pts;
+    const isTri = k === "triangle";
+    const bottomL = isTri ? C : D;
+    const bottomR = isTri ? B : C;
+    let s = "";
+    if (half) s += `<rect x="${bottomL.x}" y="${A.y}" width="${bottomR.x - bottomL.x}" height="${bottomR.y - A.y}" fill="${SOFT}" stroke="#000" stroke-width="4" stroke-dasharray="12 9"/>`;
+    s += poly(pts, TEAL, 6);
+    if (h) {
+      const foot = P(A.x, bottomL.y);
+      s += seg(A, foot, COL.orange, 6, 'stroke-dasharray="12 9"') + rightMark(foot, A, bottomR, 20);
+      s += label(A.x + 26, (A.y + foot.y) / 2, h, 34);
+    }
+    if (base) s += label((bottomL.x + bottomR.x) / 2, bottomL.y + 30, base, 32);
+    if (top) s += label((A.x + B.x) / 2, A.y - 24, top, 32);
+    if (parallel) {
+      const mark = (U, W, n) => {
+        const M = V.mid(U, W);
+        const dir = V.unit(V.sub(W, U));
+        for (let i = 0; i < n; i++) s += arrowHead(V.add(M, V.mul(dir, 10 + i * 18)), M, COL.orange, 20);
+      };
+      mark(A, B, 1);
+      mark(D, C, 1);
+      if (k !== "trapezoid") {
+        mark(D, A, 2);
+        mark(C, B, 2);
+      }
+    }
+    if (equal) pts.forEach((p, i) => (s += ticks(p, pts[(i + 1) % pts.length], 1)));
+    return svg("-14 -22 338 246", s);
+  }
+
+  // Whole pizzas and a part of one, in a row: whole, then k of n slices.
+  function mixed({ whole = 1, n = 2, k = 1 }) {
+    const r = 56;
+    const gap = 14;
+    const count = whole + (k ? 1 : 0);
+    let s = "";
+    for (let p = 0; p < count; p++) {
+      const cx = r + 6 + p * (2 * r + gap);
+      const colored = p < whole ? n : k;
+      for (let i = 0; i < n; i++) {
+        const a1 = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+        const a2 = -Math.PI / 2 + ((i + 1) * 2 * Math.PI) / n;
+        s += `<path d="M${cx} ${r + 6} L${f1(cx + r * Math.cos(a1))} ${f1(r + 6 + r * Math.sin(a1))} A${r} ${r} 0 0 1 ${f1(cx + r * Math.cos(a2))} ${f1(r + 6 + r * Math.sin(a2))} Z" fill="${
+          i < colored ? TEAL : SOFT
+        }" stroke="#000" stroke-width="4" stroke-linejoin="round"/>`;
+      }
+    }
+    return svg(`0 0 ${count * (2 * r + gap) - gap + 12} ${2 * r + 12}`, s);
+  }
+
   window.LESSON_FIGURES = {
     pie, equal, bars, hundred, groups, shapes, shape, area,
     right, ladder, diag, pair, aaa, kite, bowtie, balance, balls, parts, cross, scalemap,
@@ -1355,5 +1546,6 @@
     angle, tri, compass,
     ruler, box, solids, magnet, layers,
     sym, transform, similar, binom,
+    vmult, vdiv, quad, mixed,
   };
 })();

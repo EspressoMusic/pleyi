@@ -73,6 +73,9 @@ blogPosts.forEach((slug) => {
 // The English guide as plain HTML (/english/...), /sitemap.xml and /llms.txt.
 seo.mount(app);
 
+// The audio clips never change under the same address (speech.js has ?v=N).
+app.use("/audio", express.static(path.join(__dirname, "public", "audio"), { maxAge: "30d", immutable: true }));
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/join", (_req, res) => {

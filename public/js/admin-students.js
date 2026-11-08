@@ -33,6 +33,7 @@
     translate: "תרגום",
     exam: "מבחן הבנת הנקרא",
     review: "חזרה על טעויות",
+    mix: "תרגול מעורב",
   };
 
   const ICONS = {
@@ -214,7 +215,7 @@
   }
 
   function whatsappUrl(s) {
-    const text = `שלום ${s.name}! זה הקישור האישי שלך לשיעורי הבית באנגלית:\n${portalUrl(s)}`;
+    const text = `שלום ${s.name}! זה הקישור האישי שלך למשימות באנגלית:\n${portalUrl(s)}`;
     return `https://wa.me/?text=${encodeURIComponent(text)}`;
   }
 
@@ -232,7 +233,7 @@
   function homeworkStatus(hw) {
     if (hw.doneAt) {
       const p = pct(hw.score, hw.total);
-      return { done: true, html: pill(level(p).cls, `בוצע · <span dir="ltr">${hw.score}/${hw.total}</span> · ${p}%`) };
+      return { done: true, html: pill(level(p).cls, `בוצע · <span dir="ltr">${hw.score}/${hw.total}</span>`) };
     }
     if (hw.dueDate && hw.dueDate < todayKey()) return { late: true, html: pill("low", "באיחור") };
     return { html: pill("none", "ממתין") };
@@ -389,7 +390,7 @@
           body: { name: $("#admNewName").value },
         });
         students = [student, ...students];
-        showToast("התלמיד נוסף — עכשיו אפשר לתת שיעורי בית ולשלוח את הקישור");
+        showToast("התלמיד נוסף — עכשיו אפשר להוסיף משימות ולשלוח את הקישור");
         location.hash = encodeURIComponent(student.id);
       });
     });
@@ -636,6 +637,12 @@
       </div>
       <div class="adm-card adm-link-card hidden" id="admLinkCard">${linkCardHtml(s)}</div>
 
+      <!-- The tasks the student sees on his link — the only thing there. -->
+      <h2 class="adm-h1 adm-solved-head">משימות ל${esc(s.name)}</h2>
+      <p class="adm-muted adm-card-lead">התרגילים שתוסיפו כאן הם מה שהתלמיד יראה בקישור האישי שלו.</p>
+      ${homeworkFormHtml(s)}
+      <div id="admHomework">${homeworkListHtml(s)}</div>
+
       <h2 class="adm-h1 adm-solved-head">התרגילים של ${esc(s.name)}</h2>
       ${solvedGridHtml(s)}
 
@@ -657,13 +664,6 @@
         <div class="adm-tiles">
           ${tile("ציון ממוצע", avg == null ? "—" : `${avg}%`)}
           ${tile("זמן תרגול", esc(fmtDuration(s.counts?.practiceSec || 0)))}
-        </div>
-
-        <div class="adm-card">
-          <h3 class="adm-h3">שיעורי בית</h3>
-          <p class="adm-muted adm-card-lead">יופיעו לתלמיד בקישור האישי שלו.</p>
-          ${homeworkFormHtml()}
-          <div id="admHomework">${homeworkListHtml(s)}</div>
         </div>
 
         <div class="adm-detail-grid">
@@ -755,7 +755,7 @@
         <span class="adm-link-icon">${ICONS.link}</span>
         <div class="adm-link-text">
           <h3 class="adm-h3">הקישור האישי של ${esc(s.name)}</h3>
-          <p class="adm-muted adm-small">שלחו לתלמיד את הקישור. הוא יראה בו את שיעורי הבית, וכל מה שיפתור יישמר בתיק הזה. אין צורך בהרשמה או בסיסמה.</p>
+          <p class="adm-muted adm-small">שלחו לתלמיד את הקישור. הוא יראה בו את המשימות שתשאירו לו, וכל מה שיפתור יישמר בתיק הזה. אין צורך בהרשמה או בסיסמה.</p>
         </div>
         ${foldCloseHtml()}
       </div>
@@ -794,6 +794,11 @@
       </div>`;
   }
 
+  // A mistakes retry that fixed its round: the round's score after the fix.
+  function fixedNote(a) {
+    return a.fixedTotal ? ` · הציון תוקן ל-<span dir="ltr">${a.fixedScore}/${a.fixedTotal}</span>` : "";
+  }
+
   function roundHtml(a) {
     const mistakes = a.mistakes || [];
     let body;
@@ -818,7 +823,7 @@
     return `
       <li class="adm-round">
         <div class="adm-round-head">
-          <span class="adm-round-when">${esc(relTime(a.at))}${a.isRetry ? " · תרגול טעויות" : ""}</span>
+          <span class="adm-round-when">${esc(relTime(a.at))}${a.isRetry ? " · תרגול טעויות" : ""}${fixedNote(a)}</span>
           ${scorePill(a.score, a.total)}
         </div>
         ${body}
@@ -848,7 +853,30 @@
       </div>`;
   }
 
-  function homeworkFormHtml() {
+  // The exercises a mixed practice can take questions from: the ones the
+  // student solved, except passages and exams (their questions need the text).
+  function mixKeys(s) {
+    return solvedExercises(s)
+      .map((ex) => ex.key)
+      .filter((key) => {
+        const [topicId, exerciseId] = key.split("/");
+        const ex = TOPICS.find((tp) => tp.id === topicId)?.exercises?.find((e) => e.id === exerciseId);
+        return ex && ex.type !== "reading" && ex.type !== "exam";
+      });
+  }
+
+  function mixTopicCount(keys) {
+    return new Set(keys.map((key) => key.split("/")[0])).size;
+  }
+
+  function homeworkFormHtml(s) {
+    const mix = mixKeys(s);
+    const mixTopics = mixTopicCount(mix);
+    const mixOption = mix.length
+      ? `<optgroup label="תרגול מעורב — שאלות מכל מה שפתר">
+          <option value="mix">תרגול מעורב · ${mixTopics === 1 ? "נושא אחד" : `${mixTopics} נושאים`}</option>
+        </optgroup>`
+      : "";
     const groups = TOPICS.map((topic) => {
       const exercises = topic.exercises || [];
       return `
@@ -858,16 +886,17 @@
         </optgroup>`;
     }).join("");
     return `
-      ${foldToggleHtml("admHwToggle", "admHwForm", ICONS.plus, "הוספת שיעורי בית")}
+      ${foldToggleHtml("admHwToggle", "admHwForm", ICONS.plus, "הוספת משימה")}
       <form class="adm-hw-form hidden" id="admHwForm">
         <div class="adm-hw-form-head">
-          <span class="adm-hw-form-title">הוספת שיעורי בית</span>
+          <span class="adm-hw-form-title">הוספת משימה</span>
           ${foldCloseHtml()}
         </div>
         <label class="adm-field adm-hw-pick">
           <span>מה לתרגל</span>
           <select id="admHwPick" required>
             <option value="">בחרו תרגיל או נושא…</option>
+            ${mixOption}
             ${groups}
           </select>
         </label>
@@ -879,38 +908,33 @@
           <span>הערה לתלמיד (לא חובה)</span>
           <input type="text" id="admHwNote" maxlength="300" placeholder="למשל: שימו לב להבדל בין is ל-are" />
         </label>
-        <button type="submit" class="btn btn-primary btn-candy btn-sm adm-hw-add">הוספה לשיעורי הבית</button>
+        <button type="submit" class="btn btn-primary btn-candy btn-sm adm-hw-add">הוספה למשימות</button>
       </form>`;
   }
 
+  // A rectangle per task, like the solved exercises below it.
   function homeworkListHtml(s) {
     const list = sortedHomework(s.homework || []);
     if (!list.length) return "";
     const done = list.filter((hw) => hw.doneAt).length;
     return `
       <p class="adm-hw-summary"><span dir="ltr">${done}/${list.length}</span> בוצעו</p>
-      <ul class="adm-hw-list">
+      <ul class="adm-solved adm-tasks">
         ${list
           .map((hw) => {
             const status = homeworkStatus(hw);
-            const meta = [
-              hw.topicTitle,
-              TYPE_LABELS[hw.type] || "",
-              `ניתן: ${fmtDate(hw.assignedAt)}`,
-              hw.dueDate ? `עד: ${fmtDue(hw.dueDate)}` : "",
-              hw.doneAt ? `בוצע: ${fmtDate(hw.doneAt)}${hw.attempts > 1 ? ` (${hw.attempts} ניסיונות)` : ""}` : "",
-            ].filter(Boolean);
             return `
-              <li class="adm-hw${status.done ? " is-done" : ""}${status.late ? " is-late" : ""}">
-                <span class="adm-hw-text">
-                  <span class="adm-hw-title">${esc(hw.exerciseTitle)}</span>
-                  <span class="adm-hw-meta">${esc(meta.join(" · "))}</span>
-                  ${hw.note ? `<span class="adm-hw-note-text">הערה: ${esc(hw.note)}</span>` : ""}
-                </span>
-                ${status.html}
-                <span class="adm-hw-actions">
-                  <button type="button" class="adm-icon-btn" data-copy-hw="${esc(hw.id)}" aria-label="העתקת קישור ישיר לתרגיל" title="העתקת קישור ישיר לתרגיל">${ICONS.link}</button>
-                  <button type="button" class="adm-icon-btn" data-del-hw="${esc(hw.id)}" aria-label="הסרה משיעורי הבית" title="הסרה משיעורי הבית">${ICONS.trash}</button>
+              <li class="adm-solved-card adm-task${status.done ? " is-done" : ""}${status.late ? " is-late" : ""}">
+                <span class="adm-solved-topic">${esc(hw.topicTitle)}</span>
+                <span class="adm-solved-title">${esc(hw.exerciseTitle)}</span>
+                ${hw.dueDate ? `<span class="adm-task-due">עד: ${esc(fmtDue(hw.dueDate))}</span>` : ""}
+                ${hw.note ? `<span class="adm-task-note">הערה: ${esc(hw.note)}</span>` : ""}
+                <span class="adm-task-foot">
+                  ${status.html}
+                  <span class="adm-hw-actions">
+                    <button type="button" class="adm-icon-btn" data-copy-hw="${esc(hw.id)}" aria-label="העתקת קישור ישיר לתרגיל" title="העתקת קישור ישיר לתרגיל">${ICONS.link}</button>
+                    <button type="button" class="adm-icon-btn" data-del-hw="${esc(hw.id)}" aria-label="הסרה מהמשימות" title="הסרה מהמשימות">${ICONS.trash}</button>
+                  </span>
                 </span>
               </li>`;
           })
@@ -1141,7 +1165,7 @@
               <span class="adm-act-title">${esc(a.exerciseTitle)}</span>
               ${scorePill(a.score, a.total)}
             </div>
-            <span class="adm-act-meta">${esc(a.topicTitle)} · ${esc(TYPE_LABELS[a.type] || "")}${a.isRetry ? " · תרגול טעויות" : ""}${a.isNew ? " · תרגילים חדשים" : ""} · ${esc(fmtDuration(a.durationSec))} · ${time}</span>
+            <span class="adm-act-meta">${esc(a.topicTitle)} · ${esc(TYPE_LABELS[a.type] || "")}${a.isRetry ? " · תרגול טעויות" : ""}${fixedNote(a)}${a.isNew ? " · תרגילים חדשים" : ""} · ${esc(fmtDuration(a.durationSec))} · ${time}</span>
             ${details}
           </div>
         </li>`;
@@ -1226,8 +1250,22 @@
     }
   }
 
-  // Selected option → the exercises it stands for ("topic:<id>" is the whole topic).
+  // Selected option → the exercises it stands for ("topic:<id>" is the whole
+  // topic, "mix" one task with questions from everything the student solved).
   function pickedExercises(value) {
+    if (value === "mix") {
+      const keys = mixKeys(current);
+      const topics = mixTopicCount(keys);
+      if (!keys.length) return [];
+      return [{
+        topicId: "mix",
+        exerciseId: "mix",
+        topicTitle: "תרגול מעורב",
+        exerciseTitle: topics === 1 ? "שאלות מעורבבות מנושא אחד" : `שאלות מעורבבות מ-${topics} נושאים`,
+        type: "mix",
+        items: keys,
+      }];
+    }
     const items = (topic, exercises) =>
       exercises.map((ex) => ({ topicId: topic.id, exerciseId: ex.id, topicTitle: topic.title, exerciseTitle: ex.title, type: ex.type }));
     if (value.startsWith("topic:")) {
@@ -1296,8 +1334,8 @@
         $("#admHomework").innerHTML = homeworkListHtml(current);
         $("#admHwPick").value = "";
         $("#admHwNote").value = "";
-        if (!res.added) showToast("התרגילים האלה כבר בשיעורי הבית ועוד לא בוצעו");
-        else showToast(res.skipped ? `נוספו ${res.added} תרגילים (${res.skipped} כבר היו ברשימה)` : res.added === 1 ? "התרגיל נוסף לשיעורי הבית" : `נוספו ${res.added} תרגילים לשיעורי הבית`);
+        if (!res.added) showToast("התרגילים האלה כבר במשימות ועוד לא בוצעו");
+        else showToast(res.skipped ? `נוספו ${res.added} תרגילים (${res.skipped} כבר היו ברשימה)` : res.added === 1 ? "התרגיל נוסף למשימות" : `נוספו ${res.added} תרגילים למשימות`);
       });
     });
 
@@ -1309,7 +1347,7 @@
         if (hw) showToast((await copyText(exerciseUrl(current, hw))) ? "הקישור הישיר לתרגיל הועתק" : "לא הצלחנו להעתיק");
         return;
       }
-      if (!delBtn || !confirm("להסיר את התרגיל משיעורי הבית?")) return;
+      if (!delBtn || !confirm("להסיר את התרגיל מהמשימות?")) return;
       withBusy(delBtn, async () => {
         const res = await api(`/api/admin/students/${id}/homework/${encodeURIComponent(delBtn.dataset.delHw)}`, { method: "DELETE" });
         current.homework = res.homework;
@@ -1375,7 +1413,7 @@
     });
 
     $("#admDeleteStudent").addEventListener("click", (e) => {
-      if (!confirm(`למחוק את התיק של ${current.name}, כולל כל ההתקדמות, שיעורי הבית וההערות? הקישור שלו יפסיק לעבוד, ואי אפשר לבטל את זה.`)) return;
+      if (!confirm(`למחוק את התיק של ${current.name}, כולל כל ההתקדמות, המשימות וההערות? הקישור שלו יפסיק לעבוד, ואי אפשר לבטל את זה.`)) return;
       withBusy(e.currentTarget, async () => {
         await api(`/api/admin/students/${id}`, { method: "DELETE" });
         students = students.filter((s) => s.id !== current.id);
@@ -1513,7 +1551,7 @@
               (s) => `
             <li class="adm-report-chip">
               ${studentLinkHtml(s)}
-              ${s.homeworkLate ? pill("low", `שיעורי בית באיחור: ${s.homeworkLate === 1 ? "תרגיל אחד" : `${s.homeworkLate} תרגילים`}`) : ""}
+              ${s.homeworkLate ? pill("low", `משימות באיחור: ${s.homeworkLate === 1 ? "תרגיל אחד" : `${s.homeworkLate} תרגילים`}`) : ""}
             </li>`
             )
             .join("")}

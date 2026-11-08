@@ -3544,6 +3544,7 @@
       ag: [
         { id: "letters", label: "אותיות וצלילים" },
         { id: "phonics", label: "צירופי אותיות" },
+        { id: "greetings", label: "ברכות והיכרות" },
         { id: "pronouns", label: "כינויי גוף" },
         { id: "possessives", label: "כינויי שייכות" },
         { id: "verbs", label: "פעלים" },
@@ -3552,7 +3553,9 @@
         { id: "there-is", label: "יש: There is / There are" },
         { id: "vocabulary", label: "אוצר מילים בתמונות" },
         { id: "calendar", label: "ימים, חודשים ועונות" },
+        { id: "ordinals", label: "מספרים סודרים" },
         { id: "telling-time", label: "מה השעה?" },
+        { id: "time-prepositions", label: "מתי? at, on, in" },
         { id: "prepositions", label: "מילות יחס ומיקום" },
         { id: "connectors", label: "מילות קישור" },
         { id: "plurals", label: "יחיד ורבים" },
@@ -3561,6 +3564,7 @@
         { id: "comparatives", label: "השוואה: bigger, the biggest" },
         { id: "questions", label: "מילות שאלה" },
         { id: "negation", label: "שלילה ושאלות" },
+        { id: "imperatives", label: "ציווי ו־Let's" },
         { id: "frequency", label: "תדירות: always, usually, never" },
         { id: "present-simple", label: "הווה פשוט (Present Simple)" },
         { id: "progressive", label: "הווה ממושך (Present Progressive)" },
@@ -3585,6 +3589,7 @@
       dv: [
         { id: "letters", label: "אותיות וצלילים" },
         { id: "phonics", label: "צירופי אותיות" },
+        { id: "greetings", label: "ברכות והיכרות" },
         { id: "pronouns", label: "כינויי גוף" },
         { id: "possessives", label: "כינויי שייכות" },
         { id: "verbs", label: "פעלים" },
@@ -3593,7 +3598,9 @@
         { id: "there-is", label: "יש: There is / There are" },
         { id: "vocabulary", label: "אוצר מילים בתמונות" },
         { id: "calendar", label: "ימים, חודשים ועונות" },
+        { id: "ordinals", label: "מספרים סודרים" },
         { id: "telling-time", label: "מה השעה?" },
+        { id: "time-prepositions", label: "מתי? at, on, in" },
         { id: "prepositions", label: "מילות יחס ומיקום" },
         { id: "connectors", label: "מילות קישור" },
         { id: "plurals", label: "יחיד ורבים" },
@@ -3602,6 +3609,7 @@
         { id: "comparatives", label: "השוואה: bigger, the biggest" },
         { id: "questions", label: "מילות שאלה" },
         { id: "negation", label: "שלילה ושאלות" },
+        { id: "imperatives", label: "ציווי ו־Let's" },
         { id: "frequency", label: "תדירות: always, usually, never" },
         { id: "present-simple", label: "הווה פשוט (Present Simple)" },
         { id: "progressive", label: "הווה ממושך (Present Progressive)" },
@@ -3626,6 +3634,7 @@
       zh: [
         { id: "letters", label: "אותיות וצלילים" },
         { id: "phonics", label: "צירופי אותיות" },
+        { id: "greetings", label: "ברכות והיכרות" },
         { id: "pronouns", label: "כינויי גוף" },
         { id: "possessives", label: "כינויי שייכות" },
         { id: "verbs", label: "פעלים" },
@@ -3634,7 +3643,9 @@
         { id: "there-is", label: "יש: There is / There are" },
         { id: "vocabulary", label: "אוצר מילים בתמונות" },
         { id: "calendar", label: "ימים, חודשים ועונות" },
+        { id: "ordinals", label: "מספרים סודרים" },
         { id: "telling-time", label: "מה השעה?" },
+        { id: "time-prepositions", label: "מתי? at, on, in" },
         { id: "prepositions", label: "מילות יחס ומיקום" },
         { id: "connectors", label: "מילות קישור" },
         { id: "plurals", label: "יחיד ורבים" },
@@ -3643,6 +3654,7 @@
         { id: "comparatives", label: "השוואה: bigger, the biggest" },
         { id: "questions", label: "מילות שאלה" },
         { id: "negation", label: "שלילה ושאלות" },
+        { id: "imperatives", label: "ציווי ו־Let's" },
         { id: "frequency", label: "תדירות: always, usually, never" },
         { id: "present-simple", label: "הווה פשוט (Present Simple)" },
         { id: "progressive", label: "הווה ממושך (Present Progressive)" },
@@ -3692,6 +3704,7 @@
         { id: "shapes", label: "צורות, היקף ושטח" },
         { id: "symmetry", label: "סימטריה" },
         { id: "addition", label: "חיבור וחיסור" },
+        { id: "estimate", label: "עיגול ואומדן" },
         { id: "division", label: "חילוק" },
         { id: "measure", label: "מידות" },
         { id: "solids", label: "גופים" },
@@ -3700,8 +3713,11 @@
         { id: "fractions", label: "שברים" },
         { id: "multiplication", label: "לוח הכפל" },
         { id: "division", label: "חילוק" },
+        { id: "long-ops", label: "כפל וחילוק ארוכים" },
+        { id: "estimate", label: "עיגול ואומדן" },
         { id: "order-ops", label: "סדר פעולות חשבון" },
         { id: "shapes", label: "צורות, היקף ושטח" },
+        { id: "quads", label: "מרובעים ושטחים" },
         { id: "symmetry", label: "סימטריה" },
         { id: "percent", label: "אחוזים" },
         { id: "equations", label: "משוואות" },
@@ -3711,7 +3727,7 @@
         { id: "probability", label: "הסתברות" },
         { id: "graphs", label: "גרפים" },
         { id: "angles", label: "זוויות" },
-        { id: "average", label: "ממוצע" },
+        { id: "average", label: "ממוצע, חציון ושכיח" },
         { id: "measure", label: "מידות" },
         { id: "divisibility", label: "התחלקות" },
         { id: "solids", label: "גופים ונפח" },
@@ -3719,6 +3735,8 @@
       zh: [
         { id: "percent", label: "אחוזים" },
         { id: "equations", label: "משוואות" },
+        { id: "inequalities", label: "אי־שוויונות" },
+        { id: "quadratic", label: "משוואה ריבועית" },
         { id: "ratio", label: "יחס ופרופורציה" },
         { id: "pythagoras", label: "משפט פיתגורס" },
         { id: "congruence", label: "משולשים חופפים" },
@@ -3730,9 +3748,11 @@
         { id: "graphs", label: "גרפים" },
         { id: "order-ops", label: "סדר פעולות חשבון" },
         { id: "angles", label: "זוויות" },
-        { id: "average", label: "ממוצע" },
+        { id: "average", label: "ממוצע, חציון ושכיח" },
         { id: "algebra", label: "ביטויים אלגבריים" },
         { id: "short-mult", label: "כפל מקוצר" },
+        { id: "factoring", label: "פירוק לגורמים" },
+        { id: "quads", label: "מרובעים ושטחים" },
         { id: "divisibility", label: "התחלקות" },
         { id: "solids", label: "גופים ונפח" },
         { id: "powers", label: "חזקות ושורשים" },
@@ -3746,6 +3766,10 @@
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
+        { id: "nikud", label: "ניקוד" },
+        { id: "spelling", label: "כתיב נכון" },
+        { id: "he-prefixes", label: "אותיות השימוש" },
+        { id: "poetry", label: "שיר" },
         { id: "grammar", label: "דקדוק" },
         { id: "words", label: "אוצר מילים" },
         { id: "text-types", label: "סוגי טקסטים" },
@@ -3755,6 +3779,10 @@
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
+        { id: "spelling", label: "כתיב נכון" },
+        { id: "he-prefixes", label: "אותיות השימוש" },
+        { id: "he-prepositions", label: "מילות יחס" },
+        { id: "poetry", label: "שיר" },
         { id: "grammar", label: "דקדוק" },
         { id: "he-numbers", label: "שם המספר" },
         { id: "words", label: "אוצר מילים" },
@@ -3767,6 +3795,7 @@
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
+        { id: "he-prepositions", label: "מילות יחס" },
         { id: "words", label: "אוצר מילים" },
         { id: "grammar", label: "דקדוק" },
         { id: "he-numbers", label: "שם המספר" },
@@ -5118,37 +5147,6 @@
     let wordPopupEl = null;
     let activeWordBtn = null;
 
-    // Default TTS voices are often the robotic system fallback — prefer a
-    // natural/cloud voice (Edge/Chrome "Online (Natural)" or "Google US English")
-    // when the browser offers one, otherwise fall back to whatever exists.
-    let cachedVoice;
-    const PREFERRED_VOICE_NAMES = [
-      "Google US English",
-      "Microsoft Aria Online (Natural)",
-      "Microsoft Jenny Online (Natural)",
-      "Microsoft Ana Online (Natural)",
-      "Samantha",
-    ];
-
-    function pickVoice() {
-      if (cachedVoice !== undefined) return cachedVoice;
-      const voices = window.speechSynthesis?.getVoices?.() || [];
-      if (!voices.length) return null;
-      cachedVoice =
-        voices.find((v) => PREFERRED_VOICE_NAMES.includes(v.name)) ||
-        voices.find((v) => /^en/i.test(v.lang) && /(natural|online|google)/i.test(v.name)) ||
-        voices.find((v) => v.lang === "en-US") ||
-        voices.find((v) => /^en/i.test(v.lang)) ||
-        null;
-      return cachedVoice;
-    }
-
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.addEventListener("voiceschanged", () => {
-        cachedVoice = undefined;
-      });
-    }
-
     function ensureWordPopup() {
       if (wordPopupEl) return wordPopupEl;
       wordPopupEl = document.createElement("div");
@@ -5169,18 +5167,7 @@
     }
 
     function speakWord(word) {
-      if (!("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(word);
-      utter.lang = "en-US";
-      utter.rate = 0.92;
-      utter.pitch = 1;
-      const voice = pickVoice();
-      if (voice) {
-        utter.voice = voice;
-        utter.lang = voice.lang;
-      }
-      window.speechSynthesis.speak(utter);
+      window.PleyiSpeech.say(word);
     }
 
     function activeClassFor(el) {
@@ -5926,6 +5913,7 @@
 
       const showNew = () => {
         slideEl.innerHTML = html;
+        window.PleyiSpeech.preload($$("[data-say], [data-en]", slideEl).map((el) => el.dataset.say || el.dataset.en));
         const inner = $(".lp-slide-inner", slideEl);
         if (!inner) return;
         fitSlideContent();

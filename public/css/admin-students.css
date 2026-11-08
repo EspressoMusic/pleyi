@@ -1222,56 +1222,53 @@ body.adm-info-open {
   font-weight: 900;
 }
 
-.adm-hw-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* A task is a rectangle like a solved exercise, but it isn't a button —
+   its own buttons copy the link and remove it. */
+.adm-tasks {
   margin: 8px 0 0;
   padding: 0;
   list-style: none;
 }
 
-.adm-hw {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border: 2px solid var(--ink);
-  border-radius: 14px;
-  background: var(--adm-field);
-  box-shadow: 3px 4px 0 0 var(--ink);
+.adm-task,
+.adm-task:hover,
+.adm-task:active {
+  cursor: default;
+  transform: none;
+  box-shadow: 5px 6px 0 0 var(--ink);
 }
 
-.adm-hw.is-done {
+.adm-task.is-done {
   background: var(--adm-soft);
 }
 
-.adm-hw.is-late {
+.adm-task.is-late {
   border-color: var(--adm-low);
 }
 
-.adm-hw-text {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.adm-hw-title {
-  font-weight: 900;
-}
-
-.adm-hw-meta {
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: var(--muted);
-}
-
-.adm-hw-note-text {
-  margin-top: 2px;
-  font-size: 0.88rem;
+.adm-task-due,
+.adm-task-note {
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--body);
+}
+
+.adm-task.is-late .adm-task-due {
+  color: var(--adm-low);
+}
+
+.adm-task-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  align-self: stretch;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.adm-task-foot .adm-pill {
+  margin-top: 0;
 }
 
 .adm-hw-actions {
@@ -2005,18 +2002,6 @@ body.adm-info-open {
   .adm-link-actions .btn {
     flex: 1 1 auto;
     justify-content: center;
-  }
-
-  .adm-hw {
-    flex-wrap: wrap;
-  }
-
-  .adm-hw-text {
-    flex-basis: 100%;
-  }
-
-  .adm-hw-actions {
-    margin-inline-start: auto;
   }
 
   .adm-topic-head {

@@ -82,21 +82,20 @@
       perfect: "מושלם! כל התשובות נכונות!",
       great: "כל הכבוד! עוד קצת ואתם שם.",
       keepGoing: "התחלה טובה — תרגלו שוב ותשתפרו.",
+      cheerPerfect: "מושלם",
+      cheerGreat: "כל הכבוד",
       again: "סבב חדש",
       retryMistakes: "לתרגל את הטעויות",
-      makeNew: "ליצור תרגילים חדשים",
-      makeNewReading: "ליצור קטע קריאה חדש",
-      makingNew: "יוצרים תרגילים חדשים…",
-      makingNewReading: "כותבים קטע קריאה חדש…",
-      makingNewNote: "זה יכול לקחת עד חצי דקה.",
-      newFailed: "לא הצלחנו ליצור תרגילים חדשים כרגע. נסו שוב בעוד דקה.",
-      newFromPool: "הנה שאלות מהתרגיל שעוד לא תרגלתם.",
+      fixedCount: (f, w, s, t) => `תיקנת ${f} מתוך ${w} טעויות · עכשיו ${s} מתוך ${t} נכונות`,
+      fixedAll: "תיקנת את כל הטעויות — הציון עלה!",
+      fixedSome: "הציון עלה! אפשר לתקן גם את מה שנשאר.",
+      fixedNone: "עוד לא תיקנת — נסו שוב את הטעויות.",
+      makingNew: "מכינים סבב חדש…",
       mistakesTitle: "מה כדאי לחזור עליו",
-      copyLink: "העתקת קישור לתרגיל",
       copied: "הקישור הועתק!",
       studentBar: "התרגול שלך נשמר אצל המורה",
-      myProgress: "ההתקדמות שלי",
-      backToHomework: "לשיעורי הבית",
+      myProgress: "המשימות שלי",
+      backToHomework: "למשימות שלי",
       notMe: "זה לא אני",
       notMeConfirm: (name) => `להפסיק לשמור את התרגול בתיק של ${name} במכשיר הזה?`,
       prevSlide: "שקופית קודמת",
@@ -107,6 +106,7 @@
       printSheet: (n) => `דף ${n}`,
       printAll: "כל הדפים יחד",
       printAction: "להדפסה",
+      paperSheet: (name) => `דף להורדה ולהדפסה: ${name}`,
       level: (n) => `רמה ${n}`,
       levelName: (n) => ["", "קל", "בינוני", "מתקדם", "מאתגר"][n] || "",
       readingMeta: (w, q) => `${w} מילים · ${q} שאלות`,
@@ -210,6 +210,10 @@
       reviewOutCount: (n) => (n === 1 ? "שאלה אחת יצאה מהמאגר" : `${n} שאלות יצאו מהמאגר`),
       reviewLeft: (n) => (n ? `נשארו במאגר: ${n}` : "המאגר ריק — כל הכבוד!"),
       reviewAgain: "סבב חזרה נוסף",
+      mixTitle: "תרגול מעורב",
+      mixAgain: "סבב מעורב חדש",
+      mixMissing: "התרגול הזה לא נמצא",
+      mixMissingLead: "אולי המורה הסיר אותו מהמשימות.",
       mistakesSaved: "הטעויות נשמרו בחזרה האישית שלכם, כדי שתוכלו לחזור עליהן גם בפעם אחרת.",
       reviewPictureInstr: "מה רואים בתמונה? בחרו את המילה הנכונה.",
       reviewPairInstr: "מה מתאים? בחרו את התשובה הנכונה.",
@@ -357,21 +361,20 @@
       perfect: "Perfect! Every answer is right!",
       great: "Well done! Almost there.",
       keepGoing: "Good start — practice again to improve.",
+      cheerPerfect: "Perfect",
+      cheerGreat: "Well done",
       again: "New round",
       retryMistakes: "Practice my mistakes",
-      makeNew: "Create new exercises",
-      makeNewReading: "Create a new passage",
-      makingNew: "Creating new exercises…",
-      makingNewReading: "Writing a new passage…",
-      makingNewNote: "This can take up to half a minute.",
-      newFailed: "We couldn't create new exercises right now. Try again in a minute.",
-      newFromPool: "Here are questions from this exercise you haven't practiced yet.",
+      fixedCount: (f, w, s, t) => `You fixed ${f} of ${w} mistakes · now ${s} of ${t} correct`,
+      fixedAll: "You fixed every mistake — your grade went up!",
+      fixedSome: "Your grade went up! You can fix the rest too.",
+      fixedNone: "Not fixed yet — try your mistakes again.",
+      makingNew: "Getting a new round ready…",
       mistakesTitle: "Worth reviewing",
-      copyLink: "Copy exercise link",
       copied: "Link copied!",
       studentBar: "Your practice is saved for your teacher",
-      myProgress: "My progress",
-      backToHomework: "Back to my homework",
+      myProgress: "My tasks",
+      backToHomework: "Back to my tasks",
       notMe: "Not me",
       notMeConfirm: (name) => `Stop saving practice for ${name} on this device?`,
       prevSlide: "Previous slide",
@@ -382,6 +385,7 @@
       printSheet: (n) => `Sheet ${n}`,
       printAll: "All sheets together",
       printAction: "Print",
+      paperSheet: (name) => `Sheet to download and print: ${name}`,
       level: (n) => `Level ${n}`,
       levelName: (n) => ["", "Easy", "Medium", "Advanced", "Challenging"][n] || "",
       readingMeta: (w, q) => `${w} words · ${q} questions`,
@@ -485,6 +489,10 @@
       reviewOutCount: (n) => (n === 1 ? "1 question left your list" : `${n} questions left your list`),
       reviewLeft: (n) => (n ? `Still on your list: ${n}` : "Your list is empty — well done!"),
       reviewAgain: "Another review round",
+      mixTitle: "Mixed practice",
+      mixAgain: "New mixed round",
+      mixMissing: "This practice wasn't found",
+      mixMissingLead: "Maybe your teacher removed it from your tasks.",
       mistakesSaved: "Your mistakes were saved to your review, so you can practice them another time too.",
       reviewPictureInstr: "What's in the picture? Choose the right word.",
       reviewPairInstr: "What matches? Choose the right answer.",
@@ -582,7 +590,10 @@
     STR.en.helpTips.write = "Type the answer and click “Check” (or press Enter).";
   }
 
+  const PAPER_TOPICS = ["tobe"];
+
   const ICONS = {
+    download: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>`,
     slides: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>`,
     choice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="2"/><rect x="3" y="13" width="18" height="5" rx="2"/><path d="m14 6.5 1.5 1.5 3-3"/></svg>`,
     truefalse: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 12 3 3 5-6"/><path d="m14 9 6 6M20 9l-6 6"/></svg>`,
@@ -610,7 +621,6 @@
     arrowDown: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6"/></svg>`,
   };
   ICONS.print = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>`;
-  ICONS.sparkle = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 11.8 8.7 17 10.5 11.8 12.3 10 17.5 8.2 12.3 3 10.5 8.2 8.7 10 3.5Z"/><path d="M18.5 14.5v6M15.5 17.5h6"/></svg>`;
   ICONS.spinner = `<svg class="eng-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke-opacity="0.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>`;
   ICONS["pick-picture"] = ICONS.picture;
   ICONS["find-error"] = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M8 8.5l5 4M13 8.5l-5 4"/></svg>`;
@@ -793,49 +803,12 @@
 
   /* ── Speech (pronunciation) ── */
 
-  const PREFERRED_VOICES = [
-    "Google US English",
-    "Microsoft Aria Online (Natural)",
-    "Microsoft Jenny Online (Natural)",
-    "Samantha",
-  ];
-  let cachedVoice;
-
   function canSpeak() {
-    return "speechSynthesis" in window && typeof window.SpeechSynthesisUtterance === "function";
+    return window.PleyiSpeech.canSpeak();
   }
 
-  function pickVoice() {
-    if (cachedVoice !== undefined) return cachedVoice;
-    const voices = window.speechSynthesis?.getVoices?.() || [];
-    if (!voices.length) return null;
-    cachedVoice =
-      voices.find((v) => PREFERRED_VOICES.includes(v.name)) ||
-      voices.find((v) => /^en/i.test(v.lang) && /(natural|online|google)/i.test(v.name)) ||
-      voices.find((v) => v.lang === "en-US") ||
-      voices.find((v) => /^en/i.test(v.lang)) ||
-      null;
-    return cachedVoice;
-  }
-
-  if (canSpeak()) {
-    window.speechSynthesis.addEventListener?.("voiceschanged", () => {
-      cachedVoice = undefined;
-    });
-  }
-
-  function speak(text, rate = 0.9) {
-    if (!canSpeak() || !text) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = "en-US";
-    utter.rate = rate;
-    const voice = pickVoice();
-    if (voice) {
-      utter.voice = voice;
-      utter.lang = voice.lang;
-    }
-    window.speechSynthesis.speak(utter);
+  function speak(text, rate) {
+    window.PleyiSpeech.say(text, rate);
   }
 
   function speakBtn(text, extraClass = "") {
@@ -1034,7 +1007,7 @@
       </span>
       <span class="eng-student-bar-text">${esc(t("studentBar"))}</span>
       <button type="button" class="eng-student-bar-points" id="engBarPoints" title="${esc(t("leaderboard"))}">${ICONS.trophy}<span id="engBarPointsNum">${esc(t("leaderboard"))}</span></button>
-      <a class="eng-student-bar-link" href="${esc(window.StudentProgress.homeUrl())}#progress">${esc(t("myProgress"))}</a>
+      <a class="eng-student-bar-link" href="${esc(window.StudentProgress.homeUrl())}">${esc(t("myProgress"))}</a>
       <button type="button" class="eng-student-bar-out" id="engNotMe">${esc(t("notMe"))}</button>`;
     $("#engMain .container")?.prepend(bar);
     $("#engBarPoints").addEventListener("click", () => window.Leaderboard?.open());
@@ -1479,6 +1452,7 @@
             <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${reading ? `<bdi>${esc(passageTitle(ex))}</bdi>` : esc(loc(ex, "title"))}</a>
           </span>
           ${statusHtml(exerciseStatus(topic, ex, best, started))}
+          ${paperBtnHtml(topic, ex)}
           ${infoBtnHtml(ex)}
           <span class="eng-item-action" aria-hidden="true">${esc(t("practice"))}</span>
         </div>`;
@@ -1590,6 +1564,8 @@
     answered: false,
     phase: "question",
     isRetry: false,
+    // A mistakes retry: the score of the round it fixes ({ score, total }).
+    fix: null,
     isNew: false,
     newRequest: null,
     prepared: false,
@@ -1727,9 +1703,16 @@
     return `<span class="eng-status eng-status--${status}">${done ? ICONS.statusDone : ICONS.statusProgress}<span>${esc(t(done ? "statusDone" : "statusProgress"))}</span></span>`;
   }
 
-  // mode: "retry" — only the last round's mistakes; "new" — a round of new
-  // items made by the server (see makeNewRound).
-  function startExercise(topic, exercise, round = null, mode = round ? "retry" : "") {
+  // mode: "retry" — only the last round's mistakes, fixing the score `fix`
+  // of that round; "new" — a round of new items made by the server (see
+  // makeNewRound).
+  // So that the speaker button starts right away.
+  function preloadRoundSpeech() {
+    const said = runner.round.flatMap((q) => (q?.pairs ? q.pairs.map((pair) => pair.en) : [q?.en, q?.answer]));
+    window.PleyiSpeech.preload(said.filter((text) => typeof text === "string"));
+  }
+
+  function startExercise(topic, exercise, round = null, mode = round ? "retry" : "", fix = null) {
     clearTimeout(runner.timer);
     stopExamTimer();
     runner.review = null;
@@ -1737,10 +1720,12 @@
     runner.topic = topic;
     runner.exercise = exercise;
     runner.isRetry = mode === "retry";
+    runner.fix = runner.isRetry ? fix : null;
     runner.isNew = mode === "new";
     runner.newRequest = null;
     runner.prepared = false;
     runner.round = round || buildRound(topic, exercise);
+    preloadRoundSpeech();
     runner.total = exercise.type === "match" ? runner.round.reduce((n, b) => n + b.pairs.length, 0) : runner.round.length;
     runner.index = 0;
     runner.barIndex = 0;
@@ -1761,11 +1746,13 @@
   /* ── New exercises: the server writes new items in the exercise's own
      format (lib/english-practice.js) and keeps them in a shared bank. ── */
 
-  function practiceRequest(path, topic, ex) {
+  // `waitMs`: how long to wait for the answer before giving up on it.
+  function practiceRequest(path, topic, ex, waitMs = 0) {
     return fetch(path, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ topicId: topic.id, exerciseId: ex.id, seen: seenKeys(topic, ex) }),
+      signal: waitMs && window.AbortSignal?.timeout ? AbortSignal.timeout(waitMs) : undefined,
     });
   }
 
@@ -1812,53 +1799,52 @@
     return { exercise: ex, round: isMatch ? [{ pairs: picked }] : picked, fromPool: !fresh.length };
   }
 
-  function newButtonLabel() {
-    const reading = runner.exercise?.type === "reading";
-    if (runner.newRequest) return t(reading ? "makingNewReading" : "makingNew");
-    return t(reading ? "makeNewReading" : "makeNew");
-  }
+  // "New round" waits this long for the server's items; past that the round
+  // is the exercise's own items, and the server keeps writing for next time.
+  const NEW_ROUND_WAIT_MS = 8000;
 
-  function newButtonHtml() {
+  function againButtonHtml() {
     const busy = !!runner.newRequest;
-    return `<button type="button" class="btn btn-candy font-cartoon eng-btn-new" id="engMakeNew"${busy ? ' disabled aria-busy="true"' : ""}>${busy ? ICONS.spinner : ICONS.sparkle}<span>${esc(newButtonLabel())}</span></button>`;
+    return `<button type="button" class="btn btn-primary btn-candy font-cartoon eng-btn-again" id="engAgain"${busy ? ' disabled aria-busy="true"' : ""}>${busy ? ICONS.spinner : ""}<span>${esc(t(busy ? "makingNew" : "again"))}</span></button>`;
   }
 
-  function refreshNewButton() {
-    const btn = $("#engMakeNew");
+  function refreshAgainButton() {
+    const btn = $("#engAgain");
     if (!btn) return;
-    btn.outerHTML = newButtonHtml();
-    $("#engMakeNew").addEventListener("click", makeNewRound);
-    const msg = $(".eng-results-msg");
-    if (msg) msg.textContent = runner.newRequest ? t("makingNewNote") : runner.resultsMessage || "";
+    btn.outerHTML = againButtonHtml();
+    $("#engAgain").addEventListener("click", makeNewRound);
   }
 
+  // "New round": the server's new items topped up with the exercise's own
+  // unseen ones, or a plain round of the exercise when there is nothing new.
+  // Built-in exercises (english-more.js) and the subject pages have no
+  // server items.
   async function makeNewRound() {
     if (runner.newRequest) return;
     const { topic } = runner;
     const ex = findExercise(topic, runner.exercise.id) || runner.exercise;
+    if (ex.derived || SUBJECT) {
+      startExercise(topic, ex);
+      return;
+    }
     const request = {};
     runner.newRequest = request;
-    refreshNewButton();
+    refreshAgainButton();
     let items = [];
     try {
-      const res = await practiceRequest("/api/english/practice", topic, ex);
+      const res = await practiceRequest("/api/english/practice", topic, ex, NEW_ROUND_WAIT_MS);
       const data = await res.json();
       if (data.ok) items = data.items || [];
     } catch {
-      /* offline or a server error: the exercise's own unseen items, below */
+      /* offline, a server error or too long a wait: the exercise's own items */
     }
     // The student may have moved on while the items were being made.
     const stillHere = runner.newRequest === request && runner.phase === "results" && !views.exercise()?.classList.contains("hidden");
     if (!stillHere) return;
     runner.newRequest = null;
     const next = newRound(topic, ex, items);
-    if (!next) {
-      refreshNewButton();
-      showToast(t("newFailed"));
-      return;
-    }
-    startExercise(topic, next.exercise, next.round, "new");
-    if (next.fromPool) showToast(t("newFromPool"));
+    if (next) startExercise(topic, next.exercise, next.round, "new");
+    else startExercise(topic, ex);
   }
 
   /* ── Game runner: a vocabulary game (english-games.js) in the same fixed
@@ -1919,6 +1905,7 @@
   function renderGameShell(game, topic, inner, hud = "") {
     const view = views.exercise();
     const backLabel = gameLessonReturn ? "backToLesson" : "backToTopic";
+    runner.gameId = game.id;
     view.classList.remove("is-reading");
     view.innerHTML = `
       <div class="eng-runner-head">
@@ -1932,7 +1919,7 @@
         </div>
         <div class="eng-game-hud" id="engGameHud">${hud}</div>
       </div>
-      <div class="eng-runner-card eng-runner-card--game eng-runner-card--game-${esc(game.id)}${cardColorClass()}">${inner}</div>`;
+      <div class="eng-runner-card eng-runner-card--game eng-runner-card--game-${esc(game.id)}${cardColorClass()}${prefs.say ? " is-say" : ""}">${inner}</div>`;
     if (gameLessonReturn) {
       $("#engGameBack").addEventListener("click", (e) => {
         e.preventDefault();
@@ -2001,7 +1988,7 @@
     const isReading = runner.exercise?.type === "reading";
     const isExam = runner.exercise?.type === "exam";
     const showTranslate = runner.phase === "question" && hasTranslation(runner.exercise);
-    const showSay = runner.phase === "question" && roundHasSay();
+    const showSay = (runner.phase === "question" && roundHasSay()) || (runner.phase === "game" && runner.gameId === "hunt");
     const showReadAloud = isReading && runner.phase !== "results" && canSpeak();
     const showWords = isReading && runner.phase !== "results";
     const showHeQuestions =
@@ -2161,18 +2148,11 @@
       }
       const paragraphs = runner.exercise?.passage?.text;
       if (!canSpeak() || !paragraphs) return;
-      window.speechSynthesis.cancel();
+      window.PleyiSpeech.stop();
       const run = ++this.run;
       this.on = true;
       paragraphs.forEach((para, i) => {
-        const utter = new SpeechSynthesisUtterance(para.replace(/[[\]]/g, ""));
-        utter.lang = "en-US";
-        utter.rate = 0.85;
-        const voice = pickVoice();
-        if (voice) {
-          utter.voice = voice;
-          utter.lang = voice.lang;
-        }
+        const utter = window.PleyiSpeech.utterance(para.replace(/[[\]]/g, ""), 0.85);
         if (i === paragraphs.length - 1) utter.onend = () => this.done(run);
         utter.onerror = () => this.done(run);
         window.speechSynthesis.speak(utter);
@@ -2181,7 +2161,7 @@
     },
     stop() {
       this.run++;
-      if (this.on) window.speechSynthesis?.cancel?.();
+      if (this.on) window.PleyiSpeech.stop();
       this.on = false;
       renderTools();
     },
@@ -2194,7 +2174,7 @@
 
   function runnerTitle() {
     const { exercise } = runner;
-    if (runner.review) return t("reviewTitle");
+    if (runner.review) return t(runner.review.mix ? "mixTitle" : "reviewTitle");
     if (exercise.type === "reading") return t("readingTitle");
     if (exercise.type === "exam") return t("examTitle");
     return loc(exercise, "title");
@@ -2208,10 +2188,11 @@
   }
 
   // A review question: the topic and exercise it is from, and how close it
-  // is to leaving the bank.
+  // is to leaving the bank (a mixed practice shows where it is from only).
   function reviewFromHtml() {
     const item = runner.review?.items[runner.index];
     if (!item || runner.phase === "results") return "";
+    if (runner.review.mix) return `<span class="eng-game-topic eng-review-from"><span>${esc(loc(item.topic, "title"))} · ${esc(loc(item.source, "title"))}</span></span>`;
     const goal = window.MistakeBank.GOAL;
     const streak = Math.min(goal, window.MistakeBank.streakOf(item.id));
     const dots = Array.from({ length: goal }, (_, i) => `<i${i < streak ? ' class="is-on"' : ""}></i>`).join("");
@@ -4114,6 +4095,13 @@
     },
   };
 
+  // A finished mistakes retry: the round it fixed, with every answer fixed
+  // now added to that round's score.
+  function fixedResult() {
+    const { fix, score } = runner;
+    return fix ? { score: Math.min(fix.total, fix.score + score), total: fix.total } : null;
+  }
+
   // Sends a finished round to the student's file (when this device opened the
   // teacher's personal link) — once, so re-rendering the results on a language
   // switch doesn't resend it.
@@ -4136,10 +4124,24 @@
       durationSec: Math.round((Date.now() - startedAt) / 1000),
       mistakes: mistakeLog,
     };
-    // A review round mixes many exercises: it is saved as practice of its
-    // own, and like any mistakes practice it earns half the points. Titles
-    // are in Hebrew, like the teacher's page.
-    if (review) {
+    const fixed = fixedResult();
+    if (fixed) Object.assign(activity, { fixedScore: fixed.score, fixedTotal: fixed.total });
+    // A mixed practice task counts as an exercise of its own, so finishing
+    // it completes the task, and fixing its mistakes raises its grade. A
+    // review round mixes many exercises too, but it is saved as practice of
+    // its own, and like any mistakes practice it earns half the points.
+    // Titles are in Hebrew, like the teacher's page.
+    if (review?.mix) {
+      const levels = review.items.map((item) => exerciseLevel(item.source));
+      Object.assign(activity, {
+        topicId: MIX_ROUTE,
+        topicTitle: STR.he.mixTitle,
+        exerciseId: review.mix.exerciseId,
+        exerciseTitle: review.mix.exerciseTitle || STR.he.mixTitle,
+        type: "mix",
+        level: Math.round(levels.reduce((a, b) => a + b, 0) / Math.max(1, levels.length)) || 1,
+      });
+    } else if (review) {
       const levels = review.items.map((item) => exerciseLevel(item.source));
       Object.assign(activity, {
         topicId: REVIEW_ROUTE,
@@ -4175,12 +4177,73 @@
     if (slot) slot.innerHTML = earnedHtml(result);
   }
 
+  /* ── A grade of 90 and up: confetti over the screen, and the linked
+     student's first name on top of the results, letter by letter on a teal
+     marker. Visitors without a student link get the confetti only. ── */
+
+  const CONFETTI_COLORS = ["#ffe135", "#00e5cc", "#ff7eb6", "#4da6ff", "#7ee08c", "#ff9f43"];
+
+  function launchConfetti() {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    $(".eng-confetti")?.remove();
+    const layer = document.createElement("div");
+    layer.className = "eng-confetti";
+    layer.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 90; i++) {
+      const piece = document.createElement("i");
+      piece.style.setProperty("--x", `${Math.random() * 100}%`);
+      piece.style.setProperty("--delay", `${Math.random() * 0.9}s`);
+      piece.style.setProperty("--dur", `${2.4 + Math.random() * 1.6}s`);
+      piece.style.setProperty("--drift", `${Math.round(Math.random() * 120 - 60)}px`);
+      piece.style.setProperty("--rot", `${(Math.random() > 0.5 ? 1 : -1) * (360 + Math.round(Math.random() * 540))}deg`);
+      piece.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      if (i % 4 === 0) piece.className = "is-round";
+      layer.appendChild(piece);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 5200);
+  }
+
+  // A name split into letters (a letter with its niqqud stays whole).
+  function nameLetters(text) {
+    if (window.Intl?.Segmenter) return Array.from(new Intl.Segmenter().segment(text), (s) => s.segment);
+    return Array.from(text);
+  }
+
+  // `slot`: the results block the name goes on top of.
+  function celebrate(grade, slot) {
+    if (grade < 90) return;
+    launchConfetti();
+    window.StudentProgress?.profile().then((student) => {
+      const name = String(student?.name || "").trim().split(/\s+/)[0];
+      if (!name || !slot?.isConnected || $(".eng-cheer", slot)) return;
+      const letters = nameLetters(name)
+        .map((ch, i) => `<span style="--i:${i}">${esc(ch)}</span>`)
+        .join("");
+      slot.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="eng-cheer">
+          <span class="eng-cheer-lead">${esc(t(grade === 100 ? "cheerPerfect" : "cheerGreat"))}</span>
+          <span class="eng-cheer-name font-cartoon">
+            <span class="eng-cheer-spark" aria-hidden="true">${ICONS.star}</span>
+            <bdi class="eng-cheer-letters" dir="auto" aria-label="${esc(name)}">${letters}</bdi>
+            <span class="eng-cheer-spark" aria-hidden="true">${ICONS.star}</span>
+          </span>
+        </div>`
+      );
+    });
+  }
+
   function homeworkButtonHtml() {
     const home = window.StudentProgress?.homeUrl();
     return home ? `<a class="btn btn-candy font-cartoon eng-btn-secondary" href="${esc(home)}">${esc(t("backToHomework"))}</a>` : "";
   }
 
   function renderResults() {
+    if (runner.review?.mix) {
+      renderMixResults();
+      return;
+    }
     if (runner.review) {
       renderReviewResults();
       return;
@@ -4193,14 +4256,18 @@
     runner.phase = "results";
     recordRound();
     window.MistakeBank?.flush();
-    const ratio = total ? score / total : 0;
+    // A mistakes retry shows the grade of the round it fixed, after the fix.
+    const fixed = fixedResult();
+    const shown = fixed || { score, total };
+    const ratio = shown.total ? shown.score / shown.total : 0;
     const grade = Math.round(ratio * 100);
     const stars = ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
-    const message = ratio === 1 ? t("perfect") : ratio >= 0.7 ? t("great") : t("keepGoing");
-    runner.resultsMessage = message;
+    const message = fixed
+      ? t(score === total ? "fixedAll" : score ? "fixedSome" : "fixedNone")
+      : ratio === 1 ? t("perfect") : ratio >= 0.7 ? t("great") : t("keepGoing");
 
-    // A mistakes-only retry is a partial round, so it doesn't count as a best score.
-    if (!isRetry) saveBest(`${topic.id}/${exercise.id}`, score, total);
+    // A mistakes-only retry is a partial round: only the round it fixed counts.
+    if (!isRetry || fixed) saveBest(`${topic.id}/${exercise.id}`, shown.score, shown.total);
     // Exercises built in the browser (english-more.js) have no AI-made items.
     if (!runner.prepared && !exercise.derived) {
       runner.prepared = true;
@@ -4215,18 +4282,12 @@
       ? [read.marking ? t("partMark", read.markScore, read.targets.length) : "", t("partQuestions", read.qScore, runner.round.length)]
           .filter(Boolean)
           .join(" · ")
-      : t("score", score, total);
+      : fixed
+        ? t("fixedCount", score, total, fixed.score, fixed.total)
+        : t("score", score, total);
 
-    const review = (TYPES[exercise.type] || TYPES.choice).review;
-    const savedNote = !isReading && window.MistakeBank ? `<p class="eng-mistakes-saved">${ICONS.review}<span>${esc(t("mistakesSaved"))}</span></p>` : "";
-    const mistakesList = mistakes.length
-      ? `<div class="eng-mistakes">
-          <h3>${esc(t("mistakesTitle"))}</h3>
-          ${savedNote}
-          <ul>${mistakes.map((q) => `<li>${review(q)}</li>`).join("")}</ul>
-        </div>`
-      : "";
-
+    // The wrong answers aren't listed with their right answers, so that
+    // "practice my mistakes" really fixes them.
     renderRunnerShell(`
       <div class="eng-results">
         <div class="eng-stars" aria-hidden="true">
@@ -4237,33 +4298,22 @@
           <p class="eng-score font-cartoon">${grade}</p>
         </div>
         <p class="eng-results-count">${esc(countLine)}</p>
-        <p class="eng-results-msg" aria-live="polite">${esc(runner.newRequest ? t("makingNewNote") : message)}</p>
+        <p class="eng-results-msg" aria-live="polite">${esc(message)}</p>
         <div class="eng-results-actions">
-          ${exercise.derived || SUBJECT ? "" : newButtonHtml()}
-          <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engAgain">${esc(t("again"))}</button>
+          ${againButtonHtml()}
           ${mistakes.length && !isReading ? `<button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engRetryMistakes">${esc(t("retryMistakes"))}</button>` : ""}
           ${homeworkButtonHtml()}
         </div>
-        ${mistakesList}
-        <button type="button" class="eng-copy-link" id="engCopyLink">${ICONS.link}<span>${esc(t("copyLink"))}</span></button>
       </div>`,
       `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
     );
+    // A mistakes-only retry is no real grade to celebrate — unless it fixed one.
+    if (!isRetry || fixed) celebrate(grade, $(".eng-results"));
 
-    $("#engMakeNew")?.addEventListener("click", makeNewRound);
-    $("#engAgain").addEventListener("click", () => startExercise(topic, exercise));
+    $("#engAgain").addEventListener("click", makeNewRound);
     $("#engRetryMistakes")?.addEventListener("click", () => {
       const retry = exercise.type === "match" ? [{ pairs: shuffle(mistakes) }] : shuffle(mistakes);
-      startExercise(topic, exercise, retry);
-    });
-    $("#engCopyLink").addEventListener("click", async () => {
-      const url = `${location.origin}${location.pathname}#${topic.id}/${exercise.id}`;
-      try {
-        await navigator.clipboard.writeText(url);
-        showToast(t("copied"));
-      } catch {
-        /* ignore */
-      }
+      startExercise(topic, exercise, retry, "retry", fixed || { score, total });
     });
   }
 
@@ -4338,12 +4388,20 @@
       renderReviewMessage(t("reviewEmpty"), mastered ? t("reviewCardDone", mastered) : t("reviewEmptyLead"), back);
       return;
     }
-    runner.review = { topicId, items, out: 0, back };
+    startMixedRound({ topicId, items, out: 0, back });
+  }
+
+  // A round of questions from many exercises (a review or a mixed practice).
+  // `fix`: the round whose mistakes these are, as in startExercise.
+  function startMixedRound(review, fix = null) {
+    const { items } = review;
+    runner.review = review;
     runner.topic = items[0].topic;
     runner.exercise = items[0].exercise;
     runner.round = items.map((item) => item.q);
     runner.total = runner.round.length;
-    runner.isRetry = false;
+    runner.isRetry = !!fix;
+    runner.fix = fix;
     runner.isNew = false;
     runner.newRequest = null;
     runner.prepared = true;
@@ -4360,7 +4418,7 @@
 
   // The review screen with nothing to practice (or while the bank loads).
   // `lead` comes with a button back.
-  function renderReviewMessage(title, lead, back) {
+  function renderReviewMessage(title, lead, back, heading = t("reviewTitle")) {
     runner.phase = "message";
     const view = views.exercise();
     view.classList.remove("is-reading");
@@ -4369,7 +4427,7 @@
       <div class="eng-runner-head">
         <div class="eng-runner-top">
           <a class="eng-back" href="${esc(back)}" aria-label="${esc(backLabel)}" title="${esc(backLabel)}">${ICONS.back}</a>
-          <div class="eng-runner-title-row"><h2 class="font-cartoon eng-runner-title">${esc(t("reviewTitle"))}</h2></div>
+          <div class="eng-runner-title-row"><h2 class="font-cartoon eng-runner-title">${esc(heading)}</h2></div>
         </div>
       </div>
       <div class="eng-runner-card eng-review-empty">
@@ -4431,7 +4489,103 @@
       </div>`,
       `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
     );
+    celebrate(Math.round(ratio * 100), $(".eng-results"));
     $("#engReviewAgain")?.addEventListener("click", () => startReview(review.topicId));
+  }
+
+  /* ── Mixed practice: a task the teacher sends with questions from every
+     exercise the student solved, mixed together (#mix/<task id>). The task
+     lists the exercises; it runs like a review round, each question with its
+     own exercise, and its wrong answers go to the mistake bank as usual. ── */
+
+  const MIX_ROUTE = "mix";
+  const MIX_SIZE = 12;
+  let mixToken = 0;
+
+  // Questions taken in turn from each exercise, so every one gets a share.
+  function buildMix(keys) {
+    const pools = shuffle(keys)
+      .map((key) => {
+        const [topicId, exerciseId] = String(key).split("/");
+        const ex = findExercise(findTopic(topicId), exerciseId);
+        if (!ex || ex.type === "reading" || ex.type === "exam") return [];
+        return shuffle(poolOf(ex)).map((item) => ({ id: `${topicId}/${exerciseId}/${itemKey(item)}`, topicId, exerciseId, item }));
+      })
+      .filter((pool) => pool.length);
+    const items = [];
+    for (let i = 0; items.length < MIX_SIZE && pools.some((pool) => pool.length); i = (i + 1) % pools.length) {
+      const entry = pools[i].shift();
+      const item = entry && reviewItem(entry);
+      if (item) items.push(item);
+    }
+    return shuffle(items);
+  }
+
+  // The task comes from the linked student's file.
+  async function openMix(taskId) {
+    const token = ++mixToken;
+    renderReviewMessage(t("loading"), "", "#", t("mixTitle"));
+    const student = await window.StudentProgress?.profile();
+    if (token !== mixToken || decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0] !== MIX_ROUTE) return;
+    const task = (student?.homework || []).find((hw) => hw.topicId === MIX_ROUTE && hw.exerciseId === taskId);
+    startMix(task);
+  }
+
+  // `items`: the questions to ask again (practicing a round's mistakes).
+  function startMix(task, items = null, fix = null) {
+    clearTimeout(runner.timer);
+    stopExamTimer();
+    runner.exam = null;
+    const round = items || (task ? buildMix(task.items || []) : []);
+    if (!round.length) {
+      runner.review = null;
+      renderReviewMessage(t("mixMissing"), t("mixMissingLead"), "#", t("mixTitle"));
+      return;
+    }
+    startMixedRound({ mix: task, items: round, out: 0, back: "#" }, fix);
+  }
+
+  // Like an exercise's results: the grade (after a fix, the fixed one) and
+  // a way to practice the mistakes, without the right answers.
+  function renderMixResults() {
+    const { score, total, mistakes, review } = runner;
+    runner.phase = "results";
+    recordRound();
+    window.MistakeBank?.flush();
+    const fixed = fixedResult();
+    const shown = fixed || { score, total };
+    const ratio = shown.total ? shown.score / shown.total : 0;
+    const grade = Math.round(ratio * 100);
+    const stars = ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
+    const message = fixed
+      ? t(score === total ? "fixedAll" : score ? "fixedSome" : "fixedNone")
+      : ratio === 1 ? t("perfect") : ratio >= 0.7 ? t("great") : t("keepGoing");
+    renderRunnerShell(
+      `
+      <div class="eng-results">
+        <div class="eng-stars" aria-hidden="true">
+          ${[1, 2, 3].map((n) => `<span class="eng-star${n <= stars ? " is-on" : ""}">${ICONS.star}</span>`).join("")}
+        </div>
+        <div class="eng-grade">
+          <span class="eng-grade-label">${esc(t("gradeLabel"))}</span>
+          <p class="eng-score font-cartoon">${grade}</p>
+        </div>
+        <p class="eng-results-count">${esc(fixed ? t("fixedCount", score, total, fixed.score, fixed.total) : t("score", score, total))}</p>
+        <p class="eng-results-msg" aria-live="polite">${esc(message)}</p>
+        <div class="eng-results-actions">
+          <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engMixAgain">${esc(t("mixAgain"))}</button>
+          ${mistakes.length ? `<button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engRetryMistakes">${esc(t("retryMistakes"))}</button>` : ""}
+          ${homeworkButtonHtml()}
+        </div>
+      </div>`,
+      `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
+    );
+    celebrate(grade, $(".eng-results"));
+    $("#engMixAgain").addEventListener("click", () => startMix(review.mix));
+    $("#engRetryMistakes")?.addEventListener("click", () => {
+      const wrong = review.items.filter((item) => mistakes.includes(item.q));
+      startMix(review.mix, shuffle(wrong), shown);
+    });
   }
 
   /* ── Reading exams (english-exams.js): the passage on one side and one
@@ -5143,6 +5297,7 @@
       </div>`,
       `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
     );
+    celebrate(grade, $(".eng-exam-task"));
     // The passage, with the quote answers marked, is a button away.
     $("#engReadBack").addEventListener("click", () => setExamTextOpen(true));
     $("#engReadGo").addEventListener("click", () => setExamTextOpen(false));
@@ -5239,6 +5394,15 @@
 
   function exerciseName(ex) {
     return ex.type === "reading" ? passageTitle(ex) : loc(ex, "title");
+  }
+
+  // The exercise on paper (english-exercise-sheets.js), for the topics that
+  // have it for now.
+  function paperBtnHtml(topic, ex) {
+    if (SUBJECT || !PAPER_TOPICS.includes(topic.id) || ex.type === "reading") return "";
+    const href = `/services/english-worksheet?topic=${encodeURIComponent(topic.id)}&exercise=${encodeURIComponent(ex.id)}`;
+    const label = esc(t("paperSheet", exerciseName(ex)));
+    return `<a class="eng-info-btn" href="${esc(href)}" aria-label="${label}" title="${label}">${ICONS.download}</a>`;
   }
 
   function infoBtnHtml(ex) {
@@ -5661,7 +5825,7 @@
       if (!isOpen()) return;
       root.classList.add("hidden");
       document.body.classList.remove("eng-help-open");
-      window.speechSynthesis?.cancel?.();
+      window.PleyiSpeech.stop();
       if (restoreFocus) {
         // A language switch may have re-rendered the button that opened the dialog.
         const target = lastFocus?.isConnected
@@ -5768,13 +5932,20 @@
     stopGame();
     stopExamTimer();
     readAloud.stop();
-    window.speechSynthesis?.cancel?.();
+    window.PleyiSpeech.stop();
     if (slideViewer.isOpen()) slideViewer.close();
     const [topicId, exerciseId] = decodeURIComponent(location.hash.replace(/^#/, "")).split("/");
     if (topicId === REVIEW_ROUTE) {
       if (gameLessonReturn) forgetLessonReturn();
       showView("exercise");
       openReview(exerciseId || "");
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    if (topicId === MIX_ROUTE) {
+      if (gameLessonReturn) forgetLessonReturn();
+      showView("exercise");
+      openMix(exerciseId || "");
       window.scrollTo({ top: 0 });
       return;
     }
