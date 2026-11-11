@@ -13,8 +13,9 @@
   <script src="/js/pwa.js?v=1" defer></script>
   <title>ניהול תלמידים — Pleyi</title>
   <meta name="robots" content="noindex, nofollow"/>
-  <link rel="stylesheet" href="/styles.css?v=70"/>
-  <link rel="stylesheet" href="/css/admin-students.css?v=26"/>
+  <link rel="stylesheet" href="/styles.css?v=73"/>
+  <link rel="stylesheet" href="/css/admin-students.css?v=32"/>
+  <link rel="stylesheet" href="/css/site-fox.css?v=15"/>
 </head>
 <body class="adm-body">
 
@@ -22,10 +23,15 @@
     <div class="adm-top-inner">
       <a href="/" class="adm-home">חזרה לאתר</a>
       <h1 class="adm-top-title">ניהול תלמידים</h1>
+      <!-- The avatar (name below it) opens a small menu with the sign-out button. -->
       <div class="adm-account hidden" id="admAccount">
-        <span class="adm-account-avatar" id="admAccountAvatar" aria-hidden="true"></span>
-        <span class="adm-account-name" id="admAccountName"></span>
-        <button type="button" class="adm-link-btn adm-link-btn--danger" id="admSignOut">התנתקות</button>
+        <button type="button" class="adm-account-toggle" id="admAccountToggle" aria-haspopup="true" aria-expanded="false" aria-controls="admAccountMenu">
+          <span class="adm-account-avatar" id="admAccountAvatar" aria-hidden="true"></span>
+          <span class="adm-account-name" id="admAccountName"></span>
+        </button>
+        <div class="adm-account-menu hidden" id="admAccountMenu">
+          <button type="button" class="adm-link-btn adm-link-btn--danger" id="admSignOut">התנתקות</button>
+        </div>
       </div>
     </div>
   </header>
@@ -47,6 +53,7 @@
           </span>
           <span id="admGoogleLabel">התחברות עם Google</span>
         </button>
+        <p class="adm-muted adm-small adm-legal-note">בהתחברות אתם מאשרים את <a href="/legal/terms.html" target="_blank" rel="noopener">התקנון</a> ואת <a href="/legal/privacy.html" target="_blank" rel="noopener">מדיניות הפרטיות</a></p>
       </div>
     </div>
 
@@ -64,6 +71,7 @@
   <script src="/js/english-reading.js?v=12"></script>
   <script src="/js/english-more.js?v=2"></script>
   <script src="/js/english-exams.js?v=2"></script>
-  <script src="/js/admin-students.js?v=33"></script>
+  <script src="/js/admin-students.js?v=39"></script>
+  <script src="/js/site-fox.js?v=13" defer></script>
 </body>
 </html>

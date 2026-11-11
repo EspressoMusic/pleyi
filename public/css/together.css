@@ -1,0 +1,1157 @@
+/* Play together (/together, js/together.js) — the start screen, the lobby
+   and the full-screen game. */
+
+body.page-together #together.clean-section--soft {
+  background: transparent;
+  padding-top: 0 !important;
+  overflow: visible;
+}
+
+.tg-app {
+  max-width: 920px;
+  margin: 0 auto;
+  color: #000;
+}
+
+.tg-app :is(h2, h3),
+.tg-stage :is(h2, h3) {
+  margin: 0;
+  color: #000;
+  -webkit-text-stroke: 0 transparent !important;
+  -webkit-text-fill-color: #000 !important;
+  text-shadow: none !important;
+}
+
+/* The teal marker used for labels and titles (same as .lp-key). */
+.tg-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
+  font-weight: 900;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.tg-panel {
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: #eaf5ff;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  padding: clamp(16px, 3vw, 24px);
+  box-sizing: border-box;
+}
+
+.tg-label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.tg-note {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.tg-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  color: #000;
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.tg-input:focus-visible {
+  outline: 4px solid var(--memyellow);
+  outline-offset: 1px;
+}
+
+.tg-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.tg-main-btn {
+  margin: 0;
+  padding: 12px 30px;
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.tg-main-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.tg-btn-alt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #b8fff5;
+  color: #000;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.tg-btn-alt:hover,
+.tg-btn-alt:focus-visible {
+  background: var(--memyellow);
+}
+
+.tg-btn-alt svg {
+  width: 20px;
+  height: 20px;
+}
+
+.tg-link-btn {
+  padding: 6px 10px;
+  border: 0;
+  background: none;
+  color: #000;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tg-error {
+  margin: 0;
+  color: #b00020;
+  font-size: 1.1rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.tg-offline {
+  margin: 0 0 16px;
+  padding: 10px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: var(--memyellow);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-weight: 900;
+  text-align: center;
+}
+
+.tg-loading {
+  text-align: center;
+}
+
+/* ── Start ── */
+
+.tg-start {
+  display: grid;
+  gap: 24px;
+}
+
+.tg-name-panel {
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tg-start-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.tg-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.tg-option-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.tg-option .tg-main-btn {
+  margin-top: auto;
+}
+
+.tg-code-input {
+  max-width: 220px;
+  text-align: center;
+  font-size: 1.8rem;
+  letter-spacing: 0.25em;
+}
+
+.tg-modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.tg-mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  background: #c8faf5;
+}
+
+.tg-mode-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 4px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #00c9b7;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.tg-mode-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.tg-mode-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+@media (max-width: 640px) {
+  .tg-start-grid,
+  .tg-modes {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* ── Lobby ── */
+
+.tg-lobby {
+  display: grid;
+  gap: 22px;
+}
+
+.tg-lobby-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 22px;
+}
+
+.tg-code-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.tg-code {
+  margin: 0;
+  font-size: clamp(2.8rem, 12vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tg-qr {
+  width: clamp(104px, 28vw, 140px);
+  height: auto;
+  aspect-ratio: 1;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.tg-count {
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.tg-players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tg-player {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #00c9b7;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.tg-player.is-me {
+  background: var(--memyellow);
+}
+
+.tg-player.is-away {
+  opacity: 0.5;
+}
+
+.tg-player-me {
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.tg-crown {
+  display: inline-flex;
+  color: var(--memyellow);
+}
+
+.tg-player.is-me .tg-crown {
+  color: #fff;
+}
+
+.tg-crown svg {
+  width: 22px;
+  height: 22px;
+}
+
+.tg-kick {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-inline-start: 2px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #eaf5ff;
+  color: #000;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tg-settings {
+  display: grid;
+  gap: 10px;
+}
+
+.tg-settings .tg-label {
+  margin: 8px 0 0;
+}
+
+.tg-settings .tg-label:first-child {
+  margin-top: 0;
+}
+
+.tg-choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.tg-choices--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.tg-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 92px;
+  padding: 12px 8px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #d4eeff;
+  color: #000;
+  font: inherit;
+  cursor: pointer;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  transition: transform 0.15s ease;
+}
+
+.tg-choice:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.tg-choice.is-on {
+  background: #00c9b7;
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.tg-choice:disabled {
+  cursor: default;
+}
+
+.tg-choice:disabled:not(.is-on) {
+  opacity: 0.5;
+}
+
+.tg-choice-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.tg-choice-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.tg-how {
+  display: grid;
+  gap: 2px;
+  padding-inline-start: 4px;
+}
+
+.tg-select {
+  cursor: pointer;
+}
+
+.tg-select:disabled {
+  opacity: 1;
+  cursor: default;
+  background: #f1f8ff;
+}
+
+.tg-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 1.1rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.tg-check input {
+  width: 24px;
+  height: 24px;
+  accent-color: #00a596;
+}
+
+.tg-start-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.tg-start-note {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .tg-lobby-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .tg-lobby {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tg-choices {
+    gap: 10px;
+  }
+
+  .tg-choice {
+    min-height: 84px;
+    padding: 10px 4px;
+  }
+
+  .tg-choice-title {
+    font-size: 1rem;
+  }
+}
+
+/* ── The game screen ── */
+
+html.tg-open,
+html.tg-open body {
+  overflow: hidden;
+}
+
+/* !important: styles.css forces position:relative on every direct child
+   of <body>, and this screen is one. */
+.tg-stage {
+  position: fixed !important;
+  inset: 0;
+  z-index: 3000 !important;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(8px, 1.6dvh, 16px);
+  height: 100dvh;
+  padding: max(clamp(12px, 2.4dvh, 28px), env(safe-area-inset-top)) clamp(12px, 3vw, 36px) max(clamp(14px, 2.6dvh, 30px), env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background: var(--game-stage-bg-color, #e0fbf8);
+  color: #000;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Every row is placed by hand: the flash shares the bar's row. */
+.tg-bar {
+  grid-row: 1;
+  grid-column: 1;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.tg-bar-end {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tg-round-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #eaf5ff;
+  color: #000;
+  font: inherit;
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.tg-round-btn:hover,
+.tg-round-btn:focus-visible {
+  background: var(--memyellow);
+}
+
+.tg-stage-title {
+  font-size: clamp(1.2rem, 4.6vw, 2rem);
+  font-weight: 900;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.tg-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: 1.15rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+.tg-pill svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.tg-pill--hearts {
+  gap: 2px;
+  padding: 4px 8px;
+}
+
+.tg-pill--hearts.is-hit {
+  animation: tg-shake 0.45s ease;
+}
+
+.tg-heart {
+  display: inline-flex;
+}
+
+.tg-heart svg {
+  width: 22px;
+  height: 22px;
+  fill: #e4e4e4;
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.tg-heart.is-on svg {
+  fill: #ff4f6d;
+}
+
+.tg-hud {
+  grid-row: 2;
+  grid-column: 1;
+  display: flex;
+  justify-content: center;
+  min-height: 0;
+}
+
+.tg-hud:empty {
+  display: none;
+}
+
+.tg-hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tg-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.tg-vs-side {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 5px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-weight: 900;
+}
+
+.tg-vs-side.is-me {
+  background: var(--memyellow);
+}
+
+.tg-vs-name {
+  overflow: hidden;
+  max-width: 34vw;
+  font-size: 1.05rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tg-vs-score {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tg-vs-sep {
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* The board and the countdown share the last row. */
+.tg-board,
+.tg-overlay {
+  grid-row: 3;
+  grid-column: 1;
+}
+
+.tg-board {
+  display: flex;
+  min-height: 0;
+}
+
+.tg-overlay {
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: rgba(224, 251, 248, 0.82);
+  transition: opacity 0.5s ease;
+}
+
+.tg-overlay.is-fading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tg-count-num {
+  font-size: clamp(5rem, 30vmin, 12rem);
+  font-weight: 900;
+  line-height: 1;
+  animation: tg-pop 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.tg-count-go {
+  font-size: clamp(3.2rem, 16vmin, 7rem);
+}
+
+.tg-overlay-card {
+  display: grid;
+  gap: 6px;
+  padding: 24px 32px;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: #eaf5ff;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  text-align: center;
+}
+
+/* "Dan is out!" — over the game's title. */
+.tg-flash {
+  grid-row: 1;
+  grid-column: 1;
+  z-index: 6;
+  align-self: center;
+  justify-self: center;
+  max-width: calc(100% - 200px);
+  pointer-events: none;
+}
+
+.tg-flash-item {
+  padding: 6px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: 1.15rem;
+  font-weight: 900;
+  white-space: nowrap;
+  animation: tg-flash 1.8s ease forwards;
+}
+
+.tg-offline--stage {
+  position: absolute;
+  top: max(64px, calc(env(safe-area-inset-top) + 56px));
+  left: 50%;
+  z-index: 8;
+  margin: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* ── Catch the word ── */
+
+.tg-catch {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.6dvh, 14px);
+  min-height: 0;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.tg-catch-target {
+  flex: none;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #eaf5ff;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.tg-catch-target.is-new {
+  animation: tg-pop 0.35s ease;
+}
+
+.tg-catch-label {
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.tg-catch-pic {
+  width: clamp(60px, 11dvh, 110px);
+  height: clamp(60px, 11dvh, 110px);
+  object-fit: contain;
+}
+
+.tg-catch-he {
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  font-weight: 900;
+}
+
+.tg-sky {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #b8fff5 0%, #e9fffc 100%);
+  box-shadow: 5px 6px 0 0 var(--ink);
+  touch-action: manipulation;
+}
+
+.tg-drop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 9px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  color: #000;
+  font: inherit;
+  font-size: clamp(1.1rem, 4.6vw, 1.6rem);
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  will-change: transform;
+  touch-action: manipulation;
+}
+
+.tg-drop--c0 { background: #00c9b7; }
+.tg-drop--c1 { background: var(--memyellow); }
+.tg-drop--c2 { background: #9ff0e6; }
+.tg-drop--c3 { background: #ffd08a; }
+.tg-drop--c4 { background: #c6e4ff; }
+
+.tg-drop.is-caught {
+  animation: tg-caught 0.4s ease forwards;
+}
+
+.tg-drop.is-wrong {
+  background: #ff9aa8;
+  animation: tg-wrong 0.4s ease forwards;
+}
+
+/* ── Picture and word / Listen and pick ── */
+
+.tg-quiz {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(10px, 2dvh, 20px);
+  width: 100%;
+  max-width: 720px;
+  min-height: 0;
+  margin: 0 auto;
+}
+
+.tg-quiz-ask {
+  display: grid;
+  place-items: center;
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+.tg-quiz-pic {
+  width: auto;
+  height: clamp(120px, 30dvh, 300px);
+  max-width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  background: #eaf5ff;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  object-fit: contain;
+}
+
+.tg-quiz-say {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 30px;
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  background: var(--memyellow);
+  color: #000;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.tg-quiz-say svg {
+  width: clamp(48px, 9dvh, 72px);
+  height: clamp(48px, 9dvh, 72px);
+}
+
+.tg-quiz-timer {
+  height: 14px;
+  overflow: hidden;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.tg-quiz-timer span {
+  display: block;
+  height: 100%;
+  background: #00c9b7;
+  transform-origin: right center;
+}
+
+.tg-quiz-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 2vw, 16px);
+}
+
+.tg-option-btn {
+  min-height: clamp(58px, 10dvh, 92px);
+  padding: 8px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #eaf5ff;
+  color: #000;
+  font: inherit;
+  font-size: clamp(1.25rem, 5vw, 1.9rem);
+  font-weight: 900;
+  line-height: 1.15;
+  overflow-wrap: break-word;
+  cursor: pointer;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  touch-action: manipulation;
+}
+
+.tg-option-btn:hover:not(:disabled) {
+  background: #dffcf8;
+}
+
+.tg-option-btn:disabled {
+  cursor: default;
+}
+
+.tg-option-btn.is-right {
+  background: #00c9b7;
+}
+
+.tg-option-btn.is-wrong {
+  background: #ff9aa8;
+  animation: tg-shake 0.4s ease;
+}
+
+.tg-option-btn--pic {
+  display: grid;
+  place-items: center;
+  height: clamp(110px, 24dvh, 200px);
+}
+
+.tg-option-btn--pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* ── Watching: the live standings ── */
+
+.tg-watch {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+  max-width: 640px;
+  min-height: 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.tg-watch-lead {
+  margin: 0;
+  font-size: clamp(1.5rem, 6vw, 2.2rem);
+  font-weight: 900;
+}
+
+.tg-watch-list {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 6px 8px 10px 10px;
+}
+
+.tg-live,
+.tg-rank {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tg-live-row,
+.tg-rank-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: clamp(1.1rem, 3.6vw, 1.5rem);
+  font-weight: 900;
+  text-align: start;
+}
+
+.tg-live-row.is-out {
+  opacity: 0.45;
+}
+
+.tg-live-row.is-me,
+.tg-rank-row.is-me {
+  background: var(--memyellow);
+}
+
+.tg-live-name,
+.tg-rank-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tg-live-hearts {
+  display: inline-flex;
+  direction: ltr;
+}
+
+.tg-live-hearts .tg-heart svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tg-live-score {
+  min-width: 2ch;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Results ── */
+
+.tg-results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 600px;
+  min-height: 0;
+  margin: auto;
+  padding: 4px 10px 12px;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.tg-results-title {
+  font-size: clamp(1.8rem, 7vw, 2.8rem);
+  font-weight: 900;
+}
+
+.tg-rank-row {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.tg-rank-row.is-first:not(.is-me) {
+  background: #00c9b7;
+}
+
+.tg-rank-place {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+  font-size: 1.1rem;
+}
+
+.tg-rank-score {
+  font-size: 0.85em;
+}
+
+.tg-rank-name small {
+  font-size: 0.7em;
+  font-weight: 800;
+}
+
+.tg-results-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+@keyframes tg-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes tg-shake {
+  0%, 100% { translate: 0; }
+  25% { translate: -6px 0; }
+  75% { translate: 6px 0; }
+}
+
+@keyframes tg-caught {
+  to { scale: 1.45; opacity: 0; }
+}
+
+@keyframes tg-wrong {
+  0% { translate: 0; }
+  30% { translate: -6px 0; }
+  60% { translate: 6px 0; opacity: 1; }
+  100% { translate: 0; opacity: 0; }
+}
+
+@keyframes tg-flash {
+  0% { transform: translateY(-8px); opacity: 0; }
+  12%, 80% { transform: translateY(0); opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tg-count-num,
+  .tg-catch-target.is-new,
+  .tg-flash-item,
+  .tg-pill--hearts.is-hit,
+  .tg-option-btn.is-wrong {
+    animation: none;
+  }
+}

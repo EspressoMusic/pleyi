@@ -420,6 +420,39 @@ window.UserData = {
     return { ok: true, favorited: true };
   },
 
+  // Saved lessons with when they were saved, for the activity history on /my-room.
+  async getFavoriteLessonEntries() {
+    const uid = this._uid();
+    const db = this._db();
+    if (!uid || !db) return [];
+
+    const snap = await db.collection("favoriteLessons").where("userId", "==", uid).get();
+    return snap.docs.map((d) => ({ lessonId: d.data().lessonId, at: d.data().createdAt?.toMillis?.() || 0 }));
+  },
+
+  // The lessons the teacher opened, newest first (users/{uid}.lessonHistory),
+  // for the activity history and the lesson suggestions on /my-room. The same
+  // lesson opened again on the same day moves up instead of showing twice.
+  async recordLessonOpen(lessonId) {
+    const uid = this._uid();
+    const db = this._db();
+    if (!uid || !db || !lessonId || window.GameAuth?.isDevPreviewUser?.()) return;
+
+    const ref = db.collection("users").doc(uid);
+    const history = (await ref.get()).data()?.lessonHistory || [];
+    const today = this.dateKeyFromTimestamp(Date.now());
+    const kept = history.filter((e) => e.id !== lessonId || this.dateKeyFromTimestamp(e.at) !== today);
+    await ref.set({ lessonHistory: [{ id: lessonId, at: Date.now() }, ...kept].slice(0, 80) }, { merge: true });
+  },
+
+  async getLessonHistory() {
+    const uid = this._uid();
+    const db = this._db();
+    if (!uid || !db) return [];
+
+    return (await db.collection("users").doc(uid).get()).data()?.lessonHistory || [];
+  },
+
   async recordPlay({ gameId, gameTitle, customGameId, isCustom, score, reason }) {
     const uid = this._uid();
     const db = this._db();

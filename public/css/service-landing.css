@@ -116,6 +116,7 @@ body.page-ready-lessons .svc-filter-dropdown.is-open .svc-filter-trigger {
 body.page-ready-lessons .svc-filter-menu {
   border: 3px solid var(--ink);
   border-radius: 12px;
+  background: #eaf5ff;
   box-shadow: var(--shadow-sticker);
 }
 
@@ -772,6 +773,30 @@ body.coloring-zoom-open {
 
 .svc-filter-menu.hidden {
   display: none;
+}
+
+/* Site-style scrollbar: a teal pill with an ink outline, no arrows.
+   (Chrome ignores these if scrollbar-color is set, so that is Firefox-only.) */
+.svc-filter-menu::-webkit-scrollbar {
+  width: 12px;
+}
+
+.svc-filter-menu::-webkit-scrollbar-track {
+  margin: 6px 0;
+  background: transparent;
+}
+
+.svc-filter-menu::-webkit-scrollbar-thumb {
+  background: var(--memteal, #00e5cc);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .svc-filter-menu {
+    scrollbar-width: thin;
+    scrollbar-color: var(--memteal, #00e5cc) transparent;
+  }
 }
 
 @keyframes svcFilterMenuOpen {

@@ -32,6 +32,7 @@
       stepGames: "משחקים",
       backToLesson: "חזרה לשיעור",
       playGame: "לשחק",
+      playTogether: "משחק עם חברים",
       openLesson: "פתיחת השיעור",
       lessonInfo: "מידע על השיעור",
       lessonWhat: "מה לומדים בשיעור",
@@ -113,6 +114,9 @@
       readingTitle: "קטע קריאה",
       vocabHub: "אוצר מילים לפי נושאים",
       stage: (n) => `שלב ${n}`,
+      grade: "כיתה",
+      allGrades: "הכל",
+      noGradeTopics: "עוד אין כאן נושאים לכיתה הזו.",
       nextTopic: "הנושא הבא",
       markStep: "שלב 1: מסמנים בטקסט",
       markFoundLabel: "נמצאו",
@@ -311,6 +315,7 @@
       stepGames: "Games",
       backToLesson: "Back to the lesson",
       playGame: "Play",
+      playTogether: "Play with friends",
       openLesson: "Open the lesson",
       lessonInfo: "About the lesson",
       lessonWhat: "What the lesson teaches",
@@ -392,6 +397,9 @@
       readingTitle: "Reading",
       vocabHub: "Vocabulary by topic",
       stage: (n) => `Stage ${n}`,
+      grade: "Grade",
+      allGrades: "All",
+      noGradeTopics: "No topics for this grade here yet.",
       nextTopic: "Next topic",
       markStep: "Step 1: Mark the text",
       markFoundLabel: "Found",
@@ -1213,23 +1221,91 @@
       </article>`;
   }
 
+  // The path filters by grade (curriculum-grades.js through ready-lessons.js):
+  // in a school subject a topic shows when one of its lessons is learned in
+  // that grade; in English, by the topic's own grades. "?grade=7" keeps the
+  // choice in the address.
+  const GRADES = window.ReadyLessons?.grades || null;
+  let gradeFilter = GRADES ? GRADES.fromUrl() : "all";
+
+  function topicGrades(topic) {
+    if (!SUBJECT) return GRADES.englishTopic(topic.id);
+    return [...new Set(topicLessonIds(topic).flatMap((id) => lessonById(id)?.schoolGrades || []))];
+  }
+
+  function topicInGrade(topic) {
+    return gradeFilter === "all" || topicGrades(topic).includes(Number(gradeFilter));
+  }
+
+  // Only in an area where some topic is in the curriculum at all.
+  function gradeBarHtml() {
+    if (!GRADES || !pathTopics().some((topic) => topicGrades(topic).length)) return "";
+    const options = ["all", ...Array.from({ length: GRADES.count }, (_, i) => String(i + 1))];
+    const label = (grade) => (grade === "all" ? t("allGrades") : GRADES.name(Number(grade)));
+    return `
+      <div class="svc-filter-bar eng-grade-bar">
+        <div class="svc-filter-dropdown">
+          <button type="button" class="svc-filter-trigger" id="engGradeTrigger" aria-expanded="false" aria-controls="engGradeMenu">
+            <span class="svc-filter-trigger-label">${esc(t("grade"))}</span>
+            <span class="svc-filter-trigger-value">${esc(label(gradeFilter))}</span>
+          </button>
+          <ul class="svc-filter-menu hidden" id="engGradeMenu">
+            ${options.map((grade) => `<li><button type="button" data-grade="${grade}"${grade === gradeFilter ? ' class="active"' : ""}>${esc(label(grade))}</button></li>`).join("")}
+          </ul>
+        </div>
+      </div>`;
+  }
+
+  function bindGradeBar(grid) {
+    const trigger = $("#engGradeTrigger", grid);
+    const menu = $("#engGradeMenu", grid);
+    if (!trigger || !menu) return;
+    const close = () => {
+      menu.classList.add("hidden");
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.parentElement.classList.remove("is-open");
+      document.removeEventListener("click", close);
+    };
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!menu.classList.contains("hidden")) return close();
+      menu.classList.remove("hidden");
+      trigger.setAttribute("aria-expanded", "true");
+      trigger.parentElement.classList.add("is-open");
+      document.addEventListener("click", close);
+    });
+    menu.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-grade]");
+      if (!btn) return;
+      close();
+      gradeFilter = btn.dataset.grade;
+      GRADES.setInUrl(gradeFilter);
+      renderTopicGrid();
+    });
+  }
+
   function renderTopicGrid() {
     const grid = $("#engTopicGrid");
     if (!grid) return;
     if (PATH.length) {
       let num = 0;
-      grid.innerHTML = PATH.map((stage, i) => {
+      const stages = PATH.map((stage, i) => {
+        // Numbered over the whole path, so a topic keeps its number when
+        // the grade filter hides others.
         const tiles = stage.topics
           .map(findTopic)
           .filter(Boolean)
-          .map((topic) => topicTileHtml(topic, ++num))
+          .map((topic) => (++num, topicInGrade(topic) ? topicTileHtml(topic, num) : ""))
           .join("");
+        if (!tiles) return "";
         return `
         <div class="eng-topic-group eng-path-stage">
           <h2 class="eng-group-title eng-path-title"><span class="eng-path-stage-num">${esc(t("stage", i + 1))}</span>${esc(loc(stage, "title"))}</h2>
           <div class="eng-topic-grid">${tiles}</div>
         </div>`;
       }).join("");
+      grid.innerHTML = gradeBarHtml() + (stages || `<p class="eng-grade-empty">${esc(t("noGradeTopics"))}</p>`);
+      bindGradeBar(grid);
       return;
     }
     grid.innerHTML = GROUPS.map((group) => {
@@ -1368,6 +1444,22 @@
     return window.EnglishGames.find(gameId);
   }
 
+  // One on one or group survival with the topic's words (/together).
+  const TOGETHER_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6.5" cy="7" r="3"/><circle cx="17.5" cy="7" r="3"/><path d="M1.5 20v-1.5A4.5 4.5 0 0 1 6 14h1a4.5 4.5 0 0 1 4.5 4.5V20M12.5 20v-1.5A4.5 4.5 0 0 1 17 14h1a4.5 4.5 0 0 1 4.5 4.5V20"/></svg>`;
+
+  function togetherCardHtml(topic) {
+    const category = /^vocab-(.+)$/.exec(topic.id)?.[1];
+    const href = category ? `/together?topic=${encodeURIComponent(category)}` : "/together";
+    return `
+      <div class="eng-ex-card eng-ex-card--game eng-ex-card--game-together">
+        <span class="eng-ex-icon">${TOGETHER_ICON}</span>
+        <span class="eng-ex-text">
+          <a class="eng-ex-title eng-card-link" href="${esc(href)}">${esc(t("playTogether"))}</a>
+        </span>
+        <span class="eng-item-action" aria-hidden="true">${esc(t("playGame"))}</span>
+      </div>`;
+  }
+
   function gameCardsHtml(topic) {
     if (!gameWords(topic).length) return "";
     const games = window.EnglishGames;
@@ -1384,7 +1476,7 @@
             <span class="eng-item-action" aria-hidden="true">${esc(t("playGame"))}</span>
           </div>`;
       })
-      .join("");
+      .join("") + togetherCardHtml(topic);
   }
 
   // Opens a topic's slide lesson (from its card or its "i" dialog).

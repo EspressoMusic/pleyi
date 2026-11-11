@@ -1263,6 +1263,37 @@ const SoloGames = {
       }
     };
 
+    // The CSS sizes keys by card height only, so on a narrow card they wrapped
+    // into extra rows that ran off the bottom. Shrink them until every row fits.
+    const fitKeyboard = () => {
+      const card = root.querySelector(".hangman-solo-card");
+      const el = document.getElementById("hmLetters");
+      const first = el?.firstElementChild;
+      if (!card || !first || !card.clientHeight) return;
+      el.classList.remove("is-fit");
+      const cs = getComputedStyle(el);
+      const gapX = parseFloat(cs.columnGap) || 0;
+      const gapY = parseFloat(cs.rowGap) || 0;
+      const flow = [...card.children].filter(
+        (c) => c !== el && c.offsetHeight && getComputedStyle(c).position !== "absolute"
+      );
+      const cardGap = parseFloat(getComputedStyle(card).rowGap) || 0;
+      const used = flow.reduce((sum, c) => sum + c.offsetHeight, 0) + cardGap * flow.length;
+      const availH = card.clientHeight - used - 6;
+      const availW = Math.min(820, card.clientWidth);
+      const n = el.children.length;
+      const fits = (k) => {
+        const perRow = Math.max(1, Math.floor((availW + gapX) / (k + gapX)));
+        const rows = Math.ceil(n / perRow);
+        return rows * k + (rows - 1) * gapY <= availH;
+      };
+      let k = first.offsetHeight;
+      if (fits(k)) return;
+      while (k > 28 && !fits(k)) k -= 2;
+      el.style.setProperty("--hm-key", `${k}px`);
+      el.classList.add("is-fit");
+    };
+
     const renderHint = () => {
       const el = document.getElementById("hmHint");
       if (!el || !currentItem) return;
@@ -1303,6 +1334,7 @@ const SoloGames = {
       el.className = `hangman-solo-result is-${type}`;
       el.textContent = message;
       el.classList.remove("hidden");
+      fitKeyboard();
     };
 
     const hideResult = () => {
@@ -1419,6 +1451,7 @@ const SoloGames = {
       renderSlots();
       renderKeyboard();
       updateHintBtn();
+      fitKeyboard();
 
       const stage = document.getElementById("hmStage");
       if (animated && stage) {
@@ -1434,12 +1467,17 @@ const SoloGames = {
     buildShell();
     document.getElementById("hmHintBtn")?.addEventListener("click", onHint);
 
+    const fitObserver = typeof ResizeObserver === "function" ? new ResizeObserver(() => fitKeyboard()) : null;
+    [root.querySelector(".hangman-solo-card"), document.getElementById("hmHint")].forEach((node) => {
+      if (node) fitObserver?.observe(node);
+    });
+
     SoloGames.bindStartRetry("hm", () => {
       document.getElementById("hmStage")?.classList.remove("hidden");
       beginWord(true);
     });
 
-    return () => {};
+    return () => fitObserver?.disconnect();
   },
 
   /* ── Sentence scramble ── */

@@ -62,9 +62,34 @@
     return GRADE_GROUP_LABELS[code]?.[curLang()] || GRADE_GROUP_LABELS.all[curLang()];
   }
 
-  function formatGradeLabel(label) {
-    if (curLang() !== "en") return label;
-    return label === "כל הכיתות" ? "All grades" : label;
+  // School grades 1–9 (א'–ט'), from the curriculum (curriculum-grades.js).
+  const GRADE_LETTERS = ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט"];
+
+  function gradeName(grade) {
+    return curLang() === "en" ? `Grade ${grade}` : `כיתה ${GRADE_LETTERS[grade - 1]}'`;
+  }
+
+  // "?grade=7" in the address: the grade the library and the subject areas
+  // open filtered to; "all" when there is none.
+  function gradeFromUrl() {
+    const grade = Number(new URLSearchParams(location.search).get("grade"));
+    return grade >= 1 && grade <= GRADE_LETTERS.length ? String(grade) : "all";
+  }
+
+  function setGradeInUrl(grade) {
+    const url = new URL(location.href);
+    if (grade === "all") url.searchParams.delete("grade");
+    else url.searchParams.set("grade", grade);
+    history.replaceState(history.state, "", url);
+  }
+
+  // The info dialog's "כיתות": the lesson's grades ("ו', ח'"), or "כל הכיתות"
+  // for a lesson outside the curriculum.
+  function formatGradeLabel(lesson) {
+    const grades = lesson.schoolGrades || [];
+    if (!grades.length) return curLang() === "en" ? "All grades" : lesson.gradeLabel;
+    if (curLang() === "en") return grades.join(", ");
+    return grades.map((g) => `${GRADE_LETTERS[g - 1]}'`).join(", ");
   }
 
   // Merges a lesson's English overrides (lesson.en) on top of its Hebrew
@@ -75,11 +100,21 @@
     return { ...lesson, ...lesson.en, id: lesson.id };
   }
 
+  // Ink-line icons for the games slide, drawn like the picture games' icons
+  // (english-games.js ICONS) and shown on a colored tile — no emoji.
+  const LESSON_GAME_ICONS = {
+    trivia: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5h-6L7 20v-4h-.5A2.5 2.5 0 0 1 4 13.5v-8A2.5 2.5 0 0 1 6.5 3Z"/><path d="M10 7.6a2.1 2.1 0 1 1 2.9 1.9c-.6.3-.9.8-.9 1.4v.3"/><circle cx="12" cy="13.2" r=".9" fill="currentColor" stroke="none"/></svg>`,
+    tower: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="16.5" width="18" height="5" rx="1.3"/><rect x="5.5" y="10.5" width="13" height="5" rx="1.3"/><rect x="8" y="3.5" width="8" height="5" rx="1.3" transform="rotate(-9 12 6)"/></svg>`,
+    letters: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 13 12 4l3.5 9M9.7 10h4.6"/><path d="M3 19.5h4M10 19.5h4M17 19.5h4"/></svg>`,
+    compare: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="9" height="14" rx="2"/><rect x="13" y="5" width="9" height="14" rx="2"/><circle cx="6.5" cy="12" r="2.2"/><rect x="15.3" y="9.8" width="4.4" height="4.4" rx=".7"/></svg>`,
+    play: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8h10a4.5 4.5 0 0 1 4.3 5.8l-1 3.2a2.4 2.4 0 0 1-4 1L14.6 16H9.4l-1.7 2a2.4 2.4 0 0 1-4-1l-1-3.2A4.5 4.5 0 0 1 7 8Z"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="16" cy="11.5" r=".8" fill="currentColor" stroke="none"/><circle cx="17.6" cy="13.6" r=".8" fill="currentColor" stroke="none"/></svg>`,
+  };
+
   const STANDARD_LESSON_GAMES = [
-    { id: "vocabulary-duel", label: "טריוויה", labelEn: "Trivia", icon: "⚔️" },
-    { id: "tower-stack", label: "מגדל מילים", labelEn: "Word Tower", icon: "🗼" },
-    { id: "hangman", label: "איש תלוי", labelEn: "Hangman", icon: "🎯" },
-    { id: "spot-diff", label: "מצא הבדלים", labelEn: "Spot the Differences", icon: "🔍" },
+    { id: "vocabulary-duel", label: "טריוויה", labelEn: "Trivia", icon: LESSON_GAME_ICONS.trivia },
+    { id: "tower-stack", label: "מגדל מילים", labelEn: "Word Tower", icon: LESSON_GAME_ICONS.tower },
+    { id: "hangman", label: "איש תלוי", labelEn: "Hangman", icon: LESSON_GAME_ICONS.letters },
+    { id: "spot-diff", label: "מצא הבדלים", labelEn: "Spot the Differences", icon: LESSON_GAME_ICONS.compare },
   ];
 
   // Picture vocabulary shared by the vocabulary lesson's picture slides
@@ -3539,6 +3574,28 @@
     Object.defineProperty(LESSON_CATALOG, entry.topic, { value: LESSON_CATALOG[entry.id], enumerable: false });
   });
 
+  // Each lesson's grades in the curriculum (curriculum-grades.js): by its own
+  // id, else by its topic. English goes by the topics of the English area.
+  const CURRICULUM = window.CURRICULUM_GRADES || {};
+  const CURRICULUM_EN = window.CURRICULUM_GRADES_ENGLISH || {};
+  Object.entries(LESSON_CATALOG).forEach(([id, lesson]) => {
+    const map = lesson.subject === "english" ? CURRICULUM_EN : CURRICULUM;
+    lesson.schoolGrades = map[id] || map[lesson.topic] || [];
+  });
+
+  // An English area topic's grades ("tobe", "vocab-animals", "reading").
+  function englishTopicGrades(topicId) {
+    return CURRICULUM_EN[topicId] || [];
+  }
+
+  function englishInGrade(grade) {
+    return grade === "all" || Object.values(CURRICULUM_EN).some((grades) => grades.includes(Number(grade)));
+  }
+
+  function lessonInGrade(lesson, grade) {
+    return grade === "all" || (lesson?.schoolGrades || []).includes(Number(grade));
+  }
+
   const LESSON_TOPICS = {
     english: {
       ag: [
@@ -3758,6 +3815,8 @@
         { id: "powers", label: "חזקות ושורשים" },
         { id: "linear", label: "פונקציה קווית" },
         { id: "systems", label: "מערכת משוואות" },
+        { id: "parabola", label: "פונקציה ריבועית" },
+        { id: "trig", label: "טריגונומטריה" },
       ],
     },
     hebrew: {
@@ -3816,6 +3875,7 @@
         { id: "weather", label: "מזג אוויר" },
         { id: "magnets", label: "מגנטים" },
         { id: "earth", label: "כדור הארץ" },
+        { id: "technology", label: "טכנולוגיה" },
       ],
       dv: [
         { id: "plants", label: "צמחים" },
@@ -3834,6 +3894,7 @@
         { id: "earth", label: "כדור הארץ" },
         { id: "substances", label: "חומרים" },
         { id: "heredity", label: "תורשה" },
+        { id: "technology", label: "טכנולוגיה" },
       ],
       zh: [
         { id: "matter", label: "מצבי צבירה" },
@@ -3845,10 +3906,13 @@
         { id: "earth", label: "כדור הארץ" },
         { id: "substances", label: "חומרים" },
         { id: "reactions", label: "תגובה כימית" },
+        { id: "elements", label: "האטום והיסודות" },
+        { id: "nutrition", label: "תזונה" },
       ],
     },
     geography: {
       ag: [
+        { id: "homeland", label: "מולדת" },
         { id: "israel-map", label: "מפת ארץ ישראל" },
         { id: "map-skills", label: "קוראים מפה" },
         { id: "settlements", label: "יישובים בארץ" },
@@ -3860,6 +3924,7 @@
         { id: "map-skills", label: "קוראים מפה" },
         { id: "settlements", label: "יישובים בארץ" },
         { id: "israel-climate", label: "אקלים בישראל" },
+        { id: "mediterranean", label: "אגן הים התיכון" },
       ],
       zh: [
         { id: "israel-map", label: "מפת ארץ ישראל" },
@@ -3867,6 +3932,16 @@
         { id: "map-skills", label: "קוראים מפה" },
         { id: "settlements", label: "יישובים בארץ" },
         { id: "israel-climate", label: "אקלים בישראל" },
+        { id: "globalization", label: "הכפר הגלובלי" },
+        { id: "population", label: "אוכלוסיית העולם" },
+        { id: "inequality", label: "פערים בעולם" },
+        { id: "cities", label: "ערים בעולם" },
+        { id: "earth-motion", label: "כדור הארץ בתנועה" },
+        { id: "israel-mideast", label: "ישראל במזרח התיכון" },
+        { id: "israel-water", label: "המים בישראל" },
+        { id: "israel-people", label: "אוכלוסיית ישראל" },
+        { id: "israel-economy", label: "כלכלה ותשתיות" },
+        { id: "israel-environment", label: "סביבה וקיימות בישראל" },
       ],
     },
     history: {
@@ -3877,6 +3952,7 @@
         { id: "zionism", label: "הציונות ומדינת ישראל" },
         { id: "israel-wars", label: "מלחמות ישראל" },
         { id: "first-temple", label: "ימי בית ראשון" },
+        { id: "return-zion", label: "שיבת ציון" },
       ],
       dv: [
         { id: "jewish-history", label: "תולדות עם ישראל" },
@@ -3885,6 +3961,7 @@
         { id: "zionism", label: "הציונות ומדינת ישראל" },
         { id: "israel-wars", label: "מלחמות ישראל" },
         { id: "first-temple", label: "ימי בית ראשון" },
+        { id: "return-zion", label: "שיבת ציון" },
         { id: "diaspora", label: "עם ישראל בגולה" },
       ],
       zh: [
@@ -3894,7 +3971,13 @@
         { id: "zionism", label: "הציונות ומדינת ישראל" },
         { id: "israel-wars", label: "מלחמות ישראל" },
         { id: "first-temple", label: "ימי בית ראשון" },
+        { id: "return-zion", label: "שיבת ציון" },
         { id: "diaspora", label: "עם ישראל בגולה" },
+        { id: "middle-ages", label: "ימי הביניים" },
+        { id: "early-modern", label: "העת החדשה" },
+        { id: "changing-world", label: "עולם של שינויים" },
+        { id: "yishuv", label: "ארץ ישראל במאה ה־19" },
+        { id: "world-wars", label: "מלחמות העולם" },
       ],
     },
     health: {
@@ -3976,16 +4059,33 @@
     const practiceCard = $("#englishPracticeCard");
     if (!filtersRoot || !topicMenu || !cards.length) return;
 
+    // The cards are in each subject's learning-path order (subject-practice.js),
+    // so a lesson's number is its place among its subject's cards. Numbered
+    // once, so a lesson keeps its number when the filters hide others.
+    const subjectCount = {};
+    cards.forEach((card) => {
+      const subject = LESSON_CATALOG[card.dataset.lesson]?.subject;
+      const preview = $(".svc-lesson-preview", card);
+      if (!subject || !preview) return;
+      subjectCount[subject] = (subjectCount[subject] || 0) + 1;
+      const num = document.createElement("span");
+      num.className = "svc-lesson-num";
+      num.setAttribute("aria-hidden", "true");
+      num.textContent = subjectCount[subject];
+      preview.prepend(num);
+    });
+
     // Capture: the card's "פתיחה" button stops its click from bubbling up.
     practiceCard?.addEventListener(
       "click",
       () => {
-        window.location.href = SUBJECT_AREAS.english;
+        window.location.href = state.grade === "all" ? SUBJECT_AREAS.english : `${SUBJECT_AREAS.english}?grade=${state.grade}`;
       },
       true
     );
 
-    const state = { subject: "all", grade: "all", topic: "all" };
+    const state = { subject: "all", grade: gradeFromUrl(), topic: "all" };
+    const catalogLessons = Object.values(LESSON_CATALOG);
     let openDropdown = null;
 
     function closeDropdown() {
@@ -4029,12 +4129,14 @@
     function getTopicOptions() {
       // The English topics are in the English area, not in the grid.
       const subjects = state.subject === "all" ? ACTIVE_SUBJECTS.filter((s) => s !== "english") : [state.subject];
-      const grades = state.grade === "all" ? ["ag", "dv", "zh"] : [state.grade];
       const seen = new Map();
+      // With a grade chosen, only the topics that have a lesson in it.
+      const inGrade = (topicId) =>
+        catalogLessons.some((lesson) => lesson.topic === topicId && lessonInGrade(lesson, state.grade));
       subjects.forEach((subject) => {
-        grades.forEach((grade) => {
-          (LESSON_TOPICS[subject]?.[grade] || []).forEach((topic) => {
-            if (!seen.has(topic.id)) {
+        ["ag", "dv", "zh"].forEach((group) => {
+          (LESSON_TOPICS[subject]?.[group] || []).forEach((topic) => {
+            if (!seen.has(topic.id) && inGrade(topic.id)) {
               // Derive the label from the lesson itself (already localized)
               // instead of duplicating translated topic names separately.
               const topicLesson = localizeLesson(LESSON_CATALOG[topic.id]);
@@ -4089,13 +4191,13 @@
         const inActiveSubjects = ACTIVE_SUBJECTS.includes(lesson.subject);
         const matchSubject =
           inActiveSubjects && (state.subject === "all" || lesson.subject === state.subject);
-        const matchGrade = state.grade === "all" || lesson.grades.includes(state.grade);
+        const matchGrade = lessonInGrade(lesson, state.grade);
         const matchTopic = state.topic === "all" || lesson.topic === state.topic;
         const show = matchSubject && matchGrade && matchTopic;
         card.classList.toggle("hidden", !show);
         if (show) visible += 1;
       });
-      const showPractice = state.subject === "all" && state.topic === "all";
+      const showPractice = state.subject === "all" && state.topic === "all" && englishInGrade(state.grade);
       practiceCard?.classList.toggle("hidden", !showPractice);
       if (showPractice) visible += 1;
       empty?.classList.toggle("hidden", visible > 0);
@@ -4111,6 +4213,8 @@
     function fitLessonCardTitle(wrap) {
       if (!wrap) return;
       wrap.style.removeProperty("--card-fit");
+      // A hidden card has no size to fit into; the observer refits it once shown.
+      if (!wrap.clientHeight) return;
       const nameEl = $(".svc-lesson-name", wrap);
       const partEl = $(".svc-lesson-part", wrap);
       if (!nameEl && !partEl) return;
@@ -4139,6 +4243,31 @@
       });
     }
 
+    // The site font arrives after the first fit, and its wider letters ran
+    // the titles past the card — so fit again whenever a font finishes loading.
+    const refitLessonCards = () => cards.forEach((card) => fitLessonCardTitle($(".svc-lesson-title-wrap", card)));
+    document.fonts?.ready.then(refitLessonCards);
+    document.fonts?.addEventListener?.("loadingdone", refitLessonCards);
+
+    // "חיבור וחיסור 3 – חיסור עד 100": the topic on one line and what this
+    // lesson does on a smaller line under it, instead of a dash that wraps
+    // onto a line of its own.
+    function setCardPart(partEl, text) {
+      const [head, ...rest] = text.split(/\s+[–-]\s+/);
+      if (!rest.length) {
+        partEl.textContent = text;
+        return;
+      }
+      partEl.replaceChildren(
+        ...[head, rest.join(" – ")].map((line) => {
+          const span = document.createElement("span");
+          span.className = "svc-lesson-part-line";
+          span.textContent = line;
+          return span;
+        })
+      );
+    }
+
     function relabelLessonCards() {
       const lang = curLang();
       cards.forEach((card) => {
@@ -4147,7 +4276,7 @@
         const nameEl = $(".svc-lesson-name", card);
         const partEl = $(".svc-lesson-part", card);
         if (nameEl) nameEl.textContent = lesson.nameMain || lesson.name;
-        if (partEl) partEl.textContent = lesson.namePart || "";
+        if (partEl) setCardPart(partEl, lesson.namePart || "");
         const openBtn = $(".js-lesson-open", card);
         if (openBtn && !openBtn.hidden) openBtn.textContent = lang === "en" ? "Open" : "פתיחה";
         const infoToggle = $(".svc-lesson-info-toggle", card);
@@ -4166,13 +4295,15 @@
       $$("button[data-subject]", filtersRoot).forEach((btn) => {
         btn.textContent = btn.dataset.subject === "all" ? gradeGroupLabel("all") : subjectLabel(btn.dataset.subject);
       });
+      const gradeText = (grade) => (grade === "all" ? gradeGroupLabel("all") : gradeName(Number(grade)));
       $$("button[data-grade]", filtersRoot).forEach((btn) => {
-        btn.textContent = gradeGroupLabel(btn.dataset.grade);
+        btn.textContent = gradeText(btn.dataset.grade);
+        btn.classList.toggle("active", btn.dataset.grade === state.grade);
       });
       if (subjectValue) {
         subjectValue.textContent = state.subject === "all" ? gradeGroupLabel("all") : subjectLabel(state.subject);
       }
-      if (gradeValue) gradeValue.textContent = gradeGroupLabel(state.grade);
+      if (gradeValue) gradeValue.textContent = gradeText(state.grade);
       renderTopicMenu();
       relabelLessonCards();
     }
@@ -4187,11 +4318,12 @@
         // English and the school subjects have their own area (learning
         // path, exercises): choosing one goes straight there instead of
         // filtering the cards.
+        // The chosen grade goes along: the area opens on that grade's topics.
         const area = SUBJECT_AREAS[btn.dataset.subject];
         if (area) {
           btn.classList.remove("active");
           $(`#filterSubjectMenu button[data-subject="${state.subject}"]`)?.classList.add("active");
-          window.location.href = area;
+          window.location.href = state.grade === "all" ? area : `${area}?grade=${state.grade}`;
           return;
         }
         state.subject = btn.dataset.subject;
@@ -4208,6 +4340,7 @@
       (btn) => {
         state.grade = btn.dataset.grade;
         if (gradeValue) gradeValue.textContent = btn.textContent;
+        setGradeInUrl(state.grade);
         renderTopicMenu();
         applyFilters();
       }
@@ -4355,7 +4488,7 @@
 
     $("#lessonInfoTitle").textContent = lesson.nameMain || lesson.name;
     $("#lessonInfoSubject").textContent = subjectLabel(lesson.subject);
-    $("#lessonInfoGrade").textContent = formatGradeLabel(lesson.gradeLabel);
+    $("#lessonInfoGrade").textContent = formatGradeLabel(lesson);
     $("#lessonInfoSummary").textContent = lesson.summary;
     $("#lessonInfoLearnedBadge")?.classList.toggle("hidden", !getLearnedLessons().includes(lessonId));
     $("#lessonInfoPremiumBadge")?.classList.toggle("hidden", !lesson.premium || !!window.PleyiPremium?.hasPremium?.());
@@ -5035,9 +5168,9 @@
     const bgMenu = $("#lessonPlayerBgMenu");
     const pdfBtn = $("#lessonPlayerPdfToggle");
     const backdrop = $("#lessonPlayerBackdrop");
+    if (!player || !slideEl) return;
     const shell = $(".lesson-player-shell", player);
     const slideWrapEl = $(".lesson-player-slide-wrap", player);
-    if (!player || !slideEl) return;
 
     // Dense slides (long glossary lists, etc.) can be taller than the slide
     // viewport — shrink font sizes/gaps (via the --lp-fit CSS var consumed
@@ -5063,6 +5196,32 @@
       return Math.max(1, Math.min(wrapW / winWrapW, wrapH / winWrapH));
     }
 
+    // Text kept on one line (math, table cells) can be wider than its card
+    // on a narrow slide — it shrinks too, until it sits inside the card's
+    // padding (never pressed against the border).
+    const LP_NOWRAP = ".lp-math, .lp-steps-cell, .lp-en--nowrap, .lp-st td";
+
+    function nowrapBoxes() {
+      return [...slideEl.querySelectorAll(LP_NOWRAP)].map((el) => {
+        let box = el.parentElement;
+        while (box && box !== slideEl && !(parseFloat(getComputedStyle(box).borderLeftWidth) > 0)) {
+          box = box.parentElement;
+        }
+        return [el, box || slideEl];
+      });
+    }
+
+    function spillsSideways(pairs, zoom) {
+      return pairs.some(([el, box]) => {
+        const r = el.getBoundingClientRect();
+        const b = box.getBoundingClientRect();
+        const cs = getComputedStyle(box);
+        const left = (box.clientLeft + (parseFloat(cs.paddingLeft) || 0)) * zoom;
+        const right = (box.clientLeft + (parseFloat(cs.paddingRight) || 0)) * zoom;
+        return r.width > 0 && (r.left < b.left + left - 1 || r.right > b.right - right + 1);
+      });
+    }
+
     function fitSlideContent() {
       if (!slideWrapEl) return;
       slideEl.style.removeProperty("--lp-fit");
@@ -5071,8 +5230,12 @@
       else slideEl.style.removeProperty("--lp-zoom");
       const available = slideWrapEl.clientHeight / zoom;
       if (!available) return;
+      const pairs = nowrapBoxes();
       let scale = 1;
-      while (scale > LP_FIT_MIN + 1e-6 && slideEl.scrollHeight > available) {
+      while (
+        scale > LP_FIT_MIN + 1e-6 &&
+        (slideEl.scrollHeight > available || spillsSideways(pairs, zoom))
+      ) {
         scale = Math.max(LP_FIT_MIN, scale - LP_FIT_STEP);
         slideEl.style.setProperty("--lp-fit", scale.toFixed(2));
       }
@@ -5080,6 +5243,8 @@
     if (typeof ResizeObserver !== "undefined" && slideWrapEl) {
       new ResizeObserver(fitSlideContent).observe(slideWrapEl);
     }
+    // A late web font changes how wide the text is.
+    document.fonts?.addEventListener?.("loadingdone", fitSlideContent);
 
     if (player.parentElement !== document.body) {
       document.body.appendChild(player);
@@ -5091,6 +5256,39 @@
     let steps = [];
     let index = 0;
     let pdfMode = false;
+
+    // "הסבר מורחב": a square button beside the other top-bar buttons, on a
+    // lesson whose slides have `more` (lines of simple Hebrew, one idea
+    // each). It switches the whole presentation: every such slide shows its
+    // longer explanation instead of the short one. The choice is remembered.
+    const MORE_KEY = "pleyi-lesson-more";
+    const MORE_ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8v.5h6V16c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5Z"/></svg>`;
+    const moreBtn = document.createElement("button");
+    moreBtn.type = "button";
+    moreBtn.className = "lesson-player-more hidden";
+    moreBtn.setAttribute("aria-label", "הסבר מורחב");
+    moreBtn.setAttribute("title", "הסבר מורחב");
+    moreBtn.innerHTML = MORE_ICON;
+    $(".lesson-player-top-actions", player)?.prepend(moreBtn);
+    let moreMode = false;
+    try {
+      moreMode = localStorage.getItem(MORE_KEY) === "1";
+    } catch {}
+
+    function syncMoreBtn() {
+      moreBtn.classList.toggle("hidden", !lesson?.slides?.some((s) => s.more?.length));
+      moreBtn.setAttribute("aria-pressed", moreMode ? "true" : "false");
+    }
+
+    moreBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      moreMode = !moreMode;
+      try {
+        localStorage.setItem(MORE_KEY, moreMode ? "1" : "0");
+      } catch {}
+      syncMoreBtn();
+      if (steps[index]?.more?.length) renderStep();
+    });
 
     const EXPAND_ICON = `<svg class="lesson-player-expand-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M16 21h5v-5M8 21H3v-5"/></svg>`;
     const COMPRESS_ICON = `<svg class="lesson-player-expand-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M14 20v-6h6M10 4v6H4"/></svg>`;
@@ -5321,8 +5519,8 @@
       const classGames = (lesson.games || [])
         .map(
           (g) =>
-            `<button type="button" class="lp-game-btn" data-game-id="${g.id}">
-              <span class="lp-game-btn-icon" aria-hidden="true">${g.icon || "🎮"}</span>
+            `<button type="button" class="lp-game-btn lp-game-btn--${g.id}" data-game-id="${g.id}">
+              <span class="lp-game-btn-icon" aria-hidden="true">${g.icon || LESSON_GAME_ICONS.play}</span>
               <span class="lp-game-btn-label">${en ? g.labelEn : g.label}</span>
             </button>`
         )
@@ -5822,11 +6020,41 @@
       return `<div class="lp-steps">${parts.join("")}</div>`;
     }
 
+    // A slide in "הסבר מורחב" mode: its `more` lines in order (a line that
+    // is only math, "$P = 2 · π · r$", gets a card; an [english, hebrew] row
+    // in an English lesson is an example card to hear, and rows next to each
+    // other share one list), beside its drawing.
+    function renderMoreBody(slide) {
+      const parts = [];
+      slide.more.forEach((line) => {
+        if (Array.isArray(line)) {
+          const card = stepsExampleHtml({ en: line[0], he: line[1] });
+          if (Array.isArray(parts[parts.length - 1])) parts[parts.length - 1].push(card);
+          else parts.push([card]);
+          return;
+        }
+        const onlyMath = /^\$([^$]+)\$$/.exec(line);
+        parts.push(
+          onlyMath
+            ? `<div class="lp-math-card"><span class="lp-math-main">${mathHtml(onlyMath[1])}</span></div>`
+            : `<p class="lp-steps-line">${stepsHebrewHtml(line)}</p>`
+        );
+      });
+      const lines = parts.map((part) => (Array.isArray(part) ? `<div class="lp-ex-list">${part.join("")}</div>` : part)).join("");
+      const figure = slide.fig && window.LESSON_FIGURES?.[slide.fig.kind];
+      if (!figure) return `<div class="lp-steps lp-steps--more">${lines}</div>`;
+      return `<div class="lp-steps lp-steps--side lp-steps--more"><div class="lp-steps-col">${lines}</div><div class="lp-fig${
+        figure.tall ? " lp-fig--tall" : ""
+      }">${figure(slide.fig)}</div></div>`;
+    }
+
     function renderContentSlide(slide, { isLast = false } = {}) {
       let bodyHtml = "";
       let bodyLayout = "default";
 
-      if (slide.lines || slide.fig || slide.examples || LP_SIDE_FIG_PARTS.some((key) => slide[key])) {
+      if (slide.moreView) {
+        bodyHtml = renderMoreBody(slide);
+      } else if (slide.lines || slide.fig || slide.examples || LP_SIDE_FIG_PARTS.some((key) => slide[key])) {
         bodyHtml = renderStepsBody(slide);
       } else if (slide.pictures?.length) {
         bodyHtml = `<ul class="lp-picture-grid" data-count="${slide.pictures.length}">${slide.pictures
@@ -5981,7 +6209,10 @@
             ? renderQuizSlide(slide)
           : slide.type === "pdf-image"
             ? renderPdfImageSlide(slide)
-            : renderContentSlide(slide, { isLast: index === steps.length - 1 });
+            : renderContentSlide(
+                moreMode && slide.more?.length ? { title: slide.title, fig: slide.fig, more: slide.more, moreView: true } : slide,
+                { isLast: index === steps.length - 1 }
+              );
       animateSlide(html, direction);
       updateNav();
       if (index === steps.length - 1) markLessonLearned(lesson.id);
@@ -6023,6 +6254,8 @@
         lesson = null;
         return;
       }
+      // A signed-in teacher's "my activity" on /my-room.
+      Promise.resolve(window.UserData?.recordLessonOpen?.(lessonId)).catch(() => {});
       // The PDF slide images are baked-in Hebrew graphics that can't be
       // localized — fall back to the (translatable) text slides in English.
       const hasPdf = curLang() !== "en" && !!lesson.pdfSlides?.length;
@@ -6034,6 +6267,7 @@
       steps = buildSteps();
       index = Number.isInteger(startIndex) && startIndex > 0 && startIndex < steps.length ? startIndex : 0;
       player.dataset.lessonId = lessonId;
+      syncMoreBtn();
       renderDots();
       renderStep();
       player.classList.remove("hidden");
@@ -6184,6 +6418,8 @@
     openLesson: (lessonId) => openLessonSlides?.(lessonId),
     resumeLesson: (lessonId, slideIndex) => resumeLessonSlides?.(lessonId, slideIndex),
     localize: localizeLesson,
+    // The curriculum grades, for the subject areas' grade filter.
+    grades: { count: GRADE_LETTERS.length, name: gradeName, fromUrl: gradeFromUrl, setInUrl: setGradeInUrl, has: lessonInGrade, englishTopic: englishTopicGrades },
     // The subject lessons' math markup, for their practice exercises
     // (english-learning.js on a subject page).
     mathHtml,

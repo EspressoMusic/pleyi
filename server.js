@@ -16,6 +16,8 @@ const studentProgress = require("./lib/student-progress");
 const aiLesson = require("./lib/ai-lesson");
 const englishPractice = require("./lib/english-practice");
 const seo = require("./lib/seo");
+const siteSearch = require("./lib/site-search");
+const together = require("./lib/together");
 const { extractText } = require("./lib/extract-text");
 const { verifyIdToken } = require("./lib/firebase-admin");
 const multer = require("multer");
@@ -35,7 +37,7 @@ const materialUpload = multer({
 
 app.use(express.json());
 
-const servicePages = ["ready-lessons", "english", "english-worksheet", "worksheets", "family", "game-builder"];
+const servicePages = ["ready-lessons", "english", "english-worksheet", "worksheets", "class-games", "family", "game-builder"];
 servicePages.forEach((slug) => {
   app.get(`/services/${slug}`, (_req, res) => {
     res.sendFile(path.join(__dirname, "public", "services", `${slug}.html`));
@@ -72,6 +74,7 @@ blogPosts.forEach((slug) => {
 
 // The English guide as plain HTML (/english/...), /sitemap.xml and /llms.txt.
 seo.mount(app);
+siteSearch.mount(app);
 
 // The audio clips never change under the same address (speech.js has ?v=N).
 app.use("/audio", express.static(path.join(__dirname, "public", "audio"), { maxAge: "30d", immutable: true }));
@@ -96,6 +99,11 @@ app.get("/lesson-plans", (_req, res) => {
 
 app.get("/room", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "room.html"));
+});
+
+// Play together — one on one or group survival (lib/together.js).
+app.get("/together", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "together.html"));
 });
 
 app.get("/premium", (_req, res) => {
@@ -458,6 +466,9 @@ app.post("/api/progress", studentRoute(async (req) => {
   const { activity, points } = await studentProgress.recordActivity(key, req.body?.activity);
   return { id: activity.id, earned: activity.points || 0, points };
 }));
+
+// "צריך עזרה" — shows up in the teacher's bell on /my-room.
+app.post("/api/help", studentRoute((req) => studentProgress.askHelp(req.get("x-student-key"), req.body?.text)));
 
 // The student's class leaderboard (every file of the same teacher).
 app.get("/api/leaderboard", studentRoute((req) => studentProgress.getLeaderboard(req.get("x-student-key"))));
@@ -823,6 +834,8 @@ function sendGameStateToSocket(socket, room) {
     scores: roomSummary(room).scores,
   });
 }
+
+together.mount(io);
 
 io.on("connection", (socket) => {
   socket.data.roomCode = null;

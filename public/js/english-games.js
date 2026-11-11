@@ -1189,6 +1189,7 @@
       const whole = Math.min(W - 10, byHeight);
       const width = whole >= SCENE_MIN_WIDTH ? whole : Math.max(byHeight, SCENE_MIN_WIDTH);
       scene.style.width = `${width}px`;
+      card.style.setProperty("--hunt-ink", `${Math.min(3, Math.max(1.5, width / 420)).toFixed(2)}px`);
       if (!centered) {
         centered = true;
         stage.scrollLeft = (stage.scrollWidth - W) / 2;

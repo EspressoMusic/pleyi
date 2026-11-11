@@ -90,7 +90,18 @@ window.TowerStackPro = {
       glow: "#FBBF24",
     };
 
+    let controlsH = 112;
+    // The answer buttons float over the canvas bottom; measure them so the tower stands above them.
+    const measureControls = () => {
+      const el = document.getElementById("tsProControls");
+      const wasHidden = el.classList.contains("hidden");
+      el.classList.remove("hidden");
+      if (el.offsetHeight) controlsH = el.offsetHeight;
+      if (wasHidden) el.classList.add("hidden");
+    };
+
     const resize = () => {
+      measureControls();
       const rect = canvas.getBoundingClientRect();
       canvas.width = Math.round(rect.width * devicePixelRatio);
       canvas.height = Math.round(rect.height * devicePixelRatio);
@@ -101,7 +112,7 @@ window.TowerStackPro = {
     const cw = () => canvas.getBoundingClientRect().width;
     const ch = () => canvas.getBoundingClientRect().height;
     const blockW = () => Math.min(300, cw() * 0.74);
-    const groundY = () => ch() - 56;
+    const groundY = () => ch() - controlsH;
     const blockYForIndex = (idx) => {
       const base = groundY() - (idx + 1) * BLOCK_H;
       return idx > 0 ? base - idx * (CUBE_DEPTH + BLOCK_GAP) : base;

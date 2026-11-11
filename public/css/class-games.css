@@ -1,0 +1,845 @@
+/* Class games (/services/class-games, js/class-games.js) — the cards grid
+   and the full-screen game the teacher shows on the board. */
+
+body.page-class-games #games.clean-section--soft {
+  background: transparent;
+  padding-top: 0 !important;
+  overflow: visible;
+}
+
+.cg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 22px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .cg-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    max-width: 460px;
+  }
+}
+
+/* "Play together" (/together) — English games with friends, above the grid. */
+.cg-together {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 760px;
+  margin: 0 auto 34px;
+  padding: 16px 22px;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: #eaf5ff;
+  box-shadow: var(--shadow-sticker);
+  color: #000;
+  text-decoration: none;
+  transition: transform 0.32s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.cg-together:hover {
+  transform: scale(1.03);
+}
+
+.cg-together-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #00c9b7;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.cg-together-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.cg-together-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cg-together-title {
+  font-size: clamp(1.3rem, 4.4vw, 1.7rem);
+  font-weight: 900;
+}
+
+.cg-together-line {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.cg-together .cg-together-btn {
+  flex: none;
+  margin: 0;
+  padding: 10px 22px;
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+@media (max-width: 560px) {
+  .cg-together {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 14px;
+    max-width: 460px;
+    text-align: start;
+  }
+
+  .cg-together-text {
+    flex: 1 1 60%;
+  }
+
+  .cg-together .cg-together-btn {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+}
+
+/* Filters (type, level) — two sticker buttons, like the worksheets page. */
+body.page-class-games .cg-filters {
+  max-width: 540px;
+  gap: 18px;
+  margin: 0 auto 40px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.cg-filters .svc-filter-trigger {
+  align-items: center;
+  padding: 12px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #c8faf5;
+  box-shadow: var(--shadow-sticker);
+  text-align: center;
+}
+
+.cg-filters .svc-filter-trigger:hover,
+.cg-filters .svc-filter-dropdown.is-open .svc-filter-trigger {
+  background: #dffcf8;
+}
+
+.cg-filters .svc-filter-trigger-label {
+  width: 100%;
+  font-size: 1rem;
+  letter-spacing: 0;
+  color: #000;
+}
+
+.cg-filters .svc-filter-trigger-value {
+  width: 100%;
+  font-size: 1.45rem;
+  color: #000;
+}
+
+.cg-filters .svc-filter-menu {
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #eaf5ff;
+  box-shadow: var(--shadow-sticker);
+}
+
+.cg-filters .svc-filter-menu button {
+  padding: 10px 12px;
+  font-size: 1.1rem;
+  text-align: center;
+  color: #000;
+}
+
+.cg-filters .svc-filter-menu button:hover {
+  background: #d4ecff;
+}
+
+.cg-filters .svc-filter-menu button.active {
+  background: var(--memteal);
+}
+
+.cg-empty {
+  background: #eaf5ff;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 480px) {
+  body.page-class-games .cg-filters {
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .cg-filters .svc-filter-trigger-value {
+    font-size: 1.25rem;
+  }
+}
+
+/* Same sticker tile as the game-builder cards: turquoise square, black
+   title, "i" in the corner, "שחק" pill at the bottom. */
+.cg-card {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 10px 58px;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: #00c9b7;
+  box-shadow: var(--shadow-sticker);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.32s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.cg-card:hover {
+  transform: scale(1.06);
+  z-index: 2;
+}
+
+.cg-card-title {
+  font-size: clamp(1.3rem, 5.2vw, 1.85rem);
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.cg-card .cg-card-play {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: 86%;
+  margin: 0;
+  padding: 7px 12px;
+  min-height: 34px;
+  font-size: clamp(0.95rem, 3.2vw, 1.08rem);
+  font-weight: 900;
+  border-radius: 999px;
+  box-shadow: none !important;
+}
+
+.cg-card .cg-card-play:active {
+  transform: translateX(-50%);
+}
+
+.cg-card-info {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.cg-card-info:hover,
+.cg-card-info:focus-visible {
+  background: var(--memyellow);
+}
+
+/* The teal marker used for labels and titles (same as .lp-key). */
+.cg-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
+  font-weight: 900;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* "i" dialog — the game's type and level, then how to play. */
+.cg-info-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 22px;
+  margin: 0 auto 18px;
+  font-size: clamp(1rem, 2.6vw, 1.12rem);
+  font-weight: 700;
+  color: #000;
+}
+
+/* "i" dialog — how to play, one idea per line. */
+.cg-info-how {
+  margin: 0 auto 24px;
+  padding: 0;
+  max-width: 34ch;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.cg-info-how li {
+  position: relative;
+  padding-inline-start: 22px;
+  font-size: clamp(1rem, 2.6vw, 1.12rem);
+  font-weight: 700;
+  line-height: 1.5;
+  color: #000;
+}
+
+.cg-info-how li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.5em;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memteal);
+}
+
+/* --- The game screen: fills the viewport, never scrolls --- */
+html.cg-open,
+html.cg-open body {
+  overflow: hidden;
+}
+
+/* !important: styles.css forces position:relative on every direct child
+   of <body>, and this screen is one. */
+.cg-runner {
+  position: fixed !important;
+  inset: 0;
+  z-index: 3000 !important;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.8dvh, 18px);
+  height: 100dvh;
+  padding: max(clamp(20px, 4dvh, 44px), env(safe-area-inset-top)) clamp(12px, 3vw, 40px) max(clamp(22px, 4.5dvh, 48px), env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background: var(--game-stage-bg-color, #e0fbf8);
+  color: #000;
+}
+
+.cg-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+.cg-bar-end {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cg-round-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #eaf5ff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.cg-round-btn:hover,
+.cg-round-btn:focus-visible {
+  background: var(--memyellow);
+}
+
+.cg-title {
+  margin: 0;
+  font-size: clamp(1.3rem, 4vmin, 2.2rem);
+  text-align: center;
+  -webkit-text-stroke: 0 transparent !important;
+  -webkit-text-fill-color: #000 !important;
+  text-shadow: none !important;
+}
+
+.cg-count {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.6);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+.cg-instr {
+  flex: none;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1rem, 3vmin, 1.6rem);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.cg-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cg-big {
+  width: min(100%, 1000px);
+  max-height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(10px, 2.4vmin, 26px);
+  padding: clamp(18px, 4.5vmin, 56px);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: #eaf5ff;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  text-align: center;
+  overflow: hidden;
+}
+
+.cg-lead {
+  margin: 0;
+  font-size: clamp(1.15rem, 4vmin, 2.4rem);
+  font-weight: 900;
+}
+
+.cg-main {
+  margin: 0;
+  font-size: clamp(1.45rem, 6.2vmin, 4rem);
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.cg-main.cg-muted {
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.cg-word {
+  font-size: clamp(2rem, 10vmin, 6rem);
+}
+
+.cg-answer {
+  margin: 0;
+  font-size: clamp(1.15rem, 4.4vmin, 2.6rem);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.cg-cover {
+  min-height: min(40dvh, 320px);
+  background: repeating-linear-gradient(
+    45deg,
+    #b8fff5,
+    #b8fff5 18px,
+    #8ef0e3 18px,
+    #8ef0e3 36px
+  );
+}
+
+.cg-controls {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 22px);
+  min-height: 56px;
+  padding-bottom: 10px;
+}
+
+.cg-controls .cg-btn {
+  padding: clamp(10px, 1.8dvh, 16px) clamp(22px, 4vw, 40px);
+  font-size: clamp(1.05rem, 3vmin, 1.5rem);
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.cg-controls .cg-btn-alt {
+  background: #b8fff5;
+  color: var(--ink);
+}
+
+.cg-controls .cg-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Timer pill */
+.cg-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 6px 8px;
+  padding-inline-start: 18px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.cg-timer-time {
+  min-width: 3.4ch;
+  font-size: clamp(1.4rem, 4.4vmin, 2.6rem);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  text-align: center;
+}
+
+.cg-timer.is-low {
+  background: var(--memyellow);
+}
+
+.cg-timer.is-done {
+  background: #ffb3b3;
+  animation: cg-timer-done 0.5s ease-in-out 3;
+}
+
+@keyframes cg-timer-done {
+  50% { transform: scale(1.08); }
+}
+
+.cg-timer-btn {
+  padding: 8px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memteal);
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(0.95rem, 2.6vmin, 1.2rem);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* Would you rather — two options side by side, stacked on tall screens. */
+.cg-wyr {
+  width: min(100%, 1150px);
+  height: min(100%, 520px);
+  display: flex;
+  align-items: stretch;
+  gap: clamp(12px, 2.4vw, 28px);
+}
+
+.cg-wyr-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(14px, 3.5vmin, 40px);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  text-align: center;
+  font-size: clamp(1.4rem, 5.6vmin, 3.6rem);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.cg-wyr-option--a { background: var(--memyellow); }
+.cg-wyr-option--b { background: #00c9b7; }
+
+.cg-wyr-or {
+  align-self: center;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 9vmin, 84px);
+  height: clamp(52px, 9vmin, 84px);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: clamp(1.2rem, 3.6vmin, 2rem);
+}
+
+/* Question wheel — wheel and question side by side, stacked on tall screens. */
+.cg-wheel-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 56px);
+}
+
+.cg-wheel {
+  position: relative;
+  flex: none;
+  width: min(44vw, 64dvh);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.cg-wheel-disc {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cg-wheel-disc.is-spinning {
+  transition: transform 4.2s cubic-bezier(0.15, 0.7, 0.12, 1);
+}
+
+.cg-wheel-pointer {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  z-index: 2;
+  width: clamp(28px, 5vmin, 44px);
+  transform: translateX(-50%);
+}
+
+.cg-wheel-label {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 900;
+  fill: #000;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.cg-wheel-question {
+  flex: 1;
+  max-width: 640px;
+  min-height: min(36dvh, 300px);
+}
+
+/* Picture detective — the question on top, the picture big in the middle.
+   The picture keeps its 16:10 in whatever room is left (container units),
+   border and shadow included; a tap opens it over the whole screen. */
+.cg-pic-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 2dvh, 20px);
+}
+
+.cg-pic-card {
+  flex: none;
+  width: min(100%, 1100px);
+  gap: clamp(4px, 1vmin, 10px);
+  padding: clamp(10px, 2vmin, 22px) clamp(14px, 3vmin, 32px);
+}
+
+.cg-pic-card .cg-main {
+  font-size: clamp(1.15rem, 4vmin, 2.4rem);
+}
+
+.cg-pic-card .cg-answer {
+  font-size: clamp(1.05rem, 3.4vmin, 2rem);
+}
+
+/* The answer beside its clues (stacked on narrow screens). */
+.cg-pic-answer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.4vw, 32px);
+}
+
+.cg-pic-answer .cg-answer {
+  flex: none;
+  max-width: 45%;
+}
+
+.cg-clues {
+  text-align: start;
+}
+
+.cg-clue {
+  margin: 0;
+  font-size: clamp(0.9rem, 2.3vmin, 1.3rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+@media (max-width: 640px) {
+  .cg-pic-answer {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cg-pic-answer .cg-answer {
+    max-width: none;
+  }
+
+  .cg-clues {
+    text-align: center;
+  }
+}
+
+.cg-pic-wrap {
+  flex: 1 1 0;
+  width: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  container-type: size;
+}
+
+.cg-pic {
+  position: relative;
+  display: block;
+  box-sizing: content-box;
+  width: min(100cqw - 14px, (100cqh - 14px) * 1.6);
+  aspect-ratio: 16 / 10;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  overflow: hidden;
+  background: #eaf5ff;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  cursor: zoom-in;
+}
+
+.cg-pic-img,
+.cg-marks {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cg-pic-zoom {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #eaf5ff;
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+/* The answer's rings draw themselves in, one after another. */
+.cg-mark-ink,
+.cg-mark {
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: cg-mark-draw 0.7s ease-out forwards;
+}
+
+.cg-mark-ink {
+  stroke: var(--ink);
+  stroke-width: 17;
+}
+
+.cg-mark {
+  stroke: var(--memyellow, #FFE135);
+  stroke-width: 9;
+}
+
+@keyframes cg-mark-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Portrait: the picture takes the full width, and the question and the
+   picture sit together in the middle. */
+@media (max-aspect-ratio: 3 / 4) {
+  .cg-pic-stage {
+    justify-content: center;
+  }
+
+  .cg-pic-wrap {
+    flex: 0 1 auto;
+    container-type: inline-size;
+  }
+
+  .cg-pic {
+    width: calc(100cqw - 14px);
+  }
+}
+
+.cg-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: clamp(10px, 3vmin, 32px);
+  background: rgba(10, 16, 14, 0.9);
+  container-type: size;
+  cursor: zoom-out;
+}
+
+.cg-zoom-pic {
+  position: relative;
+  width: min(100cqw, 100cqh * 1.6);
+  aspect-ratio: 16 / 10;
+  border: 3px solid #000;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.cg-zoom-close {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  left: 14px;
+}
+
+@media (max-aspect-ratio: 1 / 1) {
+  .cg-wyr {
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .cg-wheel-stage {
+    flex-direction: column;
+    gap: clamp(14px, 3dvh, 28px);
+  }
+
+  .cg-wheel {
+    width: min(78vw, 40dvh);
+  }
+
+  .cg-wheel-question {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .cg-round-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 1.35rem;
+  }
+
+  .cg-big,
+  .cg-wyr-option {
+    border-radius: 18px;
+  }
+}

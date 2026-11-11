@@ -10,63 +10,6 @@ body.stu-body {
   color: var(--ink);
 }
 
-.stu-top {
-  display: flex;
-  justify-content: center;
-  padding: 14px 16px;
-  background: var(--white);
-  border-bottom: 3px solid var(--ink);
-}
-
-.stu-brand {
-  font-size: 1.6rem;
-  color: var(--ink);
-}
-
-/* The student's name on the start side of the header, the brand on the end. */
-.stu-top:has(.stu-me:not([hidden])) {
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.stu-me {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  padding: 4px 16px 4px 4px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: var(--memyellow);
-  font-size: clamp(1.1rem, 4.4vw, 1.35rem);
-  font-weight: 900;
-  color: var(--ink);
-}
-
-.stu-me[hidden] {
-  display: none;
-}
-
-.stu-me-avatar {
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--white);
-  font-size: 1.2rem;
-  line-height: 1;
-}
-
-.stu-me-name {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .stu-main {
   max-width: 760px;
   margin: 0 auto;
@@ -629,4 +572,846 @@ body.stu-body {
 
 .stu-board .lb-rules {
   margin-top: 4px;
+}
+
+/* Tabs: the tasks, the map and the library. */
+.stu-tabs {
+  display: flex;
+  gap: 6px;
+  max-width: 540px;
+  margin: 18px auto 0;
+  padding: 6px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #eaf5ff;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.stu-tab {
+  flex: 1;
+  padding: 9px 12px;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  font-size: 1.12rem;
+  font-weight: 900;
+  text-align: center;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.stu-tab.is-on {
+  border-color: var(--ink);
+  background: var(--memyellow);
+}
+
+.stu-tabs + .stu-lead {
+  margin-top: 20px;
+}
+
+@media (max-width: 420px) {
+  .stu-tabs {
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .stu-tab {
+    padding: 8px 4px;
+    font-size: 0.95rem;
+  }
+}
+
+/* The library: a card for every learning area. */
+.stu-lib {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stu-lib-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 18px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: #e3fbf3;
+  box-shadow: var(--shadow-sticker);
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+
+.stu-lib li:nth-child(3n + 1) .stu-lib-card {
+  background: var(--memyellow);
+}
+
+.stu-lib li:nth-child(3n + 2) .stu-lib-card {
+  background: #eaf5ff;
+}
+
+.stu-lib-card:hover,
+.stu-lib-card:focus-visible {
+  transform: translateY(-3px);
+}
+
+.stu-lib-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.stu-lib-about {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--body);
+}
+
+@media (max-width: 560px) {
+  .stu-lib {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stu-lib-card {
+    padding: 14px 12px;
+  }
+
+  .stu-lib-title {
+    font-size: 1.2rem;
+  }
+
+  .stu-lib-about {
+    font-size: 0.92rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stu-lib-card {
+    transition: none;
+  }
+}
+
+/* "My map": the learning path as a road (student-portal.js draws it). */
+.stu-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
+  font-weight: 900;
+}
+
+.stu-map-head {
+  margin-top: 22px;
+  padding: 18px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: #eaf5ff;
+  box-shadow: var(--shadow-sticker);
+  text-align: center;
+}
+
+.stu-map-title {
+  margin: 0 0 6px;
+  font-size: clamp(1.45rem, 6.4vw, 1.85rem);
+  font-weight: 900;
+  color: #000;
+}
+
+.stu-map-lead {
+  margin: 2px 0 0;
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.stu-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stu-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: #d9f7f3;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.stu-legend-item b {
+  margin-inline-start: auto;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.stu-to-here {
+  margin-top: 16px;
+}
+
+/* A topic's status as a small dot (the legend and the stage signs). */
+.stu-mini {
+  flex-shrink: 0;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.stu-mini.is-done {
+  background: var(--stu-done);
+}
+
+.stu-mini.is-started {
+  background: var(--memyellow);
+}
+
+.stu-mini.is-skipped {
+  border-style: dashed;
+  background: var(--stu-late-soft);
+}
+
+.stu-mini.is-ahead {
+  border-color: rgba(0, 0, 0, 0.4);
+  background: #d9f7f3;
+}
+
+.stu-road {
+  position: relative;
+  width: 320px;
+  margin: 30px auto 0;
+}
+
+.stu-road-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+}
+
+.stu-road-svg path {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.stu-road-edge {
+  stroke: var(--ink);
+  stroke-width: 26;
+}
+
+.stu-road-way {
+  stroke: #fff6cf;
+  stroke-width: 19;
+}
+
+.stu-road-walked {
+  stroke: var(--stu-done);
+  stroke-width: 19;
+}
+
+.stu-road-lane {
+  stroke: rgba(0, 0, 0, 0.3);
+  stroke-width: 2.5;
+  stroke-dasharray: 2 12;
+}
+
+.stu-start {
+  position: absolute;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 16px 5px 6px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #eaf5ff;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  transform: translate(-50%, -50%);
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #000;
+  white-space: nowrap;
+}
+
+.stu-start-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+}
+
+.stu-start-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* A stage's sign across the road: its name and a dot per topic. */
+.stu-stage {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #eaf5ff;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  text-align: center;
+}
+
+.stu-stage-head {
+  font-size: 1.18rem;
+  font-weight: 900;
+  line-height: 1.3;
+  color: #000;
+}
+
+.stu-stage-dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.stu-stage-dots .stu-mini {
+  width: 16px;
+  height: 16px;
+}
+
+/* A topic: its circle, centred on its point of the road, and its name. */
+.stu-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 140px;
+  margin: -34px 0 0 -70px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: #000;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stu-node-dot {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.stu-node:active .stu-node-dot {
+  transform: translateY(2px);
+}
+
+.stu-node:focus-visible .stu-node-dot {
+  outline: 4px solid var(--memyellow);
+  outline-offset: 3px;
+}
+
+.stu-node-dot svg {
+  width: 34px;
+  height: 34px;
+}
+
+.stu-node.is-done .stu-node-dot {
+  background: var(--stu-done);
+  color: var(--white);
+}
+
+/* Started: a ring that fills with how much of the topic is done. */
+.stu-node.is-started .stu-node-dot {
+  background:
+    radial-gradient(closest-side, var(--memyellow) calc(100% - 9px), var(--ink) calc(100% - 8px), var(--ink) calc(100% - 7px), transparent calc(100% - 6px)),
+    conic-gradient(var(--stu-done) calc(var(--p, 0) * 1%), #fff6cf 0);
+}
+
+.stu-node.is-skipped .stu-node-dot {
+  border-style: dashed;
+  background: var(--stu-late-soft);
+}
+
+.stu-node.is-ahead .stu-node-dot {
+  border-color: rgba(0, 0, 0, 0.4);
+  background: #d9f7f3;
+  box-shadow: none;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.stu-node-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 140px;
+  padding: 2px 8px 3px;
+  border-radius: 10px;
+  background: rgba(234, 245, 255, 0.94);
+}
+
+.stu-node-title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.22;
+  text-align: center;
+}
+
+.stu-node-en {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.stu-node-status {
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #0d6b38;
+}
+
+.stu-node.is-started .stu-node-status {
+  color: #000;
+}
+
+.stu-node.is-skipped .stu-node-status {
+  color: #b42318;
+}
+
+/* "You are here": the student's initial on a pin over the topic they
+   practiced last. */
+.stu-node-pin {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stu-node-pin::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  margin-left: -7px;
+  border: 7px solid transparent;
+  border-top-color: var(--ink);
+  border-bottom: 0;
+}
+
+/* On the road the pin stands beside the circle and points at it. */
+.stu-node-pin.is-right,
+.stu-node-pin.is-left {
+  top: 14px;
+  margin-left: 0;
+}
+
+.stu-node-pin.is-right {
+  left: calc(50% + 44px);
+}
+
+.stu-node-pin.is-left {
+  left: auto;
+  right: calc(50% + 44px);
+}
+
+.stu-node-pin.is-right::after,
+.stu-node-pin.is-left::after {
+  top: 50%;
+  bottom: auto;
+  margin: -7px 0 0;
+  border: 7px solid transparent;
+}
+
+.stu-node-pin.is-right::after {
+  left: -11px;
+  border-right-color: var(--ink);
+  border-left: 0;
+}
+
+.stu-node-pin.is-left::after {
+  left: auto;
+  right: -11px;
+  border-left-color: var(--ink);
+  border-right: 0;
+}
+
+.stu-node.is-here .stu-node-dot {
+  animation: stu-here 1.8s ease-in-out infinite;
+}
+
+@keyframes stu-here {
+  0%,
+  100% {
+    box-shadow: 4px 5px 0 0 var(--ink), 0 0 0 0 rgba(255, 225, 53, 0.95);
+  }
+  50% {
+    box-shadow: 4px 5px 0 0 var(--ink), 0 0 0 12px rgba(255, 225, 53, 0);
+  }
+}
+
+.stu-goal {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 280px;
+  margin: -46px 0 0 -140px;
+  text-align: center;
+}
+
+.stu-goal-icon {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #fff6cf;
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.stu-goal.is-done .stu-goal-icon {
+  background: var(--memyellow);
+}
+
+.stu-goal-icon svg {
+  width: 50px;
+  height: 50px;
+}
+
+.stu-goal-text {
+  padding: 6px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #eaf5ff;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #000;
+}
+
+/* The vocabulary topics, beside the road. */
+.stu-side {
+  margin-top: 10px;
+  padding: 18px 12px 22px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: #eaf5ff;
+  box-shadow: var(--shadow-sticker);
+}
+
+.stu-side-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.4;
+  text-align: center;
+  color: #000;
+}
+
+.stu-side-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 34px 6px;
+  margin-top: 30px;
+}
+
+.stu-side .stu-node {
+  position: relative;
+  width: auto;
+  margin: 0;
+}
+
+.stu-side .stu-node-dot {
+  width: 60px;
+  height: 60px;
+  font-size: 1.3rem;
+}
+
+.stu-side .stu-node-text {
+  max-width: 100%;
+  background: none;
+}
+
+/* A topic's details. */
+.stu-dlg {
+  width: min(92vw, 440px);
+  max-height: 86dvh;
+  padding: 0;
+  overflow: auto;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: #eaf5ff;
+  box-shadow: 6px 8px 0 0 var(--ink);
+  color: #000;
+}
+
+.stu-dlg::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.stu-dlg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 18px 20px;
+}
+
+.stu-dlg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stu-dlg-num {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--body);
+}
+
+.stu-dlg-close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  color: #000;
+  cursor: pointer;
+}
+
+.stu-dlg-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.stu-dlg-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 6vw, 1.7rem);
+  font-weight: 900;
+  line-height: 1.4;
+  color: #000;
+}
+
+.stu-dlg-en {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.stu-dlg-status {
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.stu-dlg-status p {
+  margin: 0;
+}
+
+.stu-dlg-status.is-done {
+  background: var(--stu-done-soft);
+}
+
+.stu-dlg-status.is-started {
+  background: #fff6cf;
+}
+
+.stu-dlg-status.is-skipped {
+  background: var(--stu-late-soft);
+}
+
+.stu-dlg-status.is-ahead {
+  background: #d9f7f3;
+}
+
+.stu-dlg-sub {
+  margin: 6px 0 0;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #000;
+}
+
+.stu-dlg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stu-dlg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: #e2ecf4;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.stu-dlg-row.is-on {
+  background: var(--stu-done-soft);
+}
+
+.stu-dlg-mark {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #fff6cf;
+}
+
+.stu-dlg-row.is-on .stu-dlg-mark {
+  background: var(--stu-done);
+  color: var(--white);
+}
+
+.stu-dlg-mark svg {
+  width: 16px;
+  height: 16px;
+}
+
+.stu-dlg-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.stu-dlg-val {
+  flex-shrink: 0;
+  font-weight: 900;
+}
+
+.stu-dlg-none {
+  margin: 0;
+  font-weight: 800;
+}
+
+/* The button stays in view at the bottom while the lists scroll. */
+.stu-dlg-foot {
+  position: sticky;
+  bottom: 0;
+  margin: 4px -18px -20px;
+  padding: 12px 18px 18px;
+  border-top: 3px solid var(--ink);
+  background: #eaf5ff;
+}
+
+.stu-dlg-go {
+  width: 100%;
+}
+
+/* "צריך עזרה": the button under the tasks and its dialog. */
+.stu-help {
+  margin-top: 26px;
+  text-align: center;
+}
+
+.stu-help-btn {
+  background: #eaf5ff;
+  color: var(--ink);
+}
+
+.stu-help-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+}
+
+.stu-help-lead {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.stu-help-text {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #000;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  resize: none;
+}
+
+.stu-help-error {
+  margin: 0;
+  font-weight: 800;
+  color: var(--stu-late);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stu-node.is-here .stu-node-dot {
+    animation: none;
+  }
+
+  .stu-node-dot {
+    transition: none;
+  }
 }

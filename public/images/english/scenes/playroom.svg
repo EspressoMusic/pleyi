@@ -1,21 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 625">
-<defs>
-<pattern id="floor" width="100" height="100" patternUnits="userSpaceOnUse"><rect width="100" height="100" fill="#CDE8FF"/><rect width="50" height="50" fill="#B8DBF7"/><rect x="50" y="50" width="50" height="50" fill="#B8DBF7"/></pattern>
-</defs>
-<g stroke="#1b1b1b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<g stroke="#1b1b1b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
 <rect width="1000" height="440" fill="#FFE3EC" stroke="none"/>
-<rect y="440" width="1000" height="185" fill="url(#floor)" stroke="none"/>
-<path d="M0 440H1000" fill="none"/>
-<rect x="300" y="30" width="150" height="150" rx="6" fill="#FFF3D6" stroke-width="6"/><rect x="500" y="30" width="150" height="150" rx="6" fill="#DFF3FF" stroke-width="6"/><rect x="700" y="30" width="150" height="150" rx="6" fill="#E6FBDD" stroke-width="6"/>
-<rect x="24" y="50" width="230" height="400" fill="#7FCFC1"/>
-<rect x="38" y="64" width="202" height="108" fill="#E9FBF6" stroke-width="3"/>
-<rect x="38" y="188" width="202" height="108" fill="#E9FBF6" stroke-width="3"/>
-<rect x="38" y="312" width="202" height="108" fill="#E9FBF6" stroke-width="3"/>
-<rect x="300" y="300" width="660" height="12" rx="3" fill="#C98A4E"/><path d="M316 312v14M944 312v14" stroke="#9C6B3C" stroke-width="7"/>
-<rect x="330" y="385" width="300" height="80" rx="6" fill="#FFC24B"/>
+<rect y="440" width="1000" height="185" fill="#CFE7FB" stroke="none"/>
+<path d="M0 440H1000" fill="none" stroke-width="6"/>
+<rect x="300" y="30" width="150" height="150" rx="12" fill="#FFF3D6" stroke-width="6"/>
+<rect x="500" y="30" width="150" height="150" rx="12" fill="#DFF3FF" stroke-width="6"/>
+<rect x="700" y="30" width="150" height="150" rx="12" fill="#E6FBDD" stroke-width="6"/>
+<rect x="24" y="50" width="230" height="400" rx="8" fill="#8ED3C4" stroke-width="6"/>
+<g fill="#E9FBF6" stroke-width="4">
+<rect x="38" y="64" width="202" height="108" rx="6"/>
+<rect x="38" y="188" width="202" height="108" rx="6"/>
+<rect x="38" y="312" width="202" height="108" rx="6"/>
+</g>
+<rect x="300" y="300" width="660" height="15" rx="6" fill="#D49B5E"/>
+<ellipse cx="640" cy="560" rx="340" ry="56" fill="#FFD27A" stroke-width="6"/>
+<ellipse cx="640" cy="560" rx="270" ry="40" fill="#FFE7AE" stroke-width="4"/>
+<rect x="330" y="385" width="300" height="80" rx="10" fill="#FFC24B" stroke-width="6"/>
 <path d="M330 410H630" fill="none"/>
-<rect x="465" y="402" width="30" height="20" rx="4" fill="#EF6A5B" stroke-width="3"/>
-<ellipse cx="640" cy="560" rx="340" ry="56" fill="#FFD27A"/>
-<ellipse cx="640" cy="560" rx="270" ry="40" fill="#FFE7AE" stroke-width="3"/>
+<rect x="465" y="400" width="30" height="22" rx="5" fill="#EF6A5B" stroke-width="4"/>
 </g>
 </svg>

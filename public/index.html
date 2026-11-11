@@ -51,11 +51,12 @@
     }
   ]
   </script>
-  <link rel="stylesheet" href="styles.css?v=70"/>
+  <link rel="stylesheet" href="styles.css?v=72"/>
   <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
-  <link rel="stylesheet" href="css/clean-site.css?v=88"/>
+  <link rel="stylesheet" href="css/clean-site.css?v=100"/>
   <link rel="stylesheet" href="css/legal.css?v=3"/>
   <link rel="stylesheet" href="css/accessibility.css?v=1" />
+  <link rel="stylesheet" href="/css/site-fox.css?v=15"/>
 </head>
 <body class="clean-site">
 
@@ -73,7 +74,6 @@
           <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false" data-i18n="nav.services">שירותים</button>
         </div>
         <a href="#about" class="nav-pill" data-i18n="nav.about">מי אנחנו</a>
-        <a href="#news" class="nav-pill">מה חדש</a>
         <a href="#contact" class="nav-pill" data-i18n="nav.contact">צור קשר</a>
       </nav>
       <div class="nav-actions">
@@ -86,7 +86,6 @@
           <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
             <p class="nav-user-name" id="authUserName"></p>
             <a href="/my-room" class="nav-user-link" role="menuitem" data-i18n="nav.myRoom">החדר שלי</a>
-            <a href="/admin/students" class="nav-user-link" role="menuitem" data-i18n="nav.students">ניהול תלמידים</a>
             <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem" data-i18n="nav.logout">יציאה</button>
           </div>
         </div>
@@ -96,6 +95,7 @@
     <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
       <a href="/services/ready-lessons" class="nav-services-link" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
       <a href="/services/worksheets" class="nav-services-link" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+      <a href="/services/class-games" class="nav-services-link" role="menuitem">משחקים</a>
     </div>
   </header>
 
@@ -106,10 +106,10 @@
       <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
         <a href="/services/ready-lessons" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
         <a href="/services/worksheets" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
+        <a href="/services/class-games" role="menuitem">משחקים</a>
       </div>
     </div>
     <a href="#about" data-i18n="nav.about">מי אנחנו</a>
-    <a href="#news">מה חדש</a>
     <a href="#contact" data-i18n="nav.contact">צור קשר</a>
     <button type="button" class="mobile-nav-auth" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
   </nav>
@@ -142,63 +142,34 @@
       </div>
       <div class="container about-wrap">
         <h2 class="clean-section-title font-cartoon" data-i18n="about.title">מי אנחנו</h2>
-        <p class="about-lead" data-i18n="about.lead">הפתרון המושלם למורה ממלא מקום או לרגע שבו אין שיעור מוכן — ספריית שיעורים ומשחקים איכותיים, זמינה תמיד.</p>
-        <div class="about-demo-scene" aria-hidden="true">
-          <div class="about-demo-frame">
-            <span class="about-demo-dot about-demo-dot--a"></span>
-            <span class="about-demo-dot about-demo-dot--b"></span>
-            <span class="about-demo-dot about-demo-dot--c"></span>
-
-            <div class="about-demo-loading">
-              <span class="about-demo-loading-track"><span class="about-demo-loading-fill"></span></span>
+        <p class="about-lead" data-i18n="about.lead" data-i18n-html>הפתרון המושלם <mark class="about-key">למורה ממלא מקום</mark> או לרגע שבו <mark class="about-key">אין שיעור מוכן</mark> — ספריית <mark class="about-key">שיעורים ומשחקים</mark> איכותיים, <mark class="about-key">זמינה תמיד</mark>.</p>
+        <!-- A tour of the real site from screenshots of the "הר געש" lesson (about-demo.js) -->
+        <div class="about-demo-scene" data-site-demo>
+          <div class="about-demo-frame" aria-hidden="true">
+            <div class="about-demo-bar">
+              <span class="about-demo-dot about-demo-dot--a"></span>
+              <span class="about-demo-dot about-demo-dot--b"></span>
+              <span class="about-demo-dot about-demo-dot--c"></span>
+              <span class="about-demo-url" dir="ltr">
+                <svg class="about-demo-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                <span>pleyschool.com</span><span class="about-demo-url-path">/services/ready-lessons</span>
+              </span>
             </div>
-
-            <div class="about-demo-view about-demo-view--tile">
-              <div class="about-demo-tile about-demo-tile--english">
-                <span class="about-demo-tile-icon" aria-hidden="true">📖</span>
-                <span class="about-demo-tile-label font-cartoon" data-i18n="about.demo.lesson">שיעור אנגלית</span>
-              </div>
-              <div class="about-demo-tile about-demo-tile--lifeskills">
-                <span class="about-demo-tile-icon" aria-hidden="true">🌱</span>
-                <span class="about-demo-tile-label font-cartoon" data-i18n="about.demo.lifeskills">שיעור כישורי חיים</span>
-              </div>
-              <div class="about-demo-tile about-demo-tile--nature">
-                <span class="about-demo-tile-icon" aria-hidden="true">🌿</span>
-                <span class="about-demo-tile-label font-cartoon" data-i18n="about.demo.nature">שיעור טבע</span>
-              </div>
-              <div class="about-demo-tile about-demo-tile--math">
-                <span class="about-demo-tile-icon" aria-hidden="true">🔢</span>
-                <span class="about-demo-tile-label font-cartoon" data-i18n="about.demo.math">שיעור חשבון</span>
-              </div>
-            </div>
-
-            <div class="about-demo-view about-demo-view--lesson">
-              <span class="about-demo-lesson-title" dir="ltr">Animals</span>
-              <div class="about-demo-lesson-row">
-                <span class="about-demo-nav-arrow about-demo-nav-arrow--prev" aria-hidden="true">→</span>
-                <div class="about-demo-slide-content">
-                  <p class="about-demo-slide-text" dir="ltr">The dog is big.</p>
-                  <p class="about-demo-slide-text" dir="ltr">The bird can fly.</p>
-                  <p class="about-demo-slide-text" dir="ltr">Fish live in water.</p>
-                </div>
-                <span class="about-demo-nav-arrow about-demo-nav-arrow--next" aria-hidden="true">←</span>
-              </div>
-            </div>
-
-            <div class="about-demo-view about-demo-view--game">
-              <div class="about-demo-quiz">
-                <span class="about-demo-quiz-question" dir="ltr">Apple</span>
-                <span class="about-demo-quiz-hint">מה התרגום?</span>
-                <div class="about-demo-quiz-options">
-                  <span class="about-demo-quiz-option about-demo-quiz-option--1">תפוח</span>
-                  <span class="about-demo-quiz-option about-demo-quiz-option--2">בננה</span>
-                  <span class="about-demo-quiz-option about-demo-quiz-option--3">ענבים</span>
-                  <span class="about-demo-quiz-option about-demo-quiz-option--4">תות</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="about-demo-cursor-pos">
+            <div class="about-demo-screen">
+              <img class="about-demo-shot" data-shot="library" src="/images/demo/library.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="library-menu" src="/images/demo/library-menu.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="subject" src="/images/demo/subject.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="topic" src="/images/demo/topic.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="slide1" src="/images/demo/slide1.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="slide2" src="/images/demo/slide2.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="games" src="/images/demo/games.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="game" src="/images/demo/game.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="game-right" src="/images/demo/game-right.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="exercise" src="/images/demo/exercise.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="exercise-right" src="/images/demo/exercise-right.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="student" src="/images/demo/student.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="student-map" src="/images/demo/student-map.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <span class="about-demo-click"></span>
               <svg class="about-demo-cursor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M5 2 L5 19 L9 15.2 L12.3 21.6 L15.4 20.1 L12.1 13.7 L18 13.6 Z" fill="#fff" stroke="#000" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
               </svg>
@@ -216,38 +187,82 @@
         <div class="news-carousel" data-news-carousel aria-roledescription="carousel" aria-label="מה חדש">
           <ol class="news-list" aria-live="off">
             <li class="news-item is-active" aria-roledescription="slide">
-              <h3 class="news-title">האתר כאפליקציה בטלפון</h3>
-              <p class="news-text">אפשר להתקין את האתר על מסך הבית</p>
-              <p class="news-text">ולפתוח אותו כמו כל אפליקציה</p>
+              <div class="news-body">
+                <h3 class="news-title">האתר כאפליקציה בטלפון</h3>
+                <p class="news-text">אפשר להתקין את האתר על מסך הבית</p>
+                <p class="news-text">ולפתוח אותו כמו כל אפליקציה</p>
+              </div>
+              <button type="button" class="news-shot" data-news-shots="/images/news/app-install.webp" aria-label="לראות בתמונה: האתר כאפליקציה בטלפון">
+                <img src="/images/news/app-install-thumb.webp" alt="" width="240" height="320" loading="lazy" draggable="false" />
+              </button>
             </li>
             <li class="news-item" aria-roledescription="slide">
-              <h3 class="news-title">דוח שבועי למורה</h3>
-              <p class="news-text">פעם בשבוע רואים מה כל תלמיד עשה</p>
-              <p class="news-text">ומי צריך עזרה</p>
+              <div class="news-body">
+                <h3 class="news-title">דוח שבועי למורה</h3>
+                <p class="news-text">פעם בשבוע רואים מה כל תלמיד עשה</p>
+                <p class="news-text">ומי צריך עזרה</p>
+              </div>
+              <button type="button" class="news-shot" data-news-shots="/images/news/weekly-report.webp" aria-label="לראות בתמונה: דוח שבועי למורה">
+                <img src="/images/news/weekly-report-thumb.webp" alt="" width="240" height="320" loading="lazy" draggable="false" />
+              </button>
             </li>
             <li class="news-item" aria-roledescription="slide">
-              <h3 class="news-title">שיעורי אנגלית קצרים</h3>
-              <p class="news-text">50 שיעורים קצרים ופשוטים</p>
-              <p class="news-text">מסודרים מהאותיות ועד קריאת קטע</p>
+              <div class="news-body">
+                <h3 class="news-title">שיעורי אנגלית קצרים</h3>
+                <p class="news-text">50 שיעורים קצרים ופשוטים</p>
+                <p class="news-text">מסודרים מהאותיות ועד קריאת קטע</p>
+              </div>
+              <button type="button" class="news-shot" data-news-shots="/images/news/english-lessons.webp" aria-label="לראות בתמונה: שיעורי אנגלית קצרים">
+                <img src="/images/news/english-lessons-thumb.webp" alt="" width="240" height="320" loading="lazy" draggable="false" />
+              </button>
             </li>
             <li class="news-item" aria-roledescription="slide">
-              <h3 class="news-title">רשימת תלמידים למורה</h3>
-              <p class="news-text">המורה רואה את כל התלמידים יחד</p>
-              <p class="news-text">והתלמיד רואה את ההתקדמות שלו</p>
+              <div class="news-body">
+                <h3 class="news-title">רשימת תלמידים למורה</h3>
+                <p class="news-text">המורה רואה את כל התלמידים יחד</p>
+                <p class="news-text">והתלמיד רואה את ההתקדמות שלו</p>
+              </div>
+              <button type="button" class="news-shot" data-news-shots="/images/news/student-list.webp" aria-label="לראות בתמונה: רשימת תלמידים למורה">
+                <img src="/images/news/student-list-thumb.webp" alt="" width="240" height="320" loading="lazy" draggable="false" />
+              </button>
             </li>
             <li class="news-item" aria-roledescription="slide">
-              <h3 class="news-title">מחברת טעויות ומבחני קריאה</h3>
-              <p class="news-text">חוזרים על מה שטעינו בו</p>
-              <p class="news-text">ונבחנים על קטע קריאה עם שעון</p>
+              <div class="news-body">
+                <h3 class="news-title">מחברת טעויות ומבחני קריאה</h3>
+                <p class="news-text">חוזרים על מה שטעינו בו</p>
+                <p class="news-text">ונבחנים על קטע קריאה עם שעון</p>
+              </div>
+              <button type="button" class="news-shot news-shot--stack" data-news-shots="/images/news/mistakes.webp /images/news/reading-exam.webp" aria-label="לראות בתמונה: מחברת טעויות ומבחני קריאה">
+                <img src="/images/news/mistakes-thumb.webp" alt="" width="240" height="320" loading="lazy" draggable="false" />
+                <img src="/images/news/reading-exam-thumb.webp" alt="" width="240" height="320" loading="lazy" draggable="false" />
+              </button>
             </li>
             <li class="news-item" aria-roledescription="slide">
-              <h3 class="news-title">נקודות וטבלת אלופים</h3>
-              <p class="news-text">כל תרגיל נותן נקודות</p>
-              <p class="news-text">והכיתה רואה מי מוביל</p>
+              <div class="news-body">
+                <h3 class="news-title">נקודות וטבלת אלופים</h3>
+                <p class="news-text">כל תרגיל נותן נקודות</p>
+                <p class="news-text">והכיתה רואה מי מוביל</p>
+              </div>
+              <button type="button" class="news-shot" data-news-shots="/images/news/leaderboard.webp" aria-label="לראות בתמונה: נקודות וטבלת אלופים">
+                <img src="/images/news/leaderboard-thumb.webp" alt="" width="240" height="320" loading="lazy" draggable="false" />
+              </button>
             </li>
           </ol>
+          <button type="button" class="news-arrow news-arrow--prev" aria-label="העדכון הקודם"></button>
+          <button type="button" class="news-arrow news-arrow--next" aria-label="העדכון הבא"></button>
         </div>
       </div>
+      <!-- A card's picture, big (news-carousel.js) -->
+      <dialog class="news-zoom" aria-label="תמונה">
+        <h3 class="news-zoom-title"><span class="news-zoom-key"></span></h3>
+        <img class="news-zoom-img" alt="" width="618" height="1372" />
+        <div class="news-zoom-nav">
+          <button type="button" class="news-zoom-arrow news-zoom-arrow--prev" aria-label="התמונה הקודמת"></button>
+          <p class="news-zoom-count" aria-live="polite"></p>
+          <button type="button" class="news-zoom-arrow news-zoom-arrow--next" aria-label="התמונה הבאה"></button>
+        </div>
+        <button type="button" class="news-zoom-close" aria-label="סגירה"></button>
+      </dialog>
     </section>
 
     <!-- 4. יצירת קשר -->
@@ -297,6 +312,15 @@
         <a href="/legal/cookies.html">עוגיות</a>
         <a href="/legal/accessibility.html">נגישות</a>
       </nav>
+      <button type="button" class="logo-style-btn" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4c0-4.5-4-8.2-9-8.2z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10" cy="7" r="1.2" fill="currentColor"/><circle cx="14.5" cy="7" r="1.2" fill="currentColor"/></svg>
+        <span>נראות</span>
+      </button>
+      <dialog class="logo-style-dialog" aria-label="סגנון הלוגו">
+        <h3 class="news-zoom-title"><span class="news-zoom-key">סגנון הלוגו</span></h3>
+        <div class="logo-style-grid"></div>
+        <button type="button" class="news-zoom-close" aria-label="סגירה"></button>
+      </dialog>
     </div>
   </footer>
 
@@ -425,6 +449,7 @@
         <span data-i18n="auth.google">התחברות עם Google</span>
       </button>
       <p class="form-error hidden" id="loginError"></p>
+      <p class="login-legal-note">בהתחברות אתם מאשרים את <a href="/legal/terms.html" target="_blank" rel="noopener">התקנון</a> ואת <a href="/legal/privacy.html" target="_blank" rel="noopener">מדיניות הפרטיות</a></p>
     </div>
   </div>
 
@@ -514,7 +539,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-app.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <script src="js/auth.js?v=5"></script>
+  <script src="js/auth.js?v=6"></script>
   <script src="/js/parse-content.js"></script>
   <script src="/js/games-catalog.js"></script>
   <script src="/js/file-extract.js"></script>
@@ -526,9 +551,13 @@
   <script src="js/teacher-dashboard.js"></script>
   <script src="/js/ambient-bg.js?v=3"></script>
   <script src="js/scroll-animations.js?v=5"></script>
-  <script src="/js/news-carousel.js?v=3"></script>
-  <script src="/js/i18n.js?v=7"></script>
+  <script src="/js/news-carousel.js?v=5"></script>
+  <script src="/js/about-demo.js?v=3"></script>
+  <script src="/js/i18n.js?v=9"></script>
+  <script src="/js/hero-title.js?v=3"></script>
+  <script src="/js/logo-style.js?v=1"></script>
   <script src="/js/app.js?v=9"></script>
   <script src="js/cookie-consent.js?v=4"></script>
+  <script src="/js/site-fox.js?v=13" defer></script>
 </body>
 </html>

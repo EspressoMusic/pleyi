@@ -1,0 +1,548 @@
+/* The site's fennec fox (site-fox.js) */
+
+.site-fox,
+.site-search-fox {
+  --fox-body: #f7b55e;
+}
+
+.site-fox {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink, #000);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.site-fox:focus-visible {
+  outline: 3px solid var(--ink, #000);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.site-fox-fig {
+  display: block;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(2px 3px 0 var(--ink, #000));
+}
+
+.site-fox-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  stroke: var(--ink, #000);
+  stroke-width: 8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  /* The cartoon titles draw their stroke under the fill, which would hide
+     half of every line on the perched fox. */
+  paint-order: normal;
+}
+
+/* The head's line again, above the snout so it stays whole (site-fox.js). */
+.site-fox-svg .f-line { fill: none; }
+
+.site-fox-svg .f-body { fill: var(--fox-body); }
+.site-fox-svg .f-cream { fill: #fff1d9; stroke: none; }
+.site-fox-svg .f-pupil { fill: var(--ink, #000); stroke: none; }
+.site-fox-svg .f-nose { fill: var(--ink, #000); stroke: none; }
+.site-fox-svg .f-cap { fill: #3a4050; }
+
+.site-fox-svg .fox-pupils {
+  transition: transform 0.15s ease-out;
+}
+
+/* Blinks by squashing the eyes. */
+.site-fox-svg .fox-eyes {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: site-fox-blink 4.6s var(--fox-blink-delay, 0s) infinite;
+}
+
+/* The ears turn on their base, the tail on where it meets the body. */
+.site-fox-svg .fox-ear,
+.site-fox-svg .fox-tail {
+  transform-box: fill-box;
+}
+
+.site-fox-svg .fox-ear-l { transform-origin: 80% 90%; }
+.site-fox-svg .fox-ear-r { transform-origin: 20% 90%; }
+.site-fox-svg .fox-tail { transform-origin: 5% 80%; }
+
+@keyframes site-fox-blink {
+  0%, 93%, 98%, 100% { transform: none; }
+  95.5% { transform: scaleY(0.15); }
+}
+
+/* Tapped: a hop with a squash, the ears flop twice and the tail wags. */
+.site-fox.is-hop .site-fox-fig {
+  animation: site-fox-hop 0.7s ease-in-out;
+}
+
+.site-fox.is-hop .fox-ear-l { animation: site-fox-ear-l 0.35s ease-in-out 2; }
+.site-fox.is-hop .fox-ear-r { animation: site-fox-ear-r 0.35s ease-in-out 2; }
+.site-fox.is-hop .fox-tail { animation: site-fox-wag 0.35s ease-in-out 2; }
+
+/* Somersaulting with the letter under it (site-fox.js) turns on its middle. */
+.site-fox.is-flip .site-fox-fig { transform-origin: 50% 50%; }
+.site-fox.is-flip .fox-ear-l { animation: site-fox-ear-l 0.42s ease-in-out 2; }
+.site-fox.is-flip .fox-ear-r { animation: site-fox-ear-r 0.42s ease-in-out 2; }
+.site-fox.is-flip .fox-tail { animation: site-fox-wag 0.42s ease-in-out 2; }
+
+@keyframes site-fox-hop {
+  0%, 100% { transform: none; }
+  15% { transform: scale(1.12, 0.86); }
+  45% { transform: translateY(-22%) scale(0.94, 1.08); }
+  75% { transform: scale(1.1, 0.9); }
+}
+
+@keyframes site-fox-ear-l {
+  50% { transform: rotate(-16deg); }
+}
+
+@keyframes site-fox-ear-r {
+  50% { transform: rotate(16deg); }
+}
+
+@keyframes site-fox-wag {
+  50% { transform: rotate(-18deg); }
+}
+
+/* Speech bubble */
+.site-fox-bubble {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  width: max-content;
+  max-width: min(230px, calc(100vw - 32px));
+  padding: 10px 14px;
+  border: 3px solid var(--ink, #000);
+  border-radius: 16px;
+  background: #eaf5ff;
+  box-shadow: 4px 5px 0 var(--ink, #000);
+  color: var(--ink, #000);
+  -webkit-text-fill-color: var(--ink, #000);
+  -webkit-text-stroke: 0;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0;
+  white-space: normal;
+  text-align: start;
+  text-shadow: none;
+  pointer-events: none;
+  opacity: 0;
+  translate: 0 8px;
+  scale: 0.9;
+  transform-origin: 85% 100%;
+  transition: opacity 0.2s ease, translate 0.2s ease, scale 0.2s ease;
+}
+
+.site-fox-bubble::after {
+  content: "";
+  position: absolute;
+  right: 22px;
+  bottom: -9px;
+  width: 14px;
+  height: 14px;
+  border-right: 3px solid var(--ink, #000);
+  border-bottom: 3px solid var(--ink, #000);
+  background: #eaf5ff;
+  rotate: 45deg;
+}
+
+.site-fox-bubble:empty {
+  display: none;
+}
+
+.site-fox-bubble.is-on {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+}
+
+/* The corner fox. !important: styles.css pins every direct child of body to
+   position:relative and z-index:1. Below the mobile menu (150). */
+.site-fox-dock {
+  position: fixed !important;
+  z-index: 140 !important;
+  right: max(14px, env(safe-area-inset-right, 0px));
+  bottom: max(14px, env(safe-area-inset-bottom, 0px));
+  width: 64px;
+  transform-origin: 50% 100%;
+  transition: opacity 0.3s ease, scale 0.3s ease, translate 0.3s ease, visibility 0s;
+}
+
+@media (min-width: 900px) {
+  .site-fox-dock {
+    right: 22px;
+    bottom: 22px;
+    width: 76px;
+  }
+}
+
+.site-fox-dock.is-away {
+  opacity: 0;
+  scale: 0.4;
+  translate: 0 24px;
+  visibility: hidden;
+  transition: opacity 0.3s ease, scale 0.3s ease, translate 0.3s ease, visibility 0s 0.3s;
+}
+
+.eng-runner-open .site-fox-dock,
+.eng-viewer-open .site-fox-dock,
+.eng-help-open .site-fox-dock,
+.cg-open .site-fox-dock,
+.lb-open .site-fox-dock,
+.adm-info-open .site-fox-dock,
+.lesson-player-expanded .site-fox-dock,
+.coloring-zoom-open .site-fox-dock,
+.in-room .site-fox-dock,
+body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="true"]:not(.hidden, [hidden], .hidden *, [aria-hidden="true"])) .site-fox-dock {
+  display: none;
+}
+
+/* The big fox perched on the hero title */
+.site-fox-perch {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.site-fox--hero {
+  position: absolute;
+  inset-inline-start: 0.06em;
+  bottom: calc(100% - 0.18em);
+  width: clamp(66px, 1.3em, 146px);
+}
+
+/* Sections clip their overflow (clean-site.css); the home one only sideways,
+   so the fox can somersault up past its top with the first letter. */
+#home.clean-section--hero {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.site-fox-perch--name .site-fox--hero {
+  inset-inline-start: 2%;
+  bottom: 80%;
+  width: clamp(62px, 11vw, 104px);
+}
+
+/* Above the fox there is little room under the navbar — so the bubble sits
+   beside the fox, over the room left above the title. */
+.site-fox--hero .site-fox-bubble {
+  top: 50%;
+  bottom: auto;
+  right: calc(100% + 12px);
+  max-width: min(230px, 50vw);
+  translate: 8px -50%;
+  transform-origin: 100% 50%;
+}
+
+.site-fox--hero .site-fox-bubble.is-on {
+  translate: 0 -50%;
+}
+
+.site-fox--hero .site-fox-bubble::after {
+  top: calc(50% - 7px);
+  right: -9px;
+  bottom: auto;
+  border-top: 3px solid var(--ink, #000);
+  border-bottom: 0;
+}
+
+/* On phones the title sits right under the navbar, which would hide the
+   fox's ears — the title moves down to make room. */
+@media (max-width: 700px) {
+  /* The hero section clips its overflow, so a small title still leaves room
+     for the whole fox. */
+  .site-fox-perch--line {
+    margin-top: max(1.05em, 74px);
+  }
+
+  .site-fox-perch--name {
+    margin-top: 64px;
+  }
+}
+
+/* Lands on the title once it has come in. */
+.site-fox--hero .site-fox-fig {
+  animation: site-fox-land 0.8s linear 0.6s backwards;
+}
+
+/* Without this, the landing would replay after every hop. */
+.site-fox--hero.is-landed:not(.is-hop) .site-fox-fig {
+  animation: none;
+}
+
+@keyframes site-fox-land {
+  0% {
+    translate: 0 -160%;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  20% { opacity: 1; }
+  55% {
+    translate: 0 0;
+    scale: 1;
+    animation-timing-function: ease-out;
+  }
+  70% { scale: 1.16 0.84; }
+  86% { scale: 0.95 1.06; }
+  100% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+/* The search the fox opens (site-fox.js). !important: see .site-fox-dock.
+   Above the navbar and the mobile menu. */
+.site-search {
+  position: fixed !important;
+  inset: 0;
+  z-index: 300 !important;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px 16px;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  color: var(--ink, #000);
+}
+
+.site-search[hidden] {
+  display: none;
+}
+
+.site-search-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.site-search-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 520px);
+  max-height: calc(100dvh - 32px);
+  margin-top: min(8vh, 64px);
+  padding: 16px 18px 12px;
+  background: #eaf5ff;
+  border: 3px solid var(--ink, #000);
+  border-radius: 24px;
+  box-shadow: 6px 8px 0 var(--ink, #000);
+}
+
+@media (max-width: 700px) {
+  .site-search-box {
+    margin-top: 0;
+  }
+}
+
+.site-search-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.site-search-fox {
+  flex-shrink: 0;
+  width: 46px;
+  filter: drop-shadow(2px 3px 0 var(--ink, #000));
+}
+
+.site-search-fox .site-fox-svg .fox-eyes {
+  animation: none;
+}
+
+.site-search-title {
+  flex: 1;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: #000;
+}
+
+.site-search-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 45%, #fff);
+}
+
+.site-search-close {
+  flex-shrink: 0;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--memyellow, #ffe066);
+  border: 3px solid var(--ink, #000);
+  border-radius: 50%;
+  box-shadow: 3px 4px 0 var(--ink, #000);
+  cursor: pointer;
+}
+
+/* The X */
+.site-search-close::before,
+.site-search-close::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 3px;
+  margin: -1.5px 0 0 -9px;
+  border-radius: 2px;
+  background: var(--ink, #000);
+  rotate: 45deg;
+}
+
+.site-search-close::after {
+  rotate: -45deg;
+}
+
+.site-search-field {
+  position: relative;
+  display: block;
+}
+
+.site-search-icon {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 14px;
+  width: 22px;
+  height: 22px;
+  translate: 0 -50%;
+  fill: none;
+  stroke: var(--ink, #000);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.site-search-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  padding-inline-start: 46px;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+  background: #fff;
+  border: 3px solid var(--ink, #000);
+  border-radius: 16px;
+  box-shadow: 3px 4px 0 var(--ink, #000);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.site-search-input:focus-visible {
+  border-color: var(--ink, #000);
+  box-shadow: 3px 4px 0 var(--ink, #000), 0 0 0 4px var(--memyellow, #ffe066);
+}
+
+.site-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.site-search-note {
+  margin: 12px 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.site-search-note:empty {
+  display: none;
+}
+
+.site-search-results {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.site-search-results:empty {
+  display: none;
+}
+
+.site-search-results li + li {
+  border-top: 2px solid #c9d6e2;
+}
+
+.site-search-hit {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 8px;
+  border-radius: 10px;
+  color: #000;
+  text-decoration: none;
+}
+
+.site-search-hit:hover,
+.site-search-hit:focus-visible {
+  background: color-mix(in srgb, var(--memyellow, #ffe066) 55%, #fff);
+  outline: none;
+}
+
+.site-search-hit-title {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.site-search-hit-kind {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #555;
+}
+
+html.site-search-open,
+html.site-search-open body {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-fox .site-fox-fig,
+  .site-fox .fox-ear,
+  .site-fox .fox-tail,
+  .site-fox-svg .fox-eyes {
+    animation: none !important;
+  }
+  .site-fox-dock,
+  .site-fox-bubble {
+    transition: none;
+  }
+}
+
+html[data-visual="minimal"] .site-fox .site-fox-fig,
+html[data-visual="minimal"] .site-fox .fox-ear,
+html[data-visual="minimal"] .site-fox .fox-tail,
+html[data-visual="minimal"] .site-fox-svg .fox-eyes {
+  animation: none !important;
+}
+
+@media print {
+  .site-fox-dock,
+  .site-fox--hero {
+    display: none !important;
+  }
+}

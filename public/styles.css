@@ -5,7 +5,7 @@
 /* Pleyi — Memphis / Sticker Pop style */
 
 :root {
-  --font-sans: "Google Sans", system-ui, sans-serif;
+  --font-sans: "Rubik", system-ui, sans-serif;
   --electric: #62ebe0;
   --ambient-site-bg: #62ebe0;
   --mempink: #B8FFF5;
@@ -208,7 +208,7 @@ body.in-room .logo-text.font-brand {
 body.clean-site h2.font-cartoon,
 .hub-body :is(.hub-title, .teacher-room-name, .hub-custom-header h2, .hub-skill-filters-label).font-cartoon {
   paint-order: stroke fill;
-  -webkit-text-stroke: clamp(6px, 1vw, 10px) var(--ink);
+  -webkit-text-stroke: min(0.3em, 18px) var(--ink);
   -webkit-text-stroke-color: var(--ink);
   -webkit-text-fill-color: var(--memyellow);
   color: var(--memyellow);
@@ -228,9 +228,10 @@ body.clean-site h2.font-cartoon,
   text-shadow: none;
 }
 
+/* Thick ink outline, scaled to the title size (like the English page title) */
 .hero-title.font-cartoon .line {
   paint-order: stroke fill;
-  -webkit-text-stroke: clamp(7px, 1.25vw, 16px) var(--ink);
+  -webkit-text-stroke: min(0.3em, 24px) var(--ink);
   -webkit-text-stroke-color: var(--ink);
   -webkit-text-fill-color: currentColor;
   text-shadow: none;
@@ -3443,6 +3444,21 @@ body.in-room .game-actions .btn {
 #loginModal .form-error {
   width: 100%;
   margin: 0;
+}
+
+#loginModal .login-legal-note {
+  width: 100%;
+  margin: 14px 0 0;
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+#loginModal .login-legal-note a {
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: underline;
 }
 
 .modal-overlay {

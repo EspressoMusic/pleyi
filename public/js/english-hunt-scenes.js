@@ -222,5 +222,5 @@
     "vocab-holidays": { scene: "dining", extras: ["apple", "book", "clock", "cup", "flower", "ball", "cat", "lamp", "hat", "shoes", "plate", "fork", "spoon", "bread", "umbrella", "bag"] },
   };
 
-  window.ENGLISH_HUNT = { scenes, topics, sceneUrl: (id) => `/images/english/scenes/${id}.svg` };
+  window.ENGLISH_HUNT = { scenes, topics, sceneUrl: (id) => `/images/english/scenes/${id}.svg?v=2` };
 })();

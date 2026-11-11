@@ -45,6 +45,8 @@ const walk = (node) => {
       if (["en", "say", "speak"].includes(key) && typeof value === "string") add(value);
       // A short lesson's examples are [english, hebrew] rows.
       else if (key === "examples" && Array.isArray(value)) value.forEach((row) => add(Array.isArray(row) ? row[0] : row.en));
+      // "הסבר מורחב" lines: the [english, hebrew] rows are cards to hear.
+      else if (key === "more" && Array.isArray(value)) value.forEach((row) => Array.isArray(row) && add(row[0]));
       else walk(value);
     });
   }

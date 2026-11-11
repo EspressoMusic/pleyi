@@ -108,6 +108,15 @@ body.page-english .eng-page-title.font-cartoon {
 
 body.page-english .eng-page-title .line {
   display: block;
+  /* Thicker ink outline, scaled to the title size at every width. */
+  -webkit-text-stroke-width: 0.3em;
+}
+
+/* The hero clips its overflow and starts right under the sign-in bar, so
+   the title moves down to fit the whole perched fox (site-fox.css) at every
+   width, not only on phones. */
+body.page-english .site-fox-perch--line {
+  margin-top: max(1.3em, 76px);
 }
 
 /* This page has no navbar, so the generic clean-section "clear the fixed
@@ -206,6 +215,57 @@ body.page-english .eng-section {
   color: var(--ink);
 }
 
+/* A school subject's grade filter, above its path: the lessons library's
+   filter bar, one dropdown wide. */
+.eng-grade-bar {
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  border-radius: 18px;
+  background: #cdf5ee;
+  box-shadow: var(--shadow-sticker);
+}
+
+.eng-grade-bar .svc-filter-trigger {
+  align-items: center;
+  padding: 12px 18px;
+  border-radius: 15px;
+}
+
+.eng-grade-bar .svc-filter-trigger-label {
+  font-size: 1rem;
+}
+
+.eng-grade-bar .svc-filter-trigger-value {
+  font-size: 1.4rem;
+}
+
+.eng-grade-bar .svc-filter-trigger:hover,
+.eng-grade-bar .svc-filter-dropdown.is-open .svc-filter-trigger {
+  background: color-mix(in srgb, #cdf5ee 55%, #a9ecdf 45%);
+}
+
+.eng-grade-bar .svc-filter-menu {
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #eaf5ff;
+  box-shadow: var(--shadow-sticker);
+  max-height: min(360px, 60vh);
+}
+
+.eng-grade-bar .svc-filter-menu button {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.eng-grade-empty {
+  margin: 0;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
 /* The learning path: a heading per stage ("שלב 1" chip + its name) and the
    topic's running number in the tile's corner. */
 .eng-path-title {
@@ -239,6 +299,7 @@ body.page-english .eng-section {
   border: 2.5px solid var(--ink);
   border-radius: 999px;
   background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
   color: #000;
   font-size: 1rem;
   font-weight: 900;
@@ -424,7 +485,7 @@ body.page-english .eng-section {
   padding: 0;
   border: 3px solid var(--ink);
   border-radius: 50%;
-  background: var(--memyellow);
+  background: #d4d4d4;
   color: var(--ink);
   box-shadow: 3px 4px 0 0 var(--ink);
   cursor: pointer;
@@ -440,7 +501,7 @@ body.page-english .eng-section {
 
 .eng-settings-btn:hover,
 .eng-settings-btn[aria-expanded="true"] {
-  background: var(--memorange);
+  background: #b5b5b5;
 }
 
 .eng-settings-btn:hover {

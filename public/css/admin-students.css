@@ -40,17 +40,30 @@ body.adm-body {
   border-bottom: var(--adm-border);
 }
 
+/* Back link on the right, title in the middle, account on the left. Fixed
+   columns keep the title centered while the account is still hidden. */
 .adm-top-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   max-width: 1240px;
   margin: 0 auto;
   padding: 14px 16px;
 }
 
+.adm-top-inner > .adm-home {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.adm-top-inner > .adm-account {
+  grid-column: 3;
+  justify-self: end;
+}
+
 .adm-top-title {
+  grid-column: 2;
   margin: 0;
   font-size: clamp(1.25rem, 3vw, 1.6rem);
   font-weight: 900;
@@ -259,21 +272,6 @@ body.adm-body {
   color: var(--muted);
 }
 
-.adm-meter {
-  height: 12px;
-  overflow: hidden;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--adm-accent-track);
-}
-
-.adm-meter span {
-  display: block;
-  height: 100%;
-  border-radius: 999px;
-  background: var(--adm-accent);
-}
-
 .adm-avatar {
   flex-shrink: 0;
   width: 48px;
@@ -293,12 +291,6 @@ body.adm-body {
   color: var(--ink);
 }
 
-.adm-avatar--lg {
-  width: 76px;
-  height: 76px;
-  font-size: 2rem;
-}
-
 /* ── Gate ── */
 
 .adm-gate {
@@ -315,10 +307,37 @@ body.adm-body {
 /* ── Signed-in teacher (top bar) ── */
 
 .adm-account {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  position: relative;
   min-width: 0;
+}
+
+.adm-account-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.adm-account-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 50;
+  padding: 10px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #eaf5ff;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.adm-account-menu .adm-link-btn {
+  white-space: nowrap;
 }
 
 .adm-account-avatar {
@@ -329,10 +348,11 @@ body.adm-body {
   width: 38px;
   height: 38px;
   overflow: hidden;
-  border: 2px solid var(--ink);
+  border: 3px solid var(--ink);
   border-radius: 50%;
-  /* The same pink as the site's account button (styles.css). */
+  /* The same pink and shadow as the site's account button (styles.css). */
   background: #ff9ec0;
+  box-shadow: 2px 3px 0 0 var(--ink);
   color: var(--ink);
   font-weight: 900;
 }
@@ -344,8 +364,9 @@ body.adm-body {
 }
 
 .adm-account-name {
-  max-width: 200px;
+  max-width: 120px;
   overflow: hidden;
+  font-size: 0.85rem;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -482,6 +503,30 @@ body.adm-body {
   background: #6fe3d5;
 }
 
+/* The personal link: top right, bigger, and its own colour so it stands out. */
+#admLinkToggle {
+  padding: 14px 24px;
+  border-radius: 18px;
+  background: var(--adm-accent);
+  font-size: 1.25rem;
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+#admLinkToggle .adm-fold-icon {
+  width: 36px;
+  height: 36px;
+}
+
+#admLinkToggle .adm-fold-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+#admLinkToggle:hover,
+#admLinkToggle:focus-visible {
+  background: var(--memyellow);
+}
+
 .adm-owner-link {
   text-decoration: none;
 }
@@ -525,43 +570,10 @@ body.adm-body {
   transition: transform 0.15s ease;
 }
 
-/* The flex columns of a student's file already space their items. */
-.adm-detail-main > .adm-fold-toggle,
-.adm-detail-side > .adm-fold-toggle {
-  margin: 0;
-}
-
-/* The side column's folded cards: small squares in one row. */
-.adm-fold-squares {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 140px));
-  gap: 14px;
-}
-
-.adm-fold-squares > .adm-fold-toggle {
-  flex-direction: column;
-  justify-content: center;
-  width: auto;
-  aspect-ratio: 1;
-  margin: 0;
-  padding: 10px 8px;
-  font-size: 1rem;
-  line-height: 1.25;
-  text-align: center;
-}
-
-/* Topics not started yet, behind a rectangle whose "+" turns into an "x". */
-.adm-topics-rest > summary {
-  margin: 14px 0 0;
-  list-style: none;
-}
-
-.adm-topics-rest > summary::-webkit-details-marker,
 .adm-advanced > summary::-webkit-details-marker {
   display: none;
 }
 
-.adm-topics-rest[open] .adm-fold-icon svg,
 .adm-advanced[open] > summary .adm-fold-icon svg {
   transform: rotate(45deg);
 }
@@ -572,11 +584,101 @@ body.adm-body {
   list-style: none;
 }
 
+/* "מתקדם": one row per part — a title and an "i". The row's button
+   stretches over the whole row; the "i" sits above it (like .adm-student). */
+.adm-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.adm-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-inline-end: 14px;
+  border: var(--adm-border);
+  border-radius: 18px;
+  background: var(--adm-card);
+  box-shadow: 5px 6px 0 0 var(--ink);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.adm-row:hover:not(:has(.adm-info-btn:hover)),
+.adm-row:has(.adm-row-btn:focus-visible) {
+  background: var(--memyellow);
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 8px 0 0 var(--ink);
+}
+
+.adm-row:has(.adm-row-btn:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.adm-row-btn {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px 18px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 900;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.adm-row-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.adm-row-btn:focus-visible {
+  outline: none;
+}
+
+.adm-row-info {
+  margin: 10px 0 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.adm-advanced > .adm-danger-btn {
+  margin-top: 28px;
+}
+
 .adm-create-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 12px;
+}
+
+.adm-create-hints {
+  display: grid;
+  gap: 2px;
+  margin-top: 12px;
+}
+
+.adm-legal-note {
+  margin-top: 14px;
+}
+
+.adm-legal-note a {
+  color: inherit;
+  text-decoration: underline;
 }
 
 .adm-create-btn {
@@ -909,6 +1011,18 @@ body.adm-info-open {
   height: 18px;
 }
 
+/* The pencil in a student's "i" dialog opens this form under the name. */
+.adm-rename .adm-field {
+  margin: 0;
+}
+
+.adm-rename-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
 .adm-info-go {
   align-self: center;
   padding: 10px 28px;
@@ -932,14 +1046,33 @@ body.adm-info-open {
 .adm-file-top {
   display: flex;
   flex-wrap: nowrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
 }
 
 .adm-file-top > .adm-back,
-.adm-file-top > .adm-fold-toggle {
+.adm-file-tools > .adm-fold-toggle {
   margin: 0;
+}
+
+/* The personal link and "עריכת שם", side by side when there's room; on a
+   phone the second wraps under the first, so "חזרה" stays level with the
+   link (13px centres it on the link's 70px). */
+.adm-file-top > .adm-back {
+  margin-top: 13px;
+}
+
+.adm-file-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+#admDetailsCard {
+  margin-top: 18px;
 }
 
 .adm-solved-head {
@@ -1074,17 +1207,6 @@ body.adm-info-open {
   margin: 8px 0 0;
   font-weight: 800;
 }
-
-.adm-profile {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.adm-profile-text {
-  min-width: 0;
-}
-
 
 /* Personal link */
 
@@ -1275,77 +1397,6 @@ body.adm-info-open {
   display: flex;
   flex-shrink: 0;
   gap: 2px;
-}
-
-.adm-detail-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  align-items: start;
-  gap: 20px;
-}
-
-.adm-detail-main,
-.adm-detail-side {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-width: 0;
-}
-
-/* Topics */
-
-.adm-topic {
-  margin-top: 12px;
-  border: 2px solid var(--ink);
-  border-radius: 14px;
-  background: var(--adm-soft);
-  box-shadow: 3px 4px 0 0 var(--ink);
-}
-
-.adm-topic-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(80px, 180px);
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  cursor: pointer;
-  list-style: none;
-}
-
-.adm-topic-head::-webkit-details-marker {
-  display: none;
-}
-
-.adm-topic-title {
-  font-size: 1.05rem;
-  font-weight: 900;
-}
-
-.adm-topic-title::before {
-  content: "";
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-inline-end: 8px;
-  border-block: 5px solid transparent;
-  border-inline-end: 7px solid var(--ink);
-  vertical-align: middle;
-  transition: transform 0.15s ease;
-}
-
-.adm-topic[open] .adm-topic-title::before {
-  transform: rotate(-90deg);
-}
-
-.adm-topic-count {
-  font-weight: 900;
-}
-
-.adm-topic-lesson {
-  margin: 0 14px 6px;
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: var(--body);
 }
 
 .adm-ex-list {
@@ -1905,12 +1956,6 @@ body.adm-info-open {
 
 /* ── Responsive ── */
 
-@media (max-width: 1020px) {
-  .adm-detail-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 @media (max-width: 560px) {
   .adm-main {
     padding-top: 16px;
@@ -1937,17 +1982,14 @@ body.adm-info-open {
     white-space: nowrap;
   }
 
-  .adm-account {
-    gap: 6px;
-  }
-
   .adm-account-avatar {
     width: 32px;
     height: 32px;
   }
 
   .adm-account-name {
-    display: none;
+    max-width: 90px;
+    font-size: 0.78rem;
   }
 
   .adm-claim-row {
@@ -1976,16 +2018,6 @@ body.adm-info-open {
     font-size: 1.5rem;
   }
 
-  .adm-profile {
-    align-items: flex-start;
-  }
-
-  .adm-avatar--lg {
-    width: 56px;
-    height: 56px;
-    font-size: 1.5rem;
-  }
-
   .adm-create-row,
   .adm-hw-form {
     grid-template-columns: minmax(0, 1fr);
@@ -2002,14 +2034,6 @@ body.adm-info-open {
   .adm-link-actions .btn {
     flex: 1 1 auto;
     justify-content: center;
-  }
-
-  .adm-topic-head {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .adm-topic-head .adm-meter {
-    grid-column: 1 / -1;
   }
 
   .adm-ex {

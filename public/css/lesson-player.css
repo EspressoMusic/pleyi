@@ -85,6 +85,7 @@ body:is(.page-ready-lessons, .lp-host) .svc-lesson-grid {
     font-size: 0.58rem;
   }
 
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-num) .svc-lesson-title-wrap,
   body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.hidden)) .svc-lesson-title-wrap,
   body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
   body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
@@ -199,6 +200,17 @@ body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-part:
   font-weight: 700;
 }
 
+/* A numbered lesson's part comes in two lines (setCardPart in ready-lessons.js):
+   the topic, then what this lesson does, a little smaller. */
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-part-line {
+  display: block;
+}
+
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-part-line + .svc-lesson-part-line {
+  margin-top: 0.12em;
+  font-size: 0.78em;
+}
+
 body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview .js-lesson-open {
   position: absolute;
   left: 50%;
@@ -212,7 +224,7 @@ body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview .js-lesson-open {
   font-size: clamp(0.82rem, 2.8vw, 0.92rem);
   font-weight: 900;
   border-radius: 999px;
-  box-shadow: none !important;
+  box-shadow: 2px 3px 0 0 var(--ink) !important;
   pointer-events: none;
 }
 
@@ -222,7 +234,7 @@ body:is(.page-ready-lessons, .lp-host) .js-lesson-open {
   margin: 0;
   padding: 8px 10px;
   font-size: 13px;
-  box-shadow: none !important;
+  box-shadow: 2px 3px 0 0 var(--ink) !important;
 }
 
 body:is(.page-ready-lessons, .lp-host) .js-lesson-open:active {
@@ -304,11 +316,58 @@ body:is(.page-ready-lessons, .lp-host) .svc-lesson-learned-badge {
   pointer-events: none;
 }
 
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-num) .svc-lesson-title-wrap,
 body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-learned-badge:not(.hidden)) .svc-lesson-title-wrap,
 body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-premium-lock:not(.hidden)) .svc-lesson-title-wrap,
 body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-recommended-badge:not(.hidden)) .svc-lesson-title-wrap {
   padding-top: 1.85rem;
   box-sizing: border-box;
+}
+
+/* The lesson's place in its subject's path, like the topics' numbers on the
+   learning path (english-learning.css .eng-path-num). The other corner
+   badges move over to sit beside it. */
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-num {
+  position: absolute;
+  top: 8px;
+  inset-inline-start: 8px;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 5px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  box-shadow: 2px 2px 0 var(--ink);
+  color: #000;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-num) :is(.svc-lesson-learned-badge, .svc-lesson-premium-lock, .svc-lesson-recommended-badge) {
+  inset-inline-start: 44px;
+}
+
+/* Phones: two small cards per row (the block at the top of this file). */
+@media (max-width: 768px) {
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-num {
+    top: 6px;
+    inset-inline-start: 6px;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 4px;
+    border-width: 2px;
+    font-size: 0.76rem;
+  }
+
+  body:is(.page-ready-lessons, .lp-host) .svc-lesson-preview:has(.svc-lesson-num) :is(.svc-lesson-learned-badge, .svc-lesson-premium-lock, .svc-lesson-recommended-badge) {
+    inset-inline-start: 36px;
+  }
 }
 
 body:is(.page-ready-lessons, .lp-host) .svc-lesson-premium-lock {
@@ -938,10 +997,10 @@ body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="peach"] { backgrou
 body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="lavender"] { background: linear-gradient(160deg, #f1eefb 0%, #e0d6f5 100%); }
 body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="sky"] { background: linear-gradient(160deg, #e9f4fd 0%, #cee6f9 100%); }
 body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="sand"] { background: linear-gradient(160deg, #fbf6e9 0%, #f1e6c4 100%); }
-body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="navy"] { background: linear-gradient(160deg, #1b2340 0%, #232c52 100%); }
-body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="plum"] { background: linear-gradient(160deg, #2e1b34 0%, #3d2444 100%); }
-body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="forest"] { background: linear-gradient(160deg, #16281f 0%, #1e3327 100%); }
-body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="charcoal"] { background: linear-gradient(160deg, #201f22 0%, #2b2a2e 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="navy"] { background: linear-gradient(160deg, #3d4767 0%, #455072 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="plum"] { background: linear-gradient(160deg, #55435b 0%, #5e4b64 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="forest"] { background: linear-gradient(160deg, #3c5347 0%, #445c4f 100%); }
+body:is(.page-ready-lessons, .lp-host) .lp-bg-swatch[data-bg="charcoal"] { background: linear-gradient(160deg, #47464b 0%, #504f54 100%); }
 
 body:is(.page-ready-lessons, .lp-host) .lesson-player-expand-icon {
   display: block;
@@ -961,6 +1020,55 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle:hover {
 body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="true"] {
   background: var(--memteal);
   border-color: var(--ink);
+}
+
+/* "הסבר מורחב" (ready-lessons.js): a square like the other top-bar buttons,
+   teal while the presentation shows the longer explanations. */
+body:is(.page-ready-lessons, .lp-host) .lesson-player-more {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid color-mix(in srgb, var(--ink) 20%, transparent);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  line-height: 0;
+  cursor: pointer;
+  color: var(--ink);
+  transition: background 0.12s, transform 0.12s, border-color 0.12s;
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-more:hover {
+  border-color: color-mix(in srgb, var(--ink) 35%, transparent);
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-more:active {
+  transform: scale(0.97);
+}
+
+body:is(.page-ready-lessons, .lp-host) .lesson-player-more[aria-pressed="true"] {
+  background: var(--memteal);
+  border-color: var(--ink);
+}
+
+/* A slide in that mode has more lines than usual: a little smaller, so
+   they fit beside the drawing without shrinking much. */
+.lp-steps--more .lp-steps-line {
+  font-size: calc(var(--lp-fit, 1) * clamp(1.05rem, 3.2vh, 1.4rem));
+}
+
+.lp-steps--more.lp-steps--side .lp-fig-svg {
+  height: calc(var(--lp-fit, 1) * clamp(130px, 30vh, 240px));
+}
+
+@media (max-width: 640px) {
+  .lp-steps--more.lp-steps--side .lp-fig-svg {
+    height: calc(var(--lp-fit, 1) * clamp(100px, 18vh, 160px));
+  }
 }
 
 .lesson-player-top {
@@ -1022,11 +1130,12 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 2px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  border: 3px solid var(--ink);
   border-radius: 50%;
   background: var(--white);
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: 900;
+  -webkit-text-stroke: 1.5px currentColor;
   cursor: pointer;
   color: var(--ink);
   transition: background 0.12s, opacity 0.12s;
@@ -1994,8 +2103,31 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
 }
 
 .lp-game-btn-icon {
-  font-size: calc(var(--lp-fit, 1) * 1.6rem);
+  display: grid;
+  place-items: center;
+  width: calc(var(--lp-fit, 1) * 50px);
+  height: calc(var(--lp-fit, 1) * 50px);
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  background: var(--memteal);
+  box-shadow: 2px 2px 0 var(--ink);
+  color: var(--ink);
+  transition: transform 0.12s;
 }
+
+.lp-game-btn-icon svg {
+  width: 60%;
+  height: 60%;
+}
+
+.lp-game-btn:hover .lp-game-btn-icon {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+.lp-game-btn--vocabulary-duel .lp-game-btn-icon { background: #ffd84d; }
+.lp-game-btn--tower-stack .lp-game-btn-icon { background: #ff8f8f; }
+.lp-game-btn--hangman .lp-game-btn-icon { background: #7fdccf; }
+.lp-game-btn--spot-diff .lp-game-btn-icon { background: #a9c4ff; }
 
 .lp-game-btn-label {
   font-size: calc(var(--lp-fit, 1) * 0.95rem);
@@ -2129,6 +2261,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-pdf-toggle[aria-pressed="t
   border: 3px solid var(--ink);
   border-radius: 14px;
   background: #dcecff;
+  box-shadow: 3px 3px 0 0 var(--ink);
   color: #000;
   font: inherit;
   font-size: calc(var(--lp-fit, 1) * clamp(1.15rem, 3.4vh, 1.5rem));
@@ -2295,20 +2428,10 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-
   line-height: 1.25;
 }
 
-.lp-game-btn--picture .lp-game-btn-icon {
-  display: grid;
-  place-items: center;
+.lp-game-options--wide .lp-game-btn-icon {
   width: calc(var(--lp-fit, 1) * 46px);
   height: calc(var(--lp-fit, 1) * 46px);
-  border: 2.5px solid var(--ink);
   border-radius: 13px;
-  background: var(--memteal);
-  color: var(--ink);
-}
-
-.lp-game-btn--picture .lp-game-btn-icon svg {
-  width: 60%;
-  height: 60%;
 }
 
 .lp-game-btn--memory .lp-game-btn-icon { background: #ffb27a; }
@@ -2322,7 +2445,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-
   display: flex;
   justify-content: center;
   gap: 7px;
-  padding: clamp(6px, 1.5vh, 14px) 0 4px;
+  padding: clamp(6px, 1.5vh, 14px) 0 12px;
 }
 
 .lesson-player-dot {
@@ -2371,6 +2494,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-
     width: auto;
     height: 44px;
     border-radius: 12px;
+    box-shadow: 3px 3px 0 0 var(--ink);
   }
 }
 
@@ -2403,19 +2527,19 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-sand {
 
 /* Bold dark swatches — self-contained: bring their own light-ink text, like the site's sticker cards */
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-navy {
-  background: linear-gradient(160deg, #1b2340 0%, #232c52 100%);
+  background: linear-gradient(160deg, #3d4767 0%, #455072 100%);
 }
 
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-plum {
-  background: linear-gradient(160deg, #2e1b34 0%, #3d2444 100%);
+  background: linear-gradient(160deg, #55435b 0%, #5e4b64 100%);
 }
 
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-forest {
-  background: linear-gradient(160deg, #16281f 0%, #1e3327 100%);
+  background: linear-gradient(160deg, #3c5347 0%, #445c4f 100%);
 }
 
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-charcoal {
-  background: linear-gradient(160deg, #201f22 0%, #2b2a2e 100%);
+  background: linear-gradient(160deg, #47464b 0%, #504f54 100%);
 }
 
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark {
@@ -2456,7 +2580,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-p
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-nav {
   background: var(--lp-surface);
   color: var(--lp-ink);
-  border-color: rgba(244, 241, 251, 0.22);
+  border-color: rgba(244, 241, 251, 0.7);
 }
 
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-nav:hover:not(:disabled) {
@@ -3836,7 +3960,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-ex-fl
 
 @media (max-width: 600px) {
   .lp-math-card {
-    padding-inline: 10px;
+    padding-inline: 16px;
   }
 
   .lp-steps-row,

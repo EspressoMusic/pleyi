@@ -121,6 +121,68 @@
   max-width: 100%;
 }
 
+/* Solo play on a phone: score, game name, settings and exit stay in one row;
+   the game name shortens with "…" if it still doesn't fit. A room has more
+   pills, so it keeps wrapping. */
+@media (max-width: 600px) {
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) {
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding-inline: 10px;
+  }
+
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-stats {
+    flex: 0 0 auto;
+  }
+
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-stats .room-stat-pill {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-actions.room-top-strip-actions {
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-actions > .room-stat-pill {
+    min-width: 0;
+    min-height: 40px;
+    padding: 6px 11px 9px 8px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .room-stat-pill--games-btn {
+    display: block;
+    flex: 0 1 auto;
+    overflow: hidden;
+    line-height: 25px;
+  }
+}
+
+@media (max-width: 380px) {
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) {
+    gap: 4px;
+    padding-inline: 6px;
+  }
+
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-stats .room-stat-pill {
+    padding-inline: 7px;
+  }
+
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-actions.room-top-strip-actions {
+    gap: 4px;
+  }
+
+  .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-actions > .room-stat-pill {
+    padding: 6px 8px 9px 5px;
+  }
+}
+
 .play-root {
   flex: 1;
   display: flex;
@@ -486,11 +548,32 @@
   pointer-events: none;
 }
 
+/* On a tall screen the two panels sit one above the other, so the cards
+   are not squeezed into thin columns */
+@media (orientation: portrait) {
+  .spot-solo-board {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .spot-solo-board::before {
+    top: 50%;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    width: auto;
+    height: 4px;
+  }
+}
+
 .spot-solo-panel {
   padding: 16px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   min-height: 0;
+  container-type: inline-size;
 }
 
 .spot-solo-panel h4 {
@@ -506,8 +589,11 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));
+  /* A card is never taller than it is wide; the number and the cards stay
+     together in the middle of the panel */
+  grid-template-rows: repeat(2, minmax(0, 28cqi));
   gap: clamp(8px, 1.6vw, 18px);
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
 }
 
@@ -680,10 +766,19 @@
   box-shadow: none;
 }
 
+/* The question word looks like the site's titles: yellow with a thick ink outline */
 .vd-word-box .solo-quiz-word {
   margin: 0;
+  font-family: var(--font-sans);
   font-size: clamp(30px, 8vw, 56px);
+  font-weight: 900;
   line-height: 1.1;
+  letter-spacing: 0;
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
+  paint-order: stroke fill;
+  -webkit-text-stroke: clamp(8px, 1.6vw, 12px) var(--ink);
+  text-shadow: none;
 }
 
 .solo-options { display: grid; gap: 10px; }
@@ -805,7 +900,7 @@
 .solo-option--c0 { background: var(--memyellow); }
 .solo-option--c1 { background: var(--mempink); }
 .solo-option--c2 { background: var(--memteal); }
-.solo-option--c3 { background: var(--mempurple); color: #fff; }
+.solo-option--c3 { background: var(--mempurple); color: var(--ink); }
 
 .solo-options--vd .solo-option--c0 {
   background: #ff5252;
@@ -813,13 +908,8 @@
 }
 
 .solo-options--vd .solo-option--c1 {
-  background: #2563eb;
-  color: #fff;
-}
-
-.solo-options--vd .solo-option--c1 .solo-option-num,
-.solo-options--vd .solo-option--c1 .solo-option-text {
-  color: #fff;
+  background: #60a5fa;
+  color: var(--ink);
 }
 
 .solo-options--vd .solo-option--c2 {
@@ -865,7 +955,7 @@
 
 .vd-feedback--bad {
   background: rgba(220, 70, 70, 0.96);
-  color: #fff;
+  color: var(--ink);
 }
 
 @keyframes vd-feedback-in {
@@ -1127,7 +1217,9 @@
   justify-content: center;
   margin-bottom: 0;
   text-align: center;
-  padding: 0 clamp(8px, 2vw, 24px);
+  /* Clear the absolute hint (bulb) button on both sides so a long
+     definition never runs into it and still stays centered. */
+  padding: 0 calc(clamp(36px, 6cqh, 52px) + clamp(4px, 1.5vw, 14px) + 8px);
 }
 
 .hangman-solo-hint-he {
@@ -1339,6 +1431,14 @@
 .hangman-key:not(:disabled):active {
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 var(--ink);
+}
+
+/* Set by fitKeyboard() in solo-games.js when the height-based key size
+   would wrap into more rows than fit under the word. */
+.hangman-solo-letters.is-fit .hangman-key {
+  width: var(--hm-key);
+  height: var(--hm-key);
+  font-size: calc(var(--hm-key) * 0.45);
 }
 
 .hangman-key.is-used {
@@ -1897,8 +1997,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   padding: 14px;
-  background: rgba(255, 255, 255, 0.95);
-  border-top: 4px solid var(--ink);
 }
 
 .ts-pro-btn {

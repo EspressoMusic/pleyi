@@ -293,6 +293,8 @@
     if (o.a) s += sLabel(R, T, cen, o.a);
     if (o.b) s += sLabel(R, Q, cen, o.b);
     if (o.c) s += sLabel(T, Q, cen, o.c);
+    // ang: the sharp angle at the bottom right, marked and named.
+    if (o.ang) s += arcs(Q, R, T, 1, 56) + label(Q.x - 92, Q.y - 22, o.ang, 34, "#b71c1c");
     return svg("0 0 480 380", s);
   }
 
@@ -556,7 +558,7 @@
   // walk: dashed steps from the origin to the first point (right, then up).
   // line: [[x1, y1], [x2, y2]] — a straight line through the points (a
   // linear function's graph), drawn under them.
-  function axes({ min = 0, max = 6, points = [], walk = false, line, line2 }) {
+  function axes({ min = 0, max = 6, points = [], walk = false, line, line2, parab }) {
     const n = max - min;
     const u = Math.min(52, 330 / n);
     const pad = 46;
@@ -581,6 +583,16 @@
     }
     if (line) s += seg(P(X(line[0][0]), Y(line[0][1])), P(X(line[1][0]), Y(line[1][1])), COL.deep, 6);
     if (line2) s += seg(P(X(line2[0][0]), Y(line2[0][1])), P(X(line2[1][0]), Y(line2[1][1])), COL.orange, 6);
+    // parab: [a, p, q] – the parabola y = a(x - p)² + q, cut at the grid.
+    if (parab) {
+      const [a, p, q] = parab;
+      const pts = [];
+      for (let x = min; x <= max + 1e-9; x += 0.05) {
+        const y = a * (x - p) ** 2 + q;
+        if (y >= min - 0.05 && y <= max + 0.05) pts.push(`${f1(X(x))},${f1(Y(y))}`);
+      }
+      s += `<polyline points="${pts.join(" ")}" fill="none" stroke="${COL.deep}" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>`;
+    }
     points.forEach(([px, py, name]) => {
       s += `<circle cx="${f1(X(px))}" cy="${f1(Y(py))}" r="9" fill="${COL.red}" stroke="#000" stroke-width="3"/>`;
       if (name) s += label(X(px) + (px < max - 1 ? 20 : -20), Y(py) - 22, name, 26, "#b71c1c");

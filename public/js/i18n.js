@@ -36,7 +36,7 @@ const I18n = {
       "hero.ctaGames": "למשחקים",
       "hero.playNow": "לספריית השיעורים",
       "about.title": "מי אנחנו",
-      "about.lead": "הפתרון המושלם למורה ממלא מקום או לרגע שבו אין שיעור מוכן — ספריית שיעורים ומשחקים איכותיים, זמינה תמיד.",
+      "about.lead": 'הפתרון המושלם <mark class="about-key">למורה ממלא מקום</mark> או לרגע שבו <mark class="about-key">אין שיעור מוכן</mark> — ספריית <mark class="about-key">שיעורים ומשחקים</mark> איכותיים, <mark class="about-key">זמינה תמיד</mark>.',
       "about.s1.title": "שיעורים מוכנים",
       "about.s1.text": "מערכי שיעור מסודרים — מוכנים להצגה בכיתה.",
       "about.s2.title": "דפי עבודה ויצירה",
@@ -49,10 +49,6 @@ const I18n = {
       "services.worksheets": "דפי עבודה",
       "services.gameBuilder": "משחקים",
       "services.english": "לומדים אנגלית",
-      "about.demo.lesson": "שיעור אנגלית",
-      "about.demo.lifeskills": "שיעור כישורי חיים",
-      "about.demo.nature": "שיעור טבע",
-      "about.demo.math": "שיעור חשבון",
       "how.titleShort": "איך זה עובד?",
       "how.step1": "בוחרים משחק",
       "how.step2": "מעלים את התוכן",
@@ -250,10 +246,6 @@ const I18n = {
       "services.worksheets": "Worksheets",
       "services.gameBuilder": "Games",
       "services.english": "Learn English",
-      "about.demo.lesson": "English Lesson",
-      "about.demo.lifeskills": "Life Skills Lesson",
-      "about.demo.nature": "Nature Lesson",
-      "about.demo.math": "Math Lesson",
       "how.titleShort": "How does it work?",
       "how.step1": "Choose a game",
       "how.step2": "Upload the content",
@@ -424,7 +416,7 @@ const I18n = {
       .map((ch, i) => {
         const color = colors[i % colors.length];
         const delay = (i * 0.14).toFixed(2);
-        return `<span class="hero-site-ch" style="--ch-color:${color};--ch-delay:${delay}s">${ch}</span>`;
+        return `<span class="hero-site-ch" style="--ch-color:${color};--ch-delay:${delay}s" data-ch="${ch}">${ch}</span>`;
       })
       .join("");
   },
@@ -447,7 +439,9 @@ const I18n = {
         this.applyHeroSiteName(el);
         return;
       }
-      el.textContent = this.t(key);
+      // data-i18n-html: the text has markup of its own (the marked words).
+      if (el.hasAttribute("data-i18n-html")) el.innerHTML = this.t(key);
+      else el.textContent = this.t(key);
     });
 
     document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {

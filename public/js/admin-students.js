@@ -52,9 +52,13 @@
   ICONS.chart = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M3 20h18M6 16v-4M11 16V6M16 16v-7"/></svg>`;
   ICONS.flag = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4h12l-2.5 4L17 12H5"/></svg>`;
   ICONS.note = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>`;
-  ICONS.user = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`;
   ICONS.plus = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`;
   ICONS.phone = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>`;
+  ICONS.map = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>`;
+  ICONS.pencil = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>`;
+  ICONS.trend = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>`;
+  ICONS.target = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`;
+  ICONS.clock = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
 
   // The signed-in teacher ({ name, email, photoURL }), null when signed out.
   let account = null;
@@ -201,11 +205,6 @@
     return `<span class="adm-avatar adm-avatar--initial ${size}" aria-hidden="true">${esc(String(s.name || "?").trim().charAt(0) || "?")}</span>`;
   }
 
-  function meterHtml(done, total, label) {
-    const width = total ? Math.round((done / total) * 100) : 0;
-    return `<div class="adm-meter" role="img" aria-label="${esc(label)}"><span style="width:${width}%"></span></div>`;
-  }
-
   function portalUrl(s) {
     return `${location.origin}/s/${encodeURIComponent(s.key)}`;
   }
@@ -217,10 +216,6 @@
   function whatsappUrl(s) {
     const text = `שלום ${s.name}! זה הקישור האישי שלך למשימות באנגלית:\n${portalUrl(s)}`;
     return `https://wa.me/?text=${encodeURIComponent(text)}`;
-  }
-
-  function topicExerciseKeys() {
-    return new Set(TOPICS.flatMap((topic) => (topic.exercises || []).map((ex) => `${topic.id}/${ex.id}`)));
   }
 
   // Full (non-retry) rounds only: a mistakes-only retry never sets a best score.
@@ -290,6 +285,11 @@
       : esc(account.name.charAt(0).toUpperCase());
     $("#admAccountName").textContent = account.name;
     $("#admAccount").title = account.email || "";
+  }
+
+  function setAccountMenu(open) {
+    $("#admAccountMenu").classList.toggle("hidden", !open);
+    $("#admAccountToggle").setAttribute("aria-expanded", open ? "true" : "false");
   }
 
   async function signIn() {
@@ -372,9 +372,13 @@
         <div class="adm-create-row">
           <label class="adm-field">
             <span>שם התלמיד</span>
-            <input type="text" id="admNewName" maxlength="80" required placeholder="למשל: יוסי כהן" />
+            <input type="text" id="admNewName" maxlength="80" required placeholder="למשל: יוסי כ." />
           </label>
           <button type="submit" class="btn btn-primary btn-candy adm-create-btn">הוספה</button>
+        </div>
+        <div class="adm-create-hints">
+          <p class="adm-muted adm-small">מספיק שם פרטי ואות משם המשפחה. בלי מידע רגיש: בריאות, אבחונים או ת״ז</p>
+          <p class="adm-muted adm-small">פתיחת תיק = אישור שיש לכם רשות מההורים או מבית הספר</p>
         </div>
       </form>
 
@@ -398,9 +402,39 @@
     $$("[data-student-info]", view).forEach((btn) =>
       btn.addEventListener("click", () => {
         const s = students.find((st) => st.id === btn.dataset.studentInfo);
-        if (s) infoDialog.open(studentInfoHtml(s), btn);
+        if (s) openStudentInfo(s, btn);
       })
     );
+  }
+
+  // The card's "i" dialog; its pencil opens a small form to rename the student.
+  function openStudentInfo(s, opener) {
+    infoDialog.open(studentInfoHtml(s), opener);
+    const card = $(".adm-info .adm-info-card");
+    const form = $("[data-rename-form]", card);
+    const input = $("input", form);
+    const edit = $("[data-rename]", card);
+    const setEditing = (on) => {
+      form.classList.toggle("hidden", !on);
+      edit.classList.toggle("hidden", on);
+      if (on) input.select();
+      (on ? input : edit).focus();
+    };
+    edit.addEventListener("click", () => setEditing(true));
+    $("[data-rename-cancel]", form).addEventListener("click", () => {
+      input.value = s.name;
+      setEditing(false);
+    });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      withBusy(e.submitter, async () => {
+        const res = await api(`/api/admin/students/${encodeURIComponent(s.id)}`, { method: "PATCH", body: { name: input.value } });
+        s.name = res.name;
+        renderList();
+        openStudentInfo(s, $(`[data-student-info="${CSS.escape(s.id)}"]`));
+        showToast("השם נשמר");
+      });
+    });
   }
 
   /* A card folded into a small rectangle until the teacher clicks it; the
@@ -418,13 +452,64 @@
     return `<button type="button" class="adm-info-close" data-fold-close aria-label="סגירה">${ICONS.cross}</button>`;
   }
 
+  /* The rows behind "מתקדם": a title only, and an "i" that says what the
+     row holds. Clicking a row opens its card in place (bindFold); the map
+     row opens the student's map in a new tab instead. */
+
+  const FILE_ROWS = {
+    summary: { id: "admSummary", title: "סיכום", info: ["הציון הממוצע של התלמיד וכמה זמן תרגל.", "גם מתי נפתח התיק ומתי נכנס לאחרונה."] },
+    map: { id: "admMap", title: "מפת ההתקדמות", info: ["המפה שהתלמיד רואה בקישור שלו.", "רואים אילו נושאים סיים, איפה הוא עכשיו ומה עוד לפניו.", "נפתחת בחלון חדש."] },
+    trend: { id: "admTrend", title: "מגמת ציונים", info: ["הציון בכל סבב תרגול מלא, לפי הסדר.", `רואים את ${TREND_ROUNDS} הסבבים האחרונים.`] },
+    review: { id: "admReview", title: "נקודות לחיזוק", info: ["השאלות שהתלמיד טעה בהן.", "שאלה יוצאת מהרשימה אחרי 3 תשובות נכונות ברצף."] },
+    history: { id: "admHistory", title: "היסטוריית פעילות", info: ["כל מה שהתלמיד עשה דרך הקישור, מהחדש לישן."] },
+    focus: { id: "admFocus", title: "איפה אנחנו עומדים", info: ["על מה עובדים עכשיו ומה השלב הבא.", "רק אתם רואים את זה."] },
+    notes: { id: "admNotes", title: "יומן הערות", info: ["הערות שלכם על השיעורים ועל התלמיד.", "רק אתם רואים אותן."] },
+  };
+
+  function rowHtml(key, icon, href = "") {
+    const row = FILE_ROWS[key];
+    const inner = `<span class="adm-fold-icon">${icon}</span><span>${row.title}</span>`;
+    return `
+      <div class="adm-row">
+        ${
+          href
+            ? `<a class="adm-row-btn" href="${esc(href)}" target="_blank" rel="noopener">${inner}</a>`
+            : `<button type="button" class="adm-row-btn" id="${row.id}Toggle" aria-expanded="false" aria-controls="${row.id}Card">${inner}</button>`
+        }
+        <button type="button" class="adm-info-btn" data-row-info="${key}" aria-haspopup="dialog" aria-label="מה זה ${row.title}" title="מה זה">${ICONS.info}</button>
+      </div>`;
+  }
+
+  function rowHeadHtml(key) {
+    return `
+      <div class="adm-fold-head">
+        <h3 class="adm-h3">${FILE_ROWS[key].title}</h3>
+        ${foldCloseHtml()}
+      </div>`;
+  }
+
+  function rowInfoHtml(key) {
+    const row = FILE_ROWS[key];
+    return `
+      <div class="adm-info-backdrop" data-info-close></div>
+      <div class="adm-info-card">
+        <div class="adm-info-head">
+          <h2 class="adm-info-title" id="admInfoTitle">${row.title}</h2>
+          <button type="button" class="adm-info-close" data-info-close aria-label="סגירה">${ICONS.cross}</button>
+        </div>
+        ${row.info.map((line) => `<p class="adm-row-info">${line}</p>`).join("")}
+      </div>`;
+  }
+
   // The listener sits on the panel itself, so a close button in content
-  // that gets re-rendered (a new link) keeps working.
-  function bindFold(toggle, panel, focusSel) {
+  // that gets re-rendered (a new link) keeps working. A toggle inside a
+  // row (rowHtml) hides the whole row, "i" included.
+  function bindFold(toggle, panel, focusSel, onOpen) {
     const setOpen = (open) => {
-      toggle.classList.toggle("hidden", open);
+      (toggle.closest(".adm-row") || toggle).classList.toggle("hidden", open);
       toggle.setAttribute("aria-expanded", String(open));
       panel.classList.toggle("hidden", !open);
+      if (open) onOpen?.();
       (open ? $(focusSel, panel) : toggle).focus();
     };
     toggle.addEventListener("click", () => setOpen(true));
@@ -505,8 +590,20 @@
             <h2 class="adm-info-title" id="admInfoTitle">${esc(s.name)}</h2>
             <span class="adm-student-sub">${esc(sub)}</span>
           </div>
+          <button type="button" class="adm-info-close" data-rename aria-label="עריכת שם" title="עריכת שם">${ICONS.pencil}</button>
           <button type="button" class="adm-info-close" data-info-close aria-label="סגירה">${ICONS.cross}</button>
         </div>
+
+        <form class="adm-rename hidden" data-rename-form>
+          <label class="adm-field">
+            <span>שם התלמיד</span>
+            <input type="text" maxlength="80" required value="${esc(s.name)}" />
+          </label>
+          <div class="adm-rename-actions">
+            <button type="button" class="btn btn-outline btn-candy btn-sm" data-rename-cancel>ביטול</button>
+            <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירה</button>
+          </div>
+        </form>
 
         <div class="adm-student-block">
           <h4 class="adm-student-block-title">תרגילים שפתר <span class="adm-student-count">${solved.length}</span></h4>
@@ -572,7 +669,7 @@
           close();
         } else if (e.key === "Tab") {
           // Keep keyboard focus inside the dialog.
-          const items = $$("button, a[href]", $(".adm-info-card", root));
+          const items = $$("button, a[href], input", $(".adm-info-card", root)).filter((el) => el.offsetParent);
           const first = items[0];
           const last = items[items.length - 1];
           if (e.shiftKey && document.activeElement === first) {
@@ -632,116 +729,97 @@
 
     view.innerHTML = `
       <div class="adm-file-top">
+        <div class="adm-file-tools">
+          ${foldToggleHtml("admLinkToggle", "admLinkCard", ICONS.link, "הקישור האישי")}
+          ${foldToggleHtml("admDetailsToggle", "admDetailsCard", ICONS.pencil, "עריכת שם")}
+        </div>
         <a class="adm-back" href="#">חזרה</a>
-        ${foldToggleHtml("admLinkToggle", "admLinkCard", ICONS.link, "הקישור האישי")}
       </div>
       <div class="adm-card adm-link-card hidden" id="admLinkCard">${linkCardHtml(s)}</div>
+      <form class="adm-card hidden" id="admDetailsCard">
+        <div class="adm-fold-head">
+          <h3 class="adm-h3">עריכת שם</h3>
+          ${foldCloseHtml()}
+        </div>
+        <label class="adm-field">
+          <span>שם התלמיד</span>
+          <input type="text" id="admName" maxlength="80" required value="${esc(s.name)}" />
+        </label>
+        <div class="adm-form-foot">
+          <span class="adm-muted adm-small">השם החדש יופיע גם בקישור של התלמיד</span>
+          <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירה</button>
+        </div>
+      </form>
 
       <!-- The tasks the student sees on his link — the only thing there. -->
-      <h2 class="adm-h1 adm-solved-head">משימות ל${esc(s.name)}</h2>
-      <p class="adm-muted adm-card-lead">התרגילים שתוסיפו כאן הם מה שהתלמיד יראה בקישור האישי שלו.</p>
+      <h2 class="adm-h1 adm-solved-head">משימות</h2>
       ${homeworkFormHtml(s)}
       <div id="admHomework">${homeworkListHtml(s)}</div>
 
-      <h2 class="adm-h1 adm-solved-head">התרגילים של ${esc(s.name)}</h2>
+      <h2 class="adm-h1 adm-solved-head">תרגילים</h2>
       ${solvedGridHtml(s)}
 
-      <!-- The rest of the file stays folded until the teacher asks for it. -->
+      <!-- The rest of the file stays folded until the teacher asks for it:
+           one row per part, each opening in place. -->
       <details class="adm-advanced" id="admAdvanced">
         <summary class="adm-fold-toggle">
           <span class="adm-fold-icon">${ICONS.plus}</span>
           <span>מתקדם</span>
         </summary>
 
-        <div class="adm-card adm-profile">
-          ${avatarHtml(s, "adm-avatar--lg")}
-          <div class="adm-profile-text">
-            <h3 class="adm-h3">${esc(s.name)}</h3>
+        <div class="adm-rows">
+          ${rowHtml("summary", ICONS.chart)}
+          <div class="adm-card hidden" id="admSummaryCard">
+            ${rowHeadHtml("summary")}
             <p class="adm-muted">התיק נפתח: ${esc(fmtDate(s.createdAt))} · ${s.lastActive ? `פעילות אחרונה: ${esc(relTime(s.lastActive))}` : "עוד לא נכנס לקישור"}</p>
-          </div>
-        </div>
-
-        <div class="adm-tiles">
-          ${tile("ציון ממוצע", avg == null ? "—" : `${avg}%`)}
-          ${tile("זמן תרגול", esc(fmtDuration(s.counts?.practiceSec || 0)))}
-        </div>
-
-        <div class="adm-detail-grid">
-          <div class="adm-detail-main">
-            ${foldToggleHtml("admTopicsToggle", "admTopicsCard", ICONS.chart, "התקדמות לפי נושא")}
-            <div class="adm-card hidden" id="admTopicsCard">
-              <div class="adm-fold-head">
-                <h3 class="adm-h3">התקדמות לפי נושא</h3>
-                ${foldCloseHtml()}
-              </div>
-              ${topicsHtml(s)}
-            </div>
-            <div class="adm-card">
-              <h3 class="adm-h3">מגמת ציונים</h3>
-              <p class="adm-muted adm-card-lead">הציון בכל סבב תרגול מלא, לפי הסדר (${TREND_ROUNDS} האחרונים).</p>
-              ${trendHtml(s)}
-            </div>
-            <div class="adm-card">
-              <h3 class="adm-h3">נקודות לחיזוק</h3>
-              <p class="adm-muted adm-card-lead">השאלות שהתלמיד טעה בהן.<br />שאלה יוצאת מהרשימה אחרי 3 תשובות נכונות ברצף.</p>
-              ${reviewBankHtml(s)}
-            </div>
-            <div class="adm-card">
-              <h3 class="adm-h3">היסטוריית פעילות</h3>
-              <div id="admHistory">${historyHtml(s)}</div>
+            <div class="adm-tiles">
+              ${tile("ציון ממוצע", avg == null ? "—" : `${avg}%`)}
+              ${tile("זמן תרגול", esc(fmtDuration(s.counts?.practiceSec || 0)))}
             </div>
           </div>
 
-          <aside class="adm-detail-side">
-            <div class="adm-fold-squares">
-              ${foldToggleHtml("admFocusToggle", "admFocusForm", ICONS.flag, "איפה אנחנו עומדים")}
-              ${foldToggleHtml("admNotesToggle", "admNotesCard", ICONS.note, "יומן הערות")}
-              ${foldToggleHtml("admDetailsToggle", "admDetailsForm", ICONS.user, "פרטי התלמיד")}
+          ${rowHtml("map", ICONS.map, `${portalUrl(s)}?view=teacher#map`)}
+
+          ${rowHtml("trend", ICONS.trend)}
+          <div class="adm-card hidden" id="admTrendCard">
+            ${rowHeadHtml("trend")}
+            ${trendHtml(s)}
+          </div>
+
+          ${rowHtml("review", ICONS.target)}
+          <div class="adm-card hidden" id="admReviewCard">
+            ${rowHeadHtml("review")}
+            ${reviewBankHtml(s)}
+          </div>
+
+          ${rowHtml("history", ICONS.clock)}
+          <div class="adm-card hidden" id="admHistoryCard">
+            ${rowHeadHtml("history")}
+            <div id="admHistory">${historyHtml(s)}</div>
+          </div>
+
+          ${rowHtml("focus", ICONS.flag)}
+          <form class="adm-card hidden" id="admFocusCard">
+            ${rowHeadHtml("focus")}
+            <textarea id="admFocus" rows="5" placeholder="למשל: סיימנו כינויי גוף, עכשיו עוברים לפועל להיות. לחזק כתיבה.">${esc(s.focus || "")}</textarea>
+            <div class="adm-form-foot">
+              <span class="adm-muted adm-small" id="admFocusStamp">${s.focusUpdatedAt ? `עודכן: ${esc(fmtDate(s.focusUpdatedAt))}` : ""}</span>
+              <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירה</button>
             </div>
+          </form>
 
-            <form class="adm-card hidden" id="admFocusForm">
-              <div class="adm-fold-head">
-                <h3 class="adm-h3">איפה אנחנו עומדים</h3>
-                ${foldCloseHtml()}
-              </div>
-              <p class="adm-muted adm-card-lead">על מה עובדים עכשיו ומה השלב הבא.</p>
-              <textarea id="admFocus" rows="5" placeholder="למשל: סיימנו כינויי גוף, עכשיו עוברים לפועל להיות. לחזק כתיבה.">${esc(s.focus || "")}</textarea>
-              <div class="adm-form-foot">
-                <span class="adm-muted adm-small" id="admFocusStamp">${s.focusUpdatedAt ? `עודכן: ${esc(fmtDate(s.focusUpdatedAt))}` : ""}</span>
-                <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירה</button>
-              </div>
+          ${rowHtml("notes", ICONS.note)}
+          <div class="adm-card hidden" id="admNotesCard">
+            ${rowHeadHtml("notes")}
+            <form id="admNoteForm" class="adm-note-form">
+              <textarea id="admNoteText" rows="3" placeholder="הערה על השיעור או על התלמיד…" required></textarea>
+              <button type="submit" class="btn btn-primary btn-candy btn-sm">הוספת הערה</button>
             </form>
-
-            <div class="adm-card hidden" id="admNotesCard">
-              <div class="adm-fold-head">
-                <h3 class="adm-h3">יומן הערות</h3>
-                ${foldCloseHtml()}
-              </div>
-              <form id="admNoteForm" class="adm-note-form">
-                <textarea id="admNoteText" rows="3" placeholder="הערה על השיעור או על התלמיד…" required></textarea>
-                <button type="submit" class="btn btn-primary btn-candy btn-sm">הוספת הערה</button>
-              </form>
-              <ul class="adm-notes" id="admNotes">${notesHtml(s)}</ul>
-            </div>
-
-            <form class="adm-card hidden" id="admDetailsForm">
-              <div class="adm-fold-head">
-                <h3 class="adm-h3">פרטי התלמיד</h3>
-                ${foldCloseHtml()}
-              </div>
-              <label class="adm-field">
-                <span>שם התלמיד</span>
-                <input type="text" id="admName" maxlength="80" required value="${esc(s.name)}" />
-              </label>
-              <div class="adm-form-foot">
-                <span></span>
-                <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירת פרטים</button>
-              </div>
-            </form>
-
-            <button type="button" class="adm-danger-btn" id="admDeleteStudent">${ICONS.trash}<span>מחיקת התיק וכל הנתונים שבו</span></button>
-          </aside>
+            <ul class="adm-notes" id="admNotes">${notesHtml(s)}</ul>
+          </div>
         </div>
+
+        <button type="button" class="adm-danger-btn" id="admDeleteStudent">${ICONS.trash}<span>מחיקת התיק וכל הנתונים שבו</span></button>
       </details>`;
 
     bindStudent();
@@ -754,7 +832,7 @@
       <div class="adm-link-head">
         <span class="adm-link-icon">${ICONS.link}</span>
         <div class="adm-link-text">
-          <h3 class="adm-h3">הקישור האישי של ${esc(s.name)}</h3>
+          <h3 class="adm-h3">הקישור האישי</h3>
           <p class="adm-muted adm-small">שלחו לתלמיד את הקישור. הוא יראה בו את המשימות שתשאירו לו, וכל מה שיפתור יישמר בתיק הזה. אין צורך בהרשמה או בסיסמה.</p>
         </div>
         ${foldCloseHtml()}
@@ -940,74 +1018,6 @@
           })
           .join("")}
       </ul>`;
-  }
-
-  function topicsHtml(s) {
-    const best = s.best || {};
-    const opened = new Map();
-    (s.activity || []).forEach((a) => {
-      if ((a.kind === "lesson" || a.kind === "presentation") && a.topicId && !opened.has(a.topicId)) opened.set(a.topicId, a.at);
-    });
-
-    // Topics the student started show first; the rest wait behind a toggle.
-    const learned = [];
-    const notLearned = [];
-    TOPICS.forEach((topic) => {
-      const rows = (topic.exercises || []).map((ex) => ({ ex, rec: best[`${topic.id}/${ex.id}`] }));
-      const done = rows.filter((r) => r.rec?.bestAt).length;
-      const lessonSeen = opened.get(topic.id);
-      const started = done || rows.some((r) => r.rec) || lessonSeen;
-      (started ? learned : notLearned).push(`
-        <details class="adm-topic"${started ? " open" : ""}>
-          <summary class="adm-topic-head">
-            <span class="adm-topic-title">${esc(topic.title)}</span>
-            <span class="adm-topic-count" dir="ltr">${done}/${rows.length}</span>
-            ${meterHtml(done, rows.length, `${done} מתוך ${rows.length} תרגילים בנושא ${topic.title}`)}
-          </summary>
-          ${lessonSeen ? `<p class="adm-topic-lesson">השיעור נפתח לאחרונה: ${esc(fmtDate(lessonSeen))}</p>` : ""}
-          <ul class="adm-ex-list">${rows.map(({ ex, rec }) => exerciseRowHtml(ex.title, ex.type, rec)).join("")}</ul>
-        </details>`);
-    });
-
-    // Exercises recorded under ids that are no longer on the site.
-    const known = topicExerciseKeys();
-    const extra = Object.entries(best).filter(([key]) => !known.has(key));
-    if (extra.length) {
-      learned.push(`
-        <details class="adm-topic">
-          <summary class="adm-topic-head"><span class="adm-topic-title">תרגילים שהוסרו מהאתר</span><span class="adm-topic-count">${extra.length}</span></summary>
-          <ul class="adm-ex-list">${extra.map(([key, rec]) => exerciseRowHtml(rec.title || key, rec.type, rec)).join("")}</ul>
-        </details>`);
-    }
-    if (!learned.length && !notLearned.length) return `<p class="adm-muted">אין נושאים באתר.</p>`;
-    return `
-      ${learned.length ? learned.join("") : `<p class="adm-muted">עוד לא התחלנו אף נושא.</p>`}
-      ${notLearned.length ? `
-        <details class="adm-topics-rest">
-          <summary class="adm-fold-toggle">
-            <span class="adm-fold-icon">${ICONS.plus}</span>
-            <span>נושאים שעוד לא למדנו (${notLearned.length})</span>
-          </summary>
-          ${notLearned.join("")}
-        </details>` : ""}`;
-  }
-
-  function exerciseRowHtml(title, type, rec) {
-    let status;
-    if (rec?.bestAt) status = scorePill(rec.score, rec.total);
-    else if (rec) status = pill("none", "רק תרגול טעויות");
-    else status = pill("none", "טרם תורגל");
-    const meta = rec
-      ? `${rec.attempts} ${rec.attempts === 1 ? "ניסיון" : "ניסיונות"} · אחרון: ${esc(fmtDate(rec.lastAt))}${rec.lastTotal && rec.attempts > 1 ? ` (<span dir="ltr">${rec.lastScore}/${rec.lastTotal}</span>)` : ""}`
-      : "";
-    return `
-      <li class="adm-ex${rec ? "" : " is-untouched"}">
-        <span class="adm-ex-text">
-          <span class="adm-ex-title">${esc(title)}</span>
-          <span class="adm-ex-meta">${esc(TYPE_LABELS[type] || "")}${meta ? ` · ${meta}` : ""}</span>
-        </span>
-        ${status}
-      </li>`;
   }
 
   /* Score trend — one series, so the card title names it and no legend is needed. */
@@ -1307,18 +1317,21 @@
     const id = encodeURIComponent(current.id);
     bindFold($("#admLinkToggle"), $("#admLinkCard"), "#admCopyLink");
     bindFold($("#admHwToggle"), $("#admHwForm"), "#admHwPick");
-    bindFold($("#admTopicsToggle"), $("#admTopicsCard"), "[data-fold-close]");
-    bindFold($("#admFocusToggle"), $("#admFocusForm"), "#admFocus");
+    bindFold($("#admSummaryToggle"), $("#admSummaryCard"), "[data-fold-close]");
+    // The chart was drawn while folded, with no width to measure.
+    bindFold($("#admTrendToggle"), $("#admTrendCard"), "[data-fold-close]", drawTrend);
+    bindFold($("#admReviewToggle"), $("#admReviewCard"), "[data-fold-close]");
+    bindFold($("#admHistoryToggle"), $("#admHistoryCard"), "[data-fold-close]");
+    bindFold($("#admFocusToggle"), $("#admFocusCard"), "#admFocus");
     bindFold($("#admNotesToggle"), $("#admNotesCard"), "#admNoteText");
-    bindFold($("#admDetailsToggle"), $("#admDetailsForm"), "#admName");
+    bindFold($("#admDetailsToggle"), $("#admDetailsCard"), "#admName");
     bindLinkCard();
     $$("[data-solved]").forEach((btn) =>
       btn.addEventListener("click", () => infoDialog.open(solvedDialogHtml(current, btn.dataset.solved), btn))
     );
-    // The chart was drawn while folded, with no width to measure.
-    $("#admAdvanced").addEventListener("toggle", (e) => {
-      if (e.target.open) drawTrend();
-    });
+    $$("[data-row-info]").forEach((btn) =>
+      btn.addEventListener("click", () => infoDialog.open(rowInfoHtml(btn.dataset.rowInfo), btn))
+    );
 
     $("#admHwForm").addEventListener("submit", (e) => {
       e.preventDefault();
@@ -1356,7 +1369,7 @@
       });
     });
 
-    $("#admFocusForm").addEventListener("submit", (e) => {
+    $("#admFocusCard").addEventListener("submit", (e) => {
       e.preventDefault();
       withBusy(e.submitter, async () => {
         const res = await api(`/api/admin/students/${id}`, { method: "PATCH", body: { focus: $("#admFocus").value } });
@@ -1367,7 +1380,7 @@
       });
     });
 
-    $("#admDetailsForm").addEventListener("submit", (e) => {
+    $("#admDetailsCard").addEventListener("submit", (e) => {
       e.preventDefault();
       withBusy(e.submitter, async () => {
         const res = await api(`/api/admin/students/${id}`, {
@@ -1377,7 +1390,7 @@
         current.name = res.name;
         syncListEntry();
         renderStudent();
-        showToast("הפרטים נשמרו");
+        showToast("השם נשמר");
       });
     });
 
@@ -1672,7 +1685,19 @@
     }
     $("#admGoogleBtn").disabled = false;
     $("#admGoogleBtn").addEventListener("click", signIn);
-    $("#admSignOut").addEventListener("click", () => FirebaseApp.auth.signOut());
+    $("#admSignOut").addEventListener("click", () => {
+      setAccountMenu(false);
+      FirebaseApp.auth.signOut();
+    });
+    $("#admAccountToggle").addEventListener("click", () => {
+      setAccountMenu($("#admAccountMenu").classList.contains("hidden"));
+    });
+    document.addEventListener("click", (e) => {
+      if (!$("#admAccount").contains(e.target)) setAccountMenu(false);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setAccountMenu(false);
+    });
 
     FirebaseApp.auth.onAuthStateChanged((user) => {
       account = user

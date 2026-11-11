@@ -281,31 +281,343 @@
   list-style: none;
 }
 
-/* Inline game-list sections */
+/* The bar at the bottom: yellow here instead of the grey panel. */
+.my-room-body .site-footer-mini {
+  background: var(--memyellow, #ffe066);
+}
+
+/* Greeting + the bell with the students' updates */
+
+.room-hello {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 0 clamp(20px, 4vw, 28px);
+}
+
+.room-hello-title {
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 2.9rem);
+  font-weight: 900;
+  line-height: 1.15;
+  color: #000;
+}
+
+.room-bell {
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  color: var(--ink, #000);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: transform 0.15s var(--ease);
+}
+
+.room-bell:hover {
+  transform: translateY(-2px);
+}
+
+/* In the top bar: the right corner, opposite the menu button. */
+.nav-inner .room-bell {
+  margin-inline-end: auto;
+}
+
+.nav-inner .room-bell.hidden {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .nav-inner .room-bell {
+    margin-inline-end: 0;
+  }
+
+  .nav-inner .room-bell + .nav-links {
+    margin-inline-end: auto;
+  }
+}
+
+/* Just the bell: yellow inside, thick black lines. */
+.room-bell svg {
+  width: 42px;
+  height: 42px;
+  fill: var(--memyellow, #ffe066);
+}
+
+/* New updates: a red dot on the bell, and the bell rings every few seconds. */
+.room-bell-count {
+  position: absolute;
+  top: 3px;
+  inset-inline-end: 5px;
+  width: 17px;
+  height: 17px;
+  background: #d63c3c;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+}
+
+.room-bell.has-new svg {
+  transform-origin: 50% 10%;
+  animation: roomBellRing 3s ease-in-out infinite;
+}
+
+@keyframes roomBellRing {
+  0%, 30%, 100% { transform: rotate(0); }
+  4% { transform: rotate(18deg); }
+  9% { transform: rotate(-15deg); }
+  14% { transform: rotate(11deg); }
+  19% { transform: rotate(-7deg); }
+  24% { transform: rotate(3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-bell.has-new svg {
+    animation: none;
+  }
+}
+
+/* One equal tile per category: an icon and a title, nothing else. */
 
 /* styles.css pads every <section> 80px top and bottom. */
-.room-content,
-.room-list-section {
+.room-content {
   padding: 0;
 }
 
-.room-list-section {
-  max-width: 480px;
-  margin: 0 auto 28px;
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
 }
 
-.room-list-heading {
-  margin: 0 0 12px;
-  font-size: clamp(18px, 3.2vw, 22px);
-  font-weight: 900;
+.room-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  aspect-ratio: 5 / 4;
+  min-width: 0;
+  padding: 14px 10px;
+  font-family: inherit;
+  color: #000;
   text-align: center;
-  color: var(--ink);
+  text-decoration: none;
+  background: #eaf5ff;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease);
+}
+
+.room-tile:hover {
+  transform: translateY(-3px);
+}
+
+.room-tile-icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  background: var(--memyellow, #ffe066);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+}
+
+.room-tile-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* A color per tile, from the lesson game buttons' palette. */
+.room-tile-icon[data-icon="student"] { background: #ffd84d; }
+.room-tile-icon[data-icon="clock"] { background: #7fdccf; }
+.room-tile-icon[data-icon="star"] { background: #ff8f8f; }
+.room-tile-icon[data-icon="saved"] { background: #a9c4ff; }
+.room-tile-icon[data-icon="calendar"] { background: #ffb27a; }
+.room-tile-icon[data-icon="heart"] { background: #ff9ec7; }
+.room-tile-icon[data-icon="game"] { background: #b9a4ff; }
+.room-tile-icon[data-icon="more"] { background: #9fe0a0; }
+
+.room-tile-title {
+  font-size: clamp(1.3rem, 5vw, 1.65rem);
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+/* The slides' teal marker (same as .lp-key). */
+.room-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 45%, #fff);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.room-box-empty {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.7;
+  color: var(--body);
+}
+
+.room-box-empty a {
+  color: #000;
+  font-weight: 900;
 }
 
 .room-inline-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+}
+
+/* Inside a box the rows are split by lines, not boxed again. */
+.room-inline-list > * + * {
+  border-top: 2px solid rgba(0, 0, 0, 0.12);
+}
+
+/* A line of activity: what I did (or a student did) and when. */
+.room-act {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+}
+
+.room-act-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: #000;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 45%, #fff);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.room-act-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.room-act-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #000;
+  text-decoration: none;
+}
+
+.room-act-text b {
+  font-weight: 900;
+}
+
+a.room-act-text:hover b {
+  text-decoration: underline;
+}
+
+.room-act-score {
+  display: inline-block;
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 900;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 30%, #fff);
+  border-radius: 6px;
+}
+
+.room-act-when {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.room-act.is-help .room-act-icon {
+  background: var(--memyellow, #ffe066);
+}
+
+/* A bell update the teacher hasn't seen yet. */
+.room-act.is-new {
+  margin-inline: -8px;
+  padding-inline: 8px;
+  background: color-mix(in srgb, var(--memyellow, #ffe066) 40%, transparent);
+  border-radius: 10px;
+}
+
+/* The history and the bell open in a dialog. */
+.room-dlg {
+  width: min(92vw, 500px);
+  max-height: 86dvh;
+  padding: 0;
+  overflow: auto;
+  color: #000;
+  background: #eaf5ff;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  box-shadow: 6px 8px 0 0 var(--ink);
+}
+
+.room-dlg::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.room-dlg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 18px 20px;
+}
+
+.room-dlg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.room-dlg-title {
+  margin: 0;
+  font-size: clamp(1.3rem, 5vw, 1.55rem);
+  font-weight: 900;
+  line-height: 1.4;
+  color: #000;
+}
+
+.room-dlg-close {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #000;
+  background: var(--memyellow, #ffe066);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  cursor: pointer;
+}
+
+.room-dlg-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.room-dlg-day {
+  margin: 10px 0 0;
+  font-size: 15px;
+  font-weight: 900;
+  color: #000;
 }
 
 .room-foot-link {
@@ -342,10 +654,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
-  background: #eaf5ff;
-  border: 3px solid var(--ink);
-  border-radius: 14px;
+  padding: 10px 0;
 }
 
 .room-list-info {
@@ -427,19 +736,26 @@
   opacity: 1;
 }
 
-.room-list-empty {
-  margin: 0;
-  padding: 28px 16px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--muted);
-  line-height: 1.6;
-}
+/* Phones: two square tiles a row. */
+@media (max-width: 700px) {
+  .room-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
 
-.room-list-empty a {
-  color: var(--ink);
-  font-weight: 900;
+  .room-tile {
+    aspect-ratio: 1;
+  }
+
+  .room-tile-icon {
+    width: 54px;
+    height: 54px;
+  }
+
+  .room-tile-icon svg {
+    width: 27px;
+    height: 27px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -450,9 +766,5 @@
 
   .room-cal-num {
     font-size: 12px;
-  }
-
-  .room-list-section {
-    max-width: 100%;
   }
 }

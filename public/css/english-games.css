@@ -24,6 +24,7 @@
 .eng-ex-card--game-speed .eng-ex-icon { background: #ff9ec7; }
 .eng-ex-card--game-balloons .eng-ex-icon { background: #9be7ff; }
 .eng-ex-card--game-scramble .eng-ex-icon { background: #b9a4ff; }
+.eng-ex-card--game-together .eng-ex-icon { background: var(--memyellow); }
 
 /* ── Header: game title + topic, and the score pills under them ── */
 
@@ -1163,7 +1164,17 @@ html.eng-runner-open .eng-runner-card--game-hunt > .eng-hunt-stage {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.18));
+}
+
+/* A thick ink edge around each thing, like a sticker (and like the fox).
+   --hunt-ink grows with the picture (playHunt). The ink stays dark in the
+   dark theme too, like the lines inside the pictures. */
+.eng-hunt-item img,
+.eng-hunt-fly {
+  --o: var(--hunt-ink, 2px);
+  filter: drop-shadow(var(--o) 0 0 #1b1b1b) drop-shadow(calc(-1 * var(--o)) 0 0 #1b1b1b)
+    drop-shadow(0 var(--o) 0 #1b1b1b) drop-shadow(0 calc(-1 * var(--o)) 0 #1b1b1b)
+    drop-shadow(0 3px 0 rgba(0, 0, 0, 0.16));
 }
 
 .eng-hunt-item.is-found {
