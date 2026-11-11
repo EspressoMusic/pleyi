@@ -76,6 +76,9 @@ blogPosts.forEach((slug) => {
 seo.mount(app);
 siteSearch.mount(app);
 
+// Play together is off for now, so its page file isn't served either.
+app.get("/together.html", (_req, res, next) => (together.ENABLED ? next() : res.redirect(302, "/services/class-games")));
+
 // The audio clips never change under the same address (speech.js has ?v=N).
 app.use("/audio", express.static(path.join(__dirname, "public", "audio"), { maxAge: "30d", immutable: true }));
 
@@ -101,8 +104,10 @@ app.get("/room", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "room.html"));
 });
 
-// Play together — one on one or group survival (lib/together.js).
+// Play together — one on one or group survival (lib/together.js). While
+// it's off, the page sends to the class games page.
 app.get("/together", (_req, res) => {
+  if (!together.ENABLED) return res.redirect(302, "/services/class-games");
   res.sendFile(path.join(__dirname, "public", "together.html"));
 });
 
@@ -852,7 +857,7 @@ function sendGameStateToSocket(socket, room) {
   });
 }
 
-together.mount(io);
+if (together.ENABLED) together.mount(io);
 
 io.on("connection", (socket) => {
   socket.data.roomCode = null;

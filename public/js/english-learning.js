@@ -1512,10 +1512,13 @@
     return window.EnglishGames.find(gameId);
   }
 
-  // One on one or group survival with the topic's words (/together).
+  // One on one or group survival with the topic's words (/together). Off
+  // for now, like the page itself (lib/together.js ENABLED).
+  const TOGETHER_ON = false;
   const TOGETHER_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6.5" cy="7" r="3"/><circle cx="17.5" cy="7" r="3"/><path d="M1.5 20v-1.5A4.5 4.5 0 0 1 6 14h1a4.5 4.5 0 0 1 4.5 4.5V20M12.5 20v-1.5A4.5 4.5 0 0 1 17 14h1a4.5 4.5 0 0 1 4.5 4.5V20"/></svg>`;
 
   function togetherCardHtml(topic) {
+    if (!TOGETHER_ON) return "";
     const category = /^vocab-(.+)$/.exec(topic.id)?.[1];
     const href = category ? `/together?topic=${encodeURIComponent(category)}` : "/together";
     return `
