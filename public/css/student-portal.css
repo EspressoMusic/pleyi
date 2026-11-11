@@ -1415,3 +1415,245 @@ body.stu-body {
     transition: none;
   }
 }
+
+/* ── The daily challenge (top of "המשימות שלי") ── */
+
+.stu-daily {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 520px;
+  margin: 22px auto 0;
+  padding: 18px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: #fff4d6;
+  box-shadow: var(--shadow-sticker);
+}
+
+.stu-daily-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.stu-daily-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #ff9f43;
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.stu-daily-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.stu-daily-title {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.3;
+}
+
+.stu-daily-line {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.stu-daily-week {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stu-daily-week li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #000;
+}
+
+.stu-daily-week i {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.stu-daily-week li.is-done i {
+  background: #ff9f43;
+}
+
+.stu-daily-week li.is-today i {
+  box-shadow: 0 0 0 3px var(--memyellow), 0 0 0 5.5px var(--ink);
+}
+
+.stu-daily-week i svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── The parents' page (/p/<key>, parent-portal.js) ── */
+
+.par-sub {
+  margin: 6px 0 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-align: center;
+  color: #000;
+}
+
+.par-card {
+  margin: 22px auto 0;
+  max-width: 560px;
+  padding: 18px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: #eaf5ff;
+  box-shadow: var(--shadow-sticker);
+}
+
+.par-card--daily {
+  background: #fff4d6;
+}
+
+.par-title {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+
+.par-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.par-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 8px;
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  background: #fff9e6;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  text-align: center;
+}
+
+.par-tile b {
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #000;
+}
+
+.par-tile span {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.par-line {
+  margin: 4px 0 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.par-note {
+  margin: 10px 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #000;
+}
+
+.par-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.par-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  background: #fff9e6;
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.par-row-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.par-row-title {
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #000;
+}
+
+.par-row-sub {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #000;
+}
+
+.par-row-val {
+  flex-shrink: 0;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #000;
+}
+
+.par-row.is-late {
+  background: #ffe3e3;
+}
+
+.par-row.is-done .par-row-val {
+  color: var(--stu-done);
+}
+
+.par-daily-week {
+  margin-top: 12px;
+}
+
+.par-foot {
+  max-width: 560px;
+  margin: 26px auto 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+  color: #000;
+}

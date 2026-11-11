@@ -123,6 +123,11 @@ app.get("/s/:key", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "student.html"));
 });
 
+// The parents' page — a second link the teacher sends, that only shows.
+app.get("/p/:key", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "parent.html"));
+});
+
 // The app manifest (public/js/pwa.js). The installed app opens where it was
 // installed from — pwa.js names that page in ?start=; only a student's own
 // page, the English page (with the student's key) and the teacher's student
@@ -463,8 +468,15 @@ app.get("/api/student/:key", studentRoute(async (req) => {
 
 app.post("/api/progress", studentRoute(async (req) => {
   const key = req.get("x-student-key") || req.body?.key;
-  const { activity, points } = await studentProgress.recordActivity(key, req.body?.activity);
-  return { id: activity.id, earned: activity.points || 0, points };
+  const { activity, points, daily } = await studentProgress.recordActivity(key, req.body?.activity);
+  return { id: activity.id, earned: activity.points || 0, points, ...(daily ? { daily } : {}) };
+}));
+
+// The parents' page (/p/<key>): read only.
+app.get("/api/parent/:key", studentRoute(async (req) => {
+  const view = await studentProgress.getParentView(req.params.key);
+  if (!view) throw Object.assign(new Error("הקישור לא תקין"), { status: 404 });
+  return { view };
 }));
 
 // "צריך עזרה" — shows up in the teacher's bell on /my-room.
@@ -525,6 +537,11 @@ studentAdmin.delete("/:id", studentRoute(async (req) => {
 
 studentAdmin.post("/:id/key", studentRoute((req) =>
   studentProgress.regenerateKey(req.uid, req.params.id)
+));
+
+// The parents' link: made the first time it's asked for; `renew` replaces it.
+studentAdmin.post("/:id/parent-key", studentRoute((req) =>
+  studentProgress.parentLink(req.uid, req.params.id, !!req.body?.renew)
 ));
 
 studentAdmin.post("/:id/notes", studentRoute(async (req) => ({

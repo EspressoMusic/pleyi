@@ -180,6 +180,7 @@
         letters: "לוחצים על האותיות לפי הסדר. לחיצה על אות שכבר הונחה מחזירה אותה. בסוף לוחצים על „בדיקה”. במחשב אפשר גם להקליד.",
         dictation: "שומעים, כותבים באנגלית ולוחצים על „בדיקה” (או על Enter). הרמקול משמיע שוב, וכפתור „לאט” משמיע לאט יותר.",
         translate: "לוחצים על התרגום הנכון. במחשב אפשר גם להקיש על המספר שלו.",
+        speak: "שומעים את המילה, לוחצים על המיקרופון ואומרים אותה באנגלית. לכל מילה יש 3 ניסיונות.",
       },
       foundError: "מצאתם את הטעות!",
       fixWordLabel: "המילה הנכונה:",
@@ -218,6 +219,35 @@
       mixAgain: "סבב מעורב חדש",
       mixMissing: "התרגול הזה לא נמצא",
       mixMissingLead: "אולי המורה הסיר אותו מהמשימות.",
+      dailyTitle: "האתגר היומי",
+      dailyLead: "5 שאלות קצרות בכל יום.",
+      dailyLeadDone: "עשיתם את האתגר של היום!",
+      dailyStart: "להתחיל",
+      dailyMore: "סבב נוסף",
+      dailyStreak: (n) => (n === 1 ? "רצף: יום אחד" : `רצף: ${n} ימים`),
+      dailyStreakNone: "התחילו רצף היום!",
+      dailyStreakBig: (n) => (n === 1 ? "יום ראשון ברצף!" : `רצף של ${n} ימים!`),
+      dailyBest: (n) => `השיא שלכם: ${n} ימים`,
+      dailyWeek: "7 הימים האחרונים",
+      dailyDayDone: (d) => `${d}: עשיתם את האתגר`,
+      dailyDayMissed: (d) => `${d}: בלי אתגר`,
+      dailyTomorrow: "מחר יש אתגר חדש. כדאי לחזור!",
+      dailyAgainToday: "את האתגר של היום כבר עשיתם. הסבב הזה הוא תרגול נוסף.",
+      dailyMissing: "אין עדיין שאלות לאתגר",
+      dailyMissingLead: "פתרו תרגיל אחד באחד הנושאים, ונסו שוב.",
+      dayLetters: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"],
+      speakMic: "להקלטה",
+      speakTap: "לחצו על המיקרופון ואמרו את המילה",
+      speakListening: "מקשיבים… אמרו את המילה",
+      speakHeard: "שמענו:",
+      speakAgain: (n) => (n === 1 ? "נסו שוב. נשאר ניסיון אחד." : `נסו שוב. נשארו ${n} ניסיונות.`),
+      speakNoSound: "לא שמענו כלום. לחצו שוב ודברו קרוב לטלפון.",
+      speakNoMic: "צריך לאשר למיקרופון. לחצו על המנעול שליד הכתובת ואשרו „מיקרופון”.",
+      speakOffline: "בדיקת הדיבור צריכה אינטרנט. בדקו את החיבור ונסו שוב.",
+      speakNoSupport: "הדפדפן הזה לא יכול לשמוע דיבור. נסו בכרום.",
+      speakSkip: "לדלג על המילה",
+      speakAnswer: "אומרים:",
+      speakRight: "מעולה! אמרתם נכון:",
       mistakesSaved: "הטעויות נשמרו בחזרה האישית שלכם, כדי שתוכלו לחזור עליהן גם בפעם אחרת.",
       reviewPictureInstr: "מה רואים בתמונה? בחרו את המילה הנכונה.",
       reviewPairInstr: "מה מתאים? בחרו את התשובה הנכונה.",
@@ -463,6 +493,7 @@
         letters: "Click the letters in order. Clicking a letter that is already placed sends it back. Then click \"Check\". On a computer you can also type.",
         dictation: "Listen, type it in English and click \"Check\" (or press Enter). The speaker plays it again, and \"Slow\" plays it slower.",
         translate: "Click the right translation. On a computer you can also press its number.",
+        speak: "Listen to the word, click the microphone and say it in English. Every word has 3 tries.",
       },
       foundError: "You found the mistake!",
       fixWordLabel: "The right word:",
@@ -501,6 +532,35 @@
       mixAgain: "New mixed round",
       mixMissing: "This practice wasn't found",
       mixMissingLead: "Maybe your teacher removed it from your tasks.",
+      dailyTitle: "Daily challenge",
+      dailyLead: "5 short questions every day.",
+      dailyLeadDone: "You did today's challenge!",
+      dailyStart: "Start",
+      dailyMore: "Another round",
+      dailyStreak: (n) => (n === 1 ? "Streak: 1 day" : `Streak: ${n} days`),
+      dailyStreakNone: "Start a streak today!",
+      dailyStreakBig: (n) => (n === 1 ? "Day one of your streak!" : `A ${n}-day streak!`),
+      dailyBest: (n) => `Your best: ${n} days`,
+      dailyWeek: "The last 7 days",
+      dailyDayDone: (d) => `${d}: challenge done`,
+      dailyDayMissed: (d) => `${d}: no challenge`,
+      dailyTomorrow: "A new challenge comes tomorrow. Come back!",
+      dailyAgainToday: "You already did today's challenge. This round is extra practice.",
+      dailyMissing: "No questions for the challenge yet",
+      dailyMissingLead: "Solve one exercise in any topic, then try again.",
+      dayLetters: ["S", "M", "T", "W", "T", "F", "S"],
+      speakMic: "Record",
+      speakTap: "Click the microphone and say the word",
+      speakListening: "Listening… say the word",
+      speakHeard: "We heard:",
+      speakAgain: (n) => (n === 1 ? "Try again. One try left." : `Try again. ${n} tries left.`),
+      speakNoSound: "We didn't hear anything. Click again and speak close to the phone.",
+      speakNoMic: "The microphone needs your OK. Click the lock next to the address and allow \"Microphone\".",
+      speakOffline: "Checking speech needs the internet. Check the connection and try again.",
+      speakNoSupport: "This browser can't hear speech. Try Chrome.",
+      speakSkip: "Skip this word",
+      speakAnswer: "You say:",
+      speakRight: "Great! You said it right:",
       mistakesSaved: "Your mistakes were saved to your review, so you can practice them another time too.",
       reviewPictureInstr: "What's in the picture? Choose the right word.",
       reviewPairInstr: "What matches? Choose the right answer.",
@@ -653,6 +713,10 @@
   // exercise card on a topic page.
   const exerciseIcon = (level) =>
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.5" width="15" height="19" rx="2.5"/><path d="M3 7h4M3 12h4M3 17h4"/><text class="eng-ex-num" x="13" y="16.4" text-anchor="middle">${level}</text></svg>`;
+  ICONS.mic = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>`;
+  ICONS.speak = ICONS.mic;
+  // A flame: the daily challenge's streak.
+  ICONS.flame = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4.1 0 7-2.8 7-6.8 0-3.6-2.3-6-4.1-8.2-.4 2-1.4 3.3-2.6 3.8.3-3.1-1-6.3-3.8-8.3.1 3.2-1.6 5.4-3.2 7.4C4.2 11.5 5 13.6 5 15.2 5 19.2 7.9 22 12 22Z"/><path d="M12 22c-1.7 0-3-1.3-3-3 0-1.8 1.4-3 2.2-4.3.5 1 1.3 1.6 2 1.8.4-1 .3-2 0-3 1.4 1.1 2.8 2.8 2.8 4.9 0 2.1-1.6 3.6-4 3.6Z"/></svg>`;
   ICONS.flag = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>`;
 
   function lang() {
@@ -1024,7 +1088,11 @@
       window.StudentProgress.clear();
       bar.remove();
       board.forget();
-      if (!views.topics()?.classList.contains("hidden")) renderBoardCard();
+      dailyFresh = null;
+      if (!views.topics()?.classList.contains("hidden")) {
+        renderBoardCard();
+        renderDailyCard();
+      }
       refreshReviewLinks();
       fileFinished = new Set();
       refreshTopicStatus();
@@ -1551,7 +1619,7 @@
     };
     // Practice exercises in level order (english-more.js), easiest first.
     const practice = (topic.exercises || [])
-      .filter((ex) => ex.type !== "reading")
+      .filter((ex) => ex.type !== "reading" && (ex.type !== "speak" || canListen()))
       .sort((a, b) => exerciseLevel(a) - exerciseLevel(b));
     const exercises = practice.length ? `<div class="eng-ex-grid">${practice.map(exerciseCard).join("")}</div>` : "";
 
@@ -2266,7 +2334,7 @@
 
   function runnerTitle() {
     const { exercise } = runner;
-    if (runner.review) return t(runner.review.mix ? "mixTitle" : "reviewTitle");
+    if (runner.review) return t(runner.review.daily ? "dailyTitle" : runner.review.mix ? "mixTitle" : "reviewTitle");
     if (exercise.type === "reading") return t("readingTitle");
     if (exercise.type === "exam") return t("examTitle");
     return loc(exercise, "title");
@@ -2284,7 +2352,7 @@
   function reviewFromHtml() {
     const item = runner.review?.items[runner.index];
     if (!item || runner.phase === "results") return "";
-    if (runner.review.mix) return `<span class="eng-game-topic eng-review-from"><span>${esc(loc(item.topic, "title"))} · ${esc(loc(item.source, "title"))}</span></span>`;
+    if (runner.review.mix || runner.review.daily) return `<span class="eng-game-topic eng-review-from"><span>${esc(loc(item.topic, "title"))} · ${esc(loc(item.source, "title"))}</span></span>`;
     const goal = window.MistakeBank.GOAL;
     const streak = Math.min(goal, window.MistakeBank.streakOf(item.id));
     const dots = Array.from({ length: goal }, (_, i) => `<i${i < streak ? ' class="is-on"' : ""}></i>`).join("");
@@ -2512,6 +2580,7 @@
   }
 
   function renderQuestion() {
+    stopListening();
     runner.answered = false;
     runner.phase = "question";
     runner.state = null;
@@ -2539,7 +2608,7 @@
     const item = runner.review?.items[runner.index];
     if (item) return { id: item.id, topic: item.topic, exercise: item.source, item: item.item };
     const { topic, exercise } = runner;
-    if (!topic || !exercise || exercise.type === "reading" || exercise.type === "exam") return null;
+    if (!topic || !exercise || ["reading", "exam", "speak"].includes(exercise.type)) return null;
     return { id: `${topic.id}/${exercise.id}/${itemKey(q)}`, topic, exercise, item: q };
   }
 
@@ -3383,6 +3452,160 @@
     review: (q) => `<span dir="ltr">${esc(q.en)}</span> — ${esc(q.he)}`,
   };
 
+  /* ── Speaking: the word plays, the student clicks the microphone and says
+     it, and the browser's speech recognition hears it. Only where the
+     browser can recognize speech (Chrome, Edge, Safari) — elsewhere the
+     exercise isn't listed. Each word has SPEAK_TRIES tries; hearing nothing
+     doesn't use one up. Saying the word inside a few others ("a cat", "it's
+     a cat") counts. Its questions stay out of the mistake bank, since a
+     review round may run where there is no microphone. ── */
+
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+  const SPEAK_TRIES = 3;
+  let listening = null;
+
+  function canListen() {
+    return !!Recognition && window.isSecureContext !== false;
+  }
+
+  function stopListening() {
+    const rec = listening;
+    listening = null;
+    try {
+      rec?.abort();
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // What was said, as plain words: no case or punctuation, numbers as words.
+  function spokenWords(str) {
+    return dictationWords(str).replace(/^(a|an|the) /, "");
+  }
+
+  function saidRight(q, heard) {
+    const accepted = [q.en, ...(q.accept || [])].map(spokenWords);
+    return heard.some((said) => {
+      const words = ` ${spokenWords(said)} `;
+      return accepted.some((a) => words.includes(` ${a} `));
+    });
+  }
+
+  TYPES.speak = {
+    render(q) {
+      runner.state = { tries: 0 };
+      const mic = canListen()
+        ? `<div class="eng-mic-row">
+             <button type="button" class="eng-mic-btn" id="engMicBtn" aria-label="${esc(t("speakMic"))}">${ICONS.mic}</button>
+             <span class="eng-mic-label" id="engMicLabel">${esc(t("speakTap"))}</span>
+           </div>`
+        : `<p class="eng-listen-fallback">${esc(t("speakNoSupport"))}</p>`;
+      renderRunnerShell(`
+        ${instructionsHtml()}
+        <div class="eng-picture-box eng-picture-box--small"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" />${pictureHeHtml(q)}</div>
+        <p class="eng-speak-word" dir="ltr">${esc(q.en)}${speakBtn(q.en, "eng-speak--inline")}</p>
+        ${mic}
+        <p class="eng-heard" id="engHeard" aria-live="polite"></p>
+        <div class="eng-actions"><button type="button" class="btn btn-candy font-cartoon eng-btn-secondary eng-skip" id="engSkip">${esc(t("speakSkip"))}</button></div>
+        ${feedbackHtml}`,
+        questionProgress()
+      );
+      $("#engMicBtn")?.addEventListener("click", () => this.listen(q));
+      $("#engSkip").addEventListener("click", () => this.fail(q, ""));
+      // Clicking the previous answer counts as user activation, so the
+      // browser lets the word play on its own.
+      setTimeout(() => {
+        if (runner.round[runner.index] === q && !runner.answered && !listening) speak(q.en);
+      }, 350);
+    },
+    // A second click while listening stops it.
+    listen(q) {
+      if (runner.answered) return;
+      if (listening) {
+        stopListening();
+        this.idle();
+        return;
+      }
+      window.PleyiSpeech.stop();
+      const rec = new Recognition();
+      rec.lang = "en-US";
+      rec.interimResults = false;
+      rec.continuous = false;
+      rec.maxAlternatives = 5;
+      let heard = [];
+      let error = "";
+      rec.onresult = (e) => {
+        heard = Array.from(e.results[0] || [], (alt) => alt.transcript).filter(Boolean);
+      };
+      rec.onerror = (e) => {
+        error = e.error;
+      };
+      rec.onend = () => {
+        // Stopped by the student, or the question is gone.
+        if (listening !== rec) return;
+        listening = null;
+        this.idle();
+        if (error === "not-allowed" || error === "service-not-allowed") this.note(t("speakNoMic"));
+        else if (error === "network") this.note(t("speakOffline"));
+        else if (!heard.length) this.note(t("speakNoSound"));
+        else this.check(q, heard);
+      };
+      listening = rec;
+      $("#engMicBtn")?.classList.add("is-on");
+      $("#engMicLabel").textContent = t("speakListening");
+      $("#engHeard").textContent = "";
+      try {
+        rec.start();
+      } catch {
+        listening = null;
+        this.idle();
+      }
+    },
+    idle() {
+      $("#engMicBtn")?.classList.remove("is-on");
+      const label = $("#engMicLabel");
+      if (label) label.textContent = t("speakTap");
+    },
+    note(text) {
+      const line = $("#engHeard");
+      if (line) line.textContent = text;
+      fitCard();
+    },
+    check(q, heard) {
+      const said = `<span>${esc(t("speakHeard"))}</span> <bdi dir="ltr">${esc(heard[0])}</bdi>`;
+      if (saidRight(q, heard)) {
+        runner.answered = true;
+        this.done();
+        $("#engHeard").innerHTML = said;
+        onRight(`${t("speakRight")} ${q.en}`);
+        return;
+      }
+      runner.state.tries++;
+      const left = SPEAK_TRIES - runner.state.tries;
+      if (left > 0) {
+        $("#engHeard").innerHTML = `${said} · ${esc(t("speakAgain", left))}`;
+        playSfx("wrong");
+        fitCard();
+        return;
+      }
+      $("#engHeard").innerHTML = said;
+      this.fail(q, heard[0]);
+    },
+    fail(q, given) {
+      if (runner.answered) return;
+      runner.answered = true;
+      stopListening();
+      this.done();
+      onWrong(q, `${esc(t("speakAnswer"))} <bdi dir="ltr">${esc(q.en)}</bdi>`, given);
+    },
+    // Answered: the microphone and the skip button go.
+    done() {
+      $(".eng-mic-row", views.exercise())?.classList.add("hidden");
+      $(".eng-actions", views.exercise())?.classList.add("hidden");
+    },
+    review: (q) => TYPES.picture.review(q),
+  };
+
   function picOptionsHtml(options) {
     return `
       <div class="eng-pic-options">
@@ -4223,7 +4446,20 @@
     // review round mixes many exercises too, but it is saved as practice of
     // its own, and like any mistakes practice it earns half the points.
     // Titles are in Hebrew, like the teacher's page.
-    if (review?.mix) {
+    if (review?.daily) {
+      // One round a day keeps the streak: in the file for a linked student
+      // (the server answers with it), in this browser for a visitor.
+      const levels = review.items.map((item) => exerciseLevel(item.source));
+      Object.assign(activity, {
+        topicId: DAILY_ROUTE,
+        topicTitle: STR.he.dailyTitle,
+        exerciseId: dayKey(),
+        exerciseTitle: STR.he.dailyTitle,
+        type: "daily",
+        level: Math.round(levels.reduce((a, b) => a + b, 0) / Math.max(1, levels.length)) || 1,
+      });
+      if (!window.StudentProgress?.isLinked()) saveDailyDay(dayKey());
+    } else if (review?.mix) {
       const levels = review.items.map((item) => exerciseLevel(item.source));
       Object.assign(activity, {
         topicId: MIX_ROUTE,
@@ -4247,6 +4483,7 @@
     }
     const round = runner.round;
     window.StudentProgress?.record(activity).then((result) => {
+      if (result?.daily) dailyFresh = result.daily;
       // The student may have started another round meanwhile.
       if (!result || runner.round !== round) return;
       runner.earned = result;
@@ -4332,6 +4569,10 @@
   }
 
   function renderResults() {
+    if (runner.review?.daily) {
+      renderDailyResults();
+      return;
+    }
     if (runner.review?.mix) {
       renderMixResults();
       return;
@@ -4595,17 +4836,17 @@
   let mixToken = 0;
 
   // Questions taken in turn from each exercise, so every one gets a share.
-  function buildMix(keys) {
+  function buildMix(keys, size = MIX_SIZE) {
     const pools = shuffle(keys)
       .map((key) => {
         const [topicId, exerciseId] = String(key).split("/");
         const ex = findExercise(findTopic(topicId), exerciseId);
-        if (!ex || ex.type === "reading" || ex.type === "exam") return [];
+        if (!ex || ["reading", "exam", "speak"].includes(ex.type)) return [];
         return shuffle(poolOf(ex)).map((item) => ({ id: `${topicId}/${exerciseId}/${itemKey(item)}`, topicId, exerciseId, item }));
       })
       .filter((pool) => pool.length);
     const items = [];
-    for (let i = 0; items.length < MIX_SIZE && pools.some((pool) => pool.length); i = (i + 1) % pools.length) {
+    for (let i = 0; items.length < size && pools.some((pool) => pool.length); i = (i + 1) % pools.length) {
       const entry = pools[i].shift();
       const item = entry && reviewItem(entry);
       if (item) items.push(item);
@@ -4680,6 +4921,201 @@
     });
   }
 
+  /* ── The daily challenge (#daily): five short questions a day, mixed from
+     the exercises the student already finished (their file's and this
+     browser's), or from the first topics of the path for a new visitor.
+     Finishing a round on a new day keeps the streak of days in a row going:
+     a linked student's in their file (lib/student-progress.js has the same
+     rules), a visitor's in this browser. ── */
+
+  const DAILY_ROUTE = "daily";
+  const DAILY_SIZE = 5;
+  const DAILY_KEY = "pleyi-daily";
+  const DAILY_DAYS_KEPT = 60;
+  let dailyToken = 0;
+  // A linked student's streak after a round, newer than their cached profile.
+  let dailyFresh = null;
+
+  // Today in Israel, as YYYY-MM-DD — the day the server counts too.
+  function dayKey(date = new Date()) {
+    return date.toLocaleDateString("en-CA", { timeZone: "Asia/Jerusalem" });
+  }
+
+  function dayBefore(day) {
+    const d = new Date(`${day}T12:00:00Z`);
+    d.setUTCDate(d.getUTCDate() - 1);
+    return d.toISOString().slice(0, 10);
+  }
+
+  // A visitor's streak, kept in this browser.
+  function readDaily() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(DAILY_KEY));
+      return saved && saved.owner === ownerTag() ? saved : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveDailyDay(day) {
+    const s = { streak: 0, best: 0, last: "", days: [], ...readDaily(), owner: ownerTag() };
+    if (s.last === day) return;
+    s.streak = s.last === dayBefore(day) ? s.streak + 1 : 1;
+    s.best = Math.max(s.best, s.streak);
+    s.last = day;
+    s.days = [...s.days, day].slice(-DAILY_DAYS_KEPT);
+    try {
+      localStorage.setItem(DAILY_KEY, JSON.stringify(s));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // { streak, best, doneToday, week: [{ day, done }] } — the shape the
+  // server sends for a linked student.
+  function dailyViewOf(saved) {
+    const today = dayKey();
+    const s = saved || {};
+    const done = new Set(s.days || []);
+    const week = [];
+    for (let i = 0, day = today; i < 7; i++, day = dayBefore(day)) week.unshift({ day, done: done.has(day) });
+    return {
+      streak: s.last === today || s.last === dayBefore(today) ? s.streak || 0 : 0,
+      best: s.best || 0,
+      doneToday: s.last === today,
+      week,
+    };
+  }
+
+  async function dailyState() {
+    if (window.StudentProgress?.isLinked()) {
+      const student = await window.StudentProgress.profile();
+      if (student?.daily) return dailyFresh || student.daily;
+    }
+    return dailyViewOf(readDaily());
+  }
+
+  // The streak once today's round is done, worked out ahead of the server.
+  function dailyAfter(view) {
+    if (view.doneToday) return view;
+    const streak = view.streak + 1;
+    return {
+      streak,
+      best: Math.max(view.best, streak),
+      doneToday: true,
+      week: view.week.map((d, i) => (i === view.week.length - 1 ? { ...d, done: true } : d)),
+    };
+  }
+
+  function dailyFits(ex) {
+    return ex && !["reading", "exam", "speak"].includes(ex.type);
+  }
+
+  async function dailyKeys() {
+    const student = await window.StudentProgress?.profile();
+    const solved = [...new Set([...(student?.finished || []), ...Object.keys(readBest())])].filter((key) => {
+      const [topicId, exerciseId] = key.split("/");
+      return dailyFits(findExercise(findTopic(topicId), exerciseId));
+    });
+    if (solved.length >= 2) return solved;
+    return pathTopics()
+      .slice(0, 3)
+      .flatMap((topic) => (topic.exercises || []).filter((ex) => dailyFits(ex) && exerciseLevel(ex) === 1).map((ex) => `${topic.id}/${ex.id}`));
+  }
+
+  async function openDaily() {
+    const token = ++dailyToken;
+    renderReviewMessage(t("loading"), "", "#", t("dailyTitle"));
+    const [keys, before] = await Promise.all([dailyKeys(), dailyState()]);
+    if (token !== dailyToken || decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0] !== DAILY_ROUTE) return;
+    startDaily({ keys, before });
+  }
+
+  function startDaily(daily) {
+    clearTimeout(runner.timer);
+    stopExamTimer();
+    runner.exam = null;
+    const round = buildMix(daily.keys, DAILY_SIZE);
+    if (!round.length) {
+      runner.review = null;
+      renderReviewMessage(t("dailyMissing"), t("dailyMissingLead"), "#", t("dailyTitle"));
+      return;
+    }
+    startMixedRound({ daily: { ...daily, after: null }, items: round, out: 0, back: "#" });
+  }
+
+  // The 7 days as dots, today last, each with its weekday's letter.
+  function dailyWeekHtml(view, cls = "eng-daily-week") {
+    const letters = t("dayLetters");
+    return `
+      <ol class="${cls}" aria-label="${esc(t("dailyWeek"))}">
+        ${view.week
+          .map((d) => {
+            const letter = letters[new Date(`${d.day}T12:00:00Z`).getUTCDay()];
+            return `<li class="${d.done ? "is-done" : ""}${d.day === dayKey() ? " is-today" : ""}" aria-label="${esc(t(d.done ? "dailyDayDone" : "dailyDayMissed", letter))}"><i aria-hidden="true">${d.done ? ICONS.check : ""}</i><span aria-hidden="true">${esc(letter)}</span></li>`;
+          })
+          .join("")}
+      </ol>`;
+  }
+
+  function renderDailyResults() {
+    const { score, total, review } = runner;
+    runner.phase = "results";
+    const daily = review.daily;
+    // Worked out once, so a language switch doesn't count today twice.
+    daily.after = daily.after || dailyAfter(daily.before);
+    recordRound();
+    window.MistakeBank?.flush();
+    const view = daily.after;
+    const again = daily.before.doneToday;
+    renderRunnerShell(
+      `
+      <div class="eng-results eng-daily-results">
+        <div class="eng-daily-flame${again ? "" : " is-new"}">${ICONS.flame}<span class="font-cartoon">${view.streak}</span></div>
+        <p class="eng-daily-big font-cartoon">${esc(t("dailyStreakBig", view.streak))}</p>
+        ${dailyWeekHtml(view)}
+        <p class="eng-results-count">${esc(t("score", score, total))}</p>
+        <p class="eng-results-msg">${esc(t(again ? "dailyAgainToday" : "dailyTomorrow"))}</p>
+        ${view.best > 1 ? `<p class="eng-daily-best">${esc(t("dailyBest", view.best))}</p>` : ""}
+        <div class="eng-results-actions">
+          <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engDailyMore">${esc(t("dailyMore"))}</button>
+          ${homeworkButtonHtml()}
+        </div>
+      </div>`,
+      `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
+    );
+    if (!again) launchConfetti();
+    $("#engDailyMore").addEventListener("click", () => startDaily({ keys: daily.keys, before: view }));
+  }
+
+  // The card over the topics: today's challenge and the streak.
+  async function renderDailyCard() {
+    const host = $("#engTopicsView");
+    const grid = $("#engTopicGrid");
+    if (SUBJECT || !host || !grid) return;
+    const view = await dailyState();
+    if (views.topics()?.classList.contains("hidden")) return;
+    let card = $("#engDailyCard");
+    if (!card) {
+      card = document.createElement("section");
+      card.id = "engDailyCard";
+      card.className = "eng-daily-card";
+      host.insertBefore(card, grid);
+    }
+    card.classList.toggle("is-done", view.doneToday);
+    card.innerHTML = `
+      <div class="eng-daily-head">
+        <span class="eng-daily-icon">${ICONS.flame}</span>
+        <div class="eng-daily-text">
+          <h2 class="eng-daily-title"><span class="eng-daily-key">${esc(t("dailyTitle"))}</span></h2>
+          <p class="eng-daily-lead">${esc(t(view.doneToday ? "dailyLeadDone" : "dailyLead"))}</p>
+          <p class="eng-daily-streak">${esc(view.streak ? t("dailyStreak", view.streak) : t("dailyStreakNone"))}</p>
+        </div>
+      </div>
+      ${dailyWeekHtml(view)}
+      <a class="btn ${view.doneToday ? "" : "btn-primary "}btn-candy font-cartoon eng-daily-go" href="#${DAILY_ROUTE}">${esc(t(view.doneToday ? "dailyMore" : "dailyStart"))}</a>`;
+  }
+
   /* ── Reading exams (english-exams.js): the passage on one side and one
      question at a time on the other, as in the reading runner, but nothing
      is checked until the student hands the exam in. Answers can change until
@@ -4697,13 +5133,18 @@
     examTimer = null;
   }
 
-  // Saved exams of whoever practices on this device: a student who opened
-  // their link, or the visitor.
-  function examSaveId(ex) {
+  // Whoever practices on this device: a student who opened their link (a
+  // hash of it), or "guest".
+  function ownerTag() {
     const key = window.StudentProgress?.key() || "";
     let h = 5381;
     for (let i = 0; i < key.length; i++) h = (h * 33 + key.charCodeAt(i)) | 0;
-    return `${key ? (h >>> 0).toString(36) : "guest"}/${ex.id}`;
+    return key ? (h >>> 0).toString(36) : "guest";
+  }
+
+  // Saved exams of whoever practices on this device.
+  function examSaveId(ex) {
+    return `${ownerTag()}/${ex.id}`;
   }
 
   function readExamSaves() {
@@ -5736,6 +6177,12 @@
         <div class="eng-help-listen">${prompt}<span class="eng-help-heard" dir="ltr">“${esc(said)}”</span></div>
         <p class="eng-help-sentence" dir="ltr"><span class="eng-help-typed">${esc(said)}</span></p>`;
     },
+    speak(ex) {
+      const [w] = helpWords(ex, 1);
+      return `
+        <span class="eng-help-picture"><img src="${esc(w.img)}" alt="" draggable="false" /><span>${esc(w.he)}</span></span>
+        <div class="eng-help-listen"><span class="eng-help-mic">${ICONS.mic}</span><span class="eng-help-heard" dir="ltr">“${esc(w.en)}”</span></div>`;
+    },
     translate(ex) {
       const words = helpWords(ex);
       const [w] = words;
@@ -6025,6 +6472,7 @@
     stopExamTimer();
     readAloud.stop();
     window.PleyiSpeech.stop();
+    stopListening();
     if (slideViewer.isOpen()) slideViewer.close();
     const [topicId, exerciseId] = decodeURIComponent(location.hash.replace(/^#/, "")).split("/");
     if (topicId === REVIEW_ROUTE) {
@@ -6038,6 +6486,13 @@
       if (gameLessonReturn) forgetLessonReturn();
       showView("exercise");
       openMix(exerciseId || "");
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    if (topicId === DAILY_ROUTE && !SUBJECT) {
+      if (gameLessonReturn) forgetLessonReturn();
+      showView("exercise");
+      openDaily();
       window.scrollTo({ top: 0 });
       return;
     }
@@ -6069,6 +6524,7 @@
       showView("topics");
       renderTopicGrid();
       renderBoardCard();
+      renderDailyCard();
       dockSiteBack();
     }
     window.scrollTo({ top: 0 });
@@ -6155,7 +6611,7 @@
         // never one with typed text in it.
         const q = runner.round[runner.index];
         if (runner.read.stage !== "questions" || (!runner.answered && q?.type !== "open")) renderReading();
-      } else if (!runner.answered && !["write", "order", "match", "listen", "letters", "dictation"].includes(runner.exercise?.type)) {
+      } else if (!runner.answered && !["write", "order", "match", "listen", "letters", "dictation", "speak"].includes(runner.exercise?.type)) {
         renderQuestion();
       }
     });

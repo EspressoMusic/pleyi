@@ -18,6 +18,7 @@
     flag: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4.5L17 13H5"/></svg>`,
     trophy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h8v6a4 4 0 0 1-8 0V3z"/><path d="M8 5H4.5A3.5 3.5 0 0 0 8 10.5M16 5h3.5A3.5 3.5 0 0 1 16 10.5"/><path d="M12 13v4M8 21h8M9.5 17h5"/></svg>`,
     close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>`,
+    flame: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4.1 0 7-2.8 7-6.8 0-3.6-2.3-6-4.1-8.2-.4 2-1.4 3.3-2.6 3.8.3-3.1-1-6.3-3.8-8.3.1 3.2-1.6 5.4-3.2 7.4C4.2 11.5 5 13.6 5 15.2 5 19.2 7.9 22 12 22Z"/><path d="M12 22c-1.7 0-3-1.3-3-3 0-1.8 1.4-3 2.2-4.3.5 1 1.3 1.6 2 1.8.4-1 .3-2 0-3 1.4 1.1 2.8 2.8 2.8 4.9 0 2.1-1.6 3.6-4 3.6Z"/></svg>`,
   };
 
   function esc(str) {
@@ -69,6 +70,37 @@
       </li>`;
   }
 
+  /* ── The daily challenge: five short questions a day on the English page
+     (#daily), and the streak of days in a row. ── */
+
+  const DAY_LETTERS = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
+
+  function dailyHtml(daily) {
+    if (!daily) return "";
+    const streak = daily.streak
+      ? daily.streak === 1 ? "רצף: יום אחד" : `רצף: ${daily.streak} ימים`
+      : "התחילו רצף היום!";
+    const days = (daily.week || [])
+      .map((d, i, week) => {
+        const letter = DAY_LETTERS[new Date(`${d.day}T12:00:00Z`).getUTCDay()];
+        return `<li class="${d.done ? "is-done" : ""}${i === week.length - 1 ? " is-today" : ""}" aria-label="${letter}: ${d.done ? "עשית את האתגר" : "בלי אתגר"}"><i aria-hidden="true">${d.done ? ICONS.check : ""}</i><span aria-hidden="true">${letter}</span></li>`;
+      })
+      .join("");
+    return `
+      <section class="stu-daily${daily.doneToday ? " is-done" : ""}">
+        <div class="stu-daily-head">
+          <span class="stu-daily-icon" aria-hidden="true">${ICONS.flame}</span>
+          <div class="stu-daily-text">
+            <h2 class="stu-daily-title"><span class="stu-key">האתגר היומי</span></h2>
+            <p class="stu-daily-line">${daily.doneToday ? "עשית את האתגר של היום!" : "5 שאלות קצרות בכל יום."}</p>
+            <p class="stu-daily-line"><b>${esc(streak)}</b></p>
+          </div>
+        </div>
+        <ol class="stu-daily-week" aria-label="7 הימים האחרונים">${days}</ol>
+        <a class="btn ${daily.doneToday ? "" : "btn-primary "}btn-candy stu-btn" href="/services/english?s=${encodeURIComponent(key)}#daily">${daily.doneToday ? "סבב נוסף" : "להתחיל"}</a>
+      </section>`;
+  }
+
   function tasksHtml(student) {
     const list = sorted(student.homework || []);
     const done = list.filter((hw) => hw.doneAt).length;
@@ -79,6 +111,7 @@
         ? "אלה המשימות שהמורה השאיר לך. בהצלחה!"
         : "כל המשימות בוצעו — כל הכבוד!";
     return `
+      ${dailyHtml(student.daily)}
       <p class="stu-lead">${esc(lead)}</p>
       ${
         list.length

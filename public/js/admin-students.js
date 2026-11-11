@@ -46,6 +46,8 @@
     copy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>`,
     chat: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12Z"/></svg>`,
     open: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>`,
+    // A grown-up and a child: the parents' link.
+    parents: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="5.5" r="2.8"/><path d="M3 21v-6.5A4 4 0 0 1 7 10.5h2a4 4 0 0 1 4 4V21"/><circle cx="17.5" cy="10" r="2.2"/><path d="M14.5 21v-4a3 3 0 0 1 3-3 3 3 0 0 1 3 3v4"/></svg>`,
   };
   ICONS.info = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke-width="1.6"/><path d="M12 11v8.5"/></svg>`;
   ICONS.cross = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
@@ -215,6 +217,16 @@
 
   function whatsappUrl(s) {
     const text = `שלום ${s.name}! זה הקישור האישי שלך למשימות באנגלית:\n${portalUrl(s)}`;
+    return `https://wa.me/?text=${encodeURIComponent(text)}`;
+  }
+
+  // The parents' page (/p/<key>): shows only, made from the file on request.
+  function parentUrl(s) {
+    return `${location.origin}/p/${encodeURIComponent(s.parentKey)}`;
+  }
+
+  function parentWhatsappUrl(s) {
+    const text = `שלום! בקישור הזה אפשר לראות את ההתקדמות של ${s.name} באנגלית:\n${parentUrl(s)}`;
     return `https://wa.me/?text=${encodeURIComponent(text)}`;
   }
 
@@ -732,10 +744,12 @@
         <div class="adm-file-tools">
           ${foldToggleHtml("admLinkToggle", "admLinkCard", ICONS.link, "הקישור האישי")}
           ${foldToggleHtml("admDetailsToggle", "admDetailsCard", ICONS.pencil, "עריכת שם")}
+          ${foldToggleHtml("admParentToggle", "admParentCard", ICONS.parents, "קישור להורים")}
         </div>
         <a class="adm-back" href="#">חזרה</a>
       </div>
       <div class="adm-card adm-link-card hidden" id="admLinkCard">${linkCardHtml(s)}</div>
+      <div class="adm-card adm-link-card hidden" id="admParentCard">${parentCardHtml(s)}</div>
       <form class="adm-card hidden" id="admDetailsCard">
         <div class="adm-fold-head">
           <h3 class="adm-h3">עריכת שם</h3>
@@ -846,6 +860,34 @@
         </div>
       </div>
       <button type="button" class="adm-text-btn" id="admNewKey">הקישור דלף או נשלח בטעות? יצירת קישור חדש</button>`;
+  }
+
+  function parentCardHtml(s) {
+    const head = `
+      <div class="adm-link-head">
+        <span class="adm-link-icon">${ICONS.parents}</span>
+        <div class="adm-link-text">
+          <h3 class="adm-h3">קישור להורים</h3>
+          <p class="adm-muted adm-small">ההורים רואים בו מה ${esc(s.name)} עשה השבוע, את המשימות ואת הרצף באתגר היומי.</p>
+          <p class="adm-muted adm-small">רק צפייה: ההערות שלכם והקישור של התלמיד לא מופיעים בו.</p>
+        </div>
+        ${foldCloseHtml()}
+      </div>`;
+    if (!s.parentKey) {
+      return `${head}
+        <button type="button" class="btn btn-primary btn-candy btn-sm adm-icon-label" id="admMakeParent">${ICONS.link}<span>יצירת קישור להורים</span></button>`;
+    }
+    const url = parentUrl(s);
+    return `${head}
+      <div class="adm-link-row">
+        <input type="text" class="adm-link-input" id="admParentInput" value="${esc(url)}" readonly dir="ltr" aria-label="קישור להורים" />
+        <div class="adm-link-actions">
+          <button type="button" class="btn btn-primary btn-candy btn-sm adm-icon-label" id="admCopyParent">${ICONS.copy}<span>העתקה</span></button>
+          <a class="btn btn-outline btn-candy btn-sm adm-icon-label" href="${esc(parentWhatsappUrl(s))}" target="_blank" rel="noopener">${ICONS.chat}<span>שליחה בוואטסאפ</span></a>
+          <a class="btn btn-outline btn-candy btn-sm adm-icon-label" href="${esc(url)}" target="_blank" rel="noopener">${ICONS.open}<span>תצוגה כמו ההורים</span></a>
+        </div>
+      </div>
+      <button type="button" class="adm-text-btn" id="admNewParent">הקישור נשלח בטעות? יצירת קישור חדש להורים</button>`;
   }
 
   /* The file's simple view: a rectangle per exercise the student solved.
@@ -1313,9 +1355,40 @@
     });
   }
 
+  // Makes the parents' link (or a new one, `renew`) and redraws the card.
+  function bindParentCard() {
+    const id = encodeURIComponent(current.id);
+    const make = (btn, renew) =>
+      withBusy(btn, async () => {
+        const { parentKey } = await api(`/api/admin/students/${id}/parent-key`, { method: "POST", body: { renew } });
+        current.parentKey = parentKey;
+        syncListEntry();
+        $("#admParentCard").innerHTML = parentCardHtml(current);
+        bindParentCard();
+        showToast(renew ? "נוצר קישור חדש — הקודם כבר לא עובד" : "הקישור להורים מוכן");
+        $("#admCopyParent")?.focus();
+      });
+    $("#admMakeParent")?.addEventListener("click", (e) => make(e.currentTarget, false));
+    $("#admNewParent")?.addEventListener("click", (e) => {
+      if (!confirm("ליצור קישור חדש להורים? הקישור הקודם יפסיק לעבוד.")) return;
+      make(e.currentTarget, true);
+    });
+    $("#admCopyParent")?.addEventListener("click", async () => {
+      if (await copyText(parentUrl(current))) {
+        showToast("הקישור הועתק — אפשר להדביק ולשלוח להורים");
+        return;
+      }
+      $("#admParentInput").focus();
+      $("#admParentInput").select();
+      showToast("הקישור מסומן — לחצו Ctrl+C כדי להעתיק");
+    });
+    $("#admParentInput")?.addEventListener("focus", (e) => e.target.select());
+  }
+
   function bindStudent() {
     const id = encodeURIComponent(current.id);
     bindFold($("#admLinkToggle"), $("#admLinkCard"), "#admCopyLink");
+    bindFold($("#admParentToggle"), $("#admParentCard"), "#admMakeParent, #admCopyParent");
     bindFold($("#admHwToggle"), $("#admHwForm"), "#admHwPick");
     bindFold($("#admSummaryToggle"), $("#admSummaryCard"), "[data-fold-close]");
     // The chart was drawn while folded, with no width to measure.
@@ -1326,6 +1399,7 @@
     bindFold($("#admNotesToggle"), $("#admNotesCard"), "#admNoteText");
     bindFold($("#admDetailsToggle"), $("#admDetailsCard"), "#admName");
     bindLinkCard();
+    bindParentCard();
     $$("[data-solved]").forEach((btn) =>
       btn.addEventListener("click", () => infoDialog.open(solvedDialogHtml(current, btn.dataset.solved), btn))
     );

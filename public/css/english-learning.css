@@ -6546,3 +6546,342 @@ html.eng-runner-open .eng-slow-btn span {
 .eng-match-item .lp-frac {
   font-size: 0.92em;
 }
+
+/* ── The daily challenge: the card over the topics, and its results ── */
+
+.eng-daily-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 620px;
+  margin: 0 auto 30px;
+  padding: clamp(16px, 3vw, 22px);
+  border: var(--eng-card-border);
+  border-radius: 22px;
+  background: #fff4d6;
+  color: #000;
+  box-shadow: var(--eng-card-shadow);
+}
+
+.eng-daily-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.eng-daily-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #ff9f43;
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.eng-daily-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.eng-daily-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.eng-daily-card .eng-daily-title {
+  margin: 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: #000;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+/* Bold with the lesson slides' teal marker (.lp-key). */
+.eng-daily-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+}
+
+.eng-daily-lead,
+.eng-daily-streak {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.eng-daily-streak {
+  font-weight: 900;
+}
+
+.eng-daily-go {
+  padding: 9px 28px;
+  font-size: 1.1rem;
+}
+
+/* The last 7 days: a circle each, checked when the challenge was done. */
+.eng-daily-week {
+  display: flex;
+  justify-content: center;
+  gap: clamp(6px, 2vw, 12px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eng-daily-week li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #000;
+}
+
+.eng-daily-week i {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+}
+
+.eng-daily-week li.is-done i {
+  background: #ff9f43;
+}
+
+.eng-daily-week li.is-today i {
+  box-shadow: 0 0 0 3px var(--memyellow), 0 0 0 5.5px var(--ink);
+}
+
+.eng-daily-week i svg {
+  width: 18px;
+  height: 18px;
+}
+
+.eng-daily-flame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 110px;
+  height: 110px;
+  border: 4px solid var(--ink);
+  border-radius: 50%;
+  background: #ff9f43;
+  color: var(--ink);
+  box-shadow: var(--shadow-sticker);
+}
+
+.eng-daily-flame svg {
+  width: 70px;
+  height: 70px;
+}
+
+/* The streak's number, in a badge on the flame's corner. */
+.eng-daily-flame span {
+  position: absolute;
+  bottom: -6px;
+  inset-inline-end: -8px;
+  display: grid;
+  place-items: center;
+  min-width: 46px;
+  height: 46px;
+  padding: 0 8px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #000;
+}
+
+.eng-daily-flame.is-new {
+  animation: eng-daily-pop 0.7s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+
+@keyframes eng-daily-pop {
+  0% {
+    transform: scale(0.4) rotate(-12deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-daily-flame.is-new {
+    animation: none;
+  }
+}
+
+.eng-daily-big {
+  margin: 0;
+  font-size: 1.7rem;
+  color: #000;
+}
+
+.eng-daily-best {
+  margin: 0;
+  font-weight: 800;
+  color: #000;
+}
+
+html.eng-runner-open .eng-daily-flame {
+  width: clamp(76px, 12dvh, 110px);
+  height: clamp(76px, 12dvh, 110px);
+}
+
+html.eng-runner-open .eng-daily-flame svg {
+  width: 62%;
+  height: 62%;
+}
+
+html.eng-runner-open .eng-daily-flame span {
+  min-width: clamp(36px, 5.5dvh, 46px);
+  height: clamp(36px, 5.5dvh, 46px);
+  font-size: clamp(1.15rem, 2.4dvh, 1.5rem);
+}
+
+html.eng-runner-open .eng-daily-big {
+  font-size: clamp(1.3rem, 3dvh, 1.7rem);
+}
+
+/* ── Speaking: the word, the microphone, and what was heard ── */
+
+.eng-speak-word {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #000;
+}
+
+.eng-mic-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.eng-mic-btn {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  padding: 0;
+  border: 4px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: var(--shadow-sticker);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.eng-mic-btn:active {
+  transform: scale(0.95);
+}
+
+.eng-mic-btn svg {
+  width: 46px;
+  height: 46px;
+}
+
+/* Listening: red, with a ring that keeps growing. */
+.eng-mic-btn.is-on {
+  background: #ff6b6b;
+  animation: eng-mic-ring 1.2s ease-out infinite;
+}
+
+@keyframes eng-mic-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.65), var(--shadow-sticker);
+  }
+  100% {
+    box-shadow: 0 0 0 18px rgba(255, 107, 107, 0), var(--shadow-sticker);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-mic-btn.is-on {
+    animation: none;
+  }
+}
+
+.eng-mic-label {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #000;
+  text-align: center;
+}
+
+.eng-heard {
+  min-height: 1.4em;
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #000;
+  text-align: center;
+}
+
+.eng-heard:empty {
+  display: none;
+}
+
+.eng-skip {
+  padding: 7px 20px;
+  font-size: 0.95rem;
+}
+
+.eng-help-mic {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.eng-help-mic svg {
+  width: 28px;
+  height: 28px;
+}
+
+html.eng-runner-open .eng-speak-word {
+  margin-bottom: clamp(4px, 1.2dvh, 12px);
+  font-size: clamp(1.4rem, 3.6dvh, 2rem);
+}
+
+html.eng-runner-open .eng-mic-btn {
+  width: clamp(60px, 10dvh, 92px);
+  height: clamp(60px, 10dvh, 92px);
+}
+
+html.eng-runner-open .eng-mic-btn svg {
+  width: 48%;
+  height: 48%;
+}

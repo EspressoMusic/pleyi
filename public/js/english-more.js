@@ -15,7 +15,7 @@
      write answers as letter tiles), dictation (the order sentences).
    - topics with picture words (the vocabulary topics, and grammar topics
      like telling the time): true / false with pictures, translate (both
-     ways), match English ↔ Hebrew, letters and dictation.
+     ways), match English ↔ Hebrew, letters, dictation and speaking.
    Built exercises are marked `derived`: the server's "create new exercises"
    doesn't know them, so their results screen leaves that button out.
 
@@ -30,6 +30,8 @@
    - dictation:       hear it, type it. questions: [{ answer, he? }] or words: [vocab ids].
    - translate:       words: [vocab ids]; dir "en-he" (read the English word,
                       pick the Hebrew) or "he-en".
+   - speak:           words: [vocab ids]; hear the word and say it into the
+                      microphone (only listed where the browser hears speech).
    truefalse questions may carry `img` and `word`: does the word fit the picture? */
 
 (function () {
@@ -48,6 +50,7 @@
     letters: 2,
     "find-error": 2,
     "sentence-choice": 2,
+    speak: 2,
     write: 3,
     dictation: 3,
   };
@@ -369,6 +372,17 @@
         instructions: "הקשיבו למילה וכתבו אותה באנגלית.",
         instructionsEn: "Listen to the word and type it in English.",
         roundSize: roundOf(pictured.length),
+        words: pictured,
+      });
+      list.push({
+        id: `${topic.id}--speak`,
+        type: "speak",
+        speech: true,
+        title: "אומרים באנגלית",
+        titleEn: "Say it in English",
+        instructions: "הקשיבו למילה, לחצו על המיקרופון ואמרו אותה באנגלית.",
+        instructionsEn: "Listen to the word, click the microphone and say it in English.",
+        roundSize: Math.min(8, pictured.length),
         words: pictured,
       });
     }
