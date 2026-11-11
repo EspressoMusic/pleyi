@@ -658,8 +658,6 @@
     STR.en.helpTips.write = "Type the answer and click “Check” (or press Enter).";
   }
 
-  const PAPER_TOPICS = ["tobe"];
-
   const ICONS = {
     download: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>`,
     slides: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>`,
@@ -5932,10 +5930,10 @@
     return ex.type === "reading" ? passageTitle(ex) : loc(ex, "title");
   }
 
-  // The exercise on paper (english-exercise-sheets.js), for the topics that
-  // have it for now.
+  // The exercise on paper (english-exercise-sheets.js), where it has a paper
+  // form.
   function paperBtnHtml(topic, ex) {
-    if (SUBJECT || !PAPER_TOPICS.includes(topic.id) || ex.type === "reading") return "";
+    if (SUBJECT || !window.EnglishExerciseSheets?.canPrint(ex)) return "";
     const href = `/services/english-worksheet?topic=${encodeURIComponent(topic.id)}&exercise=${encodeURIComponent(ex.id)}`;
     const label = esc(t("paperSheet", exerciseName(ex)));
     return `<a class="eng-info-btn" href="${esc(href)}" aria-label="${label}" title="${label}">${ICONS.download}</a>`;

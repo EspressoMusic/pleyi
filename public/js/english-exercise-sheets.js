@@ -172,17 +172,22 @@
     dictation: (ex) => ex.questions.map((q, i) => lineRow(i, heHtml(q), q.answer)),
   };
 
-  window.EnglishExerciseSheets = {
-    // The topics whose exercises print for now: one, until the sheets are approved.
-    topics: ["tobe"],
+  // An exercise prints when its type has a paper form and it is all text: a
+  // picture question (or a word drawn from the picture vocabulary) means
+  // nothing without its picture.
+  function printable(ex) {
+    if (!ex || !ROWS[ex.type]) return false;
+    if (ex.type === "match") return Array.isArray(ex.pairs) && ex.pairs.length > 0 && !ex.pairs.some((p) => p.img);
+    return Array.isArray(ex.questions) && ex.questions.length > 0 && !ex.questions.some((q) => q.img || q.word);
+  }
 
+  window.EnglishExerciseSheets = {
     // A topic's exercises that have a paper form, easiest first.
     forTopic(topic) {
-      if (!topic || !this.topics.includes(topic.id)) return [];
-      return (topic.exercises || [])
-        .filter((ex) => ROWS[ex.type] && (ex.type !== "match" || ex.pairs))
-        .sort((a, b) => (a.level || 1) - (b.level || 1));
+      return (topic?.exercises || []).filter(printable).sort((a, b) => (a.level || 1) - (b.level || 1));
     },
+
+    canPrint: printable,
 
     build(ex) {
       const [instructionsEn, instructions] = PAPER[ex.type];
