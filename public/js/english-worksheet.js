@@ -233,9 +233,16 @@
       </div>`;
   }
 
+  // The topic's Hebrew name and the sheet's, once when they are the same.
+  function heTitleHtml(sheet) {
+    if (state.lang !== "he" || !topic) return "";
+    const text = sheet.title && sheet.title !== topic.title ? `${topic.title} · ${sheet.title}` : topic.title;
+    return `<span class="ws-title-he" dir="rtl">${esc(text)}</span>`;
+  }
+
   function sheetHtml(sheet, index) {
     const total = pack.sheets.length;
-    const heTitle = state.lang === "he" && topic ? `<span class="ws-title-he" dir="rtl">${esc(topic.title)} · ${esc(sheet.title)}</span>` : "";
+    const heTitle = heTitleHtml(sheet);
     return `
       <article class="ws-page" data-sheet="${esc(sheet.id)}">
         <header class="ws-head">
@@ -272,7 +279,7 @@
   }
 
   function exercisePageHtml(sheet, first) {
-    const heTitle = state.lang === "he" && topic ? `<span class="ws-title-he" dir="rtl">${esc(topic.title)} · ${esc(sheet.title)}</span>` : "";
+    const heTitle = heTitleHtml(sheet);
     const top = first
       ? `
         <div class="ws-fields">
