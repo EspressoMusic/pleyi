@@ -189,6 +189,19 @@
   display: block;
 }
 
+/* The bottom bar is yellow like the footer on the rest of the site
+   (the "pro" look keeps its own plain footer). */
+html:not([data-site-style="pro"]) .page-download .site-footer-mini {
+  background: var(--memyellow);
+  border-top: 8px solid var(--ink);
+}
+
+html:not([data-site-style="pro"]) .page-download .site-footer-mini .site-legal-nav a {
+  color: var(--ink);
+  font-weight: 800;
+  opacity: 1;
+}
+
 @media (max-width: 600px) {
   .dl-page {
     padding-top: 84px;
