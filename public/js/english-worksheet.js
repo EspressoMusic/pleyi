@@ -5,6 +5,9 @@
    ?topic=<topic id>&exercise=<exercise id>&answers=1
    Renders one of the topic's practice exercises (english-exercise-sheets.js),
    on as many pages as its questions need.
+   ?topic=<topic id>&bingo=<word ids, comma-separated>&cards=<12 | 24 | 36>
+   Prints numbered cards for the class bingo game (english-games.js): the
+   same cards the teacher's board checks by number (english-bingo.js).
    The toolbar switches sheets, shows the answer key (the same pages with the
    answers written in), prints, and downloads the pages as a PDF file. The
    sheets themselves are English worksheets, so they stay left-to-right; only
@@ -36,6 +39,10 @@
       tip: "כשדף התשובות מופעל, הקובץ וההדפסה יוצאים עם התשובות.",
       missing: "לא מצאנו דפי עבודה לנושא הזה.",
       docTitle: (title) => `${title} — דפי עבודה`,
+      bingoHeading: (title) => `כרטיסי בינגו להדפסה · ${title}`,
+      bingoBack: "חזרה לבינגו",
+      bingoCount: (n) => `${n} כרטיסים`,
+      bingoTip: "לכל כרטיס יש מספר. מי שעושה בינגו אומר את המספר, ובודקים אותו בלוח המורה.",
     },
     en: {
       back: "Back to topic",
@@ -53,6 +60,10 @@
       tip: "With the answer key on, the file and the print include the answers.",
       missing: "We couldn't find worksheets for this topic.",
       docTitle: (title) => `${title} — worksheets`,
+      bingoHeading: (title) => `Printable bingo cards · ${title}`,
+      bingoBack: "Back to bingo",
+      bingoCount: (n) => `${n} cards`,
+      bingoTip: "Every card has a number. Whoever gets bingo says it, and the teacher's board checks it.",
     },
   };
 
@@ -62,14 +73,24 @@
   const topic = TOPICS.find((tp) => tp.id === topicId);
   const exercises = window.EnglishExerciseSheets?.forTopic(topic) || [];
   const exerciseMode = params.has("exercise") && exercises.length > 0;
-  const hasSheets = exerciseMode || !!pack;
+  const VOCAB = window.ENGLISH_VOCAB || {};
+  const BINGO = window.EnglishBingo;
+  const bingoWords = (params.get("bingo") || "").split(",").filter((id) => VOCAB[id]);
+  const bingoMode = !!BINGO && bingoWords.length >= BINGO.MIN_WORDS;
+  const BINGO_COUNTS = ["12", "24", "36"];
+  const BINGO_PER_PAGE = 4;
+  const hasSheets = bingoMode || exerciseMode || !!pack;
 
   // Same lock as i18n.js: the site stays in Hebrew for now (null unlocks it).
   const LOCKED_LANG = "he";
 
   const state = {
     lang: readLang(),
-    sheet: exerciseMode ? params.get("exercise") : params.get("sheet") || "all",
+    sheet: bingoMode
+      ? BINGO_COUNTS.includes(params.get("cards")) ? params.get("cards") : BINGO_COUNTS[BINGO_COUNTS.length - 1]
+      : exerciseMode
+      ? params.get("exercise")
+      : params.get("sheet") || "all",
     answers: params.get("answers") === "1",
   };
 
@@ -346,6 +367,44 @@
     fitPages();
   }
 
+  /* ── Bingo cards: four on a page, 3 × 3 pictures each ── */
+
+  function bingoCardHtml(n) {
+    const cells = BINGO.card(bingoWords, n)
+      .map((id) => `<span class="wb-cell"><img src="/images/english/vocab/${esc(VOCAB[id].img || id)}.svg" alt="" /></span>`)
+      .join("");
+    return `
+      <section class="wb-card">
+        <header class="wb-card-head">
+          <span class="wb-card-title">BINGO</span>
+          <span class="wb-card-num">Card <b>${n}</b></span>
+        </header>
+        <div class="wb-grid">${cells}</div>
+        <span class="ws-field wb-name">Name:<i></i></span>
+      </section>`;
+  }
+
+  function renderBingoPages() {
+    const count = Number(state.sheet);
+    const pages = [];
+    for (let first = 1; first <= count; first += BINGO_PER_PAGE) {
+      const cards = [];
+      for (let n = first; n < first + BINGO_PER_PAGE && n <= count; n++) cards.push(bingoCardHtml(n));
+      pages.push(`
+        <article class="ws-page wb-page">
+          <div class="wb-cards">${cards.join("")}</div>
+          <footer class="ws-foot">
+            <span><b>Pleyi</b> · pleyschool.com</span>
+            <span>${esc(topic?.titleEn || "")} · Bingo · ${pages.length + 1} / ${Math.ceil(count / BINGO_PER_PAGE)}</span>
+          </footer>
+        </article>`);
+    }
+    $("#wsPages").innerHTML = pages.join("");
+    document.body.classList.remove("show-answers");
+    document.title = `${topic?.titleEn || topicId} — bingo cards`;
+    fitPages();
+  }
+
   /* ── PDF file ── */
 
   function loadScript(src) {
@@ -375,7 +434,8 @@
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
     let name = "";
-    if (exerciseMode) name = window.EnglishExerciseSheets.build(selectedExercise()).titleEn;
+    if (bingoMode) name = "bingo-cards";
+    else if (exerciseMode) name = window.EnglishExerciseSheets.build(selectedExercise()).titleEn;
     else if (state.sheet !== "all") name = pack.sheets.find((s) => s.id === state.sheet)?.titleEn;
     return `${[slug(topic?.titleEn || topicId), slug(name), state.answers ? "answers" : ""].filter(Boolean).join("-")}.pdf`;
   }
@@ -420,7 +480,10 @@
 
   function syncUrl() {
     const next = new URLSearchParams({ topic: topicId });
-    if (exerciseMode) next.set("exercise", state.sheet);
+    if (bingoMode) {
+      next.set("bingo", bingoWords.join(","));
+      next.set("cards", state.sheet);
+    } else if (exerciseMode) next.set("exercise", state.sheet);
     else if (state.sheet !== "all") next.set("sheet", state.sheet);
     if (state.answers) next.set("answers", "1");
     window.history.replaceState(null, "", `${window.location.pathname}?${next}`);
@@ -429,9 +492,9 @@
   function renderToolbar() {
     document.documentElement.lang = state.lang;
     document.documentElement.dir = state.lang === "en" ? "ltr" : "rtl";
-    $("#wsBack").href = hasSheets ? `/services/english#${encodeURIComponent(topicId)}` : "/services/english";
-    $("#wsBackLabel").textContent = hasSheets ? t("back") : t("backTopics");
-    $("#wsToolbarTitle").textContent = t("heading", topicTitle());
+    $("#wsBack").href = hasSheets ? `/services/english#${encodeURIComponent(topicId)}${bingoMode ? "/game-bingo" : ""}` : "/services/english";
+    $("#wsBackLabel").textContent = bingoMode ? t("bingoBack") : hasSheets ? t("back") : t("backTopics");
+    $("#wsToolbarTitle").textContent = t(bingoMode ? "bingoHeading" : "heading", topicTitle());
     $("#wsLang").textContent = t("langSwitch");
     $("#wsLang").setAttribute("aria-label", t("langLabel"));
     $("#wsLang").hidden = !!LOCKED_LANG;
@@ -439,7 +502,9 @@
     $("#wsAnswers").checked = state.answers;
     $("#wsPrintLabel").textContent = t("print");
     $("#wsDownloadLabel").textContent = t("download");
-    $("#wsTip").textContent = t("tip");
+    $("#wsTip").textContent = t(bingoMode ? "bingoTip" : "tip");
+    // Bingo cards have no answers.
+    $(".ws-switch").hidden = bingoMode;
     $(".ws-toolbar-row--controls").hidden = !hasSheets;
     $("#wsTip").hidden = !hasSheets;
 
@@ -447,7 +512,9 @@
     const chip = (id, label) =>
       `<button type="button" class="ws-pick${state.sheet === id ? " is-on" : ""}" data-sheet="${esc(id)}" aria-pressed="${state.sheet === id}">${esc(label)}</button>`;
     picker.classList.toggle("is-exercises", exerciseMode);
-    picker.innerHTML = exerciseMode
+    picker.innerHTML = bingoMode
+      ? BINGO_COUNTS.map((n) => chip(n, t("bingoCount", n))).join("")
+      : exerciseMode
       ? exercises.map((ex) => chip(ex.id, state.lang === "en" ? ex.titleEn : ex.title)).join("")
       : pack
       ? chip("all", t("all")) +
@@ -457,6 +524,10 @@
 
   function renderPages() {
     const pages = $("#wsPages");
+    if (bingoMode) {
+      renderBingoPages();
+      return;
+    }
     if (exerciseMode) {
       renderExercisePages();
       return;

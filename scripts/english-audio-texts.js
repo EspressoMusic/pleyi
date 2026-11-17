@@ -1,6 +1,6 @@
 /* Prints (as JSON) every English word and sentence that gets a ready-made
    audio clip: all the vocabulary, the dictionary, what the lessons say and the
-   dictation sentences. Longer texts (reading passages) and exercises the AI
+   dictation sentences and the chats with the bot. Longer texts (reading passages) and exercises the AI
    writes on the spot stay with the browser's voice (public/js/speech.js).
    Run through generate-english-audio.py. */
 
@@ -20,7 +20,7 @@ const context = {
   localStorage: { getItem: () => null, setItem() {} },
 };
 vm.createContext(context);
-["english-vocab", "english-data", "english-more", "english-lessons", "english-dict", "lesson-sentences-he"].forEach((file) => {
+["english-vocab", "english-data", "english-more", "english-chat", "english-lessons", "english-dict", "lesson-sentences-he"].forEach((file) => {
   vm.runInContext(fs.readFileSync(path.join(JS, `${file}.js`), "utf8"), context);
 });
 const { window: w } = context;
@@ -57,6 +57,8 @@ walk(w.ENGLISH_SHORT_LESSONS);
 w.ENGLISH_TOPICS.forEach((topic) => {
   (topic.exercises || []).forEach((ex) => {
     if (ex.type === "dictation") (ex.questions || []).forEach((q) => add(q.answer));
+    // A chat: Robo's lines, and the replies the student hears once answered.
+    if (ex.type === "chat") ex.questions.forEach((q) => [q.text, q.answer].forEach(add));
   });
 });
 

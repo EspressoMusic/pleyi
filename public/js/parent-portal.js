@@ -38,7 +38,7 @@
 
   function weekHtml(week) {
     return `
-      <section class="par-card">
+      <section class="par-card par-card--week">
         <h2 class="par-title"><span class="stu-key">השבוע</span></h2>
         <ul class="par-tiles">
           ${tile(week.days, week.days === 1 ? "יום תרגול" : "ימי תרגול")}
@@ -91,7 +91,7 @@
         </li>`;
     };
     return `
-      <section class="par-card">
+      <section class="par-card par-card--tasks">
         <h2 class="par-title"><span class="stu-key">משימות מהמורה</span></h2>
         <p class="par-line">בוצעו <span dir="ltr">${done.length}/${homework.length}</span></p>
         <ul class="par-list">${[...open, ...done.slice(0, RECENT_TASKS_DONE)].map(row).join("")}</ul>
@@ -101,7 +101,7 @@
   function recentHtml(recent) {
     if (!recent.length) return "";
     return `
-      <section class="par-card">
+      <section class="par-card par-card--recent">
         <h2 class="par-title"><span class="stu-key">תרגילים אחרונים</span></h2>
         <ul class="par-list">
           ${recent
@@ -150,6 +150,13 @@
       const res = await fetch(`/api/parent/${encodeURIComponent(key)}`);
       if (res.status === 404) {
         renderInvalid();
+        return;
+      }
+      // The parents' page is off for now (PARENTS_ENABLED in server.js).
+      if (res.status === 410) {
+        app.innerHTML = `
+          <h1 class="stu-hello">בקרוב!</h1>
+          <p class="stu-lead">הדף להורים לא זמין כרגע.</p>`;
         return;
       }
       const data = await res.json();

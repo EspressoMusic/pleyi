@@ -5,23 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#00C9B7" />
   <link rel="manifest" href="/manifest.webmanifest"/>
-  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml"/>
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"/>
+  <link rel="icon" href="/icons/icon.svg?v=2" type="image/svg+xml"/>
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2"/>
   <meta name="apple-mobile-web-app-title" content="Pleyi"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="mobile-web-app-capable" content="yes"/>
-  <script src="/js/pwa.js?v=1" defer></script>
+  <script src="/js/pwa.js?v=2"></script>
   <title>ניהול תלמידים — Pleyi</title>
   <meta name="robots" content="noindex, nofollow"/>
   <link rel="stylesheet" href="/styles.css?v=73"/>
-  <link rel="stylesheet" href="/css/admin-students.css?v=32"/>
-  <link rel="stylesheet" href="/css/site-fox.css?v=15"/>
+  <link rel="stylesheet" href="/css/admin-students.css?v=45"/>
 </head>
 <body class="adm-body">
 
   <header class="adm-top">
     <div class="adm-top-inner">
-      <a href="/" class="adm-home">חזרה לאתר</a>
+      <a href="/" class="adm-home" id="admBack">חזרה</a>
       <h1 class="adm-top-title">ניהול תלמידים</h1>
       <!-- The avatar (name below it) opens a small menu with the sign-out button. -->
       <div class="adm-account hidden" id="admAccount">
@@ -40,7 +39,7 @@
     <div class="adm-gate hidden" id="admGate">
       <div class="adm-card adm-gate-card">
         <h2 class="adm-h2">כניסת מורה</h2>
-        <p class="adm-muted">התחברו עם חשבון Google כדי לראות את כל תיקי התלמידים שפתחתם. התיקים שמורים בחשבון שלכם, ומכל מכשיר שתתחברו ממנו תראו אותם.</p>
+        <p class="adm-muted">התחברו עם Google או עם מייל כדי לראות את כל תיקי התלמידים שפתחתם. התיקים שמורים בחשבון שלכם, ומכל מכשיר שתתחברו ממנו תראו אותם.</p>
         <p class="adm-error hidden" id="admGateError"></p>
         <button type="button" class="btn btn-google btn-full adm-btn-full" id="admGoogleBtn" disabled>
           <span class="btn-google-icon" aria-hidden="true">
@@ -53,6 +52,18 @@
           </span>
           <span id="admGoogleLabel">התחברות עם Google</span>
         </button>
+        <p class="adm-gate-or"><span>או עם מייל</span></p>
+        <form class="adm-gate-email" id="admEmailLogin" novalidate>
+          <input type="text" id="admLoginName" class="hidden" maxlength="80" placeholder="שם" autocomplete="name" aria-label="שם" />
+          <input type="email" id="admLoginEmail" maxlength="254" placeholder="מייל" autocomplete="email" dir="ltr" aria-label="מייל" required />
+          <input type="password" id="admLoginPassword" placeholder="סיסמה" autocomplete="current-password" dir="ltr" aria-label="סיסמה" required />
+          <button type="submit" class="btn btn-primary btn-candy btn-full" id="admLoginSubmit" disabled>כניסה</button>
+          <div class="adm-gate-links">
+            <button type="button" class="adm-text-btn" id="admLoginMode">פעם ראשונה? הרשמה</button>
+            <button type="button" class="adm-text-btn" id="admLoginForgot">שכחתי סיסמה</button>
+          </div>
+        </form>
+        <p class="adm-gate-note hidden" id="admGateNote" role="status"></p>
         <p class="adm-muted adm-small adm-legal-note">בהתחברות אתם מאשרים את <a href="/legal/terms.html" target="_blank" rel="noopener">התקנון</a> ואת <a href="/legal/privacy.html" target="_blank" rel="noopener">מדיניות הפרטיות</a></p>
       </div>
     </div>
@@ -67,11 +78,12 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="/js/firebase-app.js?v=2"></script>
   <script src="/js/english-vocab.js?v=4"></script>
-  <script src="/js/english-data.js?v=22"></script>
+  <script src="/js/english-data.js?v=25"></script>
   <script src="/js/english-reading.js?v=12"></script>
-  <script src="/js/english-more.js?v=3"></script>
+  <script src="/js/english-more.js?v=4"></script>
+  <script src="/js/english-chat.js?v=1"></script>
   <script src="/js/english-exams.js?v=2"></script>
-  <script src="/js/admin-students.js?v=40"></script>
-  <script src="/js/site-fox.js?v=13" defer></script>
+  <script src="/js/english-tests.js?v=1"></script>
+  <script src="/js/admin-students.js?v=56"></script>
 </body>
 </html>

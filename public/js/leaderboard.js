@@ -10,7 +10,8 @@
      the name is clicked.
    Leaderboard.bind(box, rows, opts) — renders the board with week / all-time
      tabs into `box`, and switches between them.
-   Leaderboard.open() — the linked student's full board in a dialog.
+   Leaderboard.open({ top }) — the linked student's full board in a dialog,
+   with the page's `top` html over it.
    Leaderboard.rulesHtml() — how points are earned. */
 
 window.Leaderboard = (() => {
@@ -300,7 +301,7 @@ window.Leaderboard = (() => {
         e.preventDefault();
         close();
       } else if (e.key === "Tab") {
-        const items = [...root.querySelectorAll("button, summary")];
+        const items = [...root.querySelectorAll("button, summary, a[href]")];
         const first = items[0];
         const last = items[items.length - 1];
         if (e.shiftKey && document.activeElement === first) {
@@ -314,7 +315,8 @@ window.Leaderboard = (() => {
     });
   }
 
-  function shell(body) {
+  // `top`: the page's own line over the board (a new certificate).
+  function shell(body, top = "") {
     root.innerHTML = `
       <div class="lb-backdrop" data-lb-close></div>
       <div class="lb-card">
@@ -323,16 +325,17 @@ window.Leaderboard = (() => {
           <h2 class="lb-title" id="lbDialogTitle">${esc(t("title"))}</h2>
           <button type="button" class="lb-close" data-lb-close aria-label="${esc(t("close"))}">${ICONS.cross}</button>
         </div>
+        ${top}
         <div class="lb-body" id="lbDialogBody">${body}</div>
         ${rulesHtml()}
       </div>`;
   }
 
-  async function open() {
+  async function open({ top = "" } = {}) {
     if (!root) build();
     const run = ++openRun;
     lastFocus = document.activeElement;
-    shell(`<p class="lb-empty">${esc(t("loading"))}</p>`);
+    shell(`<p class="lb-empty">${esc(t("loading"))}</p>`, top);
     root.classList.remove("hidden");
     document.body.classList.add("lb-open");
     root.querySelector(".lb-close").focus({ preventScroll: true });

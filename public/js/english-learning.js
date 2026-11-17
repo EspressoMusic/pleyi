@@ -6,7 +6,8 @@
    Routes (hash): ""                    → topic grid
                   "#<topic>"            → topic page
                   "#<topic>/<exercise>" → exercise runner (a reading exam too)
-                  "#my-mistakes[/<topic>]" → a round from the mistake bank */
+                  "#my-mistakes[/<topic>]" → a round from the mistake bank
+                  "#cards[/today|/<category>]" → the word cards */
 
 (function () {
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -94,11 +95,12 @@
       makingNew: "מכינים סבב חדש…",
       mistakesTitle: "מה כדאי לחזור עליו",
       copied: "הקישור הועתק!",
-      studentBar: "התרגול שלך נשמר אצל המורה",
-      myProgress: "המשימות שלי",
+      hello: (name) => `שלום ${name}`,
+      leaderboard: "טבלת השיאים",
+      newCertLabel: "יש תעודה חדשה",
+      newCert: "קיבלת תעודה חדשה!",
+      newCertGo: "לתעודות שלי",
       backToHomework: "למשימות שלי",
-      notMe: "זה לא אני",
-      notMeConfirm: (name) => `להפסיק לשמור את התרגול בתיק של ${name} במכשיר הזה?`,
       prevSlide: "שקופית קודמת",
       nextSlide: "שקופית הבאה",
       close: "סגירה",
@@ -114,6 +116,7 @@
       readingTitle: "קטע קריאה",
       vocabHub: "אוצר מילים לפי נושאים",
       stage: (n) => `שלב ${n}`,
+      toc: "תוכן עניינים",
       grade: "כיתה",
       allGrades: "הכל",
       noGradeTopics: "עוד אין כאן נושאים לכיתה הזו.",
@@ -181,6 +184,7 @@
         dictation: "שומעים, כותבים באנגלית ולוחצים על „בדיקה” (או על Enter). הרמקול משמיע שוב, וכפתור „לאט” משמיע לאט יותר.",
         translate: "לוחצים על התרגום הנכון. במחשב אפשר גם להקיש על המספר שלו.",
         speak: "שומעים את המילה, לוחצים על המיקרופון ואומרים אותה באנגלית. לכל מילה יש 3 ניסיונות.",
+        chat: "רובו אומר משפט באנגלית, ושומעים אותו. לוחצים על התשובה שמתאימה לו. במחשב אפשר גם להקיש על המספר שלה.",
       },
       foundError: "מצאתם את הטעות!",
       fixWordLabel: "המילה הנכונה:",
@@ -196,12 +200,6 @@
       lettersLabel: (n) => `אות ${n}`,
       earned: (n) => `+${n} נקודות`,
       earnedTotal: (n) => `סה״כ ${n.toLocaleString("he-IL")}`,
-      myPoints: (n) => (n === 1 ? "נקודה אחת" : `${n.toLocaleString("he-IL")} נקודות`),
-      leaderboard: "טבלת השיאים",
-      boardTitle: "טבלת השיאים של הכיתה",
-      boardFull: "לטבלה המלאה",
-      boardJoinTitle: "טבלת השיאים",
-      boardJoin: "כל תשובה נכונה שווה נקודות! נכנסים דרך הקישור האישי מהמורה — והנקודות נשמרות ומופיעות בטבלת השיאים של הכיתה.",
       loading: "טוען…",
       reviewTitle: "חזרה על הטעויות שלי",
       reviewCardTitle: "החזרה האישית שלי",
@@ -219,8 +217,28 @@
       mixAgain: "סבב מעורב חדש",
       mixMissing: "התרגול הזה לא נמצא",
       mixMissingLead: "אולי המורה הסיר אותו מהמשימות.",
+      testTitle: "מבחן",
+      testMissing: "המבחן לא נמצא",
+      testMissingLead: "אולי המורה הסיר אותו. אפשר לחזור למשימות.",
+      testLinkOnly: "המבחן נפתח מהקישור האישי שהמורה שלח.",
+      testCount: (n) => `${n} שאלות`,
+      testRules: ["עונים על כל שאלה ועוברים לבאה.", "התשובות נבדקות רק בסוף.", "בסוף תקבלו ציון, והמורה יראה אותו."],
+      testResume: (n, total) => `כבר עניתם על ${n} מתוך ${total} שאלות. ממשיכים מאותו מקום.`,
+      testStart: "להתחלת המבחן",
+      testGoOn: "להמשך המבחן",
+      testRetakeBadge: "מבחן חוזר",
+      testNote: "מהמורה:",
+      testConfirm: "אישור",
+      testSaving: "שולחים את המבחן למורה…",
+      testSaved: "המבחן נשלח למורה",
+      testRetry: "לשלוח שוב",
+      testByTopic: "הציון בכל נושא",
+      testDoneTitle: "המבחן כבר הוגש",
+      testAskRetake: "בקשת מבחן חוזר",
+      testAsked: "ביקשת מבחן חוזר. המורה יחליט אם לפתוח אותו.",
+      testDeclined: "המורה לא פתח מבחן חוזר הפעם. אפשר לבקש שוב.",
       dailyTitle: "האתגר היומי",
-      dailyLead: "5 שאלות קצרות בכל יום.",
+      dailyPageLead: ["5 שאלות קצרות בכל יום.", "השאלות הן ממה שכבר למדתם.", "עושים את האתגר כל יום, והרצף גדל."],
       dailyLeadDone: "עשיתם את האתגר של היום!",
       dailyStart: "להתחיל",
       dailyMore: "סבב נוסף",
@@ -236,6 +254,43 @@
       dailyMissing: "אין עדיין שאלות לאתגר",
       dailyMissingLead: "פתרו תרגיל אחד באחד הנושאים, ונסו שוב.",
       dayLetters: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"],
+      cardsTitle: "כרטיסיות מילים",
+      cardsTitleEn: "Word cards",
+      cardsLead: ["רואים מילה באנגלית ונזכרים מה היא אומרת.", "הופכים את הכרטיס ובודקים.", "מילה שידעתם תחזור בעוד כמה ימים.", "מילה שלא ידעתם תחזור מהר."],
+      cardsLearned: (n, all) => `למדתם ${n} מתוך ${all} מילים`,
+      cardsToday: "הכרטיסים של היום",
+      cardsDueLine: (n) => (n === 1 ? "כרטיס אחד לחזור עליו" : `${n} כרטיסים לחזור עליהם`),
+      cardsNewLine: (n) => (n === 1 ? "מילה חדשה אחת" : `${n} מילים חדשות`),
+      cardsTodayDone: "סיימתם להיום! אפשר ללמוד מילים חדשות מנושא.",
+      cardsGo: "להתחיל",
+      cardsTopics: "מילים לפי נושא",
+      cardsTopicDone: (n, all) => `למדתם ${n} מתוך ${all}`,
+      cardsNew: "מילה חדשה",
+      cardsAsk: "מה המילה הזאת?",
+      cardsFlip: "להפוך את הכרטיס",
+      cardsGotIt: "הבנתי",
+      cardsKnew: "ידעתי",
+      cardsNotYet: "עוד לא",
+      cardsFlipHint: "לחצו על הכרטיס כדי להפוך אותו",
+      cardsProgress: (i, n) => `כרטיס ${i} מתוך ${n}`,
+      cardsNone: "אין כרגע כרטיסים כאן",
+      cardsNoneLead: "את כל המילים כבר ראיתם היום. חזרו מחר, או בחרו נושא אחר.",
+      cardsDoneBig: "סיימתם את הכרטיסים!",
+      cardsScore: (s, n) => `ידעתם ${s} מתוך ${n}`,
+      cardsLearnedNow: (n) => (n === 1 ? "למדתם מילה אחת!" : `למדתם ${n} מילים!`),
+      cardsTomorrow: (n) => (n ? `מחר ${n === 1 ? "יחכה לכם כרטיס אחד" : `יחכו לכם ${n} כרטיסים`}.` : "מחר יחכו לכם מילים חדשות."),
+      cardsMore: "עוד כרטיסים",
+      cardsBack: "חזרה לכרטיסיות",
+      cardsVocabLink: "ללמוד את המילים בכרטיסיות",
+      chatTitle: "שיחה עם הבוט",
+      chatTitleEn: "Chat with the bot",
+      chatLead: ["הבוט מדבר איתכם באנגלית.", "בכל פעם בוחרים מה לענות לו.", "יש שיחות קלות, בינוניות ומתקדמות."],
+      chatBack: "חזרה לשיחות",
+      chatBot: "רובו",
+      chatMe: "אני",
+      chatLevels: ["שיחות קלות", "שיחות בינוניות", "שיחות מתקדמות"],
+      chatWrong: "זה לא מתאים לשיחה.",
+      chatGo: "לשיחה",
       speakMic: "להקלטה",
       speakTap: "לחצו על המיקרופון ואמרו את המילה",
       speakListening: "מקשיבים… אמרו את המילה",
@@ -407,11 +462,12 @@
       makingNew: "Getting a new round ready…",
       mistakesTitle: "Worth reviewing",
       copied: "Link copied!",
-      studentBar: "Your practice is saved for your teacher",
-      myProgress: "My tasks",
+      hello: (name) => `Hello ${name}`,
+      leaderboard: "Leaderboard",
+      newCertLabel: "A new certificate",
+      newCert: "You got a new certificate!",
+      newCertGo: "To my certificates",
       backToHomework: "Back to my tasks",
-      notMe: "Not me",
-      notMeConfirm: (name) => `Stop saving practice for ${name} on this device?`,
       prevSlide: "Previous slide",
       nextSlide: "Next slide",
       close: "Close",
@@ -427,6 +483,7 @@
       readingTitle: "Reading",
       vocabHub: "Vocabulary by topic",
       stage: (n) => `Stage ${n}`,
+      toc: "Contents",
       grade: "Grade",
       allGrades: "All",
       noGradeTopics: "No topics for this grade here yet.",
@@ -494,6 +551,7 @@
         dictation: "Listen, type it in English and click \"Check\" (or press Enter). The speaker plays it again, and \"Slow\" plays it slower.",
         translate: "Click the right translation. On a computer you can also press its number.",
         speak: "Listen to the word, click the microphone and say it in English. Every word has 3 tries.",
+        chat: "Robo says something in English, out loud. Click the reply that fits it. On a computer you can also press its number.",
       },
       foundError: "You found the mistake!",
       fixWordLabel: "The right word:",
@@ -509,12 +567,6 @@
       lettersLabel: (n) => `Letter ${n}`,
       earned: (n) => `+${n} points`,
       earnedTotal: (n) => `Total ${n.toLocaleString("en-US")}`,
-      myPoints: (n) => (n === 1 ? "1 point" : `${n.toLocaleString("en-US")} points`),
-      leaderboard: "Leaderboard",
-      boardTitle: "Class leaderboard",
-      boardFull: "Full leaderboard",
-      boardJoinTitle: "Leaderboard",
-      boardJoin: "Every right answer earns points! Open the personal link from your teacher, and your points are saved and shown on your class leaderboard.",
       loading: "Loading…",
       reviewTitle: "My mistakes",
       reviewCardTitle: "My mistakes to review",
@@ -532,8 +584,28 @@
       mixAgain: "New mixed round",
       mixMissing: "This practice wasn't found",
       mixMissingLead: "Maybe your teacher removed it from your tasks.",
+      testTitle: "Test",
+      testMissing: "This test wasn't found",
+      testMissingLead: "Maybe your teacher removed it. You can go back to your tasks.",
+      testLinkOnly: "The test opens from the personal link your teacher sent.",
+      testCount: (n) => `${n} questions`,
+      testRules: ["Answer each question and move on to the next.", "The answers are checked only at the end.", "You get a grade at the end, and your teacher sees it."],
+      testResume: (n, total) => `You already answered ${n} of ${total} questions. Go on from where you stopped.`,
+      testStart: "Start the test",
+      testGoOn: "Go on with the test",
+      testRetakeBadge: "Retake",
+      testNote: "From your teacher:",
+      testConfirm: "Confirm",
+      testSaving: "Sending the test to your teacher…",
+      testSaved: "Sent to your teacher",
+      testRetry: "Send again",
+      testByTopic: "Your grade in each topic",
+      testDoneTitle: "This test was handed in",
+      testAskRetake: "Ask for a retake",
+      testAsked: "You asked for a retake. Your teacher will decide.",
+      testDeclined: "Your teacher didn't open a retake this time. You can ask again.",
       dailyTitle: "Daily challenge",
-      dailyLead: "5 short questions every day.",
+      dailyPageLead: ["5 short questions every day.", "The questions are about what you already learned.", "Do the challenge every day and your streak grows."],
       dailyLeadDone: "You did today's challenge!",
       dailyStart: "Start",
       dailyMore: "Another round",
@@ -548,6 +620,43 @@
       dailyAgainToday: "You already did today's challenge. This round is extra practice.",
       dailyMissing: "No questions for the challenge yet",
       dailyMissingLead: "Solve one exercise in any topic, then try again.",
+      cardsTitle: "Word cards",
+      cardsTitleEn: "",
+      cardsLead: ["See a word in English and remember what it means.", "Flip the card and check.", "A word you knew comes back in a few days.", "A word you didn't know comes back soon."],
+      cardsLearned: (n, all) => `You learned ${n} of ${all} words`,
+      cardsToday: "Today's cards",
+      cardsDueLine: (n) => (n === 1 ? "1 card to review" : `${n} cards to review`),
+      cardsNewLine: (n) => (n === 1 ? "1 new word" : `${n} new words`),
+      cardsTodayDone: "Done for today! You can learn new words from a topic.",
+      cardsGo: "Start",
+      cardsTopics: "Words by topic",
+      cardsTopicDone: (n, all) => `Learned ${n} of ${all}`,
+      cardsNew: "New word",
+      cardsAsk: "What is this word?",
+      cardsFlip: "Flip the card",
+      cardsGotIt: "Got it",
+      cardsKnew: "I knew it",
+      cardsNotYet: "Not yet",
+      cardsFlipHint: "Tap the card to flip it",
+      cardsProgress: (i, n) => `Card ${i} of ${n}`,
+      cardsNone: "No cards here right now",
+      cardsNoneLead: "You've seen all these words today. Come back tomorrow, or pick another topic.",
+      cardsDoneBig: "You finished the cards!",
+      cardsScore: (s, n) => `You knew ${s} of ${n}`,
+      cardsLearnedNow: (n) => (n === 1 ? "You learned a word!" : `You learned ${n} words!`),
+      cardsTomorrow: (n) => (n ? `Tomorrow ${n === 1 ? "1 card is" : `${n} cards are`} waiting.` : "Tomorrow new words are waiting."),
+      cardsMore: "More cards",
+      cardsBack: "Back to word cards",
+      cardsVocabLink: "Learn the words on cards",
+      chatTitle: "Chat with the bot",
+      chatTitleEn: "",
+      chatLead: ["The bot talks with you in English.", "Each time, choose what to answer.", "There are easy, medium and advanced chats."],
+      chatBack: "Back to the chats",
+      chatBot: "Robo",
+      chatMe: "Me",
+      chatLevels: ["Easy chats", "Medium chats", "Advanced chats"],
+      chatWrong: "That doesn't fit the chat.",
+      chatGo: "Chat",
       dayLetters: ["S", "M", "T", "W", "T", "F", "S"],
       speakMic: "Record",
       speakTap: "Click the microphone and say the word",
@@ -685,6 +794,8 @@
     stop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"/></svg>`,
     info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke-width="1.6"/><path d="M12 11v8.5"/></svg>`,
     arrowDown: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6"/></svg>`,
+    toc: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1.2" fill="currentColor"/><circle cx="4" cy="12" r="1.2" fill="currentColor"/><circle cx="4" cy="18" r="1.2" fill="currentColor"/></svg>`,
+    chevron: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`,
   };
   ICONS.print = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>`;
   ICONS.spinner = `<svg class="eng-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke-opacity="0.25"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>`;
@@ -704,7 +815,7 @@
   ICONS.statusDone = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="m7 12.5 3.3 3.3L17 9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   ICONS.statusProgress = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M12 6a6 6 0 0 1 0 12Z" fill="currentColor"/></svg>`;
   ICONS.palette = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.3 0 2.1-.9 2.1-2 0-.6-.3-1-.6-1.4-.3-.4-.6-.9-.6-1.5 0-1.1.9-2 2-2h2.3A4.8 4.8 0 0 0 21 9.3C21 5.8 17 3 12 3Z"/><circle cx="7.5" cy="11.5" r="1.1" fill="currentColor"/><circle cx="9.5" cy="7.2" r="1.1" fill="currentColor"/><circle cx="14.5" cy="7.2" r="1.1" fill="currentColor"/></svg>`;
-  ICONS.settings = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  ICONS.settings = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2ZM15 12a3 3 0 1 0-6 0 3 3 0 1 0 6 0Z" fill-rule="evenodd"/></svg>`;
   // Two Hebrew letters: the "how it sounds in Hebrew letters" switch.
   ICONS.sayHe = `<svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="17.5" text-anchor="middle" direction="rtl" font-family="Arial, sans-serif" font-size="14" font-weight="800" fill="currentColor">אב</text></svg>`;
   // A spiral notebook with the exercise's level on its page: every practice
@@ -715,7 +826,19 @@
   ICONS.speak = ICONS.mic;
   // A flame: the daily challenge's streak.
   ICONS.flame = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4.1 0 7-2.8 7-6.8 0-3.6-2.3-6-4.1-8.2-.4 2-1.4 3.3-2.6 3.8.3-3.1-1-6.3-3.8-8.3.1 3.2-1.6 5.4-3.2 7.4C4.2 11.5 5 13.6 5 15.2 5 19.2 7.9 22 12 22Z"/><path d="M12 22c-1.7 0-3-1.3-3-3 0-1.8 1.4-3 2.2-4.3.5 1 1.3 1.6 2 1.8.4-1 .3-2 0-3 1.4 1.1 2.8 2.8 2.8 4.9 0 2.1-1.6 3.6-4 3.6Z"/></svg>`;
+  // A medal on its ribbon: the class leaderboard.
+  ICONS.medal = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 2.5 10.6 9.2M16.5 2.5l-3.1 6.7"/><circle cx="12" cy="15" r="6"/><path d="m12 11.8 1 2 2.2.3-1.6 1.5.4 2.2-2-1.1-2 1.1.4-2.2-1.6-1.5 2.2-.3Z" fill="currentColor" stroke-width="1"/></svg>`;
+  // The same two in colour, for the buttons on top: a red flame with a
+  // yellow heart, a gold medal on a red and a blue ribbon.
+  ICONS.flameColor = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4.1 0 7-2.8 7-6.8 0-3.6-2.3-6-4.1-8.2-.4 2-1.4 3.3-2.6 3.8.3-3.1-1-6.3-3.8-8.3.1 3.2-1.6 5.4-3.2 7.4C4.2 11.5 5 13.6 5 15.2 5 19.2 7.9 22 12 22Z" fill="#ff5a36"/><path d="M12 22c-1.7 0-3-1.3-3-3 0-1.8 1.4-3 2.2-4.3.5 1 1.3 1.6 2 1.8.4-1 .3-2 0-3 1.4 1.1 2.8 2.8 2.8 4.9 0 2.1-1.6 3.6-4 3.6Z" fill="#ffd93b"/></svg>`;
+  ICONS.medalColor = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18.5 1.8H14l-3.6 7.7h4.5Z" fill="#2fb5ff"/><path d="M5.5 1.8H10l3.6 7.7H9.1Z" fill="#ff4d5e"/><circle cx="12" cy="15.5" r="6.4" fill="#ffd23f"/><circle cx="12" cy="15.5" r="4.4" fill="#ffae00"/><path d="m12 12.3 1 2 2.2.3-1.6 1.5.4 2.2-2-1.1-2 1.1.4-2.2-1.6-1.5 2.2-.3Z" fill="#fff6c9" stroke-width="1.1"/></svg>`;
   ICONS.flag = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>`;
+  // Two cards, one tilted behind the other: the word cards.
+  // Robo, the chat bot (english-chat.js), and the student he talks with.
+  ICONS.robo = `<svg viewBox="0 0 48 48" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4v6" fill="none"/><circle cx="24" cy="4.5" r="2.6" fill="#ff5a6e"/><rect x="7" y="10" width="34" height="27" rx="9" fill="#7fd8ff"/><rect x="12.5" y="16" width="23" height="13" rx="6.5" fill="#eaf5ff"/><circle cx="19.5" cy="22.5" r="2.6" fill="#000" stroke="none"/><circle cx="28.5" cy="22.5" r="2.6" fill="#000" stroke="none"/><path d="M20.5 33h7" fill="none"/><path d="M7 21H4v8h3M41 21h3v8h-3" fill="#ffd23f"/><path d="M14 37v3.5h20V37" fill="#7fd8ff"/></svg>`;
+  ICONS.me = `<svg viewBox="0 0 48 48" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 44c0-9 7-14 16-14s16 5 16 14Z" fill="#ffd23f"/><circle cx="24" cy="18" r="10" fill="#ffd9b0"/><path d="M14.2 16.5c1-6 5-9 9.8-9s9 3 9.8 9c-3-1.6-7-2.4-9.8-5-2.8 2.6-6.8 3.4-9.8 5Z" fill="#6b4a2b"/><circle cx="20.3" cy="19.5" r="1.4" fill="#000" stroke="none"/><circle cx="27.7" cy="19.5" r="1.4" fill="#000" stroke="none"/><path d="M21 23.6c1.8 1.4 4.2 1.4 6 0" fill="none"/></svg>`;
+  ICONS.chatColor = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3h9A2.5 2.5 0 0 1 17 5.5v5a2.5 2.5 0 0 1-2.5 2.5H9l-4 3.5V13h.5A2.5 2.5 0 0 1 3 10.5Z" fill="#ffffff"/><path d="M19 8.5h.5A2.5 2.5 0 0 1 22 11v4.5a2.5 2.5 0 0 1-2.5 2.5H19v3l-3.6-3H12a2.5 2.5 0 0 1-2.5-2.5V15" fill="#ffd23f"/><circle cx="7" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="8" r="1" fill="currentColor" stroke="none"/></svg>`;
+  ICONS.cards = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8.5 3.6 9.2 2.5a1.6 1.6 0 0 1 1.1 2L15.6 20"/><rect x="3.5" y="6.5" width="11" height="15" rx="1.8"/><path d="M6.5 11h5M6.5 14h3.5"/></svg>`;
 
   function lang() {
     return window.I18n?.lang === "en" ? "en" : "he";
@@ -1043,6 +1166,11 @@
     $("#engHero")?.classList.toggle("hidden", name !== "topics");
     // The exercise screen is a fixed, non-scrolling page without the site navbar or footer.
     document.documentElement.classList.toggle("eng-runner-open", name === "exercise");
+    // Practice screens get the soft, flat look (no black outlines); the game
+    // and word-card shells take it off again.
+    document.documentElement.classList.toggle("eng-soft", name === "exercise");
+    // The flame and the medal on top show on the topics page only.
+    document.documentElement.classList.toggle("eng-topics-open", name === "topics");
     settingsOpen = false;
     $("#engBarBack")?.replaceChildren();
   }
@@ -1054,124 +1182,105 @@
     if (back) $("#engBarBack")?.replaceChildren(back);
   }
 
-  // The topics page has no page above it here, so its arrow leaves to the site.
+  // The topics page has no page above it here, so its arrow leaves to the
+  // site, or to the personal area of a student who came through their link.
   function dockSiteBack() {
     const bar = $("#engBarBack");
-    if (bar) bar.innerHTML = `<a class="eng-back" href="/" aria-label="${esc(t("backToSite"))}" title="${esc(t("backToSite"))}">${ICONS.back}</a>`;
+    const home = window.StudentProgress?.fromLink() ? window.StudentProgress.homeUrl() : null;
+    const label = t(home ? "backToHomework" : "backToSite");
+    if (bar) bar.innerHTML = `<a class="eng-back" href="${esc(home || "/")}" aria-label="${esc(label)}" title="${esc(label)}">${ICONS.back}</a>`;
   }
 
-  // Shown when this device opened a student's personal link: whose file the
-  // practice goes to, and the way to their page with their progress. On the
-  // exercise screen it shrinks to the name, points and that link.
+  // Shown when this tab came through a student's personal link: the page
+  // title becomes a hello with the student's name (the fox stays perched on
+  // it), the student's menu on top, and no sign-in button or user circle.
+  // A visit through the site gets none of these, even on a device that once
+  // opened a student's link.
   async function renderStudentBar() {
-    $("#engStudentBar")?.remove();
-    const student = await window.StudentProgress?.profile();
-    if (!student) return;
-    const bar = document.createElement("div");
-    bar.id = "engStudentBar";
-    bar.className = "eng-student-bar";
-    bar.innerHTML = `
-      <span class="eng-student-bar-me">
-        <span class="eng-student-bar-avatar" aria-hidden="true">${esc(Array.from(student.name.trim())[0] || "")}</span>
-        <span class="eng-student-bar-name">${esc(student.name)}</span>
-      </span>
-      <span class="eng-student-bar-text">${esc(t("studentBar"))}</span>
-      <button type="button" class="eng-student-bar-points" id="engBarPoints" title="${esc(t("leaderboard"))}">${ICONS.trophy}<span id="engBarPointsNum">${esc(t("leaderboard"))}</span></button>
-      <a class="eng-student-bar-link" href="${esc(window.StudentProgress.homeUrl())}">${esc(t("myProgress"))}</a>
-      <button type="button" class="eng-student-bar-out" id="engNotMe">${esc(t("notMe"))}</button>`;
-    $("#engMain .container")?.prepend(bar);
-    $("#engBarPoints").addEventListener("click", () => window.Leaderboard?.open());
-    $("#engNotMe").addEventListener("click", () => {
-      if (!confirm(t("notMeConfirm", student.name))) return;
-      window.StudentProgress.clear();
-      bar.remove();
-      board.forget();
-      dailyFresh = null;
-      if (!views.topics()?.classList.contains("hidden")) {
-        renderBoardCard();
-        renderDailyCard();
-      }
-      refreshReviewLinks();
-      fileFinished = new Set();
-      refreshTopicStatus();
-    });
-    const data = await board.load();
-    const me = data?.rows.find((row) => row.isMe);
-    if (me) setBarPoints(me.total);
+    const student = window.StudentProgress?.fromLink() ? await window.StudentProgress.profile() : null;
+    document.documentElement.classList.toggle("eng-student-linked", !!student);
+    renderTopMenu(!!student);
+    const line = $("#engHero .hero-title .line");
+    if (!student || !line) return;
+    // No data-i18n: a language switch would bring the old title back.
+    line.removeAttribute("data-i18n");
+    line.textContent = t("hello", student.name);
   }
 
-  function setBarPoints(total) {
-    const num = $("#engBarPointsNum");
-    if (num) num.textContent = t("myPoints", total);
-  }
+  /* ── The student's menu on top, for a student who came through their
+     link only: a medal that opens the class leaderboard (leaderboard.js), a
+     flame that leads to the daily challenge's page, and the chat. ── */
 
-  /* ── Class leaderboard (leaderboard.js) on the topics page, for a student
-     who opened their personal link; everyone else sees how to join. ── */
-
-  const board = (() => {
-    let pending = null;
-    return {
-      load() {
-        if (!window.StudentProgress?.isLinked()) return Promise.resolve(null);
-        pending = pending || window.StudentProgress.leaderboard();
-        return pending;
-      },
-      forget() {
-        pending = null;
-      },
-    };
-  })();
-
-  // New points make the cached board stale; the student bar shows them at once.
-  window.addEventListener("pleyi:points", (e) => {
-    board.forget();
-    if (e.detail?.points) setBarPoints(e.detail.points.total);
-  });
-
-  // The "how to join the leaderboard" card for visitors is hidden for now.
-  const SHOW_BOARD_JOIN = false;
-
-  async function renderBoardCard() {
-    const host = $("#engTopicsView");
-    if (!host || !window.Leaderboard) return;
-    const linked = window.StudentProgress?.isLinked();
-    if (!linked && !SHOW_BOARD_JOIN) {
-      $("#engBoardCard")?.remove();
-      return;
-    }
-    let card = $("#engBoardCard");
-    if (!card) {
-      card = document.createElement("section");
-      card.id = "engBoardCard";
-      host.prepend(card);
-    }
+  function renderTopMenu(linked) {
+    if (SUBJECT) return;
     if (!linked) {
-      card.className = "eng-board-card is-join";
-      card.innerHTML = `
-        <span class="eng-board-icon">${ICONS.trophy}</span>
-        <div class="eng-board-join">
-          <h2 class="eng-board-title">${esc(t("boardJoinTitle"))}</h2>
-          <p>${esc(t("boardJoin"))}</p>
-        </div>`;
+      $("#engTopMenu")?.remove();
       return;
     }
-    card.className = "eng-board-card";
-    card.innerHTML = `
-      <div class="eng-board-head">
-        <span class="eng-board-icon">${ICONS.trophy}</span>
-        <h2 class="eng-board-title">${esc(t("boardTitle"))}</h2>
-      </div>
-      <div class="eng-board-body" id="engBoardBody"></div>
-      <button type="button" class="btn btn-candy font-cartoon eng-board-more" id="engBoardMore">${esc(t("boardFull"))}</button>`;
-    $("#engBoardMore").addEventListener("click", () => window.Leaderboard.open());
-    const data = await board.load();
-    const body = $("#engBoardBody");
-    if (!body) return;
-    if (!data) {
-      card.remove();
-      return;
+    let menu = $("#engTopMenu");
+    if (!menu) {
+      menu = document.createElement("div");
+      menu.id = "engTopMenu";
+      menu.className = "eng-top-menu";
+      $("#engBarBack")?.after(menu);
     }
-    window.Leaderboard.bind(body, data.rows, { limit: 5 });
+    const board = linked && window.Leaderboard;
+    menu.innerHTML = `
+      ${board ? `<button type="button" class="eng-top-btn eng-top-btn--medal" id="engTopBoard" aria-haspopup="dialog" aria-label="${esc(t("leaderboard"))}" title="${esc(t("leaderboard"))}">${ICONS.medalColor}</button>` : ""}
+      <button type="button" class="eng-top-btn eng-top-btn--daily" id="engTopDaily" aria-label="${esc(t("dailyTitle"))}" title="${esc(t("dailyTitle"))}">${ICONS.flameColor}</button>
+      ${window.ENGLISH_CHATS?.length ? `<button type="button" class="eng-top-btn eng-top-btn--chat" id="engTopChat" aria-label="${esc(t("chatTitle"))}" title="${esc(t("chatTitle"))}">${ICONS.chatColor}</button>` : ""}`;
+    if (board) $("#engTopBoard").addEventListener("click", () => window.Leaderboard.open({ top: certNewsHtml() }));
+    $("#engTopDaily").addEventListener("click", () => {
+      location.hash = DAILY_ROUTE;
+    });
+    $("#engTopChat")?.addEventListener("click", () => {
+      location.hash = CHAT_ROUTE;
+    });
+    refreshTopDaily();
+    refreshTopBoard();
+  }
+
+  // A red dot on the medal, and the medal shaking, while a certificate the
+  // student earned waits unseen on their page (/s/<key>#prizes, which marks
+  // it seen). `fresh`: ask the server again, after practice that may have
+  // earned one.
+  let newCerts = [];
+
+  async function refreshTopBoard(fresh = false) {
+    if (!$("#engTopBoard")) return;
+    const student = await window.StudentProgress.profile({ fresh });
+    const btn = $("#engTopBoard");
+    if (!btn || !student) return;
+    newCerts = window.StudentProgress.newCertificates(student);
+    const has = newCerts.length > 0;
+    btn.classList.toggle("has-new", has);
+    btn.setAttribute("aria-label", has ? `${t("leaderboard")} — ${t("newCertLabel")}` : t("leaderboard"));
+    btn.querySelector(".eng-top-btn-dot")?.remove();
+    if (has) btn.insertAdjacentHTML("beforeend", `<i class="eng-top-btn-dot" aria-hidden="true"></i>`);
+  }
+
+  // Over the leaderboard, while a certificate is new: the way to it.
+  function certNewsHtml() {
+    const home = window.StudentProgress?.homeUrl();
+    if (!newCerts.length || !home) return "";
+    return `
+      <a class="eng-cert-news" href="${esc(home)}#prizes">
+        <span class="eng-cert-news-icon">${ICONS.medalColor}</span>
+        <span class="eng-cert-news-text">
+          <b>${esc(t("newCert"))}</b>
+          <span>${esc(t("newCertGo"))}</span>
+        </span>
+      </a>`;
+  }
+
+  // A check on the flame once today's challenge is done.
+  async function refreshTopDaily() {
+    const btn = $("#engTopDaily");
+    if (!btn) return;
+    const view = await dailyState();
+    btn.classList.toggle("is-done", view.doneToday);
+    btn.querySelector(".eng-top-btn-check")?.remove();
+    if (view.doneToday) btn.insertAdjacentHTML("beforeend", `<i class="eng-top-btn-check" aria-hidden="true">${ICONS.check}</i>`);
   }
 
   /* ── "My mistakes" (mistake-bank.js): a line on a topic's page, with how
@@ -1252,7 +1361,7 @@
           ${img}
           <span class="eng-topic-title">${esc(t("vocabHub"))}</span>
           ${sub}
-          <span class="btn btn-primary btn-candy font-cartoon eng-topic-open">${esc(t("open"))}</span>
+          <span class="font-cartoon eng-topic-open">${esc(t("open"))}${ICONS.back}</span>
         </a>
       </article>`;
   }
@@ -1266,7 +1375,8 @@
         <h2 class="font-cartoon eng-topic-heading">${esc(t("vocabHub"))}</h2>
         ${lang() === "he" ? `<p class="eng-topic-heading-en" dir="ltr">Vocabulary by topic</p>` : ""}
       </div>
-      <div class="eng-topic-grid">${vocabTopics().map(topicTileHtml).join("")}</div>`;
+      ${SUBJECT ? "" : `<p class="eng-fc-vocab"><a class="btn btn-candy font-cartoon eng-fc-vocab-link" href="#${CARDS_ROUTE}">${ICONS.cards}<span>${esc(t("cardsVocabLink"))}</span></a></p>`}
+      <div class="eng-topic-grid">${vocabTopics().map((topic, i) => topicTileHtml(topic, i + 1)).join("")}</div>`;
   }
 
   // `num`: the topic's place on the learning path, shown on the tile. Every
@@ -1282,7 +1392,7 @@
           ${img}
           <span class="eng-topic-title">${esc(loc(topic, "title"))}</span>
           ${sub}
-          <span class="btn btn-primary btn-candy font-cartoon eng-topic-open">${esc(t("open"))}</span>
+          <span class="font-cartoon eng-topic-open">${esc(t("open"))}${ICONS.back}</span>
         </a>
       </article>`;
   }
@@ -1290,8 +1400,9 @@
   // The path filters by grade (curriculum-grades.js through ready-lessons.js):
   // in a school subject a topic shows when one of its lessons is learned in
   // that grade; in English, by the topic's own grades. "?grade=7" keeps the
-  // choice in the address.
-  const GRADES = window.ReadyLessons?.grades || null;
+  // choice in the address. A student who came through their link sees the
+  // whole path, with no filter.
+  const GRADES = window.StudentProgress?.isLinked() ? null : window.ReadyLessons?.grades || null;
   let gradeFilter = GRADES ? GRADES.fromUrl() : "all";
 
   function topicGrades(topic) {
@@ -1350,28 +1461,70 @@
     });
   }
 
+  // The path's stages with the topics the grade filter shows. A topic is
+  // numbered over the whole path, so it keeps its number when the filter
+  // hides others.
+  function visiblePath() {
+    let num = 0;
+    return PATH.map((stage, i) => ({
+      stage,
+      stageNum: i + 1,
+      topics: stage.topics
+        .map(findTopic)
+        .filter(Boolean)
+        .map((topic) => ({ topic, num: ++num }))
+        .filter(({ topic }) => topicInGrade(topic)),
+    })).filter(({ topics }) => topics.length);
+  }
+
+  // The table of contents above the path: each stage opens to its topics and
+  // their lessons. A topic opens its page; a lesson starts right away.
+  function pathTocHtml(stages) {
+    const lessonRow = (topic, id) => `
+      <li><button type="button" class="eng-toc-lesson" data-toc-topic="${esc(topic.id)}" data-toc-lesson="${esc(id)}">${ICONS.slides}<span>${lessonTitleHtml(topic, id)}</span></button></li>`;
+    const topicRow = ({ topic, num }) => {
+      const lessons = topicLessonIds(topic).map((id) => lessonRow(topic, id)).join("");
+      return `
+        <li class="eng-toc-topic">
+          <a class="eng-toc-topic-link" href="#${esc(topic.id)}"><span class="eng-toc-num">${num}</span><span>${esc(loc(topic, "title"))}</span></a>
+          ${lessons ? `<ul class="eng-toc-lessons">${lessons}</ul>` : ""}
+        </li>`;
+    };
+    return `
+      <details class="eng-toc" id="engToc">
+        <summary class="eng-toc-head">${ICONS.toc}<span>${esc(t("toc"))}</span><span class="eng-toc-chevron">${ICONS.chevron}</span></summary>
+        <div class="eng-toc-body">
+          ${stages.map(({ stage, stageNum, topics }) => `
+            <details class="eng-toc-stage" name="eng-toc-stage">
+              <summary class="eng-toc-stage-head"><span class="eng-path-stage-num">${esc(t("stage", stageNum))}</span><span class="eng-toc-stage-title">${esc(loc(stage, "title"))}</span><span class="eng-toc-chevron">${ICONS.chevron}</span></summary>
+              <ol class="eng-toc-topics">${topics.map(topicRow).join("")}</ol>
+            </details>`).join("")}
+        </div>
+      </details>`;
+  }
+
+  function bindPathToc(grid) {
+    $$("[data-toc-lesson]", grid).forEach((btn) =>
+      btn.addEventListener("click", () => openTopicLesson(findTopic(btn.dataset.tocTopic), btn.dataset.tocLesson))
+    );
+  }
+
   function renderTopicGrid() {
     const grid = $("#engTopicGrid");
     if (!grid) return;
     if (PATH.length) {
-      let num = 0;
-      const stages = PATH.map((stage, i) => {
-        // Numbered over the whole path, so a topic keeps its number when
-        // the grade filter hides others.
-        const tiles = stage.topics
-          .map(findTopic)
-          .filter(Boolean)
-          .map((topic) => (++num, topicInGrade(topic) ? topicTileHtml(topic, num) : ""))
-          .join("");
-        if (!tiles) return "";
-        return `
+      const path = visiblePath();
+      const stages = path.map(({ stage, stageNum, topics }) => `
         <div class="eng-topic-group eng-path-stage">
-          <h2 class="eng-group-title eng-path-title"><span class="eng-path-stage-num">${esc(t("stage", i + 1))}</span>${esc(loc(stage, "title"))}</h2>
-          <div class="eng-topic-grid">${tiles}</div>
-        </div>`;
-      }).join("");
-      grid.innerHTML = gradeBarHtml() + (stages || `<p class="eng-grade-empty">${esc(t("noGradeTopics"))}</p>`);
+          <h2 class="eng-group-title eng-path-title"><span class="eng-path-stage-num">${esc(t("stage", stageNum))}</span>${esc(loc(stage, "title"))}</h2>
+          <div class="eng-topic-grid">${topics.map(({ topic, num }) => topicTileHtml(topic, num)).join("")}</div>
+        </div>`).join("");
+      // A grade change redraws the grid; the contents stay open if they were.
+      const tocOpen = $("#engToc", grid)?.open;
+      grid.innerHTML = gradeBarHtml() + (stages ? pathTocHtml(path) + stages : `<p class="eng-grade-empty">${esc(t("noGradeTopics"))}</p>`);
+      if (tocOpen) $("#engToc", grid).open = true;
       bindGradeBar(grid);
+      bindPathToc(grid);
       return;
     }
     grid.innerHTML = GROUPS.map((group) => {
@@ -1506,8 +1659,8 @@
 
   function findGame(topic, id) {
     const gameId = /^game-(.+)$/.exec(id || "")?.[1];
-    if (!gameId || !gameWords(topic).length) return null;
-    return window.EnglishGames.find(gameId);
+    const game = gameId ? window.EnglishGames.find(gameId) : null;
+    return game && window.EnglishGames.fits(game, gameWords(topic)) ? game : null;
   }
 
   // One on one or group survival with the topic's words (/together). Off
@@ -1530,9 +1683,11 @@
   }
 
   function gameCardsHtml(topic) {
-    if (!gameWords(topic).length) return "";
+    const words = gameWords(topic);
+    if (!words.length) return "";
     const games = window.EnglishGames;
-    return games.list
+    return games
+      .listFor(words)
       .map((game) => {
         const best = games.bestText(topic.id, game.id);
         return `
@@ -1798,8 +1953,9 @@
   }
 
   function buildRound(topic, ex) {
-    // A passage's questions follow the text, so they keep their order.
-    if (ex.type === "reading" || ex.type === "exam") return [...ex.questions];
+    // A passage's questions follow the text, and a chat's lines one another,
+    // so they keep their order.
+    if (ex.type === "reading" || ex.type === "exam" || ex.type === "chat") return [...ex.questions];
     const seen = seenKeys(topic, ex);
     if (ex.type === "match") return [{ pairs: freshest(poolOf(ex), ex.boardSize || 6, seen) }];
     return freshest(poolOf(ex), ex.roundSize || 10, seen);
@@ -2068,6 +2224,7 @@
     const backLabel = gameLessonReturn ? "backToLesson" : "backToTopic";
     runner.gameId = game.id;
     view.classList.remove("is-reading");
+    document.documentElement.classList.remove("eng-soft");
     view.innerHTML = `
       <div class="eng-runner-head">
         <div class="eng-runner-top">
@@ -2142,14 +2299,14 @@
   // passages have their own switch, "Hebrew questions".
   function hasTranslation(exercise) {
     if (runner.round.some((q) => q?.sentenceHe)) return true;
-    return ["choice", "truefalse", "write", "find-error", "letters", "dictation"].includes(exercise.type) && !!exercise.questions?.some((q) => q.he);
+    return ["choice", "truefalse", "write", "find-error", "letters", "dictation", "chat"].includes(exercise.type) && !!exercise.questions?.some((q) => q.he);
   }
 
   function toolsHtml() {
     const isReading = runner.exercise?.type === "reading";
     const isExam = runner.exercise?.type === "exam";
     const showTranslate = runner.phase === "question" && hasTranslation(runner.exercise);
-    const showSay = (runner.phase === "question" && roundHasSay()) || (runner.phase === "game" && runner.gameId === "hunt");
+    const showSay = (runner.phase === "question" && roundHasSay()) || (runner.phase === "game" && ["hunt", "bingo"].includes(runner.gameId));
     const showReadAloud = isReading && runner.phase !== "results" && canSpeak();
     const showWords = isReading && runner.phase !== "results";
     const showHeQuestions =
@@ -2335,6 +2492,7 @@
 
   function runnerTitle() {
     const { exercise } = runner;
+    if (runner.review?.test) return runner.review.test.title || t("testTitle");
     if (runner.review) return t(runner.review.daily ? "dailyTitle" : runner.review.mix ? "mixTitle" : "reviewTitle");
     if (exercise.type === "reading") return t("readingTitle");
     if (exercise.type === "exam") return t("examTitle");
@@ -2353,6 +2511,7 @@
   function reviewFromHtml() {
     const item = runner.review?.items[runner.index];
     if (!item || runner.phase === "results") return "";
+    if (runner.review.test) return `<span class="eng-game-topic eng-review-from"><span>${esc(loc(item.topic, "title"))}</span></span>`;
     if (runner.review.mix || runner.review.daily) return `<span class="eng-game-topic eng-review-from"><span>${esc(loc(item.topic, "title"))} · ${esc(loc(item.source, "title"))}</span></span>`;
     const goal = window.MistakeBank.GOAL;
     const streak = Math.min(goal, window.MistakeBank.streakOf(item.id));
@@ -2371,8 +2530,15 @@
     const { topic, exercise } = runner;
     const isReading = exercise.type === "reading";
     view.classList.toggle("is-reading", isReading || exercise.type === "exam");
-    const back = runner.review ? runner.review.back : `#${topic.id}`;
-    const backLabel = back === "#" ? t("back") : t("backToTopic");
+    document.documentElement.classList.add("eng-soft");
+    const back = runner.review ? runner.review.back : runner.back || `#${topic.id}`;
+    const backLabel = inTest()
+      ? t("backToHomework")
+      : back === `#${CHAT_ROUTE}`
+        ? t("chatBack")
+        : back === "#" || back === `#${DAILY_ROUTE}`
+          ? t("back")
+          : t("backToTopic");
     view.innerHTML = `
       <div class="eng-runner-head">
         <div class="eng-runner-top">
@@ -2393,6 +2559,8 @@
     const bar = $(".eng-runner-head > .eng-progress", view);
     if (bar && instructions) bar.before(instructions);
     else if (instructions) view.insertBefore(instructions, instructions.parentElement);
+    // A test checks nothing on the way, so its button only confirms.
+    if (inTest() && $("#engCheck", view)) $("#engCheck", view).textContent = t("testConfirm");
     renderTools();
     $$(".eng-speak, .eng-word-tap", view).forEach((btn) => {
       btn.addEventListener("click", (e) => {
@@ -2659,6 +2827,22 @@
     });
   }
 
+  // A test shows no right or wrong on the way: the answer is kept and the
+  // next question comes (english-tests.js, #test/<id>).
+  function inTest() {
+    return !!runner.review?.test;
+  }
+
+  function testAnswer(q, isRight, given) {
+    if (isRight) runner.score++;
+    else {
+      runner.mistakes.push(q);
+      runner.mistakeLog.push(mistakeRecord(q, given));
+    }
+    saveTestProgress();
+    runner.timer = setTimeout(goNext, TEST_NEXT_MS);
+  }
+
   function onRight(message = t("correct"), delay = AUTO_NEXT_MS) {
     runner.score++;
     playSfx("right");
@@ -2736,9 +2920,13 @@
     choice: {
       render(q) {
         const options = q.options ? shuffle(q.options) : runner.exercise.options;
+        // `pic`: a picture word to look at and hear ("which letter does it
+        // start with?"), with no letters or sound line to give it away.
+        const pic = q.pic && wordItem(q.pic);
         renderRunnerShell(`
           ${instructionsHtml()}
           ${figHtml(q)}
+          ${pic ? `<div class="eng-picture-box eng-picture-box--small"><img class="eng-picture-img" src="${esc(pic.img)}" alt="" draggable="false" />${speakBtn(pic.en)}</div>` : ""}
           <div class="eng-sentence" dir="${TEXT_DIR}"><p id="engSentence">${sentenceHtml(q)}</p>${contextHtml(q)}${translationHtml(q)}</div>
           <div class="eng-options" dir="${TEXT_DIR}">
             ${options
@@ -2752,12 +2940,21 @@
           questionProgress()
         );
         answerButtons().forEach((btn) => btn.addEventListener("click", () => this.answer(q, btn.dataset.option)));
+        // The picture's word plays on its own, as in the listening exercise.
+        const shown = runner.index;
+        if (pic) setTimeout(() => runner.index === shown && !runner.answered && speak(pic.en), 350);
       },
       answer(q, choice) {
         if (runner.answered) return;
         runner.answered = true;
         const isRight = choice === q.answer;
         lockAnswers();
+        if (inTest()) {
+          answerButtons().find((btn) => btn.dataset.option === choice)?.classList.add("is-picked");
+          $("#engSentence").innerHTML = sentenceHtml(q, choice, "picked");
+          testAnswer(q, isRight, choice);
+          return;
+        }
         answerButtons().forEach((btn) => {
           if (btn.dataset.option === q.answer) btn.classList.add("is-right");
           else if (btn.dataset.option === choice) btn.classList.add("is-wrong");
@@ -2796,6 +2993,11 @@
         runner.answered = true;
         const isRight = value === q.correct;
         lockAnswers();
+        if (inTest()) {
+          answerButtons().find((btn) => (btn.dataset.value === "true") === value)?.classList.add("is-picked");
+          testAnswer(q, isRight, value);
+          return;
+        }
         answerButtons().forEach((btn) => {
           const btnValue = btn.dataset.value === "true";
           if (btnValue === q.correct) btn.classList.add("is-right");
@@ -2898,6 +3100,12 @@
         const isRight =
           accepted.map(normalize).includes(normalize(inputEl.value)) || (SUBJECT && accepted.some((a) => sameNumber(a, inputEl.value)));
         inputEl.readOnly = true;
+        if (inTest()) {
+          inputEl.classList.add("is-picked");
+          $(".eng-actions", views.exercise())?.classList.add("hidden");
+          testAnswer(q, isRight, inputEl.value.trim());
+          return;
+        }
         inputEl.classList.add(isRight ? "is-right" : "is-wrong");
         $(".eng-actions", views.exercise())?.classList.add("hidden");
         if (isRight) {
@@ -2974,6 +3182,11 @@
         // Every chip is placed by now, so the bank and Check button are empty space.
         $("#engOrderBank").classList.add("hidden");
         $(".eng-actions", views.exercise())?.classList.add("hidden");
+        if (inTest()) {
+          $("#engOrderLine").classList.add("is-picked");
+          testAnswer(q, isRight, placed.map((i) => tokens[i]).join(" "));
+          return;
+        }
         $("#engOrderLine").classList.add(isRight ? "is-right" : "is-wrong");
         if (isRight) onRight();
         else onWrong(q, `${esc(t("fixLabel"))} <span dir="${TEXT_DIR}">${esc(q.answer)}</span>`, placed.map((i) => tokens[i]).join(" "));
@@ -3211,6 +3424,72 @@
       else onWrong(q, `${esc(t("fixLabel"))} <bdi dir="ltr">${esc(q.answer)}</bdi>`, choice);
     },
     review: (q) => `<span dir="ltr">${esc(q.answer)}</span>${q.he ? ` <span class="eng-review-he">${esc(q.he)}</span>` : ""}`,
+  };
+
+  /* A conversation with Robo (english-chat.js): his line, out loud, and three
+     replies to choose from. The exchange before stays on screen above it,
+     so the chat reads on; the right reply then joins the chat as the
+     student's message. A line on its own (my mistakes, a mixed round, a
+     mistakes retry) has no exchange before it. */
+  function chatRowHtml(who, text, he, extra = "") {
+    const bot = who === "bot";
+    return `
+      <div class="eng-chat-row is-${who}">
+        <span class="eng-chat-avatar" role="img" aria-label="${esc(t(bot ? "chatBot" : "chatMe"))}">${bot ? ICONS.robo : ICONS.me}</span>
+        <div class="eng-chat-bubble">
+          <p class="eng-chat-text" lang="en" dir="ltr">${esc(text)}${extra}</p>
+          ${he ? `<p class="eng-translation eng-chat-he" dir="rtl" lang="he">${esc(he)}</p>` : ""}
+        </div>
+      </div>`;
+  }
+
+  TYPES.chat = {
+    render(q) {
+      const prev = !runner.review && !runner.isRetry && runner.index > 0 ? runner.round[runner.index - 1] : null;
+      const options = shuffle(q.options);
+      renderRunnerShell(`
+        ${instructionsHtml()}
+        <div class="eng-chat" id="engChat" dir="ltr">
+          ${prev ? `<div class="eng-chat-prev">${chatRowHtml("bot", prev.text, prev.he)}${chatRowHtml("me", prev.answer, prev.replyHe)}</div>` : ""}
+          ${chatRowHtml("bot", q.text, q.he, speakBtn(q.text, "eng-speak--inline"))}
+          <div id="engChatReply"></div>
+        </div>
+        <div class="eng-options eng-options--sentences eng-chat-options" dir="ltr">
+          ${options
+            .map(
+              (opt, i) =>
+                `<button type="button" class="eng-option eng-option--sentence js-answer" data-option="${esc(opt)}"><span class="eng-option-key">${i + 1}</span>${esc(opt)}</button>`
+            )
+            .join("")}
+        </div>
+        ${feedbackHtml}`,
+        questionProgress()
+      );
+      answerButtons().forEach((btn) => btn.addEventListener("click", () => this.answer(q, btn.dataset.option)));
+      // Robo says his line on his own.
+      const shown = runner.index;
+      setTimeout(() => runner.index === shown && runner.phase === "question" && !runner.answered && speak(q.text), 350);
+    },
+    answer(q, choice) {
+      if (runner.answered) return;
+      runner.answered = true;
+      const isRight = choice === q.answer;
+      lockAnswers();
+      if (inTest()) {
+        answerButtons().find((btn) => btn.dataset.option === choice)?.classList.add("is-picked");
+        testAnswer(q, isRight, choice);
+        return;
+      }
+      answerButtons().forEach((btn) => {
+        if (btn.dataset.option === q.answer) btn.classList.add("is-right");
+        else if (btn.dataset.option === choice) btn.classList.add("is-wrong");
+      });
+      $("#engChatReply").innerHTML = chatRowHtml("me", q.answer, q.replyHe);
+      speak(q.answer);
+      if (isRight) onRight(t("correct"), AUTO_NEXT_MS + 600);
+      else onWrong(q, esc(t("chatWrong")), choice);
+    },
+    review: (q) => `<span dir="ltr">${esc(q.text)} → <strong>${esc(q.answer)}</strong></span>`,
   };
 
   // A short picture word gets two letters of another word as decoys.
@@ -4570,6 +4849,10 @@
   }
 
   function renderResults() {
+    if (runner.review?.test) {
+      renderTestResults();
+      return;
+    }
     if (runner.review?.daily) {
       renderDailyResults();
       return;
@@ -4751,12 +5034,13 @@
   }
 
   // The review screen with nothing to practice (or while the bank loads).
-  // `lead` comes with a button back.
-  function renderReviewMessage(title, lead, back, heading = t("reviewTitle")) {
+  // `lead` comes with a button back (`backText`: its label, when it leads
+  // somewhere else than the topics or a topic).
+  function renderReviewMessage(title, lead, back, heading = t("reviewTitle"), backText = "") {
     runner.phase = "message";
     const view = views.exercise();
     view.classList.remove("is-reading");
-    const backLabel = back === "#" ? t("back") : t("backToTopic");
+    const backLabel = backText || (back === "#" || back === `#${DAILY_ROUTE}` ? t("back") : t("backToTopic"));
     view.innerHTML = `
       <div class="eng-runner-head">
         <div class="eng-runner-top">
@@ -4922,14 +5206,367 @@
     });
   }
 
-  /* ── The daily challenge (#daily): five short questions a day, mixed from
-     the exercises the student already finished (their file's and this
+  /* ── Tests (#test/<id>): a test the teacher sent from the student's file,
+     with questions of its own for every topic (english-tests.js). It runs
+     like a mixed round, but shows no right or wrong on the way: the grade,
+     and each topic's grade, come once it is handed in, and go to the
+     teacher. Leaving in the middle keeps the place on this device. A test is
+     handed in once; then the student can ask for a retake, which the
+     teacher opens (lib/student-progress.js). ── */
+
+  const TEST_ROUTE = "test";
+  const TEST_NEXT_MS = 350;
+  const TEST_PROGRESS_KEY = "pleyi-test-progress";
+  const TEST_LEVEL = { choice: 1, truefalse: 2, order: 2, write: 3 };
+  let testToken = 0;
+  const testExercises = {};
+
+  function testIsOpen(test) {
+    return (test.attempts || []).length < (test.allowed || 1);
+  }
+
+  // One made-up exercise per kind of question, for its instructions.
+  function testExercise(q) {
+    const ask = q.ask || q.type;
+    if (!testExercises[ask]) {
+      const asks = window.ENGLISH_TEST_ASK || {};
+      const [en, he] = asks[ask] || asks[q.type] || ["", ""];
+      testExercises[ask] = { id: `test-${ask}`, type: q.type, title: STR.he.testTitle, titleEn: STR.en.testTitle, instructions: he, instructionsEn: en, level: TEST_LEVEL[q.type] || 1 };
+    }
+    return testExercises[ask];
+  }
+
+  // "topicId:index" — a question of the topic's test bank.
+  function testItem(key) {
+    const [topicId, index] = String(key).split(":");
+    const topic = findTopic(topicId);
+    const q = window.ENGLISH_TESTS?.[topicId]?.[Number(index)];
+    if (!topic || !q) return null;
+    const exercise = testExercise(q);
+    return { id: key, topic, source: exercise, exercise, q, item: q };
+  }
+
+  // `perTopic` questions of each topic, in the order the teacher picked them;
+  // a retake asks first the ones the last hand-in didn't.
+  function buildTest(test) {
+    const last = new Set(test.attempts?.[test.attempts.length - 1]?.asked || []);
+    return (test.topics || []).flatMap((tp) => {
+      const keys = (window.ENGLISH_TESTS?.[tp.id] || []).map((_, i) => `${tp.id}:${i}`);
+      const fresh = [...shuffle(keys.filter((k) => !last.has(k))), ...shuffle(keys.filter((k) => last.has(k)))];
+      return shuffle(fresh.slice(0, test.perTopic || 5)).map(testItem).filter(Boolean);
+    });
+  }
+
+  // The place in a test, kept per student, test and hand-in on this device.
+  function testProgressKey(test) {
+    return `${window.StudentProgress?.key() || ""}/${test.id}/${(test.attempts || []).length}`;
+  }
+
+  function readTestProgress(test) {
+    try {
+      return (JSON.parse(localStorage.getItem(TEST_PROGRESS_KEY)) || {})[testProgressKey(test)] || null;
+    } catch {
+      return null;
+    }
+  }
+
+  // `value` null forgets it.
+  function writeTestProgress(test, value) {
+    try {
+      const all = JSON.parse(localStorage.getItem(TEST_PROGRESS_KEY)) || {};
+      if (value) all[testProgressKey(test)] = value;
+      else delete all[testProgressKey(test)];
+      localStorage.setItem(TEST_PROGRESS_KEY, JSON.stringify(all));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // After every answer: the questions, the next one, and the wrong ones.
+  function saveTestProgress(next = runner.index + 1) {
+    const { review } = runner;
+    if (!review?.test) return;
+    writeTestProgress(review.test, {
+      keys: review.items.map((it) => it.id),
+      index: next,
+      wrong: runner.mistakes.map((q) => review.items.findIndex((it) => it.q === q)),
+      log: runner.mistakeLog,
+      startedAt: runner.startedAt,
+    });
+  }
+
+  function testHome() {
+    return window.StudentProgress?.homeUrl() || "#";
+  }
+
+  function onTestRoute() {
+    return decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0] === TEST_ROUTE;
+  }
+
+  // The test comes from the linked student's file, as it is now (a retake
+  // may have been opened a minute ago).
+  async function openTest(testId) {
+    const token = ++testToken;
+    renderReviewMessage(t("loading"), "", testHome(), t("testTitle"));
+    const student = await window.StudentProgress?.profile({ fresh: true });
+    if (token !== testToken || !onTestRoute()) return;
+    const test = (student?.tests || []).find((x) => x.id === testId);
+    runner.review = null;
+    if (!test) {
+      renderReviewMessage(t("testMissing"), t(student ? "testMissingLead" : "testLinkOnly"), testHome(), t("testTitle"), t("backToHomework"));
+      return;
+    }
+    const saved = readTestProgress(test);
+    // Handed in, but the answer from the server never came: send it again.
+    if (testIsOpen(test) && saved && saved.index >= saved.keys.length) {
+      startTest(test, saved);
+      return;
+    }
+    if (testIsOpen(test)) renderTestIntro(test, saved);
+    else renderTestDone(test);
+  }
+
+  function testTopicsHtml(test) {
+    return `<ul class="eng-test-topics">${(test.topics || []).map((tp) => `<li>${esc(loc(findTopic(tp.id) || tp, "title"))}</li>`).join("")}</ul>`;
+  }
+
+  function testHeadHtml(test) {
+    return `
+      <div class="eng-runner-head">
+        <div class="eng-runner-top">
+          <a class="eng-back" href="${esc(testHome())}" aria-label="${esc(t("backToHomework"))}" title="${esc(t("backToHomework"))}">${ICONS.back}</a>
+          <div class="eng-runner-title-row"><h2 class="font-cartoon eng-runner-title">${esc(test.title || t("testTitle"))}</h2></div>
+        </div>
+      </div>`;
+  }
+
+  // Before the first question: the topics, how many questions, the rules.
+  function renderTestIntro(test, saved) {
+    runner.phase = "message";
+    const view = views.exercise();
+    view.classList.remove("is-reading");
+    const count = saved?.keys?.length || (test.topics || []).reduce((n, tp) => n + Math.min(test.perTopic || 5, window.ENGLISH_TESTS?.[tp.id]?.length || 0), 0);
+    const retake = (test.attempts || []).length > 0;
+    view.innerHTML = `
+      ${testHeadHtml(test)}
+      <div class="eng-runner-card eng-review-empty eng-test-intro">
+        <span class="eng-review-empty-icon">${ICONS.exam}</span>
+        ${retake ? `<span class="eng-test-badge">${esc(t("testRetakeBadge"))}</span>` : ""}
+        ${testTopicsHtml(test)}
+        <p class="eng-test-count">${esc(t("testCount", count))}</p>
+        <ul class="eng-test-rules">${t("testRules").map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
+        ${saved?.index ? `<p class="eng-test-resume">${esc(t("testResume", saved.index, saved.keys.length))}</p>` : ""}
+        ${test.note ? `<p class="eng-test-note"><b>${esc(t("testNote"))}</b> ${esc(test.note)}</p>` : ""}
+        <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engTestGo">${esc(t(saved?.index ? "testGoOn" : "testStart"))}</button>
+      </div>`;
+    $("#engTestGo").addEventListener("click", () => startTest(test, readTestProgress(test)));
+    $("#engTestGo").focus({ preventScroll: true });
+  }
+
+  // `saved`: the place this device kept, to go on from it.
+  function startTest(test, saved = null) {
+    clearTimeout(runner.timer);
+    stopExamTimer();
+    runner.exam = null;
+    let items = saved ? saved.keys.map(testItem) : null;
+    // The test bank changed since: start over with new questions.
+    if (!items || !items.length || items.some((it) => !it)) {
+      saved = null;
+      items = buildTest(test);
+    }
+    if (!items.length) {
+      renderReviewMessage(t("testMissing"), t("testMissingLead"), testHome(), t("testTitle"), t("backToHomework"));
+      return;
+    }
+    runner.testSend = null;
+    startMixedRound({ test, items, out: 0, back: testHome() });
+    if (!saved) {
+      saveTestProgress(0);
+      return;
+    }
+    runner.index = Math.min(saved.index, items.length);
+    runner.barIndex = runner.index;
+    runner.mistakes = (saved.wrong || []).map((i) => items[i]?.q).filter(Boolean);
+    runner.mistakeLog = saved.log || [];
+    runner.score = runner.index - runner.mistakes.length;
+    runner.startedAt = saved.startedAt || runner.startedAt;
+    if (runner.index >= items.length) renderResults();
+    else renderQuestion();
+  }
+
+  // Right answers and questions of every topic of the test.
+  function testByTopic() {
+    const out = {};
+    runner.review.items.forEach((it) => {
+      const r = (out[it.topic.id] ||= { score: 0, total: 0 });
+      r.total++;
+      if (!runner.mistakes.includes(it.q)) r.score++;
+    });
+    return out;
+  }
+
+  function testGradeOf(score, total) {
+    return total ? Math.round((score / total) * 100) : 0;
+  }
+
+  function testByTopicHtml(test, byTopic) {
+    const rows = (test.topics || [])
+      .filter((tp) => byTopic?.[tp.id]?.total)
+      .map((tp) => {
+        const r = byTopic[tp.id];
+        return `<li><span class="eng-test-topic-name">${esc(loc(findTopic(tp.id) || tp, "title"))}</span><span class="eng-test-topic-score" dir="ltr">${r.score}/${r.total}</span></li>`;
+      });
+    return rows.length > 1 ? `<div class="eng-test-by-topic"><h3>${esc(t("testByTopic"))}</h3><ul>${rows.join("")}</ul></div>` : "";
+  }
+
+  // The grade, each topic's grade, and the hand-in: it goes to the server
+  // once, and a failed one can be sent again.
+  function renderTestResults() {
+    const { score, total, review } = runner;
+    runner.phase = "results";
+    const grade = testGradeOf(score, total);
+    renderRunnerShell(
+      `
+      <div class="eng-results eng-test-results">
+        <div class="eng-grade">
+          <span class="eng-grade-label">${esc(t("gradeLabel"))}</span>
+          <p class="eng-score font-cartoon">${grade}</p>
+        </div>
+        <p class="eng-results-count">${esc(t("score", score, total))}</p>
+        ${testByTopicHtml(review.test, testByTopic())}
+        <p class="eng-results-msg eng-test-status" id="engTestStatus" aria-live="polite"></p>
+        <div class="eng-results-actions" id="engTestActions"></div>
+      </div>`,
+      `<div class="eng-earned" id="engEarned" aria-live="polite">${earnedHtml(runner.earned)}</div>`
+    );
+    celebrate(grade, $(".eng-results"));
+    sendTest();
+  }
+
+  function sendTest() {
+    const { review } = runner;
+    const test = review.test;
+    const send = (runner.testSend ||= { state: "idle" });
+    if (send.state === "idle" || send.state === "failed") {
+      send.state = "sending";
+      const levels = review.items.map((it) => exerciseLevel(it.exercise));
+      const activity = {
+        kind: "exercise",
+        topicId: TEST_ROUTE,
+        topicTitle: STR.he.testTitle,
+        exerciseId: test.id,
+        exerciseTitle: test.title || STR.he.testTitle,
+        type: "test",
+        level: Math.round(levels.reduce((a, b) => a + b, 0) / Math.max(1, levels.length)) || 1,
+        score: runner.score,
+        total: runner.total,
+        durationSec: Math.round((Date.now() - runner.startedAt) / 1000),
+        mistakes: runner.mistakeLog,
+        byTopic: testByTopic(),
+        asked: review.items.map((it) => it.id),
+      };
+      window.StudentProgress.submitTest(activity).then((res) => {
+        // A test handed in already (another device, or an answer that got
+        // lost on the way) counts as sent.
+        send.state = res.ok || res.done ? "sent" : "failed";
+        send.error = res.ok ? "" : res.error;
+        send.done = !res.ok && res.done;
+        if (send.state === "sent") {
+          writeTestProgress(test, null);
+          test.attempts = [...(test.attempts || []), { score: runner.score, total: runner.total }];
+        }
+        if (runner.review !== review || runner.phase !== "results") return;
+        if (res.ok) {
+          runner.earned = res;
+          showEarned(res);
+        }
+        showTestStatus();
+      });
+    }
+    showTestStatus();
+  }
+
+  function showTestStatus() {
+    const status = $("#engTestStatus");
+    const actions = $("#engTestActions");
+    const send = runner.testSend;
+    if (!status || !actions || !send) return;
+    const test = runner.review.test;
+    status.textContent = send.state === "sending" ? t("testSaving") : send.state === "sent" ? (send.done ? t("testDoneTitle") : t("testSaved")) : send.error;
+    status.classList.toggle("is-error", send.state === "failed");
+    actions.innerHTML = `
+      ${send.state === "failed" ? `<button type="button" class="btn btn-primary btn-candy font-cartoon" id="engTestResend">${esc(t("testRetry"))}</button>` : ""}
+      ${send.state === "sent" ? retakeHtml(test) : ""}
+      ${homeworkButtonHtml()}`;
+    $("#engTestResend")?.addEventListener("click", sendTest);
+    bindRetake(test);
+  }
+
+  // The way to a retake once a test is handed in: a button, or where the
+  // request stands.
+  function retakeHtml(test) {
+    if (test.retakeAt) return `<p class="eng-test-asked">${esc(t("testAsked"))}</p>`;
+    return `
+      ${test.retakeDeclinedAt ? `<p class="eng-test-asked">${esc(t("testDeclined"))}</p>` : ""}
+      <button type="button" class="btn btn-candy font-cartoon eng-btn-secondary" id="engTestRetake">${esc(t("testAskRetake"))}</button>`;
+  }
+
+  function bindRetake(test) {
+    const btn = $("#engTestRetake");
+    btn?.addEventListener("click", async () => {
+      btn.disabled = true;
+      const res = await window.StudentProgress.askRetake(test.id);
+      if (!btn.isConnected) return;
+      if (res.ok) {
+        Object.assign(test, { retakeAt: res.test?.retakeAt || new Date().toISOString(), retakeDeclinedAt: null });
+        btn.outerHTML = `<p class="eng-test-asked">${esc(t("testAsked"))}</p>`;
+        $("#engTestStatus")?.classList.remove("is-error");
+      } else {
+        btn.disabled = false;
+        const status = $("#engTestStatus");
+        if (status) {
+          status.textContent = res.error;
+          status.classList.add("is-error");
+        }
+      }
+    });
+  }
+
+  // Opening a test that was handed in: its last grade, and the retake.
+  function renderTestDone(test) {
+    runner.phase = "message";
+    const view = views.exercise();
+    view.classList.remove("is-reading");
+    const last = test.attempts[test.attempts.length - 1] || {};
+    view.innerHTML = `
+      ${testHeadHtml(test)}
+      <div class="eng-runner-card">
+        <div class="eng-results eng-test-results">
+          <p class="eng-test-done-title">${esc(t("testDoneTitle"))}</p>
+          <div class="eng-grade">
+            <span class="eng-grade-label">${esc(t("gradeLabel"))}</span>
+            <p class="eng-score font-cartoon">${testGradeOf(last.score, last.total)}</p>
+          </div>
+          <p class="eng-results-count">${esc(t("score", last.score || 0, last.total || 0))}</p>
+          ${testByTopicHtml(test, last.byTopic)}
+          <p class="eng-results-msg eng-test-status" id="engTestStatus" aria-live="polite"></p>
+          <div class="eng-results-actions">${retakeHtml(test)}${homeworkButtonHtml()}</div>
+        </div>
+      </div>`;
+    bindRetake(test);
+  }
+
+  /* ── The daily challenge: five short questions a day, mixed from the
+     exercises the student already finished (their file's and this
      browser's), or from the first topics of the path for a new visitor.
      Finishing a round on a new day keeps the streak of days in a row going:
      a linked student's in their file (lib/student-progress.js has the same
-     rules), a visitor's in this browser. ── */
+     rules), a visitor's in this browser.
+
+     "#daily" is its page (the streak and the week), "#daily/go" a round. ── */
 
   const DAILY_ROUTE = "daily";
+  const DAILY_GO = "go";
   const DAILY_SIZE = 5;
   const DAILY_KEY = "pleyi-daily";
   const DAILY_DAYS_KEPT = 60;
@@ -5026,7 +5663,7 @@
 
   async function openDaily() {
     const token = ++dailyToken;
-    renderReviewMessage(t("loading"), "", "#", t("dailyTitle"));
+    renderReviewMessage(t("loading"), "", `#${DAILY_ROUTE}`, t("dailyTitle"));
     const [keys, before] = await Promise.all([dailyKeys(), dailyState()]);
     if (token !== dailyToken || decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0] !== DAILY_ROUTE) return;
     startDaily({ keys, before });
@@ -5042,7 +5679,7 @@
       renderReviewMessage(t("dailyMissing"), t("dailyMissingLead"), "#", t("dailyTitle"));
       return;
     }
-    startMixedRound({ daily: { ...daily, after: null }, items: round, out: 0, back: "#" });
+    startMixedRound({ daily: { ...daily, after: null }, items: round, out: 0, back: `#${DAILY_ROUTE}` });
   }
 
   // The 7 days as dots, today last, each with its weekday's letter.
@@ -5089,32 +5726,485 @@
     $("#engDailyMore").addEventListener("click", () => startDaily({ keys: daily.keys, before: view }));
   }
 
-  // The card over the topics: today's challenge and the streak.
-  async function renderDailyCard() {
-    const host = $("#engTopicsView");
-    const grid = $("#engTopicGrid");
-    if (SUBJECT || !host || !grid) return;
-    const view = await dailyState();
-    if (views.topics()?.classList.contains("hidden")) return;
-    let card = $("#engDailyCard");
-    if (!card) {
-      card = document.createElement("section");
-      card.id = "engDailyCard";
-      card.className = "eng-daily-card";
-      host.insertBefore(card, grid);
-    }
-    card.classList.toggle("is-done", view.doneToday);
-    card.innerHTML = `
-      <div class="eng-daily-head">
-        <span class="eng-daily-icon">${ICONS.flame}</span>
-        <div class="eng-daily-text">
-          <h2 class="eng-daily-title"><span class="eng-daily-key">${esc(t("dailyTitle"))}</span></h2>
-          <p class="eng-daily-lead">${esc(t(view.doneToday ? "dailyLeadDone" : "dailyLead"))}</p>
-          <p class="eng-daily-streak">${esc(view.streak ? t("dailyStreak", view.streak) : t("dailyStreakNone"))}</p>
-        </div>
+  // "#daily": what the challenge is, the streak, the last 7 days, and the
+  // way into today's round.
+  async function renderDailyPage() {
+    const view = views.topic();
+    if (!view) return;
+    const token = ++dailyToken;
+    view.innerHTML = `<p class="eng-fc-loading">${esc(t("loading"))}</p>`;
+    const state = await dailyState();
+    if (token !== dailyToken || views.topic()?.classList.contains("hidden")) return;
+    view.innerHTML = `
+      <div class="eng-topic-head">
+        <a class="eng-back" href="#" aria-label="${esc(t("back"))}" title="${esc(t("back"))}">${ICONS.back}</a>
+        <h2 class="font-cartoon eng-topic-heading">${esc(t("dailyTitle"))}</h2>
       </div>
-      ${dailyWeekHtml(view)}
-      <a class="btn ${view.doneToday ? "" : "btn-primary "}btn-candy font-cartoon eng-daily-go" href="#${DAILY_ROUTE}">${esc(t(view.doneToday ? "dailyMore" : "dailyStart"))}</a>`;
+      <div class="eng-fc-intro">${t("dailyPageLead").map((line) => `<p>${esc(line)}</p>`).join("")}</div>
+      <section class="eng-daily-card eng-daily-page${state.doneToday ? " is-done" : ""}">
+        <div class="eng-daily-flame">${ICONS.flameColor}${state.streak ?`<span class="font-cartoon">${state.streak}</span>` : ""}</div>
+        <p class="eng-daily-big font-cartoon">${esc(state.streak ? t("dailyStreak", state.streak) : t("dailyStreakNone"))}</p>
+        ${dailyWeekHtml(state)}
+        ${state.best > 1 ? `<p class="eng-daily-best">${esc(t("dailyBest", state.best))}</p>` : ""}
+        ${state.doneToday ? `<p class="eng-daily-lead">${esc(t("dailyLeadDone"))}</p>` : ""}
+        <a class="btn ${state.doneToday ? "" : "btn-primary "}btn-candy font-cartoon eng-daily-go" href="#${DAILY_ROUTE}/${DAILY_GO}">${esc(t(state.doneToday ? "dailyMore" : "dailyStart"))}</a>
+      </section>`;
+    dockBack();
+    refreshTopDaily();
+  }
+
+  /* ── Word cards (#cards): the vocabulary words (english-vocab.js) on
+     flashcards that come back on a schedule of their own. A card shows an
+     English word; the student flips it to see the picture and the Hebrew,
+     and says whether they knew it. Every "I knew it" moves the word a box
+     up and further away (CARDS_GAP: tomorrow, in 3 days, a week, two weeks,
+     a month); "not yet" sends it back to box 1 and asks it again a few cards
+     later. A new word is first shown open, then asked later in the round.
+     A word in box CARDS_LEARNED or higher is learned.
+
+     "#cards" is the page of the cards, "#cards/today" today's round (the
+     words due today and up to CARDS_NEW_A_DAY new ones) and "#cards/<id>"
+     a round of one category. A visitor's boxes live in this browser; a
+     linked student's also in their file (GET/POST /api/cards), loaded once
+     and sent in small batches, like the mistake bank. ── */
+
+  /* ── "#chat": every conversation with Robo (english-chat.js), by level.
+     A chat opens as an exercise of its topic (#chat/<id>), and its back
+     arrow leads here. ── */
+
+  const CHAT_ROUTE = "chat";
+
+  function findChat(id) {
+    return (window.ENGLISH_CHATS || []).find((c) => c.exercise.id === id) || null;
+  }
+
+  function renderChatHub() {
+    const view = views.topic();
+    if (!view) return;
+    const chats = window.ENGLISH_CHATS || [];
+    const best = readBest();
+    const started = readStarted();
+    const levels = [1, 2, 3]
+      .map((level) => {
+        const tiles = chats
+          .filter((c) => c.exercise.level === level)
+          .map(
+            ({ topic, exercise }) => `
+              <a class="eng-chat-tile" href="#${CHAT_ROUTE}/${esc(exercise.id)}">
+                <span class="eng-chat-tile-avatar" aria-hidden="true">${ICONS.robo}</span>
+                <span class="eng-chat-tile-title">${esc(loc(exercise, "scene"))}</span>
+                ${statusHtml(exerciseStatus(topic, exercise, best, started))}
+              </a>`
+          )
+          .join("");
+        return tiles
+          ? `
+            <div class="eng-chat-level">
+              <h3 class="eng-fc-sub font-cartoon">${esc(t("chatLevels")[level - 1])}</h3>
+              <div class="eng-chat-grid">${tiles}</div>
+            </div>`
+          : "";
+      })
+      .join("");
+    view.innerHTML = `
+      <div class="eng-topic-head">
+        <a class="eng-back" href="#" aria-label="${esc(t("back"))}" title="${esc(t("back"))}">${ICONS.back}</a>
+        <h2 class="font-cartoon eng-topic-heading">${esc(t("chatTitle"))}</h2>
+        ${t("chatTitleEn") ? `<p class="eng-topic-heading-en" dir="ltr">${esc(t("chatTitleEn"))}</p>` : ""}
+      </div>
+      <div class="eng-fc-intro eng-chat-intro">
+        <span class="eng-chat-intro-robo" aria-hidden="true">${ICONS.robo}</span>
+        <div>${t("chatLead").map((line) => `<p>${esc(line)}</p>`).join("")}</div>
+      </div>
+      ${levels}`;
+    dockBack();
+  }
+
+  const CARDS_ROUTE = "cards";
+  const CARDS_TODAY = "today";
+  const CARDS_KEY = "pleyi-cards";
+  const CARDS_LEARNED = 4;
+  const CARDS_TOP = 6;
+  // The days until a word comes back, by the box it moved up to.
+  const CARDS_GAP = { 2: 1, 3: 3, 4: 7, 5: 14, 6: 30 };
+  const CARDS_ROUND = 15;
+  const CARDS_NEW_A_DAY = 8;
+  const CARDS_AGAIN_AFTER = 3;
+  const CARDS_AGAIN_MAX = 2;
+  const CARDS_BATCH = 30;
+  const CARDS_FLUSH_MS = 3000;
+  let cardsToken = 0;
+  let cards = null;
+
+  function dayPlus(day, days) {
+    const d = new Date(`${day}T12:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + days);
+    return d.toISOString().slice(0, 10);
+  }
+
+  // Where every word stands for whoever practices on this device:
+  // word id → { b: box, d: the day it comes back, f: the day it was first shown }.
+  const cardsStore = (() => {
+    let owner = null;
+    let words = null;
+    // A linked student's changes that the server doesn't have yet.
+    let queue = [];
+    let loaded = null;
+    let flushing = null;
+    let timer = null;
+
+    function storeName() {
+      return `${CARDS_KEY}-${owner}`;
+    }
+
+    function current() {
+      const tag = ownerTag();
+      if (words && owner === tag) return words;
+      owner = tag;
+      queue = [];
+      loaded = null;
+      try {
+        const saved = JSON.parse(localStorage.getItem(storeName()));
+        words = saved && typeof saved === "object" ? saved : {};
+      } catch {
+        words = {};
+      }
+      return words;
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(storeName(), JSON.stringify(words));
+      } catch {
+        /* ignore */
+      }
+    }
+
+    // A linked student's boxes come from their file once per page load;
+    // changes made before they arrive are put back on top.
+    function ready() {
+      current();
+      const key = window.StudentProgress?.key();
+      if (!key) return Promise.resolve(words);
+      if (!loaded) {
+        const tag = owner;
+        loaded = fetch("/api/cards", { headers: { "X-Student-Key": key } })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => {
+            if (!data?.ok || owner !== tag) return words;
+            words = { ...data.words };
+            queue.forEach(({ id, ...place }) => {
+              words[id] = place;
+            });
+            save();
+            return words;
+          })
+          // Offline: the copy in this browser.
+          .catch(() => words);
+      }
+      return loaded;
+    }
+
+    // `keepalive` lets the last batch go out while the page is closing.
+    function flush(keepalive = false) {
+      clearTimeout(timer);
+      const key = window.StudentProgress?.key();
+      if (!key || !queue.length) return Promise.resolve();
+      if (flushing) return flushing;
+      flushing = (async () => {
+        while (queue.length) {
+          const ops = queue.slice(0, CARDS_BATCH);
+          try {
+            const res = await fetch("/api/cards", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "X-Student-Key": key },
+              body: JSON.stringify({ ops }),
+              keepalive,
+            });
+            // A server error keeps the changes for the next try; a link that
+            // no longer works (404) drops them.
+            if (!res.ok && res.status !== 404) break;
+            queue = queue.slice(ops.length);
+          } catch {
+            break;
+          }
+        }
+      })().finally(() => {
+        flushing = null;
+      });
+      return flushing;
+    }
+
+    function set(id, place) {
+      current()[id] = place;
+      save();
+      if (!window.StudentProgress?.key()) return;
+      queue = [...queue.filter((op) => op.id !== id), { id, ...place }];
+      clearTimeout(timer);
+      timer = setTimeout(() => flush(), CARDS_FLUSH_MS);
+    }
+
+    window.addEventListener("pagehide", () => flush(true));
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flush(true);
+    });
+
+    return { ready, flush, set, get: (id) => current()[id] || null, all: () => current() };
+  })();
+
+  // The categories in the order of the vocabulary stage on the path.
+  function cardsCategories() {
+    const order = PATH.flatMap((stage) => stage.topics);
+    const place = (cat) => {
+      const i = order.indexOf(`vocab-${cat.id}`);
+      return i < 0 ? order.length : i;
+    };
+    return [...(window.ENGLISH_VOCAB_CATEGORIES || [])].sort((a, b) => place(a) - place(b));
+  }
+
+  function cardsWordIds(cats) {
+    return [...new Set(cats.flatMap((cat) => cat.words.map((w) => w.id)))].filter((id) => VOCAB[id]);
+  }
+
+  function cardsCount(cats = cardsCategories()) {
+    const today = dayKey();
+    const all = cardsStore.all();
+    const ids = cardsWordIds(cats);
+    const placed = ids.map((id) => all[id]).filter(Boolean);
+    return {
+      total: ids.length,
+      learned: placed.filter((p) => p.b >= CARDS_LEARNED).length,
+      due: placed.filter((p) => p.d <= today).length,
+      fresh: ids.length - placed.length,
+    };
+  }
+
+  // How many new words today's round may still bring.
+  function cardsNewRoom() {
+    const today = dayKey();
+    const shown = Object.values(cardsStore.all()).filter((p) => p.f === today).length;
+    return Math.max(0, CARDS_NEW_A_DAY - shown);
+  }
+
+  // The words due first (the lowest boxes, then the longest waiting), then
+  // new words in path order. A category's round isn't held to the day's
+  // new words: the student picked it.
+  function cardsRound(catId) {
+    const today = dayKey();
+    const all = cardsStore.all();
+    const cats = catId === CARDS_TODAY ? cardsCategories() : cardsCategories().filter((cat) => cat.id === catId);
+    const ids = cardsWordIds(cats);
+    const due = ids
+      .filter((id) => all[id] && all[id].d <= today)
+      .sort((a, b) => all[a].b - all[b].b || all[a].d.localeCompare(all[b].d))
+      .slice(0, CARDS_ROUND);
+    const room = Math.min(catId === CARDS_TODAY ? cardsNewRoom() : CARDS_NEW_A_DAY, CARDS_ROUND - due.length);
+    const fresh = ids.filter((id) => !all[id]).slice(0, Math.max(0, room));
+    return [...shuffle(due).map((id) => ({ id })), ...fresh.map((id) => ({ id, fresh: true }))];
+  }
+
+  // A small bar of the words learned.
+  function cardsBarHtml(n, all) {
+    return `<span class="eng-fc-bar" role="img" aria-label="${esc(t("cardsLearned", n, all))}"><i style="width:${all ? Math.round((n / all) * 100) : 0}%"></i></span>`;
+  }
+
+  // "#cards": today's round and a tile for every category.
+  async function renderCardsHub() {
+    const view = views.topic();
+    if (!view) return;
+    const token = ++cardsToken;
+    view.innerHTML = `<p class="eng-fc-loading">${esc(t("loading"))}</p>`;
+    await cardsStore.ready();
+    if (token !== cardsToken || views.topic()?.classList.contains("hidden")) return;
+    const count = cardsCount();
+    const fresh = Math.min(count.fresh, cardsNewRoom());
+    const today = [count.due ? t("cardsDueLine", count.due) : "", fresh ? t("cardsNewLine", fresh) : ""].filter(Boolean);
+    const tiles = cardsCategories()
+      .map((cat) => {
+        const n = cardsCount([cat]);
+        return `
+          <article class="eng-topic-card">
+            <a class="eng-topic-tile has-img eng-fc-tile" href="#${CARDS_ROUTE}/${esc(cat.id)}">
+              <img class="eng-topic-img" src="${esc(imgUrl(VOCAB[cat.cover]?.img || cat.cover))}" alt="" draggable="false" />
+              <span class="eng-topic-title">${esc(loc(cat, "title"))}</span>
+              ${cardsBarHtml(n.learned, n.total)}
+              <span class="btn btn-primary btn-candy font-cartoon eng-topic-open">${esc(t("cardsGo"))}</span>
+            </a>
+          </article>`;
+      })
+      .join("");
+    view.innerHTML = `
+      <div class="eng-topic-head">
+        <a class="eng-back" href="#" aria-label="${esc(t("back"))}" title="${esc(t("back"))}">${ICONS.back}</a>
+        <h2 class="font-cartoon eng-topic-heading">${esc(t("cardsTitle"))}</h2>
+        ${t("cardsTitleEn") ? `<p class="eng-topic-heading-en" dir="ltr">${esc(t("cardsTitleEn"))}</p>` : ""}
+      </div>
+      <div class="eng-fc-intro">${t("cardsLead").map((line) => `<p>${esc(line)}</p>`).join("")}</div>
+      <section class="eng-daily-card eng-fc-today">
+        <div class="eng-daily-head">
+          <span class="eng-daily-icon">${ICONS.cards}</span>
+          <div class="eng-daily-text">
+            <h3 class="eng-daily-title"><span class="eng-daily-key">${esc(t("cardsToday"))}</span></h3>
+            ${(today.length ? today : [t("cardsTodayDone")]).map((line) => `<p class="eng-daily-lead">${esc(line)}</p>`).join("")}
+          </div>
+        </div>
+        <p class="eng-daily-streak">${esc(t("cardsLearned", count.learned, count.total))}</p>
+        ${cardsBarHtml(count.learned, count.total)}
+        ${today.length ? `<a class="btn btn-primary btn-candy font-cartoon eng-daily-go" href="#${CARDS_ROUTE}/${CARDS_TODAY}">${esc(t("cardsGo"))}</a>` : ""}
+      </section>
+      <h3 class="eng-fc-sub font-cartoon">${esc(t("cardsTopics"))}</h3>
+      <div class="eng-topic-grid">${tiles}</div>`;
+    dockBack();
+  }
+
+  function renderCardsShell(inner, progress = "") {
+    runner.phase = "cards";
+    const view = views.exercise();
+    view.classList.remove("is-reading");
+    document.documentElement.classList.remove("eng-soft");
+    view.innerHTML = `
+      <div class="eng-runner-head">
+        <div class="eng-runner-top">
+          <a class="eng-back" href="#${CARDS_ROUTE}" aria-label="${esc(t("cardsBack"))}" title="${esc(t("cardsBack"))}">${ICONS.back}</a>
+          <div class="eng-runner-title-row"><h2 class="font-cartoon eng-runner-title">${esc(t("cardsTitle"))}</h2></div>
+          <div class="eng-runner-tools"></div>
+        </div>
+        ${progress}
+      </div>
+      <div class="eng-runner-card eng-runner-card--cards">${inner}</div>`;
+  }
+
+  async function openCards(catId) {
+    const token = ++cardsToken;
+    renderCardsShell(`<div class="eng-review-empty"><span class="eng-review-empty-icon">${ICONS.spinner}</span><p class="eng-review-empty-title">${esc(t("loading"))}</p></div>`);
+    await cardsStore.ready();
+    if (token !== cardsToken || decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0] !== CARDS_ROUTE) return;
+    const list = cardsRound(catId);
+    // `first`: each word's first answer in the round (true = knew it).
+    cards = { catId, list, index: 0, flipped: false, first: new Map(), learnedBefore: cardsCount().learned };
+    if (list.length) renderCardsStep();
+    else
+      renderCardsShell(`
+        <div class="eng-review-empty">
+          <span class="eng-review-empty-icon">${ICONS.cards}</span>
+          <p class="eng-review-empty-title">${esc(t("cardsNone"))}</p>
+          <p class="eng-review-empty-lead">${esc(t("cardsNoneLead"))}</p>
+          <a class="btn btn-primary btn-candy font-cartoon" href="#${CARDS_ROUTE}">${esc(t("cardsBack"))}</a>
+        </div>`);
+  }
+
+  function renderCardsStep() {
+    const { list, index, flipped } = cards;
+    const card = list[index];
+    const word = wordItem(card.id);
+    const open = card.fresh || flipped;
+    const progress = progressHtml({ label: t("cardsProgress", index + 1, list.length), total: list.length, done: index, current: index });
+    const actions = card.fresh
+      ? `<button type="button" class="btn btn-primary btn-candy font-cartoon" id="engFcGot">${esc(t("cardsGotIt"))}</button>`
+      : flipped
+        ? `<button type="button" class="btn btn-candy font-cartoon eng-fc-no" id="engFcNo">${esc(t("cardsNotYet"))}</button>
+           <button type="button" class="btn btn-primary btn-candy font-cartoon eng-fc-yes" id="engFcYes">${esc(t("cardsKnew"))}</button>`
+        : `<button type="button" class="btn btn-primary btn-candy font-cartoon" id="engFcFlip">${esc(t("cardsFlip"))}</button>`;
+    const wordHtml = canSpeak()
+      ? `<button type="button" class="eng-fc-word eng-word-tap" data-say="${esc(word.en)}" aria-label="${esc(t("speakWord", word.en))}"><span class="eng-fc-en" lang="en">${esc(word.en)}</span><span class="eng-fc-ear" aria-hidden="true">${ICONS.listen}</span></button>`
+      : `<span class="eng-fc-word"><span class="eng-fc-en" lang="en">${esc(word.en)}</span></span>`;
+    renderCardsShell(
+      `
+      <div class="eng-fc">
+        <p class="eng-fc-tag${card.fresh ? " is-new" : ""}">${esc(t(card.fresh ? "cardsNew" : "cardsAsk"))}</p>
+        <div class="eng-fc-card${open ? " is-open" : ""}${flipped ? " is-flipped" : ""}">
+          <div class="eng-fc-front" dir="ltr">
+            ${wordHtml}
+            ${word.say ? `<span class="eng-fc-say" dir="rtl" lang="he">${esc(word.say)}</span>` : ""}
+          </div>
+          <button type="button" class="eng-fc-back" id="engFcBack"${open ? " disabled" : ""} aria-label="${esc(t("cardsFlip"))}">
+            <span class="eng-fc-cover" aria-hidden="true">?</span>
+            <span class="eng-fc-meaning">
+              <img class="eng-fc-img" src="${esc(word.img)}" alt="" draggable="false" />
+              <span class="eng-fc-he">${esc(word.he)}</span>
+            </span>
+          </button>
+        </div>
+        <div class="eng-fc-actions">${actions}</div>
+      </div>`,
+      progress
+    );
+    const view = views.exercise();
+    $$(".eng-word-tap", view).forEach((btn) => btn.addEventListener("click", () => speak(btn.dataset.say)));
+    $("#engFcBack", view)?.addEventListener("click", cardsFlip);
+    $("#engFcFlip", view)?.addEventListener("click", cardsFlip);
+    $("#engFcGot", view)?.addEventListener("click", cardsGotIt);
+    $("#engFcYes", view)?.addEventListener("click", () => cardsAnswer(true));
+    $("#engFcNo", view)?.addEventListener("click", () => cardsAnswer(false));
+    // The word is said as the card comes up (not again when it flips).
+    if (!flipped) speak(word.en);
+    $(".eng-fc-actions .btn-primary", view)?.focus({ preventScroll: true });
+  }
+
+  function cardsFlip() {
+    if (!cards || cards.flipped || cards.list[cards.index]?.fresh) return;
+    cards.flipped = true;
+    renderCardsStep();
+  }
+
+  // Asked again a few cards later in the round.
+  function cardsLater(card) {
+    cards.list.splice(Math.min(cards.list.length, cards.index + 1 + CARDS_AGAIN_AFTER), 0, card);
+  }
+
+  // A new word goes into box 1, to be asked later in this round.
+  function cardsGotIt() {
+    const card = cards.list[cards.index];
+    const today = dayKey();
+    cardsStore.set(card.id, { b: 1, d: today, f: today });
+    cardsLater({ id: card.id });
+    cardsNext();
+  }
+
+  function cardsAnswer(knew) {
+    const card = cards.list[cards.index];
+    const today = dayKey();
+    const was = cardsStore.get(card.id) || { b: 1, f: today };
+    if (!cards.first.has(card.id)) cards.first.set(card.id, knew);
+    if (knew) {
+      const b = Math.min(CARDS_TOP, was.b + 1);
+      cardsStore.set(card.id, { b, d: dayPlus(today, CARDS_GAP[b]), f: was.f });
+    } else {
+      cardsStore.set(card.id, { b: 1, d: today, f: was.f });
+      if ((card.again || 0) < CARDS_AGAIN_MAX) cardsLater({ id: card.id, again: (card.again || 0) + 1 });
+    }
+    cardsNext();
+  }
+
+  function cardsNext() {
+    cards.flipped = false;
+    cards.index++;
+    if (cards.index < cards.list.length) renderCardsStep();
+    else renderCardsResults();
+  }
+
+  function renderCardsResults() {
+    cardsStore.flush();
+    const asked = cards.first.size;
+    const knew = [...cards.first.values()].filter(Boolean).length;
+    const learnedNow = Math.max(0, cardsCount().learned - cards.learnedBefore);
+    const tomorrow = dayPlus(dayKey(), 1);
+    const waiting = Object.values(cardsStore.all()).filter((p) => p.d <= tomorrow).length;
+    const more = cardsRound(cards.catId).length;
+    renderCardsShell(`
+      <div class="eng-results eng-fc-results">
+        <div class="eng-fc-medal">${ICONS.cards}</div>
+        <p class="eng-daily-big font-cartoon">${esc(t("cardsDoneBig"))}</p>
+        <p class="eng-results-count">${esc(t("cardsScore", knew, asked))}</p>
+        ${learnedNow ? `<p class="eng-results-msg">${esc(t("cardsLearnedNow", learnedNow))}</p>` : ""}
+        <p class="eng-results-msg">${esc(t("cardsTomorrow", waiting))}</p>
+        <div class="eng-results-actions">
+          ${more ? `<button type="button" class="btn btn-primary btn-candy font-cartoon" id="engFcMore">${esc(t("cardsMore"))}</button>` : ""}
+          <a class="btn btn-candy font-cartoon" href="#${CARDS_ROUTE}">${esc(t("cardsBack"))}</a>
+        </div>
+      </div>`);
+    if (asked && knew === asked) launchConfetti();
+    $("#engFcMore")?.addEventListener("click", () => openCards(cards.catId));
   }
 
   /* ── Reading exams (english-exams.js): the passage on one side and one
@@ -6153,6 +7243,15 @@
           .map((o) => (o === q.answer ? `<span class="eng-help-opt is-right">${ICONS.check}${esc(o)}</span>` : `<span class="eng-help-opt">${esc(o)}</span>`))
           .join("")}</div>`;
     },
+    chat(ex) {
+      const q = ex.questions[0];
+      return `
+        <div class="eng-help-chat" dir="ltr"><span class="eng-help-chat-avatar">${ICONS.robo}</span><span class="eng-help-chat-line">${esc(q.text)}</span></div>
+        ${q.he ? `<p class="eng-help-tr eng-help-tr--prompt" dir="rtl" lang="he">${esc(q.he)}</p>` : ""}
+        <div class="eng-help-sentences" dir="ltr">${answerInMiddle(q.options.slice(0, 3), q.answer)
+          .map((o) => (o === q.answer ? `<span class="eng-help-opt is-right">${ICONS.check}${esc(o)}</span>` : `<span class="eng-help-opt">${esc(o)}</span>`))
+          .join("")}</div>`;
+    },
     letters(ex) {
       const chips = (list, cls = "") => `<div class="eng-help-chips" dir="ltr">${list.map((c) => `<span class="eng-help-chip${cls}">${esc(c)}</span>`).join("")}</div>`;
       if (ex.words) {
@@ -6467,10 +7566,16 @@
 
   /* ── Routing ── */
 
+  // Not the page's first view: back from practice, refreshTopBoard asks again.
+  let routed = false;
+
   function route() {
+    const again = routed;
+    routed = true;
     clearTimeout(runner.timer);
     stopGame();
     stopExamTimer();
+    runner.back = null;
     readAloud.stop();
     window.PleyiSpeech.stop();
     stopListening();
@@ -6492,8 +7597,20 @@
     }
     if (topicId === DAILY_ROUTE && !SUBJECT) {
       if (gameLessonReturn) forgetLessonReturn();
+      if (exerciseId === DAILY_GO) {
+        showView("exercise");
+        openDaily();
+      } else {
+        showView("topic");
+        renderDailyPage();
+      }
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    if (topicId === TEST_ROUTE && !SUBJECT) {
+      if (gameLessonReturn) forgetLessonReturn();
       showView("exercise");
-      openDaily();
+      openTest(exerciseId || "");
       window.scrollTo({ top: 0 });
       return;
     }
@@ -6505,9 +7622,49 @@
       window.scrollTo({ top: 0 });
       return;
     }
+    if (topicId === CHAT_ROUTE && !SUBJECT) {
+      if (gameLessonReturn) forgetLessonReturn();
+      const chat = exerciseId && findChat(exerciseId);
+      if (chat) {
+        showView("exercise");
+        runner.back = `#${CHAT_ROUTE}`;
+        startExercise(chat.topic, chat.exercise);
+      } else {
+        showView("topic");
+        renderChatHub();
+      }
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    if (topicId === CARDS_ROUTE && !SUBJECT) {
+      if (gameLessonReturn) forgetLessonReturn();
+      if (exerciseId) {
+        showView("exercise");
+        openCards(exerciseId);
+      } else {
+        showView("topic");
+        renderCardsHub();
+      }
+      window.scrollTo({ top: 0 });
+      return;
+    }
     const topic = findTopic(topicId);
     const exercise = findExercise(topic, exerciseId);
     const game = !exercise && findGame(topic, exerciseId);
+    // A lesson task's link (#<topic>/lesson-<id>): the topic's page with the
+    // lesson open over it. The address drops the lesson, so closing it
+    // leaves the student on the topic.
+    const lessonId = /^lesson-(.+)$/.exec(exerciseId || "")?.[1];
+    if (topic && lessonId && topicLessonIds(topic).includes(lessonId)) {
+      history.replaceState(null, "", `${location.pathname}${location.search}#${encodeURIComponent(topic.id)}`);
+      if (gameLessonReturn) forgetLessonReturn();
+      showView("topic");
+      renderTopic(topic);
+      dockBack();
+      window.scrollTo({ top: 0 });
+      openTopicLesson(topic, lessonId);
+      return;
+    }
     // Leaving a game that came from a lesson drops the way back to it.
     if (gameLessonReturn && !(game && gameLessonReturn.pictureGame === `${topic.id}/game-${game.id}`)) forgetLessonReturn();
 
@@ -6524,8 +7681,11 @@
     } else {
       showView("topics");
       renderTopicGrid();
-      renderBoardCard();
-      renderDailyCard();
+      // Just the topics: the daily challenge's page is the flame on top, and the
+      // word cards have a card in the lessons library (ready-lessons.html).
+      refreshTopDaily();
+      // Back from a topic: the practice there may have earned a certificate.
+      refreshTopBoard(again);
       dockSiteBack();
     }
     window.scrollTo({ top: 0 });
@@ -6600,6 +7760,11 @@
       } else if (runner.phase === "message") {
         // The "my mistakes" screen while it loads or has nothing to show.
         route();
+      } else if (runner.phase === "cards") {
+        // A word card keeps its place; the round's end screen comes back as it was.
+        if (!cards?.list.length) route();
+        else if (cards.index < cards.list.length) renderCardsStep();
+        else renderCardsResults();
       } else if (runner.phase === "results") {
         renderResults();
       } else if (runner.exercise?.type === "exam") {

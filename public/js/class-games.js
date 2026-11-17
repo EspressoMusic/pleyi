@@ -7,6 +7,8 @@
 
   // "בלשי תמונה": the painted pictures and their questions (class-pictures.js).
   const PICTURES = window.ClassPictures?.scenes || [];
+  // "חפשו ומצאו": the busy pictures and the things hidden in them (class-find-scenes.js).
+  const FIND_SCENES = window.ClassFindScenes || [];
 
   const GAMES = [
     {
@@ -361,6 +363,20 @@
       items: PICTURES,
     },
     {
+      id: "seek-find",
+      kind: "seek",
+      type: "think",
+      level: "medium",
+      title: "חפשו ומצאו",
+      how: [
+        "על הלוח יש תמונה גדולה, מלאה בפרטים.",
+        "בסרגל למטה — הדברים שצריך למצוא בה.",
+        "מי שמצא — בא ללוח ולוחץ עליו בתמונה.",
+        "כל דבר שנמצא מקבל וי בסרגל.",
+      ],
+      items: FIND_SCENES,
+    },
+    {
       id: "class-challenge",
       kind: "challenge",
       type: "move",
@@ -438,6 +454,7 @@
   const PEEK_MS = 3000;
   const CHARADES_SECONDS = 60;
   const SPIN_MS = 4200;
+  const SEEK_ZOOM_MAX = 4;
 
   function escapeHtml(str) {
     return String(str || "")
@@ -605,14 +622,15 @@
     return `${m}:${String(s).padStart(2, "0")}`;
   }
 
-  function beep() {
+  // Short tones, each [frequency, seconds from now]; the default is the timer's.
+  function beep(notes = [[740, 0], [740, 0.35]]) {
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       const ctx = beep.ctx || (beep.ctx = new Ctx());
-      [0, 0.35].forEach((at) => {
+      notes.forEach(([freq, at]) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.frequency.value = 740;
+        osc.frequency.value = freq;
         osc.connect(gain);
         gain.connect(ctx.destination);
         gain.gain.setValueAtTime(0.25, ctx.currentTime + at);
@@ -766,6 +784,169 @@
       ${view.answer ? marksSvg(item.q[3]) : ""}`;
   }
 
+  // --- Seek and find (חפשו ומצאו) ---
+  // The picture zooms (view.scale) and moves (view.x / view.y, in pixels of
+  // the frame). At scale 1 it covers its frame; on a tall phone the frame is
+  // narrower than the picture, so it starts centred and moves sideways.
+  let seekClock = null;
+  let hintTimer = null;
+
+  const CHECK_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  function seekSeconds() {
+    return Math.floor(((view.end || Date.now()) - view.start) / 1000);
+  }
+
+  function paintSeekClock() {
+    const clock = $(".cg-seek-clock", runner);
+    if (clock) clock.textContent = formatTime(seekSeconds());
+  }
+
+  // The ring round a found thing, sized to it.
+  function seekRing(scene, i) {
+    const [x, y, w, h] = scene.items[i].box;
+    const pad = Math.max(w, h) * 0.25 + 6;
+    const ink = scene.w / 130;
+    const ring = `cx="${x + w / 2}" cy="${y + h / 2}" rx="${w / 2 + pad}" ry="${h / 2 + pad}" pathLength="1"`;
+    return `
+      <ellipse class="cg-mark-ink" ${ring} style="stroke-width:${ink * 1.9}"/>
+      <ellipse class="cg-mark" ${ring} style="stroke-width:${ink}"/>`;
+  }
+
+  // The frame's size, the picture's size at scale 1 (covering the frame),
+  // and the smallest scale (the whole picture showing).
+  function seekBounds(box) {
+    const ratio = deck[pos].w / deck[pos].h;
+    const vw = box.clientWidth;
+    const vh = box.clientHeight;
+    const ww = Math.max(vw, vh * ratio);
+    const wh = ww / ratio;
+    return { vw, vh, ww, wh, min: Math.min(vw / ww, vh / wh) };
+  }
+
+  function seekPlace(ease = false) {
+    const box = $(".cg-seek-view", runner);
+    if (!box) return;
+    const { vw, vh, ww, wh, min } = seekBounds(box);
+    view.scale = Math.min(SEEK_ZOOM_MAX, Math.max(min, view.scale));
+    // Smaller than the frame: centred. Bigger: no gap at any edge.
+    const fit = (at, room, size) => (size <= room
+      ? (room - size) / 2
+      : Math.min(0, Math.max(room - size, at ?? (room - size) / 2)));
+    view.x = fit(view.x, vw, ww * view.scale);
+    view.y = fit(view.y, vh, wh * view.scale);
+    const world = $(".cg-seek-world", box);
+    world.style.width = `${ww}px`;
+    world.style.height = `${wh}px`;
+    world.classList.toggle("is-easing", ease);
+    world.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+    box.classList.toggle("can-move", ww * view.scale > vw + 1 || wh * view.scale > vh + 1);
+  }
+
+  // Zooms to `scale`, keeping the spot at (px, py) in the frame in place.
+  function seekZoom(scale, px, py, ease = false) {
+    const box = $(".cg-seek-view", runner);
+    if (!box) return;
+    const { vw, vh, min } = seekBounds(box);
+    const next = Math.min(SEEK_ZOOM_MAX, Math.max(min, scale));
+    const k = next / view.scale;
+    view.x = (px ?? vw / 2) - ((px ?? vw / 2) - view.x) * k;
+    view.y = (py ?? vh / 2) - ((py ?? vh / 2) - view.y) * k;
+    view.scale = next;
+    seekPlace(ease);
+  }
+
+  // Where a point on the screen falls in the frame, in pixels.
+  function seekSpot(box, clientX, clientY) {
+    const r = box.getBoundingClientRect();
+    return [clientX - r.left - box.clientLeft, clientY - r.top - box.clientTop];
+  }
+
+  // A tap finds the nearest thing not found yet, if it lands on it
+  // (or within `slackPx` of it on the screen).
+  function seekTap(box, clientX, clientY, slackPx) {
+    const scene = deck[pos];
+    const r = $(".cg-seek-world", box).getBoundingClientRect();
+    const px = ((clientX - r.left) / r.width) * scene.w;
+    const py = ((clientY - r.top) / r.height) * scene.h;
+    const slack = (slackPx * scene.w) / r.width;
+    let hit = -1;
+    let nearest = Infinity;
+    scene.items.forEach((item, i) => {
+      if (view.found.includes(i)) return;
+      const [x, y, w, h] = item.box;
+      if (px < x - slack || px > x + w + slack || py < y - slack || py > y + h + slack) return;
+      const d = Math.hypot(px - (x + w / 2), py - (y + h / 2));
+      if (d < nearest) {
+        nearest = d;
+        hit = i;
+      }
+    });
+    if (hit < 0) {
+      seekMiss(box, ...seekSpot(box, clientX, clientY));
+      return;
+    }
+    view.found.push(hit);
+    if (view.found.length === scene.items.length) {
+      view.end = Date.now();
+      clearInterval(seekClock);
+      beep([[523, 0], [659, 0.14], [784, 0.28], [1047, 0.42]]);
+      render();
+      return;
+    }
+    beep([[660, 0], [990, 0.12]]);
+    $(".cg-seek-marks", box).insertAdjacentHTML("beforeend", seekRing(scene, hit));
+    $(`[data-thing="${hit}"]`, runner).classList.add("is-found");
+    $(".cg-count", runner).textContent = KINDS.seek.count(scene);
+  }
+
+  // A little cross where the tap missed.
+  function seekMiss(box, x, y) {
+    const miss = document.createElement("span");
+    miss.className = "cg-seek-miss";
+    miss.style.left = `${x}px`;
+    miss.style.top = `${y}px`;
+    miss.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18" stroke="#000" stroke-width="7"/>
+        <path d="M6 6l12 12M18 6L6 18" stroke="#ff5a5a" stroke-width="3.6"/>
+      </svg>`;
+    box.appendChild(miss);
+    setTimeout(() => miss.remove(), 650);
+  }
+
+  // A soft circle round the area of one thing not found yet (not centred on it),
+  // brought into view, and the thing's square in the bar glows.
+  function seekHint() {
+    const scene = deck[pos];
+    const box = $(".cg-seek-view", runner);
+    const left = scene.items.map((_, i) => i).filter((i) => !view.found.includes(i));
+    if (!box || !left.length) return;
+    const i = left[Math.floor(Math.random() * left.length)];
+    const [x, y, w, h] = scene.items[i].box;
+    const r = Math.max(scene.w * 0.09, Math.max(w, h) * 2.2);
+    const off = (r - Math.hypot(w, h) / 2) * (0.3 + Math.random() * 0.4);
+    const angle = Math.random() * Math.PI * 2;
+    const cx = x + w / 2 + Math.cos(angle) * off;
+    const cy = y + h / 2 + Math.sin(angle) * off;
+    const { vw, vh, ww } = seekBounds(box);
+    view.scale = 1;
+    view.x = vw / 2 - (cx / scene.w) * ww;
+    view.y = vh / 2 - (cy / scene.w) * ww;
+    seekPlace(true);
+    const marks = $(".cg-seek-marks", runner);
+    $(".cg-seek-hint", marks)?.remove();
+    marks.insertAdjacentHTML("beforeend", `
+      <circle class="cg-seek-hint" cx="${cx}" cy="${cy}" r="${r}" style="stroke-width:${scene.w / 220}"/>`);
+    runner.querySelectorAll(".cg-seek-thing.is-hinted").forEach((el) => el.classList.remove("is-hinted"));
+    $(`[data-thing="${i}"]`, runner).classList.add("is-hinted");
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(() => {
+      $(".cg-seek-hint", runner)?.remove();
+      runner.querySelectorAll(".cg-seek-thing.is-hinted").forEach((el) => el.classList.remove("is-hinted"));
+    }, 3000);
+  }
+
   function makeDeck() {
     if (game.kind === "wheel") return [null];
     // One card per question; a picture's questions stay together.
@@ -893,6 +1074,47 @@
           </div>` : ""}`,
       controls: () => (view.answer ? "" : button("answer", "הצגת התשובה", { alt: true })) + button("next", "הבא"),
     },
+    seek: {
+      instr: () => (view.end ? "כל הכבוד! מצאתם את כל הדברים." : "מחפשים בתמונה את מה שבסרגל, ולוחצים עליו."),
+      stage: (scene) => `
+        <div class="cg-seek" style="--seek-ar:${scene.w / scene.h}; --seek-n:${scene.items.length}; --seek-half:${Math.ceil(scene.items.length / 2)}">
+          <div class="cg-seek-main">
+            <div class="cg-seek-view">
+              <div class="cg-seek-world">
+                <img class="cg-seek-img" src="${scene.src}" alt="" draggable="false">
+                <svg class="cg-seek-marks" viewBox="0 0 ${scene.w} ${scene.h}" preserveAspectRatio="none" aria-hidden="true">
+                  ${view.found.map((i) => seekRing(scene, i)).join("")}
+                </svg>
+              </div>
+              <div class="cg-seek-zoom">
+                <button type="button" class="cg-round-btn" data-act="zoomIn" aria-label="הגדלה">+</button>
+                <button type="button" class="cg-round-btn" data-act="zoomOut" aria-label="הקטנה">−</button>
+              </div>
+              ${view.end ? `
+                <div class="cg-seek-done">
+                  <p class="cg-lead"><span class="cg-key">מצאתם הכל!</span></p>
+                  <p class="cg-answer">בזמן ${formatTime(seekSeconds())}</p>
+                </div>` : ""}
+            </div>
+            <div class="cg-seek-side">
+              <span class="cg-seek-clock" aria-label="הזמן">${formatTime(seekSeconds())}</span>
+              ${button("hint", "רמז", { alt: true, disabled: !!view.end })}
+              ${button("next", deck.length > 1 ? "תמונה הבאה" : "משחק חדש")}
+            </div>
+          </div>
+          <ul class="cg-seek-tray">
+            ${scene.items.map((item, i) => `
+              <li class="cg-seek-thing${view.found.includes(i) ? " is-found" : ""}" data-thing="${i}">
+                <img src="${item.img}" alt="${escapeHtml(item.name)}" draggable="false">
+                <span class="cg-seek-check">${CHECK_SVG}</span>
+              </li>`).join("")}
+          </ul>
+        </div>`,
+      // The buttons sit beside the picture (seek-side), to leave it more room.
+      controls: () => "",
+      count: (scene) => `${view.found.length}/${scene.items.length}`,
+      after: () => seekPlace(),
+    },
     challenge: {
       instr: () => "כל הכיתה עובדת יחד. מפעילים את השעון ומתחילים!",
       stage: (item) => `<div class="cg-big"><p class="cg-main">${escapeHtml(item.text)}</p></div>`,
@@ -911,7 +1133,13 @@
 
   function freshView() {
     clearTimeout(peekTimer);
+    clearTimeout(hintTimer);
+    clearInterval(seekClock);
     view = { phase: "ready" };
+    if (game.kind === "seek") {
+      Object.assign(view, { found: [], scale: 1, x: null, y: null, start: Date.now() });
+      seekClock = setInterval(paintSeekClock, 1000);
+    }
     if (deck[pos]?.time) resetTimer(deck[pos].time);
     else stopTimer();
   }
@@ -922,8 +1150,11 @@
     $(".cg-instr", runner).textContent = kind.instr();
     $(".cg-stage", runner).innerHTML = kind.stage(item);
     $(".cg-controls", runner).innerHTML = kind.controls();
-    $(".cg-count", runner).textContent = game.kind === "wheel" ? "" : `${pos + 1}/${deck.length}`;
+    $(".cg-count", runner).textContent = kind.count
+      ? kind.count(item)
+      : game.kind === "wheel" ? "" : `${pos + 1}/${deck.length}`;
     paintTimer();
+    kind.after?.(item);
   }
 
   function next() {
@@ -962,6 +1193,7 @@
     freshView();
     if (game.kind === "wheel") view = { angle: 0, used: {} };
     $("#cgRunnerTitle").textContent = game.title;
+    runner.dataset.kind = game.kind;
     runner.classList.remove("hidden");
     document.documentElement.classList.add("cg-open");
     render();
@@ -972,6 +1204,8 @@
     stopTimer();
     clearTimeout(peekTimer);
     clearTimeout(spinTimer);
+    clearTimeout(hintTimer);
+    clearInterval(seekClock);
     runner.classList.add("hidden");
     document.documentElement.classList.remove("cg-open");
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
@@ -1004,6 +1238,10 @@
     } else if (act === "zoom" || act === "unzoom") {
       view.zoom = act === "zoom";
       render();
+    } else if (act === "zoomIn" || act === "zoomOut") {
+      seekZoom(view.scale * (act === "zoomIn" ? 1.6 : 1 / 1.6), undefined, undefined, true);
+    } else if (act === "hint") {
+      seekHint();
     } else if (act === "twist") {
       view.twist = pickFrom(game.twists, view.twist);
       render();
@@ -1015,6 +1253,81 @@
       }
       paintTimer();
     }
+  });
+
+  // Seek: a tap finds, a drag moves the zoomed picture, two fingers or the
+  // mouse wheel zoom. `drag` holds where the fingers started and the view then.
+  const fingers = new Map();
+  let drag = null;
+
+  function seekGrip(box) {
+    const pts = [...fingers.values()];
+    return {
+      box,
+      cx: pts.reduce((sum, p) => sum + p[0], 0) / pts.length,
+      cy: pts.reduce((sum, p) => sum + p[1], 0) / pts.length,
+      dist: pts.length > 1 ? Math.hypot(pts[0][0] - pts[1][0], pts[0][1] - pts[1][1]) : 0,
+      x: view.x,
+      y: view.y,
+      scale: view.scale,
+    };
+  }
+
+  runner.addEventListener("pointerdown", (e) => {
+    const box = e.target.closest(".cg-seek-view");
+    if (!box || e.target.closest("button")) return;
+    box.setPointerCapture(e.pointerId);
+    fingers.set(e.pointerId, [e.clientX, e.clientY]);
+    drag = { ...seekGrip(box), moved: fingers.size > 1 };
+  });
+
+  runner.addEventListener("pointermove", (e) => {
+    if (!drag || !fingers.has(e.pointerId)) return;
+    fingers.set(e.pointerId, [e.clientX, e.clientY]);
+    const now = seekGrip(drag.box);
+    const dx = now.cx - drag.cx;
+    const dy = now.cy - drag.cy;
+    if (!drag.moved && Math.hypot(dx, dy) < 8) return;
+    drag.moved = true;
+    drag.box.classList.add("is-dragging");
+    const scale = drag.dist && now.dist
+      ? Math.min(SEEK_ZOOM_MAX, Math.max(seekBounds(drag.box).min, (drag.scale * now.dist) / drag.dist))
+      : drag.scale;
+    const k = scale / drag.scale;
+    const [px, py] = seekSpot(drag.box, drag.cx, drag.cy);
+    view.scale = scale;
+    view.x = px - (px - drag.x) * k + dx;
+    view.y = py - (py - drag.y) * k + dy;
+    seekPlace();
+  });
+
+  function seekLift(e, tapped) {
+    if (!drag || !fingers.has(e.pointerId)) return;
+    fingers.delete(e.pointerId);
+    if (fingers.size) {
+      drag = { ...seekGrip(drag.box), moved: true };
+      return;
+    }
+    if (tapped && !drag.moved && !view.end && drag.box.isConnected) {
+      seekTap(drag.box, e.clientX, e.clientY, e.pointerType === "mouse" ? 10 : 22);
+    }
+    drag.box.classList.remove("is-dragging");
+    drag = null;
+  }
+
+  runner.addEventListener("pointerup", (e) => seekLift(e, true));
+  runner.addEventListener("pointercancel", (e) => seekLift(e, false));
+
+  runner.addEventListener("wheel", (e) => {
+    const box = e.target.closest(".cg-seek-view");
+    if (!box) return;
+    e.preventDefault();
+    const [px, py] = seekSpot(box, e.clientX, e.clientY);
+    seekZoom(view.scale * Math.exp(-e.deltaY * 0.0025), px, py);
+  }, { passive: false });
+
+  window.addEventListener("resize", () => {
+    if (game?.kind === "seek") seekPlace();
   });
 
   document.addEventListener("keydown", (e) => {

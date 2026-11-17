@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#00C9B7" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Pleyi</title>
+  <style>
+    /* The fox loading screen's background (pwa.js), so the hop from here to
+       the next page doesn't flash. */
+    html, body { margin: 0; min-height: 100vh; background: #e0fbf8; }
+  </style>
+  <!-- Where the app opens (server.js /app, the manifest's start page and the
+       Android app's): a student whose personal link this phone opened
+       (student-progress.js remembers it) goes to their page, anyone else to
+       the home page. Opened by the Android app, the pages after it know
+       they're in the app (pwa.js). -->
+  <script>
+    (function () {
+      var key = "";
+      try {
+        if (/^android-app:/.test(document.referrer)) sessionStorage.setItem("pleyi-app", "1");
+        key = localStorage.getItem("pleyi-student-key") || "";
+      } catch (e) {
+        /* ignore */
+      }
+      location.replace(/^[A-Za-z0-9_-]{20,64}$/.test(key) ? "/s/" + encodeURIComponent(key) : "/");
+    })();
+  </script>
+</head>
+<body>
+</body>
+</html>

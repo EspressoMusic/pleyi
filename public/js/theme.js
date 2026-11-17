@@ -7,6 +7,42 @@
   var DARK = "dark";
   var LIGHT = "light";
 
+  // The site's look, picked with "נראות" on the home page (logo-style.js):
+  // "pro" = clean and professional (site-pro.css), otherwise the colorful one.
+  // Set here, at the top of <head>, so a page never flashes the other look.
+  var SITE_STYLE_KEY = "pleyi-site-style";
+  var PRO = "pro";
+  var COLORFUL = "colorful";
+
+  function readSiteStyle() {
+    try {
+      return localStorage.getItem(SITE_STYLE_KEY) === PRO ? PRO : COLORFUL;
+    } catch (e) {
+      return COLORFUL;
+    }
+  }
+
+  function siteStyle() {
+    return document.documentElement.getAttribute("data-site-style") === PRO ? PRO : COLORFUL;
+  }
+
+  function applySiteStyle(style) {
+    document.documentElement.setAttribute("data-site-style", style === PRO ? PRO : COLORFUL);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta && document.documentElement.getAttribute("data-theme") !== DARK) {
+      meta.setAttribute("content", style === PRO ? "#f1f4f7" : "#00C9B7");
+    }
+  }
+
+  function setSiteStyle(style) {
+    try {
+      localStorage.setItem(SITE_STYLE_KEY, style === PRO ? PRO : COLORFUL);
+    } catch (e) { /* ignore */ }
+    applySiteStyle(style);
+  }
+
+  applySiteStyle(readSiteStyle());
+
   function readStored() {
     try {
       var stored = localStorage.getItem(STORAGE_KEY);
@@ -42,7 +78,7 @@
     document.documentElement.setAttribute("data-theme", next);
 
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", next === DARK ? "#0f2220" : "#00C9B7");
+    if (meta) meta.setAttribute("content", next === DARK ? "#0f2220" : siteStyle() === PRO ? "#f1f4f7" : "#00C9B7");
 
     syncA11yDarkMode(next === DARK);
   }
@@ -69,6 +105,8 @@
     apply: apply,
     toggle: toggle,
     readStored: readStored,
+    siteStyle: siteStyle,
+    setSiteStyle: setSiteStyle,
     DARK: DARK,
     LIGHT: LIGHT,
   };

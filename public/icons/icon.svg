@@ -1,11 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="3" dy="4" stdDeviation="0" flood-color="#000" flood-opacity="1"/>
+    </filter>
+  </defs>
   <rect width="512" height="512" rx="112" fill="#00C9B7"/>
-  <g transform="translate(0 14)">
-    <path d="M168 214V326q0 54 54 54h68q54 0 54-54V214Z" fill="#fff" stroke="#111" stroke-width="18" stroke-linejoin="round"/>
-    <path d="M256 108 414 178 256 248 98 178Z" fill="#fff" stroke="#111" stroke-width="18" stroke-linejoin="round"/>
-    <path d="M256 178 376 212V282" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="362" y="276" width="28" height="42" rx="9" fill="#111"/>
-    <path d="M198 302q18-20 36 0M278 302q18-20 36 0" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round"/>
-    <path d="M234 332q22 20 44 0" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round"/>
+  <g filter="url(#shadow)" transform="translate(256 256) scale(2.75) translate(-61 -66)">
+  <g fill="#f7b55e" stroke="#000" stroke-width="8" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M80 123C100 128 117 116 115 97C114 86 105 82 99 87C104 96 101 108 84 109Z"/>
+    <path d="M50 44C42 30 22 13 9 5C6 22 13 45 30 61Z"/>
+    <path d="M70 44C78 30 98 13 111 5C114 22 107 45 90 61Z"/>
+    <path d="M60 86C80 86 90 102 90 114C90 122 80 126 60 126C40 126 30 122 30 114C30 102 40 86 60 86Z"/>
+    <path d="M60 40C79 40 95 51 95 67C95 81 79 94 60 94C41 94 25 81 25 67C25 51 41 40 60 40Z"/>
+    <path fill="#fff1d9" stroke="none" d="M60 72C70 72 77 78 80 85C74 91 67 94 60 94C53 94 46 91 40 85C43 78 50 72 60 72Z"/>
+    <path fill="none" d="M60 40C79 40 95 51 95 67C95 81 79 94 60 94C41 94 25 81 25 67C25 51 41 40 60 40Z"/>
+    <circle fill="#000" stroke="none" cx="47" cy="65" r="5.6"/>
+    <circle fill="#000" stroke="none" cx="73" cy="65" r="5.6"/>
+    <path fill="#000" stroke="none" d="M54 77Q60 74 66 77Q63.5 83 60 83.5Q56.5 83 54 77Z"/>
+    <path fill="#3a4050" d="M44 41V34Q60 29 76 34V41Q60 47 44 41Z"/>
+    <path fill="#3a4050" d="M60 21L89 30.5L60 40L31 30.5Z"/>
+  </g>
   </g>
 </svg>

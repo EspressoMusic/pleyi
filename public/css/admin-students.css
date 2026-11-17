@@ -67,7 +67,12 @@ body.adm-body {
   margin: 0;
   font-size: clamp(1.25rem, 3vw, 1.6rem);
   font-weight: 900;
-  color: var(--ink);
+  /* Yellow with a thick ink outline, as the site's page titles. */
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.3em var(--ink);
+  letter-spacing: 0;
 }
 
 .adm-home,
@@ -302,6 +307,71 @@ body.adm-body {
 .adm-gate-card {
   width: 100%;
   max-width: 440px;
+}
+
+.adm-gate-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 12px;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.adm-gate-or::before,
+.adm-gate-or::after {
+  content: "";
+  flex: 1;
+  border-top: 2px solid color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+.adm-gate-email {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.adm-gate-email input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--adm-field);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* The Hebrew placeholder on the right, in an LTR field. */
+.adm-gate-email input:placeholder-shown {
+  direction: rtl;
+}
+
+.adm-gate-email input:focus-visible {
+  outline: 3px solid var(--adm-accent);
+  outline-offset: 1px;
+}
+
+.adm-gate-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.adm-gate-links .adm-text-btn {
+  margin-top: 0;
+}
+
+.adm-gate-note {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: #eaf5ff;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 /* ── Signed-in teacher (top bar) ── */
@@ -580,7 +650,7 @@ body.adm-body {
 
 /* A student's file: the main things up top, the rest behind "מתקדם". */
 .adm-advanced > summary {
-  margin: 24px auto 18px;
+  margin: 24px 0 18px;
   list-style: none;
 }
 
@@ -831,20 +901,6 @@ body.adm-body {
   color: var(--muted);
 }
 
-.adm-student-block {
-  padding-top: 12px;
-  border-top: 2px dashed #cbd6d4;
-}
-
-.adm-student-block-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 8px;
-  font-size: 1rem;
-  font-weight: 900;
-}
-
 .adm-student-count {
   min-width: 28px;
   padding: 0 8px;
@@ -859,55 +915,6 @@ body.adm-body {
   background: var(--adm-low-soft);
 }
 
-.adm-card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.adm-card-ex {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.adm-card-ex-title {
-  min-width: 0;
-  overflow: hidden;
-  font-size: 0.95rem;
-  font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.adm-card-mistake {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 6px 10px;
-  border: 2px solid #e2eceb;
-  border-radius: 12px;
-  background: var(--adm-soft);
-}
-
-.adm-card-mistake-prompt {
-  overflow: hidden;
-  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
-  font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.adm-card-mistake-answer {
-  font-size: 0.88rem;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-}
-
 .adm-card-more,
 .adm-card-empty {
   margin: 6px 0 0;
@@ -920,7 +927,7 @@ body.adm-body {
   margin: 0;
 }
 
-/* The student card's "i" dialog. position/z-index need !important:
+/* The "i" dialog. position/z-index need !important:
    styles.css forces position:relative on every direct child of <body>. */
 .adm-info {
   position: fixed !important;
@@ -1011,24 +1018,6 @@ body.adm-info-open {
   height: 18px;
 }
 
-/* The pencil in a student's "i" dialog opens this form under the name. */
-.adm-rename .adm-field {
-  margin: 0;
-}
-
-.adm-rename-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.adm-info-go {
-  align-self: center;
-  padding: 10px 28px;
-  font-size: 1rem;
-}
-
 .adm-empty {
   margin-top: 8px;
   text-align: center;
@@ -1042,7 +1031,7 @@ body.adm-info-open {
 
 /* ── Student page ── */
 
-/* Back and the personal link share the first row. */
+/* The personal link and "עריכת שם" open the page ("חזרה" is in the header). */
 .adm-file-top {
   display: flex;
   flex-wrap: nowrap;
@@ -1051,16 +1040,9 @@ body.adm-info-open {
   gap: 14px;
 }
 
-.adm-file-top > .adm-back,
+/* Side by side when there's room; on a phone the second wraps under the first. */
 .adm-file-tools > .adm-fold-toggle {
   margin: 0;
-}
-
-/* The personal link and "עריכת שם", side by side when there's room; on a
-   phone the second wraps under the first, so "חזרה" stays level with the
-   link (13px centres it on the link's 70px). */
-.adm-file-top > .adm-back {
-  margin-top: 13px;
 }
 
 .adm-file-tools {
@@ -1075,8 +1057,67 @@ body.adm-info-open {
   margin-top: 18px;
 }
 
+/* "כניסה לחשבון" under the name, apart from it by a dashed line. */
+.adm-access {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 2px dashed var(--ink);
+}
+
+.adm-access-title {
+  margin: 0 0 6px;
+  font-weight: 800;
+}
+
+.adm-access-state,
+.adm-blocked-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 900;
+}
+
+.adm-access-state {
+  margin: 0 0 4px;
+}
+
+.adm-access-state svg,
+.adm-blocked-note svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+.adm-access-state.is-off,
+.adm-blocked-note {
+  color: var(--adm-low);
+}
+
+.adm-access .adm-small {
+  margin: 4px 0 0;
+}
+
+.adm-access > .adm-danger-btn {
+  margin-top: 12px;
+}
+
+/* On top of the file while the student's sign-in is off. */
+.adm-blocked-note {
+  margin: 14px 0 0;
+}
+
 .adm-solved-head {
   margin: 26px 0 16px;
+}
+
+/* The file's top (links + summary) stands apart from the tasks and the
+   exercises below it. */
+.adm-tiles.adm-file-summary {
+  margin: 0;
+}
+
+.adm-solved-head.adm-file-section {
+  margin-top: 44px;
 }
 
 /* One rectangle per solved exercise, all the same size. */
@@ -1221,6 +1262,10 @@ body.adm-info-open {
   gap: 12px;
 }
 
+.adm-link-head--solo {
+  align-items: center;
+}
+
 .adm-link-text {
   flex: 1;
   min-width: 0;
@@ -1283,6 +1328,10 @@ body.adm-info-open {
   height: 17px;
 }
 
+.adm-email-form .adm-small {
+  margin: 6px 0 0;
+}
+
 .adm-text-btn {
   margin-top: 12px;
   padding: 0;
@@ -1298,11 +1347,12 @@ body.adm-info-open {
 
 /* Homework */
 
+/* The library is the big tile in the middle; date and note open only
+   when asked for ("תאריך" / "הערה"). */
 .adm-hw-form {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 190px;
-  align-items: end;
-  gap: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   padding: 14px;
   border: 2px dashed var(--ink);
   border-radius: 14px;
@@ -1314,29 +1364,486 @@ body.adm-info-open {
 }
 
 .adm-hw-form-head {
-  grid-column: 1 / -1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 10px;
 }
 
+/* The slides' marker, light since it sits on aqua. */
 .adm-hw-form-title {
+  padding: 0 0.2em;
+  border-radius: 6px;
+  background: #eaf5ff;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #000;
+}
+
+/* "בחירה מהספרייה": opens the library window. */
+.adm-lib-open {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 150px;
+  padding: 16px;
+  border: 3px dashed var(--ink);
+  border-radius: 16px;
+  background: var(--adm-field);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.adm-lib-open b {
+  font-size: 1.18rem;
+  font-weight: 900;
+}
+
+.adm-lib-open small {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--body);
+}
+
+.adm-lib-open:hover,
+.adm-lib-open:focus-visible {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.adm-lib-open:focus-visible {
+  outline: 3px solid var(--adm-accent);
+  outline-offset: 1px;
+}
+
+.adm-lib-open:active {
+  transform: translate(1px, 2px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.adm-lib-open-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memteal);
+}
+
+.adm-lib-open-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* "תאריך" / "הערה": round buttons that open their field. */
+.adm-hw-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.adm-hw-extra {
+  flex: 1 1 0;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--adm-card);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.adm-hw-extra:hover,
+.adm-hw-extra:focus-visible {
+  transform: translate(-1px, -1px);
+}
+
+.adm-hw-extra:active {
+  transform: translate(1px, 2px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.adm-hw-extra[aria-expanded="true"] {
+  background: var(--memyellow);
+}
+
+.adm-hw-extra svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* What's chosen: one chip per topic, with an x to drop it. */
+.adm-hw-chosen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-hw-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 4px;
+  padding-inline-start: 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--adm-card);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-weight: 700;
+}
+
+.adm-hw-chip-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.adm-hw-chip-x {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--adm-field);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.adm-hw-chip-x:hover,
+.adm-hw-chip-x:focus-visible {
+  background: var(--memyellow);
+}
+
+.adm-hw-chip-x svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* The library window: as big as the screen allows, its list scrolling
+   between the title and the "סיום" bar. */
+.adm-lib-card {
+  width: min(980px, 100%);
+  height: min(900px, 100%);
+  overflow: hidden;
+  gap: 12px;
+  padding: 16px 0 0;
+}
+
+.adm-lib-card > .adm-info-head {
+  padding: 0 18px;
+}
+
+.adm-lib .adm-info-title {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ICONS.chevron points left; "back" in RTL points right. */
+.adm-lib-back svg {
+  transform: scaleX(-1);
+}
+
+.adm-lib-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 4px 18px 20px;
+}
+
+.adm-lib-body::-webkit-scrollbar {
+  display: none;
+}
+
+.adm-lib-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px max(12px, env(safe-area-inset-bottom, 0px));
+  border-top: var(--adm-border);
+  background: var(--adm-card);
+}
+
+.adm-lib-count {
   font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.adm-lib-group + .adm-lib-group {
+  margin-top: 26px;
+}
+
+.adm-lib-group-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.adm-lib-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 1.2rem;
   font-weight: 900;
   color: var(--ink);
 }
 
-.adm-hw-note {
-  grid-column: 1 / -1;
-  margin-top: 12px !important;
+/* Bold with the lesson slides' teal marker (.lp-key). */
+.adm-lib-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
+  font-weight: 900;
+}
+
+.adm-lib-all {
+  padding: 5px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--adm-field);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.adm-lib-all:hover,
+.adm-lib-all:focus-visible {
+  background: var(--memyellow);
+}
+
+/* A topic's tile, as on the English page: its number in the corner. */
+.adm-lib-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 16px;
+}
+
+.adm-lib-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 130px;
+  padding: 44px 10px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--memteal);
+  box-shadow: 5px 6px 0 0 var(--ink);
+  color: #000;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.adm-lib-tile:hover,
+.adm-lib-tile:focus-visible {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 8px 0 0 var(--ink);
+}
+
+.adm-lib-tile:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.adm-lib-tile:active {
+  transform: translate(1px, 2px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.adm-lib-num {
+  position: absolute;
+  top: 8px;
+  inset-inline-start: 8px;
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.adm-lib-tile-title {
+  max-width: 100%;
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.adm-lib-tile-sub {
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+/* How many are chosen from the topic, in the other corner. */
+.adm-lib-tile-picked {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  padding: 3px 9px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+/* A lesson or exercise to tick. */
+.adm-lib-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
+  gap: 14px;
+}
+
+.adm-lib-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--adm-card);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  color: #000;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.adm-lib-item:hover,
+.adm-lib-item:focus-visible {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 7px 0 0 var(--ink);
+}
+
+.adm-lib-item:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.adm-lib-item:active {
+  transform: translate(1px, 2px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.adm-lib-item.is-picked {
+  background: var(--memyellow);
+}
+
+.adm-lib-check {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2.5px solid var(--ink);
+  border-radius: 9px;
+  background: var(--adm-bg);
+  color: transparent;
+}
+
+.adm-lib-item.is-picked .adm-lib-check {
+  background: var(--adm-accent);
+  color: #000;
+}
+
+.adm-lib-check svg {
+  width: 20px;
+  height: 20px;
+}
+
+.adm-lib-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.adm-lib-item-title {
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.adm-lib-item-sub {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--body);
+}
+
+@media (max-width: 480px) {
+  .adm-lib-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .adm-lib-tile {
+    min-height: 120px;
+  }
+
+  .adm-lib-tile-title {
+    font-size: 1.1rem;
+  }
 }
 
 .adm-hw-add {
-  grid-column: 1 / -1;
-  justify-self: start;
-  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.adm-hw-add svg {
+  width: 18px;
+  height: 18px;
 }
 
 .adm-hw-summary {
@@ -2018,13 +2525,8 @@ body.adm-info-open {
     font-size: 1.5rem;
   }
 
-  .adm-create-row,
-  .adm-hw-form {
+  .adm-create-row {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .adm-hw-form .adm-hw-due {
-    margin-top: 12px;
   }
 
   .adm-create-btn {
@@ -2044,5 +2546,148 @@ body.adm-info-open {
 
   .adm-pill {
     white-space: normal;
+  }
+}
+
+/* ── Tests ("שליחת מבחן" on the student's file) ── */
+
+.adm-test-sum,
+.adm-test-about {
+  grid-column: 1 / -1;
+  margin: 10px 0 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.adm-test-sum {
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+/* A topic picked for a test: framed, with "נבחר" in the corner. */
+.adm-lib-tile.is-picked {
+  outline: 4px solid var(--ink);
+  outline-offset: -10px;
+}
+
+.adm-lib-tile-picked {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.adm-lib-tile-picked svg {
+  width: 14px;
+  height: 14px;
+}
+
+.adm-lib-tile-picked.hidden {
+  display: none;
+}
+
+/* A request for a retake waits on the test's rectangle. */
+.adm-task.is-asked {
+  border-color: var(--adm-low);
+}
+
+.adm-test-ask {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin-top: 6px;
+}
+
+.adm-test-ask .adm-text-btn {
+  margin-top: 0;
+}
+
+/* Bold with the lesson slides' teal marker (.lp-key). */
+.adm-test-key {
+  margin-inline-end: 6px;
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
+  font-weight: 900;
+}
+
+.adm-test-topics {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-test-topic {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.adm-test-topic .adm-pill {
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.adm-test-reopen {
+  margin-top: 16px;
+}
+
+/* ── The class at a glance (#class) ── */
+
+a.adm-fold-toggle {
+  text-decoration: none;
+}
+
+.adm-class-lead {
+  margin: 0 0 2px;
+  font-size: 0.95rem;
+}
+
+.adm-class-lead + .adm-solved,
+.adm-class-lead + .adm-weak {
+  margin-top: 14px;
+}
+
+.adm-class-chip {
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+/* The class's topics: a thin one-line rectangle each — the name on one
+   side, the average on the other. */
+.adm-class-topics {
+  gap: 12px;
+}
+
+.adm-class-topic {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 14px;
+}
+
+.adm-class-topic .adm-solved-title {
+  font-size: 1.05rem;
+}
+
+.adm-solved-card.adm-class-topic .adm-pill {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+/* The topic window's rows: name on one side, grade on the other, even on
+   a narrow phone (the grade is short). */
+@media (max-width: 420px) {
+  .adm-class-rows > .adm-ex {
+    flex-direction: row;
+    align-items: center;
   }
 }

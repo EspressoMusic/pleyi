@@ -339,7 +339,7 @@ body:is(.page-ready-lessons, .lp-host) .svc-lesson-num {
   padding: 0 5px;
   border: 2.5px solid var(--ink);
   border-radius: 999px;
-  background: var(--memyellow);
+  background: #ff9ecb;
   box-shadow: 2px 2px 0 var(--ink);
   color: #000;
   font-size: 0.9rem;
@@ -1055,9 +1055,21 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-more[aria-pressed="true"] 
   border-color: var(--ink);
 }
 
-/* A slide in that mode has more lines than usual: a little smaller, so
-   they fit beside the drawing without shrinking much. */
-.lp-steps--more .lp-steps-line {
+/* In that mode the longer explanation is added under the whole slide, on a
+   soft tint, and a little smaller so the slide still fits without
+   shrinking much. */
+.lp-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--lp-fit, 1) * clamp(6px, 1.4vh, 12px));
+  max-width: 100%;
+  padding: calc(var(--lp-fit, 1) * clamp(8px, 1.8vh, 14px)) calc(var(--lp-fit, 1) * 18px);
+  border-radius: 16px;
+  background: #eaf5ff;
+}
+
+.lp-more .lp-steps-line {
   font-size: calc(var(--lp-fit, 1) * clamp(1.05rem, 3.2vh, 1.4rem));
 }
 
@@ -2439,6 +2451,11 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-
 .lp-game-btn--balloons .lp-game-btn-icon { background: #9be7ff; }
 .lp-game-btn--scramble .lp-game-btn-icon { background: #b9a4ff; }
 .lp-game-btn--hunt .lp-game-btn-icon { background: #9fe0a0; }
+.lp-game-btn--adventure .lp-game-btn-icon { background: #ffd57a; }
+.lp-game-btn--bingo .lp-game-btn-icon { background: #ff9f9f; }
+.lp-game-btn--sentence .lp-game-btn-icon { background: #7fdccf; }
+.lp-game-btn--dictation .lp-game-btn-icon { background: #a9c4ff; }
+.lp-game-btn--snake .lp-game-btn-icon { background: #c4e86b; }
 
 .lesson-player-dots {
   flex: 0 0 auto;

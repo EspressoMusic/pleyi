@@ -1,5 +1,7 @@
-/* Home title look — the "נראות" button in the footer picks a style for the
-   site name (the looks are in clean-site.css), kept in this browser. */
+/* The "נראות" button in the footer: picks the site's look (colorful, or
+   clean and professional — site-pro.css, set early on every page by
+   theme.js) and the home title's look (clean-site.css). Both are kept in
+   this browser. */
 
 (function () {
   const KEY = "pleyi-logo-style";
@@ -11,6 +13,10 @@
     { id: "sticker", name: "מדבקה" },
     { id: "shiny", name: "מבריק" },
     { id: "tilt", name: "שובב" },
+  ];
+  const SITE_STYLES = [
+    { id: "colorful", name: "צבעוני", desc: "שמח ומשחקי" },
+    { id: "pro", name: "מקצועי", desc: "נקי ורגוע" },
   ];
 
   function stored() {
@@ -34,24 +40,50 @@
   const title = document.querySelector("#home .hero-site-name");
   if (title) title.dataset.logoStyle = stored();
 
+  // A tiny page drawn in each look: a title, two cards and a button.
+  const SITE_PREVIEW =
+    '<span class="site-style-preview" aria-hidden="true">' +
+    '<span class="ssp-title"></span>' +
+    '<span class="ssp-cards"><span class="ssp-card"></span><span class="ssp-card"></span></span>' +
+    '<span class="ssp-btn"></span></span>';
+
+  const CHECK = '<span class="look-check" aria-hidden="true"></span>';
+
   document.addEventListener("DOMContentLoaded", () => {
     const btn = document.querySelector(".logo-style-btn");
     const dialog = document.querySelector(".logo-style-dialog");
     if (!title || !btn || !dialog) return;
-    const grid = dialog.querySelector(".logo-style-grid");
+    const siteGrid = dialog.querySelector(".site-style-grid");
+    const list = dialog.querySelector(".logo-style-list");
+    const logoGroup = dialog.querySelector(".look-group--logo");
 
-    grid.innerHTML = STYLES.map(
+    siteGrid.innerHTML = SITE_STYLES.map(
       (s) =>
-        `<button type="button" class="logo-style-tile" data-id="${s.id}">` +
-        `<span class="logo-style-preview" data-logo-style="${s.id}" aria-hidden="true"></span>` +
-        `<span class="logo-style-name">${s.name}</span></button>`
+        `<button type="button" class="site-style-tile" data-id="${s.id}">` +
+        SITE_PREVIEW.replace('class="site-style-preview"', `class="site-style-preview site-style-preview--${s.id}"`) +
+        `<span class="site-style-text">${CHECK}<span class="site-style-name">${s.name}</span>` +
+        `<span class="site-style-desc">${s.desc}</span></span></button>`
     ).join("");
-    grid.querySelectorAll(".logo-style-preview").forEach((el) => window.I18n.applyHeroSiteName(el));
+
+    list.innerHTML = STYLES.map(
+      (s) =>
+        `<button type="button" class="logo-style-row" data-id="${s.id}">` +
+        `${CHECK}<span class="logo-style-name">${s.name}</span>` +
+        `<span class="logo-style-preview" data-logo-style="${s.id}" aria-hidden="true"></span></button>`
+    ).join("");
+    list.querySelectorAll(".logo-style-preview").forEach((el) => window.I18n.applyHeroSiteName(el));
+
+    const siteStyle = () => (window.PleyiTheme ? window.PleyiTheme.siteStyle() : "colorful");
 
     function markChosen() {
-      grid.querySelectorAll(".logo-style-tile").forEach((tile) => {
-        tile.setAttribute("aria-pressed", String(tile.dataset.id === title.dataset.logoStyle));
+      siteGrid.querySelectorAll(".site-style-tile").forEach((tile) => {
+        tile.setAttribute("aria-pressed", String(tile.dataset.id === siteStyle()));
       });
+      list.querySelectorAll(".logo-style-row").forEach((row) => {
+        row.setAttribute("aria-pressed", String(row.dataset.id === title.dataset.logoStyle));
+      });
+      // The professional look has its own plain title, so the title looks are only for the colorful one.
+      logoGroup.hidden = siteStyle() === "pro";
     }
 
     btn.addEventListener("click", () => {
@@ -59,12 +91,20 @@
       dialog.showModal();
     });
 
-    // Picking a look closes the picker and goes up to the title to see it big.
-    grid.addEventListener("click", (e) => {
-      const tile = e.target.closest(".logo-style-tile");
-      if (!tile) return;
-      title.dataset.logoStyle = tile.dataset.id;
-      save(tile.dataset.id);
+    // The site's look changes at once, the box included, so it stays open.
+    siteGrid.addEventListener("click", (e) => {
+      const tile = e.target.closest(".site-style-tile");
+      if (!tile || !window.PleyiTheme) return;
+      window.PleyiTheme.setSiteStyle(tile.dataset.id);
+      markChosen();
+    });
+
+    // Picking a title look closes the picker and goes up to the title to see it big.
+    list.addEventListener("click", (e) => {
+      const row = e.target.closest(".logo-style-row");
+      if (!row) return;
+      title.dataset.logoStyle = row.dataset.id;
+      save(row.dataset.id);
       markChosen();
       dialog.close();
       document.getElementById("home")?.scrollIntoView({ behavior: "smooth" });

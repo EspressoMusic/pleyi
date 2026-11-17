@@ -6,6 +6,8 @@
    EnglishGames.list            — [{ id, title, titleEn, desc, descEn, icon }]
    EnglishGames.usable(words)   — the words a game may show (no pictures of
                                   girls or women); a topic needs MIN_WORDS.
+   EnglishGames.listFor(words)  — the games a topic with these words can
+                                  play (bingo needs more: game.minWords).
    EnglishGames.bestText(topicId, gameId) — "Your record: …" or "".
    EnglishGames.start(gameId, ctx) → { stop(), relabel() }
      ctx: { topic, words: [{ word, en, he, img }], shell(inner, hud),
@@ -16,7 +18,10 @@
 
    Every game opens on a how-to screen with a start button, so timers only
    run once the student is ready, and ends on a results screen with stars,
-   the score, the personal record and the words worth going over again. */
+   the score, the personal record and the words worth going over again.
+   A game with `modes` (bingo) shows a button per mode instead of the start
+   button, and runs until the student leaves it. Dictation is the letter
+   scramble with `extras` (letters that aren't in the word), played by ear. */
 
 (function () {
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -40,6 +45,19 @@
     question: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.8 8.6a3.3 3.3 0 1 1 4.6 3c-.9.4-1.4 1.2-1.4 2.2v.7"/><circle cx="12" cy="18.3" r="1.2" fill="currentColor" stroke="none"/></svg>`,
     check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>`,
     cross: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
+    bingo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="6" cy="6" r="1.5" fill="currentColor"/><circle cx="18" cy="18" r="1.5" fill="currentColor"/></svg>`,
+    adventure: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20.5c3.5 0 4-3.5 7-4.5s5.5.5 6.5-3.5" stroke-dasharray="2.6 2.6"/><circle cx="4" cy="20.5" r="1.3" fill="currentColor"/><path d="M17.5 12V3.5"/><path d="M17.5 3.5H22l-1.4 2.2L22 8h-4.5"/></svg>`,
+    board: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="13" rx="2"/><path d="M12 16.5v4M8 20.5h8"/></svg>`,
+    phone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>`,
+    print: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>`,
+    picture: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m21 15.5-5-5L6 20"/></svg>`,
+    home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg>`,
+    flag: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h12l-2.2 3.5L17 11H5"/></svg>`,
+    sentence: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="7.5" height="6" rx="1.5"/><rect x="11.5" y="5" width="4.5" height="6" rx="1.5"/><rect x="2" y="14" width="5" height="6" rx="1.5"/><rect x="9" y="14" width="7" height="6" rx="1.5"/><path d="M19 8h2.5M19 17h2.5"/></svg>`,
+    dictation: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5a5.5 5.5 0 0 1 11 0c0 3.2-3.2 4.2-3.2 7.3a3.3 3.3 0 0 1-6.1 1.7"/><path d="M9.6 9.8a2.4 2.4 0 0 1 4.8 0c0 1.4-1.2 1.9-1.8 2.8"/><path d="M19.5 3.5c1.3 1.2 2 2.9 2 4.7s-.7 3.5-2 4.7"/></svg>`,
+    snake: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h9a3.5 3.5 0 0 0 0-7H8.5a3.5 3.5 0 0 1 0-7H15"/><circle cx="17.8" cy="6" r="2.8"/><path d="M20.6 6h1.9"/><circle cx="18.3" cy="5.2" r=".5" fill="currentColor"/></svg>`,
+    arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19.5v-15M5 11.5l7-7 7 7"/></svg>`,
+    slow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 16.5h13a3 3 0 0 0 3-3v-1.5"/><path d="M5.5 16.5a6 6 0 0 1 12 0"/><path d="M19.5 12h1.5a1.5 1.5 0 0 0 0-3h-1.5v3Z"/><path d="M7 16.5V19M15.5 16.5V19"/></svg>`,
   };
 
   const STR = {
@@ -101,6 +119,55 @@
       huntSlot: (n) => `מקום ${n} בסרגל, עדיין ריק`,
       hudFound: "נמצאו",
       huntResult: (time, misses) => `סיימתם בזמן ${time} · ${misses === 0 ? "בלי טעויות" : misses === 1 ? "טעות אחת" : `${misses} טעויות`}`,
+
+      adventureHow: "השועל יוצא לטיול, ויש לו 8 צעדים עד הבית.\nבכל צעד יש משפט קצר באנגלית.\nבוחרים את התמונה או את המילה הנכונה — והשועל מתקדם!",
+      advPickPic: "בחרו את התמונה של המילה המסומנת",
+      advPickWord: "איזו מילה חסרה במשפט?",
+      advTryAgain: "לא נורא, נסו שוב",
+      advHomeHe: "השועל הגיע הביתה!",
+      hudStep: "צעד",
+      adventureResult: (first, total) => `${first} מתוך ${total} בניסיון הראשון`,
+
+      bingoHow: "המורה קורא מילים באנגלית, ולכל תלמיד יש כרטיס עם 9 תמונות.\nשומעים מילה שיש בכרטיס? מסמנים אותה.\nשלוש בשורה, בטור או באלכסון — בינגו!",
+      bingoModeBoard: "לוח המורה",
+      bingoModeCard: "כרטיס בטלפון",
+      bingoModePrint: "הדפסת כרטיסים",
+      bingoNext: "המילה הבאה",
+      bingoFirst: "לחצו על ״המילה הבאה״ כדי להתחיל",
+      bingoShowPic: "הצגת התמונה",
+      bingoCheck: "בדיקת כרטיס",
+      bingoNewRound: "סבב חדש",
+      bingoAllCalled: "כל המילים נקראו",
+      bingoCalledList: "המילים שנקראו",
+      hudCalled: "נקראו",
+      bingoCheckPrompt: "מספר הכרטיס:",
+      bingoCheckGo: "בדיקה",
+      bingoCheckBack: "חזרה ללוח",
+      bingoCheckWin: "בינגו! יש שורה מלאה",
+      bingoCheckNo: "עוד אין שורה מלאה",
+      bingoCheckBad: "כתבו מספר מ־1 עד 999",
+      bingoCardTip: "שומעים מילה שיש בכרטיס? לוחצים על התמונה שלה.",
+      hudCard: "כרטיס",
+      bingoWin: (n) => `בינגו! הראו למורה את כרטיס ${n}`,
+      bingoNewCard: "כרטיס חדש",
+      bingoNewCardSure: "בטוחים? לחצו שוב",
+
+      sentenceHow: "יש תמונה, ומתחתיה המשפט בעברית.\nלוחצים על המילים באנגלית לפי הסדר — ובונים את המשפט.\nמילה שלא באה עכשיו לא נכנסת. נסו מילה אחרת!",
+      senNotYet: "לא זאת. איזו מילה באה עכשיו?",
+      hudSentence: "משפט",
+      sentenceResult: (clean, total) => `${clean} מתוך ${total} משפטים בלי טעויות`,
+
+      dictationHow: "שומעים מילה באנגלית — בלי לראות תמונה!\nכותבים אותה באותיות שלמטה. יש שם גם כמה אותיות מיותרות.\nאפשר לשמוע שוב, גם לאט. כשמצליחים — רואים את התמונה.",
+      dicListen: "השמעה",
+      dicSlow: "לאט",
+      dicAsk: "מה שמעתם?",
+
+      snakeHow: "למעלה כתובה מילה באנגלית, ואפשר גם לשמוע אותה.\nמובילים את הנחש אל התמונה שלה — והוא גדל!\nתמונה לא נכונה או נגיעה בזנב מורידות לב, ויש לכם 3.\nמזיזים בחצים, בכפתורים או בהחלקה על המסך.",
+      snakeEat: "הנחש צריך לאכול:",
+      snakeReady: "מוכנים...",
+      snakeTail: "אוי! הנחש נגע בזנב",
+      snakeKeys: { up: "למעלה", down: "למטה", left: "שמאלה", right: "ימינה" },
+      snakeResult: (n) => (n === 1 ? "הנחש אכל תמונה אחת" : `הנחש אכל ${n} תמונות`),
     },
     en: {
       start: "Start!",
@@ -159,6 +226,55 @@
       huntSlot: (n) => `Place ${n} in the bar, still empty`,
       hudFound: "Found",
       huntResult: (time, misses) => `Finished in ${time} · ${misses === 0 ? "no mistakes" : misses === 1 ? "1 mistake" : `${misses} mistakes`}`,
+
+      adventureHow: "The fox is going for a walk, and home is 8 steps away.\nEvery step has a short English sentence.\nChoose the right picture or word — and the fox moves on!",
+      advPickPic: "Choose the picture of the marked word",
+      advPickWord: "Which word is missing?",
+      advTryAgain: "Never mind, try again",
+      advHomeHe: "",
+      hudStep: "Step",
+      adventureResult: (first, total) => `${first} of ${total} on the first try`,
+
+      bingoHow: "The teacher calls out English words, and every student has a card with 9 pictures.\nHear a word that's on your card? Mark it.\nThree in a row, a column or a diagonal — bingo!",
+      bingoModeBoard: "Teacher's board",
+      bingoModeCard: "Card on a phone",
+      bingoModePrint: "Print cards",
+      bingoNext: "Next word",
+      bingoFirst: "Click “Next word” to start",
+      bingoShowPic: "Show the picture",
+      bingoCheck: "Check a card",
+      bingoNewRound: "New round",
+      bingoAllCalled: "All the words were called",
+      bingoCalledList: "Words called so far",
+      hudCalled: "Called",
+      bingoCheckPrompt: "Card number:",
+      bingoCheckGo: "Check",
+      bingoCheckBack: "Back to the board",
+      bingoCheckWin: "Bingo! A full line",
+      bingoCheckNo: "No full line yet",
+      bingoCheckBad: "Write a number from 1 to 999",
+      bingoCardTip: "Hear a word that's on your card? Tap its picture.",
+      hudCard: "Card",
+      bingoWin: (n) => `Bingo! Show the teacher card ${n}`,
+      bingoNewCard: "New card",
+      bingoNewCardSure: "Sure? Tap again",
+
+      sentenceHow: "There's a picture, and the sentence in Hebrew under it.\nTap the English words in order — and build the sentence.\nA word that doesn't come next won't go in. Try another one!",
+      senNotYet: "Not that one. Which word comes next?",
+      hudSentence: "Sentence",
+      sentenceResult: (clean, total) => `${clean} of ${total} sentences without mistakes`,
+
+      dictationHow: "You hear an English word — without seeing a picture!\nSpell it with the letters below. Some of them are extra.\nYou can listen again, slowly too. Get it right — and see the picture.",
+      dicListen: "Listen",
+      dicSlow: "Slowly",
+      dicAsk: "What did you hear?",
+
+      snakeHow: "An English word is written at the top, and you can hear it too.\nSteer the snake to its picture — and it grows!\nA wrong picture or touching the tail costs a heart, and you have 3.\nSteer with the arrow keys, the buttons or a swipe.",
+      snakeEat: "The snake wants:",
+      snakeReady: "Ready...",
+      snakeTail: "Oops! The snake hit its tail",
+      snakeKeys: { up: "Up", down: "Down", left: "Left", right: "Right" },
+      snakeResult: (n) => (n === 1 ? "The snake ate 1 picture" : `The snake ate ${n} pictures`),
     },
   };
 
@@ -314,8 +430,8 @@
       sfx(name) {
         ctx.sfx?.(name);
       },
-      speak(text) {
-        ctx.speak?.(text);
+      speak(text, rate) {
+        ctx.speak?.(text, rate);
       },
     };
     return run;
@@ -333,12 +449,23 @@
     run.phase = "intro";
     const { game } = run;
     const best = bestText(run.ctx.topic.id, game.id);
+    const modeHtml = (mode) => {
+      const inner = `${mode.icon}<span>${esc(T(mode.label))}</span>`;
+      const cls = `eng-game-mode${mode.primary ? " is-primary" : ""}`;
+      return mode.href
+        ? `<a class="${cls}" href="${esc(mode.href(run))}">${inner}</a>`
+        : `<button type="button" class="${cls}" data-mode="${esc(mode.id)}">${inner}</button>`;
+    };
     run.shell(`
       <div class="eng-game-intro">
         <span class="eng-game-badge eng-game-badge--${game.id}">${game.icon}</span>
         <p class="eng-game-howto">${esc(T(`${game.id}How`))}</p>
         ${best ? `<p class="eng-game-best">${ICONS.trophy}<span>${esc(best)}</span></p>` : ""}
-        <button type="button" class="btn btn-primary btn-candy font-cartoon eng-game-start" id="engGameStart">${esc(T("start"))}</button>
+        ${
+          game.modes
+            ? `<div class="eng-game-modes">${game.modes.map(modeHtml).join("")}</div>`
+            : `<button type="button" class="btn btn-primary btn-candy font-cartoon eng-game-start" id="engGameStart">${esc(T("start"))}</button>`
+        }
       </div>`);
     // Pictures and sounds load while the student reads the how-to.
     (game.pictures?.(run) || run.words.map((w) => w.img)).forEach((src) => {
@@ -346,14 +473,16 @@
       img.src = src;
     });
     window.PleyiSpeech?.preload(run.words.map((w) => w.en));
+    $$("[data-mode]").forEach((btn) => btn.addEventListener("click", () => begin(run, btn.dataset.mode)));
     const btn = $("#engGameStart");
-    btn.addEventListener("click", () => begin(run));
-    btn.focus({ preventScroll: true });
+    btn?.addEventListener("click", () => begin(run));
+    (btn || $(".eng-game-mode"))?.focus({ preventScroll: true });
   }
 
-  function begin(run) {
+  function begin(run, mode = run.mode) {
     run.clear();
     run.phase = "play";
+    run.mode = mode;
     run.result = null;
     run.startedAt = Date.now();
     run.game.play(run);
@@ -891,12 +1020,23 @@
   /* ════════ Game 4: Letter scramble — spell the picture's word with tiles ════════ */
 
   const isLetter = (ch) => /[A-Za-z]/.test(ch);
+  // Dictation mixes this many letters that aren't in the word into the tiles.
+  const DICTATION_EXTRAS = 3;
 
-  function playScramble(run) {
+  function extraLetters(answer, count) {
+    const have = new Set(answer.map((ch) => ch.toLowerCase()));
+    return shuffle([..."abcdefghijklmnoprstuwy"].filter((ch) => !have.has(ch))).slice(0, count);
+  }
+
+  // listen: the dictation game — the word is only heard, its picture and
+  // Hebrew show once it is spelled, and the tiles have extra letters.
+  function playScramble(run, listen = false) {
+    // Without a voice, dictation shows the picture after all.
+    listen = listen && !!run.ctx.canSpeak?.();
     const list = shuffle(run.words.filter((w) => [...w.en].filter(isLetter).length >= 2)).slice(0, 8);
     const st = { list, index: 0, score: 0, clean: 0, missed: new Map(), cur: null, max: list.length * 10 };
     const hud = () =>
-      pillHtml("engHudWord", ICONS.scramble, T("hudWord"), `${st.index + 1}/${list.length}`) +
+      pillHtml("engHudWord", run.game.icon, T("hudWord"), `${st.index + 1}/${list.length}`) +
       pillHtml("engHudScore", run.ctx.icons.star, T("hudScore"), st.score);
 
     function renderWord() {
@@ -908,10 +1048,12 @@
       for (let tries = 0; tries < 12 && order.every((k, i) => answer[k].toLowerCase() === answer[i].toLowerCase()); tries++) {
         order = shuffle(order);
       }
+      let tiles = order.map((k) => answer[k]);
+      if (run.game.extras) tiles = shuffle([...tiles, ...extraLetters(answer, run.game.extras)]);
       st.cur = {
         w,
         answer,
-        tiles: order.map((k) => ({ ch: answer[k], used: false })),
+        tiles: tiles.map((ch) => ({ ch, used: false })),
         slots: answer.map(() => null),
         locked: new Set(),
         hints: 0,
@@ -939,9 +1081,16 @@
       run.shell(
         `
         <div class="eng-game-stage eng-scr-stage" id="engGameStage">
-          <img class="eng-scr-img" src="${esc(w.img)}" alt="" draggable="false" />
+          ${
+            listen
+              ? `<div class="eng-dic-ear">
+                  <button type="button" class="eng-dic-play" id="engDicPlay" aria-label="${esc(T("dicListen"))}">${run.ctx.icons.listen}</button>
+                  <button type="button" class="eng-tool eng-dic-slow" id="engDicSlow">${ICONS.slow}<span>${esc(T("dicSlow"))}</span></button>
+                </div>`
+              : `<img class="eng-scr-img" src="${esc(w.img)}" alt="" draggable="false" />`
+          }
         </div>
-        <p class="eng-scr-he">${esc(w.he)}</p>
+        <p class="eng-scr-he${listen ? " is-ask" : ""}" id="engScrHe">${esc(listen ? T("dicAsk") : w.he)}</p>
         <div class="eng-scr-board" dir="ltr" style="--n:${Math.max(6, longest, Math.ceil(answer.length / 2))}">
           <div class="eng-scr-slots" id="engScrSlots">${slotsHtml}</div>
           <div class="eng-scr-tiles" id="engScrTiles">${st.cur.tiles
@@ -958,6 +1107,11 @@
       $$(".eng-scr-tile").forEach((btn) => btn.addEventListener("click", () => place(Number(btn.dataset.k))));
       $$(".eng-scr-slot").forEach((btn) => btn.addEventListener("click", () => unplace(Number(btn.dataset.s))));
       $("#engScrHint").addEventListener("click", hint);
+      if (listen) {
+        $("#engDicPlay").addEventListener("click", () => run.speak(w.en));
+        $("#engDicSlow").addEventListener("click", () => run.speak(w.en, 0.55));
+        run.later(() => run.speak(w.en), 350);
+      }
     }
 
     const slotEl = (s) => $(`.eng-scr-slot[data-s="${s}"]`);
@@ -1047,6 +1201,12 @@
         el.disabled = true;
       });
       $("#engScrHint").disabled = true;
+      if (listen) {
+        $("#engGameStage").innerHTML = `<img class="eng-scr-img" src="${esc(cur.w.img)}" alt="" draggable="false" />`;
+        const he = $("#engScrHe");
+        he.textContent = cur.w.he;
+        he.classList.remove("is-ask");
+      }
       run.sfx("right");
       run.speak(cur.w.en);
       flash(`<bdi dir="ltr">${esc(cur.w.en)}</bdi> — ${esc(cur.w.he)} · <bdi dir="ltr">+${points}</bdi>`, "right");
@@ -1357,6 +1517,1129 @@
     run.on(hintBtn, "click", hint);
   }
 
+  /* ════════ Game 6: Fox adventure — a short story on a path: every right
+     answer takes the fox one stop closer to home. The stops take turns:
+     read the marked word and pick its picture, or see the picture in the
+     sentence and pick the missing word. ════════ */
+
+  const ADV_STEPS = 8;
+  // Said without "a" / "an".
+  const NO_ARTICLE = new Set([
+    "bread", "cheese", "milk", "water", "ice cream", "pants", "shoes", "socks", "gloves", "scissors",
+    "rain", "snow", "wind", "candles", "challah", "apple and honey", "matzah",
+  ]);
+
+  // The sentences of each topic (its id without "vocab-"): {w} is the word,
+  // {a w} the word with "a" / "an", {A w} the same starting a sentence. Every
+  // sentence must fit every word of the topic. The Hebrew line keeps the
+  // blank, so it never gives the answer away.
+  const STORIES = {
+    animals: [
+      { en: "The fox sees {a w}.", he: "השועל רואה ___" },
+      { en: "The fox plays with {a w}.", he: "השועל משחק עם ___" },
+      { en: "The fox meets {a w}.", he: "השועל פוגש ___" },
+      { en: "Look! {A w}!", he: "תראו! ___!" },
+    ],
+    food: [
+      { en: "The fox finds {a w}.", he: "השועל מוצא ___" },
+      { en: "The fox wants {a w}.", he: "השועל רוצה ___" },
+      { en: "The fox has {a w}.", he: "לשועל יש ___" },
+      { en: "Look! {A w}!", he: "תראו! ___!" },
+    ],
+    colors: [
+      { en: "The fox finds {a w} ball.", he: "השועל מוצא כדור ___" },
+      { en: "The fox has {a w} hat.", he: "לשועל יש כובע ___" },
+      { en: "The fox sees {a w} flower.", he: "השועל רואה פרח ___" },
+      { en: "The fox likes {w}.", he: "השועל אוהב ___" },
+    ],
+    numbers: [
+      { en: "The fox finds the number {w}.", he: "השועל מוצא את המספר ___" },
+      { en: "The fox counts to {w}.", he: "השועל סופר עד ___" },
+      { en: "The fox sees the number {w}.", he: "השועל רואה את המספר ___" },
+    ],
+    body: [
+      { en: "The fox shows his {w}.", he: "השועל מראה את ___ שלו" },
+      { en: "The fox washes his {w}.", he: "השועל רוחץ את ___ שלו" },
+      { en: "Look at the fox's {w}!", he: "תראו את ___ של השועל!" },
+    ],
+    clothes: [
+      { en: "The fox puts on his {w}.", he: "השועל לובש את ___ שלו" },
+      { en: "The fox finds his {w}.", he: "השועל מוצא את ___ שלו" },
+      { en: "The fox likes his {w}.", he: "השועל אוהב את ___ שלו" },
+    ],
+    family: [
+      { en: "The fox sees the {w}.", he: "השועל רואה את ___" },
+      { en: "The fox plays with the {w}.", he: "השועל משחק עם ___" },
+      { en: "The fox meets the {w}.", he: "השועל פוגש את ___" },
+    ],
+    school: [
+      { en: "The fox takes his {w}.", he: "השועל לוקח את ___ שלו" },
+      { en: "The fox finds his {w}.", he: "השועל מוצא את ___ שלו" },
+      { en: "The fox looks at his {w}.", he: "השועל מסתכל על ___ שלו" },
+    ],
+    home: [
+      { en: "The fox cleans the {w}.", he: "השועל מנקה את ___" },
+      { en: "The fox looks at the {w}.", he: "השועל מסתכל על ___" },
+      { en: "The fox sees the {w}.", he: "השועל רואה את ___" },
+    ],
+    kitchen: [
+      { en: "The fox washes the {w}.", he: "השועל שוטף את ___" },
+      { en: "The fox takes the {w}.", he: "השועל לוקח את ___" },
+      { en: "The fox finds {a w}.", he: "השועל מוצא ___" },
+    ],
+    nature: [
+      { en: "The fox likes the {w}.", he: "השועל אוהב את ___" },
+      { en: "The fox talks about the {w}.", he: "השועל מדבר על ___" },
+      { en: "The fox sings about the {w}.", he: "השועל שר על ___" },
+    ],
+    transport: [
+      { en: "The fox sees {a w}.", he: "השועל רואה ___" },
+      { en: "The fox goes by {w}.", he: "השועל נוסע ב־___" },
+      { en: "Look! {A w}!", he: "תראו! ___!" },
+    ],
+    feelings: [
+      { en: "The fox is {w}.", he: "השועל ___" },
+      { en: "Today the fox is {w}.", he: "היום השועל ___" },
+      { en: "The fox feels {w}.", he: "השועל מרגיש ___" },
+    ],
+    opposites: [
+      { en: "Look! It is {w}.", he: "תראו! זה ___" },
+      { en: "The fox sees something {w}.", he: "השועל רואה משהו ___" },
+      { en: "The fox says: it is {w}!", he: "השועל אומר: זה ___!" },
+    ],
+    actions: [
+      { en: "The fox can {w}.", he: "השועל יודע ___" },
+      { en: "The fox likes to {w}.", he: "השועל אוהב ___" },
+      { en: "Now the fox wants to {w}.", he: "עכשיו השועל רוצה ___" },
+    ],
+    places: [
+      { en: "The fox goes to the {w}.", he: "השועל הולך ל־___" },
+      { en: "The fox sees the {w}.", he: "השועל רואה את ___" },
+      { en: "Where is the {w}?", he: "איפה ___?" },
+    ],
+    jobs: [
+      { en: "The fox meets {a w}.", he: "השועל פוגש ___" },
+      { en: "The fox wants to be {a w}.", he: "השועל רוצה להיות ___" },
+      { en: "The fox talks to the {w}.", he: "השועל מדבר עם ___" },
+    ],
+    hobbies: [
+      { en: "The fox likes {w}.", he: "השועל אוהב ___" },
+      { en: "The fox loves {w}.", he: "השועל מאוד אוהב ___" },
+      { en: "The fox and his friend like {w}.", he: "השועל והחבר שלו אוהבים ___" },
+    ],
+    holidays: [
+      { en: "The fox sees the {w}.", he: "השועל רואה את ___" },
+      { en: "Look at the {w}!", he: "תראו את ___!" },
+      { en: "The fox likes the {w}.", he: "השועל אוהב את ___" },
+    ],
+    default: [
+      { en: "The fox finds {a w}.", he: "השועל מוצא ___" },
+      { en: "The fox draws {a w}.", he: "השועל מצייר ___" },
+      { en: "Look! {A w}!", he: "תראו! ___!" },
+    ],
+  };
+
+  function article(en) {
+    const word = en.toLowerCase();
+    if (NO_ARTICLE.has(word)) return "";
+    return /^[aeiou]/.test(word) ? "an" : "a";
+  }
+
+  // The sentence around the word: { before, word, after }.
+  function storyLine(frame, w) {
+    const m = /\{(a |A )?w\}/.exec(frame.en);
+    let before = frame.en.slice(0, m.index);
+    const after = frame.en.slice(m.index + m[0].length);
+    const art = m[1] ? article(w.en) : "";
+    const capital = m[1] === "A ";
+    let word = w.en;
+    if (art) before += `${capital ? art[0].toUpperCase() + art.slice(1) : art} `;
+    else if (capital) word = word[0].toUpperCase() + word.slice(1);
+    return { before, word, after };
+  }
+
+  // A smooth line through the stops (a Catmull-Rom curve as Béziers).
+  function smoothPath(pts) {
+    const f = (n) => n.toFixed(2);
+    let d = `M${f(pts[0].x)} ${f(pts[0].y)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = pts[i + 2] || p2;
+      d += ` C${f(p1.x + (p2.x - p0.x) / 6)} ${f(p1.y + (p2.y - p0.y) / 6)} ${f(p2.x - (p3.x - p1.x) / 6)} ${f(p2.y - (p3.y - p1.y) / 6)} ${f(p2.x)} ${f(p2.y)}`;
+    }
+    return d;
+  }
+
+  function playAdventure(run) {
+    const frames = STORIES[run.ctx.topic.id.replace(/^vocab-/, "")] || STORIES.default;
+    // Eight words, never the same one twice in a row.
+    const targets = [];
+    let bag = [];
+    while (targets.length < ADV_STEPS) {
+      if (!bag.length) bag = shuffle(run.words);
+      const w = bag.pop();
+      if (w.word !== targets[targets.length - 1]?.word) targets.push(w);
+    }
+    const firstFrame = Math.floor(Math.random() * frames.length);
+    const st = { i: 0, score: 0, firstTry: 0, cur: null, missed: new Map() };
+
+    // The path follows the reading direction: home is where a line ends.
+    const rtl = document.documentElement.dir === "rtl";
+    const stops = Array.from({ length: ADV_STEPS + 1 }, (_, k) => {
+      const x = 7 + (86 * k) / ADV_STEPS;
+      return { x: rtl ? 100 - x : x, y: 70 - 16 * Math.sin((k * Math.PI) / 2) };
+    });
+    const at = (p) => `left:${p.x.toFixed(2)}%;top:${p.y.toFixed(2)}%`;
+    const fox = window.PleyiFox?.svg ? `<span class="site-fox-fig">${window.PleyiFox.svg}</span>` : `<span class="eng-adv-fox-dot"></span>`;
+
+    run.shell(
+      `
+      <div class="eng-adv-trail" id="engAdvTrail" aria-hidden="true">
+        <svg class="eng-adv-path" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${smoothPath(stops)}"/></svg>
+        ${stops
+          .map(
+            (p, k) =>
+              `<span class="eng-adv-stop${k === 0 ? " is-done" : ""}${k === ADV_STEPS ? " is-home" : ""}" data-stop="${k}" style="${at(p)}">${k === ADV_STEPS ? ICONS.home : ""}</span>`
+          )
+          .join("")}
+        <span class="eng-adv-fox" id="engAdvFox" style="${at(stops[0])}">${fox}</span>
+      </div>
+      <p class="eng-adv-ask" id="engAdvAsk"></p>
+      <div class="eng-adv-story" id="engAdvStory" aria-live="polite"></div>
+      <div class="eng-game-stage eng-adv-stage" id="engGameStage">
+        <div class="eng-adv-options" id="engAdvOptions" dir="ltr"></div>
+      </div>
+      <div class="eng-game-flash" id="engGameFlash" aria-live="polite"></div>`,
+      pillHtml("engHudStep", ICONS.flag, T("hudStep"), `1/${ADV_STEPS}`) + pillHtml("engHudScore", run.ctx.icons.star, T("hudScore"), 0)
+    );
+
+    const stage = $("#engGameStage");
+    const optionsBox = $("#engAdvOptions");
+    const story = $("#engAdvStory");
+    const ask = $("#engAdvAsk");
+    const foxEl = $("#engAdvFox");
+
+    // Picture options: three squares as big as the stage allows.
+    const fitOptions = () => {
+      if (!optionsBox.classList.contains("is-pic")) return;
+      const W = stage.clientWidth;
+      const H = stage.clientHeight;
+      if (!W || !H) return;
+      const gap = W < 420 ? 10 : 16;
+      optionsBox.style.setProperty("--gap", `${gap}px`);
+      optionsBox.style.setProperty("--cell", `${Math.floor(Math.max(60, Math.min((W - gap * 2) / 3, H - 8, 190)))}px`);
+    };
+    run.observe(stage, fitOptions);
+
+    function storyHtml(cur, solved) {
+      const { line, w } = cur;
+      const showWord = cur.type === "pic" || solved;
+      const slot = showWord
+        ? `<b class="lp-key eng-adv-word">${esc(line.word)}</b>`
+        : `<span class="eng-adv-blank"><img src="${esc(w.img)}" alt="" draggable="false" /></span>`;
+      return `
+        <p class="eng-adv-line" lang="en" dir="ltr">${esc(line.before)}${slot}${esc(line.after)}${showWord ? speakBtnHtml(run, w.en, "", "eng-speak--inline") : ""}</p>
+        ${lang() === "he" ? `<p class="eng-adv-he">${esc(cur.frame.he)}</p>` : ""}`;
+    }
+
+    // With "a" / "an" before the gap, the other words take the same one, so
+    // the article doesn't give the answer away.
+    function othersFor(w, type, frame) {
+      const others = shuffle(run.words.filter((o) => o.word !== w.word));
+      if (type !== "word" || !/\{(a |A )w\}/.test(frame.en)) return others.slice(0, 2);
+      const same = others.filter((o) => article(o.en) === article(w.en));
+      return [...same, ...others.filter((o) => !same.includes(o))].slice(0, 2);
+    }
+
+    function render() {
+      const w = targets[st.i];
+      const type = st.i % 2 === 0 ? "pic" : "word";
+      const frame = frames[(firstFrame + st.i) % frames.length];
+      const options = shuffle([w, ...othersFor(w, type, frame)]);
+      st.cur = { w, type, frame, line: storyLine(frame, w), tries: 0, done: false };
+      setPill("engHudStep", `${st.i + 1}/${ADV_STEPS}`);
+      ask.textContent = T(type === "pic" ? "advPickPic" : "advPickWord");
+      story.innerHTML = storyHtml(st.cur, false);
+      story.classList.remove("is-in");
+      void story.offsetWidth;
+      story.classList.add("is-in");
+      optionsBox.className = `eng-adv-options is-${type}`;
+      optionsBox.innerHTML = options
+        .map((o, k) =>
+          type === "pic"
+            ? `<button type="button" class="eng-pic-option eng-adv-pic" data-word="${esc(o.word)}" aria-label="${esc(o.he)}"><span class="eng-option-key">${k + 1}</span><img src="${esc(o.img)}" alt="" draggable="false" /></button>`
+            : `<button type="button" class="eng-option eng-adv-opt" data-word="${esc(o.word)}"><span class="eng-option-key">${k + 1}</span>${esc(o.en)}</button>`
+        )
+        .join("");
+      fitOptions();
+      flash("");
+    }
+
+    function moveFox(k) {
+      foxEl.style.cssText = at(stops[k]);
+      foxEl.classList.remove("is-hop");
+      void foxEl.offsetWidth;
+      foxEl.classList.add("is-hop");
+      $(`.eng-adv-stop[data-stop="${k}"]`)?.classList.add("is-done");
+    }
+
+    function answer(btn) {
+      const cur = st.cur;
+      if (!cur || cur.done || btn.disabled) return;
+      if (btn.dataset.word !== cur.w.word) {
+        cur.tries++;
+        st.missed.set(cur.w.word, cur.w);
+        btn.classList.add("is-wrong");
+        btn.disabled = true;
+        run.sfx("wrong");
+        flash(esc(T("advTryAgain")), "wrong");
+        return;
+      }
+      cur.done = true;
+      btn.classList.add("is-right");
+      $$("button", optionsBox).forEach((b) => (b.disabled = true));
+      st.score += [10, 5][cur.tries] ?? 2;
+      if (!cur.tries) st.firstTry++;
+      setPill("engHudScore", st.score);
+      bumpPill("engHudScore");
+      run.sfx("right");
+      run.speak(cur.w.en);
+      story.innerHTML = storyHtml(cur, true);
+      flash(`<bdi dir="ltr">${esc(cur.w.en)}</bdi> — ${esc(cur.w.he)}`, "right");
+      st.i++;
+      run.later(() => moveFox(st.i), 350);
+      run.later(st.i < ADV_STEPS ? render : arrive, 1500);
+    }
+
+    function arrive() {
+      ask.textContent = "";
+      optionsBox.innerHTML = "";
+      story.innerHTML = `
+        <p class="eng-adv-line eng-adv-end" lang="en" dir="ltr">The fox is home!</p>
+        ${T("advHomeHe") ? `<p class="eng-adv-he">${esc(T("advHomeHe"))}</p>` : ""}`;
+      $("#engAdvTrail").classList.add("is-home");
+      flash("");
+      run.later(() => {
+        const max = ADV_STEPS * 10;
+        const ratio = st.score / max;
+        finish(run, {
+          value: st.score,
+          label: "pointsLabel",
+          detail: T("adventureResult", st.firstTry, ADV_STEPS),
+          stars: ratio >= 0.9 ? 3 : ratio >= 0.65 ? 2 : ratio >= 0.35 ? 1 : 0,
+          correct: st.firstTry,
+          recordScore: `${st.score}/${max}`,
+          review: [...st.missed.values()],
+        });
+      }, 1600);
+    }
+
+    run.on(optionsBox, "click", (e) => {
+      const btn = e.target.closest("button");
+      if (btn) answer(btn);
+    });
+    run.on(story, "click", (e) => {
+      const btn = e.target.closest(".eng-speak");
+      if (btn) run.speak(btn.dataset.say);
+    });
+    run.on(document, "keydown", (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || !/^[1-3]$/.test(e.key)) return;
+      const btn = $$("button", optionsBox)[Number(e.key) - 1];
+      if (btn && !btn.disabled) {
+        e.preventDefault();
+        answer(btn);
+      }
+    });
+
+    render();
+  }
+
+  /* ════════ Game 7: Class bingo — the teacher calls the words on the board,
+     and every student marks them on a card: on a phone or a printed one
+     (english-worksheet.js ?bingo=). The cards come from english-bingo.js by
+     their number, so the board can check any card. ════════ */
+
+  const BINGO_KEY = "pleyi-english-bingo";
+  // A phone card keeps its marks through a reload, for about one lesson.
+  const BINGO_KEEP_MS = 6 * 60 * 60 * 1000;
+
+  // kind: "localStorage" or "sessionStorage" — read inside the try, since
+  // even reaching it throws where site data is blocked.
+  function readStore(kind, key) {
+    try {
+      return JSON.parse(window[kind].getItem(key)) || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function writeStore(kind, key, value) {
+    try {
+      window[kind].setItem(key, JSON.stringify(value));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function bingoIds(run) {
+    return run.words.map((w) => w.word);
+  }
+
+  // The print page gets the very words the board calls, so its cards match.
+  function bingoPrintHref(run) {
+    return `/services/english-worksheet?topic=${encodeURIComponent(run.ctx.topic.id)}&bingo=${bingoIds(run).map(encodeURIComponent).join(",")}`;
+  }
+
+  function playBingoBoard(run) {
+    const topicId = run.ctx.topic.id;
+    const byId = new Map(run.words.map((w) => [w.word, w]));
+    // The round survives a reload of the board (this tab only).
+    const saved = readStore("sessionStorage", BINGO_KEY)[topicId];
+    const valid = saved?.order?.length === byId.size && saved.order.every((id) => byId.has(id));
+    const st = {
+      order: valid ? saved.order : shuffle(bingoIds(run)),
+      count: valid ? Math.min(saved.count || 0, byId.size) : 0,
+      pic: false,
+      checking: false,
+    };
+
+    run.shell(
+      `
+      <div class="eng-game-stage eng-bingo-stage" id="engGameStage">
+        <div class="eng-bingo-ball" id="engBingoBall" aria-live="polite"></div>
+        <div class="eng-bingo-check" id="engBingoCheck" hidden>
+          <div class="eng-bingo-check-head">
+            <h3 class="eng-bingo-check-title"><span class="lp-key">${esc(T("bingoCheck"))}</span></h3>
+            <button type="button" class="eng-tool" id="engBingoCheckClose">${esc(T("bingoCheckBack"))}</button>
+          </div>
+          <form class="eng-bingo-check-form" id="engBingoCheckForm">
+            <label for="engBingoNum">${esc(T("bingoCheckPrompt"))}</label>
+            <input type="text" id="engBingoNum" inputmode="numeric" maxlength="3" autocomplete="off" dir="ltr" />
+            <button type="submit" class="eng-tool">${ICONS.hunt}<span>${esc(T("bingoCheckGo"))}</span></button>
+          </form>
+          <div class="eng-bingo-check-result" id="engBingoCheckResult"></div>
+        </div>
+      </div>
+      <div class="eng-bingo-controls">
+        <button type="button" class="btn btn-primary btn-candy font-cartoon eng-bingo-next" id="engBingoNext"></button>
+        <button type="button" class="eng-tool" id="engBingoPic" aria-pressed="false">${ICONS.picture}<span>${esc(T("bingoShowPic"))}</span></button>
+        <button type="button" class="eng-tool" id="engBingoCheckBtn" aria-pressed="false">${ICONS.hunt}<span>${esc(T("bingoCheck"))}</span></button>
+        <button type="button" class="eng-tool" id="engBingoNew">${ICONS.moves}<span>${esc(T("bingoNewRound"))}</span></button>
+      </div>
+      <ul class="eng-bingo-called" id="engBingoCalled" dir="ltr" aria-label="${esc(T("bingoCalledList"))}"></ul>`,
+      pillHtml("engHudCalled", ICONS.bingo, T("hudCalled"), `${st.count}/${byId.size}`)
+    );
+
+    const ball = $("#engBingoBall");
+    const checkBox = $("#engBingoCheck");
+    const result = $("#engBingoCheckResult");
+    const nextBtn = $("#engBingoNext");
+    const picBtn = $("#engBingoPic");
+    const checkBtn = $("#engBingoCheckBtn");
+
+    function save() {
+      const all = readStore("sessionStorage", BINGO_KEY);
+      all[topicId] = { order: st.order, count: st.count };
+      writeStore("sessionStorage", BINGO_KEY, all);
+    }
+
+    function renderBall(fresh) {
+      if (!st.count) {
+        ball.innerHTML = `<span class="eng-bingo-badge">${ICONS.bingo}</span><span class="eng-bingo-wait">${esc(T("bingoFirst"))}</span>`;
+        return;
+      }
+      const w = byId.get(st.order[st.count - 1]);
+      const say = w.say ? `<span class="eng-say-row" dir="rtl" lang="he"><span class="eng-say eng-say-line">${esc(w.say)}</span></span>` : "";
+      ball.innerHTML = `
+        <span class="eng-bingo-count">${st.count}</span>
+        ${st.pic ? `<img class="eng-bingo-pic" src="${esc(w.img)}" alt="${esc(w.he)}" draggable="false" />` : ""}
+        <span class="eng-bingo-word-row">
+          <span class="eng-bingo-word" lang="en" dir="ltr">${esc(w.en)}</span>
+          ${speakBtnHtml(run, w.en)}
+        </span>
+        ${say}`;
+      if (fresh) {
+        ball.classList.remove("is-in");
+        void ball.offsetWidth;
+        ball.classList.add("is-in");
+      }
+    }
+
+    // Newest first, so the last few words are always in view.
+    function renderCalled() {
+      $("#engBingoCalled").innerHTML = st.order
+        .slice(0, st.count)
+        .reverse()
+        .map((id) => {
+          const w = byId.get(id);
+          return `<li><button type="button" class="eng-game-chip eng-bingo-chip" data-say="${esc(w.en)}"><img src="${esc(w.img)}" alt="" draggable="false" /><span class="eng-game-chip-en">${esc(w.en)}</span></button></li>`;
+        })
+        .join("");
+    }
+
+    function sync() {
+      const all = st.count >= byId.size;
+      nextBtn.textContent = T(all ? "bingoAllCalled" : "bingoNext");
+      nextBtn.disabled = all;
+      picBtn.disabled = !st.count;
+      picBtn.setAttribute("aria-pressed", String(st.pic));
+      checkBtn.setAttribute("aria-pressed", String(st.checking));
+      setPill("engHudCalled", `${st.count}/${byId.size}`);
+    }
+
+    function next() {
+      if (st.count >= byId.size) return;
+      if (st.checking) closeCheck();
+      st.count++;
+      save();
+      run.sfx("flip");
+      run.speak(byId.get(st.order[st.count - 1]).en);
+      renderBall(true);
+      renderCalled();
+      sync();
+      bumpPill("engHudCalled");
+    }
+
+    function newRound() {
+      st.order = shuffle(bingoIds(run));
+      st.count = 0;
+      save();
+      closeCheck();
+      renderBall(true);
+      renderCalled();
+      sync();
+    }
+
+    function openCheck() {
+      st.checking = true;
+      ball.hidden = true;
+      checkBox.hidden = false;
+      result.innerHTML = "";
+      $("#engBingoNum").value = "";
+      $("#engBingoNum").focus({ preventScroll: true });
+      sync();
+    }
+
+    function closeCheck() {
+      st.checking = false;
+      ball.hidden = false;
+      checkBox.hidden = true;
+      sync();
+    }
+
+    // The card as the student has it, with the called words lit up.
+    function showCard(n) {
+      const ids = window.EnglishBingo.card(bingoIds(run), n);
+      const called = new Set(st.order.slice(0, st.count));
+      const lines = window.EnglishBingo.lines((i) => called.has(ids[i]));
+      const inLine = new Set(lines.flat());
+      result.innerHTML = `
+        <div class="eng-bingo-mini" id="engBingoMini" dir="ltr">${ids
+          .map((id, i) => {
+            const w = byId.get(id);
+            return `<span class="eng-bingo-mini-cell${called.has(id) ? " is-called" : ""}${inLine.has(i) ? " is-line" : ""}"><img src="${esc(w.img)}" alt="${esc(w.en)}" draggable="false" /></span>`;
+          })
+          .join("")}</div>
+        <p class="eng-bingo-verdict${lines.length ? " is-win" : ""}">${lines.length ? ICONS.check : ""}<span>${esc(T(lines.length ? "bingoCheckWin" : "bingoCheckNo"))}</span></p>`;
+      run.sfx(lines.length ? "right" : "tick");
+      fitMini();
+    }
+
+    const fitMini = () => {
+      const mini = $("#engBingoMini");
+      if (!mini || checkBox.hidden) return;
+      const verdict = $(".eng-bingo-verdict", result);
+      const room = Math.min(result.clientWidth, result.clientHeight - (verdict?.offsetHeight || 0) - 8, 300);
+      mini.style.setProperty("--size", `${Math.max(90, Math.floor(room))}px`);
+    };
+    run.observe($("#engGameStage"), fitMini);
+
+    run.on(nextBtn, "click", next);
+    run.on(picBtn, "click", () => {
+      st.pic = !st.pic;
+      renderBall(false);
+      sync();
+    });
+    run.on(checkBtn, "click", () => (st.checking ? closeCheck() : openCheck()));
+    run.on($("#engBingoCheckClose"), "click", closeCheck);
+    run.on($("#engBingoNew"), "click", newRound);
+    run.on($("#engBingoCheckForm"), "submit", (e) => {
+      e.preventDefault();
+      const raw = $("#engBingoNum").value.trim();
+      const n = Number(raw);
+      if (!/^\d{1,3}$/.test(raw) || n < 1) {
+        result.innerHTML = `<p class="eng-bingo-verdict is-bad">${esc(T("bingoCheckBad"))}</p>`;
+        return;
+      }
+      showCard(n);
+    });
+    run.on($("#engGameStage"), "click", (e) => {
+      const btn = e.target.closest(".eng-speak");
+      if (btn) run.speak(btn.dataset.say);
+    });
+    run.on($("#engBingoCalled"), "click", (e) => {
+      const chip = e.target.closest(".eng-bingo-chip");
+      if (chip) run.speak(chip.dataset.say);
+    });
+
+    renderBall(false);
+    renderCalled();
+    sync();
+    nextBtn.focus({ preventScroll: true });
+  }
+
+  function playBingoCard(run) {
+    const topicId = run.ctx.topic.id;
+    const byId = new Map(run.words.map((w) => [w.word, w]));
+    // Phone cards are numbered from 100, so they rarely share a number with
+    // the printed ones (1, 2, 3…) — the same number is the same card.
+    const freshCard = () => ({ n: 100 + Math.floor(Math.random() * 900), marks: new Set() });
+    const kept = readStore("localStorage", BINGO_KEY)[topicId];
+    const st = kept?.n && Date.now() - (kept.at || 0) < BINGO_KEEP_MS ? { n: kept.n, marks: new Set(kept.marks || []) } : freshCard();
+    let won = false;
+    let sureTimer = 0;
+
+    function save() {
+      const all = readStore("localStorage", BINGO_KEY);
+      all[topicId] = { n: st.n, marks: [...st.marks], at: Date.now() };
+      writeStore("localStorage", BINGO_KEY, all);
+    }
+
+    function render() {
+      won = false;
+      const ids = window.EnglishBingo.card(bingoIds(run), st.n);
+      run.shell(
+        `
+        <p class="eng-bingo-tip">${esc(T("bingoCardTip"))}</p>
+        <div class="eng-game-stage eng-bingo-card-stage" id="engGameStage">
+          <div class="eng-bingo-card" id="engBingoCard" dir="ltr">${ids
+            .map((id, i) => {
+              const w = byId.get(id);
+              const on = st.marks.has(i);
+              return `<button type="button" class="eng-bingo-cell${on ? " is-marked" : ""}" data-i="${i}" aria-pressed="${on}" aria-label="${esc(w.he)}"><img src="${esc(w.img)}" alt="" draggable="false" /><span class="eng-bingo-stamp" aria-hidden="true">${ICONS.check}</span></button>`;
+            })
+            .join("")}</div>
+        </div>
+        <div class="eng-game-flash" id="engGameFlash" aria-live="polite"></div>
+        <div class="eng-bingo-card-actions">
+          <button type="button" class="eng-tool" id="engBingoNewCard">${ICONS.moves}<span>${esc(T("bingoNewCard"))}</span></button>
+        </div>`,
+        pillHtml("engHudCard", ICONS.bingo, T("hudCard"), st.n)
+      );
+
+      const stage = $("#engGameStage");
+      const board = $("#engBingoCard");
+      const fit = () => {
+        const W = stage.clientWidth;
+        const H = stage.clientHeight;
+        if (!W || !H) return;
+        const gap = Math.min(W, H) < 420 ? 8 : 12;
+        board.style.setProperty("--gap", `${gap}px`);
+        board.style.setProperty("--cell", `${Math.floor(Math.min((W - gap * 2) / 3, (H - gap * 2) / 3, 190))}px`);
+      };
+      fit();
+      run.observe(stage, fit);
+      run.on(board, "click", (e) => {
+        const cell = e.target.closest(".eng-bingo-cell");
+        if (cell) toggle(cell);
+      });
+      run.on($("#engBingoNewCard"), "click", newCard);
+      checkLines();
+    }
+
+    function toggle(cell) {
+      const i = Number(cell.dataset.i);
+      const on = !st.marks.has(i);
+      if (on) st.marks.add(i);
+      else st.marks.delete(i);
+      cell.classList.toggle("is-marked", on);
+      cell.setAttribute("aria-pressed", String(on));
+      run.sfx(on ? "pop" : "tick");
+      save();
+      checkLines();
+    }
+
+    function checkLines() {
+      const inLine = new Set(window.EnglishBingo.lines((i) => st.marks.has(i)).flat());
+      $$(".eng-bingo-cell").forEach((cell) => cell.classList.toggle("is-line", inLine.has(Number(cell.dataset.i))));
+      $("#engBingoCard").classList.toggle("is-bingo", inLine.size > 0);
+      if (inLine.size && !won) {
+        won = true;
+        run.sfx("finish");
+        flash(esc(T("bingoWin", st.n)), "right");
+      } else if (!inLine.size && won) {
+        won = false;
+        flash("");
+      }
+    }
+
+    // A card with marks asks once more before it is thrown away.
+    function newCard() {
+      const btn = $("#engBingoNewCard");
+      if (st.marks.size && !btn.classList.contains("is-sure")) {
+        btn.classList.add("is-sure");
+        $("span", btn).textContent = T("bingoNewCardSure");
+        run.cancel(sureTimer);
+        sureTimer = run.later(() => {
+          btn.classList.remove("is-sure");
+          $("span", btn).textContent = T("bingoNewCard");
+        }, 3000);
+        return;
+      }
+      run.clear();
+      Object.assign(st, freshCard());
+      save();
+      run.sfx("flip");
+      render();
+    }
+
+    save();
+    render();
+  }
+
+  /* ════════ Game 8: Build a sentence — the fox's sentences of the topic
+     (STORIES) come apart into word tiles, tapped in order. A tile that
+     doesn't come next shakes and stays put. ════════ */
+
+  const SENTENCE_ROUNDS = 6;
+
+  // { tiles: ["The", "fox", "sees", "a", "cat"], end: ".", text } — the
+  // topic's word stays one tile even when it is two words ("ice cream").
+  function sentenceTiles(line) {
+    const text = `${line.before}${line.word}${line.after}`;
+    const end = /[.!?]$/.exec(text)?.[0] || "";
+    const words = (s) => s.split(/\s+/).filter(Boolean);
+    return { tiles: [...words(line.before), line.word, ...words(line.after.slice(0, line.after.length - end.length))], end, text };
+  }
+
+  function playSentence(run) {
+    const frames = STORIES[run.ctx.topic.id.replace(/^vocab-/, "")] || STORIES.default;
+    const targets = [];
+    let bag = [];
+    while (targets.length < SENTENCE_ROUNDS) {
+      if (!bag.length) bag = shuffle(run.words);
+      const w = bag.pop();
+      if (w.word !== targets[targets.length - 1]?.word) targets.push(w);
+    }
+    const firstFrame = Math.floor(Math.random() * frames.length);
+    const st = { i: 0, score: 0, clean: 0, cur: null, missed: new Map() };
+    const max = SENTENCE_ROUNDS * 10;
+
+    function render() {
+      const w = targets[st.i];
+      const frame = frames[(firstFrame + st.i) % frames.length];
+      const parts = sentenceTiles(storyLine(frame, w));
+      // Shuffled, but never already in order.
+      let order = shuffle(parts.tiles.map((_, k) => k));
+      for (let tries = 0; tries < 12 && order.every((k, i) => parts.tiles[k] === parts.tiles[i]); tries++) order = shuffle(order);
+      st.cur = { w, parts, next: 0, wrongs: 0, missHere: 0, done: false };
+
+      run.shell(
+        `
+        <div class="eng-game-stage eng-sen-stage" id="engGameStage">
+          <img class="eng-scr-img eng-sen-img" src="${esc(w.img)}" alt="" draggable="false" />
+        </div>
+        ${lang() === "he" ? `<p class="eng-sen-he">${esc(frame.he)}</p>` : ""}
+        <div class="eng-sen-line" id="engSenLine" lang="en" dir="ltr">
+          ${parts.tiles.map((_, k) => `<span class="eng-sen-gap" data-slot="${k}"></span>`).join("")}${parts.end ? `<span class="eng-sen-end">${esc(parts.end)}</span>` : ""}
+        </div>
+        <div class="eng-sen-tiles" id="engSenTiles" lang="en" dir="ltr">
+          ${order.map((k) => `<button type="button" class="eng-sen-tile" data-text="${esc(parts.tiles[k])}">${esc(parts.tiles[k])}</button>`).join("")}
+        </div>
+        <div class="eng-game-flash" id="engGameFlash" aria-live="polite"></div>`,
+        pillHtml("engHudStep", ICONS.sentence, T("hudSentence"), `${st.i + 1}/${SENTENCE_ROUNDS}`) + pillHtml("engHudScore", run.ctx.icons.star, T("hudScore"), st.score)
+      );
+      run.on($("#engSenTiles"), "click", (e) => {
+        const btn = e.target.closest(".eng-sen-tile");
+        if (btn) pick(btn);
+      });
+    }
+
+    function pick(btn) {
+      const cur = st.cur;
+      if (cur.done || btn.classList.contains("is-used")) return;
+      const want = cur.parts.tiles[cur.next];
+      if (btn.dataset.text !== want) {
+        cur.wrongs++;
+        cur.missHere++;
+        btn.classList.remove("is-wrong");
+        void btn.offsetWidth;
+        btn.classList.add("is-wrong");
+        run.later(() => btn.classList.remove("is-wrong"), 700);
+        run.sfx("wrong");
+        flash(esc(T("senNotYet")), "wrong");
+        // Two misses at the same place: the right tile lights up.
+        if (cur.missHere >= 2) $$(".eng-sen-tile:not(.is-used)").find((b) => b.dataset.text === want)?.classList.add("is-glow");
+        return;
+      }
+      btn.classList.add("is-used");
+      btn.disabled = true;
+      $$(".eng-sen-tile.is-glow").forEach((b) => b.classList.remove("is-glow"));
+      const gap = $(`.eng-sen-gap[data-slot="${cur.next}"]`);
+      gap.textContent = want;
+      gap.classList.add("is-filled");
+      cur.next++;
+      cur.missHere = 0;
+      run.sfx("tick");
+      flash("");
+      if (cur.next === cur.parts.tiles.length) solved();
+    }
+
+    function solved() {
+      const cur = st.cur;
+      cur.done = true;
+      const points = Math.max(2, 10 - 2 * cur.wrongs);
+      st.score += points;
+      if (!cur.wrongs) st.clean++;
+      else st.missed.set(cur.w.word, cur.w);
+      setPill("engHudScore", st.score);
+      bumpPill("engHudScore");
+      $("#engSenLine").classList.add("is-right");
+      run.sfx("right");
+      run.speak(cur.parts.text);
+      flash(`<bdi dir="ltr">${esc(cur.w.en)}</bdi> — ${esc(cur.w.he)} · <bdi dir="ltr">+${points}</bdi>`, "right");
+      run.later(() => {
+        st.i++;
+        if (st.i < SENTENCE_ROUNDS) {
+          render();
+          return;
+        }
+        const ratio = st.score / max;
+        finish(run, {
+          value: st.score,
+          label: "pointsLabel",
+          detail: T("sentenceResult", st.clean, SENTENCE_ROUNDS),
+          stars: ratio >= 0.9 ? 3 : ratio >= 0.65 ? 2 : ratio >= 0.35 ? 1 : 0,
+          correct: Math.round(st.score / 10),
+          recordScore: `${st.score}/${max}`,
+          review: [...st.missed.values()],
+        });
+      }, 2200);
+    }
+
+    render();
+  }
+
+  /* ════════ Game 10: Word snake — the word is on top; steer the snake to
+     its picture and it grows. Another picture or its own tail costs a
+     heart; the walls let it through to the other side. ════════ */
+
+  const SNAKE_LIVES = 3;
+  const SNAKE_FOODS = 3;
+  const SNAKE_DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  const SNAKE_OPPOSITE = { up: "down", down: "up", left: "right", right: "left" };
+  const SNAKE_TURN = { up: 0, right: 90, down: 180, left: 270 };
+  const SNAKE_KEYS = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right", w: "up", s: "down", a: "left", d: "right" };
+
+  function playSnake(run) {
+    const st = {
+      snake: [],
+      dir: "right",
+      queue: [],
+      grow: 0,
+      foods: [],
+      target: null,
+      score: 0,
+      lives: SNAKE_LIVES,
+      missed: new Map(),
+      over: false,
+      paused: true,
+      timer: 0,
+    };
+
+    const heartsHtml = () =>
+      `<span class="eng-hud-pill eng-hud-hearts" id="engHudLives" role="img" aria-label="${esc(T("hudLives", st.lives))}">${Array.from(
+        { length: SNAKE_LIVES },
+        (_, i) => `<span class="eng-heart${i < st.lives ? " is-on" : ""}">${ICONS.heart}</span>`
+      ).join("")}</span>`;
+    const keys = T("snakeKeys");
+
+    run.shell(
+      `
+      <div class="eng-balloon-target">
+        <span class="eng-balloon-target-label">${esc(T("snakeEat"))}</span>
+        <span class="eng-balloon-word" id="engSnakeWord" dir="ltr"></span>
+        ${run.ctx.canSpeak?.() ? `<button type="button" class="eng-speak" id="engSnakeSay" aria-label="${esc(T("sayTarget"))}">${run.ctx.icons.listen}</button>` : ""}
+      </div>
+      <div class="eng-game-stage eng-snake-stage" id="engGameStage">
+        <div class="eng-snake-board" id="engSnakeBoard" dir="ltr"></div>
+      </div>
+      <div class="eng-snake-pad" dir="ltr">
+        ${["left", "up", "down", "right"]
+          .map((d) => `<button type="button" class="eng-snake-key" data-dir="${d}" style="--turn:${SNAKE_TURN[d]}deg" aria-label="${esc(keys[d])}">${ICONS.arrow}</button>`)
+          .join("")}
+      </div>
+      <div class="eng-game-flash" id="engGameFlash" aria-live="polite"></div>`,
+      heartsHtml() + pillHtml("engHudScore", run.ctx.icons.star, T("hudScore"), 0)
+    );
+
+    const stage = $("#engGameStage");
+    const board = $("#engSnakeBoard");
+    const wordEl = $("#engSnakeWord");
+
+    // The grid is set once, from the room there is at the start; a resize
+    // only changes the size of its cells.
+    const W0 = stage.clientWidth || 600;
+    const H0 = stage.clientHeight || 400;
+    const want = Math.max(40, Math.min(64, Math.min(W0, H0) / 7));
+    const cols = Math.max(7, Math.min(14, Math.floor(W0 / want)));
+    const rows = Math.max(6, Math.min(11, Math.floor(H0 / want)));
+    board.style.setProperty("--cols", cols);
+    board.style.setProperty("--rows", rows);
+    const fit = () => {
+      const W = stage.clientWidth;
+      const H = stage.clientHeight;
+      if (W && H) board.style.setProperty("--cell", `${Math.floor(Math.min(W / cols, H / rows))}px`);
+    };
+    fit();
+    run.observe(stage, fit);
+
+    const place = (el, p) => {
+      el.style.setProperty("--x", p.x);
+      el.style.setProperty("--y", p.y);
+    };
+    const same = (a, b) => a.x === b.x && a.y === b.y;
+    const speed = () => Math.max(170, 380 - st.score * 12);
+
+    function draw() {
+      const segs = $$(".eng-snake-seg", board);
+      for (let k = segs.length; k < st.snake.length; k++) {
+        const el = document.createElement("span");
+        el.className = "eng-snake-seg";
+        // The first one is always the head.
+        if (k === 0) el.innerHTML = `<i class="eng-snake-eye"></i><i class="eng-snake-eye"></i>`;
+        board.appendChild(el);
+        segs.push(el);
+      }
+      segs.slice(st.snake.length).forEach((el) => el.remove());
+      st.snake.forEach((p, k) => {
+        const el = segs[k];
+        place(el, p);
+        el.classList.toggle("is-head", k === 0);
+        el.classList.toggle("is-tail", k > 0 && k === st.snake.length - 1);
+      });
+      segs[0].style.setProperty("--turn", `${SNAKE_TURN[st.dir]}deg`);
+    }
+
+    // Cells for pictures: not on the snake, nor just ahead of its head.
+    function freeCells() {
+      const head = st.snake[0];
+      const [dx, dy] = SNAKE_DIRS[st.dir];
+      const ahead = [1, 2, 3].map((n) => ({ x: (head.x + dx * n + cols) % cols, y: (head.y + dy * n + rows) % rows }));
+      const cells = [];
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const p = { x, y };
+          if (st.snake.some((s) => same(s, p)) || ahead.some((a) => same(a, p)) || st.foods.some((f) => same(f, p))) continue;
+          // Pictures don't stand right next to each other.
+          if (st.foods.some((f) => Math.abs(f.x - x) <= 1 && Math.abs(f.y - y) <= 1)) continue;
+          cells.push(p);
+        }
+      }
+      return cells;
+    }
+
+    function addFood(word) {
+      const p = pickOne(freeCells());
+      if (!p) return false;
+      const el = document.createElement("span");
+      el.className = "eng-snake-food";
+      el.innerHTML = `<img src="${esc(word.img)}" alt="" draggable="false" />`;
+      place(el, p);
+      board.appendChild(el);
+      st.foods.push({ ...p, word, el });
+      return true;
+    }
+
+    function removeFood(food) {
+      food.el.remove();
+      st.foods = st.foods.filter((f) => f !== food);
+    }
+
+    function setFoods() {
+      st.foods.forEach((f) => f.el.remove());
+      st.foods = [];
+      if (!addFood(st.target)) return false;
+      shuffle(run.words.filter((w) => w.word !== st.target.word))
+        .slice(0, SNAKE_FOODS - 1)
+        .forEach(addFood);
+      return true;
+    }
+
+    function newTarget() {
+      st.target = pickOne(run.words.filter((w) => w.word !== st.target?.word));
+      wordEl.textContent = st.target.en;
+      wordEl.classList.remove("is-in");
+      void wordEl.offsetWidth;
+      wordEl.classList.add("is-in");
+      run.later(() => run.speak(st.target.en), 250);
+      return setFoods();
+    }
+
+    function resetSnake() {
+      const y = Math.floor(rows / 2);
+      const x = Math.max(2, Math.floor(cols / 2) - 1);
+      st.snake = [{ x, y }, { x: x - 1, y }, { x: x - 2, y }];
+      st.dir = "right";
+      st.queue = [];
+      st.grow = 0;
+      draw();
+    }
+
+    function go(ms) {
+      run.cancel(st.timer);
+      st.paused = false;
+      st.timer = run.later(tick, ms);
+    }
+
+    function loseLife(messageHtml) {
+      st.lives = Math.max(0, st.lives - 1);
+      const hearts = $("#engHudLives");
+      if (hearts) hearts.outerHTML = heartsHtml();
+      bumpPill("engHudLives", "is-hit");
+      run.sfx("wrong");
+      flash(messageHtml, "wrong");
+      if (st.lives === 0) gameOver();
+    }
+
+    function eat(food) {
+      if (food.word.word === st.target.word) {
+        st.score++;
+        st.grow++;
+        setPill("engHudScore", st.score);
+        bumpPill("engHudScore");
+        run.sfx("pop");
+        flash(`<bdi dir="ltr">${esc(food.word.en)}</bdi> — ${esc(food.word.he)}`, "right");
+        if (!newTarget()) gameOver();
+        return;
+      }
+      st.missed.set(st.target.word, st.target);
+      removeFood(food);
+      loseLife(`<bdi>${esc(T("wrongPop", food.word.en, food.word.he))}</bdi>`);
+      if (st.over) return;
+      // Another wrong picture somewhere else, so there are always choices.
+      const shown = new Set(st.foods.map((f) => f.word.word));
+      const other = pickOne(run.words.filter((w) => !shown.has(w.word) && w.word !== food.word.word));
+      if (other) addFood(other);
+    }
+
+    function crash() {
+      st.paused = true;
+      board.classList.add("is-crash");
+      loseLife(esc(T("snakeTail")));
+      if (st.over) return;
+      run.later(() => {
+        board.classList.remove("is-crash");
+        resetSnake();
+        // Pictures under the new snake move away.
+        st.foods.filter((f) => st.snake.some((s) => same(s, f))).forEach((f) => {
+          removeFood(f);
+          addFood(f.word);
+        });
+        go(700);
+      }, 1100);
+    }
+
+    function tick() {
+      if (st.over || st.paused) return;
+      if (st.queue.length) st.dir = st.queue.shift();
+      const [dx, dy] = SNAKE_DIRS[st.dir];
+      const head = st.snake[0];
+      const next = { x: (head.x + dx + cols) % cols, y: (head.y + dy + rows) % rows };
+      // The tail moves out of the way, unless the snake is growing.
+      const body = st.grow > 0 ? st.snake : st.snake.slice(0, -1);
+      if (body.some((p) => same(p, next))) {
+        crash();
+        return;
+      }
+      st.snake.unshift(next);
+      if (st.grow > 0) st.grow--;
+      else st.snake.pop();
+      const food = st.foods.find((f) => same(f, next));
+      if (food) eat(food);
+      if (st.over) return;
+      draw();
+      st.timer = run.later(tick, speed());
+    }
+
+    function turn(dir) {
+      if (st.over) return;
+      const last = st.queue[st.queue.length - 1] || st.dir;
+      if (dir === last || dir === SNAKE_OPPOSITE[last] || st.queue.length >= 2) return;
+      st.queue.push(dir);
+    }
+
+    function gameOver() {
+      st.over = true;
+      st.paused = true;
+      run.cancel(st.timer);
+      flash(esc(T("outOfLives")), "wrong");
+      run.later(() => {
+        const { score } = st;
+        finish(run, {
+          value: score,
+          label: "pointsLabel",
+          detail: T("snakeResult", score),
+          stars: score >= 15 ? 3 : score >= 8 ? 2 : score >= 3 ? 1 : 0,
+          correct: score,
+          review: [...st.missed.values()],
+        });
+      }, 1400);
+    }
+
+    // The buttons react on press, like a game pad; keyboard presses (a click
+    // with detail 0) still count.
+    $$(".eng-snake-key").forEach((btn) => {
+      btn.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        turn(btn.dataset.dir);
+      });
+      btn.addEventListener("click", (e) => {
+        if (e.detail === 0) turn(btn.dataset.dir);
+      });
+    });
+    run.on(document, "keydown", (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const dir = SNAKE_KEYS[e.key] || SNAKE_KEYS[e.key.toLowerCase()];
+      if (!dir) return;
+      e.preventDefault();
+      turn(dir);
+    });
+    // A swipe on the board turns the snake as soon as the finger has moved
+    // far enough, so one long swipe can turn twice.
+    let swipe = null;
+    stage.addEventListener("pointerdown", (e) => {
+      swipe = { x: e.clientX, y: e.clientY, id: e.pointerId };
+    });
+    stage.addEventListener("pointermove", (e) => {
+      if (!swipe || swipe.id !== e.pointerId) return;
+      const dx = e.clientX - swipe.x;
+      const dy = e.clientY - swipe.y;
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+      turn(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up");
+      swipe = { x: e.clientX, y: e.clientY, id: e.pointerId };
+    });
+    ["pointerup", "pointercancel"].forEach((type) => stage.addEventListener(type, () => (swipe = null)));
+    $("#engSnakeSay")?.addEventListener("click", () => run.speak(st.target.en));
+    // The snake waits while the tab is hidden.
+    run.on(document, "visibilitychange", () => {
+      if (st.over) return;
+      if (document.hidden) {
+        run.cancel(st.timer);
+      } else if (!st.paused) {
+        go(600);
+      }
+    });
+
+    resetSnake();
+    newTarget();
+    flash(esc(T("snakeReady")));
+    go(1300);
+    run.later(() => flash(""), 1300);
+  }
+
   const GAMES = [
     {
       id: "hunt",
@@ -1413,10 +2696,72 @@
       bestValue: (v) => T("points", v),
       play: playScramble,
     },
+    {
+      id: "adventure",
+      title: "הרפתקת השועל",
+      titleEn: "Fox Adventure",
+      desc: "כל תשובה נכונה מקדמת את השועל צעד אחד בדרך הביתה",
+      descEn: "Every right answer takes the fox one step closer to home",
+      icon: ICONS.adventure,
+      bestValue: (v) => T("points", v),
+      play: playAdventure,
+    },
+    {
+      id: "sentence",
+      title: "בונים משפט",
+      titleEn: "Build a Sentence",
+      desc: "מסדרים את המילים לפי הסדר ובונים משפט קצר באנגלית",
+      descEn: "Put the words in order to build a short English sentence",
+      icon: ICONS.sentence,
+      bestValue: (v) => T("points", v),
+      play: playSentence,
+    },
+    {
+      // Game 9: the letter scramble by ear (playScramble's listen mode).
+      id: "dictation",
+      title: "הכתבה",
+      titleEn: "Dictation",
+      desc: "שומעים מילה וכותבים אותה — בלי לראות תמונה",
+      descEn: "Hear a word and spell it — without seeing a picture",
+      icon: ICONS.dictation,
+      extras: DICTATION_EXTRAS,
+      bestValue: (v) => T("points", v),
+      play: (run) => playScramble(run, true),
+    },
+    {
+      id: "snake",
+      title: "נחש המילים",
+      titleEn: "Word Snake",
+      desc: "מובילים את הנחש אל התמונה של המילה — והוא גדל",
+      descEn: "Steer the snake to the word's picture — and watch it grow",
+      icon: ICONS.snake,
+      bestValue: (v) => T("points", v),
+      play: playSnake,
+    },
+    {
+      id: "bingo",
+      title: "בינגו כיתתי",
+      titleEn: "Class Bingo",
+      desc: "המורה קורא מילים, וכל תלמיד מסמן אותן בכרטיס שלו — בטלפון או על דף",
+      descEn: "The teacher calls out words, and every student marks them on a card — on a phone or on paper",
+      icon: ICONS.bingo,
+      // One word more than a card's nine (english-bingo.js MIN_WORDS).
+      minWords: 10,
+      modes: [
+        { id: "board", icon: ICONS.board, label: "bingoModeBoard", primary: true },
+        { id: "card", icon: ICONS.phone, label: "bingoModeCard" },
+        { id: "print", icon: ICONS.print, label: "bingoModePrint", href: bingoPrintHref },
+      ],
+      play: (run) => (run.mode === "card" ? playBingoCard(run) : playBingoBoard(run)),
+    },
   ];
 
   function find(id) {
     return GAMES.find((g) => g.id === id) || null;
+  }
+
+  function fits(game, words) {
+    return (words || []).length >= (game.minWords || MIN_WORDS);
   }
 
   function bestText(topicId, gameId) {
@@ -1429,6 +2774,8 @@
     MIN_WORDS,
     list: GAMES,
     find,
+    fits,
+    listFor: (words) => GAMES.filter((game) => fits(game, words)),
     loc,
     bestText,
     usable(words) {

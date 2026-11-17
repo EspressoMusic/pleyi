@@ -256,6 +256,16 @@ body.page-class-games .cg-filters {
   background: var(--memyellow);
 }
 
+/* Narrow phones: in a small square a two-line title ran under the "i" and
+   the button, so the card grows with its title instead. */
+@media (max-width: 420px) {
+  .cg-card {
+    aspect-ratio: auto;
+    min-height: 150px;
+    padding-top: 48px;
+  }
+}
+
 /* The teal marker used for labels and titles (same as .lp-key). */
 .cg-key {
   padding: 0 0.18em;
@@ -779,6 +789,321 @@ html.cg-open body {
 
   .cg-pic {
     width: calc(100cqw - 14px);
+  }
+}
+
+/* Seek and find — the busy picture as big as fits with its buttons beside it,
+   and under it the bar of things to find. The picture zooms and moves inside
+   its frame. */
+.cg-runner[data-kind="seek"] .cg-controls {
+  display: none;
+}
+
+.cg-seek {
+  --seek-side: clamp(130px, 13vw, 200px);
+  --seek-gap: clamp(12px, 2vw, 28px);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 2dvh, 18px);
+}
+
+.cg-seek-main {
+  flex: 1 1 0;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--seek-gap);
+  container-type: size;
+}
+
+.cg-seek-side {
+  flex: none;
+  width: var(--seek-side);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(12px, 2.4dvh, 22px);
+}
+
+.cg-seek-side .cg-btn {
+  padding: clamp(10px, 1.8dvh, 16px) 12px;
+  font-size: clamp(1.05rem, 3vmin, 1.5rem);
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.cg-seek-side .cg-btn-alt {
+  background: #b8fff5;
+  color: var(--ink);
+}
+
+.cg-seek-side .cg-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.cg-seek-view {
+  position: relative;
+  flex: none;
+  box-sizing: content-box;
+  width: min(100cqw - var(--seek-side) - var(--seek-gap) - 14px, (100cqh - 14px) * var(--seek-ar));
+  aspect-ratio: var(--seek-ar);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  overflow: hidden;
+  background: #eaf5ff;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  direction: ltr;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: crosshair;
+}
+
+.cg-seek-view.can-move {
+  cursor: grab;
+}
+
+.cg-seek-view.is-dragging {
+  cursor: grabbing;
+}
+
+/* Sized and moved from class-games.js (seekPlace). */
+.cg-seek-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.cg-seek-world.is-easing {
+  transition: transform 0.25s ease-out;
+}
+
+.cg-seek-img,
+.cg-seek-marks {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.cg-seek-zoom {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* A soft circle round the area of one thing still hidden. */
+.cg-seek-hint {
+  fill: rgba(255, 225, 53, 0.3);
+  stroke: var(--ink);
+  animation: cg-seek-breathe 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes cg-seek-breathe {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+.cg-seek-miss {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  pointer-events: none;
+  animation: cg-seek-miss 0.65s ease-out forwards;
+}
+
+.cg-seek-miss svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes cg-seek-miss {
+  0% { opacity: 0; transform: scale(0.5); }
+  25% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+.cg-seek-done {
+  position: absolute;
+  inset: 0;
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: clamp(12px, 3vmin, 28px) clamp(22px, 5vmin, 52px);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: #eaf5ff;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  direction: rtl;
+  text-align: center;
+  pointer-events: none;
+  animation: cg-seek-pop 0.4s ease-out both;
+}
+
+/* The bar of things to find; each one found gets a check. */
+.cg-seek-tray {
+  flex: none;
+  width: 100%;
+  margin: 0;
+  padding: 10px 10px 0;
+  box-sizing: border-box;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(var(--seek-n), minmax(0, min(92px, 10.5dvh)));
+  justify-content: center;
+  gap: clamp(8px, 1.2vw, 14px);
+}
+
+.cg-seek-thing {
+  position: relative;
+  box-sizing: border-box;
+  aspect-ratio: 1 / 1;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  transition: background 0.2s;
+}
+
+/* Out of the flow, so a tall picture can't stretch its square. */
+.cg-seek-thing img {
+  position: absolute;
+  inset: 12%;
+  display: block;
+  width: 76%;
+  height: 76%;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  transition: opacity 0.2s;
+}
+
+.cg-seek-thing.is-found {
+  background: var(--memteal);
+}
+
+.cg-seek-thing.is-found img {
+  opacity: 0.45;
+}
+
+.cg-seek-check {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  display: none;
+  place-items: center;
+  width: 54%;
+  aspect-ratio: 1 / 1;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.cg-seek-check svg {
+  width: 82%;
+  height: 82%;
+}
+
+.cg-seek-thing.is-found .cg-seek-check {
+  display: grid;
+  animation: cg-seek-pop 0.35s ease-out both;
+}
+
+.cg-seek-thing.is-hinted {
+  animation: cg-seek-glow 0.5s ease-in-out 6 alternate;
+}
+
+@keyframes cg-seek-glow {
+  to {
+    background: var(--memyellow);
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes cg-seek-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  70% { opacity: 1; transform: scale(1.12); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* The clock: how long the class has been looking. */
+.cg-seek-clock {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 4.4ch;
+  padding: 6px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-size: clamp(1.2rem, 3.8vmin, 2.2rem);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+@media (max-width: 640px) {
+  .cg-seek-tray {
+    grid-template-columns: repeat(var(--seek-half), minmax(0, 72px));
+    padding-inline: 6px;
+  }
+
+  .cg-seek-thing {
+    border-radius: 12px;
+  }
+}
+
+/* Portrait: the frame fills the room left (the picture moves sideways in
+   it), then the bar, then the buttons in a row. */
+@media (max-aspect-ratio: 3 / 4) {
+  .cg-seek-main {
+    display: contents;
+  }
+
+  .cg-seek-view {
+    flex: 1 1 0;
+    min-height: 0;
+    box-sizing: border-box;
+    width: calc(100% - 8px);
+    aspect-ratio: auto;
+  }
+
+  .cg-seek-tray {
+    order: 1;
+    padding-top: 4px;
+  }
+
+  .cg-seek-side {
+    order: 2;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 6px;
+  }
+
+  .cg-seek-side .cg-btn {
+    padding-inline: clamp(16px, 5vw, 28px);
   }
 }
 

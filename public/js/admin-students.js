@@ -4,8 +4,10 @@
    student does through it shows up here. Exercise names and totals come from
    english-data.js.
 
-   Routes (hash): ""      → all files
-                  "#<id>" → one student's file */
+   Routes (hash): ""        → all files
+                  "#class"  → the class at a glance
+                  "#report" → the weekly report
+                  "#<id>"   → one student's file */
 
 (function () {
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -15,6 +17,8 @@
   const DAY_MS = 86400000;
   const HISTORY_PAGE = 40;
   const TREND_ROUNDS = 30;
+  // The parents' link is off for now (and in server.js too).
+  const PARENTS_ENABLED = false;
 
   const TYPE_LABELS = {
     choice: "בחירה",
@@ -34,6 +38,10 @@
     exam: "מבחן הבנת הנקרא",
     review: "חזרה על טעויות",
     mix: "תרגול מעורב",
+    speak: "דיבור",
+    chat: "שיחה עם הבוט",
+    lesson: "שיעור",
+    test: "מבחן",
   };
 
   const ICONS = {
@@ -46,21 +54,29 @@
     copy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>`,
     chat: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12Z"/></svg>`,
     open: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>`,
+    share: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>`,
     // A grown-up and a child: the parents' link.
     parents: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="5.5" r="2.8"/><path d="M3 21v-6.5A4 4 0 0 1 7 10.5h2a4 4 0 0 1 4 4V21"/><circle cx="17.5" cy="10" r="2.2"/><path d="M14.5 21v-4a3 3 0 0 1 3-3 3 3 0 0 1 3 3v4"/></svg>`,
   };
   ICONS.info = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke-width="1.6"/><path d="M12 11v8.5"/></svg>`;
   ICONS.cross = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
-  ICONS.chart = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M3 20h18M6 16v-4M11 16V6M16 16v-7"/></svg>`;
   ICONS.flag = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4h12l-2.5 4L17 12H5"/></svg>`;
   ICONS.note = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>`;
   ICONS.plus = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`;
   ICONS.phone = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>`;
   ICONS.map = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>`;
   ICONS.pencil = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>`;
+  // One person: the student's details.
+  ICONS.user = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>`;
+  // A padlock: the student's sign-in turned off.
+  ICONS.lock = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`;
   ICONS.trend = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>`;
   ICONS.target = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`;
   ICONS.clock = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
+  ICONS.check = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>`;
+  // Books on a shelf: the library the tasks are chosen from.
+  ICONS.books = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="4.5" height="16" rx="1"/><rect x="9.5" y="4" width="4.5" height="16" rx="1"/><path d="m16.2 5.2 3.9-1 2.6 15.4-3.9 1z"/><path d="M3 20h19"/></svg>`;
+  ICONS.calendar = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>`;
 
   // The signed-in teacher ({ name, email, photoURL }), null when signed out.
   let account = null;
@@ -215,9 +231,12 @@
     return `${location.origin}/services/english?s=${encodeURIComponent(s.key)}#${hw.topicId}/${hw.exerciseId}`;
   }
 
+  function shareText(s) {
+    return `שלום ${s.name}! זה הקישור האישי שלך למשימות באנגלית:\n${portalUrl(s)}`;
+  }
+
   function whatsappUrl(s) {
-    const text = `שלום ${s.name}! זה הקישור האישי שלך למשימות באנגלית:\n${portalUrl(s)}`;
-    return `https://wa.me/?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/?text=${encodeURIComponent(shareText(s))}`;
   }
 
   // The parents' page (/p/<key>): shows only, made from the file on request.
@@ -238,6 +257,7 @@
   }
 
   function homeworkStatus(hw) {
+    if (hw.doneAt && hw.type === "lesson") return { done: true, html: pill("good", "צפה בשיעור") };
     if (hw.doneAt) {
       const p = pct(hw.score, hw.total);
       return { done: true, html: pill(level(p).cls, `בוצע · <span dir="ltr">${hw.score}/${hw.total}</span>`) };
@@ -274,18 +294,30 @@
     "auth/popup-blocked": "הדפדפן חסם את חלון ההתחברות — אפשרו חלונות קופצים ונסו שוב",
     "auth/network-request-failed": "בעיית רשת — בדקו את החיבור לאינטרנט",
     "auth/unauthorized-domain": "הכתובת הזאת עוד לא מורשית להתחברות ב-Firebase",
-    "auth/operation-not-allowed": "ההתחברות עם Google לא מופעלת ב-Firebase",
+    "auth/operation-not-allowed": "שיטת ההתחברות הזו עוד לא הופעלה ב-Firebase",
+    "auth/invalid-credential": "המייל או הסיסמה לא נכונים",
+    "auth/invalid-login-credentials": "המייל או הסיסמה לא נכונים",
+    "auth/wrong-password": "המייל או הסיסמה לא נכונים",
+    "auth/user-not-found": "המייל הזה עוד לא רשום — לחצו \"פעם ראשונה? הרשמה\"",
+    "auth/email-already-in-use": "המייל הזה כבר רשום — לחצו \"כבר נרשמתם? כניסה\"",
+    "auth/weak-password": "הסיסמה קצרה מדי — לפחות 6 תווים",
+    "auth/invalid-email": "כתובת המייל לא תקינה",
+    "auth/missing-password": "כתבו סיסמה",
+    "auth/too-many-requests": "יותר מדי ניסיונות — נסו שוב בעוד כמה דקות",
+    "auth/user-disabled": "החשבון הזה חסום",
   };
 
   function showOnly(id) {
     ["admGate", "admListView", "admDetailView"].forEach((key) => $(`#${key}`).classList.toggle("hidden", key !== id));
   }
 
-  function showGate(error = "") {
+  function showGate(error = "", notice = "") {
     showOnly("admGate");
     const err = $("#admGateError");
     err.textContent = error;
     err.classList.toggle("hidden", !error);
+    $("#admGateNote").textContent = notice;
+    $("#admGateNote").classList.toggle("hidden", !notice);
   }
 
   function renderAccount() {
@@ -319,6 +351,73 @@
     } finally {
       btn.disabled = false;
       $("#admGoogleLabel").textContent = "התחברות עם Google";
+    }
+  }
+
+  // Email + password, besides Google; "הרשמה" opens the account.
+  let emailMode = "signin";
+
+  function setEmailMode(mode) {
+    emailMode = mode;
+    const signup = mode === "signup";
+    $("#admLoginName").classList.toggle("hidden", !signup);
+    $("#admLoginPassword").setAttribute("autocomplete", signup ? "new-password" : "current-password");
+    $("#admLoginSubmit").textContent = signup ? "הרשמה" : "כניסה";
+    $("#admLoginMode").textContent = signup ? "כבר נרשמתם? כניסה" : "פעם ראשונה? הרשמה";
+    $("#admLoginForgot").classList.toggle("hidden", signup);
+  }
+
+  async function emailSignIn(e) {
+    e.preventDefault();
+    const email = $("#admLoginEmail").value.trim();
+    const password = $("#admLoginPassword").value;
+    if (!email || !password) {
+      showGate("כתבו מייל וסיסמה");
+      return;
+    }
+    const btn = $("#admLoginSubmit");
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "מתחבר…";
+    showGate();
+    try {
+      if (emailMode === "signup") {
+        const { user } = await FirebaseApp.auth.createUserWithEmailAndPassword(email, password);
+        const name = $("#admLoginName").value.trim();
+        if (name) {
+          await user.updateProfile({ displayName: name });
+          // The auth listener already ran, before the name was set.
+          if (account) {
+            account.name = name;
+            renderAccount();
+          }
+        }
+      } else {
+        // The auth listener in init() takes over once this resolves.
+        await FirebaseApp.auth.signInWithEmailAndPassword(email, password);
+      }
+      $("#admEmailLogin").reset();
+    } catch (err) {
+      showGate(SIGN_IN_ERRORS[err?.code] || "ההתחברות נכשלה. נסו שוב");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  }
+
+  // Firebase answers the same for an email it doesn't know.
+  async function resetPassword() {
+    const email = $("#admLoginEmail").value.trim();
+    if (!email) {
+      showGate("כתבו קודם את המייל, ואז לחצו \"שכחתי סיסמה\"");
+      $("#admLoginEmail").focus();
+      return;
+    }
+    try {
+      await FirebaseApp.auth.sendPasswordResetEmail(email);
+      showGate("", `אם המייל ⁨${email}⁩ רשום, שלחנו אליו קישור לבחירת סיסמה חדשה.`);
+    } catch (err) {
+      showGate(SIGN_IN_ERRORS[err?.code] || "השליחה נכשלה. נסו שוב");
     }
   }
 
@@ -410,43 +509,6 @@
         location.hash = encodeURIComponent(student.id);
       });
     });
-
-    $$("[data-student-info]", view).forEach((btn) =>
-      btn.addEventListener("click", () => {
-        const s = students.find((st) => st.id === btn.dataset.studentInfo);
-        if (s) openStudentInfo(s, btn);
-      })
-    );
-  }
-
-  // The card's "i" dialog; its pencil opens a small form to rename the student.
-  function openStudentInfo(s, opener) {
-    infoDialog.open(studentInfoHtml(s), opener);
-    const card = $(".adm-info .adm-info-card");
-    const form = $("[data-rename-form]", card);
-    const input = $("input", form);
-    const edit = $("[data-rename]", card);
-    const setEditing = (on) => {
-      form.classList.toggle("hidden", !on);
-      edit.classList.toggle("hidden", on);
-      if (on) input.select();
-      (on ? input : edit).focus();
-    };
-    edit.addEventListener("click", () => setEditing(true));
-    $("[data-rename-cancel]", form).addEventListener("click", () => {
-      input.value = s.name;
-      setEditing(false);
-    });
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      withBusy(e.submitter, async () => {
-        const res = await api(`/api/admin/students/${encodeURIComponent(s.id)}`, { method: "PATCH", body: { name: input.value } });
-        s.name = res.name;
-        renderList();
-        openStudentInfo(s, $(`[data-student-info="${CSS.escape(s.id)}"]`));
-        showToast("השם נשמר");
-      });
-    });
   }
 
   /* A card folded into a small rectangle until the teacher clicks it; the
@@ -469,13 +531,14 @@
      row opens the student's map in a new tab instead. */
 
   const FILE_ROWS = {
-    summary: { id: "admSummary", title: "סיכום", info: ["הציון הממוצע של התלמיד וכמה זמן תרגל.", "גם מתי נפתח התיק ומתי נכנס לאחרונה."] },
     map: { id: "admMap", title: "מפת ההתקדמות", info: ["המפה שהתלמיד רואה בקישור שלו.", "רואים אילו נושאים סיים, איפה הוא עכשיו ומה עוד לפניו.", "נפתחת בחלון חדש."] },
     trend: { id: "admTrend", title: "מגמת ציונים", info: ["הציון בכל סבב תרגול מלא, לפי הסדר.", `רואים את ${TREND_ROUNDS} הסבבים האחרונים.`] },
     review: { id: "admReview", title: "נקודות לחיזוק", info: ["השאלות שהתלמיד טעה בהן.", "שאלה יוצאת מהרשימה אחרי 3 תשובות נכונות ברצף."] },
     history: { id: "admHistory", title: "היסטוריית פעילות", info: ["כל מה שהתלמיד עשה דרך הקישור, מהחדש לישן."] },
     focus: { id: "admFocus", title: "איפה אנחנו עומדים", info: ["על מה עובדים עכשיו ומה השלב הבא.", "רק אתם רואים את זה."] },
     notes: { id: "admNotes", title: "יומן הערות", info: ["הערות שלכם על השיעורים ועל התלמיד.", "רק אתם רואים אותן."] },
+    login: { id: "admLogin", title: "כניסה עם מייל", info: ["התלמיד נכנס עם המייל הזה בכל מכשיר, גם בלי הקישור.", `באתר: "התחברות", ואז "תלמיד".`] },
+    renew: { id: "admRenew", title: "קישור חדש", info: ["כשהקישור נשלח בטעות למישהו אחר.", "הקישור הקודם יפסיק לעבוד, וצריך לשלוח לתלמיד את החדש."] },
   };
 
   function rowHtml(key, icon, href = "") {
@@ -531,11 +594,8 @@
   }
 
 
-  /* One card per student with their overall score; its "i" dialog lists the
-     exercises they solved and the mistakes still open in their review bank. */
+  /* One card per student with their overall score. */
 
-  const CARD_EXERCISES = 5;
-  const CARD_MISTAKES = 4;
   const EXERCISE_TITLES = new Map(TOPICS.flatMap((topic) => (topic.exercises || []).map((ex) => [`${topic.id}/${ex.id}`, ex.title])));
   const TOPIC_TITLES = new Map(TOPICS.map((topic) => [topic.id, topic.title]));
 
@@ -554,21 +614,8 @@
       }));
   }
 
-  // The list brings a preview of the bank ({ count, entries }); a file opened
-  // since then brings all of it.
-  function openMistakes(s) {
-    const entries = [...(s.review?.entries || [])].sort(
-      (a, b) => (b.wrong || 0) - (a.wrong || 0) || String(b.wrongAt || "").localeCompare(String(a.wrongAt || ""))
-    );
-    return { count: s.review?.count ?? entries.length, entries: entries.slice(0, CARD_MISTAKES) };
-  }
-
-  function moreHtml(n) {
-    return n > 0 ? `<p class="adm-card-more">ועוד ${n}</p>` : "";
-  }
-
   // The card shows only the name and the overall score; the name link
-  // stretches over the whole card, and the "i" button above it opens the rest.
+  // stretches over the whole card.
   function studentCardHtml(s) {
     const { avg } = summarize(s);
     const lv = avg == null ? null : level(avg);
@@ -582,84 +629,10 @@
           <span class="adm-student-score-val">${avg == null ? "—" : `${avg}%`}</span>
           <span class="adm-student-score-label">${lv ? `ציון כללי · ${lv.label}` : "ציון כללי"}</span>
         </div>
-        <button type="button" class="adm-info-btn" data-student-info="${esc(s.id)}" aria-haspopup="dialog" aria-label="מידע על ${esc(s.name)}" title="מידע על התלמיד">${ICONS.info}</button>
       </div>`;
   }
 
-  /* The card's "i" dialog: the student's last visit, the exercises they
-     solved and the mistakes still open. */
-
-  function studentInfoHtml(s) {
-    const solved = solvedExercises(s);
-    const mistakes = openMistakes(s);
-    const sub = s.lastActive ? `פעילות אחרונה: ${relTime(s.lastActive)}` : "עוד לא נכנס לקישור";
-    return `
-      <div class="adm-info-backdrop" data-info-close></div>
-      <div class="adm-info-card">
-        <div class="adm-info-head">
-          ${avatarHtml(s)}
-          <div class="adm-student-id">
-            <h2 class="adm-info-title" id="admInfoTitle">${esc(s.name)}</h2>
-            <span class="adm-student-sub">${esc(sub)}</span>
-          </div>
-          <button type="button" class="adm-info-close" data-rename aria-label="עריכת שם" title="עריכת שם">${ICONS.pencil}</button>
-          <button type="button" class="adm-info-close" data-info-close aria-label="סגירה">${ICONS.cross}</button>
-        </div>
-
-        <form class="adm-rename hidden" data-rename-form>
-          <label class="adm-field">
-            <span>שם התלמיד</span>
-            <input type="text" maxlength="80" required value="${esc(s.name)}" />
-          </label>
-          <div class="adm-rename-actions">
-            <button type="button" class="btn btn-outline btn-candy btn-sm" data-rename-cancel>ביטול</button>
-            <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירה</button>
-          </div>
-        </form>
-
-        <div class="adm-student-block">
-          <h4 class="adm-student-block-title">תרגילים שפתר <span class="adm-student-count">${solved.length}</span></h4>
-          ${
-            solved.length
-              ? `<ul class="adm-card-list">
-                  ${solved
-                    .slice(0, CARD_EXERCISES)
-                    .map((ex) => {
-                      const p = pct(ex.score, ex.total);
-                      return `<li class="adm-card-ex"><span class="adm-card-ex-title">${esc(ex.title)}</span>${pill(level(p).cls, `<span dir="ltr">${ex.score}/${ex.total}</span>`)}</li>`;
-                    })
-                    .join("")}
-                </ul>
-                ${moreHtml(solved.length - CARD_EXERCISES)}`
-              : `<p class="adm-card-empty">עוד לא פתר תרגילים</p>`
-          }
-        </div>
-
-        <div class="adm-student-block">
-          <h4 class="adm-student-block-title">טעויות <span class="adm-student-count${mistakes.count ? " is-low" : ""}">${mistakes.count}</span></h4>
-          ${
-            mistakes.count
-              ? `<ul class="adm-card-list">
-                  ${mistakes.entries
-                    .map(
-                      (m) => `
-                    <li class="adm-card-mistake">
-                      ${m.prompt ? `<span class="adm-card-mistake-prompt" dir="auto">${esc(m.prompt)}</span>` : ""}
-                      <span class="adm-card-mistake-answer">נכון: <strong dir="auto">${esc(m.answer)}</strong>${(m.wrong || 1) > 1 ? ` · טעה ${m.wrong} פעמים` : ""}</span>
-                    </li>`
-                    )
-                    .join("")}
-                </ul>
-                ${moreHtml(mistakes.count - mistakes.entries.length)}`
-              : `<p class="adm-card-empty">אין טעויות פתוחות</p>`
-          }
-        </div>
-
-        <a class="btn btn-primary btn-candy adm-info-go" href="#${encodeURIComponent(s.id)}" data-info-close>פתיחת התיק</a>
-      </div>`;
-  }
-
-  // One dialog for both the student card's "i" and a solved exercise in the file.
+  // One dialog for a solved exercise in the file and a row's "i".
   const infoDialog = (() => {
     let root = null;
     let lastFocus = null;
@@ -672,7 +645,7 @@
       root.setAttribute("aria-labelledby", "admInfoTitle");
       document.body.appendChild(root);
       root.addEventListener("click", (e) => {
-        if (e.target.closest("[data-info-close]")) close(!e.target.closest(".adm-info-go"));
+        if (e.target.closest("[data-info-close]")) close();
       });
       document.addEventListener("keydown", (e) => {
         if (!isOpen()) return;
@@ -701,10 +674,10 @@
       root.innerHTML = html;
       root.classList.remove("hidden");
       document.body.classList.add("adm-info-open");
-      ($(".adm-info-go", root) || $(".adm-info-close", root)).focus({ preventScroll: true });
+      $(".adm-info-close", root).focus({ preventScroll: true });
     }
 
-    // `restoreFocus` is false when the dialog's link opens the student's file.
+    // `restoreFocus` is false when the page moves to another view.
     function close(restoreFocus = true) {
       if (!isOpen()) return;
       root.classList.add("hidden");
@@ -730,45 +703,58 @@
       historyShown = HISTORY_PAGE;
       renderStudent();
     } catch (e) {
-      if (account) view.innerHTML = `<a class="adm-back" href="#">חזרה</a><p class="adm-error">${esc(e.message)}</p>`;
+      if (account) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
     }
   }
 
   function renderStudent() {
     const s = current;
-    const { avg } = summarize(s);
     const view = $("#admDetailView");
 
     view.innerHTML = `
       <div class="adm-file-top">
         <div class="adm-file-tools">
           ${foldToggleHtml("admLinkToggle", "admLinkCard", ICONS.link, "הקישור האישי")}
-          ${foldToggleHtml("admDetailsToggle", "admDetailsCard", ICONS.pencil, "עריכת שם")}
-          ${foldToggleHtml("admParentToggle", "admParentCard", ICONS.parents, "קישור להורים")}
+          ${foldToggleHtml("admDetailsToggle", "admDetailsCard", ICONS.user, "פרטי התלמיד")}
+          ${PARENTS_ENABLED ? foldToggleHtml("admParentToggle", "admParentCard", ICONS.parents, "קישור להורים") : ""}
         </div>
-        <a class="adm-back" href="#">חזרה</a>
       </div>
-      <div class="adm-card adm-link-card hidden" id="admLinkCard">${linkCardHtml(s)}</div>
-      <div class="adm-card adm-link-card hidden" id="admParentCard">${parentCardHtml(s)}</div>
-      <form class="adm-card hidden" id="admDetailsCard">
+      <p class="adm-blocked-note${s.blocked ? "" : " hidden"}" id="admBlockedNote">${ICONS.lock}<span>הכניסה של התלמיד מושבתת</span></p>
+      <div class="adm-card adm-link-card hidden" id="admLinkCard">${linkCardHtml()}</div>
+      ${PARENTS_ENABLED ? `<div class="adm-card adm-link-card hidden" id="admParentCard">${parentCardHtml(s)}</div>` : ""}
+      <div class="adm-card hidden" id="admDetailsCard">
         <div class="adm-fold-head">
-          <h3 class="adm-h3">עריכת שם</h3>
+          <h3 class="adm-h3">פרטי התלמיד</h3>
           ${foldCloseHtml()}
         </div>
-        <label class="adm-field">
-          <span>שם התלמיד</span>
-          <input type="text" id="admName" maxlength="80" required value="${esc(s.name)}" />
-        </label>
-        <div class="adm-form-foot">
-          <span class="adm-muted adm-small">השם החדש יופיע גם בקישור של התלמיד</span>
-          <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירה</button>
-        </div>
-      </form>
+        <form id="admNameForm">
+          <label class="adm-field">
+            <span>שם התלמיד</span>
+            <input type="text" id="admName" maxlength="80" required value="${esc(s.name)}" />
+          </label>
+          <div class="adm-form-foot">
+            <span class="adm-muted adm-small">השם החדש יופיע גם בקישור של התלמיד</span>
+            <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירה</button>
+          </div>
+        </form>
+        <div class="adm-access" id="admAccess">${accessHtml(s)}</div>
+      </div>
+
+      <!-- Up top: the links and the student at a glance; the tasks and the
+           solved exercises come below. -->
+      <h2 class="adm-h1 adm-solved-head">סיכום</h2>
+      <div class="adm-tiles adm-file-summary" id="admFileSummary">${summaryHtml(s)}</div>
 
       <!-- The tasks the student sees on his link — the only thing there. -->
-      <h2 class="adm-h1 adm-solved-head">משימות</h2>
+      <h2 class="adm-h1 adm-solved-head adm-file-section">משימות</h2>
       ${homeworkFormHtml(s)}
       <div id="admHomework">${homeworkListHtml(s)}</div>
+
+      <!-- Tests: new questions from the topics the teacher picks, a grade
+           at the end, and the student's requests for a retake. -->
+      <h2 class="adm-h1 adm-solved-head adm-file-section">מבחנים</h2>
+      ${testFormHtml()}
+      <div id="admTests">${testListHtml(s)}</div>
 
       <h2 class="adm-h1 adm-solved-head">תרגילים</h2>
       ${solvedGridHtml(s)}
@@ -782,16 +768,6 @@
         </summary>
 
         <div class="adm-rows">
-          ${rowHtml("summary", ICONS.chart)}
-          <div class="adm-card hidden" id="admSummaryCard">
-            ${rowHeadHtml("summary")}
-            <p class="adm-muted">התיק נפתח: ${esc(fmtDate(s.createdAt))} · ${s.lastActive ? `פעילות אחרונה: ${esc(relTime(s.lastActive))}` : "עוד לא נכנס לקישור"}</p>
-            <div class="adm-tiles">
-              ${tile("ציון ממוצע", avg == null ? "—" : `${avg}%`)}
-              ${tile("זמן תרגול", esc(fmtDuration(s.counts?.practiceSec || 0)))}
-            </div>
-          </div>
-
           ${rowHtml("map", ICONS.map, `${portalUrl(s)}?view=teacher#map`)}
 
           ${rowHtml("trend", ICONS.trend)}
@@ -831,6 +807,33 @@
             </form>
             <ul class="adm-notes" id="admNotes">${notesHtml(s)}</ul>
           </div>
+
+          <!-- Signing in on the site instead of the link (the login dialog's
+               "תלמיד"): the student's own email, Google or with a password. -->
+          ${rowHtml("login", ICONS.chat)}
+          <form class="adm-card adm-email-form hidden" id="admLoginCard">
+            ${rowHeadHtml("login")}
+            <label class="adm-field">
+              <span>המייל של התלמיד</span>
+              <input type="email" id="admEmail" maxlength="254" dir="ltr" placeholder="student@gmail.com" value="${esc(s.email || "")}" />
+            </label>
+            <p class="adm-muted adm-small">באתר: "התחברות", ואז "תלמיד".</p>
+            <div class="adm-form-foot">
+              <span></span>
+              <button type="submit" class="btn btn-primary btn-candy btn-sm">שמירה</button>
+            </div>
+          </form>
+
+          ${rowHtml("renew", ICONS.link)}
+          <div class="adm-card adm-email-form hidden" id="admRenewCard">
+            ${rowHeadHtml("renew")}
+            <p class="adm-muted adm-small">הקישור הקודם יפסיק לעבוד.</p>
+            <p class="adm-muted adm-small">ההתקדמות שנשמרה לא נמחקת.</p>
+            <div class="adm-form-foot">
+              <span></span>
+              <button type="button" class="btn btn-primary btn-candy btn-sm" id="admNewKey">יצירת קישור חדש</button>
+            </div>
+          </div>
         </div>
 
         <button type="button" class="adm-danger-btn" id="admDeleteStudent">${ICONS.trash}<span>מחיקת התיק וכל הנתונים שבו</span></button>
@@ -840,26 +843,59 @@
     drawTrend();
   }
 
-  function linkCardHtml(s) {
-    const url = portalUrl(s);
+  // "כניסה לחשבון" in the student's details: turned off, the link and the
+  // email sign-in stop working until it's turned back on; the file stays.
+  function accessHtml(s) {
+    if (s.blocked) {
+      return `
+        <p class="adm-access-title">כניסה לחשבון</p>
+        <p class="adm-access-state is-off">${ICONS.lock}<span>הכניסה מושבתת</span></p>
+        <p class="adm-muted adm-small">התלמיד לא יכול להיכנס, לא עם הקישור ולא עם המייל.</p>
+        <p class="adm-muted adm-small">ההתקדמות שלו שמורה.</p>
+        <div class="adm-form-foot">
+          <span></span>
+          <button type="button" class="btn btn-primary btn-candy btn-sm" id="admAccessBtn">החזרת הכניסה</button>
+        </div>`;
+    }
     return `
-      <div class="adm-link-head">
+      <p class="adm-access-title">כניסה לחשבון</p>
+      <p class="adm-access-state">${ICONS.check}<span>התלמיד יכול להיכנס</span></p>
+      <p class="adm-muted adm-small">אחרי השבתה, הקישור והמייל לא יעבדו.</p>
+      <p class="adm-muted adm-small">ההתקדמות לא נמחקת, ואפשר להחזיר את הכניסה בכל רגע.</p>
+      <button type="button" class="adm-danger-btn" id="admAccessBtn">${ICONS.lock}<span>השבתת כניסה</span></button>`;
+  }
+
+  // The student at a glance, right under the links.
+  function summaryHtml(s) {
+    const { avg } = summarize(s);
+    const homework = s.homework || [];
+    const done = homework.filter((hw) => hw.doneAt).length;
+    // Day and month only, so the date fits a phone's half-width tile.
+    const shortDate = (iso) => new Date(iso).toLocaleDateString("he-IL", { day: "numeric", month: "short" });
+    const lastActive = s.lastActive && relTime(s.lastActive) === fmtDate(s.lastActive) ? shortDate(s.lastActive) : relTime(s.lastActive);
+    return `
+      ${tile("ציון ממוצע", avg == null ? "—" : `${avg}%`, avg == null ? "" : level(avg).label)}
+      ${tile("זמן תרגול", esc(fmtDuration(s.counts?.practiceSec || 0)))}
+      ${tile("משימות שבוצעו", homework.length ? `<span dir="ltr">${done}/${homework.length}</span>` : "—")}
+      ${tile("פעילות אחרונה", s.lastActive ? esc(lastActive) : "—", s.lastActive ? `התיק נפתח: ${shortDate(s.createdAt)}` : "עוד לא נכנס לקישור")}`;
+  }
+
+  // Copy and share only; the email sign-in and a new link sit in "מתקדם".
+  function linkCardHtml() {
+    return `
+      <div class="adm-link-head adm-link-head--solo">
         <span class="adm-link-icon">${ICONS.link}</span>
         <div class="adm-link-text">
           <h3 class="adm-h3">הקישור האישי</h3>
-          <p class="adm-muted adm-small">שלחו לתלמיד את הקישור. הוא יראה בו את המשימות שתשאירו לו, וכל מה שיפתור יישמר בתיק הזה. אין צורך בהרשמה או בסיסמה.</p>
         </div>
         ${foldCloseHtml()}
       </div>
       <div class="adm-link-row">
-        <input type="text" class="adm-link-input" id="admLinkInput" value="${esc(url)}" readonly dir="ltr" aria-label="הקישור האישי" />
         <div class="adm-link-actions">
           <button type="button" class="btn btn-primary btn-candy btn-sm adm-icon-label" id="admCopyLink">${ICONS.copy}<span>העתקה</span></button>
-          <a class="btn btn-outline btn-candy btn-sm adm-icon-label" href="${esc(whatsappUrl(s))}" target="_blank" rel="noopener">${ICONS.chat}<span>שליחה בוואטסאפ</span></a>
-          <a class="btn btn-outline btn-candy btn-sm adm-icon-label" href="${esc(url)}" target="_blank" rel="noopener">${ICONS.open}<span>תצוגה כמו התלמיד</span></a>
+          <button type="button" class="btn btn-primary btn-candy btn-sm adm-icon-label" id="admShareLink">${ICONS.share}<span>שיתוף</span></button>
         </div>
-      </div>
-      <button type="button" class="adm-text-btn" id="admNewKey">הקישור דלף או נשלח בטעות? יצירת קישור חדש</button>`;
+      </div>`;
   }
 
   function parentCardHtml(s) {
@@ -989,22 +1025,358 @@
     return new Set(keys.map((key) => key.split("/")[0])).size;
   }
 
-  function homeworkFormHtml(s) {
-    const mix = mixKeys(s);
-    const mixTopics = mixTopicCount(mix);
-    const mixOption = mix.length
-      ? `<optgroup label="תרגול מעורב — שאלות מכל מה שפתר">
-          <option value="mix">תרגול מעורב · ${mixTopics === 1 ? "נושא אחד" : `${mixTopics} נושאים`}</option>
-        </optgroup>`
-      : "";
-    const groups = TOPICS.map((topic) => {
-      const exercises = topic.exercises || [];
+  // The mixed practice as a task: questions from every exercise the student
+  // solved (mixKeys). Null until they solved one.
+  function mixTask(s) {
+    const keys = mixKeys(s);
+    if (!keys.length) return null;
+    const topics = mixTopicCount(keys);
+    return {
+      topicId: "mix",
+      exerciseId: "mix",
+      topicTitle: "תרגול מעורב",
+      exerciseTitle: topics === 1 ? "שאלות מעורבבות מנושא אחד" : `שאלות מעורבבות מ-${topics} נושאים`,
+      type: "mix",
+      items: keys,
+    };
+  }
+
+  /* ── Choosing tasks from the library ──
+     "בחירה מהספרייה" opens the English library the way the English page
+     shows it: the path's stages with a numbered tile per topic, and inside a
+     topic its lessons and exercises to tick. What's ticked waits in `picked`
+     until the form adds it to the tasks. */
+
+  const PATH = window.ENGLISH_PATH || [];
+  const LESSONS_SRC = "/js/english-lessons.js?v=8";
+  // "topicId/exerciseId" (or "mix") → the task the form sends.
+  let picked = new Map();
+  let lessonsLoading = null;
+
+  function taskKey(task) {
+    return task.topicId === "mix" ? "mix" : `${task.topicId}/${task.exerciseId}`;
+  }
+
+  // The short lessons' names are in english-lessons.js, which only the
+  // library needs, so it loads the first time the library opens.
+  function loadLessons() {
+    if (window.ENGLISH_SHORT_LESSONS) return Promise.resolve();
+    lessonsLoading ||= new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = LESSONS_SRC;
+      script.onload = resolve;
+      script.onerror = () => {
+        lessonsLoading = null;
+        resolve();
+      };
+      document.head.appendChild(script);
+    });
+    return lessonsLoading;
+  }
+
+  // A topic's slide lessons as tasks: "שיעור 2 – לא ושאלות" in a topic split
+  // into numbered lessons, else "שיעור – <its name>". The student's link
+  // opens the lesson (#<topic>/lesson-<id>) and the task is done once seen.
+  function lessonTasks(topic) {
+    const ids = topic.lessons || (topic.lesson ? [topic.lesson] : []);
+    const short = window.ENGLISH_SHORT_LESSONS || [];
+    return ids.map((id, i) => {
+      const lesson = short.find((l) => l.id === id);
+      const title =
+        ids.length > 1
+          ? lesson?.part ? `שיעור ${i + 1} – ${lesson.part}` : `שיעור ${i + 1}`
+          : `שיעור – ${lesson?.name || topic.title}`;
+      return { topicId: topic.id, exerciseId: `lesson-${id}`, topicTitle: topic.title, exerciseTitle: title, type: "lesson" };
+    });
+  }
+
+  // Practice in level order, easiest first, as on the topic's page.
+  function practiceLevel(ex) {
+    return Math.min(3, Math.max(1, ex.level || window.ENGLISH_TYPE_LEVEL?.[ex.type] || 1));
+  }
+
+  function topicGroups(topic) {
+    const task = (ex) => ({ topicId: topic.id, exerciseId: ex.id, topicTitle: topic.title, exerciseTitle: ex.title, type: ex.type });
+    const exercises = topic.exercises || [];
+    const byLevel = (a, b) => (a.level || 1) - (b.level || 1);
+    return [
+      { title: "שיעורים", tasks: lessonTasks(topic) },
+      {
+        title: "תרגילים",
+        tasks: exercises
+          .filter((ex) => ex.type !== "reading" && ex.type !== "exam")
+          .sort((a, b) => practiceLevel(a) - practiceLevel(b))
+          .map(task),
+      },
+      { title: "קטעי קריאה", tasks: exercises.filter((ex) => ex.type === "reading").sort(byLevel).map(task) },
+      { title: "מבחנים", tasks: exercises.filter((ex) => ex.type === "exam").map(task) },
+    ].filter((group) => group.tasks.length);
+  }
+
+  function pickedCountText(n) {
+    if (!n) return "עוד לא נבחר כלום";
+    return n === 1 ? "נבחרה משימה אחת" : `נבחרו ${n} משימות`;
+  }
+
+  const library = (() => {
+    let root = null;
+    let opener = null;
+    // The tasks on screen, by key, for ticking them.
+    let shown = new Map();
+    let homeScroll = 0;
+    let showing = 0;
+    // The topic on screen, "" on the library itself.
+    let at = "";
+    // "tasks", or "test": a topic tile is picked as a whole (testPicked).
+    let mode = "tasks";
+
+    function build() {
+      root = document.createElement("div");
+      root.className = "adm-info adm-lib hidden";
+      root.setAttribute("role", "dialog");
+      root.setAttribute("aria-modal", "true");
+      root.setAttribute("aria-labelledby", "admLibTitle");
+      root.innerHTML = `
+        <div class="adm-info-backdrop" data-lib-close></div>
+        <div class="adm-info-card adm-lib-card">
+          <div class="adm-info-head">
+            <button type="button" class="adm-info-close adm-lib-back hidden" data-lib-home aria-label="חזרה לכל הנושאים" title="חזרה לכל הנושאים">${ICONS.chevron}</button>
+            <h2 class="adm-info-title" id="admLibTitle"></h2>
+            <button type="button" class="adm-info-close" data-lib-close aria-label="סגירה">${ICONS.cross}</button>
+          </div>
+          <div class="adm-lib-body"></div>
+          <div class="adm-lib-foot">
+            <span class="adm-lib-count" aria-live="polite"></span>
+            <button type="button" class="btn btn-primary btn-candy btn-sm" data-lib-close>סיום</button>
+          </div>
+        </div>`;
+      document.body.appendChild(root);
+      root.addEventListener("click", onClick);
+      document.addEventListener("keydown", (e) => {
+        if (!isOpen()) return;
+        if (e.key === "Escape") {
+          e.preventDefault();
+          close();
+        } else if (e.key === "Tab") {
+          // Keep keyboard focus inside the dialog.
+          const items = $$("button", $(".adm-lib-card", root)).filter((el) => el.offsetParent);
+          const first = items[0];
+          const last = items[items.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      });
+    }
+
+    function onClick(e) {
+      const el = e.target.closest("button, [data-lib-close]");
+      if (!el) return;
+      if (el.matches("[data-lib-close]")) close();
+      else if (el.matches("[data-lib-home]")) show("");
+      else if (el.dataset.libTopic && mode === "test") toggleTestTopic(el.dataset.libTopic);
+      else if (el.dataset.libTopic) show(el.dataset.libTopic);
+      else if (el.dataset.libItem) setPicked([el.dataset.libItem], !picked.has(el.dataset.libItem));
+      else if (el.matches("[data-lib-all]")) {
+        const keys = groupKeys(el);
+        setPicked(keys, !keys.every((key) => picked.has(key)));
+      }
+    }
+
+    function groupKeys(el) {
+      return $$("[data-lib-item]", el.closest(".adm-lib-group")).map((item) => item.dataset.libItem);
+    }
+
+    function setPicked(keys, on) {
+      keys.forEach((key) => (on ? picked.set(key, shown.get(key)) : picked.delete(key)));
+      refresh();
+    }
+
+    function toggleTestTopic(topicId) {
+      const topic = TOPICS.find((tp) => tp.id === topicId);
+      if (!topic) return;
+      if (testPicked.has(topicId)) testPicked.delete(topicId);
+      else if (testPicked.size >= MAX_TEST_TOPICS) showToast(`אפשר לבחור עד ${MAX_TEST_TOPICS} נושאים למבחן אחד`);
+      else testPicked.set(topicId, { id: topic.id, title: topic.title });
+      refresh();
+    }
+
+    function refresh() {
+      if (mode === "test") {
+        $$("[data-lib-topic]", root).forEach((el) => {
+          const on = testPicked.has(el.dataset.libTopic);
+          el.classList.toggle("is-picked", on);
+          el.setAttribute("aria-pressed", String(on));
+          $(".adm-lib-tile-picked", el)?.classList.toggle("hidden", !on);
+        });
+        $(".adm-lib-count", root).textContent = testTopicsText(testPicked.size);
+        return;
+      }
+      $$("[data-lib-item]", root).forEach((el) => {
+        const on = picked.has(el.dataset.libItem);
+        el.classList.toggle("is-picked", on);
+        el.setAttribute("aria-pressed", String(on));
+      });
+      $$("[data-lib-all]", root).forEach((btn) => {
+        btn.textContent = groupKeys(btn).every((key) => picked.has(key)) ? "ביטול הבחירה" : "בחירת הכל";
+      });
+      $(".adm-lib-count", root).textContent = pickedCountText(picked.size);
+    }
+
+    function itemHtml(task, title, sub = "") {
+      const key = taskKey(task);
+      shown.set(key, task);
       return `
-        <optgroup label="${esc(topic.title)}">
-          ${exercises.length > 1 ? `<option value="topic:${esc(topic.id)}">כל הנושא — ${exercises.length} תרגילים</option>` : ""}
-          ${exercises.map((ex) => `<option value="${esc(topic.id)}/${esc(ex.id)}">${esc(ex.title)} · ${esc(TYPE_LABELS[ex.type] || "")}</option>`).join("")}
-        </optgroup>`;
-    }).join("");
+        <button type="button" class="adm-lib-item" data-lib-item="${esc(key)}" aria-pressed="false">
+          <span class="adm-lib-check" aria-hidden="true">${ICONS.check}</span>
+          <span class="adm-lib-item-text">
+            <span class="adm-lib-item-title"><bdi>${esc(title)}</bdi></span>
+            ${sub ? `<span class="adm-lib-item-sub">${esc(sub)}</span>` : ""}
+          </span>
+        </button>`;
+    }
+
+    function groupHtml(title, body, allBtn = false) {
+      return `
+        <div class="adm-lib-group">
+          <div class="adm-lib-group-head">
+            <h3 class="adm-lib-heading">${title}</h3>
+            ${allBtn ? `<button type="button" class="adm-lib-all" data-lib-all></button>` : ""}
+          </div>
+          ${body}
+        </div>`;
+    }
+
+    // The library: the path's stages, a numbered tile per topic (numbered
+    // over the whole path, like the English page).
+    function homeHtml() {
+      const testing = mode === "test";
+      const mix = !testing && mixTask(current);
+      const inPath = new Set(PATH.flatMap((stage) => stage.topics));
+      const stages = PATH.map((stage, i) => ({
+        title: `<span class="adm-lib-key">שלב ${i + 1}</span>${esc(stage.title)}`,
+        topics: stage.topics.map((id) => TOPICS.find((tp) => tp.id === id)).filter(Boolean),
+      }));
+      const rest = TOPICS.filter((tp) => !inPath.has(tp.id));
+      if (rest.length) stages.push({ title: `<span class="adm-lib-key">עוד נושאים</span>`, topics: rest });
+      let num = 0;
+      // A test's topic is picked right on its tile (only topics with test
+      // questions); the numbers stay the path's.
+      const testTile = (topic) => {
+        num++;
+        if (!TEST_BANK[topic.id]?.length) return "";
+        return `
+          <button type="button" class="adm-lib-tile" data-lib-topic="${esc(topic.id)}" aria-pressed="false">
+            <span class="adm-lib-num" aria-hidden="true">${num}</span>
+            <span class="adm-lib-tile-title">${esc(topic.title)}</span>
+            ${topic.titleEn ? `<span class="adm-lib-tile-sub" dir="ltr">${esc(topic.titleEn)}</span>` : ""}
+            <span class="adm-lib-tile-picked hidden">${ICONS.check}<span>נבחר</span></span>
+          </button>`;
+      };
+      if (testing) return stages.map((stage) => groupHtml(stage.title, `<div class="adm-lib-tiles">${stage.topics.map(testTile).join("")}</div>`)).join("");
+      const tile = (topic) => {
+        const count = [...picked.values()].filter((task) => task.topicId === topic.id).length;
+        return `
+          <button type="button" class="adm-lib-tile${count ? " has-picked" : ""}" data-lib-topic="${esc(topic.id)}">
+            <span class="adm-lib-num" aria-hidden="true">${++num}</span>
+            <span class="adm-lib-tile-title">${esc(topic.title)}</span>
+            ${topic.titleEn ? `<span class="adm-lib-tile-sub" dir="ltr">${esc(topic.titleEn)}</span>` : ""}
+            ${count ? `<span class="adm-lib-tile-picked">${count === 1 ? "נבחרה 1" : `נבחרו ${count}`}</span>` : ""}
+          </button>`;
+      };
+      return `
+        ${mix ? groupHtml(`<span class="adm-lib-key">תרגול מעורב</span>`, `<div class="adm-lib-items">${itemHtml(mix, "תרגול מעורב", mix.exerciseTitle)}</div>`) : ""}
+        ${stages.map((stage) => groupHtml(stage.title, `<div class="adm-lib-tiles">${stage.topics.map(tile).join("")}</div>`)).join("")}`;
+    }
+
+    function topicHtml(topic) {
+      const groups = topicGroups(topic);
+      if (!groups.length) return `<p class="adm-muted">בנושא הזה אין עדיין שיעורים או תרגילים.</p>`;
+      return groups
+        .map((group) => {
+          const items = group.tasks
+            .map((task) => itemHtml(task, task.exerciseTitle, group.title === "תרגילים" ? TYPE_LABELS[task.type] || "" : ""))
+            .join("");
+          return groupHtml(`<span class="adm-lib-key">${group.title}</span>`, `<div class="adm-lib-items">${items}</div>`, group.tasks.length > 1);
+        })
+        .join("");
+    }
+
+    async function show(topicId) {
+      const token = ++showing;
+      const body = $(".adm-lib-body", root);
+      const topic = topicId && TOPICS.find((tp) => tp.id === topicId);
+      const leaving = $(".adm-lib-tiles", body) ? body.scrollTop : null;
+      if (topic) await loadLessons();
+      if (token !== showing) return;
+      if (leaving != null) homeScroll = leaving;
+      const from = at;
+      at = topic ? topic.id : "";
+      shown = new Map();
+      $("#admLibTitle").textContent = topic ? topic.title : mode === "test" ? "נושאי המבחן" : "הספרייה";
+      $("[data-lib-home]", root).classList.toggle("hidden", !topic);
+      body.innerHTML = topic ? topicHtml(topic) : homeHtml();
+      body.scrollTop = topic ? 0 : homeScroll;
+      refresh();
+      // Back on the library, focus goes to the topic just left.
+      const focusEl = topic ? $("[data-lib-home]", root) : from ? $(`[data-lib-topic="${CSS.escape(from)}"]`, body) : null;
+      (focusEl || $("[data-lib-close]:not(.adm-info-backdrop)", root)).focus({ preventScroll: true });
+    }
+
+    function open(fromBtn, openMode = "tasks") {
+      if (!root) build();
+      opener = fromBtn;
+      mode = openMode;
+      homeScroll = 0;
+      at = "";
+      if (mode === "tasks") loadLessons();
+      root.classList.remove("hidden");
+      document.body.classList.add("adm-info-open");
+      show("");
+    }
+
+    // `restoreFocus` is false when the page moves to another view.
+    function close(restoreFocus = true) {
+      if (!isOpen()) return;
+      root.classList.add("hidden");
+      document.body.classList.remove("adm-info-open");
+      if (mode === "test") renderTestPicked();
+      else renderPicked();
+      if (restoreFocus && opener?.isConnected) opener.focus({ preventScroll: true });
+    }
+
+    function isOpen() {
+      return !!root && !root.classList.contains("hidden");
+    }
+
+    return { open, close };
+  })();
+
+  // What's chosen, under the library button: one chip per topic.
+  function renderPicked() {
+    const list = $("#admHwChosen");
+    if (!list) return;
+    const byTopic = new Map();
+    picked.forEach((task) => byTopic.set(task.topicId, [...(byTopic.get(task.topicId) || []), task]));
+    list.innerHTML = [...byTopic.entries()]
+      .map(([topicId, tasks]) => {
+        const what = tasks.length === 1 ? tasks[0].exerciseTitle : `${tasks.length} משימות`;
+        return `
+          <li class="adm-hw-chip">
+            <span class="adm-hw-chip-text"><b>${esc(tasks[0].topicTitle)}</b> · ${esc(what)}</span>
+            <button type="button" class="adm-hw-chip-x" data-unpick="${esc(topicId)}" aria-label="הסרה: ${esc(tasks[0].topicTitle)}" title="הסרה">${ICONS.cross}</button>
+          </li>`;
+      })
+      .join("");
+    list.classList.toggle("hidden", !picked.size);
+    $("#admLibOpenLabel").textContent = picked.size ? `${pickedCountText(picked.size)} · שינוי` : "בחירה מהספרייה";
+  }
+
+  function homeworkFormHtml() {
     return `
       ${foldToggleHtml("admHwToggle", "admHwForm", ICONS.plus, "הוספת משימה")}
       <form class="adm-hw-form hidden" id="admHwForm">
@@ -1012,23 +1384,25 @@
           <span class="adm-hw-form-title">הוספת משימה</span>
           ${foldCloseHtml()}
         </div>
-        <label class="adm-field adm-hw-pick">
-          <span>מה לתרגל</span>
-          <select id="admHwPick" required>
-            <option value="">בחרו תרגיל או נושא…</option>
-            ${mixOption}
-            ${groups}
-          </select>
-        </label>
-        <label class="adm-field adm-hw-due">
-          <span>עד תאריך (לא חובה)</span>
+        <button type="button" class="adm-lib-open" id="admLibOpen" aria-haspopup="dialog">
+          <span class="adm-lib-open-icon">${ICONS.books}</span>
+          <b id="admLibOpenLabel">בחירה מהספרייה</b>
+          <small>נושא ותרגילים לתלמיד</small>
+        </button>
+        <ul class="adm-hw-chosen hidden" id="admHwChosen" aria-label="מה נבחר"></ul>
+        <div class="adm-hw-extras">
+          <button type="button" class="adm-hw-extra" data-hw-extra="admHwDueField" aria-expanded="false" aria-controls="admHwDueField">${ICONS.calendar}<span>תאריך</span></button>
+          <button type="button" class="adm-hw-extra" data-hw-extra="admHwNoteField" aria-expanded="false" aria-controls="admHwNoteField">${ICONS.pencil}<span>הערה</span></button>
+        </div>
+        <label class="adm-field hidden" id="admHwDueField">
+          <span>עד תאריך</span>
           <input type="date" id="admHwDue" min="${todayKey()}" />
         </label>
-        <label class="adm-field adm-hw-note">
-          <span>הערה לתלמיד (לא חובה)</span>
+        <label class="adm-field hidden" id="admHwNoteField">
+          <span>הערה לתלמיד</span>
           <input type="text" id="admHwNote" maxlength="300" placeholder="למשל: שימו לב להבדל בין is ל-are" />
         </label>
-        <button type="submit" class="btn btn-primary btn-candy btn-sm adm-hw-add">הוספה למשימות</button>
+        <button type="submit" class="btn btn-primary btn-candy adm-hw-add">${ICONS.plus}<span>הוספה למשימות</span></button>
       </form>`;
   }
 
@@ -1052,7 +1426,7 @@
                 <span class="adm-task-foot">
                   ${status.html}
                   <span class="adm-hw-actions">
-                    <button type="button" class="adm-icon-btn" data-copy-hw="${esc(hw.id)}" aria-label="העתקת קישור ישיר לתרגיל" title="העתקת קישור ישיר לתרגיל">${ICONS.link}</button>
+                    <button type="button" class="adm-icon-btn" data-copy-hw="${esc(hw.id)}" aria-label="העתקת קישור ישיר" title="העתקת קישור ישיר">${ICONS.link}</button>
                     <button type="button" class="adm-icon-btn" data-del-hw="${esc(hw.id)}" aria-label="הסרה מהמשימות" title="הסרה מהמשימות">${ICONS.trash}</button>
                   </span>
                 </span>
@@ -1060,6 +1434,292 @@
           })
           .join("")}
       </ul>`;
+  }
+
+  /* ── Tests: "שליחת מבחן" picks topics in the library (a tile is a whole
+     topic) and sends a test with new questions from each
+     (english-tests.js). Once the student hands it in, its rectangle shows
+     the grade; the "i" shows each topic's grade and the wrong answers. A
+     student's request for a retake waits on the rectangle until the
+     teacher opens one or turns it down (lib/student-progress.js). ── */
+
+  const TEST_BANK = window.ENGLISH_TESTS || {};
+  const MAX_TEST_TOPICS = 8;
+  // topicId → { id, title }, in the order they were picked.
+  let testPicked = new Map();
+
+  // The same rule as lib/student-progress.js testPerTopic.
+  function testPerTopic(topics) {
+    return topics === 1 ? 10 : topics === 2 ? 6 : topics === 3 ? 5 : topics === 4 ? 4 : 3;
+  }
+
+  function testTopicsText(n) {
+    if (!n) return "עוד לא נבחר נושא";
+    return n === 1 ? "נבחר נושא אחד" : `נבחרו ${n} נושאים`;
+  }
+
+  function testQuestionCount(topicIds, perTopic = testPerTopic(topicIds.length)) {
+    return topicIds.reduce((n, id) => n + Math.min(perTopic, TEST_BANK[id]?.length || 0), 0);
+  }
+
+  function testIsOpen(test) {
+    return (test.attempts || []).length < (test.allowed || 1);
+  }
+
+  function lastAttempt(test) {
+    const list = test.attempts || [];
+    return list[list.length - 1] || null;
+  }
+
+  // What's chosen, under the topics button: one chip per topic.
+  function renderTestPicked() {
+    const list = $("#admTestChosen");
+    if (!list) return;
+    list.innerHTML = [...testPicked.values()]
+      .map(
+        (tp) => `
+          <li class="adm-hw-chip">
+            <span class="adm-hw-chip-text"><b>${esc(tp.title)}</b></span>
+            <button type="button" class="adm-hw-chip-x" data-unpick-test="${esc(tp.id)}" aria-label="הסרה: ${esc(tp.title)}" title="הסרה">${ICONS.cross}</button>
+          </li>`
+      )
+      .join("");
+    list.classList.toggle("hidden", !testPicked.size);
+    $("#admTestLibLabel").textContent = testPicked.size ? `${testTopicsText(testPicked.size)} · שינוי` : "בחירת נושאים";
+    const sum = $("#admTestSum");
+    const count = testQuestionCount([...testPicked.keys()]);
+    sum.textContent = count ? `${count} שאלות במבחן` : "";
+    sum.classList.toggle("hidden", !count);
+    $("#admTestTitle").placeholder = testPicked.size === 1 ? `מבחן: ${[...testPicked.values()][0].title}` : testPicked.size ? `מבחן ב־${testPicked.size} נושאים` : "מבחן";
+  }
+
+  function testFormHtml() {
+    return `
+      ${foldToggleHtml("admTestToggle", "admTestForm", ICONS.plus, "שליחת מבחן")}
+      <form class="adm-hw-form hidden" id="admTestForm">
+        <div class="adm-hw-form-head">
+          <span class="adm-hw-form-title">שליחת מבחן</span>
+          ${foldCloseHtml()}
+        </div>
+        <div class="adm-field adm-hw-pick">
+          <span>נושאי המבחן</span>
+          <button type="button" class="adm-lib-open" id="admTestLibOpen" aria-haspopup="dialog">
+            <span class="adm-lib-open-icon">${ICONS.books}</span>
+            <span id="admTestLibLabel">בחירת נושאים</span>
+          </button>
+        </div>
+        <label class="adm-field adm-hw-due">
+          <span>עד תאריך (לא חובה)</span>
+          <input type="date" id="admTestDue" min="${todayKey()}" />
+        </label>
+        <ul class="adm-hw-chosen hidden" id="admTestChosen" aria-label="הנושאים שנבחרו"></ul>
+        <p class="adm-test-sum hidden" id="admTestSum" aria-live="polite"></p>
+        <p class="adm-test-about">השאלות במבחן חדשות — הן לא מופיעות בתרגולים.</p>
+        <label class="adm-field adm-hw-note">
+          <span>שם המבחן (לא חובה)</span>
+          <input type="text" id="admTestTitle" maxlength="120" placeholder="מבחן" />
+        </label>
+        <label class="adm-field adm-hw-note">
+          <span>הערה לתלמיד (לא חובה)</span>
+          <input type="text" id="admTestNote" maxlength="300" placeholder="למשל: קראו כל שאלה עד הסוף. בהצלחה!" />
+        </label>
+        <button type="submit" class="btn btn-primary btn-candy btn-sm adm-hw-add">שליחת המבחן</button>
+      </form>`;
+  }
+
+  function testStatus(test) {
+    const last = lastAttempt(test);
+    if (test.retakeAt) return { html: pill("low", "ביקש מבחן חוזר"), asked: true, done: !!last };
+    if (testIsOpen(test) && last) return { html: pill("none", "מבחן חוזר פתוח") };
+    if (last) {
+      const p = pct(last.score, last.total);
+      return { done: true, html: pill(level(p).cls, `ציון ${p}`) };
+    }
+    if (test.dueDate && test.dueDate < todayKey()) return { late: true, html: pill("low", "באיחור") };
+    return { html: pill("none", "ממתין") };
+  }
+
+  // Requests for a retake first, then open tests (soonest due first), then
+  // the handed-in ones, newest first.
+  function sortedTests(list) {
+    const key = (t) => (t.retakeAt ? 0 : testIsOpen(t) ? 1 : 2);
+    return [...list].sort((a, b) => {
+      if (key(a) !== key(b)) return key(a) - key(b);
+      if (key(a) === 1) return (a.dueDate || "9999").localeCompare(b.dueDate || "9999") || a.assignedAt.localeCompare(b.assignedAt);
+      return String(lastAttempt(b)?.at || b.retakeAt || "").localeCompare(String(lastAttempt(a)?.at || a.retakeAt || ""));
+    });
+  }
+
+  function testTopicsLine(test) {
+    const topics = test.topics || [];
+    return topics.length <= 3 ? topics.map((tp) => tp.title).join(" · ") : `${topics.length} נושאים`;
+  }
+
+  function testListHtml(s) {
+    const list = sortedTests(s.tests || []);
+    if (!list.length) return "";
+    return `
+      <ul class="adm-solved adm-tasks">
+        ${list
+          .map((test) => {
+            const status = testStatus(test);
+            return `
+              <li class="adm-solved-card adm-task adm-test${status.done ? " is-done" : ""}${status.late ? " is-late" : ""}${status.asked ? " is-asked" : ""}">
+                <span class="adm-solved-topic">מבחן · ${esc(testTopicsLine(test))}</span>
+                <span class="adm-solved-title">${esc(test.title)}</span>
+                ${test.dueDate && testIsOpen(test) ? `<span class="adm-task-due">עד: ${esc(fmtDue(test.dueDate))}</span>` : ""}
+                ${
+                  status.asked
+                    ? `<span class="adm-test-ask">
+                        <button type="button" class="btn btn-primary btn-candy btn-sm" data-test-allow="${esc(test.id)}">אישור מבחן חוזר</button>
+                        <button type="button" class="adm-text-btn" data-test-decline="${esc(test.id)}">לא עכשיו</button>
+                      </span>`
+                    : ""
+                }
+                <span class="adm-task-foot">
+                  ${status.html}
+                  <span class="adm-hw-actions">
+                    <button type="button" class="adm-icon-btn" data-test-info="${esc(test.id)}" aria-haspopup="dialog" aria-label="פרטי המבחן" title="פרטי המבחן">${ICONS.info}</button>
+                    <button type="button" class="adm-icon-btn" data-del-test="${esc(test.id)}" aria-label="מחיקת המבחן" title="מחיקת המבחן">${ICONS.trash}</button>
+                  </span>
+                </span>
+              </li>`;
+          })
+          .join("")}
+      </ul>`;
+  }
+
+  // Each hand-in: its grade, each topic's grade and the wrong answers (from
+  // the activity it came with, while the file still has it).
+  function attemptHtml(s, test, attempt, i) {
+    const topics = (test.topics || [])
+      .filter((tp) => attempt.byTopic?.[tp.id]?.total)
+      .map((tp) => {
+        const r = attempt.byTopic[tp.id];
+        return `<li class="adm-test-topic"><span>${esc(tp.title)}</span>${pill(level(pct(r.score, r.total)).cls, `<span dir="ltr">${r.score}/${r.total}</span>`)}</li>`;
+      })
+      .join("");
+    const activity = (s.activity || []).find((a) => a.id === attempt.activityId);
+    const mistakes = activity?.mistakes || [];
+    const wrong = mistakes.length
+      ? `<ul class="adm-round-list">${mistakes
+          .map(
+            (m) => `
+            <li class="adm-round-mistake">
+              ${m.prompt ? `<span class="adm-round-prompt" dir="auto">${esc(m.prompt)}</span>` : ""}
+              <span class="adm-round-answer">${m.given ? `ענה: <strong class="adm-round-given" dir="auto">${esc(m.given)}</strong> · ` : ""}נכון: <strong dir="auto">${esc(m.answer)}</strong></span>
+            </li>`
+          )
+          .join("")}</ul>`
+      : attempt.score >= attempt.total
+        ? `<p class="adm-round-note">כל התשובות נכונות</p>`
+        : `<p class="adm-round-note">התשובות של המבחן הזה כבר לא שמורות</p>`;
+    return `
+      <li class="adm-round">
+        <div class="adm-round-head">
+          <span class="adm-round-when">${i ? `מבחן חוזר ${i > 1 ? i : ""} · ` : ""}${esc(relTime(attempt.at))}</span>
+          ${scorePill(attempt.score, attempt.total)}
+        </div>
+        ${topics && (test.topics || []).length > 1 ? `<ul class="adm-test-topics">${topics}</ul>` : ""}
+        ${wrong}
+      </li>`;
+  }
+
+  function testDialogHtml(s, testId) {
+    const test = (s.tests || []).find((t) => t.id === testId);
+    if (!test) return "";
+    const attempts = test.attempts || [];
+    const canReopen = attempts.length && !testIsOpen(test) && !test.retakeAt;
+    return `
+      <div class="adm-info-backdrop" data-info-close></div>
+      <div class="adm-info-card">
+        <div class="adm-info-head">
+          <div class="adm-student-id">
+            <h2 class="adm-info-title" id="admInfoTitle">${esc(test.title)}</h2>
+            <span class="adm-student-sub">נשלח: ${esc(fmtDate(test.assignedAt))}${test.dueDate ? ` · עד: ${esc(fmtDue(test.dueDate))}` : ""}</span>
+          </div>
+          <button type="button" class="adm-info-close" data-info-close aria-label="סגירה">${ICONS.cross}</button>
+        </div>
+        <p class="adm-row-info"><b class="adm-test-key">נושאים</b> ${esc((test.topics || []).map((tp) => tp.title).join(" · "))}</p>
+        <p class="adm-row-info"><b class="adm-test-key">שאלות</b> ${testQuestionCount((test.topics || []).map((tp) => tp.id), test.perTopic)}</p>
+        ${test.note ? `<p class="adm-row-info"><b class="adm-test-key">הערה</b> ${esc(test.note)}</p>` : ""}
+        ${
+          attempts.length
+            ? `<ul class="adm-rounds">${attempts.map((a, i) => attemptHtml(s, test, a, i)).reverse().join("")}</ul>`
+            : `<p class="adm-card-empty">${testIsOpen(test) ? "התלמיד עוד לא הגיש את המבחן." : ""}</p>`
+        }
+        ${testIsOpen(test) && attempts.length ? `<p class="adm-row-info">מבחן חוזר פתוח — מחכה שהתלמיד יגיש.</p>` : ""}
+        ${canReopen ? `<button type="button" class="btn btn-outline btn-candy btn-sm adm-test-reopen" data-test-allow="${esc(test.id)}">פתיחת מבחן חוזר</button>` : ""}
+      </div>`;
+  }
+
+  function bindTests() {
+    const id = encodeURIComponent(current.id);
+    bindFold($("#admTestToggle"), $("#admTestForm"), "#admTestLibOpen");
+    // A new file starts with no topic chosen.
+    testPicked = new Map();
+    const redraw = () => {
+      $("#admTests").innerHTML = testListHtml(current);
+    };
+    const answer = (button, testId, allow) =>
+      withBusy(button, async () => {
+        const res = await api(`/api/admin/students/${id}/tests/${encodeURIComponent(testId)}/retake`, { method: "POST", body: { allow } });
+        current.tests = res.tests;
+        syncListEntry();
+        redraw();
+        infoDialog.close();
+        showToast(allow ? "המבחן החוזר נפתח — התלמיד יכול לגשת אליו מהקישור" : "הבקשה נדחתה. התלמיד יכול לבקש שוב");
+      });
+
+    $("#admTestLibOpen").addEventListener("click", (e) => library.open(e.currentTarget, "test"));
+    $("#admTestChosen").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-unpick-test]");
+      if (!btn) return;
+      testPicked.delete(btn.dataset.unpickTest);
+      renderTestPicked();
+      $("#admTestLibOpen").focus();
+    });
+
+    $("#admTestForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!testPicked.size) {
+        showToast("בחרו קודם נושא אחד לפחות");
+        return;
+      }
+      withBusy(e.submitter, async () => {
+        const res = await api(`/api/admin/students/${id}/tests`, {
+          method: "POST",
+          body: { topics: [...testPicked.values()], title: $("#admTestTitle").value, dueDate: $("#admTestDue").value, note: $("#admTestNote").value },
+        });
+        current.tests = res.tests;
+        syncListEntry();
+        redraw();
+        testPicked = new Map();
+        renderTestPicked();
+        $("#admTestTitle").value = "";
+        $("#admTestNote").value = "";
+        $("#admTestDue").value = "";
+        showToast("המבחן נשלח — התלמיד יראה אותו בקישור שלו");
+      });
+    });
+
+    $("#admTests").addEventListener("click", (e) => {
+      const el = e.target.closest("[data-test-allow], [data-test-decline], [data-test-info], [data-del-test]");
+      if (!el) return;
+      if (el.dataset.testAllow) answer(el, el.dataset.testAllow, true);
+      else if (el.dataset.testDecline) answer(el, el.dataset.testDecline, false);
+      else if (el.dataset.testInfo) {
+        infoDialog.open(testDialogHtml(current, el.dataset.testInfo), el);
+        $(".adm-info:not(.adm-lib) [data-test-allow]")?.addEventListener("click", (ev) => answer(ev.currentTarget, ev.currentTarget.dataset.testAllow, true));
+      } else if (confirm("למחוק את המבחן? הציונים שלו יימחקו מהתיק.")) {
+        withBusy(el, async () => {
+          const res = await api(`/api/admin/students/${id}/tests/${encodeURIComponent(el.dataset.delTest)}`, { method: "DELETE" });
+          current.tests = res.tests;
+          syncListEntry();
+          redraw();
+        });
+      }
+    });
   }
 
   /* Score trend — one series, so the card title names it and no legend is needed. */
@@ -1302,55 +1962,43 @@
     }
   }
 
-  // Selected option → the exercises it stands for ("topic:<id>" is the whole
-  // topic, "mix" one task with questions from everything the student solved).
-  function pickedExercises(value) {
-    if (value === "mix") {
-      const keys = mixKeys(current);
-      const topics = mixTopicCount(keys);
-      if (!keys.length) return [];
-      return [{
-        topicId: "mix",
-        exerciseId: "mix",
-        topicTitle: "תרגול מעורב",
-        exerciseTitle: topics === 1 ? "שאלות מעורבבות מנושא אחד" : `שאלות מעורבבות מ-${topics} נושאים`,
-        type: "mix",
-        items: keys,
-      }];
-    }
-    const items = (topic, exercises) =>
-      exercises.map((ex) => ({ topicId: topic.id, exerciseId: ex.id, topicTitle: topic.title, exerciseTitle: ex.title, type: ex.type }));
-    if (value.startsWith("topic:")) {
-      const topic = TOPICS.find((tp) => tp.id === value.slice(6));
-      return topic ? items(topic, topic.exercises || []) : [];
-    }
-    const [topicId, exerciseId] = value.split("/");
-    const topic = TOPICS.find((tp) => tp.id === topicId);
-    const ex = topic?.exercises?.find((e) => e.id === exerciseId);
-    return ex ? items(topic, [ex]) : [];
-  }
-
   function bindLinkCard() {
     const id = encodeURIComponent(current.id);
     $("#admCopyLink").addEventListener("click", async () => {
-      if (await copyText(portalUrl(current))) {
-        showToast("הקישור הועתק — אפשר להדביק ולשלוח לתלמיד");
+      const url = portalUrl(current);
+      // The card no longer shows the link, so a blocked copy offers it to copy by hand.
+      if (await copyText(url)) showToast("הקישור הועתק — אפשר להדביק ולשלוח לתלמיד");
+      else prompt("העתיקו את הקישור:", url);
+    });
+    // The phone's share sheet; a computer without one gets WhatsApp.
+    $("#admShareLink").addEventListener("click", async () => {
+      if (!navigator.share) {
+        window.open(whatsappUrl(current), "_blank", "noopener");
         return;
       }
-      $("#admLinkInput").focus();
-      $("#admLinkInput").select();
-      showToast("הקישור מסומן — לחצו Ctrl+C כדי להעתיק");
+      try {
+        await navigator.share({ text: shareText(current) });
+      } catch (e) {
+        if (e.name !== "AbortError") window.open(whatsappUrl(current), "_blank", "noopener");
+      }
     });
-    $("#admLinkInput").addEventListener("focus", (e) => e.target.select());
     $("#admNewKey").addEventListener("click", (e) => {
       if (!confirm(`ליצור ל${current.name} קישור חדש? הקישור הקודם יפסיק לעבוד, וצריך יהיה לשלוח לתלמיד את החדש. ההתקדמות שנשמרה לא נמחקת.`)) return;
       withBusy(e.currentTarget, async () => {
         const { key } = await api(`/api/admin/students/${id}/key`, { method: "POST" });
         current.key = key;
         syncListEntry();
-        $("#admLinkCard").innerHTML = linkCardHtml(current);
-        bindLinkCard();
         showToast("נוצר קישור חדש — שלחו אותו לתלמיד");
+      });
+    });
+    $("#admLoginCard").addEventListener("submit", (e) => {
+      e.preventDefault();
+      withBusy(e.submitter, async () => {
+        const res = await api(`/api/admin/students/${id}`, { method: "PATCH", body: { email: $("#admEmail").value } });
+        current.email = res.email;
+        syncListEntry();
+        $("#admEmail").value = res.email;
+        showToast(res.email ? "נשמר — התלמיד יכול להיכנס עם המייל" : "המייל נמחק — התלמיד נכנס רק עם הקישור");
       });
     });
   }
@@ -1388,9 +2036,8 @@
   function bindStudent() {
     const id = encodeURIComponent(current.id);
     bindFold($("#admLinkToggle"), $("#admLinkCard"), "#admCopyLink");
-    bindFold($("#admParentToggle"), $("#admParentCard"), "#admMakeParent, #admCopyParent");
-    bindFold($("#admHwToggle"), $("#admHwForm"), "#admHwPick");
-    bindFold($("#admSummaryToggle"), $("#admSummaryCard"), "[data-fold-close]");
+    if (PARENTS_ENABLED) bindFold($("#admParentToggle"), $("#admParentCard"), "#admMakeParent, #admCopyParent");
+    bindFold($("#admHwToggle"), $("#admHwForm"), "#admLibOpen");
     // The chart was drawn while folded, with no width to measure.
     bindFold($("#admTrendToggle"), $("#admTrendCard"), "[data-fold-close]", drawTrend);
     bindFold($("#admReviewToggle"), $("#admReviewCard"), "[data-fold-close]");
@@ -1398,8 +2045,10 @@
     bindFold($("#admFocusToggle"), $("#admFocusCard"), "#admFocus");
     bindFold($("#admNotesToggle"), $("#admNotesCard"), "#admNoteText");
     bindFold($("#admDetailsToggle"), $("#admDetailsCard"), "#admName");
+    bindFold($("#admLoginToggle"), $("#admLoginCard"), "#admEmail");
+    bindFold($("#admRenewToggle"), $("#admRenewCard"), "#admNewKey");
     bindLinkCard();
-    bindParentCard();
+    if (PARENTS_ENABLED) bindParentCard();
     $$("[data-solved]").forEach((btn) =>
       btn.addEventListener("click", () => infoDialog.open(solvedDialogHtml(current, btn.dataset.solved), btn))
     );
@@ -1407,10 +2056,42 @@
       btn.addEventListener("click", () => infoDialog.open(rowInfoHtml(btn.dataset.rowInfo), btn))
     );
 
+    // The summary counts the tasks, so it's redrawn with the list.
+    const redrawHomework = () => {
+      $("#admHomework").innerHTML = homeworkListHtml(current);
+      $("#admFileSummary").innerHTML = summaryHtml(current);
+    };
+
+    // A new file starts with nothing chosen.
+    picked = new Map();
+    $("#admLibOpen").addEventListener("click", (e) => library.open(e.currentTarget));
+    $("#admHwChosen").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-unpick]");
+      if (!btn) return;
+      picked.forEach((task, key) => task.topicId === btn.dataset.unpick && picked.delete(key));
+      renderPicked();
+      $("#admLibOpen").focus();
+    });
+    // "תאריך" / "הערה" open their field; closing one empties it, so what's
+    // hidden isn't sent.
+    $$("[data-hw-extra]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const field = $(`#${btn.dataset.hwExtra}`);
+        const input = $("input", field);
+        const open = field.classList.toggle("hidden") === false;
+        btn.setAttribute("aria-expanded", String(open));
+        if (open) input.focus();
+        else input.value = "";
+      })
+    );
+
     $("#admHwForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      const items = pickedExercises($("#admHwPick").value);
-      if (!items.length) return;
+      const items = [...picked.values()];
+      if (!items.length) {
+        showToast("בחרו קודם שיעור או תרגיל מהספרייה");
+        return;
+      }
       withBusy(e.submitter, async () => {
         const res = await api(`/api/admin/students/${id}/homework`, {
           method: "POST",
@@ -1418,11 +2099,12 @@
         });
         current.homework = res.homework;
         syncListEntry();
-        $("#admHomework").innerHTML = homeworkListHtml(current);
-        $("#admHwPick").value = "";
+        redrawHomework();
+        picked = new Map();
+        renderPicked();
         $("#admHwNote").value = "";
-        if (!res.added) showToast("התרגילים האלה כבר במשימות ועוד לא בוצעו");
-        else showToast(res.skipped ? `נוספו ${res.added} תרגילים (${res.skipped} כבר היו ברשימה)` : res.added === 1 ? "התרגיל נוסף למשימות" : `נוספו ${res.added} תרגילים למשימות`);
+        if (!res.added) showToast("המשימות האלה כבר ברשימה ועוד לא בוצעו");
+        else showToast(res.skipped ? `נוספו ${res.added} משימות (${res.skipped} כבר היו ברשימה)` : res.added === 1 ? "המשימה נוספה" : `נוספו ${res.added} משימות`);
       });
     });
 
@@ -1431,17 +2113,19 @@
       const delBtn = e.target.closest("[data-del-hw]");
       if (copyBtn) {
         const hw = (current.homework || []).find((h) => h.id === copyBtn.dataset.copyHw);
-        if (hw) showToast((await copyText(exerciseUrl(current, hw))) ? "הקישור הישיר לתרגיל הועתק" : "לא הצלחנו להעתיק");
+        if (hw) showToast((await copyText(exerciseUrl(current, hw))) ? (hw.type === "lesson" ? "הקישור הישיר לשיעור הועתק" : "הקישור הישיר לתרגיל הועתק") : "לא הצלחנו להעתיק");
         return;
       }
-      if (!delBtn || !confirm("להסיר את התרגיל מהמשימות?")) return;
+      if (!delBtn || !confirm("להסיר את המשימה?")) return;
       withBusy(delBtn, async () => {
         const res = await api(`/api/admin/students/${id}/homework/${encodeURIComponent(delBtn.dataset.delHw)}`, { method: "DELETE" });
         current.homework = res.homework;
         syncListEntry();
-        $("#admHomework").innerHTML = homeworkListHtml(current);
+        redrawHomework();
       });
     });
+
+    bindTests();
 
     $("#admFocusCard").addEventListener("submit", (e) => {
       e.preventDefault();
@@ -1465,6 +2149,23 @@
         syncListEntry();
         renderStudent();
         showToast("השם נשמר");
+      });
+    });
+
+    // On the box, so the button keeps working after it's redrawn.
+    $("#admAccess").addEventListener("click", (e) => {
+      const btn = e.target.closest("#admAccessBtn");
+      if (!btn) return;
+      const blocked = !current.blocked;
+      if (blocked && !confirm(`להשבית ל${current.name} את הכניסה? הקישור והמייל יפסיקו לעבוד עד שתחזירו אותה. ההתקדמות לא נמחקת.`)) return;
+      withBusy(btn, async () => {
+        const res = await api(`/api/admin/students/${id}`, { method: "PATCH", body: { blocked } });
+        current.blocked = res.blocked;
+        syncListEntry();
+        $("#admAccess").innerHTML = accessHtml(current);
+        $("#admBlockedNote").classList.toggle("hidden", !current.blocked);
+        $("#admAccessBtn").focus();
+        showToast(res.blocked ? "הכניסה הושבתה" : "הכניסה הוחזרה — התלמיד יכול להיכנס");
       });
     });
 
@@ -1544,7 +2245,7 @@
       report = (await api(`/api/admin/students/report${week ? `?week=${encodeURIComponent(week)}` : ""}`)).report;
       renderReport();
     } catch (e) {
-      if (account) view.innerHTML = `<a class="adm-back" href="#">חזרה</a><p class="adm-error">${esc(e.message)}</p>`;
+      if (account) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
     }
   }
 
@@ -1556,7 +2257,6 @@
       ? `<span class="adm-week-btn is-off" aria-hidden="true">${ICONS.chevron}</span>`
       : `<a class="adm-week-btn" href="${weekHash(shiftWeek(r.week, 1))}" aria-label="השבוע הבא" title="השבוע הבא">${ICONS.chevron}</a>`;
     $("#admDetailView").innerHTML = `
-      <a class="adm-back" href="#">חזרה</a>
       <div class="adm-page-head">
         <h2 class="adm-h1">הדוח השבועי</h2>
       </div>
@@ -1723,10 +2423,169 @@
     return reportCard("כל התלמידים", null, "", `<ul class="adm-ex-list adm-report-rows">${rows}</ul>`);
   }
 
+  /* ── The class at a glance (#class): from everything the students
+     practiced so far — a rectangle per topic with the class's average in
+     it (hardest first), opening who practiced it and how they did, and the
+     questions the students still get wrong. ── */
+
+  const CLASS_MISTAKES = 10;
+  const CLASS_TOPIC_MISTAKES = 5;
+
+  let classData = null;
+
+  async function loadClass() {
+    showOnly("admDetailView");
+    const view = $("#admDetailView");
+    view.innerHTML = `<p class="adm-loading">טוען את הכיתה…</p>`;
+    try {
+      classData = (await api("/api/admin/students/class")).class;
+      renderClass();
+    } catch (e) {
+      if (account) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
+    }
+  }
+
+  function classTopicTitle(topic) {
+    return TOPIC_TITLES.get(topic.id) || topic.title || topic.id;
+  }
+
+  function studentsText(n) {
+    return n === 1 ? "תלמיד אחד" : `${n} תלמידים`;
+  }
+
+  function renderClass() {
+    const c = classData;
+    const t = c.totals;
+    const view = $("#admDetailView");
+    if (!t.students) {
+      view.innerHTML = `
+        <div class="adm-page-head"><h2 class="adm-h1">דוח הכיתה</h2></div>
+        <p class="adm-muted adm-report-none">עוד אין תלמידים ברשימה. הוסיפו תלמידים, והעמוד יתמלא כשיתרגלו.</p>`;
+      return;
+    }
+    view.innerHTML = `
+      <div class="adm-file-top">
+        <div class="adm-file-tools">
+          <a class="adm-fold-toggle" href="#report">
+            <span class="adm-fold-icon">${ICONS.clock}</span>
+            <span>הדוח השבועי</span>
+          </a>
+        </div>
+      </div>
+      <h2 class="adm-h1 adm-solved-head">דוח הכיתה</h2>
+      <div class="adm-tiles adm-file-summary">
+        ${tile("תרגלו", `<span dir="ltr">${t.practiced}/${t.students}</span>`, "תלמידים")}
+        ${tile("ציון ממוצע", t.average == null ? "—" : `${t.average}%`, t.average == null ? "" : level(t.average).label)}
+        ${tile("זמן תרגול", esc(fmtDuration(t.practiceSec)), "של כל הכיתה")}
+        ${tile("נושאים", fmtNum(c.topics.length), "שתורגלו")}
+      </div>
+
+      <h2 class="adm-h1 adm-solved-head adm-file-section">נושאים</h2>
+      ${
+        c.topics.length
+          ? `<p class="adm-muted adm-class-lead">הנושא הכי קשה לכיתה — ראשון.</p>
+             <p class="adm-muted adm-class-lead">לחיצה על נושא מראה כל תלמיד.</p>
+             <div class="adm-solved adm-class-topics" id="admClassTopics">${c.topics.map(classTopicCardHtml).join("")}</div>`
+          : `<p class="adm-muted">עוד לא תרגלו. כשהתלמידים יפתרו תרגילים בקישור שלהם, הנושאים יופיעו כאן.</p>`
+      }
+
+      <h2 class="adm-h1 adm-solved-head adm-file-section">טעויות נפוצות</h2>
+      ${
+        c.mistakes.length
+          ? `<p class="adm-muted adm-class-lead">שאלות שהתלמידים עדיין טועים בהן.</p>
+             <p class="adm-muted adm-class-lead">כדאי לעבור עליהן בכיתה.</p>
+             ${classMistakesHtml(c.mistakes.slice(0, CLASS_MISTAKES))}`
+          : `<p class="adm-muted">אין כרגע שאלות שהתלמידים טועים בהן.</p>`
+      }`;
+
+    $("#admClassTopics")?.addEventListener("click", (e) => {
+      const card = e.target.closest("[data-class-topic]");
+      if (card) infoDialog.open(classTopicDialogHtml(card.dataset.classTopic), card);
+    });
+  }
+
+  // One thin line: the topic and the class's average. Who practiced it is in its window.
+  function classTopicCardHtml(topic) {
+    const lv = level(topic.average);
+    return `
+      <button type="button" class="adm-solved-card adm-class-topic" data-class-topic="${esc(topic.id)}" aria-haspopup="dialog">
+        <span class="adm-solved-title">${esc(classTopicTitle(topic))}</span>
+        ${pill(lv.cls, `${topic.average}% · ${lv.label}`)}
+      </button>`;
+  }
+
+  // Who still gets each question wrong: their names while they fit a line.
+  function classMistakesHtml(list) {
+    const names = new Map(classData.students.map((s) => [s.id, s.name]));
+    return `
+      <ul class="adm-weak adm-class-weak">
+        ${list
+          .map((m) => {
+            const who = m.students.length <= 3 ? `: ${m.students.map((id) => names.get(id)).join(", ")}` : "";
+            return `
+          <li class="adm-weak-item">
+            <span class="adm-weak-count" title="${esc(studentsText(m.students.length))}">${m.students.length}</span>
+            <span class="adm-weak-text">
+              ${m.prompt ? `<span class="adm-weak-prompt" dir="auto">${esc(m.prompt)}</span>` : ""}
+              <span class="adm-weak-answer">תשובה נכונה: <strong dir="auto">${esc(m.answer)}</strong></span>
+              <span class="adm-weak-from">${esc(`${TOPIC_TITLES.get(m.topicId) || m.topicTitle} · ${m.exerciseTitle}`)}</span>
+              <span class="adm-weak-from">${esc(`טועים בה ${studentsText(m.students.length)}${who}`)}</span>
+            </span>
+          </li>`;
+          })
+          .join("")}
+      </ul>`;
+  }
+
+  function classTopicDialogHtml(topicId) {
+    const c = classData;
+    const topic = c.topics.find((tp) => tp.id === topicId);
+    if (!topic) return "";
+    const byId = new Map(c.students.map((s) => [s.id, s]));
+    const done = new Set(topic.students.map((s) => s.id));
+    const rows = [...topic.students]
+      .sort((a, b) => a.average - b.average || byId.get(a.id).name.localeCompare(byId.get(b.id).name, "he"))
+      .map((s) => {
+        const lv = level(s.average);
+        return `
+          <li class="adm-ex">
+            <span class="adm-ex-text">
+              ${studentLinkHtml(byId.get(s.id))}
+              <span class="adm-ex-meta">${s.exercises === 1 ? "תרגיל אחד" : `${s.exercises} תרגילים`}</span>
+            </span>
+            ${pill(lv.cls, `${s.average}% · ${lv.label}`)}
+          </li>`;
+      })
+      .join("");
+    const notYet = c.students.filter((s) => !done.has(s.id)).sort((a, b) => a.name.localeCompare(b.name, "he"));
+    const mistakes = c.mistakes.filter((m) => m.topicId === topicId).slice(0, CLASS_TOPIC_MISTAKES);
+    return `
+      <div class="adm-info-backdrop" data-info-close></div>
+      <div class="adm-info-card">
+        <div class="adm-info-head">
+          <div class="adm-student-id">
+            <h2 class="adm-info-title" id="admInfoTitle">${esc(classTopicTitle(topic))}</h2>
+            <span class="adm-student-sub">ממוצע הכיתה: ${topic.average}% · תרגלו: <span dir="ltr">${topic.students.length}/${c.totals.students}</span></span>
+          </div>
+          <button type="button" class="adm-info-close" data-info-close aria-label="סגירה">${ICONS.cross}</button>
+        </div>
+        <h3 class="adm-lib-heading"><b class="adm-lib-key">לפי תלמיד</b></h3>
+        <ul class="adm-ex-list adm-report-rows adm-class-rows">${rows}</ul>
+        ${
+          notYet.length
+            ? `<h3 class="adm-lib-heading"><b class="adm-lib-key">עוד לא תרגלו</b></h3>
+               <ul class="adm-report-chips">${notYet.map((s) => `<li class="adm-report-chip adm-class-chip">${studentLinkHtml(s)}</li>`).join("")}</ul>`
+            : ""
+        }
+        ${mistakes.length ? `<h3 class="adm-lib-heading"><b class="adm-lib-key">טעויות נפוצות</b></h3>${classMistakesHtml(mistakes)}` : ""}
+      </div>`;
+  }
+
   /* ── Routing ── */
 
   function route() {
     infoDialog.close(false);
+    library.close(false);
     if (!account) {
       showGate(gateError);
       gateError = "";
@@ -1735,6 +2594,7 @@
     const id = decodeURIComponent(location.hash.replace(/^#/, ""));
     const week = id.match(/^report(?:\/(\d{4}-\d{2}-\d{2}))?$/);
     if (week) loadReport(week[1]);
+    else if (id === "class") loadClass();
     else if (id) loadStudent(id);
     else loadList();
     window.scrollTo({ top: 0 });
@@ -1754,11 +2614,28 @@
     $("#admListView").innerHTML = `<p class="adm-loading">טוען…</p>`;
     const ready = await window.FirebaseApp?.ready;
     if (!ready) {
-      showGate("ההתחברות עם Google עדיין לא מוגדרת באתר (חסרות הגדרות Firebase)");
+      showGate("ההתחברות עדיין לא מוגדרת באתר (חסרות הגדרות Firebase)");
       return;
     }
+    // The reset email in Hebrew.
+    FirebaseApp.auth.languageCode = "he";
     $("#admGoogleBtn").disabled = false;
     $("#admGoogleBtn").addEventListener("click", signIn);
+    $("#admLoginSubmit").disabled = false;
+    $("#admEmailLogin").addEventListener("submit", emailSignIn);
+    $("#admLoginMode").addEventListener("click", () => {
+      showGate();
+      setEmailMode(emailMode === "signup" ? "signin" : "signup");
+    });
+    $("#admLoginForgot").addEventListener("click", resetPassword);
+    // The header's "חזרה" goes to the previous page; opened straight from a
+    // link (no history), it falls back to the site.
+    $("#admBack").addEventListener("click", (e) => {
+      if (history.length > 1) {
+        e.preventDefault();
+        history.back();
+      }
+    });
     $("#admSignOut").addEventListener("click", () => {
       setAccountMenu(false);
       FirebaseApp.auth.signOut();

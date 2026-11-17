@@ -3634,7 +3634,7 @@
         { id: "tenses", label: "זמנים בסיסיים" },
         { id: "going-to", label: "עתיד: going to" },
         { id: "irregular-verbs", label: "פעלים חשובים" },
-        { id: "modals", label: "חובה ועצה: must, should, have to" },
+        { id: "modals", label: "חובה, עצה ואפשרות: must, should, might" },
         { id: "word-building", label: "בניית מילים: un-, re-, -er, -ful" },
         { id: "present-perfect", label: "הווה מושלם: have done" },
         { id: "conditionals", label: "משפטי תנאי: if" },
@@ -3679,7 +3679,7 @@
         { id: "tenses", label: "זמנים בסיסיים" },
         { id: "going-to", label: "עתיד: going to" },
         { id: "irregular-verbs", label: "פעלים חשובים" },
-        { id: "modals", label: "חובה ועצה: must, should, have to" },
+        { id: "modals", label: "חובה, עצה ואפשרות: must, should, might" },
         { id: "word-building", label: "בניית מילים: un-, re-, -er, -ful" },
         { id: "present-perfect", label: "הווה מושלם: have done" },
         { id: "conditionals", label: "משפטי תנאי: if" },
@@ -3724,7 +3724,7 @@
         { id: "tenses", label: "זמנים בסיסיים" },
         { id: "going-to", label: "עתיד: going to" },
         { id: "irregular-verbs", label: "פעלים חשובים" },
-        { id: "modals", label: "חובה ועצה: must, should, have to" },
+        { id: "modals", label: "חובה, עצה ואפשרות: must, should, might" },
         { id: "word-building", label: "בניית מילים: un-, re-, -er, -ful" },
         { id: "present-perfect", label: "הווה מושלם: have done" },
         { id: "conditionals", label: "משפטי תנאי: if" },
@@ -3765,6 +3765,10 @@
         { id: "division", label: "חילוק" },
         { id: "measure", label: "מידות" },
         { id: "solids", label: "גופים" },
+        { id: "diagrams", label: "דיאגרמות" },
+        { id: "numbers", label: "מספרים" },
+        { id: "coins", label: "כסף" },
+        { id: "clock", label: "שעון" },
       ],
       dv: [
         { id: "fractions", label: "שברים" },
@@ -3788,6 +3792,9 @@
         { id: "measure", label: "מידות" },
         { id: "divisibility", label: "התחלקות" },
         { id: "solids", label: "גופים ונפח" },
+        { id: "big-numbers", label: "מספרים גדולים" },
+        { id: "diagrams", label: "דיאגרמות" },
+        { id: "lines", label: "ישרים מקבילים" },
       ],
       zh: [
         { id: "percent", label: "אחוזים" },
@@ -3817,11 +3824,15 @@
         { id: "systems", label: "מערכת משוואות" },
         { id: "parabola", label: "פונקציה ריבועית" },
         { id: "trig", label: "טריגונומטריה" },
+        { id: "speed", label: "דרך, זמן ומהירות" },
+        { id: "lines", label: "ישרים מקבילים" },
+        { id: "isosceles", label: "משולש שווה שוקיים" },
+        { id: "alg-fractions", label: "שברים אלגבריים" },
       ],
     },
     hebrew: {
       ag: [
-        { id: "roots", label: "שורש ובניין" },
+        { id: "roots", label: "שורש, בניין ומשקל" },
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
@@ -3832,9 +3843,10 @@
         { id: "grammar", label: "דקדוק" },
         { id: "words", label: "אוצר מילים" },
         { id: "text-types", label: "סוגי טקסטים" },
+        { id: "final-letters", label: "אותיות סופיות" },
       ],
       dv: [
-        { id: "roots", label: "שורש ובניין" },
+        { id: "roots", label: "שורש, בניין ומשקל" },
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
@@ -3845,12 +3857,12 @@
         { id: "grammar", label: "דקדוק" },
         { id: "he-numbers", label: "שם המספר" },
         { id: "words", label: "אוצר מילים" },
-        { id: "sentence", label: "תחביר: נושא, נשוא ותיאורים" },
+        { id: "sentence", label: "תחביר: חלקי המשפט" },
         { id: "complex-sentence", label: "משפט מחובר ומורכב" },
         { id: "text-types", label: "סוגי טקסטים" },
       ],
       zh: [
-        { id: "roots", label: "שורש ובניין" },
+        { id: "roots", label: "שורש, בניין ומשקל" },
         { id: "he-tenses", label: "זמנים" },
         { id: "writing", label: "ניסוח ופיסוק" },
         { id: "reading", label: "הבנת הנקרא" },
@@ -3858,7 +3870,7 @@
         { id: "words", label: "אוצר מילים" },
         { id: "grammar", label: "דקדוק" },
         { id: "he-numbers", label: "שם המספר" },
-        { id: "sentence", label: "תחביר: נושא, נשוא ותיאורים" },
+        { id: "sentence", label: "תחביר: חלקי המשפט" },
         { id: "complex-sentence", label: "משפט מחובר ומורכב" },
         { id: "text-types", label: "סוגי טקסטים" },
       ],
@@ -3895,6 +3907,7 @@
         { id: "substances", label: "חומרים" },
         { id: "heredity", label: "תורשה" },
         { id: "technology", label: "טכנולוגיה" },
+        { id: "ai", label: "בינה מלאכותית" },
       ],
       zh: [
         { id: "matter", label: "מצבי צבירה" },
@@ -3908,11 +3921,15 @@
         { id: "reactions", label: "תגובה כימית" },
         { id: "elements", label: "האטום והיסודות" },
         { id: "nutrition", label: "תזונה" },
+        { id: "heat", label: "חום" },
+        { id: "acids", label: "חומצות ובסיסים" },
+        { id: "ai", label: "בינה מלאכותית" },
       ],
     },
     geography: {
       ag: [
         { id: "homeland", label: "מולדת" },
+        { id: "civics", label: "חברה ואזרחות" },
         { id: "israel-map", label: "מפת ארץ ישראל" },
         { id: "map-skills", label: "קוראים מפה" },
         { id: "settlements", label: "יישובים בארץ" },
@@ -3925,6 +3942,7 @@
         { id: "settlements", label: "יישובים בארץ" },
         { id: "israel-climate", label: "אקלים בישראל" },
         { id: "mediterranean", label: "אגן הים התיכון" },
+        { id: "civics", label: "חברה ואזרחות" },
       ],
       zh: [
         { id: "israel-map", label: "מפת ארץ ישראל" },
@@ -3937,6 +3955,7 @@
         { id: "inequality", label: "פערים בעולם" },
         { id: "cities", label: "ערים בעולם" },
         { id: "earth-motion", label: "כדור הארץ בתנועה" },
+        { id: "landforms", label: "עיצוב פני השטח" },
         { id: "israel-mideast", label: "ישראל במזרח התיכון" },
         { id: "israel-water", label: "המים בישראל" },
         { id: "israel-people", label: "אוכלוסיית ישראל" },
@@ -4057,6 +4076,8 @@
     // The English lessons live in the English area (/services/english), so
     // the library shows it as one card instead of a card per lesson.
     const practiceCard = $("#englishPracticeCard");
+    // The English word cards (#cards on the English page) get a card of their own.
+    const wordCardsCard = $("#englishCardsCard");
     if (!filtersRoot || !topicMenu || !cards.length) return;
 
     // The cards are in each subject's learning-path order (subject-practice.js),
@@ -4080,6 +4101,13 @@
       "click",
       () => {
         window.location.href = state.grade === "all" ? SUBJECT_AREAS.english : `${SUBJECT_AREAS.english}?grade=${state.grade}`;
+      },
+      true
+    );
+    wordCardsCard?.addEventListener(
+      "click",
+      () => {
+        window.location.href = `${SUBJECT_AREAS.english}#cards`;
       },
       true
     );
@@ -4199,6 +4227,7 @@
       });
       const showPractice = state.subject === "all" && state.topic === "all" && englishInGrade(state.grade);
       practiceCard?.classList.toggle("hidden", !showPractice);
+      wordCardsCard?.classList.toggle("hidden", !showPractice);
       if (showPractice) visible += 1;
       empty?.classList.toggle("hidden", visible > 0);
     }
@@ -4232,8 +4261,11 @@
       }
     }
 
+    // The English practice and word-cards cards aren't lessons, but have the
+    // same square title, so they are fitted too.
+    const fitCards = [...cards, practiceCard, wordCardsCard].filter(Boolean);
     if (typeof ResizeObserver !== "undefined") {
-      cards.forEach((card) => {
+      fitCards.forEach((card) => {
         const preview = $(".svc-lesson-preview", card);
         const wrap = $(".svc-lesson-title-wrap", card);
         if (!preview || !wrap) return;
@@ -4245,7 +4277,7 @@
 
     // The site font arrives after the first fit, and its wider letters ran
     // the titles past the card — so fit again whenever a font finishes loading.
-    const refitLessonCards = () => cards.forEach((card) => fitLessonCardTitle($(".svc-lesson-title-wrap", card)));
+    const refitLessonCards = () => fitCards.forEach((card) => fitLessonCardTitle($(".svc-lesson-title-wrap", card)));
     document.fonts?.ready.then(refitLessonCards);
     document.fonts?.addEventListener?.("loadingdone", refitLessonCards);
 
@@ -5259,8 +5291,9 @@
 
     // "הסבר מורחב": a square button beside the other top-bar buttons, on a
     // lesson whose slides have `more` (lines of simple Hebrew, one idea
-    // each). It switches the whole presentation: every such slide shows its
-    // longer explanation instead of the short one. The choice is remembered.
+    // each). It switches the whole presentation: every such slide keeps all
+    // it shows and adds its longer explanation under it. The choice is
+    // remembered.
     const MORE_KEY = "pleyi-lesson-more";
     const MORE_ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5.9 1.1.9 1.8v.5h6V16c0-.7.3-1.3.9-1.8A6.5 6.5 0 0 0 12 2.5Z"/></svg>`;
     const moreBtn = document.createElement("button");
@@ -5527,7 +5560,8 @@
         .join("");
       // Vocabulary lessons also offer the picture games of the Learn English
       // page (english-games.js), played there on the lesson's words.
-      const pictureGames = lesson.gameTopic ? window.EnglishGames?.list || [] : [];
+      // Bingo needs more words than the other games (EnglishGames.listFor).
+      const pictureGames = lesson.gameTopic ? window.EnglishGames?.listFor(lesson.vocab || []) || [] : [];
       const options = pictureGames.length
         ? `
           <div class="lp-game-group">
@@ -6016,17 +6050,56 @@
         parts.push(`<div class="lp-chips" dir="rtl">${slide.chips.map((c) => `<div class="lp-chip">${subjectTextHtml(c)}</div>`).join("")}</div>`);
       }
       if (slide.result) parts.push(`<div class="lp-result" dir="rtl">${subjectTextHtml(slide.result)}</div>`);
-      if (sideFig) return `<div class="lp-steps lp-steps--side"><div class="lp-steps-col">${parts.join("")}</div>${figHtml}</div>`;
-      return `<div class="lp-steps">${parts.join("")}</div>`;
+      const moreParts = slide.moreView ? moreLineParts(moreLinesToShow(slide)) : [];
+      if (moreParts.length) parts.push(`<div class="lp-more">${moreParts.join("")}</div>`);
+      const cls = `lp-steps${moreParts.length ? " lp-steps--more" : ""}`;
+      if (sideFig) return `<div class="${cls} lp-steps--side"><div class="lp-steps-col">${parts.join("")}</div>${figHtml}</div>`;
+      return `<div class="${cls}">${parts.join("")}</div>`;
     }
 
-    // A slide in "הסבר מורחב" mode: its `more` lines in order (a line that
-    // is only math, "$P = 2 · π · r$", gets a card; an [english, hebrew] row
-    // in an English lesson is an example card to hear, and rows next to each
-    // other share one list), beside its drawing.
-    function renderMoreBody(slide) {
+    // "הסבר מורחב" keeps the whole slide (its short lines, table, right /
+    // wrong, examples, math cards) and adds the `more` lines under it. A
+    // `more` line that just repeats what the slide already shows is left
+    // out, so nothing is on the slide twice.
+    const LP_MORE_SHOWN_PARTS = ["lines", "math", "table", "grid", "steps", "check", "compare", "verdicts", "proof", "points", "chips", "result", "examples"];
+    const lpWords = (text) =>
+      String(text)
+        .replace(/\*\*|\$/g, " ")
+        .toLowerCase()
+        .split(/[^\p{L}\p{N}'’]+/u)
+        .filter(Boolean);
+    const lpSameText = (text) => lpWords(text).join(" ");
+
+    function lpShownTexts(value, out = []) {
+      if (typeof value === "string" || typeof value === "number") out.push(String(value));
+      else if (Array.isArray(value)) value.forEach((v) => lpShownTexts(v, out));
+      else if (value && typeof value === "object") Object.values(value).forEach((v) => lpShownTexts(v, out));
+      return out;
+    }
+
+    function moreLinesToShow(slide) {
+      const texts = LP_MORE_SHOWN_PARTS.flatMap((key) => lpShownTexts(slide[key]));
+      if (!texts.length) return slide.more;
+      const sameTexts = new Set(texts.map(lpSameText));
+      const words = new Set(texts.flatMap(lpWords));
+      // Hebrew "ו" in front of a word ("ועליז") is still the same word.
+      const known = (w) => words.has(w) || (w.length > 2 && w[0] === "ו" && words.has(w.slice(1)));
+      return slide.more.filter((line) => {
+        // An English example or a math line repeats only as a whole — "I am
+        // sad" next to "I am happy" and "He is sad" is still new.
+        if (Array.isArray(line)) return !sameTexts.has(lpSameText(line[0]));
+        if (/^\$[^$]+\$$/.test(line)) return !sameTexts.has(lpSameText(line));
+        const lineWords = lpWords(line);
+        return !lineWords.length || !lineWords.every(known);
+      });
+    }
+
+    // `more` lines in order: a line that is only math, "$P = 2 · π · r$",
+    // gets a card; an [english, hebrew] row in an English lesson is an
+    // example card to hear, and rows next to each other share one list.
+    function moreLineParts(more) {
       const parts = [];
-      slide.more.forEach((line) => {
+      more.forEach((line) => {
         if (Array.isArray(line)) {
           const card = stepsExampleHtml({ en: line[0], he: line[1] });
           if (Array.isArray(parts[parts.length - 1])) parts[parts.length - 1].push(card);
@@ -6040,21 +6113,14 @@
             : `<p class="lp-steps-line">${stepsHebrewHtml(line)}</p>`
         );
       });
-      const lines = parts.map((part) => (Array.isArray(part) ? `<div class="lp-ex-list">${part.join("")}</div>` : part)).join("");
-      const figure = slide.fig && window.LESSON_FIGURES?.[slide.fig.kind];
-      if (!figure) return `<div class="lp-steps lp-steps--more">${lines}</div>`;
-      return `<div class="lp-steps lp-steps--side lp-steps--more"><div class="lp-steps-col">${lines}</div><div class="lp-fig${
-        figure.tall ? " lp-fig--tall" : ""
-      }">${figure(slide.fig)}</div></div>`;
+      return parts.map((part) => (Array.isArray(part) ? `<div class="lp-ex-list">${part.join("")}</div>` : part));
     }
 
     function renderContentSlide(slide, { isLast = false } = {}) {
       let bodyHtml = "";
       let bodyLayout = "default";
 
-      if (slide.moreView) {
-        bodyHtml = renderMoreBody(slide);
-      } else if (slide.lines || slide.fig || slide.examples || LP_SIDE_FIG_PARTS.some((key) => slide[key])) {
+      if (slide.moreView || slide.lines || slide.fig || slide.examples || LP_SIDE_FIG_PARTS.some((key) => slide[key])) {
         bodyHtml = renderStepsBody(slide);
       } else if (slide.pictures?.length) {
         bodyHtml = `<ul class="lp-picture-grid" data-count="${slide.pictures.length}">${slide.pictures
@@ -6210,7 +6276,7 @@
           : slide.type === "pdf-image"
             ? renderPdfImageSlide(slide)
             : renderContentSlide(
-                moreMode && slide.more?.length ? { title: slide.title, fig: slide.fig, more: slide.more, moreView: true } : slide,
+                moreMode && slide.more?.length ? { ...slide, moreView: true } : slide,
                 { isLast: index === steps.length - 1 }
               );
       animateSlide(html, direction);
@@ -6274,8 +6340,41 @@
       player.setAttribute("aria-hidden", "false");
       setExpanded(pdfMode);
       document.body.style.overflow = "hidden";
+      // The first lesson someone opens: the fox shows the buttons
+      // (site-fox.js), once the slide has come in. A button only some
+      // lessons have is shown the first time a lesson has it.
+      setTimeout(() => {
+        if (!player.classList.contains("hidden")) window.PleyiFox?.tour?.("lesson-player", tourSteps());
+      }, 450);
     }
     openLessonSlides = open;
+
+    function tourSteps() {
+      return [
+        {
+          id: "slide",
+          el: slideWrapEl,
+          title: "המצגת",
+          text: ["היי! אני אראה לכם איך זה עובד", "כאן רואים את השיעור"],
+        },
+        { id: "next", el: [nextBtn, nextMobile], title: "החץ", text: "לוחצים כדי לעבור לשקופית הבאה" },
+        {
+          id: "word",
+          el: $(".lp-word, .lp-en-word, .lp-term, .lp-say", slideEl),
+          title: "מילה מסומנת",
+          text: "לוחצים עליה ומקבלים הסבר קטן",
+        },
+        { id: "more", el: moreBtn, title: "הסבר מורחב", text: ["לא הבנתם?", "כאן מקבלים הסבר ארוך יותר"] },
+        {
+          id: "pdf",
+          el: pdfBtn,
+          title: "מצגת תמונות",
+          text: ["בשיעור הזה יש גם מצגת תמונות", "כאן עוברים בין התמונות לשקופיות"],
+        },
+        { id: "expand", el: expandBtn, title: "מסך מלא", text: ["מגדילים את המצגת לכל המסך", "טוב ללוח בכיתה"] },
+        { id: "close", el: closeBtn, title: "יציאה", text: "סוגרים את המצגת" },
+      ];
+    }
     resumeLessonSlides = (lessonId, slideIndex) => open(lessonId, Number(slideIndex) || 0);
 
     function close() {

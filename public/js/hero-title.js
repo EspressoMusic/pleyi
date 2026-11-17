@@ -13,7 +13,9 @@
   function motionOff() {
     return (
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      document.documentElement.dataset.visual === "minimal"
+      document.documentElement.dataset.visual === "minimal" ||
+      // The professional look keeps the title still (site-pro.css).
+      document.documentElement.dataset.siteStyle === "pro"
     );
   }
 

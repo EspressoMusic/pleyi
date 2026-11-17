@@ -1,0 +1,687 @@
+/* The site's clean, professional look — picked with "נראות" on the home page
+   (logo-style.js) and set on <html data-site-style="pro"> by theme.js.
+
+   Only the site itself changes: the bar on top, the page, the footer and the
+   dialogs. Lessons, games and exercises keep their colors (they sit outside
+   <main>, or on the learning pages that don't load this file).
+
+   First every hard ink edge in the page goes soft (the block right below),
+   then each kind of piece gets its calm version. Everything here starts with
+   html[data-site-style="pro"] body.clean-site so it wins over the page's own
+   rules. */
+
+html[data-site-style="pro"] {
+  --pro-bg: #f1f4f7;
+  --pro-surface: #fafbfc;
+  --pro-surface-2: #eaeef2;
+  --pro-line: #dbe2ea;
+  --pro-line-strong: #c4ced9;
+  --pro-text: #1e293b;
+  --pro-muted: #5b6b7f;
+  --pro-accent: #0f766e;
+  --pro-accent-hover: #115e59;
+  --pro-accent-soft: #e2f2ef;
+  --pro-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 4px 14px rgba(15, 23, 42, 0.06);
+  --pro-shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.14);
+  --pro-radius: 14px;
+}
+
+html[data-site-style="pro"]:has(body.clean-site) {
+  background: var(--pro-bg);
+}
+
+/* The colors the pages paint with, turned calm, for anything not handled below. */
+html[data-site-style="pro"] body.clean-site {
+  --electric: var(--pro-accent);
+  --clean-site-bg: var(--pro-bg);
+  --ambient-site-bg: var(--pro-bg);
+  --text-soft-turquoise: var(--pro-text);
+  --memyellow: var(--pro-accent-soft);
+  --memteal: var(--pro-accent-soft);
+  --mempink: var(--pro-surface-2);
+  --lesson-turquoise: var(--pro-surface);
+  --lesson-card-ink: var(--pro-text);
+  --hero-accent: var(--pro-accent);
+  --shadow-sticker: var(--pro-shadow);
+  --shadow-candy: var(--pro-shadow);
+  background: var(--pro-bg);
+  color: var(--pro-text);
+}
+
+html[data-site-style="pro"] .ambient-bg,
+html[data-site-style="pro"] body.clean-site .clean-section-shapes {
+  display: none !important;
+}
+
+/* No hard offset shadows, outlined letters or black edges anywhere in the site. */
+html[data-site-style="pro"] body.clean-site :where(.navbar, .mobile-nav, main, .site-footer, .modal-overlay) *,
+html[data-site-style="pro"] body.clean-site :where(.navbar, .mobile-nav, main, .site-footer, .modal-overlay) *::before,
+html[data-site-style="pro"] body.clean-site :where(.navbar, .mobile-nav, main, .site-footer, .modal-overlay) *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  -webkit-text-stroke-width: 0 !important;
+  border-color: var(--pro-line) !important;
+}
+
+html[data-site-style="pro"] body.clean-site :where(main, .site-footer, .modal-overlay) .font-cartoon {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--pro-text);
+  -webkit-text-fill-color: currentColor;
+}
+
+/* ── Bar on top ── */
+html[data-site-style="pro"] body.clean-site .menu-toggle {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  align-items: center;
+  border: 1px solid var(--pro-line) !important;
+  border-radius: 12px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow) !important;
+}
+
+html[data-site-style="pro"] body.clean-site .menu-toggle span {
+  width: 20px;
+  height: 2px;
+  background: var(--pro-text);
+}
+
+html[data-site-style="pro"] body.clean-site :is(.nav-pill, .nav-links a, .nav-services-btn) {
+  border: 0;
+  background: transparent;
+  color: var(--pro-text);
+  font-weight: 600;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.nav-pill.active, .nav-links a.active, .nav-services-btn.active, .nav-services-btn[aria-expanded="true"]) {
+  background: var(--pro-accent-soft);
+  color: var(--pro-accent);
+}
+
+html[data-site-style="pro"] body.clean-site :is(.nav-auth-btn, #authLoginBtn) {
+  border: 0;
+  border-radius: 10px;
+  background: var(--pro-accent);
+  color: #fff;
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .nav-services-dropdown {
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid var(--pro-line);
+  border-radius: var(--pro-radius);
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow-lg) !important;
+}
+
+html[data-site-style="pro"] body.clean-site .nav-services-link {
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--pro-text);
+  font-weight: 600;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.nav-services-link:hover, .nav-services-link.active) {
+  transform: none;
+  background: var(--pro-accent-soft);
+  color: var(--pro-accent);
+}
+
+html[data-site-style="pro"] body.clean-site .mobile-nav {
+  background: var(--pro-bg);
+}
+
+html[data-site-style="pro"] body.clean-site .mobile-nav :is(a, button) {
+  color: var(--pro-text);
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .scroll-progress {
+  background: var(--pro-accent);
+}
+
+/* ── Titles ── */
+html[data-site-style="pro"] body.clean-site .clean-section-title.font-cartoon,
+html[data-site-style="pro"] body.clean-site :is(#about, #news, #contact) .clean-section-title.font-cartoon {
+  font-size: clamp(1.7rem, 4.6vw, 2.4rem);
+  font-weight: 800;
+  color: var(--pro-text);
+  -webkit-text-fill-color: currentColor;
+}
+
+/* A short teal line under each section title. */
+html[data-site-style="pro"] body.clean-site .clean-section-title.font-cartoon::after {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin: 12px auto 0;
+  border-radius: 2px;
+  background: var(--pro-accent);
+}
+
+html[data-site-style="pro"] body.clean-site .hero-title.font-cartoon {
+  font-size: clamp(2rem, 6.4vw, 3.6rem);
+  line-height: 1.15;
+}
+
+html[data-site-style="pro"] body.clean-site .hero-title.font-cartoon .line,
+html[data-site-style="pro"] body.clean-site .hero-title.font-cartoon .line:not(.accent) {
+  color: var(--pro-text);
+  -webkit-text-fill-color: currentColor;
+}
+
+html[data-site-style="pro"] body.clean-site .hero-title.font-cartoon .line.accent {
+  color: var(--pro-accent);
+  -webkit-text-fill-color: currentColor;
+}
+
+/* Home: the site name is a calm two-tone word and the line under it is smaller. */
+html[data-site-style="pro"] body.clean-site #home .hero-site-name {
+  font-family: var(--font-sans) !important;
+  font-weight: 800;
+  font-size: clamp(3.4rem, 15vw, 7rem);
+  letter-spacing: -0.02em;
+  filter: none;
+}
+
+html[data-site-style="pro"] body.clean-site #home .hero-site-ch {
+  --ch-color: var(--pro-text) !important;
+  animation: none;
+  rotate: none;
+  top: 0;
+  filter: none;
+}
+
+html[data-site-style="pro"] body.clean-site #home .hero-site-ch:nth-child(-n + 4) {
+  --ch-color: var(--pro-accent) !important;
+}
+
+html[data-site-style="pro"] body.clean-site #home .hero-site-ch::after {
+  content: none;
+}
+
+html[data-site-style="pro"] body.clean-site #home .hero-title.font-cartoon {
+  font-size: clamp(1.5rem, 5vw, 2.4rem);
+}
+
+html[data-site-style="pro"] body.clean-site #home .hero-title .line {
+  color: var(--pro-muted);
+}
+
+/* The fox sitting on the big title stays away; the small corner one (search) stays. */
+html[data-site-style="pro"] body.clean-site .site-fox--hero {
+  display: none !important;
+}
+
+/* ── Buttons ── */
+html[data-site-style="pro"] body.clean-site :where(main, .site-footer, .modal-overlay) :is(.btn-primary, .btn-candy) {
+  border: 1px solid var(--pro-accent) !important;
+  border-radius: 12px;
+  background: var(--pro-accent);
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+html[data-site-style="pro"] body.clean-site :where(main, .site-footer, .modal-overlay) :is(.btn-primary, .btn-candy):hover {
+  background: var(--pro-accent-hover);
+}
+
+html[data-site-style="pro"] body.clean-site :where(main, .site-footer, .modal-overlay) :is(.btn-primary, .btn-candy):active {
+  transform: none;
+}
+
+html[data-site-style="pro"] body.clean-site :where(main, .site-footer, .modal-overlay) .btn-outline {
+  border: 1px solid var(--pro-line-strong) !important;
+  border-radius: 12px;
+  background: var(--pro-surface);
+  color: var(--pro-text);
+  -webkit-text-fill-color: currentColor;
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .clean-hero-actions .btn {
+  padding: 14px 30px;
+  font-size: clamp(17px, 4.4vw, 20px);
+}
+
+/* ── Home: who we are, what's new, contact ── */
+html[data-site-style="pro"] body.clean-site .about-lead {
+  color: #334155;
+  font-weight: 500;
+}
+
+html[data-site-style="pro"] body.clean-site .about-key {
+  padding: 0;
+  background: none;
+  color: var(--pro-accent);
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .about-demo-frame {
+  border: 1px solid var(--pro-line);
+  border-radius: var(--pro-radius);
+  box-shadow: var(--pro-shadow-lg) !important;
+}
+
+html[data-site-style="pro"] body.clean-site .about-demo-bar {
+  background: var(--pro-surface-2);
+}
+
+html[data-site-style="pro"] body.clean-site .about-demo-dot {
+  border-width: 0;
+  background: var(--pro-line-strong);
+}
+
+html[data-site-style="pro"] body.clean-site .news-item {
+  border: 1px solid var(--pro-line);
+  border-radius: 16px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow) !important;
+  color: var(--pro-text);
+}
+
+html[data-site-style="pro"] body.clean-site :is(.news-title, .news-text) {
+  color: var(--pro-text);
+}
+
+html[data-site-style="pro"] body.clean-site .news-title {
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .news-text {
+  color: var(--pro-muted);
+  font-weight: 500;
+}
+
+html[data-site-style="pro"] body.clean-site .news-shot img {
+  border: 1px solid var(--pro-line);
+  border-radius: 10px;
+  box-shadow: var(--pro-shadow) !important;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.whatsapp-btn, .email-btn) {
+  border: 1px solid var(--pro-line);
+  border-radius: 16px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow) !important;
+  color: var(--pro-text);
+}
+
+html[data-site-style="pro"] body.clean-site :is(.whatsapp-btn, .email-btn):hover {
+  transform: translateY(-2px);
+  box-shadow: var(--pro-shadow-lg) !important;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.whatsapp-icon, .email-icon) {
+  border: 0;
+  background: var(--pro-accent-soft);
+  color: var(--pro-accent);
+}
+
+html[data-site-style="pro"] body.clean-site .whatsapp-icon {
+  background: #e3f6ea;
+  color: #15803d;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.whatsapp-label, .email-label) {
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .email-address {
+  color: var(--pro-muted);
+  font-weight: 500;
+}
+
+/* ── Footer ── */
+html[data-site-style="pro"] body.clean-site .site-footer.section-yellow {
+  border-block: 0;
+  border-top: 1px solid var(--pro-line);
+  background: var(--pro-surface);
+}
+
+html[data-site-style="pro"] body.clean-site .site-footer.section-yellow::before {
+  background: var(--pro-surface);
+}
+
+html[data-site-style="pro"] body.clean-site .site-footer.section-yellow .footer-tagline.font-cartoon {
+  font-size: clamp(1.25rem, 4vw, 1.6rem);
+  font-weight: 700;
+  color: var(--pro-text);
+  -webkit-text-fill-color: currentColor;
+}
+
+html[data-site-style="pro"] body.clean-site .site-footer.section-yellow .footer-tagline-accent {
+  color: var(--pro-accent);
+  -webkit-text-fill-color: currentColor;
+}
+
+html[data-site-style="pro"] body.clean-site .site-footer.section-yellow .site-legal-nav a {
+  color: var(--pro-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+html[data-site-style="pro"] body.clean-site .logo-style-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--pro-line-strong);
+  border-radius: 10px;
+  background: var(--pro-surface);
+  color: var(--pro-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+html[data-site-style="pro"] body.clean-site .logo-style-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Dialogs ── */
+html[data-site-style="pro"] body.clean-site :is(.news-zoom, .logo-style-dialog) {
+  border: 1px solid var(--pro-line);
+  border-radius: 18px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow-lg) !important;
+  color: var(--pro-text);
+}
+
+html[data-site-style="pro"] body.clean-site :is(.news-zoom, .logo-style-dialog)::backdrop {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+html[data-site-style="pro"] body.clean-site .news-zoom-title {
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .news-zoom-key {
+  padding: 0;
+  background: none;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.news-zoom-close, .news-zoom-arrow) {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--pro-line);
+  background-color: var(--pro-surface-2);
+  background-size: 16px;
+}
+
+html[data-site-style="pro"] body.clean-site .news-zoom-img {
+  border: 1px solid var(--pro-line);
+  border-radius: 12px;
+  box-shadow: none !important;
+}
+
+html[data-site-style="pro"] body.clean-site .look-group-title {
+  color: var(--pro-muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+html[data-site-style="pro"] body.clean-site .site-style-tile {
+  border: 1px solid var(--pro-line);
+  border-radius: 12px;
+  background: var(--pro-surface);
+  box-shadow: none !important;
+}
+
+html[data-site-style="pro"] body.clean-site .site-style-tile[aria-pressed="true"] {
+  border-color: var(--pro-accent) !important;
+  background: var(--pro-accent-soft);
+  outline: 1px solid var(--pro-accent);
+}
+
+html[data-site-style="pro"] body.clean-site .site-style-preview {
+  border: 1px solid var(--pro-line);
+}
+
+html[data-site-style="pro"] body.clean-site .site-style-name {
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .site-style-desc {
+  color: var(--pro-muted);
+  font-weight: 500;
+}
+
+html[data-site-style="pro"] body.clean-site .look-check {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--pro-line-strong);
+  background-color: #fff;
+}
+
+html[data-site-style="pro"] body.clean-site [aria-pressed="true"] .look-check {
+  border-color: var(--pro-accent) !important;
+  background-color: var(--pro-accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+
+html[data-site-style="pro"] body.clean-site .modal-overlay {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+html[data-site-style="pro"] body.clean-site .modal-overlay > .modal {
+  border: 1px solid var(--pro-line);
+  border-radius: 18px;
+  background: var(--pro-surface) !important;
+  box-shadow: var(--pro-shadow-lg) !important;
+  color: var(--pro-text);
+}
+
+html[data-site-style="pro"] body.clean-site .modal-overlay > .modal h2 {
+  color: var(--pro-text);
+  -webkit-text-fill-color: currentColor;
+}
+
+/* ── Services pages: filters, lesson cards, worksheets ── */
+html[data-site-style="pro"] body.clean-site .svc-filter-bar {
+  border: 1px solid var(--pro-line);
+  border-radius: var(--pro-radius);
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow) !important;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-filter-trigger-label {
+  color: var(--pro-muted);
+  font-weight: 500;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-filter-trigger-value {
+  color: var(--pro-text);
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-filter-divider {
+  background: var(--pro-line);
+}
+
+html[data-site-style="pro"] body.clean-site .svc-filter-dropdown.is-open .svc-filter-trigger {
+  background: var(--pro-accent-soft);
+}
+
+html[data-site-style="pro"] body.clean-site .svc-filter-menu {
+  border: 1px solid var(--pro-line);
+  border-radius: 12px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow-lg) !important;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-filter-menu button {
+  border: 0;
+  background: transparent;
+  color: var(--pro-text);
+  font-weight: 500;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.svc-filter-menu button:hover, .svc-filter-menu button.active) {
+  background: var(--pro-accent-soft);
+  color: var(--pro-accent);
+}
+
+html[data-site-style="pro"] body.clean-site .svc-lesson-preview {
+  border: 1px solid var(--pro-line);
+  border-radius: 16px;
+  background: var(--pro-surface) !important;
+  box-shadow: var(--pro-shadow) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-lesson-card:hover .svc-lesson-preview {
+  transform: none;
+  box-shadow: var(--pro-shadow-lg) !important;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.svc-lesson-name, .svc-lesson-part) {
+  color: var(--pro-text);
+  -webkit-text-fill-color: currentColor;
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-lesson-preview:has(.svc-lesson-part:not(:empty)) .svc-lesson-name {
+  color: var(--pro-muted);
+  font-weight: 500;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-lesson-preview .js-lesson-open {
+  border-radius: 10px;
+  box-shadow: none !important;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.svc-lesson-num, .svc-lesson-info-toggle) {
+  border: 1px solid var(--pro-line);
+  background: var(--pro-surface-2);
+  color: var(--pro-muted);
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-lesson-learned-badge {
+  border: 0;
+  background: var(--pro-accent-soft);
+  color: var(--pro-accent);
+}
+
+html[data-site-style="pro"] body.clean-site :is(.svc-tile, .svc-card) {
+  border: 1px solid var(--pro-line);
+  border-radius: 16px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow) !important;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-tile-image--turquoise {
+  border: 1px solid var(--pro-line);
+  background: var(--pro-surface-2);
+}
+
+html[data-site-style="pro"] body.clean-site .svc-tile-print {
+  border: 1px solid var(--pro-line-strong) !important;
+  background: var(--pro-surface);
+  color: var(--pro-text);
+  -webkit-text-fill-color: currentColor;
+}
+
+/* Worksheets and class games: each filter is a box of its own. */
+html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games) .svc-filter-bar {
+  border: 0;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+html[data-site-style="pro"] body.clean-site .svc-filter-trigger {
+  background: transparent;
+}
+
+html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games) .svc-filter-trigger {
+  border: 1px solid var(--pro-line);
+  border-radius: var(--pro-radius);
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow) !important;
+}
+
+html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games) :is(.svc-filter-trigger:hover, .svc-filter-dropdown.is-open .svc-filter-trigger) {
+  background: var(--pro-accent-soft);
+}
+
+html[data-site-style="pro"] body.clean-site :is(.svc-tile, .svc-tile-image--turquoise, .svc-tile-print) {
+  border-width: 1px;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.cg-card, .cg-together) {
+  border: 1px solid var(--pro-line);
+  border-radius: 16px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow) !important;
+}
+
+html[data-site-style="pro"] body.clean-site .cg-card:hover {
+  transform: none;
+  box-shadow: var(--pro-shadow-lg) !important;
+}
+
+html[data-site-style="pro"] body.clean-site .cg-card-title {
+  color: var(--pro-text);
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .cg-card .cg-card-play {
+  border-radius: 10px;
+}
+
+html[data-site-style="pro"] body.clean-site .cg-card-info {
+  border: 1px solid var(--pro-line);
+  background: var(--pro-surface-2);
+  color: var(--pro-muted);
+}
+
+html[data-site-style="pro"] body.clean-site .mobile-nav-auth {
+  border: 0;
+  border-radius: 12px;
+  background: var(--pro-accent);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site .mobile-nav a.active {
+  border: 0;
+  background: var(--pro-accent-soft);
+  color: var(--pro-accent);
+}
+
+html[data-site-style="pro"] body.clean-site .back-to-top-btn {
+  border: 1px solid var(--pro-line);
+  background: var(--pro-surface);
+  color: var(--pro-text);
+  box-shadow: var(--pro-shadow-lg);
+}
+
+html[data-site-style="pro"] body.clean-site .blog-card {
+  border: 1px solid var(--pro-line);
+  border-radius: 16px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow) !important;
+}
+
+/* The corner fox's speech bubble (the fox lives on <body>, outside the block on top). */
+html[data-site-style="pro"] body.clean-site .site-fox-bubble {
+  border: 1px solid var(--pro-line);
+  border-radius: 14px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow-lg);
+  color: var(--pro-text);
+  -webkit-text-fill-color: var(--pro-text);
+  font-weight: 600;
+}
+
+html[data-site-style="pro"] body.clean-site .site-fox-bubble::after {
+  border-right: 1px solid var(--pro-line);
+  border-bottom: 1px solid var(--pro-line);
+  background: var(--pro-surface);
+}

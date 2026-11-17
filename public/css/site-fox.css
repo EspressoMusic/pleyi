@@ -304,11 +304,11 @@ body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="
 }
 
 /* The search the fox opens (site-fox.js). !important: see .site-fox-dock.
-   Above the navbar and the mobile menu. */
+   Above the navbar (1000) and its menu button, under the dialogs. */
 .site-search {
   position: fixed !important;
   inset: 0;
-  z-index: 300 !important;
+  z-index: 1100 !important;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -520,6 +520,159 @@ html.site-search-open body {
   overflow: hidden;
 }
 
+/* The guide (site-fox.js). !important: see .site-fox-dock. Above an open
+   lesson, even at full screen (lesson-player.css). */
+.site-tour {
+  position: fixed !important;
+  inset: 0;
+  z-index: 6000 !important;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  color: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.site-tour.is-on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The lit part: everything around it is dark, and a yellow ring glows. */
+.site-tour-hole {
+  position: absolute;
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 3px var(--memyellow, #ffe066),
+    0 0 22px 8px rgba(255, 224, 102, 0.55),
+    0 0 0 200vmax rgba(0, 0, 0, 0.62);
+  pointer-events: none;
+}
+
+.site-tour-hole::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  animation: site-tour-pulse 1.6s ease-out infinite;
+}
+
+@keyframes site-tour-pulse {
+  from { box-shadow: 0 0 0 0 rgba(255, 224, 102, 0.9); }
+  to { box-shadow: 0 0 0 14px rgba(255, 224, 102, 0); }
+}
+
+.site-tour.is-on .site-tour-hole {
+  transition: left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
+}
+
+.site-tour-card {
+  position: absolute;
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 4px 12px;
+  width: min(360px, calc(100vw - 24px));
+  box-sizing: border-box;
+  padding: 14px 16px 12px;
+  background: #eaf5ff;
+  border: 3px solid var(--ink, #000);
+  border-radius: 20px;
+  box-shadow: 5px 6px 0 var(--ink, #000);
+  text-align: start;
+  -webkit-text-fill-color: #000;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.site-tour.is-on .site-tour-card {
+  transition: left 0.3s ease, top 0.3s ease;
+}
+
+.site-fox--tour {
+  align-self: start;
+  width: 54px;
+  cursor: default;
+}
+
+.site-tour-title {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.25;
+  color: #000;
+}
+
+.site-tour-key {
+  padding: 0 0.18em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 45%, #fff);
+}
+
+.site-tour-text {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #000;
+}
+
+.site-tour-line {
+  display: block;
+}
+
+.site-tour-foot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.site-tour-count {
+  margin-inline-end: auto;
+  font-size: 15px;
+  font-weight: 800;
+  color: #333;
+}
+
+.site-tour-skip,
+.site-tour-next {
+  font: inherit;
+  color: #000;
+  cursor: pointer;
+}
+
+.site-tour-skip {
+  padding: 8px 10px;
+  background: none;
+  border: 0;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-tour-skip[hidden] {
+  display: none;
+}
+
+.site-tour-next {
+  min-width: 88px;
+  padding: 8px 18px;
+  background: var(--memteal, #00e5cc);
+  border: 3px solid var(--ink, #000);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 var(--ink, #000);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+/* The guide puts the focus on "הבא" itself, so no ring around it. */
+.site-tour-skip:focus,
+.site-tour-next:focus {
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-fox .site-fox-fig,
   .site-fox .fox-ear,
@@ -528,8 +681,14 @@ html.site-search-open body {
     animation: none !important;
   }
   .site-fox-dock,
-  .site-fox-bubble {
+  .site-fox-bubble,
+  .site-tour,
+  .site-tour.is-on .site-tour-hole,
+  .site-tour.is-on .site-tour-card {
     transition: none;
+  }
+  .site-tour-hole::after {
+    animation: none;
   }
 }
 
@@ -542,7 +701,8 @@ html[data-visual="minimal"] .site-fox-svg .fox-eyes {
 
 @media print {
   .site-fox-dock,
-  .site-fox--hero {
+  .site-fox--hero,
+  .site-tour {
     display: none !important;
   }
 }

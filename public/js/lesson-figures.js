@@ -1549,6 +1549,511 @@
     return svg(`0 0 ${count * (2 * r + gap) - gap + 12} ${2 * r + 12}`, s);
   }
 
+  /* ---------- numbers to 1,000, money and time ---------- */
+
+  // Two piles of counters with their numbers under them and the sign between
+  // them, read left to right like the math: a on the left, b on the right.
+  function gtlt({ a = 5, b = 3 }) {
+    const d = 30;
+    const rows = Math.ceil(Math.max(a, b, 1) / 5);
+    const pile = (x0, n, fill) => {
+      let s = "";
+      for (let i = 0; i < n; i++) {
+        const cx = x0 + 15 + (i % 5) * d;
+        const cy = 22 + Math.floor(i / 5) * d;
+        s += `<circle cx="${cx}" cy="${cy}" r="12" fill="${fill}" stroke="#000" stroke-width="3"/>`;
+      }
+      return s;
+    };
+    const base = 8 + rows * d;
+    const sign = a > b ? ">" : a < b ? "<" : "=";
+    let s = pile(10, a, COL.yellow) + pile(250, b, TEAL);
+    s += label(85, base + 30, a, 40) + label(325, base + 30, b, 40);
+    s += label(205, base / 2 + 14, sign, 84, COL.orange);
+    return svg(`0 0 410 ${base + 58}`, s);
+  }
+
+  // Base-ten blocks, left to right like the digits: h hundreds (flat
+  // squares), t tens (rods) and o ones (small cubes), each group named.
+  function blocks({ h = 2, t = 3, o = 4 }) {
+    const u = 12;
+    const big = 10 * u;
+    const top = 10;
+    let s = "";
+    let x = 10;
+    const names = [];
+    const cellLines = (x0, y0, w, hh, cols, rws) => {
+      let g = "";
+      for (let i = 1; i < cols; i++) g += seg(P(x0 + i * u, y0), P(x0 + i * u, y0 + hh), "#000", 1.4);
+      for (let j = 1; j < rws; j++) g += seg(P(x0, y0 + j * u), P(x0 + w, y0 + j * u), "#000", 1.4);
+      return g;
+    };
+    if (h) {
+      const x0 = x;
+      for (let i = 0; i < h; i++) {
+        s += `<rect x="${x}" y="${top}" width="${big}" height="${big}" fill="${TEAL}" stroke="#000" stroke-width="3.5"/>` + cellLines(x, top, big, big, 10, 10);
+        x += big + 10;
+      }
+      names.push([(x0 + x - 10) / 2, "מאות"]);
+      x += 30;
+    }
+    if (t) {
+      const x0 = x;
+      for (let i = 0; i < t; i++) {
+        s += `<rect x="${x}" y="${top}" width="${u}" height="${big}" fill="${COL.yellow}" stroke="#000" stroke-width="3"/>` + cellLines(x, top, u, big, 1, 10);
+        x += u + 8;
+      }
+      x = Math.max(x, x0 + 74);
+      names.push([(x0 + x - 8) / 2, "עשרות"]);
+      x += 30;
+    }
+    if (o) {
+      const x0 = x;
+      const cols = Math.ceil(o / 5);
+      for (let i = 0; i < o; i++) {
+        const cx = x + Math.floor(i / 5) * (u + 8);
+        const cy = top + big - u - (i % 5) * (u + 8);
+        s += `<rect x="${cx}" y="${cy}" width="${u}" height="${u}" fill="${COL.orange}" stroke="#000" stroke-width="3"/>`;
+      }
+      x = Math.max(x + cols * (u + 8) - 8, x0 + 66);
+      names.push([(x0 + x) / 2, "אחדות"]);
+    }
+    names.forEach(([nx, t2]) => (s += label(nx, top + big + 28, t2, 24)));
+    return svg(`0 0 ${Math.max(x + 14, 120)} ${top + big + 50}`, s);
+  }
+
+  // Israeli money, from right to left: "10a" and "50a" (agorot), "1", "2",
+  // "5" and "10" (shekel coins), "20b", "50b", "100b" and "200b" (bills).
+  const COINS = {
+    "10a": [30, "#f0b84f", "10", "אג׳"],
+    "50a": [34, "#f0b84f", "50", "אג׳"],
+    1: [32, "#d5dde2", "1", "₪"],
+    2: [37, "#d5dde2", "2", "₪"],
+    5: [41, "#d5dde2", "5", "₪"],
+    10: [44, "#d5dde2", "10", "₪"],
+  };
+  const BILLS = { 20: "#a5d6a7", 50: "#fff59d", 100: "#ffcc80", 200: "#b39ddb" };
+  function coins({ items = ["1", "2", "5", "10"] }) {
+    const parts = items.map((id) => {
+      const k = String(id);
+      if (k.endsWith("b")) return { k: k.slice(0, -1), w: 136, bill: true };
+      return { k, w: 2 * COINS[k][0] };
+    });
+    const gap = 16;
+    const H = 104;
+    const W = parts.reduce((sum, p) => sum + p.w, 0) + gap * (parts.length - 1) + 16;
+    let x = W - 8;
+    let s = "";
+    parts.forEach((p) => {
+      const cx = x - p.w / 2;
+      const cy = H / 2;
+      if (p.bill) {
+        s += `<rect x="${f1(cx - 66)}" y="${cy - 38}" width="132" height="76" rx="9" fill="${BILLS[p.k]}" stroke="#000" stroke-width="4"/>`;
+        s += `<rect x="${f1(cx - 56)}" y="${cy - 28}" width="112" height="56" rx="6" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="6 5"/>`;
+        s += label(cx, cy, `${p.k} ₪`, 34);
+      } else {
+        const [r, fill, num, unit] = COINS[p.k];
+        s += `<circle cx="${f1(cx)}" cy="${cy}" r="${r}" fill="${fill}" stroke="#000" stroke-width="4"/>`;
+        if (p.k === "10") s += `<circle cx="${f1(cx)}" cy="${cy}" r="${f1(r * 0.7)}" fill="#f0b84f" stroke="#000" stroke-width="2.5"/>`;
+        s += label(cx, cy - r * 0.2, num, f1(r * 0.78)) + label(cx, cy + r * 0.48, unit, f1(r * 0.44));
+      }
+      x -= p.w + gap;
+    });
+    return svg(`0 0 ${f1(W)} ${H}`, s);
+  }
+
+  // A clock with hands at h:m. hands: false shows an empty face; hl: "h"
+  // (the short hand) or "m" (the long hand) in red; fives: the minutes
+  // (5, 10 … 55) written outside the numbers.
+  function clock({ h = 3, m = 0, hands = true, hl = "", fives = false }) {
+    const C = P(150, 150);
+    const R = 128;
+    const at = (deg, r) => P(C.x + r * Math.sin((deg * Math.PI) / 180), C.y - r * Math.cos((deg * Math.PI) / 180));
+    let s = `<circle cx="${C.x}" cy="${C.y}" r="${R}" fill="${SOFT}" stroke="#000" stroke-width="7"/>`;
+    for (let i = 0; i < 60; i++) {
+      const big = i % 5 === 0;
+      s += seg(at(i * 6, R - (big ? 17 : 9)), at(i * 6, R - 4), "#000", big ? 4.5 : 2);
+    }
+    if (fives) {
+      for (let n = 1; n <= 12; n++) {
+        const p = at(n * 30, R + 24);
+        s += label(p.x, p.y, n === 12 ? 0 : n * 5, 21, COL.deep);
+      }
+    }
+    if (hands) {
+      s += seg(C, at(((h % 12) + m / 60) * 30, 64), hl === "h" ? COL.red : "#000", 12);
+      s += seg(C, at(m * 6, 102), hl === "m" ? COL.red : COL.deep, 7);
+    }
+    // The numbers over the hands, so a hand never hides one.
+    for (let n = 1; n <= 12; n++) {
+      const p = at(n * 30, R - 38);
+      s += label(p.x, p.y, n, 28);
+    }
+    s += `<circle cx="${C.x}" cy="${C.y}" r="10" fill="#000"/>`;
+    return svg(fives ? "-28 -28 356 356" : "0 0 300 300", s);
+  }
+
+  /* ---------- lines and angles ---------- */
+
+  // An arrow from A to B with a head at B.
+  function arrow(A, B, color = "#000", w = 5) {
+    const u = V.unit(V.sub(B, A));
+    const n = P(-u.y, u.x);
+    const back = V.sub(B, V.mul(u, 16));
+    return seg(A, B, color, w) + seg(B, V.add(back, V.mul(n, 10)), color, w) + seg(B, V.sub(back, V.mul(n, 10)), color, w);
+  }
+
+  // A filled angle at T from screen angle a1 to a2 (degrees, clockwise).
+  function wedge(T, a1, a2, r, fill) {
+    const p = (a) => P(T.x + r * Math.cos((a * Math.PI) / 180), T.y + r * Math.sin((a * Math.PI) / 180));
+    const A = p(a1);
+    const B = p(a2);
+    return `<path d="M${f1(T.x)} ${f1(T.y)} L${f1(A.x)} ${f1(A.y)} A${r} ${r} 0 0 1 ${f1(B.x)} ${f1(B.y)} Z" fill="${fill}" stroke="#000" stroke-width="2.5"/>`;
+  }
+
+  // The ">" marks that show two lines are parallel.
+  function parMark(A, B) {
+    const u = V.unit(V.sub(B, A));
+    const n = P(-u.y, u.x);
+    const M = V.add(A, V.mul(V.sub(B, A), 0.78));
+    return `<path d="M${f1(M.x - u.x * 9 + n.x * 10)} ${f1(M.y - u.y * 9 + n.y * 10)} L${f1(M.x + u.x * 7)} ${f1(M.y + u.y * 7)} L${f1(M.x - u.x * 9 - n.x * 10)} ${f1(
+      M.y - u.y * 9 - n.y * 10
+    )}" fill="none" stroke="#000" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
+
+  // Two straight lines. mode: "parallel" (the same gap all along, they never
+  // meet), "perp" (they meet at a right angle), "cross" (at another angle) or
+  // "trans" (two parallels cut by a third line; hl: "corr" | "alt" | "co" |
+  // "vert" | "adj" colors a pair of its angles, deg writes their size).
+  function lines({ mode = "parallel", hl = "", deg = false }) {
+    if (mode === "parallel") {
+      const A1 = P(20, 92), B1 = P(380, 52), A2 = P(20, 192), B2 = P(380, 152);
+      const u = V.unit(V.sub(B1, A1));
+      const n = P(-u.y, u.x);
+      const gap = 100 * u.x;
+      let s = "";
+      [0.25, 0.6].forEach((t) => {
+        const S = V.add(A1, V.mul(V.sub(B1, A1), t));
+        s += seg(S, V.add(S, V.mul(n, gap)), COL.orange, 4, 'stroke-dasharray="8 7"');
+      });
+      return svg("0 0 400 220", s + seg(A1, B1, COL.deep, 7) + seg(A2, B2, COL.deep, 7) + parMark(A1, B1) + parMark(A2, B2));
+    }
+    if (mode === "perp") {
+      const T = P(200, 196);
+      return svg("0 0 400 230", rightMark(T, P(380, 196), P(200, 20), 34, COL.yellow) + seg(P(20, 196), P(380, 196), COL.deep, 7) + seg(P(200, 20), P(200, 222), "#000", 7));
+    }
+    if (mode === "cross") {
+      const T = P(200, 120);
+      const a = (40 * Math.PI) / 180;
+      const d = P(Math.cos(a), -Math.sin(a));
+      return svg("0 0 400 240", arcs(T, P(380, 120), V.add(T, d), 1, 44) + seg(P(20, 120), P(380, 120), COL.deep, 7) + seg(V.sub(T, V.mul(d, 170)), V.add(T, V.mul(d, 170)), "#000", 7));
+    }
+    // "trans": the parallels y = 90 and y = 210, cut at 60°.
+    const Q1 = P(219.3, 90);
+    const Q2 = P(150, 210);
+    const d = P(0.5, -0.866);
+    const SECT = { tr: [-60, 0, 60], tl: [180, 300, 120], bl: [120, 180, 60], br: [0, 120, 120] };
+    const PAIRS = { corr: [[Q1, "tr"], [Q2, "tr"]], alt: [[Q1, "bl"], [Q2, "tr"]], co: [[Q1, "br"], [Q2, "tr"]], vert: [[Q2, "tr"], [Q2, "bl"]], adj: [[Q2, "tr"], [Q2, "tl"]] };
+    let s = "";
+    (PAIRS[hl] || []).forEach(([Q, k], i, pair) => {
+      const [a1, a2, size] = SECT[k];
+      const same = SECT[pair[0][1]][2] === SECT[pair[1][1]][2];
+      s += wedge(Q, a1, a2, 36, i && !same ? COL.blue : COL.orange);
+      if (deg) {
+        const m = (((a1 + a2) / 2) * Math.PI) / 180;
+        s += label(Q.x + 64 * Math.cos(m), Q.y + 64 * Math.sin(m), `${size}°`, 24, i && !same ? "#0d47a1" : "#b34700");
+      }
+    });
+    s += seg(P(20, 90), P(380, 90), COL.deep, 7) + seg(P(20, 210), P(380, 210), COL.deep, 7);
+    s += parMark(P(20, 90), P(380, 90)) + parMark(P(20, 210), P(380, 210));
+    s += seg(V.sub(Q2, V.mul(d, 80)), V.add(Q1, V.mul(d, 80)), "#000", 6);
+    return svg("0 0 400 300", s);
+  }
+
+  // An isosceles triangle ABC with its apex A on top. show: "sides" (the
+  // two equal legs marked), "names" (שוק / בסיס on the sides), "angles"
+  // (and the equal base angles) or "height" (the line from A to the middle
+  // of the base: a height, a median and a bisector all at once).
+  function iso({ show = "sides" }) {
+    const A = P(180, 40);
+    const B = P(40, 256);
+    const C = P(320, 256);
+    const pts = [A, B, C];
+    const cen = centroid(pts);
+    const withAngles = show === "angles" || show === "height";
+    let s = markedTri(pts, null, COL.tq, { sides: [1, 0, 1], angles: withAngles ? [0, 1, 1] : [] });
+    if (show === "names") s += sLabel(A, B, cen, "שוק", 30) + sLabel(C, A, cen, "שוק", 30) + sLabel(B, C, cen, "בסיס", 30);
+    if (show === "height") {
+      const D = V.mid(B, C);
+      s += rightMark(D, C, A, 24) + seg(A, D, COL.orange, 6) + ticks(B, D, 2) + ticks(D, C, 2);
+      s += arcs(A, B, D, 2, 52) + arcs(A, D, C, 2, 52);
+      s += label(D.x, D.y + 30, "D", 34);
+    }
+    pts.forEach((p, i) => (s += vLabel(p, cen, "ABC"[i])));
+    return svg(show === "height" || show === "names" ? "0 0 360 304" : "0 0 360 290", s);
+  }
+
+  // A circle with its center O. show: "chord" (AB), "diameter", "tangent"
+  // (at A, with the radius to A), "central" (∠AOB), "inscribed" (∠ACB),
+  // "both" (both on the arc AB; deg: [at O, at C]) or "semi" (an angle on
+  // the diameter, which is right).
+  function chord({ show = "chord", deg }) {
+    const O = P(170, 160);
+    const R = 118;
+    const pt = (a) => P(O.x + R * Math.cos((a * Math.PI) / 180), O.y - R * Math.sin((a * Math.PI) / 180));
+    let s = `<circle cx="${O.x}" cy="${O.y}" r="${R}" fill="${SOFT}" stroke="#000" stroke-width="5"/>`;
+    const dot = (p) => `<circle cx="${f1(p.x)}" cy="${f1(p.y)}" r="7" fill="#000"/>`;
+    const name = (p, t) => vLabel(p, O, t, 28);
+    let marks = "";
+    let pts = [];
+    const arcAB = (A, B) => `<path d="M${f1(A.x)} ${f1(A.y)} A${R} ${R} 0 0 0 ${f1(B.x)} ${f1(B.y)}" fill="none" stroke="${COL.orange}" stroke-width="11" stroke-linecap="round"/>`;
+    if (show === "chord" || show === "diameter") {
+      const [A, B] = show === "chord" ? [pt(205), pt(335)] : [pt(180), pt(0)];
+      s += seg(A, B, COL.orange, 7);
+      pts = [[A, "A"], [B, "B"]];
+    } else if (show === "tangent") {
+      const A = pt(270);
+      s += seg(P(20, A.y), P(320, A.y), COL.deep, 6) + seg(O, A, "#000", 5) + rightMark(A, P(320, A.y), O, 24, COL.yellow);
+      pts = [[A, "A"]];
+    } else if (show === "semi") {
+      const [A, B, C] = [pt(180), pt(0), pt(125)];
+      s += seg(A, B, "#000", 5) + poly([A, C, B], "none", 5) + rightMark(C, A, B, 24, COL.yellow);
+      pts = [[A, "A"], [B, "B"], [C, "C"]];
+    } else {
+      const [A, B, C] = [pt(215), pt(325), pt(100)];
+      s += arcAB(A, B);
+      if (show === "central" || show === "both") {
+        s += seg(O, A, COL.deep, 6) + seg(O, B, COL.deep, 6);
+        marks += arcs(O, A, B, 1, 30);
+        if (deg) marks += label(O.x, O.y + 52, `${deg[0]}°`, 26, COL.deep);
+      }
+      if (show === "inscribed" || show === "both") {
+        s += seg(C, A, "#000", 5) + seg(C, B, "#000", 5);
+        marks += arcs(C, A, B, 1, 44);
+        if (deg) marks += label(C.x - 2, C.y + 70, `${deg[1]}°`, 26);
+        pts.push([C, "C"]);
+      }
+      pts.push([A, "A"], [B, "B"]);
+    }
+    s += marks;
+    pts.forEach(([p, t]) => (s += dot(p) + name(p, t)));
+    s += dot(O) + label(O.x + 4, O.y - 24, "O", 30);
+    return svg("0 0 340 320", s);
+  }
+
+  /* ---------- solids, unfolded and whole ---------- */
+
+  // A solid unfolded flat. k: "cube" | "box" | "pyramid" | "prism" (a
+  // triangular prism) | "cylinder".
+  function net({ k = "cube" }) {
+    const fills = [TEAL, COL.tq];
+    const rect = (x, y, w, h, i) => `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}" fill="${fills[i % 2]}" stroke="#000" stroke-width="4"/>`;
+    if (k === "cube" || k === "box") {
+      const [w, h, d] = k === "cube" ? [64, 64, 64] : [96, 60, 40];
+      const xs = [10, 10 + d, 10 + d + w];
+      const ys = [10, 10 + d, 10 + d + h, 10 + 2 * d + h];
+      let s = rect(xs[1], ys[0], w, d, 1) + rect(xs[0], ys[1], d, h, 1) + rect(xs[1], ys[1], w, h, 0) + rect(xs[2], ys[1], d, h, 1) + rect(xs[1], ys[2], w, d, 1) + rect(xs[1], ys[3], w, h, 0);
+      return svg(`0 0 ${20 + 2 * d + w} ${20 + 2 * d + 2 * h}`, s);
+    }
+    if (k === "pyramid") {
+      const a = 96;
+      const c = P(150, 150);
+      const [A, B, C, D] = [P(c.x - a / 2, c.y - a / 2), P(c.x + a / 2, c.y - a / 2), P(c.x + a / 2, c.y + a / 2), P(c.x - a / 2, c.y + a / 2)];
+      let s = poly([A, B, C, D], COL.yl, 4);
+      [[A, B], [B, C], [C, D], [D, A]].forEach(([X, Y]) => {
+        const M = V.mid(X, Y);
+        const out = V.add(M, V.mul(V.unit(V.sub(M, c)), 92));
+        s += poly([X, Y, out], TEAL, 4);
+      });
+      return svg("0 0 300 300", s);
+    }
+    if (k === "prism") {
+      const w = 80;
+      const h = 110;
+      const th = 69;
+      const y0 = 10 + th;
+      let s = rect(10, y0, w, h, 1) + rect(10 + w, y0, w, h, 0) + rect(10 + 2 * w, y0, w, h, 1);
+      s += poly([P(10 + w, y0), P(10 + 2 * w, y0), P(10 + 1.5 * w, y0 - th)], COL.yl, 4);
+      s += poly([P(10 + w, y0 + h), P(10 + 2 * w, y0 + h), P(10 + 1.5 * w, y0 + h + th)], COL.yl, 4);
+      return svg(`0 0 ${20 + 3 * w} ${20 + h + 2 * th}`, s);
+    }
+    // cylinder: a rectangle as long as the circle around, a circle on each side.
+    const r = 36;
+    const w = 226;
+    const h = 100;
+    const y0 = 10 + 2 * r;
+    let s = rect(10, y0, w, h, 0);
+    s += `<circle cx="${10 + w / 2}" cy="${y0 - r}" r="${r}" fill="${COL.yl}" stroke="#000" stroke-width="4"/>`;
+    s += `<circle cx="${10 + w / 2}" cy="${y0 + h + r}" r="${r}" fill="${COL.yl}" stroke="#000" stroke-width="4"/>`;
+    return svg(`0 0 ${20 + w} ${20 + h + 4 * r}`, s);
+  }
+
+  // One big solid with its bases in yellow. k: "prism" (triangular) or
+  // "pyramid" (square base, its height dashed); h: write h on the height.
+  function solid({ k = "prism", h = false }) {
+    const hidden = 'stroke-dasharray="8 7"';
+    if (k === "prism") {
+      const [A, B, T] = [P(30, 250), P(180, 250), P(105, 130)];
+      const back = (p) => P(p.x + 110, p.y - 70);
+      let s = seg(A, back(A), "#000", 3, hidden) + seg(back(A), back(B), "#000", 3, hidden) + seg(back(A), back(T), "#000", 3, hidden);
+      s += poly([T, B, back(B), back(T)], TEAL, 5) + poly([A, B, T], COL.yellow, 5);
+      if (h) s += label(256, 236, "h", 36, "#b71c1c");
+      return svg("0 0 320 270", s);
+    }
+    const [A, B, C, D, T] = [P(40, 250), P(200, 250), P(260, 205), P(100, 205), P(150, 36)];
+    const O = V.mid(A, C);
+    let s = poly([A, B, C, D], COL.yellow, 3);
+    s += seg(D, A, "#000", 3, hidden) + seg(D, C, "#000", 3, hidden) + seg(D, T, "#000", 3, hidden);
+    if (h) s += seg(T, O, COL.red, 4, hidden) + `<circle cx="${f1(O.x)}" cy="${f1(O.y)}" r="5" fill="${COL.red}"/>`;
+    s += `<g fill-opacity="0.72">${poly([A, B, T], TEAL, 5)}${poly([B, C, T], "#00bfa8", 5)}</g>`;
+    if (h) s += label(O.x - 18, (T.y + O.y) / 2 + 20, "h", 36, "#b71c1c");
+    return svg("0 0 300 270", s);
+  }
+
+  /* ---------- life science ---------- */
+
+  // A butterfly's life cycle in a ring, clockwise from the top: egg,
+  // caterpillar, pupa and butterfly; hl: one stage (1–4), the others faded.
+  function lifecycle({ hl = 0 }) {
+    const C = P(200, 200);
+    const pos = [P(200, 70), P(330, 200), P(200, 330), P(70, 200)];
+    const names = ["ביצה", "זחל", "גולם", "פרפר"];
+    const draw = [
+      (p) =>
+        `<ellipse cx="${p.x}" cy="${p.y + 8}" rx="48" ry="19" fill="#4caf50" stroke="#000" stroke-width="4"/>` +
+        [-16, 0, 16].map((dx) => `<ellipse cx="${p.x + dx}" cy="${p.y - 10}" rx="7" ry="10" fill="#fffde7" stroke="#000" stroke-width="3"/>`).join(""),
+      (p) => {
+        let g = "";
+        for (let i = 0; i < 5; i++) g += `<circle cx="${p.x + 30 - i * 15}" cy="${p.y + (i % 2 ? 4 : -2)}" r="11" fill="#9ccc65" stroke="#000" stroke-width="3"/>`;
+        return g + `<circle cx="${p.x - 46}" cy="${p.y - 4}" r="14" fill="#7cb342" stroke="#000" stroke-width="3"/><circle cx="${p.x - 51}" cy="${p.y - 8}" r="3" fill="#000"/>`;
+      },
+      (p) =>
+        seg(P(p.x - 40, p.y - 40), P(p.x + 40, p.y - 40), "#8d5a2b", 7) +
+        seg(P(p.x, p.y - 40), P(p.x, p.y - 30), "#000", 3) +
+        `<ellipse cx="${p.x}" cy="${p.y + 2}" rx="15" ry="32" fill="#bcaaa4" stroke="#000" stroke-width="3.5"/>` +
+        seg(P(p.x - 12, p.y - 6), P(p.x + 12, p.y - 6), "#000", 2) +
+        seg(P(p.x - 13, p.y + 8), P(p.x + 13, p.y + 8), "#000", 2),
+      (p) =>
+        `<ellipse cx="${p.x - 24}" cy="${p.y - 12}" rx="26" ry="20" fill="${COL.orange}" stroke="#000" stroke-width="3.5"/>` +
+        `<ellipse cx="${p.x + 24}" cy="${p.y - 12}" rx="26" ry="20" fill="${COL.orange}" stroke="#000" stroke-width="3.5"/>` +
+        `<ellipse cx="${p.x - 17}" cy="${p.y + 16}" rx="17" ry="14" fill="${COL.yellow}" stroke="#000" stroke-width="3.5"/>` +
+        `<ellipse cx="${p.x + 17}" cy="${p.y + 16}" rx="17" ry="14" fill="${COL.yellow}" stroke="#000" stroke-width="3.5"/>` +
+        `<ellipse cx="${p.x}" cy="${p.y}" rx="6" ry="28" fill="#333" stroke="#000" stroke-width="2"/>` +
+        `<path d="M${p.x - 3} ${p.y - 26} Q${p.x - 10} ${p.y - 44} ${p.x - 18} ${p.y - 46} M${p.x + 3} ${p.y - 26} Q${p.x + 10} ${p.y - 44} ${p.x + 18} ${p.y - 46}" fill="none" stroke="#000" stroke-width="3"/>`,
+    ];
+    let s = "";
+    pos.forEach((p, i) => {
+      s += `<g${hl && hl !== i + 1 ? ' opacity="0.3"' : ""}>${draw[i](p)}${label(p.x, p.y + 54, names[i], hl === i + 1 ? 30 : 27, hl === i + 1 ? "#b71c1c" : "#000")}</g>`;
+    });
+    // Arrows in the gaps between the stages, clockwise.
+    [-90, 0, 90, 180].forEach((a) => {
+      const at = (deg) => P(C.x + 150 * Math.cos((deg * Math.PI) / 180), C.y + 150 * Math.sin((deg * Math.PI) / 180));
+      const A = at(a + 33);
+      const B = at(a + 57);
+      const tan = P(-Math.sin(((a + 57) * Math.PI) / 180), Math.cos(((a + 57) * Math.PI) / 180));
+      const n = P(-tan.y, tan.x);
+      const back = V.sub(B, V.mul(tan, 15));
+      s += `<path d="M${f1(A.x)} ${f1(A.y)} A150 150 0 0 1 ${f1(B.x)} ${f1(B.y)}" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/>`;
+      s += seg(B, V.add(back, V.mul(n, 9)), "#000", 5) + seg(B, V.sub(back, V.mul(n, 9)), "#000", 5);
+    });
+    return svg("0 0 400 410", s);
+  }
+
+  // A flower cut down the middle: petals, stamens (with pollen) and the
+  // pistil with its ovary. labels: the parts named on the right; hl:
+  // "petals" | "stamens" | "pistil" | "ovary", the others faded; bee: a bee
+  // flying in with pollen.
+  function flower({ labels = false, hl = "", bee = false }) {
+    const fade = (part) => (hl && hl !== part && !(hl === "ovary" && part === "pistil") ? ' opacity="0.3"' : "");
+    let s = `<path d="M150 330 L150 232" stroke="#2e7d32" stroke-width="11" stroke-linecap="round"/>`;
+    s += `<ellipse cx="96" cy="300" rx="34" ry="13" transform="rotate(-25 96 300)" fill="#4caf50" stroke="#000" stroke-width="3.5"/>`;
+    s += `<ellipse cx="150" cy="226" rx="32" ry="14" fill="#66bb6a" stroke="#000" stroke-width="4"/>`;
+    s += `<g${fade("petals")}>
+      <ellipse cx="94" cy="168" rx="62" ry="26" transform="rotate(-38 94 168)" fill="#ff8fb1" stroke="#000" stroke-width="4"/>
+      <ellipse cx="206" cy="168" rx="62" ry="26" transform="rotate(38 206 168)" fill="#ff8fb1" stroke="#000" stroke-width="4"/></g>`;
+    const stamen = (x2, y2) => seg(P(150 + (x2 - 150) * 0.12, 214), P(x2, y2), "#558b2f", 4) + `<ellipse cx="${x2}" cy="${y2}" rx="10" ry="7" fill="#ffca28" stroke="#000" stroke-width="3"/>`;
+    s += `<g${fade("stamens")}>${stamen(116, 124)}${stamen(94, 150)}${stamen(184, 124)}${stamen(206, 150)}
+      <circle cx="104" cy="110" r="3.5" fill="#ffca28"/><circle cx="196" cy="110" r="3.5" fill="#ffca28"/><circle cx="84" cy="136" r="3.5" fill="#ffca28"/></g>`;
+    s += `<g${fade("pistil")}>
+      <rect x="145" y="112" width="10" height="80" fill="#81c784" stroke="#000" stroke-width="3"/>
+      <ellipse cx="150" cy="108" rx="17" ry="8" fill="#aed581" stroke="#000" stroke-width="3.5"/>
+      <ellipse cx="150" cy="204" rx="19" ry="22" fill="${hl === "ovary" ? COL.yellow : "#81c784"}" stroke="#000" stroke-width="${hl === "ovary" ? 6 : 3.5}"/>
+      <circle cx="150" cy="196" r="5" fill="#fffde7" stroke="#000" stroke-width="2"/><circle cx="150" cy="212" r="5" fill="#fffde7" stroke="#000" stroke-width="2"/></g>`;
+    if (bee && !labels) {
+      const bx = 252;
+      const by = 64;
+      s += `<path d="M120 118 Q170 40 ${bx - 26} ${by + 4}" fill="none" stroke="#000" stroke-width="2.5" stroke-dasharray="6 6"/>`;
+      s += `<ellipse cx="${bx - 6}" cy="${by - 18}" rx="14" ry="10" fill="#e1f5fe" stroke="#000" stroke-width="3"/><ellipse cx="${bx + 10}" cy="${by - 18}" rx="14" ry="10" fill="#e1f5fe" stroke="#000" stroke-width="3"/>`;
+      s += `<ellipse cx="${bx}" cy="${by}" rx="26" ry="16" fill="${COL.yellow}" stroke="#000" stroke-width="3.5"/>`;
+      s += seg(P(bx - 6, by - 15), P(bx - 6, by + 15), "#000", 5) + seg(P(bx + 8, by - 14), P(bx + 8, by + 14), "#000", 5);
+      s += `<circle cx="${bx - 24}" cy="${by - 2}" r="3" fill="#000"/><circle cx="${bx - 4}" cy="${by + 20}" r="4" fill="#ffca28" stroke="#000" stroke-width="1.5"/><circle cx="${bx + 10}" cy="${by + 19}" r="4" fill="#ffca28" stroke="#000" stroke-width="1.5"/>`;
+    }
+    if (labels) {
+      const tag = (x1, y1, ty, t) => `<line x1="${x1}" y1="${y1}" x2="300" y2="${ty}" stroke="#000" stroke-width="3"/>` + label(372, ty, t, 28);
+      s += tag(167, 106, 64, "עלי") + tag(194, 124, 124, "אבקן") + tag(252, 178, 184, "עלה כותרת") + tag(169, 210, 244, "שחלה");
+    }
+    return svg(labels ? "0 0 450 340" : "0 0 300 340", s);
+  }
+
+  // How a plant makes its food: light, water and carbon dioxide go in;
+  // sugar and oxygen come out. hl: "in" or "out" fades the other side.
+  function photo({ hl = "" }) {
+    const fade = (side) => (hl && hl !== side ? ' opacity="0.25"' : "");
+    let s = `<rect x="10" y="272" width="400" height="62" rx="12" fill="#d7b48a" stroke="#000" stroke-width="4"/>`;
+    s += `<g fill="none" stroke="#8d5a2b" stroke-width="6" stroke-linecap="round"><path d="M210 274 L210 318"/><path d="M210 290 Q192 302 184 324"/><path d="M210 290 Q228 302 236 324"/></g>`;
+    s += `<path d="M210 276 L210 104" stroke="#2e7d32" stroke-width="10" stroke-linecap="round"/>`;
+    s += `<ellipse cx="276" cy="146" rx="66" ry="28" transform="rotate(-18 276 146)" fill="#4caf50" stroke="#000" stroke-width="4"/>`;
+    s += `<ellipse cx="148" cy="196" rx="50" ry="21" transform="rotate(22 148 196)" fill="#4caf50" stroke="#000" stroke-width="4"/>`;
+    s += `<g${fade("out")}>${label(278, 146, "סוכר", 26)}</g>`;
+    let rays = "";
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4;
+      rays += seg(P(58 + 40 * Math.cos(a), 58 + 40 * Math.sin(a)), P(58 + 52 * Math.cos(a), 58 + 52 * Math.sin(a)), "#f9a825", 5);
+    }
+    s += `<g${fade("in")}><circle cx="58" cy="58" r="30" fill="${COL.yellow}" stroke="#000" stroke-width="4"/>${rays}`;
+    s += arrow(P(104, 82), P(226, 128), "#f9a825", 6) + label(176, 82, "אור", 28, "#b26a00");
+    s += arrow(P(236, 316), P(236, 214), COL.blue, 6) + label(270, 250, "מים", 28, "#0d47a1");
+    s += arrow(P(402, 70), P(334, 118), "#555", 5) + label(322, 40, "פחמן דו־חמצני", 24, "#333") + `</g>`;
+    s += `<g${fade("out")}>${arrow(P(106, 216), P(30, 240), COL.deep, 5)}${label(52, 204, "חמצן", 26, "#004d40")}</g>`;
+    return svg("0 0 420 340", s);
+  }
+
+  // A bacterium (one living cell with a tail) and a virus (much smaller,
+  // a ball with spikes). k: "both" | "bacteria" | "virus".
+  function microbe({ k = "both" }) {
+    const bact = (x, y) =>
+      `<path d="M${x + 130} ${y + 28} q12 -14 22 0 t22 0 t22 0" fill="none" stroke="#33691e" stroke-width="4" stroke-linecap="round"/>` +
+      `<rect x="${x}" y="${y}" width="132" height="56" rx="28" fill="#aed581" stroke="#000" stroke-width="4.5"/>` +
+      `<path d="M${x + 34} ${y + 30} q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#33691e" stroke-width="3.5" stroke-linecap="round"/>`;
+    const virus = (cx, cy) => {
+      let g = "";
+      for (let i = 0; i < 10; i++) {
+        const a = (i * Math.PI) / 5;
+        const tip = P(cx + 34 * Math.cos(a), cy + 34 * Math.sin(a));
+        g += seg(P(cx + 20 * Math.cos(a), cy + 20 * Math.sin(a)), tip, "#000", 3) + `<circle cx="${f1(tip.x)}" cy="${f1(tip.y)}" r="5" fill="${COL.red}" stroke="#000" stroke-width="2"/>`;
+      }
+      return g + `<circle cx="${cx}" cy="${cy}" r="21" fill="#ff8a80" stroke="#000" stroke-width="4"/>`;
+    };
+    if (k === "bacteria") return svg("0 0 250 170", bact(20, 50) + label(86, 140, "חיידק", 28));
+    if (k === "virus") return svg("0 0 200 170", virus(100, 76) + label(100, 140, "נגיף", 28));
+    return svg("0 0 420 170", bact(190, 50) + label(256, 140, "חיידק", 28) + virus(80, 78) + label(80, 140, "נגיף", 28));
+  }
+
+  /* ---------- writing ---------- */
+
+  // A letter on a page: the date, the opening, the body, the closing and the
+  // signature; hl: "date" | "open" | "body" | "close" marked in teal.
+  function letter({ hl = "" }) {
+    const mark = (x, y, w, h, part) => (hl === part ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${TEAL}"/>` : "");
+    let s = `<rect x="20" y="10" width="280" height="350" rx="12" fill="${COL.yl}" stroke="#000" stroke-width="5"/>`;
+    s += mark(36, 26, 110, 40, "date") + label(91, 46, "כ׳ בחשוון", 22);
+    s += mark(150, 76, 136, 40, "open") + label(218, 96, "לסבא, שלום", 23);
+    s += mark(40, 128, 244, 108, "body");
+    [[52, 270], [52, 270], [52, 270], [130, 270]].forEach(([x1, x2], i) => (s += `<rect x="${x1}" y="${140 + i * 24}" width="${x2 - x1}" height="11" rx="5" fill="#9e9e9e"/>`));
+    s += mark(36, 252, 120, 84, "close") + label(96, 274, "בברכה,", 23) + label(96, 312, "דני", 25);
+    return svg("0 0 320 370", s);
+  }
+
   window.LESSON_FIGURES = {
     pie, equal, bars, hundred, groups, shapes, shape, area,
     right, ladder, diag, pair, aaa, kite, bowtie, balance, balls, parts, cross, scalemap,
@@ -1559,5 +2064,7 @@
     ruler, box, solids, magnet, layers,
     sym, transform, similar, binom,
     vmult, vdiv, quad, mixed,
+    gtlt, blocks, coins, clock, lines, iso, chord, net, solid,
+    lifecycle, flower, photo, microbe, letter,
   };
 })();

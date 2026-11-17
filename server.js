@@ -30,6 +30,11 @@ const io = new Server(server);
 // can't legally collect money. Flip back to true once that's sorted.
 const PAYMENTS_ENABLED = false;
 
+// The parents' page (/p/<key>) is off for now: the page says so, and no new
+// parents' links can be made. Turn back on together with PARENTS_ENABLED in
+// public/js/admin-students.js.
+const PARENTS_ENABLED = false;
+
 const materialUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024 },
@@ -136,14 +141,27 @@ app.get("/p/:key", (_req, res) => {
 // The app manifest (public/js/pwa.js). The installed app opens where it was
 // installed from — pwa.js names that page in ?start=; only a student's own
 // page, the English page (with the student's key) and the teacher's student
-// list are taken, and anything else opens the home page.
+// list are taken. Anything else opens /app, which still sends a student
+// whose link this phone opened to their page (public/app.html).
 function appStartUrl(start) {
   const value = String(start || "");
   const allowed = /^\/s\/[A-Za-z0-9_-]{20,64}$/.test(value)
     || /^\/services\/english(\?s=[A-Za-z0-9_-]{20,64})?$/.test(value)
     || value === "/admin/students";
-  return allowed ? value : "/";
+  return allowed ? value : "/app";
 }
+
+// Pictures of the app for the phone's install window (Android shows them
+// like an app store).
+const APP_SCREENSHOTS = [
+  ["/images/news/english-lessons.webp", "618x1372", "narrow", "שיעורי אנגלית"],
+  ["/images/news/reading-exam.webp", "618x1372", "narrow", "קטעי קריאה"],
+  ["/images/news/mistakes.webp", "618x1372", "narrow", "חזרה על הטעויות"],
+  ["/images/news/leaderboard.webp", "618x1372", "narrow", "טבלת השיאים"],
+  ["/images/demo/library.webp", "1536x960", "wide", "ספריית השיעורים"],
+  ["/images/demo/exercise.webp", "1536x960", "wide", "תרגול"],
+  ["/images/demo/student-map.webp", "1536x960", "wide", "המפה של התלמיד"],
+];
 
 app.get("/manifest.webmanifest", (req, res) => {
   res.set("Cache-Control", "no-cache");
@@ -151,6 +169,8 @@ app.get("/manifest.webmanifest", (req, res) => {
     id: "/",
     name: "Pleyi — לימוד דרך משחקים",
     short_name: "Pleyi",
+    description: "שיעורים, תרגולים ומשחקי למידה — בלחיצה אחת מהמסך של הטלפון.",
+    categories: ["education", "kids"],
     lang: "he",
     dir: "rtl",
     start_url: appStartUrl(req.query.start),
@@ -159,11 +179,51 @@ app.get("/manifest.webmanifest", (req, res) => {
     background_color: "#e0fbf8",
     theme_color: "#00C9B7",
     icons: [
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      // The fox (scripts/make-app-icons.js).
+      { src: "/icons/icon-192.png?v=2", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-512.png?v=2", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-maskable-512.png?v=2", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
+    screenshots: APP_SCREENSHOTS.map(([src, sizes, form_factor, label]) => ({ src, sizes, type: "image/webp", form_factor, label })),
   }));
+});
+
+// The page that installs the app — every page's phone menu and footer link
+// to it (public/js/pwa.js).
+app.get("/download", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "download.html"));
+});
+
+/* The Android app on Google Play opens the site in Chrome without the
+   browser bars (a Trusted Web Activity, made with Bubblewrap in the
+   pleyi-android folder next to this project). Android shows it bar-free only
+   when the site vouches for the app here: its package name and the SHA-256
+   fingerprints of the keys it is signed with — our upload key, and Google
+   Play's own signing key (Play Console → App integrity), which goes in
+   TWA_APP_FINGERPRINTS or on the server as TWA_SHA256 (comma-separated). */
+const TWA_PACKAGE = "com.pleyschool.app";
+const TWA_APP_FINGERPRINTS = [
+  // The upload key (pleyi-upload.keystore).
+  "6E:4A:C9:A1:F9:B7:F7:6F:12:C0:C5:77:71:30:10:56:A4:01:BB:FB:98:7A:49:EA:D4:BC:C7:92:4F:BB:CA:D7",
+];
+
+app.get("/.well-known/assetlinks.json", (req, res) => {
+  const fingerprints = [...TWA_APP_FINGERPRINTS, ...String(process.env.TWA_SHA256 || "").split(",")]
+    .map((f) => f.trim().toUpperCase())
+    .filter((f) => /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(f));
+  res.set("Cache-Control", "no-cache");
+  res.json([
+    {
+      relation: ["delegate_permission/common.handle_all_urls"],
+      target: { namespace: "android_app", package_name: TWA_PACKAGE, sha256_cert_fingerprints: [...new Set(fingerprints)] },
+    },
+  ]);
+});
+
+// Where the Android app opens: a student whose link this phone already
+// opened goes straight to their page (public/app.html), anyone else home.
+app.get("/app", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "app.html"));
 });
 
 app.get("/play/:gameId", (req, res) => {
@@ -471,6 +531,23 @@ app.get("/api/student/:key", studentRoute(async (req) => {
   return { student };
 }));
 
+// Signing in on the site as a student (the login dialog's "תלמיד"): Google,
+// or an email + password, with the email the teacher wrote on the file. The
+// email must be verified — it's the student's own — and the answer is the
+// file's link key, so from there on it's the same as opening /s/<key>.
+app.post("/api/student-login", studentRoute(async (req) => {
+  const decoded = await verifyIdToken(bearerToken(req));
+  if (!decoded?.email) throw Object.assign(new Error("יש להתחבר מחדש"), { status: 401 });
+  if (!decoded.emailVerified) {
+    throw Object.assign(new Error("צריך קודם לאשר את המייל — לחצו על הקישור שקיבלתם במייל"), { status: 403 });
+  }
+  const students = await studentProgress.findByEmail(decoded.email);
+  if (!students.length) {
+    throw Object.assign(new Error("המייל הזה עוד לא רשום אצל המורה. בקשו מהמורה להוסיף אותו לתיק שלכם"), { status: 404 });
+  }
+  return { students };
+}));
+
 app.post("/api/progress", studentRoute(async (req) => {
   const key = req.get("x-student-key") || req.body?.key;
   const { activity, points, daily } = await studentProgress.recordActivity(key, req.body?.activity);
@@ -479,6 +556,7 @@ app.post("/api/progress", studentRoute(async (req) => {
 
 // The parents' page (/p/<key>): read only.
 app.get("/api/parent/:key", studentRoute(async (req) => {
+  if (!PARENTS_ENABLED) throw Object.assign(new Error("הדף להורים לא זמין כרגע"), { status: 410 });
   const view = await studentProgress.getParentView(req.params.key);
   if (!view) throw Object.assign(new Error("הקישור לא תקין"), { status: 404 });
   return { view };
@@ -487,6 +565,9 @@ app.get("/api/parent/:key", studentRoute(async (req) => {
 // "צריך עזרה" — shows up in the teacher's bell on /my-room.
 app.post("/api/help", studentRoute((req) => studentProgress.askHelp(req.get("x-student-key"), req.body?.text)));
 
+// "בקשת מבחן חוזר" — shows on the test in the teacher's file and in the bell.
+app.post("/api/test-retake", studentRoute((req) => studentProgress.askRetake(req.get("x-student-key"), String(req.body?.testId || ""))));
+
 // The student's class leaderboard (every file of the same teacher).
 app.get("/api/leaderboard", studentRoute((req) => studentProgress.getLeaderboard(req.get("x-student-key"))));
 
@@ -494,7 +575,11 @@ app.get("/api/leaderboard", studentRoute((req) => studentProgress.getLeaderboard
 app.get("/api/review", studentRoute((req) => studentProgress.getReview(req.get("x-student-key"))));
 app.post("/api/review", studentRoute((req) => studentProgress.recordReview(req.get("x-student-key"), req.body?.ops)));
 
-// Teacher side: signed in with Google. Every file belongs to the teacher who
+// The student's flashcards ("כרטיסיות מילים" on the Learn English page).
+app.get("/api/cards", studentRoute((req) => studentProgress.getCards(req.get("x-student-key"))));
+app.post("/api/cards", studentRoute((req) => studentProgress.recordCards(req.get("x-student-key"), req.body?.ops)));
+
+// Teacher side: signed in (Google or email). Every file belongs to the teacher who
 // opened it, so each call is scoped to the verified uid.
 const studentAdmin = express.Router();
 studentAdmin.use(requireAuth);
@@ -518,6 +603,11 @@ studentAdmin.get("/report", studentRoute(async (req) => ({
   report: await studentProgress.weeklyReport(req.uid, req.query.week),
 })));
 
+// The class at a glance — before "/:id" too.
+studentAdmin.get("/class", studentRoute(async (req) => ({
+  class: await studentProgress.classView(req.uid),
+})));
+
 studentAdmin.post("/claim", studentRoute((req) => {
   if (!bookingsLib.verifyTeacherPin(req.get("x-teacher-pin"))) {
     throw Object.assign(new Error("קוד מורה שגוי"), { status: 403 });
@@ -532,7 +622,7 @@ studentAdmin.get("/:id", studentRoute(async (req) => {
 }));
 
 studentAdmin.patch("/:id", studentRoute((req) =>
-  studentProgress.updateDetails(req.uid, req.params.id, pick(req.body, ["name", "focus"]))
+  studentProgress.updateDetails(req.uid, req.params.id, pick(req.body, ["name", "focus", "email", "blocked"]))
 ));
 
 studentAdmin.delete("/:id", studentRoute(async (req) => {
@@ -545,9 +635,10 @@ studentAdmin.post("/:id/key", studentRoute((req) =>
 ));
 
 // The parents' link: made the first time it's asked for; `renew` replaces it.
-studentAdmin.post("/:id/parent-key", studentRoute((req) =>
-  studentProgress.parentLink(req.uid, req.params.id, !!req.body?.renew)
-));
+studentAdmin.post("/:id/parent-key", studentRoute(async (req) => {
+  if (!PARENTS_ENABLED) throw Object.assign(new Error("הקישור להורים לא זמין כרגע"), { status: 410 });
+  return studentProgress.parentLink(req.uid, req.params.id, !!req.body?.renew);
+}));
 
 studentAdmin.post("/:id/notes", studentRoute(async (req) => ({
   note: await studentProgress.addNote(req.uid, req.params.id, req.body?.text),
@@ -563,6 +654,19 @@ studentAdmin.post("/:id/homework", studentRoute((req) =>
 
 studentAdmin.delete("/:id/homework/:homeworkId", studentRoute((req) =>
   studentProgress.deleteHomework(req.uid, req.params.id, req.params.homeworkId)
+));
+
+studentAdmin.post("/:id/tests", studentRoute((req) =>
+  studentProgress.addTest(req.uid, req.params.id, pick(req.body, ["topics", "title", "dueDate", "note"]))
+));
+
+studentAdmin.delete("/:id/tests/:testId", studentRoute((req) =>
+  studentProgress.deleteTest(req.uid, req.params.id, req.params.testId)
+));
+
+// { allow: true } opens the test once more; false turns the request down.
+studentAdmin.post("/:id/tests/:testId/retake", studentRoute((req) =>
+  studentProgress.answerRetake(req.uid, req.params.id, req.params.testId, !!req.body?.allow)
 ));
 
 app.use("/api/admin/students", studentAdmin);

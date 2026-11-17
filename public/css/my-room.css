@@ -19,10 +19,13 @@
   min-height: 100dvh;
 }
 
+/* The navbar sits in the flow here, so no big gap under it
+   (games-hub.css pads .hub-main 88-108px on top). */
 .my-room-body .hub-main {
   flex: 1 0 auto;
   width: 100%;
   max-width: 820px;
+  padding-top: 4px;
 }
 
 .my-room-body .hub-back {
@@ -298,10 +301,31 @@
 
 .room-hello-title {
   margin: 0;
-  font-size: clamp(2rem, 7vw, 2.9rem);
+  font-size: clamp(2.4rem, 9vw, 4rem);
   font-weight: 900;
   line-height: 1.15;
-  color: #000;
+  text-align: center;
+  color: var(--ink);
+}
+
+/* Yellow with a thick ink outline, as the site's page titles. */
+.room-hello-title .line {
+  display: block;
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.3em var(--ink);
+  letter-spacing: 0;
+}
+
+/* Room above the title for the perched fox (site-fox.css). */
+.room-hello .site-fox-perch--line {
+  margin-top: max(1.2em, 74px);
+}
+
+/* Only the fox on the hello — no corner fox on this page. */
+.my-room-body .site-fox-dock {
+  display: none !important;
 }
 
 .room-bell {
@@ -390,7 +414,7 @@
 
 .room-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
 
@@ -401,6 +425,9 @@
   justify-content: center;
   gap: 14px;
   aspect-ratio: 5 / 4;
+  /* A grid item with aspect-ratio doesn't stretch by default, so a
+     one-line title left its tile shorter than the two-line ones. */
+  align-self: stretch;
   min-width: 0;
   padding: 14px 10px;
   font-family: inherit;
@@ -437,12 +464,10 @@
 /* A color per tile, from the lesson game buttons' palette. */
 .room-tile-icon[data-icon="student"] { background: #ffd84d; }
 .room-tile-icon[data-icon="clock"] { background: #7fdccf; }
-.room-tile-icon[data-icon="star"] { background: #ff8f8f; }
+.room-tile-icon[data-icon="chart"] { background: #ffb27a; }
 .room-tile-icon[data-icon="saved"] { background: #a9c4ff; }
-.room-tile-icon[data-icon="calendar"] { background: #ffb27a; }
 .room-tile-icon[data-icon="heart"] { background: #ff9ec7; }
 .room-tile-icon[data-icon="game"] { background: #b9a4ff; }
-.room-tile-icon[data-icon="more"] { background: #9fe0a0; }
 
 .room-tile-title {
   font-size: clamp(1.3rem, 5vw, 1.65rem);
@@ -468,8 +493,24 @@
 }
 
 .room-box-empty a {
-  color: #000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  padding: 8px 18px;
+  font-size: 14px;
   font-weight: 900;
+  color: #000;
+  text-decoration: none;
+  background: var(--memteal, #00e5cc);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.15s var(--ease);
+}
+
+.room-box-empty a:hover {
+  transform: translateY(-2px);
 }
 
 .room-inline-list {
@@ -553,7 +594,7 @@ a.room-act-text:hover b {
   border-radius: 10px;
 }
 
-/* The history and the bell open in a dialog. */
+/* The tiles and the bell open in a dialog. */
 .room-dlg {
   width: min(92vw, 500px);
   max-height: 86dvh;
@@ -611,13 +652,6 @@ a.room-act-text:hover b {
 .room-dlg-close svg {
   width: 20px;
   height: 20px;
-}
-
-.room-dlg-day {
-  margin: 10px 0 0;
-  font-size: 15px;
-  font-weight: 900;
-  color: #000;
 }
 
 .room-foot-link {
@@ -736,25 +770,33 @@ a.room-act-text:hover b {
   opacity: 1;
 }
 
-/* Phones: two square tiles a row. */
+/* Phones: two tiles a row, smaller. */
 @media (max-width: 700px) {
   .room-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: 12px;
   }
 
   .room-tile {
-    aspect-ratio: 1;
+    aspect-ratio: 3 / 2;
+    gap: 10px;
+    padding: 10px 6px;
+    border-radius: 14px;
   }
 
   .room-tile-icon {
-    width: 54px;
-    height: 54px;
+    width: 44px;
+    height: 44px;
   }
 
   .room-tile-icon svg {
-    width: 27px;
-    height: 27px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .room-tile-title {
+    font-size: clamp(0.95rem, 4vw, 1.2rem);
+    line-height: 1.3;
   }
 }
 

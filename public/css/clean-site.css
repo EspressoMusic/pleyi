@@ -822,9 +822,10 @@ html[data-visual="minimal"] #home .hero-site-ch::after {
   outline-offset: 3px;
 }
 
-/* Inside the footer, not under <body> (same reason as .news-zoom). */
+/* Inside the footer, not under <body> (same reason as .news-zoom).
+   Two groups: the site's look (two tiles) and the title's look (a list). */
 .logo-style-dialog {
-  width: min(92vw, 560px);
+  width: min(92vw, 480px);
   max-height: 96dvh;
   padding: 16px 16px 18px;
   border: 3px solid var(--ink);
@@ -841,53 +842,226 @@ html[data-visual="minimal"] #home .hero-site-ch::after {
 .logo-style-dialog[open] {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 16px;
 }
 
-.logo-style-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  width: 100%;
+.logo-style-dialog .look-title {
+  margin: 4px 44px 0;
 }
 
-.logo-style-tile {
+.look-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-  padding: 10px 4px 8px;
-  border: 3px solid var(--ink);
-  border-radius: 14px;
-  background: var(--ambient-site-bg, #62ebe0);
-  box-shadow: 3px 4px 0 var(--ink);
-  color: #000;
+  gap: 8px;
+}
+
+.look-group[hidden] {
+  display: none;
+}
+
+.look-group-title {
+  margin: 0;
   font-size: 17px;
   font-weight: 900;
+  color: #000;
+}
+
+/* The ring before each choice: empty, or teal with a tick when chosen. */
+.look-check {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #f6fbff center / 14px no-repeat;
+  box-sizing: border-box;
+}
+
+[aria-pressed="true"] .look-check {
+  background-color: var(--memteal, #00e5cc);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+
+/* Site look: a tiny page drawn in each look, and its name under it. */
+.site-style-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.site-style-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 8px 10px;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #f6fbff;
+  box-shadow: 3px 4px 0 var(--ink);
+  color: #000;
+  text-align: start;
   cursor: pointer;
 }
 
-.logo-style-tile[aria-pressed="true"] {
-  outline: 4px solid var(--ink);
-  outline-offset: 3px;
+.site-style-tile[aria-pressed="true"],
+.logo-style-row[aria-pressed="true"] {
+  background: #c9f5ef;
 }
 
-.logo-style-tile[aria-pressed="true"] .logo-style-name {
-  padding: 0 0.18em;
-  border-radius: 6px;
-  background: var(--memyellow, #ffe236);
-}
-
-.logo-style-tile:focus-visible {
+.site-style-tile:focus-visible {
   outline: 3px dashed var(--ink);
   outline-offset: 3px;
 }
 
+.site-style-text {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.site-style-text .look-check {
+  grid-row: span 2;
+}
+
+.site-style-name {
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.site-style-desc {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: rgba(0, 0, 0, 0.72);
+}
+
+.site-style-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 78px;
+  padding: 9px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.ssp-title {
+  align-self: center;
+  width: 55%;
+  height: 9px;
+  border-radius: 99px;
+}
+
+.ssp-cards {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+}
+
+.ssp-card {
+  flex: 1;
+  border-radius: 6px;
+}
+
+.ssp-btn {
+  align-self: center;
+  width: 46%;
+  height: 11px;
+  border-radius: 99px;
+}
+
+.site-style-preview--colorful {
+  background: #62ebe0;
+}
+
+.site-style-preview--colorful .ssp-title {
+  background: var(--memyellow, #ffe236);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+.site-style-preview--colorful .ssp-card {
+  border: 2px solid var(--ink);
+  background: #b8fff5;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.site-style-preview--colorful .ssp-btn {
+  border: 2px solid var(--ink);
+  background: var(--memyellow, #ffe236);
+}
+
+.site-style-preview--pro {
+  background: #f1f4f7;
+}
+
+.site-style-preview--pro .ssp-title {
+  height: 7px;
+  background: #1e293b;
+}
+
+.site-style-preview--pro .ssp-card {
+  border: 1px solid #dbe2ea;
+  border-radius: 5px;
+  background: #fafbfc;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.08);
+}
+
+.site-style-preview--pro .ssp-btn {
+  border-radius: 4px;
+  background: #0f766e;
+}
+
+/* Title look: one row each — ring, name, and the title drawn in that look. */
+.logo-style-list {
+  display: flex;
+  flex-direction: column;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  background: #f6fbff;
+  box-shadow: 3px 4px 0 var(--ink);
+  overflow: hidden;
+}
+
+.logo-style-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 4px 12px;
+  border: 0;
+  border-top: 2px solid rgba(0, 0, 0, 0.14);
+  background: none;
+  color: #000;
+  font-size: 16px;
+  font-weight: 800;
+  text-align: start;
+  cursor: pointer;
+}
+
+.logo-style-row:first-child {
+  border-top: 0;
+}
+
+.logo-style-row:focus-visible {
+  outline: 3px dashed var(--ink);
+  outline-offset: -5px;
+}
+
+.logo-style-name {
+  flex: 1;
+  min-width: 0;
+}
+
 .logo-style-preview {
   --logo-stroke-w: 0.1em;
-  font-size: clamp(28px, 8vw, 40px);
-  line-height: 1.25;
+  flex: none;
+  font-size: 28px;
+  line-height: 1.3;
   font-family: var(--logo-font, "Fredoka"), var(--font-sans);
   font-weight: var(--logo-weight, 700);
   letter-spacing: 0.02em;
@@ -1035,7 +1209,7 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
 .about-key {
   padding: 0 0.15em;
   border-radius: 6px;
-  background: color-mix(in srgb, var(--memteal, #00e5cc) 85%, #000);
+  background: var(--memyellow, #ffe236);
   color: #000;
   font-weight: 800;
   -webkit-box-decoration-break: clone;
@@ -1200,6 +1374,20 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
   position: absolute;
   inset: 0;
   transform: rotate(7deg) translate(-10px, 4px);
+}
+
+/* Phones: beside the picture the text had a narrow strip and broke into
+   many short lines, so the picture goes on top. */
+@media (max-width: 480px) {
+  .news-item {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .news-shot {
+    order: -1;
+    width: 104px;
+  }
 }
 
 /* The big picture. Inside the section, not under <body>, so the
@@ -2045,6 +2233,12 @@ button.clean-panel--card {
   word-break: break-all;
 }
 
+/* The card's text: in the card's column on big screens, its own column next
+   to the icon on phones. */
+.contact-channel-text {
+  display: contents;
+}
+
 .clean-contact .contact-info {
   display: flex;
   flex-direction: column;
@@ -2384,6 +2578,48 @@ body.in-room {
     font-size: clamp(20px, 5vw, 24px);
     padding: 16px;
     min-height: 52px;
+  }
+}
+
+/* Phones: two squares side by side left the email address too small, and
+   cut on narrow screens. One full-width card per row instead: the icon on
+   the side, the text big next to it. */
+@media (max-width: 480px) {
+  .clean-contact .contact-info.contact-info--simple {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .contact-channel-btn {
+    aspect-ratio: auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 16px;
+    padding: 16px 18px;
+  }
+
+  .whatsapp-btn,
+  .email-btn {
+    padding: 16px 18px;
+  }
+
+  .contact-channel-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .whatsapp-label,
+  .email-label {
+    font-size: 21px;
+  }
+
+  .email-address {
+    font-size: 15px;
+    word-break: normal;
+    overflow-wrap: anywhere;
   }
 }
 

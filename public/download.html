@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <script src="/js/theme.js?v=2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <link rel="manifest" href="/manifest.webmanifest"/>
+  <link rel="icon" href="/icons/icon.svg?v=2" type="image/svg+xml"/>
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2"/>
+  <meta name="apple-mobile-web-app-title" content="Pleyi"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <script src="/js/pwa.js?v=2"></script>
+  <title>הורדת האפליקציה — Pleyi</title>
+  <meta name="description" content="מורידים את Pleyi לטלפון או למחשב: שיעורים, תרגולים ומשחקי למידה בלחיצה אחת ממסך הבית."/>
+  <link rel="canonical" href="https://pleyschool.com/download"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="Pleyi"/>
+  <meta property="og:title" content="הורדת האפליקציה — Pleyi"/>
+  <meta property="og:description" content="מורידים את Pleyi לטלפון או למחשב: שיעורים, תרגולים ומשחקי למידה בלחיצה אחת ממסך הבית."/>
+  <meta property="og:url" content="https://pleyschool.com/download"/>
+  <meta property="og:image" content="https://pleyschool.com/images/pleyi-logo.png"/>
+  <meta property="og:locale" content="he_IL"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="הורדת האפליקציה — Pleyi"/>
+  <meta name="twitter:description" content="מורידים את Pleyi לטלפון או למחשב: שיעורים, תרגולים ומשחקי למידה בלחיצה אחת ממסך הבית."/>
+  <meta name="twitter:image" content="https://pleyschool.com/images/pleyi-logo.png"/>
+  <link rel="stylesheet" href="/styles.css?v=73"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=104"/>
+  <link rel="stylesheet" href="/css/legal.css?v=3"/>
+  <link rel="stylesheet" href="/css/download.css?v=2"/>
+  <link rel="stylesheet" href="/css/site-fox.css?v=18"/>
+  <link rel="stylesheet" href="/css/site-pro.css?v=1"/>
+</head>
+<body class="clean-site page-download">
+
+  <header class="navbar scrolled" id="navbar">
+    <div class="container nav-inner">
+      <nav class="nav-links" id="navLinks">
+        <a href="/" class="nav-pill">בית</a>
+        <div class="nav-services">
+          <button type="button" class="nav-pill nav-services-btn" id="navServicesBtn" aria-haspopup="true" aria-expanded="false">שירותים</button>
+        </div>
+        <a href="/#about" class="nav-pill">מי אנחנו</a>
+        <a href="/#contact" class="nav-pill">צור קשר</a>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="תפריט" aria-expanded="false" aria-controls="mobileNav"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="nav-services-dropdown hidden" id="navServicesDropdown" role="menu">
+      <a href="/services/ready-lessons" class="nav-services-link" role="menuitem">שיעורים</a>
+      <a href="/services/worksheets" class="nav-services-link" role="menuitem">דפי עבודה</a>
+      <a href="/services/class-games" class="nav-services-link" role="menuitem">משחקים</a>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="ניווט ראשי">
+    <a href="/">בית</a>
+    <div class="mobile-nav-services">
+      <button type="button" class="mobile-nav-services-btn" id="mobileServicesBtn" aria-expanded="false" aria-controls="mobileServicesPanel">שירותים</button>
+      <div class="mobile-nav-services-panel hidden" id="mobileServicesPanel" role="menu">
+        <a href="/services/ready-lessons" role="menuitem">שיעורים</a>
+        <a href="/services/worksheets" role="menuitem">דפי עבודה</a>
+        <a href="/services/class-games" role="menuitem">משחקים</a>
+      </div>
+    </div>
+    <a href="/#about">מי אנחנו</a>
+    <a href="/#contact">צור קשר</a>
+  </nav>
+
+  <!-- The install button and its states come from public/js/pwa.js:
+       html.pwa-installed after installing, html.pwa-app inside the app. -->
+  <main class="dl-page">
+    <div class="dl-card" data-pwa-install>
+      <div class="dl-fox" data-pwa-fox></div>
+      <h1 class="dl-title"><span class="dl-key">האפליקציה של Pleyi</span></h1>
+      <ul class="dl-points">
+        <li>פותחים בלחיצה אחת מהמסך של הטלפון</li>
+        <li>בלי לחפש את האתר כל פעם</li>
+        <li>לאנדרואיד, לאייפון ולמחשב</li>
+      </ul>
+      <button type="button" class="dl-btn" data-pwa-install-btn aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <span>הורדת האפליקציה</span>
+      </button>
+      <div class="dl-help" data-pwa-help hidden></div>
+      <p class="dl-done">
+        <span>האפליקציה הותקנה!</span>
+        <span>חפשו את Pleyi במסך הבית.</span>
+      </p>
+      <p class="dl-inapp">אתם כבר בתוך האפליקציה</p>
+    </div>
+    <p class="dl-student">
+      <span><span class="dl-key">תלמידים?</span> פתחו קודם את הקישור מהמורה.</span>
+      <span>ככה האפליקציה תיפתח ישר בדף שלכם.</span>
+    </p>
+  </main>
+
+  <footer class="site-footer-mini">
+    <nav class="site-legal-nav" aria-label="מידע משפטי">
+      <a href="/blog">בלוג</a>
+      <a href="/english">מדריך אנגלית</a>
+      <a href="/legal/terms.html">תקנון</a>
+      <a href="/legal/privacy.html">פרטיות</a>
+      <a href="/legal/cookies.html">עוגיות</a>
+      <a href="/legal/accessibility.html">נגישות</a>
+    </nav>
+  </footer>
+
+  <script src="/js/hub-nav.js"></script>
+  <script src="/js/cookie-consent.js?v=4"></script>
+  <script src="/js/site-fox.js?v=22" defer></script>
+</body>
+</html>

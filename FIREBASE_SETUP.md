@@ -7,7 +7,11 @@ Google sign-in and cloud storage for saved games + play history.
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Create a project (or use existing)
 3. **Build → Authentication → Sign-in method → Google → Enable**
-4. Add authorized domain: `localhost` (and your production domain)
+4. **Same page → Add new provider → Email/Password → Enable** (the first
+   switch only — not "Email link"). Teachers and students can then sign in
+   with an email + password too; without it the email form answers
+   "שיטת ההתחברות הזו עוד לא הופעלה".
+5. Add authorized domain: `localhost` (and your production domain)
 
 ## 2. Create Firestore database
 
@@ -84,16 +88,21 @@ Each completed solo game:
 
 ### `students/{id}` (server-only)
 Student files the teacher opens at `/admin/students`, written by the server
-(`lib/student-progress.js`). The teacher signs in with Google there, and each
-file belongs to the teacher who opened it (`ownerUid`) — a teacher only ever
-sees their own files. Students don't sign in: each file has a secret `key`,
-and the student's link `/s/<key>` is their only credential. Needs the service
+(`lib/student-progress.js`). The teacher signs in there (Google or email +
+password), and each file belongs to the teacher who opened it (`ownerUid`) —
+a teacher only ever sees their own files. Each file has a secret `key`, and
+the student's link `/s/<key>` is their credential. A student can also sign
+in on the site (login dialog → "תלמיד") with the `email` the teacher wrote
+on the file: Google, or email + password once the address is verified (the
+dialog sends the verification email). `POST /api/student-login` swaps the
+verified email for the file's key, the student's Firebase session is signed
+out right away, and the page opens `/s/<key>`. Needs the service
 account from step 4b; without it the files go to `data/student-progress.json`,
 which resets on hosts without a persistent disk (the page shows a warning when
 that's the case). No client rule is needed — browsers never read it directly.
 Files opened before Google sign-in have no `ownerUid`; the page offers to
 attach them to the signed-in teacher's account after entering `TEACHER_PIN`.
-- id, key, ownerUid, ownerEmail, name, grade, focus, notes[], createdAt, lastActive
+- id, key, ownerUid, ownerEmail, name, email (the student's sign-in email, lowercase, optional), grade, focus, notes[], createdAt, lastActive
 - homework[] { topicId, exerciseId, titles, dueDate, note, assignedAt, doneAt, score, total, attempts }
 - counts { exercises, lessons, games, practiceSec }, best { "<topic>/<exercise>": { score, total, attempts, … } }
 - subcollection `activity/{id}`: kind (exercise / lesson / presentation / game), at, and the round's details (score, total, mistakes[], …)

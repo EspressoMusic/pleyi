@@ -1328,3 +1328,997 @@ html.eng-runner-open .eng-runner-card--game-hunt > .eng-hunt-stage {
 
   .eng-hunt-slot-word { display: none; }
 }
+
+/* ── Games with modes (bingo): a button per mode instead of "Start!" ── */
+
+.eng-game-modes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(8px, 1.6dvh, 14px);
+}
+
+.eng-game-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: clamp(8px, 1.6dvh, 12px) 20px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--eng-soft);
+  color: var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font-family: inherit;
+  font-size: clamp(1rem, 2.5dvh, 1.15rem);
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.eng-game-mode.is-primary {
+  background: var(--memyellow);
+}
+
+.eng-game-mode svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.eng-game-mode:hover {
+  transform: translateY(-1px);
+}
+
+.eng-game-mode:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.eng-ex-card--game-adventure .eng-ex-icon,
+.eng-game-badge--adventure { background: #ffd57a; }
+
+.eng-ex-card--game-bingo .eng-ex-icon,
+.eng-game-badge--bingo { background: #ff9f9f; }
+
+/* ════════ Fox adventure: the path on top, the sentence, the answers ════════ */
+
+.eng-adv-trail {
+  position: relative;
+  height: clamp(64px, 14dvh, 120px);
+  margin-bottom: clamp(4px, 1dvh, 10px);
+}
+
+.eng-adv-path {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.eng-adv-path path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-dasharray: 2 9;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.45;
+}
+
+.eng-adv-stop {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: clamp(14px, 2.4dvh, 20px);
+  height: clamp(14px, 2.4dvh, 20px);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--eng-soft);
+  box-shadow: 2px 2px 0 0 var(--ink);
+  transform: translate(-50%, -50%);
+  transition: background 0.3s ease;
+}
+
+.eng-adv-stop.is-done {
+  background: var(--memyellow);
+}
+
+.eng-adv-stop.is-home {
+  width: clamp(34px, 6dvh, 48px);
+  height: clamp(34px, 6dvh, 48px);
+  border-radius: 12px;
+  background: var(--eng-soft);
+  color: var(--ink);
+}
+
+.eng-adv-stop.is-home svg {
+  width: 70%;
+  height: 70%;
+}
+
+.eng-adv-trail.is-home .eng-adv-stop.is-home {
+  background: var(--memyellow);
+  animation: eng-pop 0.4s ease;
+}
+
+/* The fox stands on its stop: its feet are on the dot. */
+.eng-adv-fox {
+  --fox-body: #f7b55e;
+  position: absolute;
+  z-index: 1;
+  width: clamp(36px, 7.5dvh, 60px);
+  transform: translate(-50%, -92%);
+  transition: left 0.6s ease, top 0.6s ease;
+  pointer-events: none;
+}
+
+.eng-adv-fox.is-hop .site-fox-fig {
+  animation: eng-adv-hop 0.6s ease;
+}
+
+@keyframes eng-adv-hop {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  20% { transform: translateY(0) scale(1.08, 0.9); }
+  50% { transform: translateY(-38%) scale(0.95, 1.06); }
+  80% { transform: translateY(0) scale(1.06, 0.94); }
+}
+
+.eng-adv-trail.is-home .eng-adv-fox .site-fox-fig {
+  animation: eng-game-pulse 0.8s ease-in-out 2;
+}
+
+.eng-adv-fox-dot {
+  display: block;
+  width: 60%;
+  aspect-ratio: 1;
+  margin: auto;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #f29a4a;
+}
+
+.eng-adv-ask {
+  margin: 0 0 clamp(4px, 1dvh, 8px);
+  font-size: clamp(0.95rem, 2.4dvh, 1.1rem);
+  font-weight: 800;
+  text-align: center;
+  color: var(--ink);
+}
+
+.eng-adv-ask:empty {
+  display: none;
+}
+
+.eng-adv-story {
+  text-align: center;
+}
+
+.eng-adv-story.is-in {
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-adv-line {
+  margin: 0;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.3rem, 4dvh, 2rem);
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.eng-adv-word {
+  white-space: nowrap;
+}
+
+.eng-adv-line .eng-speak--inline {
+  margin-inline-start: 0.35em;
+  vertical-align: middle;
+}
+
+/* The picture stands in the sentence where the missing word goes. */
+.eng-adv-blank {
+  display: inline-grid;
+  place-items: center;
+  width: clamp(48px, 9dvh, 74px);
+  height: clamp(48px, 9dvh, 74px);
+  border: 3px dashed var(--ink);
+  border-radius: 14px;
+  background: var(--eng-soft);
+  vertical-align: middle;
+}
+
+.eng-adv-blank img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  user-select: none;
+}
+
+.eng-adv-he {
+  margin: clamp(2px, 0.6dvh, 6px) 0 0;
+  font-size: clamp(0.95rem, 2.4dvh, 1.1rem);
+  font-weight: 700;
+  color: var(--body);
+}
+
+.eng-adv-end {
+  font-size: clamp(1.6rem, 5dvh, 2.4rem);
+}
+
+html.eng-runner-open .eng-runner-card--game > .eng-adv-stage {
+  margin-top: clamp(8px, 1.8dvh, 16px);
+}
+
+.eng-adv-options {
+  width: 100%;
+}
+
+.eng-adv-options.is-pic {
+  display: flex;
+  justify-content: center;
+  gap: var(--gap, 14px);
+}
+
+.eng-adv-options.is-pic .eng-adv-pic {
+  width: var(--cell, 120px);
+  height: var(--cell, 120px);
+  padding: 8%;
+}
+
+.eng-adv-pic img {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+}
+
+.eng-adv-options.is-word {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 1.6dvh, 14px);
+}
+
+.eng-adv-opt.eng-option {
+  min-width: 0;
+  padding: clamp(10px, 2.2dvh, 18px) 8px;
+  font-size: clamp(1.1rem, 3dvh, 1.45rem);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+  .eng-adv-options.is-word {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+
+  .eng-adv-opt.eng-option {
+    padding-block: clamp(8px, 1.6dvh, 12px);
+  }
+}
+
+/* ════════ Class bingo ════════ */
+
+.eng-bingo-stage [hidden] {
+  display: none !important;
+}
+
+/* The teacher's board: the word just called, big, in the middle. */
+.eng-bingo-ball {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1.2dvh, 12px);
+  max-width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  text-align: center;
+}
+
+.eng-bingo-ball.is-in {
+  animation: eng-pop 0.32s ease;
+}
+
+.eng-bingo-badge {
+  display: grid;
+  place-items: center;
+  width: clamp(60px, 12dvh, 96px);
+  height: clamp(60px, 12dvh, 96px);
+  border: 3px solid var(--ink);
+  border-radius: 26px;
+  background: #ff9f9f;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  color: var(--ink);
+}
+
+.eng-bingo-badge svg {
+  width: 56%;
+  height: 56%;
+}
+
+.eng-bingo-wait {
+  font-size: clamp(1rem, 2.6dvh, 1.2rem);
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.eng-bingo-count {
+  display: grid;
+  place-items: center;
+  min-width: clamp(34px, 6dvh, 46px);
+  height: clamp(34px, 6dvh, 46px);
+  padding: 0 8px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  box-sizing: border-box;
+  font-size: clamp(1rem, 2.8dvh, 1.3rem);
+  font-weight: 900;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.eng-bingo-pic {
+  flex: 0 1 auto;
+  width: auto;
+  height: clamp(70px, 26dvh, 220px);
+  min-height: 0;
+  aspect-ratio: 1;
+  padding: clamp(6px, 1.4dvh, 14px);
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  background: var(--eng-soft);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  box-sizing: border-box;
+  object-fit: contain;
+  user-select: none;
+}
+
+.eng-bingo-word-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+}
+
+.eng-bingo-word {
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(2.2rem, 10dvh, 5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.eng-bingo-ball .eng-say-row {
+  justify-content: center;
+}
+
+.eng-bingo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1.4dvh, 12px);
+  margin-top: clamp(8px, 1.6dvh, 14px);
+}
+
+.eng-bingo-next.btn {
+  padding: clamp(8px, 1.8dvh, 13px) 34px;
+  font-size: clamp(1.05rem, 2.8dvh, 1.3rem);
+}
+
+.eng-bingo-controls .eng-tool:disabled {
+  cursor: default;
+  opacity: 0.5;
+  transform: none;
+}
+
+/* The words called so far, newest first: as many rows as fit. */
+.eng-bingo-called {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-height: clamp(40px, 11dvh, 92px);
+  margin: clamp(8px, 1.6dvh, 14px) 0 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+}
+
+.eng-bingo-called:empty {
+  display: none;
+}
+
+.eng-bingo-chip.eng-game-chip {
+  padding: 2px 10px 2px 4px;
+  background: var(--eng-soft);
+}
+
+.eng-bingo-chip.eng-game-chip img {
+  width: 28px;
+  height: 28px;
+}
+
+.eng-bingo-called li:first-child .eng-bingo-chip {
+  background: var(--memyellow);
+}
+
+/* Checking a card: the number, then the card as the student has it. */
+.eng-bingo-check {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, 1.4dvh, 12px);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.eng-bingo-check-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.eng-bingo-check-title {
+  margin: 0;
+  font-size: clamp(1.05rem, 2.8dvh, 1.3rem);
+  font-weight: 900;
+  color: #000;
+}
+
+.eng-bingo-check-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-bingo-check-form input {
+  width: 5.5rem;
+  padding: 6px 10px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: var(--eng-soft);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.eng-bingo-check-result {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 0;
+}
+
+.eng-bingo-mini {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  width: var(--size, 220px);
+  height: var(--size, 220px);
+}
+
+.eng-bingo-mini-cell {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  border: 2.5px solid var(--ink);
+  border-radius: 12px;
+  background: var(--eng-soft);
+  box-shadow: 2px 2px 0 0 var(--ink);
+  opacity: 0.45;
+}
+
+.eng-bingo-mini-cell img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.eng-bingo-mini-cell.is-called {
+  opacity: 1;
+}
+
+.eng-bingo-mini-cell.is-line {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+  box-shadow: 2px 2px 0 0 var(--eng-right);
+}
+
+.eng-bingo-verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: clamp(1rem, 2.6dvh, 1.2rem);
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.eng-bingo-verdict svg {
+  width: 22px;
+  height: 22px;
+}
+
+.eng-bingo-verdict.is-win {
+  color: var(--eng-right);
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-bingo-verdict.is-bad {
+  color: var(--eng-wrong);
+}
+
+/* A student's card: 3 × 3 pictures, a tap marks one. */
+.eng-bingo-tip {
+  margin: 0 0 clamp(6px, 1.4dvh, 12px);
+  font-size: clamp(0.95rem, 2.4dvh, 1.1rem);
+  font-weight: 800;
+  text-align: center;
+  color: var(--ink);
+}
+
+.eng-bingo-card {
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell, 100px));
+  grid-auto-rows: var(--cell, 100px);
+  gap: var(--gap, 10px);
+}
+
+.eng-bingo-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 10%;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--eng-soft);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+
+.eng-bingo-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  transition: opacity 0.15s ease;
+}
+
+.eng-bingo-cell:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.eng-bingo-stamp {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+}
+
+.eng-bingo-stamp svg {
+  width: 58%;
+  height: 58%;
+  padding: 8%;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  box-sizing: border-box;
+}
+
+.eng-bingo-cell.is-marked {
+  background: color-mix(in srgb, var(--memyellow) 45%, var(--eng-soft));
+}
+
+.eng-bingo-cell.is-marked img {
+  opacity: 0.55;
+}
+
+.eng-bingo-cell.is-marked .eng-bingo-stamp {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.eng-bingo-cell.is-line {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+  box-shadow: 3px 4px 0 0 var(--eng-right);
+}
+
+.eng-bingo-cell.is-line .eng-bingo-stamp svg {
+  background: var(--eng-right);
+  color: #fff;
+}
+
+.eng-bingo-card.is-bingo .eng-bingo-cell.is-line {
+  animation: eng-pop 0.35s ease;
+}
+
+.eng-bingo-card-actions {
+  display: flex;
+  justify-content: center;
+}
+
+#engBingoNewCard.is-sure {
+  background: var(--eng-wrong-soft);
+  border-color: var(--eng-wrong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-adv-fox,
+  .eng-adv-fox.is-hop .site-fox-fig,
+  .eng-bingo-ball.is-in,
+  .eng-bingo-cell,
+  .eng-bingo-stamp {
+    animation: none;
+    transition: none;
+  }
+}
+
+.eng-ex-card--game-sentence .eng-ex-icon,
+.eng-game-badge--sentence { background: #7fdccf; }
+
+.eng-ex-card--game-dictation .eng-ex-icon,
+.eng-game-badge--dictation { background: #a9c4ff; }
+
+.eng-ex-card--game-snake .eng-ex-icon,
+.eng-game-badge--snake { background: #c4e86b; }
+
+/* ════════ Build a sentence: the picture, the Hebrew, the line, the words ════════ */
+
+.eng-sen-img {
+  max-height: 200px;
+}
+
+.eng-sen-he {
+  flex-shrink: 0;
+  margin: clamp(6px, 1.4dvh, 12px) 0 0;
+  font-size: clamp(1.05rem, 2.8dvh, 1.3rem);
+  font-weight: 900;
+  text-align: center;
+  color: var(--ink);
+}
+
+.eng-sen-line,
+.eng-sen-tiles {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(6px, 1.2dvh, 10px);
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(1.1rem, 3.2dvh, 1.6rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.eng-sen-line {
+  margin-top: clamp(10px, 2.2dvh, 20px);
+  padding: clamp(8px, 1.6dvh, 14px) 12px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--eng-soft);
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+/* An empty place in the line is a short dashed box; a filled one holds its word. */
+.eng-sen-gap {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.6em;
+  min-height: 1.9em;
+  padding: 0 0.35em;
+  border: 3px dashed rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  color: var(--ink);
+}
+
+.eng-sen-gap.is-filled {
+  min-width: 0;
+  border: 3px solid var(--ink);
+  background: #eaf5ff;
+  animation: eng-pop 0.24s ease;
+}
+
+.eng-sen-line.is-right .eng-sen-gap {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+  color: #11643a;
+}
+
+.eng-sen-end {
+  align-self: center;
+  margin-inline-start: -0.2em;
+  font-size: 1.2em;
+  color: var(--ink);
+}
+
+.eng-sen-tiles {
+  margin-top: clamp(10px, 2.2dvh, 20px);
+}
+
+.eng-sen-tile {
+  min-height: 1.9em;
+  padding: 0 0.6em;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.eng-sen-tile:hover {
+  transform: translateY(-2px);
+}
+
+.eng-sen-tile:active {
+  transform: translate(2px, 3px);
+  box-shadow: none;
+}
+
+.eng-sen-tile.is-used {
+  display: none;
+}
+
+.eng-sen-tile.is-wrong {
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+  animation: eng-shake 0.4s ease;
+}
+
+.eng-sen-tile.is-glow {
+  border-color: var(--eng-right);
+  background: var(--eng-right-soft);
+  animation: eng-game-pulse 1s ease-in-out infinite;
+}
+
+/* ════════ Dictation: a big "listen" button where the picture will be ════════ */
+
+.eng-runner-card--game-dictation {
+  container-type: inline-size;
+}
+
+.eng-dic-ear {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 1.8dvh, 14px);
+}
+
+.eng-dic-play {
+  display: grid;
+  place-items: center;
+  width: clamp(84px, 17dvh, 140px);
+  height: clamp(84px, 17dvh, 140px);
+  padding: 0;
+  border: 4px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  color: var(--ink);
+  cursor: pointer;
+  animation: eng-pop 0.3s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.eng-dic-play svg {
+  width: 48%;
+  height: 48%;
+}
+
+.eng-dic-play:hover {
+  transform: translateY(-2px);
+}
+
+.eng-dic-play:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.eng-scr-he.is-ask {
+  color: var(--body);
+}
+
+@media (max-width: 420px) {
+  html.eng-runner-open .eng-dic-slow span {
+    display: inline;
+  }
+}
+
+/* ════════ Word snake: the board fills the stage, the pad is under it ════════ */
+
+.eng-snake-stage {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html.eng-runner-open .eng-runner-card--game > .eng-snake-stage {
+  min-height: 200px;
+}
+
+.eng-snake-board {
+  --cell: 44px;
+  position: relative;
+  width: calc(var(--cols) * var(--cell));
+  height: calc(var(--rows) * var(--cell));
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  box-sizing: content-box;
+  background-color: #eaf5ff;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: var(--cell) var(--cell);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  overflow: hidden;
+}
+
+.eng-snake-seg,
+.eng-snake-food {
+  position: absolute;
+  left: calc(var(--x) * var(--cell));
+  top: calc(var(--y) * var(--cell));
+  width: var(--cell);
+  height: var(--cell);
+  box-sizing: border-box;
+}
+
+.eng-snake-seg::before {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border: 3px solid var(--ink);
+  border-radius: 34%;
+  background: var(--memteal);
+}
+
+.eng-snake-seg.is-tail::before {
+  inset: 18%;
+  border-radius: 50%;
+}
+
+/* The head, turned the way it goes (drawn facing up): two eyes. */
+.eng-snake-seg.is-head {
+  z-index: 2;
+  transform: rotate(var(--turn, 90deg));
+}
+
+.eng-snake-seg.is-head::before {
+  inset: 2%;
+  border-radius: 46% 46% 30% 30%;
+  background: #00c9b7;
+}
+
+.eng-snake-eye {
+  position: absolute;
+  top: 20%;
+  width: 24%;
+  height: 24%;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  box-sizing: border-box;
+}
+
+.eng-snake-eye:first-child { left: 19%; }
+.eng-snake-eye:last-child { right: 19%; }
+
+.eng-snake-eye::after {
+  content: "";
+  position: absolute;
+  top: 8%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.eng-snake-seg:not(.is-head) .eng-snake-eye {
+  display: none;
+}
+
+.eng-snake-food {
+  z-index: 1;
+}
+
+.eng-snake-food img {
+  position: absolute;
+  inset: 3%;
+  width: 94%;
+  max-width: none;
+  height: 94%;
+  padding: 8%;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #fff6d6;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  box-sizing: border-box;
+  object-fit: contain;
+  animation: eng-pop 0.3s ease;
+}
+
+.eng-snake-board.is-crash .eng-snake-seg::before {
+  border-color: var(--eng-wrong);
+  background: var(--eng-wrong-soft);
+}
+
+.eng-snake-board.is-crash {
+  animation: eng-shake 0.4s ease;
+}
+
+.eng-snake-pad {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 16px);
+  margin-top: clamp(8px, 1.8dvh, 16px);
+}
+
+.eng-snake-key {
+  display: grid;
+  place-items: center;
+  width: clamp(54px, 9dvh, 72px);
+  height: clamp(44px, 7.4dvh, 60px);
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--memyellow);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  color: var(--ink);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.eng-snake-key svg {
+  width: 50%;
+  height: 50%;
+  transform: rotate(var(--turn));
+}
+
+.eng-snake-key:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-sen-tile.is-glow,
+  .eng-snake-board.is-crash {
+    animation: none;
+  }
+}

@@ -27,9 +27,9 @@ const QUALITY = 72;
 const WORDS = { "הר געש": "הר מיוחד שיכול לפלוט", "לבה": "סלע נוזלי ולוהט", "עשן": "ענן כבד שעולה", "מאגמה": "סלע נוזלי וחם מאוד", "לוע": "הפתח שבראש", "התפרצות": "הרגע שבו הר הגעש", "אפר געשי": "אבק ופירורי סלע", "הר געש פעיל": "שהתפרץ לאחרונה", "הר געש רדום": "שלא התפרץ הרבה זמן", "הר געש כבוי": "שלא צפוי להתפרץ", "וולקנולוג": "מדען שחוקר", "וולקנולוגים": "מדענים שחוקרים", "קרום כדור הארץ": "השכבה החיצונית" };
 const FACTS = { "מה זו מאגמה?": "סלע נוזלי מתחת לאדמה", "איך קוראים למאגמה כשהיא יוצאת החוצה?": "לבה", "מה זה לוע?": "הפתח בראש ההר", "למה המאגמה עולה?": "הלחץ בפנים ההר גדל", "כמה חמה הלבה יכולה להיות?": "יותר מ־1,000 מעלות", "מה קורה ללבה כשהיא מתקררת?": "הופכת לסלע קשה", "מה יוצא מהר געש?": "לבה, עשן ואפר", "איך קוראים למדענים שחוקרים הרי געש?": "וולקנולוגים" };
 
-// Runs before every page: no cookie bar, no mascot, a tidy demo student.
+// Runs before every page: no cookie bar, no mascot or its guide, a tidy demo student.
 const PRELOAD = `
-  try { localStorage.setItem("gameclass-cookies-v1", "accepted"); localStorage.setItem("pleyi-owl-greeted", "1"); localStorage.setItem("pleyi-lang", "he"); } catch (e) {}
+  try { localStorage.setItem("gameclass-cookies-v1", "accepted"); localStorage.setItem("pleyi-owl-greeted", "1"); localStorage.setItem("pleyi-tour-off", "1"); localStorage.setItem("pleyi-lang", "he"); } catch (e) {}
   document.addEventListener("DOMContentLoaded", () => {
     const s = document.createElement("style");
     s.textContent = ".site-owl,.site-fox,.site-owl-bubble,.site-fox-bubble{visibility:hidden!important}";

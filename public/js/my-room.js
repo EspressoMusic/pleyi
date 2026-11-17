@@ -1,7 +1,6 @@
 /* Personal room (/my-room) — "שלום" + a bell with the students' updates
    (a task done, a request for help), then one equal tile per category:
-   recent activity, suggested lessons, saved lessons, the full activity
-   history (day by day), games and the weekly report. A tile opens its
+   students, recent activity, saved lessons and games. A tile opens its
    list in a dialog. */
 
 (function () {
@@ -76,7 +75,6 @@
   // Saved lessons are opened from the lessons library (?lesson= opens the slides).
   const LESSON_OPEN_PATH = "/services/ready-lessons";
   const RECENT_COUNT = 4;
-  const SUGGEST_COUNT = 3;
 
   const ICONS = {
     lesson: '<path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2V5z"/><path d="M4 20a2 2 0 0 0 2 2h13v-4"/>',
@@ -89,10 +87,8 @@
     help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><path d="M12 17h.01"/>',
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-    star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
-    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    chart: '<path d="M3 20h18M6 16v-4M11 16V6M16 16v-7"/>',
     heart: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z"/>',
-    more: '<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
   };
 
   function icon(name) {
@@ -238,7 +234,7 @@
       </div>`;
   }
 
-  // The box shows lessons and games only; students and tasks stay in the history.
+  // The box shows lessons and games only, not students and tasks.
   const RECENT_KINDS = new Set(["lesson", "saved", "game", "created"]);
 
   function activityHtml() {
@@ -246,23 +242,6 @@
     return list.length
       ? `<div class="room-inline-list">${list.map((e) => activityRowHtml(e)).join("")}</div>`
       : `<p class="room-box-empty">עדיין אין פעילות.<br>שיעור שפותחים מהספרייה יופיע כאן.<br><a href="${LESSON_OPEN_PATH}">לספריית השיעורים</a></p>`;
-  }
-
-  function historyHtml() {
-    const days = new Map();
-    myActivity().forEach((e) => {
-      const key = dayStart(e.at);
-      days.set(key, [...(days.get(key) || []), e]);
-    });
-    return days.size
-      ? [...days.entries()]
-          .map(
-            ([day, list]) => `
-              <h3 class="room-dlg-day">${escapeHtml(dayLabel(day))}</h3>
-              <div class="room-inline-list">${list.map((e) => activityRowHtml(e, { time: clock })).join("")}</div>`
-          )
-          .join("")
-      : `<p class="room-box-empty">עדיין אין פעילות.</p>`;
   }
 
   function dialogHtml(titleId, title, body) {
@@ -274,54 +253,6 @@
         </div>
         ${body}
       </div>`;
-  }
-
-  /* ── Suggested lessons: the next lesson of a topic the teacher opened or
-     saved, then more of the same subject, then a first lesson of each
-     subject. Lessons already opened or saved aren't suggested again. ── */
-
-  function suggestedLessons() {
-    const lessons = window.ReadyLessons;
-    const all = lessons?.catalog || {};
-    const ids = Object.keys(all);
-    const hasPremium = !!window.PleyiPremium?.hasPremium?.();
-    const seeds = [...lessonHistory.map((e) => e.id), ...savedLessons.map((e) => e.lessonId)].filter((id) => all[id]);
-    const seen = new Set(seeds);
-    const picks = [];
-    const usable = (id) => id && !seen.has(id) && !picks.includes(id) && (!all[id].premium || hasPremium);
-    const add = (id) => {
-      if (usable(id)) picks.push(id);
-    };
-
-    seeds.forEach((id) => {
-      const topic = all[id].topic;
-      if (topic) add(ids.slice(ids.indexOf(id) + 1).find((x) => all[x].topic === topic && usable(x)));
-    });
-    seeds.forEach((id) => add(ids.find((x) => all[x].subject === all[id].subject && usable(x))));
-    Object.keys(lessons?.subjectLabels || {}).forEach((subject) => add(ids.find((x) => all[x].subject === subject && usable(x))));
-    return picks.slice(0, SUGGEST_COUNT);
-  }
-
-  function suggestRowHtml(id) {
-    const lesson = lessonById(id);
-    const subject = window.ReadyLessons.subjectLabels?.[lesson.subject] || "";
-    return `
-      <div class="room-list-row">
-        <div class="room-list-info">
-          <p class="room-list-title">${escapeHtml(lessonTitle(lesson))}</p>
-          ${subject ? `<p class="room-list-meta">${escapeHtml(subject)}</p>` : ""}
-        </div>
-        <div class="room-list-actions">
-          <a href="${lessonUrl(id)}" class="room-list-play">פתיחה</a>
-        </div>
-      </div>`;
-  }
-
-  function suggestionsHtml() {
-    const list = suggestedLessons();
-    return list.length
-      ? `<div class="room-inline-list">${list.map(suggestRowHtml).join("")}</div>`
-      : `<p class="room-box-empty">פתחת כבר את כל השיעורים — כל הכבוד!</p>`;
   }
 
   /* ── The bell: what the students did — a task done, a request for help
@@ -351,6 +282,13 @@
       });
       (s.help || []).forEach((h) => {
         list.push({ at: ms(h.at), icon: "help", verb: `${s.name} ביקש עזרה`, title: h.text ? `"${h.text}"` : "", href, help: true });
+      });
+      // A test handed in, and a request for a retake still waiting.
+      (s.tests || []).forEach((test) => {
+        (test.attempts || []).forEach((a) => {
+          list.push({ at: ms(a.at), icon: "done", verb: `${s.name} הגיש מבחן:`, title: test.title, score: a.total ? `${a.score}/${a.total}` : "", href });
+        });
+        if (test.retakeAt) list.push({ at: ms(test.retakeAt), icon: "help", verb: `${s.name} ביקש מבחן חוזר:`, title: test.title, href, help: true });
       });
     });
     return list.filter((e) => e.at).sort((a, b) => b.at - a.at).slice(0, 40);
@@ -458,27 +396,11 @@
     return `<div class="room-inline-list">${items.map((g) => savedRowHtml(g, { showStar: true, showDelete })).join("")}</div>`;
   }
 
-  const MISC_HTML = `
-    <div class="room-inline-list">
-      <div class="room-list-row">
-        <div class="room-list-info">
-          <p class="room-list-title">הדוח השבועי</p>
-          <p class="room-list-meta">מה התלמידים שלי עשו השבוע</p>
-        </div>
-        <div class="room-list-actions">
-          <a href="/admin/students#report" class="room-list-play">פתיחה</a>
-        </div>
-      </div>
-    </div>`;
-
   const BOX_BODIES = {
     activity: activityHtml,
-    suggest: suggestionsHtml,
     lessons: () => sectionHtml("lessons"),
-    history: historyHtml,
     favorites: () => sectionHtml("favorites"),
     created: () => sectionHtml("created"),
-    misc: () => MISC_HTML,
   };
 
   function openBox(key) {

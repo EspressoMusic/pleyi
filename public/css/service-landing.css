@@ -1,11 +1,19 @@
 /* Service landing pages — extends clean-site */
 
-/* Game-builder page: hero title on one line */
+/* Game-builder page: hero title on one line. On the same baseline, since on
+   phones the fox's perch pushes the first word down (site-fox.css). */
 body.service-panel .hero-title {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: baseline;
   gap: 0.3em;
+}
+
+/* The perch centers itself with auto margins, which in this row pushed the
+   second word off to the far side. */
+body.service-panel .hero-title .site-fox-perch {
+  margin-inline: 0;
 }
 
 body.service-panel .clean-hero-inner .hero-title .line {
@@ -101,11 +109,11 @@ body.page-ready-lessons .svc-filter-trigger {
 }
 
 body.page-ready-lessons .svc-filter-trigger-label {
-  font-size: 0.78rem;
+  font-size: 1rem;
 }
 
 body.page-ready-lessons .svc-filter-trigger-value {
-  font-size: 1.02rem;
+  font-size: 1.4rem;
 }
 
 body.page-ready-lessons .svc-filter-trigger:hover,
@@ -118,6 +126,12 @@ body.page-ready-lessons .svc-filter-menu {
   border-radius: 12px;
   background: #eaf5ff;
   box-shadow: var(--shadow-sticker);
+  max-height: min(380px, 60vh);
+}
+
+body.page-ready-lessons .svc-filter-menu button {
+  padding: 10px 12px;
+  font-size: 1.2rem;
 }
 
 body.page-ready-lessons .svc-filter-divider {
@@ -1176,6 +1190,29 @@ body.page-game-builder .svc-custom-tile:active {
   box-shadow: 4px 4px 0 0 var(--ink);
 }
 
+/* Narrow phones: in a small square the title ran over the "i", the subject
+   and the button, so the card grows with its title instead. */
+@media (max-width: 420px) {
+  body.page-game-builder .svc-lesson-preview {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 150px;
+    padding: 30px 8px 56px;
+  }
+
+  body.page-game-builder .svc-lesson-title-wrap {
+    position: static;
+    flex: 1;
+    padding: 0;
+  }
+
+  body.page-game-builder .svc-custom-tile {
+    aspect-ratio: auto;
+    min-height: 150px;
+    padding-top: 44px;
+  }
+}
+
 /* Game info modal — opened from the "i" toggle on each game card */
 .modal-overlay > .modal.modal-game-info {
   --modal-fill: var(--memteal);
@@ -1257,6 +1294,11 @@ body.page-game-builder .svc-custom-tile:active {
   min-width: min(100%, 240px);
   padding: 14px 32px;
   font-size: clamp(1.05rem, 3vw, 1.25rem);
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.game-info-actions .btn:active {
+  transform: translate(4px, 5px);
   box-shadow: none;
 }
 
@@ -1870,4 +1912,43 @@ body.page-game-builder .svc-custom-tile:active {
    "פועל להיות (To Be)" keeps its English part together on the second line. */
 .svc-lesson-title-wrap :is(.svc-lesson-name, .svc-lesson-part) {
   text-wrap: balance;
+}
+
+/* The library opened from a student's page (?from=student, set early in
+   ready-lessons.html): no site menu or account circle, a way back instead. */
+html.from-student body.page-ready-lessons #navbar,
+html.from-student body.page-ready-lessons #mobileNav {
+  display: none !important;
+}
+
+.svc-student-back {
+  display: none;
+}
+
+html.from-student .svc-student-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 8px;
+  padding: 10px 22px;
+  background: #eaf5ff;
+  color: var(--ink);
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+
+html.from-student .svc-student-back svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* No navbar here, so the hero doesn't need the clean-site clearance for it. */
+html.from-student body.page-ready-lessons .clean-hero-inner {
+  padding-top: 0;
+}
+
+@media (max-width: 768px) {
+  html.from-student .svc-student-back {
+    margin-bottom: 0;
+  }
 }

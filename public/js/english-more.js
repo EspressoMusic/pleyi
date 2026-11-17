@@ -98,9 +98,11 @@
   /* ── Grammar topics ── */
 
   // Choice questions with a whole-word blank, each with its options.
+  // `noDerived`: a letter exercise ("B b → ___"), whose blanks would only
+  // make the same questions again as sentences.
   function choiceItems(topic) {
     return own(topic, "choice")
-      .filter((ex) => ex.questions)
+      .filter((ex) => ex.questions && !ex.noDerived)
       .flatMap((ex) => ex.questions.map((q) => ({ q, options: q.options || ex.options || [] })))
       .filter(({ q, options }) => WORD_BLANK.test(q.text) && options.length >= 2 && options.includes(q.answer));
   }

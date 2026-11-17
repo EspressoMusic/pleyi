@@ -8,7 +8,9 @@
    - Its eyes follow the mouse. Only the corner fox talks: on the first
      visit it says that it searches, and every so often it says hello.
    - The corner fox steps aside while a dialog, a lesson or an exercise
-     screen is open (site-fox.css). */
+     screen is open (site-fox.css).
+   - The guide: the first time someone opens a part of the site, the fox
+     shows it around (PleyiFox.tour). */
 
 (function () {
   const GREETING = "היי! לחצו עליי כדי לחפש באתר";
@@ -121,8 +123,6 @@
   /* ── The search ── */
 
   const MAX_RESULTS = 12;
-  // Shown before anything is typed: the site's main pages.
-  const START_COUNT = 6;
   // Hebrew words take ו, ה, ב, ל, מ, ש, כ in front ("השברים", "בגוף").
   const PREFIX = /^[והבלמשכ]/;
   let indexPromise = null;
@@ -163,7 +163,6 @@
 
   function find(items, query) {
     const q = norm(query);
-    if (!q) return items.slice(0, START_COUNT);
     const words = q.split(" ");
     return items
       .map((item, i) => {
@@ -248,6 +247,14 @@
     const note = panel.querySelector(".site-search-note");
     const list = panel.querySelector(".site-search-results");
     const query = input.value;
+    // Nothing typed yet: only the box. The list loads now, so the first
+    // letters find it ready.
+    if (!norm(query)) {
+      note.textContent = "";
+      list.innerHTML = "";
+      loadIndex().catch(() => {});
+      return;
+    }
     note.textContent = "מחפש…";
     loadIndex().then(
       (items) => {
@@ -294,11 +301,366 @@
     if (returnFocus) opener?.focus();
   }
 
-  // Home: on the site name. Other pages: on the first line of the big title.
+  /* ── The guide ──
+     The page goes dark, one thing at a time stays lit, and a card with the
+     fox says in a short line what it is. tour(id, steps), each step
+     { id, el, title, text }: el is an element or a selector, or a list of
+     them (the first one on screen is used, so a button can have a phone
+     twin); text is a line or a list of lines. Each step is shown once per
+     browser. A step whose element isn't on screen waits for a time it is (a
+     button only some lessons have), and then comes on its own. */
+
+  const TOUR_KEY = "pleyi-tour-";
+  // Set by the screenshot scripts (scripts/capture-home-demo.js): no guide.
+  const TOUR_OFF_KEY = "pleyi-tour-off";
+  const TOUR_PAD = 6;
+  const TOUR_GAP = 14;
+  const TOUR_EDGE = 12;
+  let touring = false;
+
+  // What is open over the page (the list the corner fox steps aside for,
+  // site-fox.css): only what is inside it can be lit.
+  const COVERS =
+    'dialog[open], .modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="true"]:not(.hidden, [hidden], .hidden *, [aria-hidden="true"])';
+
+  // `open`: the guide is on, so it is the thing over the page.
+  function onScreen(el, open = false) {
+    if (!el || el.closest(".hidden, [hidden]")) return false;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return false;
+    if (open) return true;
+    if ([...document.querySelectorAll(COVERS)].some((cover) => !cover.contains(el))) return false;
+    // In the window, nothing else may lie on it (a menu, the cookie bar).
+    const x = r.left + r.width / 2;
+    const y = r.top + r.height / 2;
+    if (x < 0 || y < 0 || x >= window.innerWidth || y >= window.innerHeight) return true;
+    const hit = document.elementFromPoint(x, y);
+    return !hit || el.contains(hit) || hit.contains(el);
+  }
+
+  function pick(spec, open = false) {
+    return []
+      .concat(spec)
+      .flatMap((one) => (typeof one === "string" ? [...document.querySelectorAll(one)] : [one]))
+      .find((el) => onScreen(el, open));
+  }
+
+  function tour(id, steps) {
+    if (touring) return false;
+    let saved;
+    try {
+      if (localStorage.getItem(TOUR_OFF_KEY)) return false;
+      saved = localStorage.getItem(TOUR_KEY + id);
+    } catch {
+      return false;
+    }
+    let seen = [];
+    try {
+      seen = [].concat(JSON.parse(saved) || []);
+    } catch {}
+    const shown = steps
+      .filter((s) => !seen.includes(s.id))
+      .map((s) => ({ ...s, spec: s.el, el: pick(s.el) }))
+      .filter((s) => s.el);
+    if (!shown.length) return false;
+    try {
+      localStorage.setItem(TOUR_KEY + id, JSON.stringify([...seen, ...shown.map((s) => s.id)]));
+    } catch {}
+    touring = true;
+
+    const el = document.createElement("div");
+    el.className = "site-tour";
+    el.dir = "rtl";
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-modal", "true");
+    el.setAttribute("aria-labelledby", "site-tour-title");
+    el.innerHTML = `
+      <div class="site-tour-hole"></div>
+      <div class="site-tour-card">
+        <span class="site-fox site-fox--tour" aria-hidden="true"><span class="site-fox-fig">${FOX_SVG}</span></span>
+        <div class="site-tour-body" aria-live="polite">
+          <p class="site-tour-title" id="site-tour-title"><span class="site-tour-key"></span></p>
+          <p class="site-tour-text"></p>
+        </div>
+        <div class="site-tour-foot">
+          <span class="site-tour-count" dir="ltr"></span>
+          <button type="button" class="site-tour-skip">דלג</button>
+          <button type="button" class="site-tour-next"></button>
+        </div>
+      </div>`;
+    const hole = el.querySelector(".site-tour-hole");
+    const card = el.querySelector(".site-tour-card");
+    const fox = el.querySelector(".site-fox");
+    const skipBtn = el.querySelector(".site-tour-skip");
+    const nextBtn = el.querySelector(".site-tour-next");
+    const back = document.activeElement;
+    let at = 0;
+    let queued = false;
+
+    fox.querySelector(".site-fox-fig").addEventListener("animationend", (e) => {
+      if (e.animationName === "site-fox-hop") fox.classList.remove("is-hop");
+    });
+
+    // The lit box hugs the element; the card goes under it, or above it, or
+    // (a big area) over its bottom.
+    function place() {
+      queued = false;
+      // The page drew itself again under the guide (fresh data came in).
+      if (!shown[at].el.isConnected) shown[at].el = pick(shown[at].spec, true) || shown[at].el;
+      const r = shown[at].el.getBoundingClientRect();
+      const vw = document.documentElement.clientWidth;
+      const vh = window.innerHeight;
+      const left = Math.max(TOUR_EDGE / 2, r.left - TOUR_PAD);
+      const top = Math.max(TOUR_EDGE / 2, r.top - TOUR_PAD);
+      const right = Math.min(vw - TOUR_EDGE / 2, r.right + TOUR_PAD);
+      const bottom = Math.min(vh - TOUR_EDGE / 2, r.bottom + TOUR_PAD);
+      const small = Math.min(right - left, bottom - top) <= 64;
+      Object.assign(hole.style, {
+        left: `${left}px`,
+        top: `${top}px`,
+        width: `${right - left}px`,
+        height: `${bottom - top}px`,
+        borderRadius: small ? `${Math.min(right - left, bottom - top) / 2}px` : "",
+      });
+      const cw = card.offsetWidth;
+      const ch = card.offsetHeight;
+      let y = vh - ch - TOUR_EDGE;
+      if (vh - bottom >= ch + TOUR_GAP + TOUR_EDGE) y = bottom + TOUR_GAP;
+      else if (top >= ch + TOUR_GAP + TOUR_EDGE) y = top - TOUR_GAP - ch;
+      const x = Math.min(Math.max(TOUR_EDGE, (left + right) / 2 - cw / 2), vw - cw - TOUR_EDGE);
+      card.style.left = `${x}px`;
+      card.style.top = `${Math.max(TOUR_EDGE, y)}px`;
+    }
+
+    function queue() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(place);
+    }
+
+    function show(i) {
+      at = i;
+      const step = shown[at];
+      const last = at === shown.length - 1;
+      el.querySelector(".site-tour-key").textContent = step.title;
+      el.querySelector(".site-tour-text").replaceChildren(
+        ...[].concat(step.text).map((line) => {
+          const span = document.createElement("span");
+          span.className = "site-tour-line";
+          span.textContent = line;
+          return span;
+        })
+      );
+      el.querySelector(".site-tour-count").textContent = shown.length > 1 ? `${at + 1} / ${shown.length}` : "";
+      nextBtn.textContent = last ? "הבנתי" : "הבא";
+      skipBtn.hidden = last;
+      if (!step.el.isConnected) step.el = pick(step.spec, true) || step.el;
+      const r = step.el.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > window.innerHeight) step.el.scrollIntoView({ block: "center" });
+      place();
+      hop(fox);
+      nextBtn.focus({ preventScroll: true });
+    }
+
+    // Keys don't reach the page under it: Esc closes the guide, not the
+    // lesson, and the arrows don't turn the slides.
+    function onKey(e) {
+      e.stopPropagation();
+      if (e.key === "Escape") end();
+      else if (e.key === "Tab") {
+        // Focus stays on the card's two buttons.
+        e.preventDefault();
+        const stops = [nextBtn, skipBtn].filter((b) => !b.hidden);
+        stops[(stops.indexOf(document.activeElement) + 1) % stops.length].focus();
+      } else if (e.key.startsWith("Arrow") || e.key.startsWith("Page")) e.preventDefault();
+    }
+
+    function end() {
+      if (!touring) return;
+      window.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("resize", queue);
+      window.removeEventListener("scroll", queue, true);
+      el.classList.remove("is-on");
+      setTimeout(() => el.remove(), 200);
+      touring = false;
+      back?.focus?.({ preventScroll: true });
+    }
+
+    nextBtn.addEventListener("click", () => (at === shown.length - 1 ? end() : show(at + 1)));
+    skipBtn.addEventListener("click", end);
+    window.addEventListener("keydown", onKey, true);
+    window.addEventListener("resize", queue);
+    window.addEventListener("scroll", queue, true);
+    document.body.append(el);
+    show(0);
+    requestAnimationFrame(() => el.classList.add("is-on"));
+    return true;
+  }
+
+  // svg: the fox drawing, for pages that show it themselves (english-games.js).
+  window.PleyiFox = { tour, svg: FOX_SVG };
+
+  /* ── The guide of each part of the site ──
+     The fox waits for each step's element to come on screen (the page loads
+     its data, a tab or an exercise opens) and shows it then. `page` is the
+     address the guide is on; `skip` holds it while that is on screen (a game
+     in play). The lesson slides have their own (ready-lessons.js). */
+
+  const GUIDE_WAIT = 800;
+  const LEARN = /^\/services\/(english|math|hebrew|science|geography|history|lifeskills|body|health)\/?$/;
+  const SUBJECT = /^\/services\/(math|hebrew|science|geography|history|lifeskills|body|health)\/?$/;
+  const DAILY_TEXT = ["5 שאלות קצרות בכל יום", "עושים כל יום ושומרים על הרצף"];
+
+  const GUIDES = [
+    {
+      id: "english",
+      page: /^\/services\/english\/?$/,
+      // Only on the topics: a topic's page has a guide of its own.
+      skip: "#engTopicsView.hidden",
+      steps: [
+        { id: "stages", el: "#engTopicGrid .eng-path-title", title: "שלבים", text: ["היי! כאן לומדים אנגלית", "הנושאים מסודרים בשלבים, לפי הסדר"] },
+        { id: "topic", el: "#engTopicGrid .eng-topic-tile", title: "נושא", text: "לוחצים על נושא ונכנסים אליו" },
+        { id: "grade", el: "#engGradeTrigger", title: "כיתה", text: "בוחרים כיתה, ורואים רק את הנושאים שלה" },
+        { id: "daily", el: "#engTopDaily", title: "אתגר יומי", text: DAILY_TEXT },
+        { id: "board", el: "#engTopBoard", title: "טבלת הניקוד", text: "כאן רואים את הנקודות של כל הכיתה" },
+      ],
+    },
+    {
+      id: "subject",
+      page: SUBJECT,
+      skip: "#engTopicsView.hidden",
+      steps: [
+        { id: "stages", el: "#engTopicGrid .eng-path-title", title: "שלבים", text: ["היי! כאן לומדים ומתרגלים", "הנושאים מסודרים בשלבים, לפי הסדר"] },
+        { id: "topic", el: "#engTopicGrid .eng-topic-tile", title: "נושא", text: "לוחצים על נושא ונכנסים אליו" },
+        { id: "grade", el: "#engGradeTrigger", title: "כיתה", text: "בוחרים כיתה, ורואים רק את הנושאים שלה" },
+      ],
+    },
+    {
+      // A topic's page, in English and in the school subjects.
+      id: "topic",
+      page: LEARN,
+      steps: [
+        { id: "lesson", el: ".eng-lesson-card .eng-lesson-open", title: "שיעור", text: ["היי! כאן הנושא", "קודם רואים את השיעור"] },
+        {
+          id: "exercise",
+          el: ".eng-ex-grid .eng-ex-card:not(.eng-ex-card--print, .eng-ex-card--game, .eng-ex-card--reading)",
+          title: "תרגילים",
+          text: ["אחרי השיעור מתרגלים", "הראשון הכי קל"],
+        },
+        { id: "info", el: ".eng-ex-card [data-help]", title: "הכפתור i", text: ["כאן רואים פרטים על התרגיל", "רמה, מספר שאלות והציון הכי טוב"] },
+        { id: "paper", el: ".eng-ex-card a.eng-info-btn", title: "דף להדפסה", text: "מדפיסים את התרגיל ופותרים על דף" },
+        { id: "mistakes", el: "#engReviewStrip", title: "הטעויות שלי", text: "מתרגלים שוב שאלות שטעיתם בהן" },
+        { id: "reading", el: ".eng-ex-card--reading", title: "קטע קריאה", text: "קוראים טקסט קצר ועונים על שאלות" },
+        { id: "games", el: ".eng-ex-card--game", title: "משחקים", text: "משחקים עם המילים של הנושא" },
+        { id: "print", el: ".eng-ex-card--print", title: "דפי עבודה", text: "דפים על כל הנושא, להדפסה" },
+        { id: "next", el: ".eng-next-topic", title: "הנושא הבא", text: "סיימתם? ממשיכים לנושא הבא" },
+        { id: "level", el: ".eng-level-card", title: "קטעים לפי רמה", text: ["בוחרים קטע לקריאה", "רמה 1 הכי קלה"] },
+        { id: "cards", el: ".eng-fc-vocab-link", title: "כרטיסיות מילים", text: "לומדים מילים חדשות בכרטיסים" },
+        { id: "back", el: '#engBarBack .eng-back[href^="#"]', title: "חזרה", text: "חוזרים לכל הנושאים" },
+      ],
+    },
+    {
+      // The exercise screen, in English and in the school subjects.
+      id: "exercise",
+      page: LEARN,
+      skip: ".eng-runner-card--game",
+      steps: [
+        { id: "what", el: ".eng-exercise-view .eng-instructions", title: "מה עושים?", text: ["היי! כאן מתרגלים", "כאן כתוב מה צריך לעשות"] },
+        { id: "bar", el: "#engProgress", title: "הפס", text: "כאן רואים כמה שאלות נשארו" },
+        { id: "speak", el: ".eng-runner-card .eng-speak, .eng-runner-card .eng-word-tap", title: "שומעים", text: "לוחצים ושומעים איך אומרים את זה" },
+        { id: "listen", el: "#engListenBtn", title: "הקשבה", text: "לוחצים ושומעים את המילה" },
+        { id: "slow", el: "#engSlowBtn", title: "לאט", text: "שומעים שוב, יותר לאט" },
+        { id: "mic", el: "#engMicBtn", title: "מיקרופון", text: "לוחצים ואומרים את המילה באנגלית" },
+        { id: "text", el: "#engReadText", title: "הטקסט", text: ["קודם קוראים את כל הטקסט", "אחר כך עונים על שאלות"] },
+        { id: "to-questions", el: ".eng-read.is-read #engReadGo", title: "לשאלות", text: "קראתם? לוחצים ועוברים לשאלות" },
+        { id: "text-back", el: "#engReadBack", title: "חזרה לטקסט", text: "שכחתם משהו? חוזרים לקרוא" },
+        { id: "timer", el: "#engExamTimer", title: "השעון", text: "כאן רואים כמה זמן נשאר" },
+        { id: "flip", el: "#engFcFlip", title: "להפוך", text: "לוחצים ורואים מה כתוב מאחור" },
+        { id: "check", el: "#engCheck", title: "בדיקה", text: "בסוף לוחצים כאן ובודקים את התשובה" },
+        { id: "settings", el: "#engSettingsBtn", title: "הגדרות", text: ["כאן יש עזרים לתרגיל", "למשל צלילים וצבע לכרטיס"] },
+        { id: "grade", el: ".eng-results .eng-grade", title: "הציון", text: "כאן רואים כמה הצלחתם" },
+        { id: "points", el: "#engEarned .eng-earned-pill", title: "נקודות", text: "על כל תרגול מקבלים נקודות" },
+        { id: "again", el: "#engAgain", title: "סבב חדש", text: "מתרגלים שוב, עם שאלות חדשות" },
+        { id: "fix", el: "#engRetryMistakes", title: "הטעויות", text: "מתרגלים רק את השאלות שטעיתם בהן" },
+        { id: "back", el: ".eng-runner-top .eng-back", title: "יציאה", text: "יוצאים מהתרגיל" },
+      ],
+    },
+    {
+      id: "library",
+      page: /^\/services\/ready-lessons\/?$/,
+      steps: [
+        { id: "filters", el: "#lessonFilters", title: "סינון", text: ["היי! כאן כל השיעורים", "כאן בוחרים מקצוע, כיתה ונושא"] },
+        { id: "info", el: ".svc-lesson-card[data-lesson] .svc-lesson-info-toggle", title: "הכפתור i", text: "כאן רואים על מה השיעור" },
+        { id: "open", el: ".svc-lesson-card[data-lesson] .js-lesson-open", title: "פתיחה", text: "פותחים את השיעור" },
+        { id: "save", el: "#lessonInfoFavBtn", title: "שמירה", text: "שומרים את השיעור לפעם אחרת" },
+        { id: "share", el: "#lessonInfoShareBtn", title: "שיתוף", text: "שולחים את השיעור לתלמידים" },
+        { id: "back", el: "#studentBack", title: "חזרה", text: "חוזרים לעמוד שלכם" },
+      ],
+    },
+    {
+      id: "worksheets",
+      page: /^\/services\/worksheets\/?$/,
+      steps: [
+        { id: "type", el: "#filterTypeTrigger", title: "סוג הדף", text: ["היי! כאן דפים להדפסה", "בוחרים: צביעה, סודוקו ועוד"] },
+        { id: "level", el: "#filterDifficultyTrigger", title: "רמת קושי", text: "בוחרים דף קל, בינוני או קשה" },
+        { id: "download", el: "#worksheetGrid .svc-tile-download", title: "להורדה", text: "שומרים את הדף במחשב או בטלפון" },
+        { id: "print", el: "#worksheetGrid .svc-tile-print", title: "הדפסה", text: "מדפיסים את הדף מיד" },
+      ],
+    },
+    {
+      id: "class-games",
+      page: /^\/services\/class-games\/?$/,
+      steps: [
+        { id: "game", el: "#classGamesGrid .cg-card", title: "משחק", text: ["היי! כאן משחקים עם כל הכיתה", "כל ריבוע הוא משחק"] },
+        { id: "filters", el: "#cgFilters", title: "סינון", text: "בוחרים סוג משחק ורמה" },
+        { id: "info", el: "#classGamesGrid .cg-card-info", title: "איך משחקים", text: "לוחצים על i וקוראים את החוקים" },
+        { id: "play", el: "#classGamesGrid .cg-card-play", title: "שחק", text: "פותחים את המשחק על הלוח בכיתה" },
+        { id: "instr", el: ".cg-runner .cg-instr", title: "מה עושים", text: "כאן כתוב מה עושים עכשיו" },
+        { id: "full", el: '.cg-runner [data-act="fullscreen"]', title: "מסך מלא", text: "מגדילים את המשחק לכל הלוח" },
+        { id: "close", el: '.cg-runner [data-act="close"]', title: "יציאה", text: "סוגרים את המשחק" },
+      ],
+    },
+  ];
+
+  function guideOn(guide) {
+    return typeof guide.page === "function" ? guide.page() : guide.page.test(location.pathname);
+  }
+
+  function guideDone(guide) {
+    try {
+      const seen = [].concat(JSON.parse(localStorage.getItem(TOUR_KEY + guide.id)) || []);
+      return guide.steps.every((s) => seen.includes(s.id));
+    } catch {
+      return true;
+    }
+  }
+
+  // Looks again a moment after anything on the page changes, until every
+  // step of the page's guides was shown.
+  function startGuides() {
+    let guides = GUIDES.filter(guideOn);
+    if (!guides.length) return;
+    let timer = 0;
+    const watch = new MutationObserver(soon);
+    function run() {
+      timer = 0;
+      guides = guides.filter((g) => !guideDone(g));
+      if (!guides.length) return watch.disconnect();
+      guides.some((g) => !(g.skip && document.querySelector(g.skip)) && tour(g.id, g.steps));
+    }
+    function soon() {
+      if (!timer) timer = setTimeout(run, GUIDE_WAIT);
+    }
+    watch.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "hidden", "open"] });
+    soon();
+  }
+
+  // Home: on the site name. Other pages: on the first line of the big title,
+  // or on a title marked data-fox-perch (my room's hello).
   // The fox goes in a wrapper beside the text, since i18n rewrites the text.
   function addHeroFox() {
     const name = document.querySelector("#home .hero-site-name");
-    const target = name || document.querySelector(".clean-section--hero .hero-title .line");
+    const target = name || document.querySelector(".clean-section--hero .hero-title .line, [data-fox-perch]");
     if (!target) return null;
     const perch = document.createElement(name ? "div" : "span");
     perch.className = `site-fox-perch site-fox-perch--${name ? "name" : "line"}`;
@@ -374,6 +736,8 @@
     const fox = dock.querySelector(".site-fox");
     const greet = (delay) =>
       setTimeout(() => {
+        // Not while the guide is on: the greeting waits for it.
+        if (touring) return greet(1500);
         try {
           localStorage.setItem(GREETED_KEY, "1");
         } catch {}
@@ -396,7 +760,7 @@
     const tick = () => {
       const searching = panel && !panel.hidden;
       const away = dock.classList.contains("is-away");
-      if (!document.hidden && !searching && !away && fox.getBoundingClientRect().width) {
+      if (!document.hidden && !searching && !away && !touring && fox.getBoundingClientRect().width) {
         hop(fox);
         say(fox, CHAT);
       }
@@ -416,6 +780,7 @@
     followPointer(heroFox ? [heroFox, cornerFox] : [cornerFox]);
     greetOnce(dock);
     chatNowAndThen(dock);
+    startGuides();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
