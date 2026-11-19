@@ -432,7 +432,18 @@ html[data-site-style="pro"] body.clean-site .site-style-tile {
   box-shadow: none !important;
 }
 
-html[data-site-style="pro"] body.clean-site .site-style-tile[aria-pressed="true"] {
+html[data-site-style="pro"] body.clean-site .look-animal-tile {
+  border: 1px solid var(--pro-line);
+  border-radius: 12px;
+  background: var(--pro-surface);
+  box-shadow: none !important;
+}
+
+html[data-site-style="pro"] body.clean-site .look-animal-name {
+  font-weight: 700;
+}
+
+html[data-site-style="pro"] body.clean-site :is(.site-style-tile, .look-animal-tile)[aria-pressed="true"] {
   border-color: var(--pro-accent) !important;
   background: var(--pro-accent-soft);
   outline: 1px solid var(--pro-accent);

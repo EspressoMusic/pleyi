@@ -1068,6 +1068,69 @@ html[data-visual="minimal"] #home .hero-site-ch::after {
   white-space: nowrap;
 }
 
+/* The mascot animal (site-fox.js): one row of small tiles — the animal, its
+   name, and the ring on the corner — so the box still fits a phone. */
+.look-animal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 7px;
+}
+
+.look-animal-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 1px 4px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #f6fbff;
+  box-shadow: 2px 3px 0 var(--ink);
+  color: #000;
+  cursor: pointer;
+}
+
+.look-animal-tile[aria-pressed="true"] {
+  background: #c9f5ef;
+}
+
+.look-animal-tile:focus-visible {
+  outline: 3px dashed var(--ink);
+  outline-offset: 3px;
+}
+
+.look-animal-tile .look-check {
+  position: absolute;
+  top: -8px;
+  inset-inline-start: -7px;
+  width: 19px;
+  height: 19px;
+  background-size: 12px;
+}
+
+.look-animal-fig {
+  display: block;
+  width: min(80%, 42px);
+  filter: drop-shadow(1px 2px 0 var(--ink));
+}
+
+.look-animal-name {
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+/* A very small phone: two rows, so the names fit. */
+@media (max-width: 370px) {
+  .look-animal-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 8px;
+  }
+}
+
 .clean-hero-inner .hero-title.font-cartoon {
   font-size: clamp(2.75rem, 8.5vw, 7rem);
 }
@@ -2184,10 +2247,6 @@ button.clean-panel--card {
   }
 }
 
-.contact-channel-btn {
-  min-height: 220px;
-}
-
 .email-btn {
   display: flex;
   flex-direction: column;
@@ -2233,10 +2292,45 @@ button.clean-panel--card {
   word-break: break-all;
 }
 
-/* The card's text: in the card's column on big screens, its own column next
-   to the icon on phones. */
+/* One short row per channel: the icon on the side, the text next to it.
+   Tall squares were too big. */
+.contact-channel-btn {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.whatsapp-icon,
+.email-icon {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+}
+
+.whatsapp-icon svg,
+.email-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
 .contact-channel-text {
-  display: contents;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.whatsapp-label,
+.email-label {
+  font-size: 22px;
+}
+
+.email-address {
+  font-size: 16px;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .clean-contact .contact-info {
@@ -2524,36 +2618,10 @@ body.in-room {
     gap: 20px;
   }
 
-  .contact-channel-btn {
-    min-height: 0;
-    aspect-ratio: 1 / 1;
-  }
-
-  .whatsapp-btn,
-  .email-btn {
-    padding: 14px 10px;
-  }
-
-  .whatsapp-icon,
-  .email-icon {
-    width: 52px;
-    height: 52px;
-  }
-
-  .whatsapp-icon svg,
-  .email-icon svg {
-    width: 32px;
-    height: 32px;
-  }
-
-  .whatsapp-label,
-  .email-label {
-    font-size: clamp(14px, 3.6vw, 18px);
-  }
-
-  .email-address {
-    font-size: clamp(11px, 3vw, 14px);
-    word-break: break-word;
+  .clean-contact .contact-info.contact-info--simple {
+    grid-template-columns: 1fr;
+    max-width: 440px;
+    margin-inline: auto;
   }
 
   body.clean-site .mobile-nav a {
@@ -2581,34 +2649,9 @@ body.in-room {
   }
 }
 
-/* Phones: two squares side by side left the email address too small, and
-   cut on narrow screens. One full-width card per row instead: the icon on
-   the side, the text big next to it. */
 @media (max-width: 480px) {
   .clean-contact .contact-info.contact-info--simple {
-    grid-template-columns: 1fr;
     gap: 16px;
-  }
-
-  .contact-channel-btn {
-    aspect-ratio: auto;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 16px;
-    padding: 16px 18px;
-  }
-
-  .whatsapp-btn,
-  .email-btn {
-    padding: 16px 18px;
-  }
-
-  .contact-channel-text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    min-width: 0;
   }
 
   .whatsapp-label,

@@ -1,4 +1,5 @@
-/* Home title — a letter does a somersault when touched, and a random one every few seconds */
+/* Home title — a letter does a somersault when touched, and a random one
+   every few seconds */
 
 (function () {
   const HOP_FRAMES = [
@@ -40,13 +41,14 @@
   document.addEventListener("DOMContentLoaded", () => {
     const title = document.querySelector("#home .hero-site-name");
     if (!title) return;
+    const LETTER = ".hero-site-ch";
 
-    title.addEventListener("pointerover", (e) => hop(e.target.closest(".hero-site-ch")));
+    title.addEventListener("pointerover", (e) => hop(e.target.closest(LETTER)));
 
     let last = -1;
     setInterval(() => {
       if (document.hidden) return;
-      const letters = title.querySelectorAll(".hero-site-ch");
+      const letters = title.querySelectorAll(LETTER);
       if (letters.length < 2) return;
       let i;
       do i = Math.floor(Math.random() * letters.length);

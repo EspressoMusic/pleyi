@@ -1374,6 +1374,63 @@ body.stu-body {
   font-weight: 800;
 }
 
+/* The exercises solved in a topic: a rectangle that opens on a tap. */
+.stu-fold {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+  background: #dceefc;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.stu-fold-sum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0;
+  list-style: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stu-fold-sum::-webkit-details-marker {
+  display: none;
+}
+
+.stu-fold-sum:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.stu-fold[open] .stu-box-chev {
+  transform: rotate(180deg);
+}
+
+.stu-fold .stu-dlg-list {
+  margin-top: 12px;
+}
+
+/* The tasks tab's box of every exercise solved: a line goes back to it. */
+.stu-solved-row {
+  color: inherit;
+  text-decoration: none;
+}
+
+.stu-solved-row:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.stu-solved-topic {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #333;
+}
+
 /* The button stays in view at the bottom while the lists scroll. */
 .stu-dlg-foot {
   position: sticky;
@@ -1511,7 +1568,7 @@ body.stu-body {
   border: 0;
   border-top: 3px solid var(--ink);
   border-radius: 0;
-  background: #eaf5ff;
+  background: var(--memyellow);
   box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.12);
 }
 

@@ -875,9 +875,9 @@ window.ENGLISH_PRINTABLES = {
         title: "es ו־ies",
         titleEn: "es and ies",
         remember: {
-          note: "אחרי s, sh, ch, x מוסיפים es. עיצור ואחריו y — הופך ל־ies:",
-          noteEn: "After s, sh, ch, x add es. A consonant + y becomes ies:",
-          chips: ["a bus → buses", "a box → boxes", "a watch → watches", "a baby → babies", "a city → cities"],
+          note: "אחרי s, sh, ch, x מוסיפים es. עיצור ואחריו y — הופך ל־ies. אבל a, e, o, u ואחריהן y — רק s:",
+          noteEn: "After s, sh, ch, x add es. A consonant + y becomes ies. But a vowel + y just adds s:",
+          chips: ["a bus → buses", "a box → boxes", "a watch → watches", "a baby → babies", "a city → cities", "a boy → boys"],
         },
         tasks: [
           {
@@ -3049,8 +3049,8 @@ window.ENGLISH_PRINTABLES = {
         title: "s, es או ies",
         titleEn: "s, es or ies",
         remember: {
-          note: "אחרי sh, ch, s, x מוסיפים es. עיצור ואחריו y — ies:",
-          noteEn: "After sh, ch, s, x add es. A consonant + y becomes ies:",
+          note: "אחרי sh, ch, s, x מוסיפים es. עיצור ואחריו y — ies. אבל a, e, o, u ואחריהן y — רק s (plays):",
+          noteEn: "After sh, ch, s, x add es. A consonant + y becomes ies. But a vowel + y just adds s (plays):",
           chips: ["plays", "watches", "goes", "studies", "has"],
         },
         tasks: [

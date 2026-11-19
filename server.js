@@ -15,6 +15,7 @@ const premiumLib = require("./lib/premium");
 const studentProgress = require("./lib/student-progress");
 const aiLesson = require("./lib/ai-lesson");
 const englishPractice = require("./lib/english-practice");
+const teacherLessons = require("./lib/teacher-lessons");
 const seo = require("./lib/seo");
 const siteSearch = require("./lib/site-search");
 const together = require("./lib/together");
@@ -56,6 +57,12 @@ subjectPages.forEach((slug) => {
   app.get(`/services/${slug}`, (_req, res) => {
     res.sendFile(path.join(__dirname, "public", "services", "subject.html"));
   });
+});
+
+// זהירות בדרכים — a mini site of its own (lessons, games and exercises),
+// part of Pleyi (public/road-safety.html).
+app.get("/road-safety", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "road-safety.html"));
 });
 
 const blogPosts = [
@@ -670,6 +677,22 @@ studentAdmin.post("/:id/tests/:testId/retake", studentRoute((req) =>
 ));
 
 app.use("/api/admin/students", studentAdmin);
+
+// Lessons the teacher creates on /my-room (the AI writes them) or copies
+// from the lessons library, and edits. The list, creating, editing and
+// deleting are the teacher's own; a lesson itself opens by its id for anyone
+// who has it — the teacher, or a student given it as a task.
+const myLessons = express.Router();
+myLessons.use(requireAuth);
+myLessons.get("/", studentRoute(async (req) => ({ lessons: await teacherLessons.listLessons(req.uid) })));
+myLessons.post("/", studentRoute((req) => teacherLessons.createLesson(req.uid, pick(req.body, ["subject", "topic"]))));
+myLessons.post("/copy", studentRoute((req) => teacherLessons.copyLesson(req.uid, pick(req.body, ["lessonId"]))));
+myLessons.get("/:id", studentRoute((req) => teacherLessons.getOwnLesson(req.uid, req.params.id)));
+myLessons.put("/:id", studentRoute((req) => teacherLessons.saveLesson(req.uid, req.params.id, pick(req.body, ["name", "slides", "discuss"]))));
+myLessons.delete("/:id", studentRoute((req) => teacherLessons.deleteLesson(req.uid, req.params.id)));
+app.use("/api/my-lessons", myLessons);
+
+app.get("/api/lessons/custom/:id", studentRoute((req) => teacherLessons.getLesson(req.params.id)));
 
 const rooms = new Map();
 

@@ -379,7 +379,7 @@
     const playExitBtn = document.getElementById("playExitBtn");
     const lessonReturn = readLessonReturn();
     if (playExitBtn && lessonReturn?.returnUrl && !roomCode) {
-      playExitBtn.textContent = "חזרה לשיעור";
+      playExitBtn.textContent = "חזרה";
     }
 
     playExitBtn?.addEventListener("click", () => {

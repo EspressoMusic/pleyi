@@ -10,7 +10,10 @@
    - The corner fox steps aside while a dialog, a lesson or an exercise
      screen is open (site-fox.css).
    - The guide: the first time someone opens a part of the site, the fox
-     shows it around (PleyiFox.tour). */
+     shows it around (PleyiFox.tour). It is off until someone turns it on
+     with the "מדריך" button beside the corner fox.
+   - Instead of the fox it can be another animal (a cat, a bear…), picked
+     with "נראות" on the home page and kept in this browser. */
 
 (function () {
   const GREETING = "היי! לחצו עליי כדי לחפש באתר";
@@ -22,37 +25,177 @@
 
   const HEAD = "M60 40C79 40 95 51 95 67C95 81 79 94 60 94C41 94 25 81 25 67C25 51 41 40 60 40Z";
   const BODY = "M60 86C80 86 90 102 90 114C90 122 80 126 60 126C40 126 30 122 30 114C30 102 40 86 60 86Z";
-  const EAR_L = "M50 44C42 30 22 13 9 5C6 22 13 45 30 61Z";
-  const EAR_R = "M70 44C78 30 98 13 111 5C114 22 107 45 90 61Z";
-  const TAIL = "M80 123C100 128 117 116 115 97C114 86 105 82 99 87C104 96 101 108 84 109Z";
   const CAP_BAND = "M44 41V34Q60 29 76 34V41Q60 47 44 41Z";
   const CAP_BOARD = "M60 21L89 30.5L60 40L31 30.5Z";
+  const NOSE = "M54 77Q60 74 66 77Q63.5 83 60 83.5Q56.5 83 54 77Z";
+  const SNOUT = "M60 72C70 72 77 78 80 85C74 91 67 94 60 94C53 94 46 91 40 85C43 78 50 72 60 72Z";
+  const MOUTH = '<path class="f-thin" d="M60 83V86.5M54 87.5Q57 90 60 86.5Q63 90 66 87.5"/>';
 
-  // A minimal fox: flat shapes, dot eyes and one thick line everywhere.
-  const FOX_SVG = `<svg class="site-fox-svg" viewBox="0 0 120 132" aria-hidden="true" focusable="false">
-    <g class="fox-tail">
-      <path class="f-body" d="${TAIL}"/>
-    </g>
-    <g class="fox-ear fox-ear-l">
-      <path class="f-body" d="${EAR_L}"/>
-    </g>
-    <g class="fox-ear fox-ear-r">
-      <path class="f-body" d="${EAR_R}"/>
-    </g>
-    <path class="f-body" d="${BODY}"/>
+  // The right ear (and whiskers, eye patch…) is the left one in a mirror.
+  const FLIP = 'transform="matrix(-1 0 0 1 120 0)"';
+  const pair = (left) => `${left}<g ${FLIP}>${left}</g>`;
+  const ears = (left) => `<g class="fox-ear fox-ear-l">${left}</g><g class="fox-ear fox-ear-r"><g ${FLIP}>${left}</g></g>`;
+  const tail = (shapes) => `<g class="fox-tail">${shapes}</g>`;
+
+  // The lion's mane: round bumps all around the head.
+  function mane(bumps) {
+    const at = (i) => {
+      const a = (i / bumps) * 2 * Math.PI;
+      return [60 + 45 * Math.sin(a), 66 - 42 * Math.cos(a)];
+    };
+    let [x, y] = at(0);
+    let d = `M${x.toFixed(1)} ${y.toFixed(1)}`;
+    for (let i = 1; i <= bumps; i++) {
+      const [nx, ny] = at(i);
+      const r = (Math.hypot(nx - x, ny - y) * 0.56).toFixed(1);
+      d += `A${r} ${r} 0 0 1 ${nx.toFixed(1)} ${ny.toFixed(1)}`;
+      [x, y] = [nx, ny];
+    }
+    return `${d}Z`;
+  }
+
+  // The mascot: the fox, or another animal picked with "נראות" on the home
+  // page (logo-style.js). All of them are drawn alike — flat shapes, dot eyes,
+  // one thick line and the cap — in layers: `back` behind the head (ears,
+  // tail), `face` on the head, `front` over the head's line. Colors: body,
+  // cream (snout) and dark (site-fox.css).
+  const ANIMALS = [
+    {
+      id: "fox",
+      name: "שועל",
+      colors: ["#f7b55e", "#fff1d9"],
+      back:
+        tail('<path class="f-body" d="M80 123C100 128 117 116 115 97C114 86 105 82 99 87C104 96 101 108 84 109Z"/>') +
+        ears('<path class="f-body" d="M50 44C42 30 22 13 9 5C6 22 13 45 30 61Z"/>'),
+      face: `<path class="f-cream" d="${SNOUT}"/>`,
+    },
+    {
+      id: "cat",
+      name: "חתול",
+      colors: ["#b9c3d1", "#f4f6fa"],
+      back:
+        tail('<path class="f-body" d="M82 121C102 124 114 110 110 92C108 84 100 84 100 91C102 104 96 112 82 112Z"/>') +
+        ears(
+          '<path class="f-body" d="M34 52C30 40 27 26 27 12C38 16 48 26 56 41Z"/>' +
+            '<path class="f-pink" d="M35 44C33 36 32 29 32 21C38 25 43 30 47 37Z"/>'
+        ),
+      face: '<path class="f-cream" d="M60 73C68 73 74 78 76 84C71 90 66 93 60 93C54 93 49 90 44 84C46 78 52 73 60 73Z"/>',
+      front: pair('<path class="f-thin" d="M15 72L35 76.5M15 84L35 81.5"/>'),
+      nose: "M55 77Q60 75 65 77Q62.5 81.5 60 82Q57.5 81.5 55 77Z",
+      mouth: '<path class="f-thin" d="M60 82V84.5M54 85.5Q57 88.5 60 84.5Q63 88.5 66 85.5"/>',
+    },
+    {
+      id: "dog",
+      name: "כלב",
+      colors: ["#e3b47e", "#fff4e3", "#93603a"],
+      back: tail('<path class="f-body" d="M84 116C96 113 104 103 106 91C107 85 101 83 98 88C96 97 92 103 82 106Z"/>'),
+      face: '<path class="f-cream" d="M60 71C71 71 79 78 79 85C74 91 67 94 60 94C53 94 46 91 41 85C41 78 49 71 60 71Z"/>',
+      // Floppy ears, over the head.
+      front: ears('<path class="f-dark" d="M41 45C29 41 16 50 15 66C14 80 20 89 29 88C36 87 35 72 39 58Z"/>'),
+      nose: "M53 76Q60 72 67 76Q64 83 60 83.5Q56 83 53 76Z",
+      mouth:
+        '<path class="f-pink f-tongue" d="M56 87.5Q60 89 64 87.5Q64.5 95 60 95Q55.5 95 56 87.5Z"/>' +
+        '<path class="f-thin" d="M51 84Q55.5 89 60 84.5Q64.5 89 69 84"/>',
+    },
+    {
+      id: "bear",
+      name: "דוב",
+      colors: ["#b98154", "#ecd3b2"],
+      back:
+        tail('<circle class="f-body" cx="93" cy="111" r="8"/>') +
+        ears('<circle class="f-body" cx="31" cy="47" r="13"/><circle class="f-cream" cx="31" cy="47" r="6"/>'),
+      face: '<path class="f-cream" d="M60 71C70 71 76 76 76 82C76 88 69 91 60 91C51 91 44 88 44 82C44 76 50 71 60 71Z"/>',
+      nose: "M54 75.5Q60 72.5 66 75.5Q63.5 81 60 81.5Q56.5 81 54 75.5Z",
+      mouth: MOUTH,
+    },
+    {
+      id: "bunny",
+      name: "ארנב",
+      colors: ["#e8e2ef", "#ffffff"],
+      back:
+        tail('<circle class="f-light" cx="92" cy="114" r="9"/>') +
+        ears(
+          '<path class="f-body" d="M45 47C37 35 25 21 19 9C17 4 10 5 10 11C11 25 21 43 33 56Z"/>' +
+            '<path class="f-pink" d="M39 46C32 36 23 25 16 14C17 25 24 39 32 50Z"/>'
+        ),
+      face:
+        '<path class="f-cream" d="M60 74C67 74 72 78 73 83C69 88 65 90 60 90C55 90 51 88 47 83C48 78 53 74 60 74Z"/>' +
+        pair('<circle class="f-pink" cx="36" cy="78" r="5"/>'),
+      nose: "M56 77Q60 75.5 64 77Q62 80.5 60 81Q58 80.5 56 77Z",
+      mouth:
+        '<path class="f-tooth" d="M54.5 83H65.5V90Q65.5 92 63.5 92H56.5Q54.5 92 54.5 90Z"/>' +
+        '<path class="f-tooth" d="M60 83V92"/>',
+    },
+    {
+      id: "panda",
+      name: "פנדה",
+      colors: ["#fbfbfb", "#fbfbfb", "#2f3442"],
+      back: ears('<circle class="f-dark" cx="32" cy="46" r="12"/>'),
+      face: pair('<path class="f-patch" d="M35 58C39 50 52 51 55.5 60C59 70 52 79 44 79C36 78.5 31.5 66 35 58Z"/>'),
+      mouth: MOUTH,
+    },
+    {
+      id: "lion",
+      name: "אריה",
+      colors: ["#f6c453", "#fff0c4", "#e07b2a"],
+      back:
+        `<path class="f-dark" d="${mane(10)}"/>` +
+        tail(
+          '<path class="f-tail-out" d="M84 121C98 125 106 117 106 104"/><path class="f-tail-in" d="M84 121C98 125 106 117 106 104"/>' +
+            '<path class="f-dark" d="M106 104C100 101 99 92 105 89C111 86 117 93 114 100C112 104 109 105 106 104Z"/>'
+        ) +
+        ears('<circle class="f-body" cx="31" cy="44" r="9"/><circle class="f-cream" cx="31" cy="44" r="4"/>'),
+      face: `<path class="f-cream" d="${SNOUT}"/>`,
+      mouth: MOUTH,
+    },
+  ];
+
+  const ANIMAL_KEY = "pleyi-mascot";
+  let animal = storedAnimal();
+
+  function storedAnimal() {
+    try {
+      const id = localStorage.getItem(ANIMAL_KEY);
+      return ANIMALS.some((a) => a.id === id) ? id : ANIMALS[0].id;
+    } catch {
+      return ANIMALS[0].id;
+    }
+  }
+
+  function draw(id = animal) {
+    const a = ANIMALS.find((one) => one.id === id) || ANIMALS[0];
+    const [body, cream, dark = body] = a.colors;
+    return `<svg class="site-fox-svg" data-animal="${a.id}" viewBox="0 0 120 132" style="--fox-body:${body};--fox-cream:${cream};--fox-dark:${dark}" aria-hidden="true" focusable="false">
+    ${a.back}
+    <path class="f-body f-torso" d="${BODY}"/>
     <path class="f-body" d="${HEAD}"/>
-    <path class="f-cream" d="M60 72C70 72 77 78 80 85C74 91 67 94 60 94C53 94 46 91 40 85C43 78 50 72 60 72Z"/>
+    ${a.face || ""}
     <path class="f-line" d="${HEAD}"/>
+    ${a.front || ""}
     <g class="fox-pupils">
       <g class="fox-eyes">
         <circle class="f-pupil" cx="47" cy="65" r="5.6"/>
         <circle class="f-pupil" cx="73" cy="65" r="5.6"/>
       </g>
     </g>
-    <path class="f-nose" d="M54 77Q60 74 66 77Q63.5 83 60 83.5Q56.5 83 54 77Z"/>
+    <path class="f-nose" d="${a.nose || NOSE}"/>
+    ${a.mouth || ""}
     <path class="f-cap" d="${CAP_BAND}"/>
     <path class="f-cap" d="${CAP_BOARD}"/>
   </svg>`;
+  }
+
+  // Every mascot on the page turns into the new animal at once.
+  function setAnimal(id) {
+    if (!ANIMALS.some((a) => a.id === id)) return;
+    animal = id;
+    try {
+      localStorage.setItem(ANIMAL_KEY, id);
+    } catch {}
+    document.querySelectorAll(".site-fox .site-fox-svg, .site-search-fox .site-fox-svg").forEach((svg) => {
+      svg.outerHTML = draw(id);
+    });
+  }
 
   const bubbleTimers = new WeakMap();
 
@@ -66,7 +209,7 @@
   function makeFox(tag, kind) {
     const fox = document.createElement(tag);
     fox.className = `site-fox site-fox--${kind}`;
-    fox.innerHTML = `<span class="site-fox-fig">${FOX_SVG}</span><span class="site-fox-bubble"></span>`;
+    fox.innerHTML = `<span class="site-fox-fig">${draw()}</span><span class="site-fox-bubble"></span>`;
     // The foxes on one page don't blink together.
     fox.style.setProperty("--fox-blink-delay", `${(Math.random() * 3).toFixed(2)}s`);
     fox.querySelector(".site-fox-fig").addEventListener("animationend", (e) => {
@@ -190,7 +333,7 @@
       <div class="site-search-backdrop"></div>
       <div class="site-search-box">
         <div class="site-search-head">
-          <span class="site-search-fox" aria-hidden="true">${FOX_SVG}</span>
+          <span class="site-search-fox" aria-hidden="true">${draw()}</span>
           <p class="site-search-title" id="site-search-title"><span class="site-search-key">מה מחפשים?</span></p>
           <button type="button" class="site-search-close" aria-label="סגירה"></button>
         </div>
@@ -201,6 +344,8 @@
         <p class="site-search-note" role="status"></p>
         <ul class="site-search-results"></ul>
       </div>`;
+    const guideBtn = makeGuideButton();
+    if (guideBtn) el.querySelector(".site-search-box").append(guideBtn);
     const input = el.querySelector(".site-search-input");
     input.addEventListener("input", render);
     input.addEventListener("keydown", (e) => {
@@ -311,6 +456,9 @@
      button only some lessons have), and then comes on its own. */
 
   const TOUR_KEY = "pleyi-tour-";
+  // Set by the guide button (makeGuideButton): each person turns it on for
+  // themselves, in their own browser.
+  const GUIDE_ON_KEY = "pleyi-guide-on";
   // Set by the screenshot scripts (scripts/capture-home-demo.js): no guide.
   const TOUR_OFF_KEY = "pleyi-tour-off";
   const TOUR_PAD = 6;
@@ -345,11 +493,18 @@
       .find((el) => onScreen(el, open));
   }
 
+  function guideEnabled() {
+    try {
+      return localStorage.getItem(GUIDE_ON_KEY) === "1" && !localStorage.getItem(TOUR_OFF_KEY);
+    } catch {
+      return false;
+    }
+  }
+
   function tour(id, steps) {
-    if (touring) return false;
+    if (touring || !guideEnabled()) return false;
     let saved;
     try {
-      if (localStorage.getItem(TOUR_OFF_KEY)) return false;
       saved = localStorage.getItem(TOUR_KEY + id);
     } catch {
       return false;
@@ -377,7 +532,7 @@
     el.innerHTML = `
       <div class="site-tour-hole"></div>
       <div class="site-tour-card">
-        <span class="site-fox site-fox--tour" aria-hidden="true"><span class="site-fox-fig">${FOX_SVG}</span></span>
+        <span class="site-fox site-fox--tour" aria-hidden="true"><span class="site-fox-fig">${draw()}</span></span>
         <div class="site-tour-body" aria-live="polite">
           <p class="site-tour-title" id="site-tour-title"><span class="site-tour-key"></span></p>
           <p class="site-tour-text"></p>
@@ -497,8 +652,18 @@
     return true;
   }
 
-  // svg: the fox drawing, for pages that show it themselves (english-games.js).
-  window.PleyiFox = { tour, svg: FOX_SVG };
+  // svg: the chosen animal's drawing, for pages that show it themselves
+  // (english-games.js). animals, draw and setAnimal: the picker in "נראות".
+  window.PleyiFox = {
+    tour,
+    get svg() {
+      return draw();
+    },
+    animals: ANIMALS.map(({ id, name }) => ({ id, name })),
+    animal: () => animal,
+    draw,
+    setAnimal,
+  };
 
   /* ── The guide of each part of the site ──
      The fox waits for each step's element to come on screen (the page loads
@@ -636,14 +801,18 @@
   }
 
   // Looks again a moment after anything on the page changes, until every
-  // step of the page's guides was shown.
+  // step of the page's guides was shown, or the guide is turned off.
+  let guideWatch = null;
   function startGuides() {
+    guideWatch?.disconnect();
     let guides = GUIDES.filter(guideOn);
-    if (!guides.length) return;
+    if (!guides.length || !guideEnabled()) return;
     let timer = 0;
-    const watch = new MutationObserver(soon);
+    const watch = (guideWatch = new MutationObserver(soon));
     function run() {
       timer = 0;
+      if (watch !== guideWatch) return;
+      if (!guideEnabled()) return watch.disconnect();
       guides = guides.filter((g) => !guideDone(g));
       if (!guides.length) return watch.disconnect();
       guides.some((g) => !(g.skip && document.querySelector(g.skip)) && tour(g.id, g.steps));
@@ -653,6 +822,39 @@
     }
     watch.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "hidden", "open"] });
     soon();
+  }
+
+  // In the list the fox opens, on pages that have a guide. Turning it on
+  // closes the list and starts the guide over from the beginning, everywhere;
+  // tapping again turns it off.
+  function makeGuideButton() {
+    if (!GUIDES.some(guideOn)) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "site-guide-btn";
+    btn.innerHTML = `<span class="site-guide-btn-icon" aria-hidden="true">?</span><span class="site-guide-btn-text"></span>`;
+    const sync = () => {
+      const on = guideEnabled();
+      btn.setAttribute("aria-pressed", String(on));
+      btn.querySelector(".site-guide-btn-text").textContent = on ? "כיבוי מדריך" : "הפעלת מדריך";
+    };
+    btn.addEventListener("click", () => {
+      const on = !guideEnabled();
+      try {
+        if (on) {
+          Object.keys(localStorage)
+            .filter((key) => key.startsWith(TOUR_KEY) && key !== TOUR_OFF_KEY)
+            .forEach((key) => localStorage.removeItem(key));
+          localStorage.setItem(GUIDE_ON_KEY, "1");
+        } else localStorage.removeItem(GUIDE_ON_KEY);
+      } catch {}
+      sync();
+      if (!on) return;
+      closeSearch(false);
+      startGuides();
+    });
+    sync();
+    return btn;
   }
 
   // Home: on the site name. Other pages: on the first line of the big title,
@@ -770,6 +972,9 @@
   }
 
   function init() {
+    // A page that puts the fox on its title itself (road-safety.js) only
+    // takes the drawing, without the corner fox and the guide.
+    if (document.documentElement.dataset.siteFox === "drawing") return;
     const heroFox = addHeroFox();
     const dock = addCornerFox();
     const cornerFox = dock.querySelector(".site-fox");

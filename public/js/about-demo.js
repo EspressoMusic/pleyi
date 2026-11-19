@@ -1,11 +1,15 @@
 /* The demo on the home page ("מי אנחנו") — a short tour of the real site:
    library → a lesson → its games → exercises → the student's page.
+   data-site-demo="road" plays the road-safety site's tour instead (on
+   /road-safety): lessons → a lesson → a game → an exercise.
 
-   - Every screen is a real screenshot (images/demo/, taken at 1024x640 from
-     the "הר געש" lesson); a pretend cursor moves and clicks between them.
-   - Click spots are in % of the screen, read off the same screenshots:
+   - Every home screen is a real screenshot (images/demo/, taken at 1024x640
+     from the "הר געש" lesson); a pretend cursor moves and clicks between
+     them. The road tour's screens are simple drawn HTML (road-safety.html).
+   - Home click spots are in % of the screen, read off the same screenshots:
      scripts/capture-home-demo.js retakes them all and prints the new spots
-     (the game and quiz answers move every time).
+     (the game and quiz answers move every time). A road click names a
+     data-hit spot instead, and { done } shows the answer as right.
    - It plays only while on screen, and never plays under
      prefers-reduced-motion (the first screen just stays). */
 
@@ -23,7 +27,8 @@
 
   // shot: the screen to show; click: where the cursor goes and clicks next;
   // wait: how long it stays (ms).
-  const TOUR = [
+  const TOURS = {};
+  TOURS.home = [
     { shot: "library", path: "/services/ready-lessons", wait: 1600 },
     { click: [70.7, 39.6] },
     { shot: "library-menu", wait: 500 },
@@ -50,11 +55,27 @@
     { click: [40, 22.6] },
     { shot: "student-map", wait: 2600 },
   ];
+  TOURS.road = [
+    { shot: "lessons", wait: 1500 },
+    { click: "lesson" },
+    { shot: "slide1", wait: 2000 },
+    { click: "next1" },
+    { shot: "slide2", wait: 2000 },
+    { click: "next2" },
+    { shot: "game", wait: 1100 },
+    { click: "safe" },
+    { done: true, wait: 1700 },
+    { shot: "exercise", wait: 1300 },
+    { click: "answer" },
+    { done: true, wait: 2200 },
+  ];
+  const TOUR = TOURS[root.dataset.siteDemo] || TOURS.home;
 
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let run = 0;
   let visible = false;
   let wake = null;
+  let current = null;
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -80,8 +101,10 @@
       img.classList.replace("is-on", "is-prev");
       setTimeout(() => img.classList.remove("is-prev"), 400);
     });
+    shots.get(name).classList.remove("is-done");
     shots.get(name).classList.add("is-on");
-    if (path) url.textContent = path;
+    current = name;
+    if (path && url) url.textContent = path;
   }
 
   function placeCursor([x, y]) {
@@ -89,7 +112,16 @@
     cursor.style.top = `${y}%`;
   }
 
-  async function click(at) {
+  // A data-hit name → the middle of that spot, in % of the screen.
+  function spotOf(at) {
+    if (Array.isArray(at)) return at;
+    const r = root.querySelector(`[data-hit="${at}"]`).getBoundingClientRect();
+    const s = screen.getBoundingClientRect();
+    return [((r.left + r.width / 2 - s.left) / s.width) * 100, ((r.top + r.height / 2 - s.top) / s.height) * 100];
+  }
+
+  async function click(spot) {
+    const at = spotOf(spot);
     cursor.classList.add("is-shown");
     placeCursor(at);
     await sleep(MOVE_MS + 150);
@@ -106,6 +138,7 @@
 
   function apply(item) {
     if (item.shot) show(item.shot, item.path);
+    if (item.done) shots.get(current).classList.add("is-done");
   }
 
   async function play(from, delay = 0) {

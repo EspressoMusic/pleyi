@@ -33,10 +33,14 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// On the computer (localhost) a failed page means the local server is off,
+// not that the internet is down — let the browser show its own error.
+const IS_LOCAL = ["localhost", "127.0.0.1"].includes(self.location.hostname);
+
 // Pages only — files, API calls and the game rooms' socket go straight to
 // the network without the worker.
 self.addEventListener("fetch", (event) => {
-  if (event.request.mode !== "navigate") return;
+  if (IS_LOCAL || event.request.mode !== "navigate") return;
   event.respondWith(
     (async () => {
       try {

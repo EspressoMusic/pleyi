@@ -349,10 +349,7 @@ window.GameAuth = {
       loginBtn?.classList.add("hidden");
       userMenu?.classList.remove("hidden");
       document.getElementById("mobileLoginBtn")?.classList.add("hidden");
-      if (mobileUser) {
-        mobileUser.querySelector(".mobile-nav-user-name").textContent = user.name;
-        mobileUser.classList.remove("hidden");
-      }
+      mobileUser?.classList.remove("hidden");
       if (userName) userName.textContent = user.name;
 
       if (user.photoURL && userPhoto) {
@@ -394,7 +391,6 @@ window.GameAuth = {
     wrap.className = "hidden";
     wrap.style.display = "contents";
     wrap.innerHTML = `
-      <p class="mobile-nav-user-name" style="margin:8px 0 0;font-size:18px;font-weight:800;opacity:.75"></p>
       <a href="/my-room" data-i18n="nav.myRoom"></a>
       <button type="button" class="mobile-nav-auth" id="mobileLogoutBtn" data-i18n="nav.logout"></button>`;
     wrap.querySelector('[data-i18n="nav.myRoom"]').textContent = t("nav.myRoom", "החדר שלי");

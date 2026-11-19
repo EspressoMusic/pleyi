@@ -1515,14 +1515,42 @@ window.ENGLISH_SHORT_LESSONS = [
     slides: [
       {
         title: "**y** הופכת ל־**ies**",
-        lines: ["עיצור ואחריו y בסוף המילה", "מורידים את y ומוסיפים ies"],
+        lines: ["לפני y אין a, e, o או u", "מורידים את y ומוסיפים ies"],
         table: [["baby", "bab**ies**"], ["city", "cit**ies**"]],
         more: [
           "מילה שנגמרת ב־y",
           "ולפני ה־y יש אות שהיא **לא תנועה**",
-          "מורידים את y ומוסיפים ies",
+          "תנועה זה a, e, i, o, u",
+          "ב־baby יש b לפני y – b היא לא תנועה",
+          "לכן מורידים את y ומוסיפים ies",
           "baby – babies",
           "city – cities",
+        ],
+      },
+      {
+        title: "אבל **boy** / **boys**",
+        lines: ["לפני y יש a, e, o או u", "אז y נשארת ומוסיפים רק s"],
+        table: [["boy", "boy**s**"], ["day", "day**s**"], ["toy", "toy**s**"], ["key", "key**s**"]],
+        more: [
+          "ב־boy יש o לפני ה־y",
+          "o היא **תנועה**",
+          "לכן לא נוגעים ב־y – ומוסיפים רק s",
+          "boy – boys",
+          "day – days",
+          "toy – toys",
+          "key – keys",
+        ],
+      },
+      {
+        title: "איך **בודקים**?",
+        lines: ["מסתכלים על האות שלפני y"],
+        table: [["baby", "bab**ies**"], ["toy", "toy**s**"]],
+        more: [
+          "מסתכלים על האות **שלפני** ה־y",
+          "לא a, e, o, u – מורידים y ומוסיפים ies",
+          "baby – babies",
+          "יש a, e, o, u – מוסיפים רק s",
+          "toy – toys",
         ],
       },
       {
@@ -1577,6 +1605,7 @@ window.ENGLISH_SHORT_LESSONS = [
     quiz: [
       ["two ___", "שני ילדים", ["childs", "children"], 1, "ילדים – children"],
       ["three ___", "שלושה תינוקות", ["babys", "babies"], 1, "y הופכת ל־ies"],
+      ["many ___", "הרבה צעצועים", ["toies", "toys"], 1, "לפני y יש o ולכן רק s"],
       ["many ___", "הרבה עלים", ["leafs", "leaves"], 1, "f הופכת ל־ves"],
     ],
     discuss: ["כמה ילדים יש בכיתה שלנו? ענו עם children", "מה עוד יש הרבה בכיתה? אמרו את זה באנגלית"],
@@ -2430,6 +2459,8 @@ window.ENGLISH_SHORT_LESSONS = [
           "הוא הופך ל־has",
           "y אחרי אות שהיא לא תנועה – הופכת ל־ies",
           "fly – flies",
+          "אבל אם לפני y יש a, e, o, u – רק s",
+          "play – plays",
           ["He **has** a dog.", "יש לו כלב"],
         ],
       },
@@ -4947,6 +4978,8 @@ window.ENGLISH_SHORT_LESSONS = [
           "like – liked",
           "y אחרי אות שהיא לא תנועה – ied",
           "study – studied",
+          "אבל אם לפני y יש a, e, o, u – רק ed",
+          "play – played",
         ],
       },
       {

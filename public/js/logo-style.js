@@ -1,7 +1,7 @@
 /* The "נראות" button in the footer: picks the site's look (colorful, or
    clean and professional — site-pro.css, set early on every page by
-   theme.js) and the home title's look (clean-site.css). Both are kept in
-   this browser. */
+   theme.js), the home title's look (clean-site.css) and the mascot animal
+   (site-fox.js). All are kept in this browser. */
 
 (function () {
   const KEY = "pleyi-logo-style";
@@ -56,6 +56,8 @@
     const siteGrid = dialog.querySelector(".site-style-grid");
     const list = dialog.querySelector(".logo-style-list");
     const logoGroup = dialog.querySelector(".look-group--logo");
+    const animalGrid = dialog.querySelector(".look-animal-grid");
+    const fox = () => window.PleyiFox;
 
     siteGrid.innerHTML = SITE_STYLES.map(
       (s) =>
@@ -73,6 +75,19 @@
     ).join("");
     list.querySelectorAll(".logo-style-preview").forEach((el) => window.I18n.applyHeroSiteName(el));
 
+    // The animals come from site-fox.js, which loads later (defer).
+    function drawAnimals() {
+      if (animalGrid.childElementCount || !fox()?.animals) return;
+      animalGrid.innerHTML = fox()
+        .animals.map(
+          (a) =>
+            `<button type="button" class="look-animal-tile" data-id="${a.id}">${CHECK}` +
+            `<span class="look-animal-fig">${fox().draw(a.id)}</span>` +
+            `<span class="look-animal-name">${a.name}</span></button>`
+        )
+        .join("");
+    }
+
     const siteStyle = () => (window.PleyiTheme ? window.PleyiTheme.siteStyle() : "colorful");
 
     function markChosen() {
@@ -82,11 +97,15 @@
       list.querySelectorAll(".logo-style-row").forEach((row) => {
         row.setAttribute("aria-pressed", String(row.dataset.id === title.dataset.logoStyle));
       });
+      animalGrid.querySelectorAll(".look-animal-tile").forEach((tile) => {
+        tile.setAttribute("aria-pressed", String(tile.dataset.id === fox().animal()));
+      });
       // The professional look has its own plain title, so the title looks are only for the colorful one.
       logoGroup.hidden = siteStyle() === "pro";
     }
 
     btn.addEventListener("click", () => {
+      drawAnimals();
       markChosen();
       dialog.showModal();
     });
@@ -108,6 +127,17 @@
       markChosen();
       dialog.close();
       document.getElementById("home")?.scrollIntoView({ behavior: "smooth" });
+    });
+
+    // Picking an animal too: in the colorful look it sits on the title, in
+    // the professional one only in the corner, where it already shows.
+    animalGrid.addEventListener("click", (e) => {
+      const tile = e.target.closest(".look-animal-tile");
+      if (!tile) return;
+      fox().setAnimal(tile.dataset.id);
+      markChosen();
+      dialog.close();
+      if (siteStyle() !== "pro") document.getElementById("home")?.scrollIntoView({ behavior: "smooth" });
     });
 
     dialog.querySelector(".news-zoom-close").addEventListener("click", () => dialog.close());

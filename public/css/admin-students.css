@@ -1178,6 +1178,75 @@ body.adm-info-open {
   margin-top: auto;
 }
 
+/* Solved exercises: all of them closed in one rectangle that opens on a
+   click, then one thin line each — topic and name on one side, the score
+   on the other. A name too long for the line ends in "…". */
+.adm-solved-fold {
+  border: var(--adm-border);
+  border-radius: 18px;
+  background: var(--adm-card);
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.adm-solved-sum {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  list-style: none;
+  cursor: pointer;
+}
+
+.adm-solved-sum::-webkit-details-marker {
+  display: none;
+}
+
+.adm-solved-sum:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 18px;
+}
+
+.adm-solved-fold[open] > .adm-solved-sum .adm-fold-icon svg {
+  transform: rotate(45deg);
+}
+
+.adm-solved--rows {
+  grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
+  gap: 12px;
+  padding: 2px 16px 20px;
+}
+
+.adm-solved-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+}
+
+.adm-solved-line {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.adm-solved-row .adm-solved-topic {
+  font-size: 0.9rem;
+}
+
+.adm-solved-row .adm-solved-title {
+  font-size: 1.05rem;
+}
+
+.adm-solved-row .adm-pill {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
 .adm-rounds {
   display: flex;
   flex-direction: column;

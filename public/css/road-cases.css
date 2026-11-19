@@ -1,0 +1,119 @@
+/* תקין או לא תקין? (road-cases.js): the PAT city in a frame, the question
+   under it and the two answers. Fits the fixed game screen, no scrolling:
+   the city takes whatever height is left. */
+
+.rs-cases {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.6dvh, 16px);
+}
+
+.rs-cases [hidden] {
+  display: none !important;
+}
+
+.rs-cases-board {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 120px;
+  border: 4px solid var(--rs-ink);
+  border-radius: 20px;
+  background: #86d3e6;
+  box-shadow: var(--rs-shadow);
+  overflow: hidden;
+}
+
+.rs-cases-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.rs-cases-replay {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 3px solid var(--rs-ink);
+  border-radius: 999px;
+  background: var(--rs-yellow);
+  color: #000;
+  font-size: 1rem;
+  box-shadow: 2px 3px 0 0 var(--rs-ink);
+  cursor: pointer;
+}
+
+.rs-cases-replay svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Two lines of room, so the city doesn't jump when the answer comes. */
+.rs-cases .rs-feedback {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-height: 2.6em;
+  text-wrap: balance;
+}
+
+.rs-cases-btns,
+.rs-cases-next {
+  flex-shrink: 0;
+  min-height: clamp(54px, 8dvh, 72px);
+}
+
+.rs-cases .rs-safe-btn {
+  padding: 8px 10px;
+  font-size: clamp(1.2rem, 3.4dvh, 1.6rem);
+}
+
+.rs-cases-next {
+  align-self: center;
+  min-width: min(100%, 260px);
+  font-size: clamp(1.2rem, 3.4dvh, 1.6rem);
+}
+
+/* The game's card: a still of the city, edge to edge (the card's road is
+   road-safety.css's, like every game card). */
+.rs-game-card--cases .rs-card-art {
+  padding: 0;
+}
+
+.rs-cases-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 380px) {
+  .rs-cases-replay {
+    top: 6px;
+    inset-inline-start: 6px;
+    padding: 3px 10px;
+    font-size: 0.9rem;
+  }
+
+  .rs-cases .rs-feedback {
+    font-size: 1rem;
+  }
+
+  .rs-cases .rs-safe-btn {
+    gap: 6px;
+    padding-inline: 6px;
+    font-size: 1.15rem;
+    white-space: nowrap;
+  }
+
+  .rs-cases .rs-safe-btn svg {
+    width: 1em;
+    height: 1em;
+  }
+}

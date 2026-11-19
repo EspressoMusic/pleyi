@@ -32,7 +32,7 @@ const PRELOAD = `
   try { localStorage.setItem("gameclass-cookies-v1", "accepted"); localStorage.setItem("pleyi-owl-greeted", "1"); localStorage.setItem("pleyi-tour-off", "1"); localStorage.setItem("pleyi-lang", "he"); } catch (e) {}
   document.addEventListener("DOMContentLoaded", () => {
     const s = document.createElement("style");
-    s.textContent = ".site-owl,.site-fox,.site-owl-bubble,.site-fox-bubble{visibility:hidden!important}";
+    s.textContent = ".site-owl,.site-fox,.site-owl-bubble,.site-fox-bubble,.site-guide-btn{visibility:hidden!important}";
     document.head.appendChild(s);
   });
   (function () {

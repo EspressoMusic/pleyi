@@ -59,6 +59,10 @@
   }
 
   function exerciseUrl(hw) {
+    // A lesson the teacher created ("lesson-my-<id>") plays in the library's player.
+    if (hw.topicId === "my-lessons") {
+      return `/services/ready-lessons?from=student&mylesson=${encodeURIComponent(hw.exerciseId.replace(/^lesson-my-/, ""))}&s=${encodeURIComponent(key)}`;
+    }
     return `/services/english?s=${encodeURIComponent(key)}#${encodeURIComponent(hw.topicId)}/${encodeURIComponent(hw.exerciseId)}`;
   }
 
@@ -275,9 +279,10 @@
       </li>`;
   }
 
-  function boxHtml(id, title, left, details) {
+  // `count`: the chip beside the title, when it isn't what's left.
+  function boxHtml(id, title, left, details, count) {
     const open = openBoxes.has(id);
-    const count = left.length
+    count ||= left.length
       ? `<span class="stu-box-count">נשארו <b dir="ltr">${left.length}</b></span>`
       : `<span class="stu-box-count is-done">${ICONS.check}הכול בוצע</span>`;
     return `
@@ -346,8 +351,43 @@
     return `
       ${testsHtml(student)}
       ${homework}
+      ${solvedHtml(student)}
       ${newPrizeHtml(student)}
       ${cardsHtml(student.cards)}`;
+  }
+
+  /* ── The exercises the student solved, from every topic: one box, closed,
+     with how many. Tapping it opens a line for each, the newest first —
+     its topic, its name and the best score — that goes back to it. ── */
+
+  function solvedList(student) {
+    return (student.map?.stages || [])
+      .flatMap((stage) => stage.topics.flatMap((topic) => topic.done.map((ex) => ({ ...ex, topicId: topic.id, topicTitle: titleParts(topic.title)[0] }))))
+      .sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  }
+
+  function solvedHtml(student) {
+    const list = solvedList(student);
+    if (!list.length) return "";
+    const rows = list
+      .map(
+        (ex) => `
+        <li>
+          <a class="stu-dlg-row is-on stu-solved-row" href="${esc(exerciseUrl({ topicId: ex.topicId, exerciseId: ex.id }))}">
+            <span class="stu-dlg-mark" aria-hidden="true">${ICONS.check}</span>
+            <span class="stu-dlg-name"><span class="stu-solved-topic">${esc(ex.topicTitle)}</span><bdi>${esc(ex.title)}</bdi></span>
+            <span class="stu-dlg-val" dir="ltr">${ex.score}/${ex.total}</span>
+          </a>
+        </li>`
+      )
+      .join("");
+    return boxHtml(
+      "stuSolved",
+      "תרגילים שפתרתי",
+      [],
+      `<ul class="stu-dlg-list">${rows}</ul>`,
+      `<span class="stu-box-count is-done">${ICONS.check}<b dir="ltr">${list.length}</b></span>`
+    );
   }
 
   /* ── "My map": the learning path, a stage at a time. On top, how far the
@@ -554,20 +594,26 @@
              .join("")}
          </ul>`
       : "";
+    // The exercises solved: closed in a rectangle that opens on a tap.
+    const solvedHead = `תרגילים · פתרת <span dir="ltr">${topic.done.length}/${topic.exercises}</span>`;
     const solved = topic.done.length
-      ? `<ul class="stu-dlg-list">
+      ? `<details class="stu-fold">
+         <summary class="stu-dlg-sub stu-fold-sum">${solvedHead}<span class="stu-box-chev" aria-hidden="true">${ICONS.chevron}</span></summary>
+         <ul class="stu-dlg-list">
            ${topic.done
              .map(
                (ex) => `
              <li class="stu-dlg-row is-on">
                <span class="stu-dlg-mark" aria-hidden="true">${ICONS.check}</span>
-               <span class="stu-dlg-name">${esc(ex.title)}</span>
+               <span class="stu-dlg-name"><bdi>${esc(ex.title)}</bdi></span>
                <span class="stu-dlg-val" dir="ltr">${ex.score}/${ex.total}</span>
              </li>`
              )
              .join("")}
-         </ul>`
-      : `<p class="stu-dlg-none">עוד לא פתרת תרגילים בנושא הזה.</p>`;
+         </ul>
+         </details>`
+      : `<h3 class="stu-dlg-sub">${solvedHead}</h3>
+         <p class="stu-dlg-none">עוד לא פתרת תרגילים בנושא הזה.</p>`;
     const about = STATUS[topic.status].about.split("\n");
     if (topic.status === "started") about.push(`עשית ${topic.did} מתוך ${topic.items}.`);
     if (here) about.push("כאן תרגלת בפעם האחרונה.");
@@ -582,7 +628,6 @@
       </h2>
       <div class="stu-dlg-status is-${topic.status}">${about.map((line) => `<p>${esc(line)}</p>`).join("")}</div>
       ${lessons}
-      <h3 class="stu-dlg-sub">תרגילים · פתרת <span dir="ltr">${topic.done.length}/${topic.exercises}</span></h3>
       ${solved}
       <div class="stu-dlg-foot">
         <a class="btn btn-primary btn-candy stu-btn stu-dlg-go" href="${esc(topicUrl(topic))}">${topic.did ? "להמשיך בנושא" : "להתחיל את הנושא"}</a>

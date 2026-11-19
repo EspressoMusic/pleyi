@@ -1,0 +1,176 @@
+/* The roads of /road-safety (road-traffic.js): the page's background as on
+   the Pleyi site (ambient-bg.css: dots falling slowly and two waves on the
+   sides) in sky blue, and the road between two parts of the page.
+   html.rs-road-bg is on while the background shows. */
+
+/* ── The background ── */
+
+:root {
+  --rs-bg: #6ec3ff;
+}
+
+html.rs-road-bg:has(body.page-road),
+html.rs-road-bg body.page-road {
+  background: var(--rs-bg);
+}
+
+/* !important: clean-site.css makes every child of body position:relative
+   with z-index 1. */
+.rs-ambient {
+  position: fixed !important;
+  inset: 0;
+  z-index: 0 !important;
+  overflow: hidden;
+  pointer-events: none;
+  direction: ltr;
+  background: var(--rs-bg);
+}
+
+html:not(.rs-road-bg) .rs-ambient {
+  display: none;
+}
+
+.rs-amb-side {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(72px, 11vw, 148px);
+  overflow: hidden;
+}
+
+.rs-amb-side--left {
+  left: 0;
+}
+
+.rs-amb-side--right {
+  right: 0;
+}
+
+.rs-amb-side svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.rs-amb-side--right svg {
+  transform: scaleX(-1);
+}
+
+.rs-amb-dot {
+  position: absolute;
+  top: -8vh;
+  width: var(--dot-size, 4px);
+  height: var(--dot-size, 4px);
+  border-radius: 50%;
+  background: var(--dot-color);
+  opacity: 0;
+  box-shadow: 0 0 calc(var(--dot-size, 4px) * 1.8) var(--dot-glow);
+  animation: rs-amb-fall linear infinite;
+}
+
+@keyframes rs-amb-fall {
+  0% {
+    transform: translate3d(0, -8vh, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--dot-opacity, 0.35);
+  }
+  92% {
+    opacity: var(--dot-opacity, 0.35);
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), 112vh, 0);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .rs-amb-side {
+    width: clamp(48px, 14vw, 72px);
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rs-amb-dot {
+    animation: none;
+    opacity: var(--dot-opacity, 0.28);
+  }
+}
+
+/* The page sits over it. */
+html.rs-road-bg body.page-road main,
+html.rs-road-bg body.page-road footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* A car's tyre tracks down both sides of the page, from top to bottom,
+   scrolling with it. */
+html.rs-road-bg body.page-road main {
+  --rs-track: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 28'%3E%3Cg fill='%23153f73' fill-opacity='.22'%3E%3Cpath d='M2 3 18 11v8L2 11z'/%3E%3Cpath d='M38 3 22 11v8l16-8z'/%3E%3C/g%3E%3C/svg%3E");
+  --rs-track-w: 40px;
+  --rs-track-x: max(14px, calc(50% - 660px));
+  background:
+    var(--rs-track) left var(--rs-track-x) top 0 / var(--rs-track-w) calc(var(--rs-track-w) * 0.7) repeat-y,
+    var(--rs-track) right var(--rs-track-x) top 0 / var(--rs-track-w) calc(var(--rs-track-w) * 0.7) repeat-y;
+}
+
+@media (max-width: 720px) {
+  html.rs-road-bg body.page-road main {
+    --rs-track-w: 26px;
+    --rs-track-x: 3px;
+  }
+}
+
+/* A part on asphalt keeps it. */
+html.rs-road-bg body.page-road main section:not(.rs-asphalt) {
+  background: transparent;
+}
+
+/* ── A whole part on the road strips' rough asphalt (road-traffic.js
+   draws it on a canvas behind the part's content). ── */
+
+.rs-asphalt {
+  position: relative;
+  isolation: isolate;
+  background: #2a2c30;
+}
+
+.rs-asphalt-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── The road between two parts: a rough black road with a white dashed
+   line and a zebra, a car that stops before it and a man who crosses,
+   drawn by road-traffic.js on its canvas. ── */
+
+.rs-road {
+  position: relative;
+  height: clamp(70px, 5.6vw, 80px);
+  border-top: 4px solid #000;
+  border-bottom: 4px solid #000;
+  background: #2a2c30;
+  overflow: hidden;
+}
+
+.rs-road-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 640px) {
+  .rs-road {
+    height: 70px;
+  }
+}

@@ -936,18 +936,24 @@
     const solved = solvedExercises(s);
     if (!solved.length) return `<p class="adm-muted">עדיין אין פעילות</p>`;
     return `
-      <div class="adm-solved">
+      <details class="adm-solved-fold">
+      <summary class="adm-solved-sum">
+        <span class="adm-fold-icon">${ICONS.plus}</span>
+        <span>כל התרגילים</span>
+        <span class="adm-student-count">${solved.length}</span>
+      </summary>
+      <div class="adm-solved adm-solved--rows">
         ${solved
           .map(
             (ex) => `
-          <button type="button" class="adm-solved-card" data-solved="${esc(ex.key)}" aria-haspopup="dialog">
-            <span class="adm-solved-topic">${esc(ex.topicTitle)}</span>
-            <span class="adm-solved-title">${esc(ex.title)}</span>
+          <button type="button" class="adm-solved-card adm-solved-row" data-solved="${esc(ex.key)}" aria-haspopup="dialog" title="${esc(`${ex.topicTitle} · ${ex.title}`)}">
+            <span class="adm-solved-line"><span class="adm-solved-topic">${esc(ex.topicTitle)}</span> · <span class="adm-solved-title">${esc(ex.title)}</span></span>
             ${pill(level(pct(ex.score, ex.total)).cls, `<span dir="ltr">${ex.score}/${ex.total}</span>`)}
           </button>`
           )
           .join("")}
-      </div>`;
+      </div>
+      </details>`;
   }
 
   // A mistakes retry that fixed its round: the round's score after the fix.
@@ -1048,7 +1054,7 @@
      until the form adds it to the tasks. */
 
   const PATH = window.ENGLISH_PATH || [];
-  const LESSONS_SRC = "/js/english-lessons.js?v=8";
+  const LESSONS_SRC = "/js/english-lessons.js?v=9";
   // "topicId/exerciseId" (or "mix") → the task the form sends.
   let picked = new Map();
   let lessonsLoading = null;
@@ -1113,6 +1119,26 @@
     ].filter((group) => group.tasks.length);
   }
 
+  // The lessons the teacher created on /my-room ("יצירת שיעור"), as tasks:
+  // they open in the library's player and are done once seen. Loaded the
+  // first time the library opens.
+  const SUBJECT_NAMES = { english: "אנגלית", math: "חשבון", hebrew: "עברית", science: "מדעים", geography: "גאוגרפיה", history: "היסטוריה" };
+  let myLessonsLoading = null;
+
+  function loadMyLessons() {
+    myLessonsLoading ||= api("/api/my-lessons")
+      .then((data) => data.lessons || [])
+      .catch(() => {
+        myLessonsLoading = null;
+        return [];
+      });
+    return myLessonsLoading;
+  }
+
+  function myLessonTask(lesson) {
+    return { topicId: "my-lessons", exerciseId: `lesson-my-${lesson.id}`, topicTitle: "השיעורים שלי", exerciseTitle: lesson.title, type: "lesson" };
+  }
+
   function pickedCountText(n) {
     if (!n) return "עוד לא נבחר כלום";
     return n === 1 ? "נבחרה משימה אחת" : `נבחרו ${n} משימות`;
@@ -1129,6 +1155,7 @@
     let at = "";
     // "tasks", or "test": a topic tile is picked as a whole (testPicked).
     let mode = "tasks";
+    let myLessons = [];
 
     function build() {
       root = document.createElement("div");
@@ -1288,8 +1315,10 @@
             ${count ? `<span class="adm-lib-tile-picked">${count === 1 ? "נבחרה 1" : `נבחרו ${count}`}</span>` : ""}
           </button>`;
       };
+      const mine = myLessons.map((lesson) => itemHtml(myLessonTask(lesson), lesson.title, SUBJECT_NAMES[lesson.subject] || "")).join("");
       return `
         ${mix ? groupHtml(`<span class="adm-lib-key">תרגול מעורב</span>`, `<div class="adm-lib-items">${itemHtml(mix, "תרגול מעורב", mix.exerciseTitle)}</div>`) : ""}
+        ${mine ? groupHtml(`<span class="adm-lib-key">השיעורים שלי</span>`, `<div class="adm-lib-items">${mine}</div>`, myLessons.length > 1) : ""}
         ${stages.map((stage) => groupHtml(stage.title, `<div class="adm-lib-tiles">${stage.topics.map(tile).join("")}</div>`)).join("")}`;
     }
 
@@ -1312,6 +1341,7 @@
       const topic = topicId && TOPICS.find((tp) => tp.id === topicId);
       const leaving = $(".adm-lib-tiles", body) ? body.scrollTop : null;
       if (topic) await loadLessons();
+      else if (mode === "tasks") myLessons = await loadMyLessons();
       if (token !== showing) return;
       if (leaving != null) homeScroll = leaving;
       const from = at;

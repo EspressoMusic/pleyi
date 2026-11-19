@@ -12,6 +12,7 @@
     lifeskills: "כישורי חיים",
     health: "נפלאות הבריאה",
     body: "גוף האדם",
+    road: "זהירות בדרכים",
     geography: "גאוגרפיה",
     history: "היסטוריה",
   };
@@ -23,10 +24,11 @@
     lifeskills: "Life Skills",
     health: "Health Wonders",
     body: "Human Body",
+    road: "Road Safety",
     geography: "Geography",
     history: "History",
   };
-  const ACTIVE_SUBJECTS = ["english", "math", "hebrew", "science", "geography", "history", "lifeskills", "health", "body"];
+  const ACTIVE_SUBJECTS = ["english", "math", "hebrew", "science", "geography", "history", "lifeskills", "health", "body", "road"];
   // Subjects with a learning area of their own (a path of topics, lessons and
   // practice exercises): English, and the school subjects (subject-practice.js).
   const SUBJECT_AREAS = {
@@ -39,6 +41,7 @@
     lifeskills: "/services/lifeskills",
     body: "/services/body",
     health: "/services/health",
+    road: "/road-safety",
   };
   const LESSON_SHARE_PATH = "/services/ready-lessons.html";
   const LP_SPEAKER_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6"/></svg>`;
@@ -3560,6 +3563,7 @@
   }
 
   const shortLessons = window.ENGLISH_SHORT_LESSONS || [];
+  const SHORT_LESSON_IDS = new Set([...shortLessons, ...(window.SUBJECT_SHORT_LESSONS || [])].map((entry) => entry.id));
   [shortLessons, window.SUBJECT_SHORT_LESSONS || []].forEach((list) => {
     list.forEach((entry) => {
       const siblings = list.filter((other) => other.topic === entry.topic);
@@ -3752,6 +3756,113 @@
         { id: "time", label: "ניהול זמן ותכנון" },
         { id: "communication", label: "תקשורת ופתרון קונפליקטים" },
         { id: "safety", label: "בטיחות ברשת" },
+      ],
+    },
+    road: {
+      ag: [
+        { id: "road-street", label: "מה יש ברחוב?" },
+        { id: "road-body", label: "הגוף שלי תופס מקום" },
+        { id: "road-moves", label: "קדימה, אחורה, ימין ושמאל" },
+        { id: "road-stop", label: "עוצרים בזמן" },
+        { id: "road-walk", label: "הולכים ברחוב" },
+        { id: "road-park", label: "בחניה ובחניון" },
+        { id: "road-cross", label: "חוצים את הכביש" },
+        { id: "road-lights", label: "רמזורים" },
+        { id: "road-group", label: "הולכים בקבוצה" },
+        { id: "road-school", label: "הדרך לבית הספר" },
+        { id: "road-signs", label: "תמרורים" },
+        { id: "road-signs2", label: "סוגי תמרורים" },
+        { id: "road-marks", label: "סימונים על הכביש" },
+        { id: "road-see", label: "רואים ונראים" },
+        { id: "road-rail", label: "מסילת רכבת" },
+        { id: "road-car", label: "ברכב ובהסעה" },
+        { id: "road-shuttle", label: "בהסעה ובאוטובוס" },
+        { id: "road-bike", label: "אופניים וקורקינט" },
+        { id: "road-ride", label: "רוכבים נכון" },
+        { id: "road-electric", label: "אופניים וקורקינט חשמליים" },
+        { id: "road-city", label: "הדרכים בעיר" },
+        { id: "road-busy", label: "העיר הצפופה" },
+        { id: "road-free", label: "חוצים בלי מעבר חצייה" },
+        { id: "road-why", label: "למה כאן מעבר חצייה?" },
+        { id: "road-wide", label: "חוצים כביש רחב" },
+        { id: "road-junction", label: "חוצים בצומת" },
+        { id: "road-route", label: "בוחרים מסלול בטוח" },
+        { id: "road-speed", label: "מהירות ועצירה" },
+        { id: "road-focus", label: "מרוכזים בדרך" },
+        { id: "road-choice", label: "אחריות ובחירה" },
+        { id: "road-help", label: "ראינו תאונה – מה עושים?" },
+        { id: "road-winter", label: "בחורף ובגשם" },
+        { id: "road-holiday", label: "בחגים ובחופש" },
+      ],
+      dv: [
+        { id: "road-street", label: "מה יש ברחוב?" },
+        { id: "road-body", label: "הגוף שלי תופס מקום" },
+        { id: "road-moves", label: "קדימה, אחורה, ימין ושמאל" },
+        { id: "road-stop", label: "עוצרים בזמן" },
+        { id: "road-walk", label: "הולכים ברחוב" },
+        { id: "road-park", label: "בחניה ובחניון" },
+        { id: "road-cross", label: "חוצים את הכביש" },
+        { id: "road-lights", label: "רמזורים" },
+        { id: "road-group", label: "הולכים בקבוצה" },
+        { id: "road-school", label: "הדרך לבית הספר" },
+        { id: "road-signs", label: "תמרורים" },
+        { id: "road-signs2", label: "סוגי תמרורים" },
+        { id: "road-marks", label: "סימונים על הכביש" },
+        { id: "road-see", label: "רואים ונראים" },
+        { id: "road-rail", label: "מסילת רכבת" },
+        { id: "road-car", label: "ברכב ובהסעה" },
+        { id: "road-shuttle", label: "בהסעה ובאוטובוס" },
+        { id: "road-bike", label: "אופניים וקורקינט" },
+        { id: "road-ride", label: "רוכבים נכון" },
+        { id: "road-electric", label: "אופניים וקורקינט חשמליים" },
+        { id: "road-city", label: "הדרכים בעיר" },
+        { id: "road-busy", label: "העיר הצפופה" },
+        { id: "road-free", label: "חוצים בלי מעבר חצייה" },
+        { id: "road-why", label: "למה כאן מעבר חצייה?" },
+        { id: "road-wide", label: "חוצים כביש רחב" },
+        { id: "road-junction", label: "חוצים בצומת" },
+        { id: "road-route", label: "בוחרים מסלול בטוח" },
+        { id: "road-speed", label: "מהירות ועצירה" },
+        { id: "road-focus", label: "מרוכזים בדרך" },
+        { id: "road-choice", label: "אחריות ובחירה" },
+        { id: "road-help", label: "ראינו תאונה – מה עושים?" },
+        { id: "road-winter", label: "בחורף ובגשם" },
+        { id: "road-holiday", label: "בחגים ובחופש" },
+      ],
+      zh: [
+        { id: "road-street", label: "מה יש ברחוב?" },
+        { id: "road-body", label: "הגוף שלי תופס מקום" },
+        { id: "road-moves", label: "קדימה, אחורה, ימין ושמאל" },
+        { id: "road-stop", label: "עוצרים בזמן" },
+        { id: "road-walk", label: "הולכים ברחוב" },
+        { id: "road-park", label: "בחניה ובחניון" },
+        { id: "road-cross", label: "חוצים את הכביש" },
+        { id: "road-lights", label: "רמזורים" },
+        { id: "road-group", label: "הולכים בקבוצה" },
+        { id: "road-school", label: "הדרך לבית הספר" },
+        { id: "road-signs", label: "תמרורים" },
+        { id: "road-signs2", label: "סוגי תמרורים" },
+        { id: "road-marks", label: "סימונים על הכביש" },
+        { id: "road-see", label: "רואים ונראים" },
+        { id: "road-rail", label: "מסילת רכבת" },
+        { id: "road-car", label: "ברכב ובהסעה" },
+        { id: "road-shuttle", label: "בהסעה ובאוטובוס" },
+        { id: "road-bike", label: "אופניים וקורקינט" },
+        { id: "road-ride", label: "רוכבים נכון" },
+        { id: "road-electric", label: "אופניים וקורקינט חשמליים" },
+        { id: "road-city", label: "הדרכים בעיר" },
+        { id: "road-busy", label: "העיר הצפופה" },
+        { id: "road-free", label: "חוצים בלי מעבר חצייה" },
+        { id: "road-why", label: "למה כאן מעבר חצייה?" },
+        { id: "road-wide", label: "חוצים כביש רחב" },
+        { id: "road-junction", label: "חוצים בצומת" },
+        { id: "road-route", label: "בוחרים מסלול בטוח" },
+        { id: "road-speed", label: "מהירות ועצירה" },
+        { id: "road-focus", label: "מרוכזים בדרך" },
+        { id: "road-choice", label: "אחריות ובחירה" },
+        { id: "road-help", label: "ראינו תאונה – מה עושים?" },
+        { id: "road-winter", label: "בחורף ובגשם" },
+        { id: "road-holiday", label: "בחגים ובחופש" },
       ],
     },
     math: {
@@ -4543,6 +4654,40 @@
     const favBtn = $("#lessonInfoFavBtn");
     if (favBtn) favBtn.dataset.lesson = lessonId;
     syncFavBtnState(lessonId);
+
+    // Short lessons can be copied to the teacher's own lessons and edited.
+    const mineBtn = $("#lessonInfoMineBtn");
+    if (mineBtn) {
+      mineBtn.dataset.lesson = lessonId;
+      mineBtn.disabled = false;
+      mineBtn.classList.toggle("hidden", !SHORT_LESSON_IDS.has(lessonId));
+    }
+  }
+
+  // A copy of the lesson goes to the teacher's lessons (lib/teacher-lessons.js),
+  // and the editor on /my-room opens on it.
+  async function copyToMyLessons(lessonId, btn) {
+    if (!window.GameAuth?.getUser()) {
+      showToast("כדי לערוך שיעור צריך להתחבר");
+      window.GameAuth?.handleLoginClick({ redirect: false });
+      return;
+    }
+    btn.disabled = true;
+    try {
+      const token = await window.FirebaseApp?.auth?.currentUser?.getIdToken().catch(() => "");
+      if (!token) throw new Error("כדי לערוך שיעור צריך להתחבר");
+      const res = await fetch("/api/my-lessons/copy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ lessonId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error || "לא הצלחנו להוסיף את השיעור");
+      window.location.href = `/my-room?edit=${encodeURIComponent(data.lesson.id)}`;
+    } catch (err) {
+      showToast(err.message);
+      btn.disabled = false;
+    }
   }
 
   function closeLessonInfoModal() {
@@ -4623,6 +4768,9 @@
     $("#lessonInfoFavBtn")?.addEventListener("click", (e) => {
       toggleFavoriteLesson(e.currentTarget.dataset.lesson, e.currentTarget);
     });
+    $("#lessonInfoMineBtn")?.addEventListener("click", (e) => {
+      copyToMyLessons(e.currentTarget.dataset.lesson, e.currentTarget);
+    });
 
     const shareBtn = $("#lessonInfoShareBtn");
     const shareMenu = $("#lessonInfoShareMenu");
@@ -4658,9 +4806,37 @@
     });
   }
 
+  // A lesson a teacher created on /my-room (lib/teacher-lessons.js): the
+  // server keeps it in the short lessons' shape, so it plays like them.
+  // Kept out of the catalog's listing (not enumerable), like old topic ids.
+  function addCustomLesson(raw) {
+    const id = `my-${raw.id}`;
+    const lesson = shortLesson({ ...raw, id, topic: "my-lessons", grades: [] }, 1, 1);
+    Object.defineProperty(LESSON_CATALOG, id, { value: lesson, enumerable: false, configurable: true });
+    return id;
+  }
+
+  async function openCustomLesson(customId) {
+    try {
+      const res = await fetch(`/api/lessons/custom/${encodeURIComponent(customId)}`);
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      const id = addCustomLesson(data.lesson);
+      // A student who came through their link: the task is done once it opens.
+      if (window.StudentProgress?.fromLink?.()) {
+        window.StudentProgress.record({ kind: "lesson", topicId: "my-lessons", topicTitle: "שיעור מהמורה", itemId: id, itemTitle: data.lesson.name });
+      }
+      openLessonSlides?.(id);
+    } catch (err) {
+      showToast(err.message || "השיעור לא נמצא");
+    }
+  }
+
   function tryOpenSharedLesson() {
-    const lessonId = new URLSearchParams(window.location.search).get("lesson");
+    const params = new URLSearchParams(window.location.search);
+    const lessonId = params.get("lesson");
     if (lessonId && LESSON_CATALOG[lessonId]) openLessonSlides?.(lessonId);
+    else if (params.get("mylesson")) openCustomLesson(params.get("mylesson"));
   }
 
   const LESSON_RETURN_KEY = "gameclass-lesson-return";
@@ -4713,20 +4889,43 @@
   function bindLessonPlayerBackground(shell, bgBtn, bgMenu) {
     if (!shell || !bgBtn || !bgMenu) return;
 
-    bgMenu.innerHTML = LP_BG_OPTIONS.map(
-      (opt) =>
-        `<button type="button" class="lp-bg-swatch" data-bg="${opt.id}" aria-label="${opt.label}" title="${opt.label}"></button>`
-    ).join("");
-    const swatches = $$(".lp-bg-swatch", bgMenu);
+    bgMenu.innerHTML =
+      LP_BG_OPTIONS.map(
+        (opt) =>
+          `<button type="button" class="lp-bg-swatch" data-bg="${opt.id}" aria-label="${opt.label}" title="${opt.label}"></button>`
+      ).join("") +
+      // Custom color: the native picker sits invisibly over a rainbow circle.
+      `<label class="lp-bg-swatch lp-bg-swatch-custom" title="התאמה אישית"><input type="color" class="lp-bg-custom-input" value="#c8e6ff" aria-label="התאמה אישית"/></label>`;
+    const swatches = $$(".lp-bg-swatch[data-bg]", bgMenu);
+    const customSwatch = $(".lp-bg-swatch-custom", bgMenu);
+    const customInput = $(".lp-bg-custom-input", bgMenu);
 
+    const isHexColor = (value) => /^#[0-9a-f]{6}$/i.test(value || "");
+
+    // Dark custom colors get the same light text as the dark presets.
+    function isDarkColor(hex) {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.5;
+    }
+
+    // bgId is a preset id or a "#rrggbb" custom color.
     function applyBackground(bgId) {
-      const opt = LP_BG_OPTIONS.find((o) => o.id === bgId) || LP_BG_OPTIONS[0];
+      const custom = isHexColor(bgId) ? bgId : "";
+      const opt = custom ? null : LP_BG_OPTIONS.find((o) => o.id === bgId) || LP_BG_OPTIONS[0];
       shell.classList.remove(...LP_BG_OPTIONS.map((o) => `lp-bg-${o.id}`), "lp-bg-dark");
-      if (opt.id !== "default") shell.classList.add(`lp-bg-${opt.id}`);
-      if (opt.dark) shell.classList.add("lp-bg-dark");
-      swatches.forEach((sw) => sw.classList.toggle("active", sw.dataset.bg === opt.id));
+      shell.style.background = custom
+        ? `linear-gradient(160deg, ${custom} 0%, color-mix(in srgb, ${custom} 90%, #000) 100%)`
+        : "";
+      if (opt && opt.id !== "default") shell.classList.add(`lp-bg-${opt.id}`);
+      if (custom ? isDarkColor(custom) : opt.dark) shell.classList.add("lp-bg-dark");
+      swatches.forEach((sw) => sw.classList.toggle("active", !!opt && sw.dataset.bg === opt.id));
+      customSwatch.classList.toggle("active", !!custom);
+      if (custom) {
+        customInput.value = custom;
+        customSwatch.style.setProperty("--lp-custom", custom);
+      }
       try {
-        localStorage.setItem(LP_BG_KEY, opt.id);
+        localStorage.setItem(LP_BG_KEY, custom || opt.id);
       } catch {
         /* ignore */
       }
@@ -4735,7 +4934,7 @@
     function readBackground() {
       try {
         const stored = localStorage.getItem(LP_BG_KEY);
-        if (LP_BG_OPTIONS.some((opt) => opt.id === stored)) return stored;
+        if (isHexColor(stored) || LP_BG_OPTIONS.some((opt) => opt.id === stored)) return stored;
       } catch {
         /* ignore */
       }
@@ -4766,6 +4965,13 @@
         applyBackground(sw.dataset.bg);
         closeMenu();
       });
+    });
+
+    // Live preview while dragging in the picker; close once a color is picked.
+    customInput.addEventListener("input", () => applyBackground(customInput.value));
+    customInput.addEventListener("change", () => {
+      applyBackground(customInput.value);
+      closeMenu();
     });
 
     bgMenu.addEventListener("click", (e) => e.stopPropagation());
@@ -5257,7 +5463,11 @@
     function fitSlideContent() {
       if (!slideWrapEl) return;
       slideEl.style.removeProperty("--lp-fit");
-      const zoom = slideZoom();
+      // The same rounded zoom as the CSS gets: the zoomed slide's min-height
+      // is the wrap's height over it, and scrollHeight rounds that up — so
+      // the check allows a pixel, or it shrank every fullscreen slide to
+      // LP_FIT_MIN.
+      const zoom = +slideZoom().toFixed(3);
       if (zoom > 1) slideEl.style.setProperty("--lp-zoom", zoom.toFixed(3));
       else slideEl.style.removeProperty("--lp-zoom");
       const available = slideWrapEl.clientHeight / zoom;
@@ -5266,7 +5476,7 @@
       let scale = 1;
       while (
         scale > LP_FIT_MIN + 1e-6 &&
-        (slideEl.scrollHeight > available || spillsSideways(pairs, zoom))
+        (slideEl.scrollHeight > available + 1 || spillsSideways(pairs, zoom))
       ) {
         scale = Math.max(LP_FIT_MIN, scale - LP_FIT_STEP);
         slideEl.style.setProperty("--lp-fit", scale.toFixed(2));
@@ -5933,6 +6143,11 @@
     function renderStepsBody(slide) {
       const hebrew = isHebrewLesson();
       const parts = (slide.lines || []).map((line) => `<p class="lp-steps-line">${stepsHebrewHtml(line)}</p>`);
+      // "הסבר מורחב": the longer explanation goes right under the short
+      // lines, as ordinary slide lines, so the slide's text simply explains
+      // more — everything else on the slide stays.
+      const moreParts = slide.moreView ? moreLineParts(moreLinesToShow(slide)) : [];
+      parts.push(...moreParts);
       const figure = slide.fig && window.LESSON_FIGURES?.[slide.fig.kind];
       const figHtml = figure ? `<div class="lp-fig${figure.tall ? " lp-fig--tall" : ""}">${figure(slide.fig)}</div>` : "";
       const sideFig = figHtml && (figure.tall || LP_SIDE_FIG_PARTS.some((key) => slide[key]));
@@ -6050,15 +6265,13 @@
         parts.push(`<div class="lp-chips" dir="rtl">${slide.chips.map((c) => `<div class="lp-chip">${subjectTextHtml(c)}</div>`).join("")}</div>`);
       }
       if (slide.result) parts.push(`<div class="lp-result" dir="rtl">${subjectTextHtml(slide.result)}</div>`);
-      const moreParts = slide.moreView ? moreLineParts(moreLinesToShow(slide)) : [];
-      if (moreParts.length) parts.push(`<div class="lp-more">${moreParts.join("")}</div>`);
       const cls = `lp-steps${moreParts.length ? " lp-steps--more" : ""}`;
       if (sideFig) return `<div class="${cls} lp-steps--side"><div class="lp-steps-col">${parts.join("")}</div>${figHtml}</div>`;
       return `<div class="${cls}">${parts.join("")}</div>`;
     }
 
     // "הסבר מורחב" keeps the whole slide (its short lines, table, right /
-    // wrong, examples, math cards) and adds the `more` lines under it. A
+    // wrong, examples, math cards) and adds the `more` lines to it. A
     // `more` line that just repeats what the slide already shows is left
     // out, so nothing is on the slide twice.
     const LP_MORE_SHOWN_PARTS = ["lines", "math", "table", "grid", "steps", "check", "compare", "verdicts", "proof", "points", "chips", "result", "examples"];

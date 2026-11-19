@@ -468,6 +468,262 @@
 .room-tile-icon[data-icon="saved"] { background: #a9c4ff; }
 .room-tile-icon[data-icon="heart"] { background: #ff9ec7; }
 .room-tile-icon[data-icon="game"] { background: #b9a4ff; }
+.room-tile-icon[data-icon="create"] { background: #9de39d; }
+.room-tile-icon[data-icon="misc"] { background: #7fdccf; }
+
+/* "יצירת שיעור": a subject, a topic, and the AI writes the lesson. */
+.room-create {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.room-create-label {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.room-create-subjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.room-create-subject {
+  position: relative;
+}
+
+.room-create-subject input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.room-create-subject span {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 16%, #fff);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+}
+
+.room-create-subject input:checked + span {
+  background: var(--memyellow, #ffe066);
+}
+
+.room-create-subject input:focus-visible + span {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.room-create-input {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: #000;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 8%, #fff);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.room-create-go {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 10px 24px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  color: #000;
+  background: var(--memteal, #00e5cc);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  cursor: pointer;
+}
+
+.room-create-go:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.room-create-wait {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.room-mine-head {
+  margin: 20px 0 6px;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.room-misc > .room-mine-head:first-child { margin-top: 4px; }
+
+.room-mine:hover {
+  transform: none;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+/* Editing a lesson: one folded card per slide. */
+.room-dlg[data-box="edit"] {
+  width: min(94vw, 640px);
+}
+
+.room-edit-tip {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+.room-edit-tip a {
+  color: #000;
+  font-weight: 900;
+}
+
+.room-edit textarea.room-create-input {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.room-edit-slides {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.room-edit-slide {
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 16%, #fff);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.room-edit-slide > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+.room-edit-slide > summary::-webkit-details-marker {
+  display: none;
+}
+
+.room-edit-num {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  font-weight: 900;
+  background: var(--memyellow, #ffe066);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.room-edit-sum {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.room-edit-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 12px 14px;
+}
+
+.room-edit-body .room-create-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.room-edit-exs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.room-edit-exs:empty {
+  display: none;
+}
+
+.room-edit-ex {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-edit-small {
+  align-self: flex-start;
+  padding: 7px 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: #000;
+  background: #fff8d6;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+}
+
+.room-edit-small.is-danger {
+  background: #ffd6d6;
+}
+
+.room-edit-add {
+  margin-top: 4px;
+  font-size: 15px;
+  background: var(--memyellow, #ffe066);
+}
+
+.room-edit-tools,
+.room-edit-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-edit-foot {
+  margin-top: 8px;
+}
+
+.room-edit-foot .room-create-go {
+  margin-top: 0;
+}
+
+@media (max-width: 480px) {
+  .room-edit-ex {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .room-edit-ex [data-ex="b"] {
+    grid-column: 1;
+  }
+}
 
 .room-tile-title {
   font-size: clamp(1.3rem, 5vw, 1.65rem);
@@ -592,6 +848,90 @@ a.room-act-text:hover b {
   padding-inline: 8px;
   background: color-mix(in srgb, var(--memyellow, #ffe066) 40%, transparent);
   border-radius: 10px;
+}
+
+/* The bell: each update is its own small rectangle. */
+.room-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 2px 4px 6px 0;
+}
+
+.room-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: #000;
+  text-decoration: none;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 16%, #fff);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.room-note:hover,
+.room-note:focus-visible {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.room-note.is-help .room-act-icon {
+  background: var(--memyellow, #ffe066);
+}
+
+.room-note-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.room-note-line {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.room-note-line b {
+  font-weight: 900;
+}
+
+.room-note-verb {
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.room-note-title {
+  font-weight: 800;
+}
+
+.room-note-side {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.room-note-side .room-act-when {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* An update the teacher hasn't seen yet: a small dot by its date. */
+.room-note-dot {
+  width: 9px;
+  height: 9px;
+  background: #ff4d4d;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
 }
 
 /* The tiles and the bell open in a dialog. */

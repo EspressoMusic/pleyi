@@ -45,11 +45,25 @@
 /* The head's line again, above the snout so it stays whole (site-fox.js). */
 .site-fox-svg .f-line { fill: none; }
 
+/* Each animal brings its own colors on the <svg> (site-fox.js). */
 .site-fox-svg .f-body { fill: var(--fox-body); }
-.site-fox-svg .f-cream { fill: #fff1d9; stroke: none; }
+.site-fox-svg .f-cream { fill: var(--fox-cream, #fff1d9); stroke: none; }
+.site-fox-svg .f-light { fill: var(--fox-cream, #fff1d9); }
+.site-fox-svg .f-dark { fill: var(--fox-dark, #3a4050); }
+.site-fox-svg .f-patch { fill: var(--fox-dark, #3a4050); stroke: none; }
+.site-fox-svg .f-pink { fill: #f6a8b9; stroke: none; }
+.site-fox-svg .f-tongue { stroke-width: 3.5; }
+.site-fox-svg .f-tooth { fill: #fff; stroke-width: 3.5; }
+.site-fox-svg .f-thin { fill: none; stroke-width: 4; }
+.site-fox-svg .f-tail-out { fill: none; stroke-width: 11; }
+.site-fox-svg .f-tail-in { fill: none; stroke: var(--fox-body); stroke-width: 4; }
 .site-fox-svg .f-pupil { fill: var(--ink, #000); stroke: none; }
 .site-fox-svg .f-nose { fill: var(--ink, #000); stroke: none; }
 .site-fox-svg .f-cap { fill: #3a4050; }
+
+/* The panda: white eyes in its black patches, and a black body. */
+.site-fox-svg[data-animal="panda"] .f-pupil { fill: #fff; }
+.site-fox-svg[data-animal="panda"] .f-torso { fill: var(--fox-dark); }
 
 .site-fox-svg .fox-pupils {
   transition: transform 0.15s ease-out;
@@ -71,6 +85,10 @@
 .site-fox-svg .fox-ear-l { transform-origin: 80% 90%; }
 .site-fox-svg .fox-ear-r { transform-origin: 20% 90%; }
 .site-fox-svg .fox-tail { transform-origin: 5% 80%; }
+
+/* The dog's ears hang, so they swing from the top. */
+.site-fox-svg[data-animal="dog"] .fox-ear-l { transform-origin: 85% 5%; }
+.site-fox-svg[data-animal="dog"] .fox-ear-r { transform-origin: 15% 5%; }
 
 @keyframes site-fox-blink {
   0%, 93%, 98%, 100% { transform: none; }
@@ -191,6 +209,50 @@
   translate: 0 24px;
   visibility: hidden;
   transition: opacity 0.3s ease, scale 0.3s ease, translate 0.3s ease, visibility 0s 0.3s;
+}
+
+/* The button that turns the guide on and off (site-fox.js), at the bottom of
+   the list the fox opens. */
+.site-guide-btn {
+  flex-shrink: 0;
+  align-self: center;
+  margin: 14px 0 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 6px;
+  padding-inline: 7px 13px;
+  font: 900 15px/1.1 var(--font-sans, system-ui, sans-serif);
+  color: #000;
+  -webkit-text-fill-color: #000;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  background: #eaf5ff;
+  border: 3px solid var(--ink, #000);
+  border-radius: 999px;
+  box-shadow: 3px 4px 0 var(--ink, #000);
+  cursor: pointer;
+}
+
+.site-guide-btn[aria-pressed="true"] {
+  background: var(--memteal, #00e5cc);
+}
+
+.site-guide-btn:active {
+  translate: 2px 3px;
+  box-shadow: 1px 1px 0 var(--ink, #000);
+}
+
+.site-guide-btn-icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ink, #000);
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  font-size: 15px;
 }
 
 .eng-runner-open .site-fox-dock,

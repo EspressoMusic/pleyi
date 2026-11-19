@@ -66,11 +66,16 @@
     },
   ];
 
+  const PREVIEW_MY_LESSONS = [
+    { id: "preview-lesson", subject: "english", title: "צבעים", createdAt: new Date(Date.now() - DAY).toISOString() },
+  ];
+
   let savedGames = [];
   let playHistory = [];
   let savedLessons = [];
   let lessonHistory = [];
   let students = [];
+  let myLessons = [];
 
   // Saved lessons are opened from the lessons library (?lesson= opens the slides).
   const LESSON_OPEN_PATH = "/services/ready-lessons";
@@ -89,6 +94,8 @@
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     chart: '<path d="M3 20h18M6 16v-4M11 16V6M16 16v-7"/>',
     heart: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z"/>',
+    create: '<path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>',
+    misc: '<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
   };
 
   function icon(name) {
@@ -278,20 +285,37 @@
       (s.homework || []).forEach((hw) => {
         if (!hw.doneAt) return;
         const score = hw.total ? `${hw.score}/${hw.total}` : "";
-        list.push({ at: ms(hw.doneAt), icon: "done", verb: `${s.name} סיים משימה:`, title: hw.exerciseTitle, score, href });
+        list.push({ at: ms(hw.doneAt), icon: "done", who: s.name, verb: "סיים משימה", title: hw.exerciseTitle, score, href });
       });
       (s.help || []).forEach((h) => {
-        list.push({ at: ms(h.at), icon: "help", verb: `${s.name} ביקש עזרה`, title: h.text ? `"${h.text}"` : "", href, help: true });
+        list.push({ at: ms(h.at), icon: "help", who: s.name, verb: "ביקש עזרה", title: h.text ? `"${h.text}"` : "", href, help: true });
       });
       // A test handed in, and a request for a retake still waiting.
       (s.tests || []).forEach((test) => {
         (test.attempts || []).forEach((a) => {
-          list.push({ at: ms(a.at), icon: "done", verb: `${s.name} הגיש מבחן:`, title: test.title, score: a.total ? `${a.score}/${a.total}` : "", href });
+          list.push({ at: ms(a.at), icon: "done", who: s.name, verb: "הגיש מבחן", title: test.title, score: a.total ? `${a.score}/${a.total}` : "", href });
         });
-        if (test.retakeAt) list.push({ at: ms(test.retakeAt), icon: "help", verb: `${s.name} ביקש מבחן חוזר:`, title: test.title, href, help: true });
+        if (test.retakeAt) list.push({ at: ms(test.retakeAt), icon: "help", who: s.name, verb: "ביקש מבחן חוזר", title: test.title, href, help: true });
       });
     });
     return list.filter((e) => e.at).sort((a, b) => b.at - a.at).slice(0, 40);
+  }
+
+  /* One update = its own small rectangle: who and what on top, the
+     exercise underneath, the date and score on the side. */
+  function bellNoteHtml(e, isNew) {
+    return `
+      <a class="room-note${isNew ? " is-new" : ""}${e.help ? " is-help" : ""}" href="${escapeHtml(e.href)}">
+        <span class="room-act-icon">${icon(e.icon)}</span>
+        <span class="room-note-main">
+          <span class="room-note-line"><b><bdi>${escapeHtml(e.who)}</bdi></b> <span class="room-note-verb">${escapeHtml(e.verb)}</span></span>
+          ${e.title ? `<span class="room-note-line room-note-title"><bdi>${escapeHtml(e.title)}</bdi></span>` : ""}
+        </span>
+        <span class="room-note-side">
+          <span class="room-act-when">${isNew ? `<span class="room-note-dot" aria-label="חדש"></span>` : ""}${escapeHtml(whenLabel(e.at))}</span>
+          ${e.score ? `<span class="room-act-score" dir="ltr">${escapeHtml(e.score)}</span>` : ""}
+        </span>
+      </a>`;
   }
 
   function renderBell() {
@@ -311,9 +335,7 @@
     const seen = bellSeenAt();
     const list = studentUpdates();
     const body = list.length
-      ? `<div class="room-inline-list">${list
-          .map((e) => activityRowHtml(e, { extraClass: `${e.at > seen ? " is-new" : ""}${e.help ? " is-help" : ""}` }))
-          .join("")}</div>`
+      ? `<div class="room-notes">${list.map((e) => bellNoteHtml(e, e.at > seen)).join("")}</div>`
       : `<p class="room-box-empty">אין עדכונים עדיין.<br>כשתלמיד יסיים משימה או יבקש עזרה, זה יופיע כאן.</p>`;
     dialog.innerHTML = dialogHtml("roomBellTitle", "עדכונים מהתלמידים", body);
     dialog.showModal();
@@ -325,10 +347,18 @@
     renderBell();
   }
 
+  // A lesson being edited isn't closed by mistake with its changes unsaved.
+  function mayClose(dialog) {
+    return dialog.dataset.dirty !== "1" || confirm("לצאת בלי לשמור את השינויים?");
+  }
+
   document.querySelectorAll(".room-dlg").forEach((dialog) => {
     // A tap on the dimmed page around the dialog, or on ×, closes it.
     dialog.addEventListener("click", (e) => {
-      if (e.target === dialog || e.target.closest("[data-close]")) dialog.close();
+      if ((e.target === dialog || e.target.closest("[data-close]")) && mayClose(dialog)) dialog.close();
+    });
+    dialog.addEventListener("cancel", (e) => {
+      if (!mayClose(dialog)) e.preventDefault();
     });
   });
   document.getElementById("roomBell")?.addEventListener("click", openBell);
@@ -396,11 +426,322 @@
     return `<div class="room-inline-list">${items.map((g) => savedRowHtml(g, { showStar: true, showDelete })).join("")}</div>`;
   }
 
+  /* ── "יצירת שיעור": the teacher picks a subject and writes a topic, the AI
+     writes a short slide lesson (lib/teacher-lessons.js). The lessons made
+     are listed under the form; each opens in the lessons library's player
+     and can be given to a student as a task from the student's file. ── */
+
+  const CREATE_SUBJECTS = [
+    ["english", "אנגלית"],
+    ["math", "חשבון"],
+    ["hebrew", "עברית"],
+    ["science", "מדעים"],
+    ["geography", "גאוגרפיה"],
+    ["history", "היסטוריה"],
+  ];
+
+  async function myLessonsApi(method = "GET", path = "", body) {
+    const token = await window.FirebaseApp?.auth?.currentUser?.getIdToken().catch(() => "");
+    if (!token) throw new Error("צריך להתחבר כדי ליצור שיעור");
+    const res = await fetch(`/api/my-lessons${path}`, {
+      method,
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || "משהו השתבש — נסו שוב");
+    return data;
+  }
+
+  async function getMyLessons() {
+    const token = await window.FirebaseApp?.auth?.currentUser?.getIdToken().catch(() => "");
+    if (!token) return [];
+    return (await myLessonsApi()).lessons || [];
+  }
+
+  function myLessonRowHtml(lesson) {
+    const subject = CREATE_SUBJECTS.find(([id]) => id === lesson.subject)?.[1] || "";
+    return `
+      <div class="room-note room-mine">
+        <span class="room-act-icon">${icon("lesson")}</span>
+        <span class="room-note-main">
+          <span class="room-note-line room-note-title"><bdi>${escapeHtml(lesson.title)}</bdi></span>
+          ${subject ? `<span class="room-note-line room-note-verb">${escapeHtml(subject)}</span>` : ""}
+        </span>
+        <a href="${LESSON_OPEN_PATH}?mylesson=${encodeURIComponent(lesson.id)}" class="room-list-play">פתיחה</a>
+        <button type="button" class="room-list-play room-edit-open" data-edit-mylesson="${escapeHtml(lesson.id)}">עריכה</button>
+        <button type="button" class="room-list-delete" data-delete-mylesson="${escapeHtml(lesson.id)}" aria-label="מחיקת השיעור" title="מחיקת השיעור">${TRASH_ICON_SVG}</button>
+      </div>`;
+  }
+
+  function createHtml() {
+    const subjects = CREATE_SUBJECTS.map(
+      ([id, label], i) => `
+        <label class="room-create-subject">
+          <input type="radio" name="subject" value="${id}"${i === 0 ? " checked" : ""} />
+          <span>${label}</span>
+        </label>`
+    ).join("");
+    return `
+      <form class="room-create" id="roomCreateForm">
+        <p class="room-create-label"><span class="room-key">מקצוע</span></p>
+        <div class="room-create-subjects">${subjects}</div>
+        <label class="room-create-label" for="roomCreateTopic"><span class="room-key">על מה השיעור?</span></label>
+        <input type="text" class="room-create-input" id="roomCreateTopic" name="topic" maxlength="200" required placeholder="למשל: צבעים, שברים, מחזור המים" />
+        <button type="submit" class="room-create-go">יצירת שיעור</button>
+        <p class="room-create-wait hidden" aria-live="polite">בונים את השיעור… זה לוקח עד דקה</p>
+      </form>
+      <h3 class="room-mine-head"><span class="room-key">השיעורים שלי</span></h3>
+      <p class="room-edit-tip">אפשר גם לקחת שיעור מ<a href="${LESSON_OPEN_PATH}">ספריית השיעורים</a></p>
+      <p class="room-edit-tip">בחלון ה־i של השיעור לוחצים על הכפתור הירוק</p>
+      ${myLessons.length ? `<div class="room-notes">${myLessons.map(myLessonRowHtml).join("")}</div>` : ""}`;
+  }
+
+  function bindCreate(container) {
+    const form = container.querySelector("#roomCreateForm");
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const go = form.querySelector(".room-create-go");
+      const wait = form.querySelector(".room-create-wait");
+      go.disabled = true;
+      wait.classList.remove("hidden");
+      try {
+        const data = await myLessonsApi("POST", "", { subject: form.elements.subject.value, topic: form.elements.topic.value });
+        myLessons = [data.lesson, ...myLessons];
+        openBox("create");
+        showToast("השיעור מוכן!");
+      } catch (err) {
+        showToast(err.message);
+        go.disabled = false;
+        wait.classList.add("hidden");
+      }
+    });
+
+    container.querySelectorAll("[data-edit-mylesson]").forEach((btn) => {
+      btn.addEventListener("click", () => openEditor(btn.dataset.editMylesson));
+    });
+
+    container.querySelectorAll("[data-delete-mylesson]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("למחוק את השיעור?")) return;
+        try {
+          await myLessonsApi("DELETE", `/${encodeURIComponent(btn.dataset.deleteMylesson)}`);
+          myLessons = myLessons.filter((l) => l.id !== btn.dataset.deleteMylesson);
+          openBox("create");
+          showToast("השיעור נמחק");
+        } catch (err) {
+          showToast(err.message);
+        }
+      });
+    });
+  }
+
+  /* ── Editing a lesson of the teacher's (one the AI wrote, or a copy of a
+     site lesson): its name, each slide's text, slides added, moved or
+     removed, and the class discussion questions. A slide's drawing or table
+     from the site's lesson isn't edited here — the server keeps it. ── */
+
+  const EDIT_TEXT_FIELDS = ["key", "title", "lines", "examples", "more"];
+
+  function textLines(text) {
+    return String(text || "")
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
+  }
+
+  // A "more" line can be an example card: [example, explanation] ↔ "a | b".
+  function moreToText(more) {
+    return (more || []).map((l) => (Array.isArray(l) ? `${l[0]} | ${l[1] || ""}`.trim() : l)).join("\n");
+  }
+
+  function textToMore(text) {
+    return textLines(text).map((l) => {
+      const card = /^(.+?)\s+\|\s*(.*)$/.exec(l);
+      return card ? [card[1], card[2]] : l;
+    });
+  }
+
+  function plainTitle(title) {
+    return String(title || "").replace(/\*\*/g, "") || "שקופית חדשה";
+  }
+
+  function exampleRowHtml([a, b] = ["", ""]) {
+    return `
+      <div class="room-edit-ex">
+        <input type="text" class="room-create-input" data-ex="a" maxlength="160" value="${escapeHtml(a)}" placeholder="דוגמה" />
+        <input type="text" class="room-create-input" data-ex="b" maxlength="160" value="${escapeHtml(b)}" placeholder="הסבר" />
+        <button type="button" class="room-list-delete" data-ex-remove aria-label="מחיקת הדוגמה" title="מחיקת הדוגמה">${REMOVE_ICON_SVG}</button>
+      </div>`;
+  }
+
+  function slideEditHtml(slide, open = false) {
+    const hasPicture = Object.keys(slide).some((k) => !EDIT_TEXT_FIELDS.includes(k));
+    return `
+      <details class="room-edit-slide" data-key="${escapeHtml(slide.key || "")}"${open ? " open" : ""}>
+        <summary><span class="room-edit-num"></span><bdi class="room-edit-sum">${escapeHtml(plainTitle(slide.title))}</bdi></summary>
+        <div class="room-edit-body">
+          <label class="room-create-label">כותרת
+            <input type="text" class="room-create-input" data-field="title" maxlength="80" value="${escapeHtml(slide.title)}" />
+          </label>
+          <label class="room-create-label">שורות בשקופית
+            <textarea class="room-create-input" data-field="lines" rows="3">${escapeHtml((slide.lines || []).join("\n"))}</textarea>
+          </label>
+          <p class="room-create-label">דוגמאות</p>
+          <div class="room-edit-exs">${(slide.examples || []).map(exampleRowHtml).join("")}</div>
+          <button type="button" class="room-edit-small" data-ex-add>+ דוגמה</button>
+          <label class="room-create-label">הסבר מורחב (בלחיצה על הנורה)
+            <textarea class="room-create-input" data-field="more" rows="4">${escapeHtml(moreToText(slide.more))}</textarea>
+          </label>
+          ${hasPicture ? `<p class="room-edit-tip">הציור או הטבלה של השקופית נשארים כמו שהם</p>` : ""}
+          <div class="room-edit-tools">
+            <button type="button" class="room-edit-small" data-move="-1">הזזה למעלה</button>
+            <button type="button" class="room-edit-small" data-move="1">הזזה למטה</button>
+            <button type="button" class="room-edit-small is-danger" data-slide-remove>מחיקת השקופית</button>
+          </div>
+        </div>
+      </details>`;
+  }
+
+  function editorHtml(lesson) {
+    return `
+      <form class="room-create room-edit" id="roomEditForm">
+        <label class="room-create-label" for="roomEditName"><span class="room-key">שם השיעור</span></label>
+        <input type="text" class="room-create-input" id="roomEditName" name="name" maxlength="60" required value="${escapeHtml(lesson.name)}" />
+        <h3 class="room-mine-head"><span class="room-key">שקופיות</span></h3>
+        <p class="room-edit-tip">לוחצים על שקופית כדי לשנות אותה</p>
+        <p class="room-edit-tip">כל שורה בתיבה היא שורה בשקופית</p>
+        <p class="room-edit-tip">מילה בין כוכביות, כך: **מילה**, תופיע מודגשת</p>
+        <div class="room-edit-slides">${lesson.slides.map((slide) => slideEditHtml(slide)).join("")}</div>
+        <button type="button" class="room-edit-small room-edit-add" data-slide-add>+ הוספת שקופית</button>
+        <label class="room-mine-head" for="roomEditDiscuss"><span class="room-key">שאלות לדיון בכיתה</span></label>
+        <textarea class="room-create-input" id="roomEditDiscuss" name="discuss" rows="3">${escapeHtml((lesson.discuss || []).join("\n"))}</textarea>
+        <div class="room-edit-foot">
+          <button type="submit" class="room-create-go">שמירה</button>
+          <a href="${LESSON_OPEN_PATH}?mylesson=${encodeURIComponent(lesson.id)}" class="room-list-play">צפייה בשיעור</a>
+          <button type="button" class="room-edit-small" data-edit-back>חזרה לרשימה</button>
+        </div>
+      </form>`;
+  }
+
+  function renumberSlides(form) {
+    form.querySelectorAll(".room-edit-slide").forEach((el, i) => {
+      el.querySelector(".room-edit-num").textContent = i + 1;
+    });
+  }
+
+  function readSlides(form) {
+    return [...form.querySelectorAll(".room-edit-slide")].map((el) => ({
+      key: el.dataset.key,
+      title: el.querySelector('[data-field="title"]').value,
+      lines: textLines(el.querySelector('[data-field="lines"]').value),
+      examples: [...el.querySelectorAll(".room-edit-ex")]
+        .map((row) => [row.querySelector('[data-ex="a"]').value.trim(), row.querySelector('[data-ex="b"]').value.trim()])
+        .filter(([a]) => a),
+      more: textToMore(el.querySelector('[data-field="more"]').value),
+    }));
+  }
+
+  function bindEditor(dialog, lesson) {
+    const form = dialog.querySelector("#roomEditForm");
+    const markDirty = () => (dialog.dataset.dirty = "1");
+    form.addEventListener("input", (e) => {
+      markDirty();
+      if (e.target.dataset.field === "title") {
+        e.target.closest(".room-edit-slide").querySelector(".room-edit-sum").textContent = plainTitle(e.target.value);
+      }
+    });
+    renumberSlides(form);
+
+    form.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      const slide = btn.closest(".room-edit-slide");
+      if (btn.hasAttribute("data-ex-add")) {
+        slide.querySelector(".room-edit-exs").insertAdjacentHTML("beforeend", exampleRowHtml());
+        slide.querySelector(".room-edit-ex:last-child input").focus();
+      } else if (btn.hasAttribute("data-ex-remove")) {
+        btn.closest(".room-edit-ex").remove();
+      } else if (btn.dataset.move) {
+        const other = btn.dataset.move === "-1" ? slide.previousElementSibling : slide.nextElementSibling;
+        if (!other) return;
+        if (btn.dataset.move === "-1") other.before(slide);
+        else other.after(slide);
+        btn.focus();
+      } else if (btn.hasAttribute("data-slide-remove")) {
+        if (!confirm("למחוק את השקופית?")) return;
+        slide.remove();
+      } else if (btn.hasAttribute("data-slide-add")) {
+        const list = form.querySelector(".room-edit-slides");
+        list.insertAdjacentHTML("beforeend", slideEditHtml({ title: "", lines: [] }, true));
+        list.lastElementChild.querySelector('[data-field="title"]').focus();
+      } else if (btn.hasAttribute("data-edit-back")) {
+        if (mayClose(dialog)) openBox("create");
+        return;
+      } else {
+        return;
+      }
+      markDirty();
+      renumberSlides(form);
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const go = form.querySelector(".room-create-go");
+      go.disabled = true;
+      try {
+        const data = await myLessonsApi("PUT", `/${encodeURIComponent(lesson.id)}`, {
+          name: form.elements.name.value,
+          slides: readSlides(form),
+          discuss: textLines(form.elements.discuss.value),
+        });
+        myLessons = myLessons.map((l) => (l.id === lesson.id ? data.lesson : l));
+        delete dialog.dataset.dirty;
+        showToast("השינויים נשמרו");
+        // The server's copy again: new slides now have their keys.
+        await openEditor(lesson.id, { keepScroll: true });
+      } catch (err) {
+        showToast(err.message);
+        go.disabled = false;
+      }
+    });
+  }
+
+  async function openEditor(id, { keepScroll = false } = {}) {
+    const dialog = document.getElementById("roomBoxDlg");
+    if (!dialog) return;
+    let lesson;
+    try {
+      lesson = (await myLessonsApi("GET", `/${encodeURIComponent(id)}`)).lesson;
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+    const scroll = dialog.scrollTop;
+    dialog.dataset.box = "edit";
+    delete dialog.dataset.dirty;
+    dialog.innerHTML = dialogHtml("roomBoxTitle", "עריכת שיעור", editorHtml(lesson));
+    bindEditor(dialog, lesson);
+    if (!dialog.open) dialog.showModal();
+    dialog.scrollTop = keepScroll ? scroll : 0;
+  }
+
+  // "שונות": recent activity and saved lessons, one under the other.
+  function miscHtml() {
+    return `
+      <div class="room-misc">
+        <h3 class="room-mine-head"><span class="room-key">פעילות אחרונה</span></h3>
+        ${activityHtml()}
+        <h3 class="room-mine-head"><span class="room-key">שיעורים ששמרתי</span></h3>
+        ${sectionHtml("lessons")}
+      </div>`;
+  }
+
   const BOX_BODIES = {
-    activity: activityHtml,
-    lessons: () => sectionHtml("lessons"),
+    misc: miscHtml,
     favorites: () => sectionHtml("favorites"),
     created: () => sectionHtml("created"),
+    create: createHtml,
   };
 
   function openBox(key) {
@@ -408,8 +749,10 @@
     const tile = document.querySelector(`.room-tile[data-box="${key}"]`);
     if (!dialog || !tile || !BOX_BODIES[key]) return;
     dialog.dataset.box = key;
+    delete dialog.dataset.dirty;
     dialog.innerHTML = dialogHtml("roomBoxTitle", tile.querySelector(".room-tile-title").textContent.trim(), BOX_BODIES[key]());
     bindSectionActions(dialog);
+    bindCreate(dialog);
     if (!dialog.open) dialog.showModal();
   }
 
@@ -425,7 +768,7 @@
     });
     // A dialog left open shows the fresh list (after a star, a remove…).
     const dialog = document.getElementById("roomBoxDlg");
-    if (dialog?.open) openBox(dialog.dataset.box);
+    if (dialog?.open && dialog.dataset.box !== "edit") openBox(dialog.dataset.box);
     renderBell();
     document.getElementById("roomFootLink")?.classList.toggle("hidden", !savedGames.length && !playHistory.length);
   }
@@ -497,26 +840,38 @@
       savedLessons = ids.slice(0, 2).map((lessonId, i) => ({ lessonId, at: Date.now() - (3 + i) * DAY }));
       lessonHistory = [{ id: ids[2], at: Date.now() - HOUR }, { id: ids[0], at: Date.now() - DAY - 4 * HOUR }].filter((e) => e.id);
       students = PREVIEW_STUDENTS;
+      myLessons = PREVIEW_MY_LESSONS;
       renderAll();
       return;
     }
 
     // Each list loads on its own, so one failed query (e.g. a missing index) doesn't blank the others.
-    const names = ["savedGames", "playHistory", "favoriteLessons", "lessonHistory", "students"];
+    const names = ["savedGames", "playHistory", "favoriteLessons", "lessonHistory", "students", "myLessons"];
     const results = await Promise.allSettled([
       UserData.getSavedGames(),
       UserData.getPlayHistory(120),
       UserData.getFavoriteLessonEntries(),
       UserData.getLessonHistory(),
       getStudents(),
+      getMyLessons(),
     ]);
     results.forEach((r, i) => {
       if (r.status === "rejected") console.error(`my-room: ${names[i]} failed to load`, r.reason);
     });
-    [savedGames, playHistory, savedLessons, lessonHistory, students] = results.map((r) => (r.status === "fulfilled" ? r.value : []));
+    [savedGames, playHistory, savedLessons, lessonHistory, students, myLessons] = results.map((r) => (r.status === "fulfilled" ? r.value : []));
     // Newest saved lesson first.
     savedLessons.sort((a, b) => b.at - a.at);
     renderAll();
+
+    // Back from the lessons library with a copied lesson: its editor opens.
+    const params = new URLSearchParams(location.search);
+    const editId = params.get("edit");
+    if (editId) {
+      params.delete("edit");
+      const rest = params.toString();
+      history.replaceState(null, "", `${location.pathname}${rest ? `?${rest}` : ""}${location.hash}`);
+      openEditor(editId);
+    }
 
     if (results.every((r) => r.status === "rejected")) {
       showToast(window.I18n?.t("myRoom.loadError") || "לא הצלחנו לטעון נתונים");

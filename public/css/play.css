@@ -121,9 +121,8 @@
   max-width: 100%;
 }
 
-/* Solo play on a phone: score, game name, settings and exit stay in one row;
-   the game name shortens with "…" if it still doesn't fit. A room has more
-   pills, so it keeps wrapping. */
+/* Solo play on a phone: score, game name, settings and exit always stay in
+   one row; a long game name is cut with "…" instead of wrapping. */
 @media (max-width: 600px) {
   .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) {
     flex-wrap: nowrap;
@@ -133,6 +132,8 @@
 
   .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-stats {
     flex: 0 0 auto;
+    flex-wrap: nowrap;
+    gap: 6px;
   }
 
   .play-top-strip:not(:has(#playRoomCodePill:not(.hidden))) .play-top-strip-stats .room-stat-pill {
@@ -160,6 +161,7 @@
     display: block;
     flex: 0 1 auto;
     overflow: hidden;
+    text-overflow: ellipsis;
     line-height: 25px;
   }
 }
@@ -822,17 +824,24 @@
   text-align: center;
 }
 
+/* The number looks like the question word: yellow with a thick ink outline */
 .solo-options--vd .solo-option-num {
-  font-size: clamp(15px, 3vw, 20px);
+  font-family: var(--font-sans);
+  font-size: clamp(32px, 8.5vw, 48px);
   font-weight: 900;
   line-height: 1;
-  opacity: 0.9;
+  opacity: 1;
   flex-shrink: 0;
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
+  paint-order: stroke fill;
+  -webkit-text-stroke: clamp(7px, 1.6vw, 10px) var(--ink);
 }
 
 .solo-options--vd .solo-option-text {
-  font-size: clamp(13px, 2.5vw, 17px);
-  line-height: 1.45;
+  font-size: clamp(19px, 4.8vw, 26px);
+  font-weight: 900;
+  line-height: 1.3;
   max-width: 100%;
   width: 100%;
   padding-inline: clamp(4px, 1vw, 10px);
@@ -867,9 +876,13 @@
     padding: clamp(10px, 2vh, 14px) clamp(12px, 3vw, 18px);
   }
 
+  .solo-options--vd .solo-option-num {
+    font-size: clamp(28px, 7.5vw, 40px);
+  }
+
   .solo-options--vd .solo-option-text {
-    font-size: clamp(12px, 2.3vw, 15px);
-    line-height: 1.4;
+    font-size: clamp(17px, 4.4vw, 22px);
+    line-height: 1.25;
   }
 }
 
@@ -1884,7 +1897,7 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: var(--shadow-candy);
-  background: #3a9ee8;
+  background: #eaf5ff;
 }
 
 .ts-pro-canvas,
@@ -1917,26 +1930,40 @@
   z-index: 5;
 }
 
+/* One pill on one row: hearts | floors | stage */
 .ts-pro-hud {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  background: #eaf5ff;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 900;
+  box-shadow: var(--shadow-sticker);
 }
 
 .ts-pro-stat {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-weight: 900;
-  box-shadow: var(--shadow-sticker);
+  gap: 6px;
+  margin-inline-start: 12px;
+  padding-inline-start: 12px;
+  border-inline-start: 2px solid rgba(0, 0, 0, 0.2);
 }
 
-.ts-pro-hearts .on { color: #e04040; }
-.ts-pro-hearts .off { color: #ccc; opacity: 0.5; }
+.ts-pro-hearts { display: flex; gap: 2px; }
+.ts-pro-heart { display: inline-flex; }
+.ts-pro-heart svg {
+  width: 22px;
+  height: 22px;
+  fill: #e4e4e4;
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+.ts-pro-heart.is-on svg { fill: #ff4f6d; }
 
 .ts-pro-word-bar {
   margin-top: 10px;
@@ -1960,8 +1987,12 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
 }
 
 .ts-pro-timer svg {
@@ -1972,9 +2003,13 @@
 
 .ts-pro-timer circle {
   fill: none;
-  stroke: #FFE135;
-  stroke-width: 4;
+  stroke: #00C9B7;
+  stroke-width: 5;
   stroke-linecap: round;
+}
+
+.ts-pro-timer circle.ts-pro-timer-track {
+  stroke: rgba(0, 0, 0, 0.1);
 }
 
 .ts-pro-timer span {
@@ -2000,30 +2035,39 @@
 }
 
 .ts-pro-btn {
-  padding: 20px 12px;
-  font-size: clamp(18px, 4vw, 24px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 12px;
+  font-size: clamp(20px, 5vw, 26px);
   font-weight: 900;
   font-family: inherit;
+  color: var(--ink);
   border: 4px solid var(--ink);
-  border-radius: 16px;
+  border-radius: 18px;
   cursor: pointer;
-  box-shadow: 0 6px 0 var(--ink);
+  box-shadow: 5px 6px 0 0 var(--ink);
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
+.ts-pro-btn svg {
+  width: 1.15em;
+  height: 1.15em;
+  flex-shrink: 0;
+}
+
 .ts-pro-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 var(--ink);
+  transform: translate(4px, 5px);
+  box-shadow: 1px 1px 0 0 var(--ink);
 }
 
 .ts-pro-btn--yes {
-  background: linear-gradient(180deg, #6bbf8a, #4a9e6a);
-  color: var(--ink);
+  background: #8ef0a8;
 }
 
 .ts-pro-btn--no {
-  background: linear-gradient(180deg, #ff8a80, #e07070);
-  color: white;
+  background: #ffa8a8;
 }
 
 .ts-pro-overlay,
@@ -2038,6 +2082,12 @@
   border-radius: 16px;
 }
 
+.ts-pro-overlay {
+  background: rgba(98, 235, 224, 0.82);
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+}
+
 .mb-pro-overlay {
   position: fixed;
   inset: 0;
@@ -2050,15 +2100,17 @@
 }
 
 .ts-pro-overlay-card {
-  background: var(--white);
-  border: 5px solid var(--ink);
+  background: #eaf5ff;
+  border: 4px solid var(--ink);
   border-radius: 24px;
   padding: clamp(18px, 4vh, 56px) clamp(20px, 5vw, 48px);
-  max-width: min(560px, 92vw);
+  /* 100% = inside the overlay's padding, so the side borders never get cut
+     off by the game stage (92vw was wider than the stage on phones). */
+  max-width: min(560px, 100%);
   max-height: 100%;
   overflow-y: auto;
   text-align: center;
-  box-shadow: 0 20px 0 var(--ink), 0 0 80px rgba(255, 225, 53, 0.3);
+  box-shadow: var(--shadow-candy);
 }
 
 .ts-pro-overlay-card h2 {
@@ -2068,12 +2120,18 @@
   color: var(--ink);
 }
 
+.ts-pro-key {
+  padding: 0 0.18em;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+}
+
 .ts-pro-overlay-card p {
   font-weight: 700;
-  font-size: clamp(14px, min(4vw, 2.6vh), 28px);
-  line-height: 1.45;
-  margin: 0 0 clamp(12px, 3vh, 36px);
-  color: #444;
+  font-size: clamp(15px, min(4.4vw, 2.6vh), 28px);
+  line-height: 1.5;
+  margin: 0 0 clamp(14px, 3vh, 36px);
+  color: var(--ink);
 }
 
 .ts-pro-start-btn {
@@ -2081,17 +2139,35 @@
   font-size: clamp(16px, min(5vw, 3.4vh), 34px);
   font-weight: 900;
   font-family: inherit;
-  background: linear-gradient(135deg, #FFE135, #ffaa00);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--memyellow);
   border: 4px solid var(--ink);
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 8px 0 var(--ink);
+  box-shadow: 5px 7px 0 0 var(--ink);
   color: var(--ink);
-  min-width: min(280px, 80vw);
+  min-width: min(280px, 100%);
+  max-width: 100%;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.ts-pro-start-btn svg {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
 }
 
 .ts-pro-start-btn:hover {
-  transform: translateY(-2px);
+  transform: translate(-1px, -2px);
+  box-shadow: 6px 9px 0 0 var(--ink);
+}
+
+.ts-pro-start-btn:active {
+  transform: translate(4px, 6px);
+  box-shadow: 1px 1px 0 0 var(--ink);
 }
 
 .wr-canvas {

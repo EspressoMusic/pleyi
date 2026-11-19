@@ -2054,6 +2054,614 @@
     return svg("0 0 320 370", s);
   }
 
+  /* ---------- road safety (זהירות בדרכים, /road-safety) ---------- */
+
+  const SKIN = "#ffd7b0";
+  const HAIR = "#5d4037";
+  const ROAD = "#546e7a";
+  const PAVE = "#cfd8dc";
+  const LIT = { red: "#ff3b3b", yellow: "#ffd600", green: "#2ee66b" };
+
+  // A thick line with a black outline (an arm, a strap).
+  const limb = (d, color, w) =>
+    `<path d="${d}" fill="none" stroke="#000" stroke-width="${w + 6}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  // A boy with his feet at (x, y), about 132 tall at s = 1. back: seen from
+  // behind (looking at the road); vest: a bright vest with shining stripes.
+  function kid(x, y, { s = 1, shirt = COL.blue, walk = false, back = false, vest = false, helmet = false, dim = false } = {}) {
+    const leg = (x1, x2) => limb(`M${x1} -48 L${x2} -8`, "#37474f", 10);
+    let g = walk ? leg(-6, -17) + leg(6, 16) : leg(-8, -8) + leg(8, 8);
+    const shoes = walk ? [-19, 18] : [-10, 10];
+    g += shoes.map((sx) => `<ellipse cx="${sx}" cy="-4" rx="10" ry="5.5" fill="#000"/>`).join("");
+    g += limb(`M-15 -84 L-27 ${walk ? -50 : -56}`, SKIN, 8) + limb(`M15 -84 L27 ${walk ? -62 : -56}`, SKIN, 8);
+    g += `<rect x="-18" y="-96" width="36" height="52" rx="12" fill="${shirt}" stroke="#000" stroke-width="3.5"/>`;
+    if (vest) {
+      g += `<rect x="-18" y="-94" width="36" height="46" rx="10" fill="#d4ff3a" stroke="#000" stroke-width="3"/>`;
+      g += [-80, -64].map((sy) => `<rect x="-18" y="${sy}" width="36" height="6" fill="#f5f5f5" stroke="#000" stroke-width="1.5"/>`).join("");
+    }
+    if (back) {
+      g += `<circle cx="0" cy="-114" r="18" fill="${HAIR}" stroke="#000" stroke-width="3.5"/>`;
+    } else {
+      g += `<circle cx="0" cy="-114" r="18" fill="${SKIN}" stroke="#000" stroke-width="3.5"/>`;
+      g += `<path d="M-18 -116 A18 18 0 0 1 18 -116 Q9 -124 0 -121 Q-9 -124 -18 -116Z" fill="${HAIR}" stroke="#000" stroke-width="3"/>`;
+      g += `<circle cx="-6" cy="-111" r="2.6" fill="#000"/><circle cx="6" cy="-111" r="2.6" fill="#000"/>`;
+      g += `<path d="M-6 -103 Q0 -98 6 -103" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>`;
+    }
+    if (helmet) {
+      g += `<path d="M-23 -114 A23 23 0 0 1 23 -114 Z" fill="${COL.orange}" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>`;
+      g += `<path d="M-8 -134 L-6 -118 M8 -134 L6 -118" stroke="#000" stroke-width="2.5"/>`;
+    }
+    return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${s})"${dim ? ' opacity="0.22"' : ""}>${g}</g>`;
+  }
+
+  // A car seen from above, its front toward `angle` (0 = right, 90 = down).
+  function carTop(x, y, angle = 0, color = COL.red) {
+    return (
+      `<g transform="translate(${x} ${y}) rotate(${angle})">` +
+      `<rect x="-46" y="-23" width="92" height="46" rx="14" fill="${color}" stroke="#000" stroke-width="4"/>` +
+      `<rect x="8" y="-17" width="18" height="34" rx="5" fill="#b3e5fc" stroke="#000" stroke-width="3"/>` +
+      `<rect x="-32" y="-15" width="14" height="30" rx="4" fill="#b3e5fc" stroke="#000" stroke-width="3"/>` +
+      `<circle cx="42" cy="-14" r="4.5" fill="#fff59d" stroke="#000" stroke-width="2"/><circle cx="42" cy="14" r="4.5" fill="#fff59d" stroke="#000" stroke-width="2"/></g>`
+    );
+  }
+
+  // A car from the side, wheels on y; f = -1 faces left.
+  function carSide(x, y, color = COL.red, f = 1) {
+    return (
+      `<g transform="translate(${x} ${y}) scale(${f} 1)">` +
+      `<path d="M-70 -14 L-70 -38 Q-68 -46 -58 -46 L-36 -46 L-20 -70 L28 -70 L46 -46 L62 -44 Q72 -42 72 -32 L72 -14 Z" fill="${color}" stroke="#000" stroke-width="4" stroke-linejoin="round"/>` +
+      `<polygon points="-30,-48 -17,-64 1,-64 1,-48" fill="#b3e5fc" stroke="#000" stroke-width="3" stroke-linejoin="round"/>` +
+      `<polygon points="8,-48 8,-64 25,-64 37,-48" fill="#b3e5fc" stroke="#000" stroke-width="3" stroke-linejoin="round"/>` +
+      `<rect x="62" y="-38" width="10" height="9" rx="3" fill="#fff59d" stroke="#000" stroke-width="2"/>` +
+      [-42, 44].map((wx) => `<circle cx="${wx}" cy="-12" r="14" fill="#212121" stroke="#000" stroke-width="3"/><circle cx="${wx}" cy="-12" r="5.5" fill="#bdbdbd"/>`).join("") +
+      `</g>`
+    );
+  }
+
+  // A bus from the side, wheels on y; f = -1 faces left.
+  function busSide(x, y, f = 1) {
+    let g = `<rect x="-112" y="-112" width="224" height="98" rx="14" fill="${COL.orange}" stroke="#000" stroke-width="4"/>`;
+    for (let i = 0; i < 4; i++) g += `<rect x="${-100 + i * 40}" y="-100" width="30" height="32" rx="5" fill="#b3e5fc" stroke="#000" stroke-width="3"/>`;
+    g += `<rect x="62" y="-100" width="22" height="80" rx="4" fill="#b3e5fc" stroke="#000" stroke-width="3"/>`;
+    g += `<rect x="90" y="-100" width="16" height="40" rx="4" fill="#b3e5fc" stroke="#000" stroke-width="3"/>`;
+    g += `<rect x="-112" y="-50" width="224" height="8" fill="#fff3b0" stroke="#000" stroke-width="2"/>`;
+    g += [-70, 70].map((wx) => `<circle cx="${wx}" cy="-12" r="16" fill="#212121" stroke="#000" stroke-width="3"/><circle cx="${wx}" cy="-12" r="6" fill="#bdbdbd"/>`).join("");
+    return `<g transform="translate(${x} ${y}) scale(${f} 1)">${g}</g>`;
+  }
+
+  // A small person shape, as on traffic lights and signs: top at y, h tall.
+  function person(cx, y, h, color, walking = true) {
+    const w = h * 0.15;
+    const at = (dx, dy) => `${f1(cx + dx * h)} ${f1(y + dy * h)}`;
+    const line = (a, b) => `<path d="M${a} L${b}" stroke="${color}" stroke-width="${f1(w)}" stroke-linecap="round" fill="none"/>`;
+    let g = `<circle cx="${f1(cx)}" cy="${f1(y + h * 0.1)}" r="${f1(h * 0.1)}" fill="${color}"/>`;
+    if (walking) {
+      g += line(at(0.02, 0.28), at(-0.02, 0.6)) + line(at(-0.02, 0.6), at(0.2, 0.96)) + line(at(-0.02, 0.6), at(-0.2, 0.96));
+      g += line(at(0.02, 0.32), at(0.2, 0.52)) + line(at(0.02, 0.32), at(-0.16, 0.5));
+    } else {
+      g += `<rect x="${f1(cx - h * 0.12)}" y="${f1(y + h * 0.24)}" width="${f1(h * 0.24)}" height="${f1(h * 0.38)}" rx="${f1(h * 0.05)}" fill="${color}"/>`;
+      g += line(at(-0.06, 0.6), at(-0.06, 0.96)) + line(at(0.06, 0.6), at(0.06, 0.96));
+      g += line(at(-0.18, 0.3), at(-0.18, 0.58)) + line(at(0.18, 0.3), at(0.18, 0.58));
+    }
+    return g;
+  }
+
+  // The pedestrians' light: a standing man (red) over a walking man (green).
+  // on: "red" | "green" | "blink" (green, flashing) | "both" | "off".
+  function plightBody(on, x = 0) {
+    const redOn = on === "red" || on === "both";
+    const greenOn = on === "green" || on === "blink" || on === "both";
+    let s = `<rect x="${x + 92}" y="236" width="16" height="84" fill="#90a4ae" stroke="#000" stroke-width="4"/>`;
+    s += `<rect x="${x + 40}" y="10" width="120" height="230" rx="18" fill="#263238" stroke="#000" stroke-width="5"/>`;
+    s += `<rect x="${x + 54}" y="24" width="92" height="98" rx="12" fill="#111"/><rect x="${x + 54}" y="128" width="92" height="98" rx="12" fill="#111"/>`;
+    if (redOn) s += `<circle cx="${x + 100}" cy="73" r="40" fill="${LIT.red}" opacity="0.28"/>`;
+    if (greenOn) s += `<circle cx="${x + 100}" cy="177" r="40" fill="${LIT.green}" opacity="0.28"/>`;
+    s += person(x + 100, 32, 82, redOn ? LIT.red : "#3e4a50", false);
+    s += person(x + 100, 136, 82, greenOn ? LIT.green : "#3e4a50", true);
+    if (on === "blink") {
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        s += seg(P(x + 100 + 62 * Math.cos(a), 177 + 62 * Math.sin(a)), P(x + 100 + 78 * Math.cos(a), 177 + 78 * Math.sin(a)), "#00c853", 5);
+      }
+    }
+    return s;
+  }
+
+  function plight({ on = "both", labels = false }) {
+    if (!labels) return svg(on === "blink" ? "-20 0 240 330" : "0 0 200 330", plightBody(on));
+    return svg("0 0 380 330", plightBody(on) + label(285, 73, "עוצרים", 28, "#c62828") + label(285, 177, "חוצים", 28, "#1b5e20"));
+  }
+
+  // The cars' light: red, yellow and green. on: "all" | "red" | "yellow" |
+  // "green" | "redyellow".
+  function clightBody(on, x = 0) {
+    const lit = (c) => on === "all" || on === c || (on === "redyellow" && (c === "red" || c === "yellow"));
+    let s = `<rect x="${x + 82}" y="276" width="16" height="44" fill="#90a4ae" stroke="#000" stroke-width="4"/>`;
+    s += `<rect x="${x + 40}" y="10" width="100" height="270" rx="20" fill="#263238" stroke="#000" stroke-width="5"/>`;
+    ["red", "yellow", "green"].forEach((c, i) => {
+      s += `<circle cx="${x + 90}" cy="${60 + i * 85}" r="34" fill="${lit(c) ? LIT[c] : "#455a64"}" stroke="#000" stroke-width="4"/>`;
+    });
+    return s;
+  }
+
+  function clight({ on = "all", labels = false }) {
+    if (!labels) return svg("0 0 180 330", clightBody(on));
+    let s = clightBody(on);
+    ["עוצרים", "מתכוננים", "נוסעים"].forEach((t, i) => (s += label(250, 60 + i * 85, t, 28)));
+    return svg("0 0 340 330", s);
+  }
+
+  // Both lights side by side, each with its name under it.
+  function lights() {
+    return svg("0 0 440 380", clightBody("all", 10) + plightBody("both", 220) + label(100, 354, "למכוניות", 26) + label(320, 354, "להולכי רגל", 26));
+  }
+
+  // One road sign in a 200 × 200 box. k: "stop" | "giveway" | "noentry" |
+  // "crosswalk" | "children" | "bike" | "nowalk" | "nobikes" | "walkpath" |
+  // "speed30" | "noparking" | "roundabout" | "oneway" | "roadworks" |
+  // "lightsahead" | "bump" | "walkers" | "railx" | "parking" | "busstop".
+  function signBody(k) {
+    const RED = "#e53935";
+    const BLUE = "#1e63c4";
+    if (k === "stop") {
+      const oct = (r) => Array.from({ length: 8 }, (_, i) => P(100 + r * Math.cos(Math.PI / 8 + (i * Math.PI) / 4), 100 + r * Math.sin(Math.PI / 8 + (i * Math.PI) / 4)));
+      let s = poly(oct(94), RED, 5);
+      s += `<polygon points="${oct(80).map((p) => `${f1(p.x)},${f1(p.y)}`).join(" ")}" fill="none" stroke="#fff" stroke-width="5"/>`;
+      s += `<g fill="#fff"><rect x="72" y="92" width="56" height="54" rx="16"/><rect x="84" y="136" width="32" height="22"/>`;
+      [[73, 60, 48], [87, 50, 56], [101, 53, 54], [115, 62, 46]].forEach(([fx, fy, fh]) => (s += `<rect x="${fx}" y="${fy}" width="12" height="${fh}" rx="6"/>`));
+      s += `<rect x="54" y="98" width="13" height="38" rx="6.5" transform="rotate(-32 60 117)"/></g>`;
+      return s;
+    }
+    if (k === "giveway") {
+      return poly([P(8, 22), P(192, 22), P(100, 186)], RED, 5) + `<polygon points="42,42 158,42 100,146" fill="#fff"/>`;
+    }
+    if (k === "noentry") {
+      return `<circle cx="100" cy="100" r="92" fill="${RED}" stroke="#000" stroke-width="5"/><rect x="36" y="85" width="128" height="30" rx="4" fill="#fff"/>`;
+    }
+    if (k === "crosswalk") {
+      let s = `<rect x="8" y="8" width="184" height="184" rx="18" fill="${BLUE}" stroke="#000" stroke-width="5"/>`;
+      s += `<polygon points="100,24 180,172 20,172" fill="#fff" stroke-linejoin="round"/>`;
+      for (let i = 0; i < 5; i++) s += `<rect x="${48 + i * 22}" y="152" width="12" height="12" fill="#000"/>`;
+      return s + person(100, 64, 82, "#000", true);
+    }
+    if (k === "children") {
+      let s = poly([P(100, 10), P(194, 182), P(6, 182)], RED, 5);
+      s += `<polygon points="100,46 164,164 36,164" fill="#fff"/>`;
+      return s + person(88, 88, 70, "#000", true) + person(124, 112, 48, "#000", true);
+    }
+    // A bicycle's wheels and frame.
+    const bicycle = (color) =>
+      `<g fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">` +
+      `<circle cx="60" cy="124" r="24"/><circle cx="140" cy="124" r="24"/>` +
+      `<path d="M60 124 L94 124 L78 88 Z M94 124 L126 86 L140 124 M78 88 L124 88 M72 78 L88 78 M120 76 L134 72"/></g>`;
+    // The red ring of the "no …" signs, on a white or blue face.
+    const ring = (face = "#fff") => `<circle cx="100" cy="100" r="92" fill="#000"/><circle cx="100" cy="100" r="87" fill="${face}" stroke="${RED}" stroke-width="16"/>`;
+    // The warning triangle: red edge, white inside.
+    const warn = () => poly([P(100, 10), P(194, 182), P(6, 182)], RED, 5) + `<polygon points="100,46 164,164 36,164" fill="#fff"/>`;
+    const blueSquare = () => `<rect x="8" y="8" width="184" height="184" rx="18" fill="${BLUE}" stroke="#000" stroke-width="5"/>`;
+    if (k === "bike") {
+      return `<circle cx="100" cy="100" r="92" fill="${BLUE}" stroke="#000" stroke-width="5"/>` + bicycle("#fff");
+    }
+    if (k === "nowalk") {
+      return ring() + person(100, 52, 96, "#000", true) + seg(P(42, 42), P(158, 158), RED, 15);
+    }
+    if (k === "nobikes") {
+      return ring() + bicycle("#000") + seg(P(42, 42), P(158, 158), RED, 15);
+    }
+    // A path for walkers only: a white walking man on a blue circle.
+    if (k === "walkpath") {
+      return `<circle cx="100" cy="100" r="92" fill="${BLUE}" stroke="#000" stroke-width="5"/>` + person(100, 42, 116, "#fff", true);
+    }
+    if (k === "speed30") {
+      return ring() + label(100, 104, "30", 82);
+    }
+    if (k === "noparking") {
+      return ring(BLUE) + seg(P(42, 42), P(158, 158), RED, 15);
+    }
+    // A roundabout: three white arrows going round, against the clock.
+    if (k === "roundabout") {
+      const at = (a, r) => P(100 + r * Math.cos((a * Math.PI) / 180), 100 + r * Math.sin((a * Math.PI) / 180));
+      let s = `<circle cx="100" cy="100" r="92" fill="${BLUE}" stroke="#000" stroke-width="5"/>`;
+      [90, 210, 330].forEach((a0) => {
+        const a1 = a0 - 72;
+        const A = at(a0, 50);
+        const B = at(a1, 50);
+        s += `<path d="M${f1(A.x)} ${f1(A.y)} A50 50 0 0 0 ${f1(B.x)} ${f1(B.y)}" fill="none" stroke="#fff" stroke-width="14"/>`;
+        s += `<polygon points="${[at(a1 - 26, 50), at(a1 + 2, 28), at(a1 + 2, 72)].map((p) => `${f1(p.x)},${f1(p.y)}`).join(" ")}" fill="#fff"/>`;
+      });
+      return s;
+    }
+    if (k === "oneway") {
+      return blueSquare() + `<polygon points="100,26 152,88 118,88 118,174 82,174 82,88 48,88" fill="#fff"/>`;
+    }
+    // Road works: a man digging, and the pile of earth.
+    if (k === "roadworks") {
+      let s = warn();
+      s += `<path d="M108 162 Q132 128 158 162 Z" fill="#000"/>`;
+      s += person(84, 84, 72, "#000", true);
+      s += seg(P(90, 116), P(124, 150), "#000", 6);
+      return s + `<polygon points="118,148 134,140 140,156 124,162" fill="#000"/>`;
+    }
+    // A traffic light ahead: the three colors in a warning triangle.
+    if (k === "lightsahead") {
+      let s = warn() + `<rect x="84" y="70" width="32" height="88" rx="8" fill="#000"/>`;
+      [[LIT.red, 86], [LIT.yellow, 114], [LIT.green, 142]].forEach(([c, cy]) => (s += `<circle cx="100" cy="${cy}" r="10" fill="${c}"/>`));
+      return s;
+    }
+    // A speed bump: a hump in the road.
+    if (k === "bump") {
+      return warn() + `<path d="M46 150 H74 Q100 104 126 150 H154 V160 H46 Z" fill="#000"/>`;
+    }
+    // A crosswalk ahead: a warning triangle with a walking man.
+    if (k === "walkers") {
+      let s = poly([P(100, 10), P(194, 182), P(6, 182)], RED, 5);
+      s += `<polygon points="100,46 164,164 36,164" fill="#fff"/>`;
+      for (let i = 0; i < 4; i++) s += `<rect x="${62 + i * 20}" y="150" width="11" height="8" fill="#000"/>`;
+      return s + person(100, 74, 74, "#000", true);
+    }
+    // A railway crossing: the white X with red edges.
+    if (k === "railx") {
+      const bar = (a) =>
+        `<g transform="rotate(${a} 100 100)"><rect x="4" y="80" width="192" height="40" rx="6" fill="${RED}" stroke="#000" stroke-width="5"/><rect x="14" y="90" width="172" height="20" rx="3" fill="#fff"/></g>`;
+      return bar(35) + bar(-35);
+    }
+    if (k === "parking") {
+      return `<rect x="8" y="8" width="184" height="184" rx="18" fill="${BLUE}" stroke="#000" stroke-width="5"/>` + label(100, 106, "P", 130, "#fff");
+    }
+    // A bus stop: a white bus on a blue square.
+    if (k === "busstop") {
+      let s = `<rect x="8" y="8" width="184" height="184" rx="18" fill="${BLUE}" stroke="#000" stroke-width="5"/>`;
+      s += `<rect x="40" y="46" width="120" height="100" rx="16" fill="#fff"/>`;
+      s += `<rect x="52" y="60" width="96" height="40" rx="6" fill="${BLUE}"/><rect x="58" y="118" width="20" height="10" rx="4" fill="${BLUE}"/><rect x="122" y="118" width="20" height="10" rx="4" fill="${BLUE}"/>`;
+      return s + `<rect x="50" y="144" width="22" height="18" rx="5" fill="#fff"/><rect x="128" y="144" width="22" height="18" rx="5" fill="#fff"/>`;
+    }
+    return "";
+  }
+
+  function sign({ k = "stop" }) {
+    return svg("0 0 200 320", `<rect x="92" y="186" width="16" height="130" fill="#90a4ae" stroke="#000" stroke-width="4"/>` + signBody(k));
+  }
+
+  // A row of signs; labels: their names under them.
+  function signs({ ks = ["stop", "crosswalk", "children"], labels = null }) {
+    let s = "";
+    ks.forEach((k, i) => {
+      s += `<g transform="translate(${i * 220 + 10} 0)">${signBody(k)}</g>`;
+      if (labels?.[i]) s += label(i * 220 + 110, 236, labels[i], 26);
+    });
+    return svg(`0 0 ${ks.length * 220} ${labels ? 262 : 204}`, s);
+  }
+
+  // A street from the front: a wall, the sidewalk and the road.
+  // k: "sidewalk" (a boy on the sidewalk) | "far" (the safe part, away from
+  // the road, in green) | "noside" (no sidewalk: from above, walking on the
+  // left edge toward the cars).
+  function street({ k = "sidewalk" }) {
+    let s = "";
+    if (k === "noside") {
+      s += `<rect width="420" height="320" fill="#c5e1a5"/>`;
+      s += `<rect x="130" y="-4" width="200" height="328" fill="${ROAD}" stroke="#000" stroke-width="4"/>`;
+      s += seg(P(148, 0), P(148, 320), "#fff", 4) + seg(P(312, 0), P(312, 320), "#fff", 4);
+      for (let y = 10; y < 320; y += 64) s += `<rect x="226" y="${y}" width="8" height="34" rx="3" fill="#fff"/>`;
+      s += carTop(186, 76, 90, COL.red) + carTop(272, 250, -90, COL.yellow);
+      s += arrow(P(186, 132), P(186, 178), "#fff", 5);
+      s += kid(132, 312, { s: 0.78, walk: true });
+      s += arrow(P(70, 300), P(70, 190), COL.deep, 6);
+      return svg("0 0 420 320", s);
+    }
+    s += `<rect x="0" y="0" width="420" height="80" fill="#ffe0b2"/>`;
+    [36, 166, 296].forEach((x) => (s += `<rect x="${x}" y="14" width="88" height="50" rx="6" fill="#b3e5fc" stroke="#000" stroke-width="4"/>` + seg(P(x + 44, 14), P(x + 44, 64), "#000", 3)));
+    s += `<rect x="0" y="80" width="420" height="100" fill="${PAVE}"/>`;
+    for (let x = 30; x <= 450; x += 70) s += seg(P(x, 80), P(x - 16, 180), "#90a4ae", 2.5);
+    if (k === "far") s += `<rect x="0" y="80" width="420" height="54" fill="#a5d6a7"/><rect x="0" y="150" width="420" height="30" fill="#ef9a9a"/>`;
+    s += seg(P(0, 80), P(420, 80), "#000", 4);
+    s += `<rect x="-4" y="178" width="428" height="14" fill="#90a4ae" stroke="#000" stroke-width="3"/>`;
+    s += `<rect x="0" y="192" width="420" height="128" fill="${ROAD}"/>`;
+    for (let x = 14; x < 420; x += 76) s += `<rect x="${x}" y="252" width="42" height="7" rx="3" fill="#fff"/>`;
+    s += carSide(320, 300, COL.red, -1);
+    if (k === "far") s += label(330, 107, "כאן הולכים", 24, "#1b5e20") + label(330, 165, "לא כאן", 22, "#b71c1c");
+    s += kid(k === "far" ? 120 : 150, k === "far" ? 130 : 168, { s: 0.8, walk: true });
+    return svg("0 0 420 320", s);
+  }
+
+  // A crosswalk from above, a boy on the near sidewalk. k: "zebra" | "stop"
+  // (stopping at the edge) | "look" (left, right and left again) | "walk"
+  // (walking straight across while the cars wait).
+  function crossing({ k = "zebra" }) {
+    let s = `<rect width="420" height="330" fill="${PAVE}"/>`;
+    s += `<rect x="-4" y="62" width="428" height="168" fill="${ROAD}" stroke="#000" stroke-width="4"/>`;
+    [0, 70, 280, 350].forEach((x) => (s += `<rect x="${x + 14}" y="142" width="42" height="7" rx="3" fill="#fff"/>`));
+    for (let y = 72; y < 222; y += 26) s += `<rect x="160" y="${y}" width="100" height="14" rx="2" fill="#fff"/>`;
+    if (k === "zebra") {
+      s += carTop(360, 104, 180, COL.yellow);
+      s += kid(300, 322, { s: 0.68 });
+    }
+    if (k === "stop") {
+      s += `<rect x="150" y="238" width="120" height="8" rx="4" fill="${COL.red}" stroke="#000" stroke-width="2"/>`;
+      s += kid(210, 324, { s: 0.68, back: true });
+      s += label(340, 284, "עוצרים", 26, "#b71c1c");
+    }
+    if (k === "look") {
+      s += carTop(64, 190, 0, COL.red) + carTop(360, 102, 180, COL.yellow);
+      s += kid(210, 324, { s: 0.68, back: true });
+      s += arrow(P(180, 262), P(104, 262), COL.deep, 6) + arrow(P(240, 262), P(316, 262), COL.deep, 6);
+      const badge = (x, y, n) => `<circle cx="${x}" cy="${y}" r="17" fill="${TEAL}" stroke="#000" stroke-width="3.5"/>` + label(x, y + 1, n, 22);
+      s += badge(72, 250, "1") + badge(72, 294, "3") + badge(348, 262, "2");
+    }
+    if (k === "walk") {
+      s += `<path d="M210 318 L210 30" stroke="${COL.deep}" stroke-width="5" stroke-dasharray="12 10" fill="none"/>` + arrowHead(P(210, 14), P(210, 40), COL.deep, 22);
+      s += carTop(94, 190, 0, COL.red) + carTop(326, 102, 180, COL.yellow);
+      s += kid(210, 200, { s: 0.66, walk: true });
+    }
+    return svg("0 0 420 330", s);
+  }
+
+  // At night: a boy in dark clothes is hard to see; one in a bright vest
+  // shines.
+  function night() {
+    let s = `<rect width="420" height="300" fill="#1a2350"/>`;
+    s += `<circle cx="362" cy="48" r="24" fill="#fff9c4" stroke="#000" stroke-width="3"/>`;
+    [[40, 30], [120, 60], [210, 24], [290, 70], [70, 100]].forEach(([x, y]) => (s += `<circle cx="${x}" cy="${y}" r="3" fill="#fff9c4"/>`));
+    s += `<rect x="0" y="236" width="420" height="64" fill="#263238"/>`;
+    s += kid(110, 250, { s: 0.95, shirt: "#37474f", dim: true });
+    for (let i = 0; i < 7; i++) {
+      const a = Math.PI + (i * Math.PI) / 6;
+      s += seg(P(300 + 74 * Math.cos(a), 168 + 74 * Math.sin(a)), P(300 + 90 * Math.cos(a), 168 + 90 * Math.sin(a)), "#fff59d", 5);
+    }
+    s += kid(300, 250, { s: 0.95, vest: true });
+    s += label(110, 272, "בגדים כהים", 24, "#fff") + label(300, 272, "אפוד זוהר", 24, "#fff");
+    return svg("0 0 420 300", s);
+  }
+
+  // A boy between parked cars, where the driver coming can't see him.
+  function parked() {
+    let s = `<rect width="420" height="300" fill="${PAVE}"/>`;
+    s += `<rect x="-4" y="84" width="428" height="14" fill="#90a4ae" stroke="#000" stroke-width="3"/>`;
+    s += `<rect x="0" y="98" width="420" height="202" fill="${ROAD}"/>`;
+    s += kid(207, 170, { s: 0.6 });
+    s += carSide(128, 180, COL.blue) + carSide(286, 180, COL.yellow, -1);
+    for (let x = 14; x < 420; x += 76) s += `<rect x="${x}" y="206" width="42" height="7" rx="3" fill="#fff"/>`;
+    s += carSide(96, 286, COL.red);
+    s += `<circle cx="196" cy="228" r="22" fill="${SOFT}" stroke="#000" stroke-width="3.5"/>` + label(196, 229, "?", 30);
+    return svg("0 0 420 300", s);
+  }
+
+  // A boy in a car seat with the belt on: over the shoulder and low on the
+  // lap. labels: name the two parts.
+  function seatbelt({ labels = true }) {
+    let s = `<rect x="104" y="6" width="92" height="42" rx="14" fill="#78909c" stroke="#000" stroke-width="4"/>`;
+    s += `<rect x="60" y="34" width="180" height="230" rx="30" fill="#90a4ae" stroke="#000" stroke-width="4"/>`;
+    s += `<rect x="38" y="230" width="224" height="62" rx="20" fill="#78909c" stroke="#000" stroke-width="4"/>`;
+    s += `<rect x="106" y="230" width="38" height="70" rx="12" fill="#37474f" stroke="#000" stroke-width="3.5"/><rect x="156" y="230" width="38" height="70" rx="12" fill="#37474f" stroke="#000" stroke-width="3.5"/>`;
+    s += limb("M92 140 L84 222", SKIN, 14) + limb("M208 140 L216 222", SKIN, 14);
+    s += `<rect x="96" y="124" width="108" height="114" rx="26" fill="${COL.blue}" stroke="#000" stroke-width="4"/>`;
+    s += `<circle cx="150" cy="88" r="36" fill="${SKIN}" stroke="#000" stroke-width="4"/>`;
+    s += `<path d="M114 84 A36 36 0 0 1 186 84 Q168 66 150 70 Q132 66 114 84Z" fill="${HAIR}" stroke="#000" stroke-width="3.5"/>`;
+    s += `<circle cx="138" cy="92" r="4" fill="#000"/><circle cx="162" cy="92" r="4" fill="#000"/><path d="M138 106 Q150 116 162 106" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>`;
+    s += limb("M190 128 L112 232", "#424242", 16) + limb("M100 234 L200 234", "#424242", 16);
+    s += `<rect x="96" y="222" width="26" height="24" rx="5" fill="${COL.red}" stroke="#000" stroke-width="3"/>`;
+    if (!labels) return svg("0 0 300 300", s);
+    s += seg(P(184, 140), P(270, 112), "#000", 3) + label(318, 112, "כתף", 28);
+    s += seg(P(200, 236), P(270, 262), "#000", 3) + label(322, 262, "ירכיים", 28);
+    return svg("0 0 380 300", s);
+  }
+
+  // The bus. k: "wait" (waiting behind the line while the bus comes) |
+  // "after" (waiting on the sidewalk until the bus has gone).
+  function bus({ k = "wait" }) {
+    let s = `<rect width="420" height="300" fill="#e3f2fd"/>`;
+    s += `<rect x="-4" y="70" width="428" height="140" fill="${ROAD}" stroke="#000" stroke-width="4"/>`;
+    s += `<rect x="0" y="212" width="420" height="88" fill="${PAVE}"/>`;
+    s += `<rect x="-4" y="206" width="428" height="12" fill="#90a4ae" stroke="#000" stroke-width="3"/>`;
+    if (k === "wait") {
+      s += busSide(282, 200, -1);
+      s += `<rect x="52" y="140" width="10" height="150" fill="#90a4ae" stroke="#000" stroke-width="3"/><rect x="30" y="112" width="54" height="40" rx="8" fill="${COL.blue}" stroke="#000" stroke-width="3.5"/>`;
+      s += `<rect x="37" y="121" width="40" height="18" rx="4" fill="#fff"/><circle cx="45" cy="142" r="3.5" fill="#fff"/><circle cx="69" cy="142" r="3.5" fill="#fff"/>`;
+      s += `<path d="M96 238 L420 238" stroke="${COL.yellow}" stroke-width="7" stroke-dasharray="20 12"/>`;
+      s += kid(160, 296, { s: 0.52 }) + kid(220, 296, { s: 0.52, shirt: COL.orange });
+    } else {
+      s += busSide(150, 200, -1);
+      [[278, 120], [290, 150], [278, 180]].forEach(([x, y]) => (s += seg(P(x, y), P(x + 40, y), "#000", 4)));
+      s += arrow(P(60, 40), P(10, 40), "#000", 5);
+      s += kid(350, 296, { s: 0.52 });
+    }
+    return svg("0 0 420 300", s);
+  }
+
+  // Riding safely. hl: "helmet" (a helmet with the strap closed) | "lights"
+  // (a bicycle with a white light in front, a red one behind and reflectors).
+  function bike({ hl = "helmet" }) {
+    if (hl === "helmet") {
+      let s = limb("M84 300 Q90 222 160 216 Q230 222 236 300", COL.blue, 4);
+      s += `<path d="M84 300 Q90 222 160 216 Q230 222 236 300 Z" fill="${COL.blue}"/>`;
+      s += `<circle cx="160" cy="150" r="68" fill="${SKIN}" stroke="#000" stroke-width="5"/>`;
+      s += `<circle cx="136" cy="162" r="6" fill="#000"/><circle cx="184" cy="162" r="6" fill="#000"/><path d="M136 188 Q160 206 184 188" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/>`;
+      s += limb("M96 146 Q112 208 160 214 Q208 208 224 146", "#424242", 6);
+      s += `<path d="M82 148 Q80 64 160 58 Q240 64 238 148 Z" fill="${COL.orange}" stroke="#000" stroke-width="5" stroke-linejoin="round"/>`;
+      s += [[130, 70, 126, 110], [160, 62, 160, 104], [190, 70, 194, 110]].map(([x1, y1, x2, y2]) => seg(P(x1, y1), P(x2, y2), "#000", 6)).join("");
+      s += `<rect x="150" y="204" width="20" height="16" rx="4" fill="${COL.yellow}" stroke="#000" stroke-width="3"/>`;
+      return svg("0 0 320 300", s);
+    }
+    let s = `<path d="M330 120 L420 80 L420 168 Z" fill="#fff59d" opacity="0.8"/>`;
+    s += `<g fill="none" stroke="#000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">`;
+    s += `<circle cx="110" cy="200" r="58"/><circle cx="290" cy="200" r="58"/>`;
+    s += `<path d="M110 200 L190 200 L162 120 Z M190 200 L276 116 L290 200 M162 120 L272 120 M148 106 L184 106 M262 98 L292 92"/></g>`;
+    s += `<g fill="none" stroke="${COL.blue}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M110 200 L190 200 L162 120 Z M190 200 L276 116 L290 200 M162 120 L272 120"/></g>`;
+    s += `<rect x="318" y="108" width="20" height="22" rx="5" fill="#fff" stroke="#000" stroke-width="3.5"/>`;
+    s += `<rect x="128" y="112" width="18" height="16" rx="4" fill="${LIT.red}" stroke="#000" stroke-width="3.5"/>`;
+    s += [[80, 176], [258, 222]].map(([x, y]) => `<rect x="${x}" y="${y}" width="22" height="10" rx="3" fill="${COL.orange}" stroke="#000" stroke-width="2.5"/>`).join("");
+    s += label(330, 268, "לבן מקדימה", 22) + label(96, 76, "אדום מאחור", 22, "#b71c1c");
+    return svg("0 0 420 290", s);
+  }
+
+  // A railway crossing from above: the lights flash, the barrier is down and
+  // the train is coming; the car and the boy wait behind the barrier.
+  function rail() {
+    let s = `<rect width="420" height="320" fill="${PAVE}"/>`;
+    s += `<rect x="150" y="-4" width="120" height="328" fill="${ROAD}" stroke="#000" stroke-width="4"/>`;
+    s += `<rect x="-4" y="84" width="428" height="70" fill="#a1887f" stroke="#000" stroke-width="3"/>`;
+    for (let x = 6; x < 420; x += 22) s += `<rect x="${x}" y="90" width="11" height="58" rx="2" fill="#6d4c41"/>`;
+    s += seg(P(0, 102), P(420, 102), "#37474f", 6) + seg(P(0, 136), P(420, 136), "#37474f", 6);
+    s += `<rect x="236" y="88" width="210" height="62" rx="14" fill="${COL.red}" stroke="#000" stroke-width="4"/>`;
+    for (let i = 0; i < 4; i++) s += `<rect x="${262 + i * 40}" y="100" width="26" height="38" rx="5" fill="#b3e5fc" stroke="#000" stroke-width="3"/>`;
+    s += arrow(P(390, 56), P(300, 56), "#000", 5);
+    // the barriers: across the road and across the sidewalk
+    const barrier = (x, w) => {
+      let g = `<rect x="${x}" y="172" width="${w}" height="14" rx="4" fill="#fff" stroke="#000" stroke-width="3"/>`;
+      for (let bx = x + 8; bx < x + w - 10; bx += 28) g += `<rect x="${bx}" y="174" width="14" height="10" fill="${LIT.red}"/>`;
+      return g;
+    };
+    s += barrier(150, 120) + barrier(286, 120);
+    // the flashing lights on their post
+    s += `<rect x="94" y="186" width="10" height="70" fill="#90a4ae" stroke="#000" stroke-width="3"/>`;
+    s += `<rect x="64" y="160" width="70" height="34" rx="12" fill="#263238" stroke="#000" stroke-width="3"/>`;
+    s += `<circle cx="82" cy="177" r="11" fill="${LIT.red}"/><circle cx="116" cy="177" r="11" fill="#455a64"/>`;
+    for (let i = 0; i < 5; i++) {
+      const a = Math.PI * (0.75 + i * 0.375);
+      s += seg(P(82 + 18 * Math.cos(a), 177 + 18 * Math.sin(a)), P(82 + 28 * Math.cos(a), 177 + 28 * Math.sin(a)), LIT.red, 4);
+    }
+    s += carTop(210, 250, -90, COL.blue);
+    s += kid(346, 314, { s: 0.6, back: true });
+    s += label(346, 208, "מחכים", 24, "#b71c1c");
+    return svg("0 0 420 320", s);
+  }
+
+  // How far a car goes until it stops: while the driver sees and reacts
+  // (yellow), then braking (red). Twice as fast — four times the braking.
+  function brake() {
+    let s = "";
+    const row = (y, name, r, b) => {
+      let g = seg(P(10, y + 2), P(450, y + 2), "#90a4ae", 6);
+      g += `<g transform="translate(64 ${y}) scale(0.55)">${carSide(0, 0, COL.blue)}</g>`;
+      g += label(64, y - 58, name, 24);
+      g += `<rect x="110" y="${y - 30}" width="${r}" height="26" fill="${LIT.yellow}" stroke="#000" stroke-width="3"/>`;
+      g += `<rect x="${110 + r}" y="${y - 30}" width="${b}" height="26" fill="${COL.red}" stroke="#000" stroke-width="3"/>`;
+      return g + seg(P(110 + r + b, y - 44), P(110 + r + b, y + 8), "#000", 5);
+    };
+    s += row(100, "לאט", 50, 40) + row(212, "מהר", 100, 160);
+    s += `<rect x="410" y="258" width="26" height="22" fill="${LIT.yellow}" stroke="#000" stroke-width="3"/>` + label(340, 269, "הנהג מגיב", 22);
+    s += `<rect x="226" y="258" width="26" height="22" fill="${COL.red}" stroke="#000" stroke-width="3"/>` + label(180, 269, "בלימה", 22);
+    return svg("0 0 460 290", s);
+  }
+
+  // A crossroads from above. The walkers' light is green, and a car from
+  // the top turns left — across the crosswalk the boy is about to take.
+  function junction() {
+    let s = `<rect width="420" height="320" fill="${ROAD}"/>`;
+    [[-4, -4, 154, 84], [270, -4, 154, 84], [-4, 200, 154, 124], [270, 200, 154, 124]].forEach(
+      ([x, y, w, h]) => (s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${PAVE}" stroke="#000" stroke-width="4"/>`)
+    );
+    for (let y = 0; y < 72; y += 32) s += `<rect x="207" y="${y}" width="6" height="18" fill="#fff"/>`;
+    for (let y = 212; y < 320; y += 32) s += `<rect x="207" y="${y}" width="6" height="18" fill="#fff"/>`;
+    for (let x = 0; x < 140; x += 36) s += `<rect x="${x}" y="137" width="20" height="6" fill="#fff"/>`;
+    for (let x = 352; x < 420; x += 36) s += `<rect x="${x}" y="137" width="20" height="6" fill="#fff"/>`;
+    for (let y = 88; y < 196; y += 22) s += `<rect x="286" y="${y}" width="54" height="12" rx="2" fill="#fff"/>`;
+    s += carTop(180, 40, 90, COL.yellow);
+    s += `<path d="M180 76 Q180 170 270 170 L330 170" fill="none" stroke="${COL.red}" stroke-width="6" stroke-dasharray="14 9"/>`;
+    s += arrowHead(P(352, 170), P(320, 170), COL.red, 24);
+    s += `<g transform="translate(366 212) scale(0.26)">${plightBody("green")}</g>`;
+    s += kid(313, 312, { s: 0.6, back: true });
+    return svg("0 0 420 320", s);
+  }
+
+  // Children on a trip, one after another on the sidewalk, away from the
+  // road, in bright vests; the teacher walks first.
+  function group() {
+    let s = `<rect x="0" y="0" width="420" height="80" fill="#ffe0b2"/>`;
+    [36, 166, 296].forEach((x) => (s += `<rect x="${x}" y="14" width="88" height="50" rx="6" fill="#b3e5fc" stroke="#000" stroke-width="4"/>`));
+    s += `<rect x="0" y="80" width="420" height="100" fill="${PAVE}"/>` + seg(P(0, 80), P(420, 80), "#000", 4);
+    s += `<rect x="-4" y="178" width="428" height="14" fill="#90a4ae" stroke="#000" stroke-width="3"/>`;
+    s += `<rect x="0" y="192" width="420" height="128" fill="${ROAD}"/>`;
+    for (let x = 14; x < 420; x += 76) s += `<rect x="${x}" y="252" width="42" height="7" rx="3" fill="#fff"/>`;
+    s += carSide(300, 300, COL.red, -1);
+    s += arrow(P(30, 166), P(400, 166), COL.deep, 5);
+    [80, 140, 200, 260].forEach((x, i) => (s += kid(x, 152, { s: 0.6, walk: true, vest: true, shirt: [COL.orange, COL.blue, COL.red, COL.blue][i] })));
+    s += kid(344, 156, { s: 0.88, walk: true, shirt: COL.deep });
+    return svg("0 0 420 320", s);
+  }
+
+  // A car backing out: the white lights at its back are on, and the driver
+  // can't see the small boy behind it.
+  function reverse() {
+    let s = `<rect width="420" height="300" fill="#e3f2fd"/>`;
+    s += `<rect x="0" y="240" width="420" height="60" fill="${PAVE}"/>` + seg(P(0, 240), P(420, 240), "#000", 3);
+    s += carSide(290, 262, COL.yellow);
+    s += `<rect x="214" y="222" width="10" height="12" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>`;
+    [[-1, 0], [-0.8, -0.6], [-0.8, 0.6]].forEach(([dx, dy]) => (s += seg(P(212 + dx * 8, 228 + dy * 8), P(212 + dx * 22, 228 + dy * 22), "#ffb300", 4)));
+    s += arrow(P(340, 150), P(250, 150), "#000", 5) + label(296, 120, "נוסעת אחורה", 24);
+    s += kid(120, 262, { s: 0.5 });
+    s += `<circle cx="120" cy="160" r="20" fill="${SOFT}" stroke="#000" stroke-width="3.5"/>` + label(120, 161, "!", 28, "#b71c1c");
+    return svg("0 0 420 300", s);
+  }
+
+  // A street from above with its markings: the crosswalk, the white stop
+  // line before it, the solid line in the middle and a red-and-white curb.
+  // hl: "zebra" | "stop" | "center" | "curb" — circled.
+  function marks({ hl = "" }) {
+    let s = `<rect width="420" height="320" fill="${PAVE}"/>`;
+    s += `<rect x="-4" y="80" width="428" height="160" fill="${ROAD}" stroke="#000" stroke-width="4"/>`;
+    for (let y = 88; y < 232; y += 26) s += `<rect x="236" y="${y}" width="76" height="14" rx="2" fill="#fff"/>`;
+    s += `<rect x="208" y="164" width="10" height="72" fill="#fff"/>`;
+    for (let x = 0; x < 100; x += 40) s += `<rect x="${x}" y="157" width="22" height="6" fill="#fff"/>`;
+    s += `<rect x="108" y="157" width="112" height="6" fill="#fff"/>`;
+    for (let x = 336; x < 420; x += 40) s += `<rect x="${x}" y="157" width="22" height="6" fill="#fff"/>`;
+    s += `<rect x="-4" y="240" width="428" height="12" fill="#90a4ae" stroke="#000" stroke-width="2"/>`;
+    for (let x = 56, i = 0; x < 236; x += 20, i++) s += `<rect x="${x}" y="240" width="20" height="12" fill="${i % 2 ? "#fff" : LIT.red}" stroke="#000" stroke-width="1.5"/>`;
+    s += carTop(150, 200, 0, COL.yellow);
+    s += kid(274, 314, { s: 0.52, back: true });
+    const ring = { zebra: [226, 80, 96, 160], stop: [198, 154, 30, 92], center: [100, 148, 128, 24], curb: [48, 232, 196, 28] }[hl];
+    if (ring) {
+      const [x, y, w, h] = ring;
+      s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="none" stroke="#000" stroke-width="11"/>`;
+      s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="none" stroke="${COL.yellow}" stroke-width="6"/>`;
+    }
+    return svg("0 0 420 320", s);
+  }
+
+  // Two ways from home to school on a map: the short one (red) runs across
+  // the street between the parked cars; the safe one (green) goes along the
+  // sidewalk to the crosswalk at the lights.
+  function route() {
+    let s = `<rect width="420" height="300" fill="#c5e1a5"/>`;
+    s += `<rect x="150" y="-4" width="40" height="308" fill="${PAVE}"/><rect x="250" y="-4" width="40" height="308" fill="${PAVE}"/>`;
+    s += `<rect x="190" y="-4" width="60" height="308" fill="${ROAD}" stroke="#000" stroke-width="3"/>`;
+    for (let x = 194; x < 248; x += 14) s += `<rect x="${x}" y="40" width="8" height="40" fill="#fff"/>`;
+    s += `<rect x="296" y="22" width="22" height="54" rx="7" fill="#263238" stroke="#000" stroke-width="2.5"/>`;
+    ["red", "yellow", "green"].forEach((c, i) => (s += `<circle cx="307" cy="${34 + i * 15}" r="5.5" fill="${c === "green" ? LIT.green : "#455a64"}"/>`));
+    s += carTop(220, 210, 90, COL.blue) + carTop(220, 290, 90, COL.orange);
+    // home on the right, school on the left
+    s += poly([P(318, 206), P(362, 170), P(406, 206)], COL.red, 4) + `<rect x="326" y="204" width="72" height="56" fill="${COL.yl}" stroke="#000" stroke-width="4"/><rect x="352" y="226" width="20" height="34" fill="${COL.deep}" stroke="#000" stroke-width="3"/>`;
+    s += `<rect x="20" y="186" width="104" height="80" fill="${COL.tq}" stroke="#000" stroke-width="4"/>`;
+    [36, 64, 92].forEach((x) => (s += `<rect x="${x}" y="200" width="18" height="18" fill="#b3e5fc" stroke="#000" stroke-width="2.5"/>`));
+    s += `<rect x="60" y="234" width="24" height="32" fill="${COL.orange}" stroke="#000" stroke-width="3"/>` + seg(P(72, 186), P(72, 150), "#000", 4) + poly([P(74, 150), P(104, 160), P(74, 170)], COL.yellow, 3);
+    s += `<path d="M318 246 L130 246" fill="none" stroke="${COL.red}" stroke-width="6" stroke-dasharray="12 9"/>` + arrowHead(P(130, 246), P(160, 246), COL.red, 22);
+    s += `<path d="M340 170 L270 130 L270 60 L170 60 L170 140 L124 190" fill="none" stroke="#1b7a3a" stroke-width="7" stroke-linejoin="round"/>` + arrowHead(P(124, 190), P(150, 162), "#1b7a3a", 24);
+    s += label(366, 108, "בטוח", 26, "#1b7a3a") + label(366, 284, "קצר", 26, "#b71c1c");
+    return svg("0 0 420 300", s);
+  }
+
+  // A road slide's fig with `city: "<scene>"` plays as a moving picture of
+  // the PAT city (road-lessons.js, loaded here with road-city.js the first
+  // time one is drawn); the flat drawing shows until it's ready.
+  let cityLoad = null;
+  function loadCity() {
+    if (cityLoad || window.RoadLessons) return;
+    const add = (src) =>
+      new Promise((done, fail) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.onload = done;
+        s.onerror = fail;
+        document.head.appendChild(s);
+      });
+    cityLoad = (window.RoadCity ? Promise.resolve() : add("/js/road-city.js?v=7")).then(() => add("/js/road-lessons.js?v=4")).catch(() => {});
+  }
+  const city = (draw) => (o) => {
+    if (!o.city) return draw(o);
+    loadCity();
+    return `<div class="lp-fig-svg lf-city" data-city="${o.city}">${draw(o)}</div>`;
+  };
+
   window.LESSON_FIGURES = {
     pie, equal, bars, hundred, groups, shapes, shape, area,
     right, ladder, diag, pair, aaa, kite, bowtie, balance, balls, parts, cross, scalemap,
@@ -2066,5 +2674,11 @@
     vmult, vdiv, quad, mixed,
     gtlt, blocks, coins, clock, lines, iso, chord, net, solid,
     lifecycle, flower, photo, microbe, letter,
+    plight: city(plight), clight: city(clight), lights: city(lights), sign: city(sign), signs: city(signs),
+    street: city(street), crossing: city(crossing), night: city(night), parked: city(parked),
+    seatbelt, bus: city(bus), bike: city(bike),
+    rail, brake: city(brake), junction, group, reverse: city(reverse), marks, route,
+    // Bare <g> parts (no <svg>), for the roads of /road-safety (road-traffic.js).
+    carTop, kid,
   };
 })();
