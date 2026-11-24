@@ -4184,6 +4184,170 @@ body.eng-viewer-open {
   color: var(--body);
 }
 
+/* "Words" on a question screen (english-learning.js, wordTap): the button at
+   the end of the progress row, the dots kept in the middle; with it on, every
+   English word is underlined, the open one marked, and its bubble sits on
+   the page over everything. */
+.eng-progress-row {
+  align-self: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 560px);
+  min-height: 42px;
+  padding-inline: 108px;
+}
+
+.eng-progress-row > .eng-progress {
+  width: 100%;
+}
+
+/* Too narrow for both on one line: the button goes under the dots. */
+@media (max-width: 340px) {
+  .eng-progress-row {
+    flex-direction: column;
+    gap: 8px;
+    padding-inline: 0;
+  }
+
+  .eng-progress-row > .eng-words-btn {
+    position: static;
+    translate: none;
+  }
+}
+
+.eng-progress-row > .eng-words-btn {
+  position: absolute;
+  inset-inline-end: 0;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.eng-words-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--soft-fill, #dbf2ee);
+  box-shadow: 0 3px 0 0 var(--soft-edge, #bfe2dc);
+  color: var(--ink);
+  font: 800 1rem/1 var(--font-sans), system-ui, sans-serif;
+  cursor: pointer;
+  transition: scale 0.12s ease, background-color 0.12s ease;
+}
+
+.eng-words-btn svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.eng-words-btn:hover {
+  scale: 1.06;
+}
+
+.eng-words-btn[aria-pressed="true"] {
+  background: var(--soft-accent, #00bfae);
+  box-shadow: 0 3px 0 0 #00897d;
+}
+
+.eng-wt {
+  cursor: pointer;
+  border-radius: 6px;
+  text-decoration: underline dotted 3px var(--soft-accent, #00bfae);
+  text-underline-offset: 0.2em;
+  text-decoration-skip-ink: none;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.eng-wt.is-on {
+  background: #eaf5ff;
+  box-shadow: 0 0 0 3px var(--soft-accent, #00bfae);
+  text-decoration: none;
+}
+
+/* position: fixed needs !important: every child of <body> is made relative
+   (styles.css). */
+.eng-word-pop {
+  position: fixed !important;
+  z-index: 1300;
+  width: max-content;
+  min-width: 160px;
+  max-width: min(340px, calc(100vw - 16px));
+  padding: 10px 14px 8px;
+  border: 2px solid var(--soft-accent, #00bfae);
+  border-radius: 18px;
+  background: #eaf5ff;
+  box-shadow: 0 5px 0 0 #9fd8d0;
+  color: var(--ink);
+  text-align: center;
+  animation: eng-pop 0.2s ease;
+}
+
+.eng-word-pop-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.eng-word-pop-en {
+  min-width: 0;
+  padding: 0 4px;
+  font-family: "Varela Round", var(--font-sans), system-ui, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.eng-word-pop .eng-speak {
+  flex-shrink: 0;
+}
+
+.eng-word-pop-he {
+  margin: 8px 0 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.eng-word-pop-he.is-none {
+  font-size: 1rem;
+  color: var(--body);
+}
+
+/* The note at the bottom ("to answer, click Words again") on one line: the
+   site's toast, anchored at the middle, would wrap at half the width. */
+html.eng-runner-open .toast {
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+
+/* Pulses when the student tries to answer while it is on. */
+.eng-words-btn.is-nudge {
+  animation: eng-words-nudge 0.45s ease 2;
+}
+
+@keyframes eng-words-nudge {
+  50% {
+    scale: 1.18;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-words-btn.is-nudge {
+    animation: none;
+  }
+}
+
 .eng-dict-base,
 .eng-dict-none {
   display: block;

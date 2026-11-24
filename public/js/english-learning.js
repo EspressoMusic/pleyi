@@ -153,6 +153,11 @@
       dictNone: "עוד אין לנו תרגום למילה הזו.",
       dictFrom: (base) => `צורה של ${base}`,
       dictMarkNote: "כדי לסמן מילים, כבו את „תרגום מילים”.",
+      wordsBtn: "מילים",
+      wordsBtnOff: "לחיצה על מילה באנגלית: שומעים אותה ורואים מה היא אומרת",
+      wordsBtnOn: "חזרה לתרגיל",
+      wordsHint: "כדי לענות, לוחצים שוב על „מילים”.",
+      wordLetter: (name) => `האות ${name}`,
       glossary: "מילים חשובות:",
       partMark: (s, t) => `סימון: ${s} מתוך ${t}`,
       partQuestions: (s, t) => `שאלות: ${s} מתוך ${t}`,
@@ -520,6 +525,11 @@
       dictNone: "No translation for this word yet.",
       dictFrom: (base) => `A form of ${base}`,
       dictMarkNote: "To mark words, turn off \"Translate words\".",
+      wordsBtn: "Words",
+      wordsBtnOff: "Click an English word: hear it and see what it means",
+      wordsBtnOn: "Back to the exercise",
+      wordsHint: "To answer, click \"Words\" again.",
+      wordLetter: (name) => `The letter ${name}`,
       glossary: "Key words:",
       partMark: (s, t) => `Marking: ${s} of ${t}`,
       partQuestions: (s, t) => `Questions: ${s} of ${t}`,
@@ -2529,6 +2539,11 @@
     const view = views.exercise();
     const { topic, exercise } = runner;
     const isReading = exercise.type === "reading";
+    wordTap.reset();
+    // The "words" button sits at the end of the progress row (in the title
+    // row when there is no bar), the dots staying in the middle.
+    const words = wordTap.available() ? wordTap.buttonHtml() : "";
+    if (progress && words) progress = `<div class="eng-progress-row">${progress}${words}</div>`;
     view.classList.toggle("is-reading", isReading || exercise.type === "exam");
     document.documentElement.classList.add("eng-soft");
     const back = runner.review ? runner.review.back : runner.back || `#${topic.id}`;
@@ -2547,6 +2562,7 @@
             <h2 class="font-cartoon eng-runner-title">${esc(runnerTitle())}</h2>
             ${runnerSubtitleHtml()}
             ${reviewFromHtml()}
+            ${words && !progress ? words : ""}
           </div>
           <div class="eng-runner-tools" id="engRunnerTools"></div>
         </div>
@@ -2556,11 +2572,12 @@
     // The instructions sit on the page above the card, not inside it — over
     // the progress bar when there is one.
     const instructions = $(".eng-runner-card > .eng-instructions", view);
-    const bar = $(".eng-runner-head > .eng-progress", view);
+    const bar = $(".eng-runner-head > .eng-progress, .eng-runner-head > .eng-progress-row", view);
     if (bar && instructions) bar.before(instructions);
     else if (instructions) view.insertBefore(instructions, instructions.parentElement);
     // A test checks nothing on the way, so its button only confirms.
     if (inTest() && $("#engCheck", view)) $("#engCheck", view).textContent = t("testConfirm");
+    $("#engWordsBtn", view)?.addEventListener("click", () => wordTap.toggle());
     renderTools();
     $$(".eng-speak, .eng-word-tap", view).forEach((btn) => {
       btn.addEventListener("click", (e) => {
@@ -4453,6 +4470,206 @@
       this.at = -1;
     },
   };
+
+  /* ── "Words" on a question screen: every English word on it — in the
+     question, the instructions and the answers — opens in a bubble when
+     clicked, said aloud with its Hebrew meaning. While
+     it is on, a click on a word (or on an answer that has words) only shows
+     the word; another click on the button goes back to answering. Not in a
+     test or the placement test, nor where the word itself is the question
+     (translate, pick the picture, listen, dictation). ── */
+
+  const WORDS_OFF_TYPES = ["reading", "exam", "translate", "pick-picture", "listen", "dictation"];
+  const WORD_RE = /[A-Za-z]+(?:['’-][A-Za-z]+)*/g;
+  // A letter's name, as the letters lessons say it.
+  const LETTER_NAMES = {
+    A: "אֵי", B: "בִּי", C: "סִי", D: "דִי", E: "אִי", F: "אֶף", G: "גִ׳י", H: "אֵייץ׳", I: "אַיי", J: "גֵ׳יי", K: "קֵיי", L: "אֶל", M: "אֶם",
+    N: "אֶן", O: "אוֹ", P: "פִּי", Q: "קְיוּ", R: "אָר", S: "אֶס", T: "טִי", U: "יוּ", V: "וִי", W: "דַאבֶּל יוּ", X: "אֶקְס", Y: "וַאי", Z: "זִי",
+  };
+  // Never split: typed answers, drawings, a word already split out.
+  const WORD_SKIP = "input, textarea, select, script, style, svg, .eng-wt";
+  let vocabMeanings = null;
+
+  // The picture words' own meanings ("ice cream" → גלידה), by the word.
+  function vocabMeaning(word) {
+    if (!vocabMeanings) {
+      vocabMeanings = new Map();
+      Object.values(VOCAB).forEach((w) => {
+        const key = w?.en?.toLowerCase();
+        if (key && w.he && !vocabMeanings.has(key)) vocabMeanings.set(key, w.he);
+      });
+    }
+    return vocabMeanings.get(word.toLowerCase()) || "";
+  }
+
+  // A letter on its own is its name — but "a" and "I" are words, except in
+  // the letters topic.
+  function isLoneLetter(word) {
+    return /^[A-Za-z]$/.test(word) && (runner.topic?.id === "letters" || !/^(a|I)$/.test(word));
+  }
+
+  // { he, base } — `he` is "" when there is no meaning.
+  function wordMeaning(word) {
+    if (isLoneLetter(word)) {
+      const name = LETTER_NAMES[word.toUpperCase()];
+      return { he: name ? t("wordLetter", name) : "" };
+    }
+    const found = lookup(word);
+    if (found) return found;
+    const own = vocabMeaning(word);
+    if (own) return { he: own };
+    // ice-cream → each part's meaning.
+    if (word.includes("-")) {
+      const parts = word.split("-").map((part) => lookup(part)?.he || vocabMeaning(part));
+      if (parts.every(Boolean)) return { he: parts.join(" ") };
+    }
+    return { he: "" };
+  }
+
+  function wrapWords(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: (node) => (/[A-Za-z]/.test(node.data) && !node.parentElement?.closest(WORD_SKIP) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT),
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach((node) => {
+      const text = node.data;
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      for (const m of text.matchAll(WORD_RE)) {
+        if (m.index > last) frag.append(text.slice(last, m.index));
+        const span = document.createElement("span");
+        span.className = "eng-wt";
+        span.textContent = m[0];
+        frag.append(span);
+        last = m.index + m[0].length;
+      }
+      if (last < text.length) frag.append(text.slice(last));
+      node.replaceWith(frag);
+    });
+  }
+
+  function unwrapWords(root) {
+    $$(".eng-wt", root).forEach((el) => el.replaceWith(el.textContent));
+    root.normalize();
+  }
+
+  const wordTap = {
+    on: false,
+    el: null,
+    available() {
+      const ex = runner.exercise;
+      return !!ex && !SUBJECT && runner.phase === "question" && !inTest() && !runner.review?.placement && !WORDS_OFF_TYPES.includes(ex.type);
+    },
+    buttonHtml() {
+      return `<button type="button" class="eng-words-btn" id="engWordsBtn" aria-pressed="false" title="${esc(t("wordsBtnOff"))}">${ICONS.wordMeaning}<span>${esc(t("wordsBtn"))}</span></button>`;
+    },
+    // The question card (the question, then its answers), then the
+    // instructions over it.
+    roots() {
+      const view = views.exercise();
+      if (!view) return [];
+      const card = $(".eng-runner-card", view);
+      return [card, ...$$(".eng-instructions", view).filter((el) => !card?.contains(el))].filter(Boolean);
+    },
+    toggle() {
+      if (this.on) this.stop();
+      else this.start();
+    },
+    start() {
+      const roots = this.roots();
+      if (!roots.length) return;
+      roots.forEach(wrapWords);
+      this.on = true;
+      views.exercise().classList.add("is-words");
+      this.mark();
+      const first = this.list()[0];
+      if (first) this.open(first);
+    },
+    stop() {
+      this.close();
+      this.roots().forEach(unwrapWords);
+      views.exercise()?.classList.remove("is-words");
+      this.on = false;
+      this.mark();
+    },
+    // The screen is drawn again: the words went with the old one.
+    reset() {
+      this.close();
+      this.on = false;
+      views.exercise()?.classList.remove("is-words");
+    },
+    mark() {
+      const btn = $("#engWordsBtn");
+      if (!btn) return;
+      btn.setAttribute("aria-pressed", String(this.on));
+      btn.title = t(this.on ? "wordsBtnOn" : "wordsBtnOff");
+    },
+    // The words on the screen now, in reading order.
+    list() {
+      return this.roots().flatMap((root) => $$(".eng-wt", root).filter((el) => el.getClientRects().length));
+    },
+    open(el) {
+      this.close();
+      this.el = el;
+      el.classList.add("is-on");
+      const word = el.textContent;
+      const say = isLoneLetter(word) ? word.toUpperCase() : word;
+      const m = wordMeaning(word);
+      const pop = document.createElement("div");
+      pop.className = "eng-word-pop";
+      pop.id = "engWordPop";
+      pop.setAttribute("role", "status");
+      pop.innerHTML = `
+        <div class="eng-word-pop-row" dir="ltr">
+          <span class="eng-word-pop-en" lang="en">${esc(word)}</span>
+          ${speakBtn(say, "eng-word-pop-say")}
+        </div>
+        <p class="eng-word-pop-he${m.he ? "" : " is-none"}" dir="rtl" lang="he">${esc(m.he || t("dictNone"))}${
+          m.base ? `<span class="eng-dict-base">${esc(t("dictFrom", m.base))}</span>` : ""
+        }</p>`;
+      document.body.appendChild(pop);
+      $(".eng-speak", pop)?.addEventListener("click", () => speak(say));
+      this.place();
+      speak(say);
+    },
+    // Under the word in the top half of the screen, over it in the bottom half.
+    place() {
+      const pop = $("#engWordPop");
+      if (!pop || !this.el) return;
+      const r = this.el.getBoundingClientRect();
+      const vw = document.documentElement.clientWidth;
+      const vh = window.innerHeight;
+      const w = pop.offsetWidth;
+      const h = pop.offsetHeight;
+      const below = r.top + r.height / 2 < vh / 2;
+      const top = below ? Math.min(r.bottom + 10, vh - h - 8) : Math.max(8, r.top - h - 10);
+      pop.style.left = `${Math.max(8, Math.min(r.left + r.width / 2 - w / 2, vw - w - 8))}px`;
+      pop.style.top = `${top}px`;
+    },
+    close() {
+      $("#engWordPop")?.remove();
+      this.el?.classList.remove("is-on");
+      this.el = null;
+    },
+    // The student tried to answer: a note at the bottom, and the button
+    // pulses so they see where it is.
+    nudge() {
+      showToast(t("wordsHint"));
+      const btn = $("#engWordsBtn");
+      if (!btn) return;
+      btn.classList.remove("is-nudge");
+      void btn.offsetWidth;
+      btn.classList.add("is-nudge");
+    },
+  };
+
+  // An answer on the question card (not a speaker or the word said aloud).
+  const WORD_ANSWER = ".eng-runner-card button, .eng-runner-card label, .eng-runner-card [role='button'], .eng-runner-card .js-answer";
+  function answerOf(el) {
+    const control = el.closest(WORD_ANSWER);
+    return control && !control.matches(".eng-speak, .eng-word-tap") && (control.matches(".js-answer") || $(".eng-wt", control)) ? control : null;
+  }
 
   /* Questions stage */
 
@@ -7736,8 +7953,42 @@
     route();
     window.addEventListener("hashchange", () => {
       help.close(false);
+      wordTap.reset();
       route();
     });
+    // "Words" is on: a click on a word opens it, and a click on an answer
+    // that has words isn't an answer now. A click on such an answer away
+    // from its words, or on the open word of an answer again, is a try to
+    // answer: a note says how. Buttons with no English words (check, next,
+    // the speakers) still work.
+    document.addEventListener(
+      "click",
+      (e) => {
+        if (!wordTap.on || !e.target.closest) return;
+        const word = e.target.closest(".eng-wt");
+        if (word) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (word !== wordTap.el) wordTap.open(word);
+          else {
+            speak(isLoneLetter(word.textContent) ? word.textContent.toUpperCase() : word.textContent);
+            if (answerOf(word)) wordTap.nudge();
+          }
+          return;
+        }
+        if (answerOf(e.target)) {
+          e.preventDefault();
+          e.stopPropagation();
+          wordTap.nudge();
+        }
+      },
+      true
+    );
+    // A tap away from the words closes the bubble; "Words" stays on.
+    document.addEventListener("pointerdown", (e) => {
+      if ($("#engWordPop") && !e.target.closest?.("#engWordPop, .eng-wt, #engWordsBtn")) wordTap.close();
+    });
+    window.addEventListener("resize", () => wordTap.place());
     // A click anywhere but on the word bubble or another word (or Escape)
     // closes the bubble.
     document.addEventListener("pointerdown", (e) => {
@@ -7745,6 +7996,7 @@
     });
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && $("#engDictPop")) dict.close();
+      if (e.key === "Escape" && wordTap.on) wordTap.stop();
     });
     // Re-render on language switch. An exercise in progress keeps its place
     // instead of restarting; screens holding the student's own input (typed
