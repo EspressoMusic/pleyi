@@ -31,6 +31,11 @@
       backToSite: "חזרה לאתר",
       backToTopic: "חזרה לנושא",
       stepGames: "משחקים",
+      setLetters: "אותיות",
+      setAll: "כל האותיות",
+      setLesson: (n) => `תרגול לשיעור ${n}`,
+      setTopicAll: "תרגול על כל הנושא",
+      openSet: "לתרגילים",
       backToLesson: "חזרה לשיעור",
       playGame: "לשחק",
       playTogether: "משחק עם חברים",
@@ -66,6 +71,7 @@
       typeHere: "כתבו כאן",
       emptyAnswer: "כתבו תשובה קודם",
       orderHint: "לחצו על המילים לפי הסדר",
+      orderHintLetters: "לחצו על האותיות לפי הסדר",
       play: "השמעה",
       playAgain: "השמעה שוב",
       noSpeech: "הדפדפן לא תומך בהשמעה, אז הנה המילה:",
@@ -75,6 +81,9 @@
       soundOn: "השתקת הצלילים",
       cardColorTitle: "צבע כרטיס השאלה",
       settings: "הגדרות",
+      classicLook: "רקע צבעוני",
+      classicLookOn: "חזרה למסך הרגוע",
+      classicLookOff: "רקע טורקיז עם נקודות זזות, וכרטיס לשאלה",
       soundOff: "הפעלת הצלילים",
       translate: "תרגום",
       translateOn: "הסתרת התרגום",
@@ -242,8 +251,37 @@
       testAskRetake: "בקשת מבחן חוזר",
       testAsked: "ביקשת מבחן חוזר. המורה יחליט אם לפתוח אותו.",
       testDeclined: "המורה לא פתח מבחן חוזר הפעם. אפשר לבקש שוב.",
+      stageTestOn: "על כל השלב:",
+      stageTestRules: ["עונים על כל שאלה ועוברים לבאה.", "התשובות נבדקות רק בסוף.", "את המבחן הזה עושים פעם אחת בלבד."],
+      stageTestClock: (m) => `יש ${m} דקות. כשהזמן נגמר, המבחן נשלח.`,
+      stageTestOnce: "את המבחן הזה עושים פעם אחת בלבד.",
+      stageTestMissingLead: "אפשר לחזור למפה ולבחור מבחן אחר.",
+      testTimeUp: "הזמן נגמר!",
+      testClock: "הזמן שנשאר",
+      backToMap: "למפה שלי",
+      placeTitle: "מבחן מיון",
+      placeLead: ["מבחן קצר שמוצא מאיפה להתחיל.", "השאלות מתחילות קלות ונהיות קשות יותר.", "לא יודעים? לוחצים על \"לא יודע\". זה בסדר גמור.", "המבחן נגמר כשהשאלות נהיות קשות מדי."],
+      placeLast: (n, title) => `בפעם הקודמת: שלב ${n} – ${title}`,
+      placeSkip: "לא יודע",
+      placeStageOf: (n, total) => `שלב ${n} מתוך ${total}`,
+      placeStartAt: "מתחילים בשלב",
+      placeKnown: (n) => (n === 1 ? "את שלב 1 כבר יודעים." : `את שלבים 1–${n} כבר יודעים.`),
+      placeFromStart: "מתחילים מההתחלה. בהצלחה!",
+      placeAll: "ידעתם את כל השלבים. כל הכבוד!",
+      placeGo: (n) => `לשלב ${n}`,
+      placeSaving: "שומרים את התוצאה…",
+      placeSaved: "התוצאה נשמרה, והמורה יראה אותה.",
+      placeFailed: "התוצאה לא נשמרה.",
+      placeRetry: "לשמור שוב",
+      placeAsk: "לא יודעים מאיפה להתחיל?",
+      placeAskLead: "מבחן מיון קצר ימצא את השלב שמתאים לכם.",
+      placeOpen: "למבחן המיון",
+      placeResult: "תוצאת מבחן המיון",
+      placeResultLine: (n, title) => `מתחילים בשלב ${n} – ${title}`,
+      placeAgain: "לעשות שוב",
+      placeHere: "מתחילים כאן",
       dailyTitle: "האתגר היומי",
-      dailyPageLead: ["5 שאלות קצרות בכל יום.", "השאלות הן ממה שכבר למדתם.", "עושים את האתגר כל יום, והרצף גדל."],
+      dailyPageLead: ["5 שאלות קצרות בכל יום.", "השאלות מעורבבות מהתרגילים שפתרתם.", "עושים את האתגר כל יום, והרצף גדל."],
       dailyLeadDone: "עשיתם את האתגר של היום!",
       dailyStart: "להתחיל",
       dailyMore: "סבב נוסף",
@@ -379,6 +417,10 @@
       examSequenceClear: "להתחיל את הסידור מחדש",
       examCompleteHow: "השלימו את המשפט באנגלית.",
       examWordHow: "כתבו את המילה באנגלית, כמו שהיא כתובה בטקסט.",
+      multiWrong: "לא בדיוק — התשובות הנכונות מסומנות בירוק.",
+      seqWrong: "לא בדיוק — כך הסדר הנכון.",
+      quoteWrong: "לא בדיוק — זה המשפט הנכון.",
+      quoteRightLabel: "המשפט הנכון:",
       examGrade: "הציון במבחן",
       examTimeUsed: (time) => `זמן: ${time}`,
       examByType: "לפי סוג השאלה",
@@ -403,6 +445,11 @@
       backToSite: "Back to the site",
       backToTopic: "Back to topic",
       stepGames: "Games",
+      setLetters: "Letters",
+      setAll: "All the letters",
+      setLesson: (n) => `Practice for lesson ${n}`,
+      setTopicAll: "Practice on the whole topic",
+      openSet: "Exercises",
       backToLesson: "Back to the lesson",
       playGame: "Play",
       playTogether: "Play with friends",
@@ -438,6 +485,7 @@
       typeHere: "Type here",
       emptyAnswer: "Type an answer first",
       orderHint: "Click the words in order",
+      orderHintLetters: "Click the letters in order",
       play: "Play",
       playAgain: "Play again",
       noSpeech: "Your browser can't play audio, so here is the word:",
@@ -447,6 +495,9 @@
       soundOn: "Mute sounds",
       cardColorTitle: "Question card color",
       settings: "Settings",
+      classicLook: "Colorful background",
+      classicLookOn: "Back to the calm screen",
+      classicLookOff: "A turquoise background with moving dots, and a card for the question",
       soundOff: "Turn sounds on",
       translate: "Translation",
       translateOn: "Hide the translation",
@@ -614,8 +665,37 @@
       testAskRetake: "Ask for a retake",
       testAsked: "You asked for a retake. Your teacher will decide.",
       testDeclined: "Your teacher didn't open a retake this time. You can ask again.",
+      stageTestOn: "On the whole stage:",
+      stageTestRules: ["Answer each question and move on to the next.", "The answers are checked only at the end.", "You can take this test only once."],
+      stageTestClock: (m) => `You have ${m} minutes. When the time is up, the test is handed in.`,
+      stageTestOnce: "You can take this test only once.",
+      stageTestMissingLead: "Go back to your map and pick another test.",
+      testTimeUp: "Time is up!",
+      testClock: "Time left",
+      backToMap: "Back to my map",
+      placeTitle: "Placement test",
+      placeLead: ["A short test that finds where to start.", "The questions start easy and get harder.", "Don't know? Tap \"I don't know\". That's fine.", "The test ends when the questions get too hard."],
+      placeLast: (n, title) => `Last time: stage ${n} – ${title}`,
+      placeSkip: "I don't know",
+      placeStageOf: (n, total) => `Stage ${n} of ${total}`,
+      placeStartAt: "Start at stage",
+      placeKnown: (n) => (n === 1 ? "You already know stage 1." : `You already know stages 1–${n}.`),
+      placeFromStart: "Start from the beginning. Good luck!",
+      placeAll: "You knew every stage. Well done!",
+      placeGo: (n) => `To stage ${n}`,
+      placeSaving: "Saving the result…",
+      placeSaved: "Saved. Your teacher will see it.",
+      placeFailed: "The result wasn't saved.",
+      placeRetry: "Save again",
+      placeAsk: "Not sure where to start?",
+      placeAskLead: "A short placement test finds the stage that fits you.",
+      placeOpen: "Take the placement test",
+      placeResult: "Your placement test result",
+      placeResultLine: (n, title) => `Start at stage ${n} – ${title}`,
+      placeAgain: "Take it again",
+      placeHere: "Start here",
       dailyTitle: "Daily challenge",
-      dailyPageLead: ["5 short questions every day.", "The questions are about what you already learned.", "Do the challenge every day and your streak grows."],
+      dailyPageLead: ["5 short questions every day.", "The questions are mixed from the exercises you solved.", "Do the challenge every day and your streak grows."],
       dailyLeadDone: "You did today's challenge!",
       dailyStart: "Start",
       dailyMore: "Another round",
@@ -751,6 +831,10 @@
       examSequenceClear: "Start the order over",
       examCompleteHow: "Complete the sentence in English.",
       examWordHow: "Type the English word as it is written in the text.",
+      multiWrong: "Not quite — the right answers are in green.",
+      seqWrong: "Not quite — this is the right order.",
+      quoteWrong: "Not quite — this is the right sentence.",
+      quoteRightLabel: "The right sentence:",
       examGrade: "Your exam grade",
       examTimeUsed: (time) => `Time: ${time}`,
       examByType: "By question type",
@@ -825,6 +909,8 @@
   ICONS.statusDone = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="m7 12.5 3.3 3.3L17 9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   ICONS.statusProgress = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M12 6a6 6 0 0 1 0 12Z" fill="currentColor"/></svg>`;
   ICONS.palette = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.3 0 2.1-.9 2.1-2 0-.6-.3-1-.6-1.4-.3-.4-.6-.9-.6-1.5 0-1.1.9-2 2-2h2.3A4.8 4.8 0 0 0 21 9.3C21 5.8 17 3 12 3Z"/><circle cx="7.5" cy="11.5" r="1.1" fill="currentColor"/><circle cx="9.5" cy="7.2" r="1.1" fill="currentColor"/><circle cx="14.5" cy="7.2" r="1.1" fill="currentColor"/></svg>`;
+  // Sparkles: the colorful look's switch (the moving dots behind the card).
+  ICONS.sparkles = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 11.7 8.3 16.5 10l-4.8 1.7L10 16.5l-1.7-4.8L3.5 10l4.8-1.7Z"/><path d="M18 14.5l.8 2.2 2.2.8-2.2.8L18 20.5l-.8-2.2-2.2-.8 2.2-.8Z"/><path d="M18.5 3v3M17 4.5h3"/></svg>`;
   ICONS.settings = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2ZM15 12a3 3 0 1 0-6 0 3 3 0 1 0 6 0Z" fill-rule="evenodd"/></svg>`;
   // Two Hebrew letters: the "how it sounds in Hebrew letters" switch.
   ICONS.sayHe = `<svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="17.5" text-anchor="middle" direction="rtl" font-family="Arial, sans-serif" font-size="14" font-weight="800" fill="currentColor">אב</text></svg>`;
@@ -843,6 +929,8 @@
   ICONS.flameColor = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4.1 0 7-2.8 7-6.8 0-3.6-2.3-6-4.1-8.2-.4 2-1.4 3.3-2.6 3.8.3-3.1-1-6.3-3.8-8.3.1 3.2-1.6 5.4-3.2 7.4C4.2 11.5 5 13.6 5 15.2 5 19.2 7.9 22 12 22Z" fill="#ff5a36"/><path d="M12 22c-1.7 0-3-1.3-3-3 0-1.8 1.4-3 2.2-4.3.5 1 1.3 1.6 2 1.8.4-1 .3-2 0-3 1.4 1.1 2.8 2.8 2.8 4.9 0 2.1-1.6 3.6-4 3.6Z" fill="#ffd93b"/></svg>`;
   ICONS.medalColor = `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18.5 1.8H14l-3.6 7.7h4.5Z" fill="#2fb5ff"/><path d="M5.5 1.8H10l3.6 7.7H9.1Z" fill="#ff4d5e"/><circle cx="12" cy="15.5" r="6.4" fill="#ffd23f"/><circle cx="12" cy="15.5" r="4.4" fill="#ffae00"/><path d="m12 12.3 1 2 2.2.3-1.6 1.5.4 2.2-2-1.1-2 1.1.4-2.2-1.6-1.5 2.2-.3Z" fill="#fff6c9" stroke-width="1.1"/></svg>`;
   ICONS.flag = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>`;
+  // Stairs with a flag on top: the placement test, which climbs the path.
+  ICONS.stairs = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h5v-5h5v-5h5V6h3"/><path d="M18 6V2.5l3 1.2-3 1.2"/></svg>`;
   // Two cards, one tilted behind the other: the word cards.
   // Robo, the chat bot (english-chat.js), and the student he talks with.
   ICONS.robo = `<svg viewBox="0 0 48 48" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 4v6" fill="none"/><circle cx="24" cy="4.5" r="2.6" fill="#ff5a6e"/><rect x="7" y="10" width="34" height="27" rx="9" fill="#7fd8ff"/><rect x="12.5" y="16" width="23" height="13" rx="6.5" fill="#eaf5ff"/><circle cx="19.5" cy="22.5" r="2.6" fill="#000" stroke="none"/><circle cx="28.5" cy="22.5" r="2.6" fill="#000" stroke="none"/><path d="M20.5 33h7" fill="none"/><path d="M7 21H4v8h3M41 21h3v8h-3" fill="#ffd23f"/><path d="M14 37v3.5h20V37" fill="#7fd8ff"/></svg>`;
@@ -1029,6 +1117,10 @@
   const HE_QUESTIONS_KEY = "pleyi-english-read-he";
   // Vocabulary words: how each one sounds, in Hebrew letters.
   const SAY_KEY = "pleyi-english-say";
+  // The practice screens' colorful look ("רקע צבעוני"): the turquoise page
+  // with its moving dots and the question card, instead of the soft screen.
+  // road-safety.js reads the same key for its question games.
+  const CLASSIC_KEY = "pleyi-practice-classic";
   // The question card's color. Light colors only, so the black text and the
   // white answer buttons keep their contrast.
   const CARD_COLOR_KEY = "pleyi-english-card-color";
@@ -1078,8 +1170,22 @@
     words: readFlag(WORDS_KEY, false),
     heQuestions: readFlag(HE_QUESTIONS_KEY, false),
     say: readFlag(SAY_KEY, false),
+    classic: readFlag(CLASSIC_KEY, false),
     cardColor: readCardColor(),
   };
+
+  /* A practice screen is soft (html.eng-soft) unless the colorful look is
+     on; then html.eng-classic, and a page without the moving background
+     (no-ambient-bg) gets one for it (ambient-bg.js, shown by CSS). */
+  let softScreen = false;
+
+  function setSoft(on) {
+    softScreen = on;
+    const root = document.documentElement;
+    root.classList.toggle("eng-soft", on && !prefs.classic);
+    root.classList.toggle("eng-classic", on && prefs.classic);
+    if (on && prefs.classic) window.PleyiAmbient?.mount();
+  }
 
   /* ── Sound effects (Web Audio, no files) ── */
 
@@ -1176,9 +1282,9 @@
     $("#engHero")?.classList.toggle("hidden", name !== "topics");
     // The exercise screen is a fixed, non-scrolling page without the site navbar or footer.
     document.documentElement.classList.toggle("eng-runner-open", name === "exercise");
-    // Practice screens get the soft, flat look (no black outlines); the game
-    // and word-card shells take it off again.
-    document.documentElement.classList.toggle("eng-soft", name === "exercise");
+    // Practice screens get the soft, flat look (no black outlines) unless
+    // the colorful look is on; the game and word-card shells take it off.
+    setSoft(name === "exercise");
     // The flame and the medal on top show on the topics page only.
     document.documentElement.classList.toggle("eng-topics-open", name === "topics");
     settingsOpen = false;
@@ -1195,6 +1301,9 @@
   // The topics page has no page above it here, so its arrow leaves to the
   // site, or to the personal area of a student who came through their link.
   function dockSiteBack() {
+    // Opened as a student's library: the bottom bar leads everywhere, so no
+    // arrow on top (user request, 2026-11-23).
+    if (new URLSearchParams(location.search).get("from") === "student") return;
     const bar = $("#engBarBack");
     const home = window.StudentProgress?.fromLink() ? window.StudentProgress.homeUrl() : null;
     const label = t(home ? "backToHomework" : "backToSite");
@@ -1210,6 +1319,9 @@
     const student = window.StudentProgress?.fromLink() ? await window.StudentProgress.profile() : null;
     document.documentElement.classList.toggle("eng-student-linked", !!student);
     renderTopMenu(!!student);
+    // Opened as the student's library (the books on their page's bar, for a
+    // student who learns English only): that bar stays at the bottom.
+    if (new URLSearchParams(location.search).get("from") === "student") window.StudentBar?.mount();
     const line = $("#engHero .hero-title .line");
     if (!student || !line) return;
     // No data-i18n: a language switch would bring the old title back.
@@ -1221,9 +1333,12 @@
      link only: a medal that opens the class leaderboard (leaderboard.js), a
      flame that leads to the daily challenge's page, and the chat. ── */
 
+  // Turned off at the user's request (2026-11-20): no icons on top.
+  const TOP_MENU_ENABLED = false;
+
   function renderTopMenu(linked) {
     if (SUBJECT) return;
-    if (!linked) {
+    if (!linked || !TOP_MENU_ENABLED) {
       $("#engTopMenu")?.remove();
       return;
     }
@@ -1369,7 +1484,7 @@
       <article class="eng-topic-card">
         <a class="eng-topic-tile${img ? " has-img" : ""}" href="#${VOCAB_ROUTE}">
           ${img}
-          <span class="eng-topic-title">${esc(t("vocabHub"))}</span>
+          ${topicTitleHtml(t("vocabHub"))}
           ${sub}
           <span class="font-cartoon eng-topic-open">${esc(t("open"))}${ICONS.back}</span>
         </a>
@@ -1389,6 +1504,12 @@
       <div class="eng-topic-grid">${vocabTopics().map((topic, i) => topicTileHtml(topic, i + 1)).join("")}</div>`;
   }
 
+  // A tile title that is one short word ("כסף", "שעון") gets bigger letters.
+  function topicTitleHtml(title) {
+    const short = !/\s/.test(title) && title.length <= 8;
+    return `<span class="eng-topic-title${short ? " is-short" : ""}">${esc(title)}</span>`;
+  }
+
   // `num`: the topic's place on the learning path, shown on the tile. Every
   // topic (reading and exams too) is a plain square tile.
   function topicTileHtml(topic, num) {
@@ -1400,7 +1521,7 @@
         <a class="eng-topic-tile${img ? " has-img" : ""}${badge ? " has-num" : ""}" href="#${esc(topic.id)}">
           ${badge}
           ${img}
-          <span class="eng-topic-title">${esc(loc(topic, "title"))}</span>
+          ${topicTitleHtml(loc(topic, "title"))}
           ${sub}
           <span class="font-cartoon eng-topic-open">${esc(t("open"))}${ICONS.back}</span>
         </a>
@@ -1524,17 +1645,28 @@
     if (!grid) return;
     if (PATH.length) {
       const path = visiblePath();
+      // Each stage's tiles get one color by how hard it is (english-learning.css):
+      // green for the first stage up to red and black for the last. A stage
+      // can set its own `level` (the vocabulary stage is last but not hard).
+      const graded = PATH.filter((stage) => stage.level == null);
+      const level = (stage) =>
+        stage.level ?? (graded.length > 1 ? Math.round((graded.indexOf(stage) * 7) / (graded.length - 1)) : 0);
+      // The stage the placement test said to start in (English only).
+      if (!SUBJECT) loadPlacementFromFile();
+      const placed = placementAvailable() ? placementResult()?.stage : null;
       const stages = path.map(({ stage, stageNum, topics }) => `
-        <div class="eng-topic-group eng-path-stage">
-          <h2 class="eng-group-title eng-path-title"><span class="eng-path-stage-num">${esc(t("stage", stageNum))}</span>${esc(loc(stage, "title"))}</h2>
+        <div class="eng-topic-group eng-path-stage${stage === placed ? " is-placed" : ""}" data-level="${level(stage)}"${stage.id ? ` id="engStage-${esc(stage.id)}"` : ""}>
+          <h2 class="eng-group-title eng-path-title"><span class="eng-path-stage-num">${esc(t("stage", stageNum))}</span>${esc(loc(stage, "title"))}${stage === placed ? `<span class="eng-place-here">${ICONS.flag}${esc(t("placeHere"))}</span>` : ""}</h2>
           <div class="eng-topic-grid">${topics.map(({ topic, num }) => topicTileHtml(topic, num)).join("")}</div>
         </div>`).join("");
       // A grade change redraws the grid; the contents stay open if they were.
       const tocOpen = $("#engToc", grid)?.open;
-      grid.innerHTML = gradeBarHtml() + (stages ? pathTocHtml(path) + stages : `<p class="eng-grade-empty">${esc(t("noGradeTopics"))}</p>`);
+      grid.innerHTML = gradeBarHtml() + placementBoxHtml() + (stages ? pathTocHtml(path) + stages : `<p class="eng-grade-empty">${esc(t("noGradeTopics"))}</p>`);
       if (tocOpen) $("#engToc", grid).open = true;
       bindGradeBar(grid);
       bindPathToc(grid);
+      bindPlacementBox(grid);
+      scrollToPlacedStage();
       return;
     }
     grid.innerHTML = GROUPS.map((group) => {
@@ -1669,8 +1801,89 @@
 
   function findGame(topic, id) {
     const gameId = /^game-(.+)$/.exec(id || "")?.[1];
-    const game = gameId ? window.EnglishGames.find(gameId) : null;
-    return game && window.EnglishGames.fits(game, gameWords(topic)) ? game : null;
+    const game = gameId && topic ? window.EnglishGames?.find(gameId) : null;
+    if (!game) return null;
+    if (game.questions) return triviaPool(topic).length >= window.EnglishGames.MIN_QUESTIONS ? game : null;
+    return window.EnglishGames.fits(game, gameWords(topic)) ? game : null;
+  }
+
+  /* ── The topic's games, after its exercises: the trivia on its lessons'
+     questions (english-games.js, in the practice screens' look), the picture
+     games of a vocabulary topic, and the /play games on its lessons' words
+     (ReadyLessons.playGames). ── */
+
+  // The trivia's questions: the topic's lessons' (ReadyLessons.triviaFor), or
+  // one lesson's when the trivia was opened from its end slide.
+  function triviaPool(topic, lessonId = "") {
+    const ids = topicLessonIds(topic);
+    const from = lessonId && ids.includes(lessonId) ? [lessonId] : ids;
+    return from.flatMap((id) => window.ReadyLessons?.triviaFor?.(id) || []);
+  }
+
+  // The words the topic's lessons teach, once each, for the /play games.
+  function topicVocab(topic) {
+    const seen = new Set();
+    return topicLessonIds(topic)
+      .flatMap((id) => window.ReadyLessons?.catalog?.[id]?.vocab || [])
+      .filter((v) => {
+        if (!v?.en || !v?.he || seen.has(v.en)) return false;
+        seen.add(v.en);
+        return true;
+      });
+  }
+
+  function playGamesFor(topic) {
+    const count = topicVocab(topic).length;
+    return window.CreateGameFlow ? (window.ReadyLessons?.playGames || []).filter((g) => count >= g.minItems) : [];
+  }
+
+  // A /play game on the topic's words; its exit button comes back here.
+  function launchPlayGame(topic, gameId) {
+    const vocab = topicVocab(topic);
+    const subject = window.ReadyLessons?.catalog?.[topicLessonIds(topic)[0]]?.subject || (SUBJECT ? "" : "english");
+    try {
+      sessionStorage.removeItem(LESSON_RETURN_KEY);
+      sessionStorage.setItem("gameclass-play-return", location.href);
+    } catch {
+      /* ignore */
+    }
+    window.CreateGameFlow.launchGame({
+      text: vocab.map((v) => `${v.en}=${v.he}`).join("\n"),
+      items: vocab,
+      subject: subject || "english",
+      gamePick: gameId,
+    });
+  }
+
+  // A lesson's end slide (ready-lessons.js) asks which of this page's topics
+  // teaches the lesson, to open its exercises or its trivia right here.
+  window.LearnArea = {
+    topicOfLesson(lessonId) {
+      return TOPICS.find((topic) => topicLessonIds(topic).includes(lessonId))?.id || null;
+    },
+  };
+
+  // The English mini site (/learn-english, english-site.js) builds its
+  // lessons library and games page from the same path, lessons and games.
+  if (!SUBJECT) {
+    window.EnglishLearning = {
+      // The path's stages, each with its topics and how hard it is (the
+      // tiles' color, as on the topics page).
+      path() {
+        const graded = PATH.filter((stage) => stage.level == null);
+        return PATH.map((stage, i) => ({
+          title: loc(stage, "title"),
+          stageNum: i + 1,
+          level: stage.level ?? (graded.length > 1 ? Math.round((graded.indexOf(stage) * 7) / (graded.length - 1)) : 0),
+          topics: stage.topics.map(findTopic).filter(Boolean),
+        }));
+      },
+      lessonIds: (topic) => topicLessonIds(topic),
+      // The topics a game can be played with (#<topic>/game-<id>).
+      gameTopics: (gameId) => TOPICS.filter((topic) => findGame(topic, `game-${gameId}`)),
+      title: (topic) => loc(topic, "title"),
+      imgUrl,
+    };
   }
 
   // One on one or group survival with the topic's words (/together). Off
@@ -1693,11 +1906,24 @@
   }
 
   function gameCardsHtml(topic) {
-    const words = gameWords(topic);
-    if (!words.length) return "";
     const games = window.EnglishGames;
-    return games
-      .listFor(words)
+    const trivia = findGame(topic, "game-trivia");
+    const words = gameWords(topic);
+    const pictureGames = games && words.length ? games.listFor(words) : [];
+    const playCards = playGamesFor(topic)
+      .map(
+        (g) => `
+          <div class="eng-ex-card eng-ex-card--game eng-ex-card--game-${esc(g.id)}">
+            <span class="eng-ex-icon">${g.icon}</span>
+            <span class="eng-ex-text">
+              <a class="eng-ex-title eng-card-link" href="#" data-play-game="${esc(g.id)}">${esc(lang() === "en" ? g.labelEn : g.label)}</a>
+            </span>
+            <span class="eng-item-action" aria-hidden="true">${esc(t("playGame"))}</span>
+          </div>`
+      )
+      .join("");
+    if (!trivia && !pictureGames.length && !playCards) return "";
+    return [...(trivia ? [trivia] : []), ...pictureGames]
       .map((game) => {
         const best = games.bestText(topic.id, game.id);
         return `
@@ -1710,7 +1936,7 @@
             <span class="eng-item-action" aria-hidden="true">${esc(t("playGame"))}</span>
           </div>`;
       })
-      .join("") + togetherCardHtml(topic);
+      .join("") + playCards + (words.length ? togetherCardHtml(topic) : "");
   }
 
   // Opens a topic's slide lesson (from its card or its "i" dialog).
@@ -1727,7 +1953,58 @@
     else window.location.href = `/services/ready-lessons?lesson=${encodeURIComponent(id)}`;
   }
 
-  function renderTopic(topic) {
+  // A topic's practice in sets (the letters topic): one per lesson's letters,
+  // then "all the letters" for the exercises on every letter. Empty for a
+  // topic without sets.
+  const SET_PREFIX = "set-";
+  const SET_ALL = "all";
+
+  // A topic of two lessons or more: one set per lesson, of the exercises
+  // that practice only that lesson (`lesson` on the exercise), and "the whole
+  // topic" for the ones that mix its lessons. The lesson's own "practice"
+  // button (its last slide) opens its set: #<topic>/set-<lesson id>.
+  function practiceSets(topic, practice) {
+    if (topic.sets?.length) {
+      const sets = topic.sets.map((set) => ({
+        id: set.id,
+        lesson: set.lesson,
+        title: `${t("setLetters")} ${loc(set, "title")}`,
+        range: set.id.toUpperCase().replace("-", "–"),
+        list: practice.filter((ex) => ex.set === set.id),
+      }));
+      sets.push({ id: SET_ALL, title: t("setAll"), range: "A–Z", list: practice.filter((ex) => !ex.set) });
+      return sets.filter((set) => set.list.length);
+    }
+    const lessons = topicLessonIds(topic);
+    if (lessons.length < 2 || !practice.some((ex) => ex.lesson)) return [];
+    const sets = lessons.map((id, i) => ({
+      id,
+      lesson: id,
+      title: t("setLesson", i + 1),
+      part: lessonById(id)?.partTitle || "",
+      range: String(i + 1),
+      list: practice.filter((ex) => ex.lesson === id),
+    }));
+    sets.push({ id: SET_ALL, title: t("setTopicAll"), range: "", list: practice.filter((ex) => !lessons.includes(ex.lesson)) });
+    return sets.filter((set) => set.list.length);
+  }
+
+  // The set an exercise sits in, by the set's id.
+  function setOfExercise(topic, exercise) {
+    if (topic.sets?.length) return exercise.set || SET_ALL;
+    if (topicLessonIds(topic).length < 2 || !(topic.exercises || []).some((ex) => ex.lesson)) return "";
+    return topicLessonIds(topic).includes(exercise.lesson) ? exercise.lesson : SET_ALL;
+  }
+
+  // The page an exercise's arrow goes back to: its set's page, when the
+  // topic has sets.
+  function exerciseBack(topic, exercise) {
+    if (exercise.type === "reading") return null;
+    const set = setOfExercise(topic, exercise);
+    return set ? `#${topic.id}/${SET_PREFIX}${set}` : null;
+  }
+
+  function renderTopic(topic, setId = "") {
     const view = views.topic();
     if (!view) return;
     const best = readBest();
@@ -1775,7 +2052,7 @@
         <div class="eng-ex-card eng-ex-card--${esc(ex.type)}${reading ? ` eng-ex-card--level-${ex.level}` : ""}">
           <span class="eng-ex-icon${reading ? "" : " eng-ex-icon--level"}">${reading ? ICONS.reading : exerciseIcon(exerciseLevel(ex))}</span>
           <span class="eng-ex-text">
-            <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${reading ? `<bdi>${esc(passageTitle(ex))}</bdi>` : esc(loc(ex, "title"))}</a>
+            <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${esc(ex.id)}">${reading ? `<bdi>${esc(passageTitle(ex))}</bdi>` : esc(loc(ex, ex.cardTitle ? "cardTitle" : "title"))}</a>
           </span>
           ${statusHtml(exerciseStatus(topic, ex, best, started))}
           ${paperBtnHtml(topic, ex)}
@@ -1787,12 +2064,48 @@
     const practice = (topic.exercises || [])
       .filter((ex) => ex.type !== "reading" && (ex.type !== "speak" || canListen()))
       .sort((a, b) => exerciseLevel(a) - exerciseLevel(b));
-    const exercises = practice.length ? `<div class="eng-ex-grid">${practice.map(exerciseCard).join("")}</div>` : "";
+    const grid = (list) => `<div class="eng-ex-grid">${list.map(exerciseCard).join("")}</div>`;
+    const step = (body) => `<section class="eng-step">${body}</section>`;
+    // The letters topic's practice sets (A–G, H–T, U–Z, and "all the
+    // letters"): one card each here, its exercises on its own page
+    // (#letters/set-a-g). A set's cards show their short title.
+    const sets = practiceSets(topic, practice);
+    // A lesson's own practice (#<topic>/set-<lesson id>): its set, or the
+    // letters set that teaches its letters.
+    const openSet = setId && sets.find((set) => set.id === setId || set.lesson === setId);
+    if (openSet) {
+      view.innerHTML = `
+        <div class="eng-topic-head">
+          <a class="eng-back" href="#${esc(topic.id)}" aria-label="${esc(t("backToTopic"))}" title="${esc(t("backToTopic"))}">${ICONS.back}</a>
+          <h2 class="font-cartoon eng-topic-heading eng-set-heading">${esc(openSet.title)}</h2>
+          ${openSet.part ? `<p class="eng-set-part">${mixedText(openSet.part)}</p>` : ""}
+        </div>
+        ${step(grid(openSet.list))}`;
+      bindHelpButtons(view, topic);
+      return;
+    }
+    const setCard = (set) => {
+      const statuses = set.list.map((ex) => exerciseStatus(topic, ex, best, started));
+      const status = statuses.every((s) => s === "done") ? "done" : statuses.some(Boolean) ? "progress" : "";
+      return `
+        <div class="eng-ex-card eng-ex-card--set${set.range ? "" : " eng-ex-card--set-all"}">
+          <span class="eng-ex-icon eng-set-icon" dir="ltr" aria-hidden="true">${set.range ? esc(set.range) : ICONS.toc}</span>
+          <span class="eng-ex-text">
+            <a class="eng-ex-title eng-card-link" href="#${esc(topic.id)}/${SET_PREFIX}${esc(set.id)}">${esc(set.title)}</a>
+          </span>
+          ${statusHtml(status)}
+          <span class="eng-item-action" aria-hidden="true">${esc(t("openSet"))}</span>
+        </div>`;
+    };
+    const exercises = sets.length
+      ? `<div class="eng-ex-grid">${sets.map(setCard).join("")}</div>`
+      : practice.length
+        ? grid(practice)
+        : "";
 
     const printables = printCardsHtml(topic);
     const gameCards = gameCardsHtml(topic);
     const units = readingUnits(topic);
-    const step = (body) => `<section class="eng-step">${body}</section>`;
 
     // A vocabulary topic on the path goes back to the path, not the hub.
     const backHref = topicGroup(topic) === "vocab" && !PATH.length ? `#${VOCAB_ROUTE}` : "#";
@@ -1830,7 +2143,7 @@
       ${head}
       ${lessonCard || decks ? step(`${lessonCard}${decks ? `<div class="eng-item-list">${decks}</div>` : ""}`) : ""}
       ${step(
-        `<div id="engReviewSlot">${reviewStripHtml(topic)}</div>${exercises || (gameCards ? "" : `<p class="eng-empty">${esc(t("noExercises"))}</p>`)}${
+        `<div id="engPractice" class="eng-practice-anchor"></div><div id="engReviewSlot">${reviewStripHtml(topic)}</div>${exercises || (gameCards ? "" : `<p class="eng-empty">${esc(t("noExercises"))}</p>`)}${
           gameCards
             ? `<div class="eng-practice-games">
                 <h4 class="eng-practice-sub">${esc(t("stepGames"))}</h4>
@@ -1851,7 +2164,20 @@
       ${printables ? step(`<p class="eng-step-lead">${esc(t("printLead"))}</p><div class="eng-ex-grid">${printables}</div>`) : ""}
       ${nextTopicHtml(topic)}`;
 
+    // A lesson's practice link to a topic of one lesson (no sets): the
+    // topic's page, at its exercises.
+    if (setId && topicLessonIds(topic).includes(setId)) {
+      history.replaceState(null, "", `${location.pathname}${location.search}#${encodeURIComponent(topic.id)}`);
+      requestAnimationFrame(() => $("#engPractice")?.scrollIntoView({ block: "start" }));
+    }
+
     bindHelpButtons(view, topic);
+    $$("[data-play-game]", view).forEach((link) =>
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        launchPlayGame(topic, link.dataset.playGame);
+      })
+    );
     $$(".eng-lesson-open", view).forEach((btn) =>
       btn.addEventListener("click", () => openTopicLesson(topic, btn.dataset.lessonId))
     );
@@ -2150,7 +2476,8 @@
     if (runner.newRequest) return;
     const { topic } = runner;
     const ex = findExercise(topic, runner.exercise.id) || runner.exercise;
-    if (ex.derived || SUBJECT) {
+    // A letters set (`set`) is all its letters already: nothing new to ask for.
+    if (ex.derived || ex.set || SUBJECT) {
       startExercise(topic, ex);
       return;
     }
@@ -2185,9 +2512,11 @@
     activeGame = null;
   }
 
-  /* A picture game opened from a lesson's games slide: ready-lessons.js
+  /* A game opened from a lesson's end slide (the trivia): ready-lessons.js
      stores where it came from, and the game's back arrow and results lead
-     back to that slide (on this page, or on the lessons library). */
+     back to that slide (on this page, or on the lessons library). A
+     teacher's own lesson has no topic: its questions come in the same note
+     (`trivia`), for #my-lessons/game-trivia. */
   const LESSON_RETURN_KEY = "gameclass-lesson-return";
   const LESSON_RESTORE_KEY = "gameclass-lesson-restore";
   let gameLessonReturn = null;
@@ -2229,12 +2558,17 @@
     location.href = ret.returnUrl;
   }
 
-  function renderGameShell(game, topic, inner, hud = "") {
+  function renderGameShell(game, topic, inner, hud = "", opts = {}) {
     const view = views.exercise();
     const backLabel = gameLessonReturn ? "backToLesson" : "backToTopic";
     runner.gameId = game.id;
     view.classList.remove("is-reading");
-    document.documentElement.classList.remove("eng-soft");
+    // The trivia looks like the practice screens; a trivia question is laid
+    // out (and its text grown) like an exercise's question.
+    setSoft(!!game.soft);
+    const cardClass = opts.question
+      ? `eng-runner-card--trivia${prefs.say ? " is-say" : ""}`
+      : `eng-runner-card--game eng-runner-card--game-${esc(game.id)}${cardColorClass()}${prefs.say ? " is-say" : ""}`;
     view.innerHTML = `
       <div class="eng-runner-head">
         <div class="eng-runner-top">
@@ -2247,7 +2581,10 @@
         </div>
         <div class="eng-game-hud" id="engGameHud">${hud}</div>
       </div>
-      <div class="eng-runner-card eng-runner-card--game eng-runner-card--game-${esc(game.id)}${cardColorClass()}${prefs.say ? " is-say" : ""}">${inner}</div>`;
+      <div class="eng-runner-card ${cardClass}">${inner}</div>`;
+    // A trivia question's line sits over the bar, as an exercise's instructions.
+    const ask = $(".eng-runner-card > .eng-trivia-ask", view);
+    if (ask) $("#engGameHud", view).before(ask);
     if (gameLessonReturn) {
       $("#engGameBack").addEventListener("click", (e) => {
         e.preventDefault();
@@ -2283,11 +2620,23 @@
     runner.exercise = null;
     runner.phase = "game";
     gameLessonReturn = readLessonReturn(`${topic.id}/game-${game.id}`);
+    window.PleyiStats?.hit("game", `english-${game.id}`, game.title);
+    // The trivia's questions: a teacher's lesson brings its own; one opened
+    // from a lesson asks about that lesson only.
+    const questions = !game.questions ? null : topic.trivia || triviaPool(topic, gameLessonReturn?.lessonId);
+    // A subject's math marks; a teacher's lesson on another subject has them too.
+    const subjectText = SUBJECT || (topic.subject && topic.subject !== "english");
+    const autoHtml = window.ReadyLessons?.autoHtml;
     activeGame = window.EnglishGames.start(game.id, {
       topic,
-      words: gameWords(topic),
+      words: game.questions ? [] : gameWords(topic),
+      questions,
+      textHtml: (str) => (subjectText && autoHtml ? autoHtml(String(str ?? "")) : esc(str)),
+      mathHtml: (q) => mathLineHtml(q),
+      progressHtml,
+      fit: fitCard,
       backToLesson: gameLessonReturn ? backToLesson : null,
-      shell: (inner, hud) => renderGameShell(game, topic, inner, hud),
+      shell: (inner, hud, opts) => renderGameShell(game, topic, inner, hud, opts),
       speak,
       canSpeak,
       sfx: playSfx,
@@ -2334,6 +2683,7 @@
           ${showTranslate ? tool("engTranslateToggle", prefs.translate, ICONS.translate, t("translate"), t(prefs.translate ? "translateOn" : "translateOff")) : ""}
           ${showSay ? tool("engSayToggle", prefs.say, ICONS.sayHe, t("sayTool"), t(prefs.say ? "sayToolOn" : "sayToolOff")) : ""}
           ${tool("engSoundToggle", prefs.sound, prefs.sound ? ICONS.listen : ICONS.soundOff, t("sound"), t(prefs.sound ? "soundOn" : "soundOff"))}
+          ${softScreen ? tool("engClassicToggle", prefs.classic, ICONS.sparkles, t("classicLook"), t(prefs.classic ? "classicLookOn" : "classicLookOff")) : ""}
           <div class="eng-settings-colors">
             <button type="button" class="eng-setting" id="engColorToggle" aria-expanded="${colorsOpen}" aria-controls="engColorSwatches">${ICONS.palette}<span class="eng-setting-label">${esc(t("cardColorTitle"))}</span><span class="eng-color-current eng-color-swatch--${prefs.cardColor}" aria-hidden="true"></span><span class="eng-color-chevron" aria-hidden="true"></span></button>
             <div class="eng-color-swatches${colorsOpen ? "" : " hidden"}" id="engColorSwatches" role="group" aria-label="${esc(t("cardColorTitle"))}">
@@ -2430,6 +2780,15 @@
       renderTools();
       $("#engSoundToggle")?.focus({ preventScroll: true });
     });
+    // The colorful look or the soft one, right away on this screen too.
+    $("#engClassicToggle")?.addEventListener("click", () => {
+      prefs.classic = !prefs.classic;
+      saveFlag(CLASSIC_KEY, prefs.classic);
+      setSoft(softScreen);
+      renderTools();
+      fitCard();
+      $("#engClassicToggle")?.focus({ preventScroll: true });
+    });
     $("#engTranslateToggle")?.addEventListener("click", () => {
       prefs.translate = !prefs.translate;
       saveFlag(TRANSLATE_KEY, prefs.translate);
@@ -2521,6 +2880,11 @@
   function reviewFromHtml() {
     const item = runner.review?.items[runner.index];
     if (!item || runner.phase === "results") return "";
+    const place = runner.review.placement;
+    if (place) {
+      const stage = place.stages[Math.min(place.stage, place.stages.length - 1)];
+      return `<span class="eng-game-topic eng-review-from"><span>${esc(t("placeStageOf", place.stages.indexOf(stage) + 1, place.stages.length))} · ${esc(loc(stage, "title"))}</span></span>`;
+    }
     if (runner.review.test) return `<span class="eng-game-topic eng-review-from"><span>${esc(loc(item.topic, "title"))}</span></span>`;
     if (runner.review.mix || runner.review.daily) return `<span class="eng-game-topic eng-review-from"><span>${esc(loc(item.topic, "title"))} · ${esc(loc(item.source, "title"))}</span></span>`;
     const goal = window.MistakeBank.GOAL;
@@ -2545,10 +2909,10 @@
     const words = wordTap.available() ? wordTap.buttonHtml() : "";
     if (progress && words) progress = `<div class="eng-progress-row">${progress}${words}</div>`;
     view.classList.toggle("is-reading", isReading || exercise.type === "exam");
-    document.documentElement.classList.add("eng-soft");
+    setSoft(true);
     const back = runner.review ? runner.review.back : runner.back || `#${topic.id}`;
     const backLabel = inTest()
-      ? t("backToHomework")
+      ? testBackLabel(runner.review.test)
       : back === `#${CHAT_ROUTE}`
         ? t("chatBack")
         : back === "#" || back === `#${DAILY_ROUTE}`
@@ -2562,6 +2926,8 @@
             <h2 class="font-cartoon eng-runner-title">${esc(runnerTitle())}</h2>
             ${runnerSubtitleHtml()}
             ${reviewFromHtml()}
+            ${testClockHtml()}
+            ${placeSkipHtml()}
             ${words && !progress ? words : ""}
           </div>
           <div class="eng-runner-tools" id="engRunnerTools"></div>
@@ -2577,6 +2943,7 @@
     else if (instructions) view.insertBefore(instructions, instructions.parentElement);
     // A test checks nothing on the way, so its button only confirms.
     if (inTest() && $("#engCheck", view)) $("#engCheck", view).textContent = t("testConfirm");
+    $("#engPlaceSkip", view)?.addEventListener("click", placementSkip);
     $("#engWordsBtn", view)?.addEventListener("click", () => wordTap.toggle());
     renderTools();
     $$(".eng-speak, .eng-word-tap", view).forEach((btn) => {
@@ -2606,6 +2973,14 @@
 
   function questionProgress() {
     const { index, round } = runner;
+    // The placement test doesn't know how many questions it will ask: its
+    // bar has a segment per stage, filled up to the one it is in.
+    const place = runner.review?.placement;
+    if (place) {
+      const total = place.stages.length;
+      const stage = Math.min(place.stage, total - 1);
+      return progressHtml({ label: t("placeStageOf", stage + 1, total), total, done: stage, current: stage });
+    }
     // Only a newly reached question animates its segment, not a re-render of
     // the same one (e.g. on a language switch).
     const fresh = runner.barIndex === index ? -1 : index - 1;
@@ -2701,36 +3076,65 @@
     return runner.round.some((q) => q && (sayOf(q.en) || (q.img && sayOf(q.text)) || q.pairs?.some((p) => sayOf(p.a))));
   }
 
-  // The match buttons grow to fit what is in them; when the board then runs
-  // past the card, its text and pictures shrink a step at a time until it fits.
+  // The match buttons grow to fit what is in them. Their text and pictures
+  // take the biggest size (in steps of 0.05) at which the board still fits
+  // the card and no word runs past its button, so there is no empty room left.
   function fitMatchBoard() {
     const board = $(".eng-match");
     const card = board?.closest(".eng-runner-card");
     if (!board || !card) return;
     const items = $$(".eng-match-item", board);
-    const tooBig = () => card.scrollHeight > card.clientHeight + 1 || items.some((it) => it.scrollWidth > it.clientWidth + 1);
-    let fit = 1;
-    board.style.setProperty("--fit", fit);
-    while (fit > 0.6 && tooBig()) {
-      fit = Math.round((fit - 0.05) * 100) / 100;
+    const tooBig = (fit) => {
       board.style.setProperty("--fit", fit);
+      // The board can shrink and spill into the empty feedback row under it,
+      // which the card alone doesn't count as running past it.
+      return card.scrollHeight > card.clientHeight + 1 || board.scrollHeight > board.clientHeight + 1 || items.some((it) => it.scrollWidth > it.clientWidth + 1);
+    };
+    let lo = 12;
+    let hi = 64;
+    if (!tooBig(hi / 20)) return;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (tooBig(mid / 20)) hi = mid;
+      else lo = mid;
     }
+    // Wrapping lines can make a smaller size taller now and then: step down
+    // until the size really fits.
+    while (tooBig(lo / 20) && lo > 12) lo--;
   }
 
-  // Any other question card: when it runs past the screen (a long sentence
-  // with its translation, a small phone), everything in it shrinks a step at
-  // a time until it fits, so the next button never ends up under the edge.
+  // Any other question card: everything in it takes the biggest size (in
+  // steps of 0.05, from 0.7 up to 2) at which the card still fits the screen.
+  // A short question on a big screen grows; a long sentence on a small phone
+  // shrinks, so the next button never ends up under the edge. Growing never
+  // runs past the sides or breaks a line that fit on one line before. Once
+  // answered, the question only shrinks, so it doesn't jump.
   function fitCard() {
     const card = $(".eng-runner-card");
     if (!card) return;
+    const was = parseFloat(card.style.getPropertyValue("--card-fit")) || 1;
     card.style.removeProperty("--card-fit");
     if (!document.documentElement.classList.contains("eng-runner-open")) return;
     if (card.matches(".eng-runner-card--game") || $(".eng-match, .eng-read, .eng-results", card)) return;
-    let fit = 1;
-    while (fit > 0.7 && card.scrollHeight > card.clientHeight + 1) {
-      fit = Math.round((fit - 0.05) * 100) / 100;
+    const grows = !card.matches(".eng-runner-card--cards, .eng-review-empty");
+    const max = !grows ? 1 : runner.answered ? Math.min(was, 2) : 2;
+    const texts = $$(".eng-sentence, .eng-option, .eng-tf-btn, .eng-pic-option", card).map((el) => [el, el.getBoundingClientRect().height]);
+    const tooBig = (fit) => {
       card.style.setProperty("--card-fit", fit);
+      if (card.scrollHeight > card.clientHeight + 1) return true;
+      if (fit <= 1) return false;
+      if (card.scrollWidth > card.clientWidth + 1) return true;
+      return !runner.answered && texts.some(([el, h]) => el.getBoundingClientRect().height > h * fit * 1.15);
+    };
+    let lo = 14;
+    let hi = Math.round(max * 20);
+    if (!tooBig(hi / 20)) return;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (tooBig(mid / 20)) hi = mid;
+      else lo = mid;
     }
+    card.style.setProperty("--card-fit", lo / 20);
   }
 
   function fitRunner() {
@@ -2856,7 +3260,8 @@
       runner.mistakes.push(q);
       runner.mistakeLog.push(mistakeRecord(q, given));
     }
-    saveTestProgress();
+    if (runner.review.placement) placementStep(isRight);
+    else saveTestProgress();
     runner.timer = setTimeout(goNext, TEST_NEXT_MS);
   }
 
@@ -3114,8 +3519,10 @@
         runner.answered = true;
         const answer = q.word ? q.en : q.answer;
         const accepted = [answer, ...(q.accept || [])];
-        const isRight =
-          accepted.map(normalize).includes(normalize(inputEl.value)) || (SUBJECT && accepted.some((a) => sameNumber(a, inputEl.value)));
+        // "Type the capital letter": there the case is the answer.
+        const isRight = runner.exercise.exactCase
+          ? accepted.includes(inputEl.value.trim())
+          : accepted.map(normalize).includes(normalize(inputEl.value)) || (SUBJECT && accepted.some((a) => sameNumber(a, inputEl.value)));
         inputEl.readOnly = true;
         if (inTest()) {
           inputEl.classList.add("is-picked");
@@ -3164,7 +3571,7 @@
         const line = $("#engOrderLine");
         line.innerHTML = placed.length
           ? placed.map((i) => `<button type="button" class="eng-chip is-placed" data-i="${i}">${esc(tokens[i])}</button>`).join("")
-          : `<span class="eng-order-placeholder">${esc(t("orderHint"))}</span>`;
+          : `<span class="eng-order-placeholder">${esc(t(tokens.every((tk) => /^[A-Za-z]$/.test(tk)) ? "orderHintLetters" : "orderHint"))}</span>`;
         $("#engOrderBank").innerHTML = bank
           .map(
             (i) =>
@@ -3303,6 +3710,8 @@
         );
         $$(".eng-match-item").forEach((item) => item.addEventListener("click", () => this.pick(item)));
         fitMatchBoard();
+        // The board's font may only start loading now; fit again once it is in.
+        document.fonts?.ready.then(fitMatchBoard);
       },
       pick(item) {
         const st = runner.state;
@@ -3416,11 +3825,11 @@
         ${instructionsHtml()}
         ${q.he ? `<p class="eng-order-he">${esc(q.he)}</p>` : ""}
         ${q.context ? `<div class="eng-sc-context" dir="ltr">${contextHtml(q)}</div>` : ""}
-        <div class="eng-options eng-options--sentences" dir="ltr">
+        <div class="eng-options eng-options--sentences" dir="${TEXT_DIR}">
           ${options
             .map(
               (opt, i) =>
-                `<button type="button" class="eng-option eng-option--sentence js-answer" data-option="${esc(opt)}"><span class="eng-option-key">${i + 1}</span>${esc(opt)}</button>`
+                `<button type="button" class="eng-option eng-option--sentence js-answer" data-option="${esc(opt)}"><span class="eng-option-key">${i + 1}</span>${SUBJECT ? aHtml(opt) : esc(opt)}</button>`
             )
             .join("")}
         </div>
@@ -3438,9 +3847,9 @@
         else if (btn.dataset.option === choice) btn.classList.add("is-wrong");
       });
       if (choice === q.answer) onRight();
-      else onWrong(q, `${esc(t("fixLabel"))} <bdi dir="ltr">${esc(q.answer)}</bdi>`, choice);
+      else onWrong(q, `${esc(t("fixLabel"))} <bdi dir="${TEXT_DIR}">${SUBJECT ? aHtml(q.answer) : esc(q.answer)}</bdi>`, choice);
     },
-    review: (q) => `<span dir="ltr">${esc(q.answer)}</span>${q.he ? ` <span class="eng-review-he">${esc(q.he)}</span>` : ""}`,
+    review: (q) => `<span dir="${TEXT_DIR}">${SUBJECT ? aHtml(q.answer) : esc(q.answer)}</span>${q.he ? ` <span class="eng-review-he">${esc(q.he)}</span>` : ""}`,
   };
 
   /* A conversation with Robo (english-chat.js): his line, out loud, and three
@@ -3517,12 +3926,14 @@
   }
 
   // Spell the answer with letter tiles. Spaces, apostrophes and hyphens stay
-  // fixed in the answer line; only letters are tiles.
+  // fixed in the answer line; only letters are tiles (Hebrew ones too, for a
+  // school subject's words).
+  const LETTER_TILE = /[A-Za-zא-ת]/;
   TYPES.letters = {
     render(q) {
       const answer = q.word ? q.en : q.answer;
       const chars = [...answer];
-      const slots = chars.map((c, i) => (/[A-Za-z]/.test(c) ? i : -1)).filter((i) => i >= 0);
+      const slots = chars.map((c, i) => (LETTER_TILE.test(c) ? i : -1)).filter((i) => i >= 0);
       const letters = slots.map((i) => chars[i]);
       let tiles = shuffle([...letters, ...(q.word ? wordDecoys(q) : q.extra || [])]);
       for (let tries = 0; tries < 6 && tiles.length > 1 && tiles.slice(0, letters.length).join("") === letters.join(""); tries++) {
@@ -3531,12 +3942,12 @@
       runner.state = { chars, slots, tiles, placed: [] };
       const prompt = q.word
         ? `<div class="eng-picture-box eng-picture-box--small"><img class="eng-picture-img" src="${esc(q.img)}" alt="" draggable="false" />${pictureHeHtml(q)}</div>`
-        : `<div class="eng-sentence" dir="ltr"><p id="engSentence">${sentenceHtml(q)}</p>${translationHtml(q)}</div>`;
+        : `<div class="eng-sentence" dir="${TEXT_DIR}"><p id="engSentence">${sentenceHtml(q)}</p>${translationHtml(q)}</div>`;
       renderRunnerShell(`
         ${instructionsHtml()}
         ${prompt}
-        <div class="eng-letter-slots" id="engSlots" dir="ltr"></div>
-        <div class="eng-letter-bank" id="engBank" dir="ltr"></div>
+        <div class="eng-letter-slots" id="engSlots" dir="${TEXT_DIR}"></div>
+        <div class="eng-letter-bank" id="engBank" dir="${TEXT_DIR}"></div>
         ${feedbackWithCheckHtml(true)}`,
         questionProgress()
       );
@@ -3593,7 +4004,7 @@
       } else if (e.key === "Enter") {
         e.preventDefault();
         if (st.placed.length === st.slots.length) $("#engCheck")?.click();
-      } else if (/^[a-z]$/i.test(e.key)) {
+      } else if (e.key.length === 1 && LETTER_TILE.test(e.key)) {
         const tile = st.tiles.findIndex((ch, i) => !st.placed.includes(i) && ch.toLowerCase() === e.key.toLowerCase());
         if (tile < 0) return;
         e.preventDefault();
@@ -3610,6 +4021,12 @@
       const answer = q.word ? q.en : q.answer;
       const isRight = [answer, ...(q.accept || [])].map(normalize).includes(normalize(built));
       this.draw();
+      if (inTest()) {
+        $("#engSlots").classList.add("is-picked");
+        $("#engBank").classList.add("hidden");
+        testAnswer(q, isRight, built);
+        return;
+      }
       $("#engSlots").classList.add(isRight ? "is-right" : "is-wrong");
       $("#engBank").classList.add("hidden");
       if (!q.word) $("#engSentence").innerHTML = sentenceHtml(q, answer, isRight ? "right" : "wrong");
@@ -3935,6 +4352,11 @@
     runner.answered = true;
     const isRight = wordId === q.word;
     lockAnswers();
+    if (inTest()) {
+      answerButtons().find((btn) => btn.dataset.word === wordId)?.classList.add("is-picked");
+      testAnswer(q, isRight, VOCAB[wordId]?.en || wordId);
+      return;
+    }
     answerButtons().forEach((btn) => {
       btn.classList.add("is-revealed");
       if (btn.dataset.word === q.word) btn.classList.add("is-right");
@@ -3991,6 +4413,9 @@
       revealed: new Set(),
       markScore: 0,
       qScore: 0,
+      // A quote question shows the text as sentences to pick from.
+      sentences: ex.passage.text.flatMap((para) => splitSentences(para.replace(/\[([^\]]+)\]/g, "$1"))),
+      quoting: false,
     };
     runner.total = (marking ? targets.length : 0) + runner.round.length;
     renderReading();
@@ -4013,7 +4438,13 @@
   function prepareQuestion() {
     const q = runner.round[runner.index];
     runner.answered = false;
-    runner.state = { order: q.type === "mc" ? shuffle(q.options.map((_, i) => i)) : null };
+    // Options (mc, multi) and events (sequence) get an order of their own,
+    // as in the exams; `picks` and `placed` are what the student chose.
+    runner.state = { order: examOrder(q), picks: [], placed: [] };
+    if (runner.read) {
+      runner.read.quoting = q.type === "quote";
+      runner.read.quoteMarks = null;
+    }
   }
 
   // One segment for the first step (reading the passage, or marking in it)
@@ -4035,11 +4466,33 @@
   }
 
   function passageClass() {
+    if (runner.read.quoting) return "eng-read-text is-quoting";
     return `eng-read-text${marking() ? " is-marking" : ""}${prefs.words ? " is-dict" : ""}`;
+  }
+
+  // While a quote question waits for its answer, the text is a row of
+  // sentences to pick from (the words don't open their meaning then).
+  function quotePassageHtml() {
+    const st = runner.read;
+    const open = !runner.answered;
+    let s = 0;
+    return runner.exercise.passage.text
+      .map((para) => {
+        const sents = splitSentences(para.replace(/\[([^\]]+)\]/g, "$1")).map((sent) => {
+          const i = s++;
+          const cls = st.quoteMarks?.[i] ? ` ${st.quoteMarks[i]}` : "";
+          return open
+            ? `<span class="eng-sent${cls}" role="button" tabindex="0" data-s="${i}">${esc(sent)}</span>`
+            : `<span class="eng-sent${cls}" data-s="${i}">${esc(sent)}</span>`;
+        });
+        return `<p>${sents.join(" ")}</p>`;
+      })
+      .join("");
   }
 
   function passageHtml() {
     const st = runner.read;
+    if (st.quoting) return quotePassageHtml();
     const markable = marking();
     const paras = [];
     st.tokens.forEach((tok, i) => {
@@ -4125,14 +4578,19 @@
     }
     const text = $("#engReadText");
     text.addEventListener("click", (e) => {
+      const sent = e.target.closest(".eng-sent[tabindex]");
+      if (sent) return answerQuote(Number(sent.dataset.s));
       const tok = e.target.closest(".eng-tok[tabindex]");
       if (tok) clickWord(tok);
     });
     text.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const sent = e.target.closest?.(".eng-sent[tabindex]");
       const tok = e.target.closest?.(".eng-tok[tabindex]");
-      if (!tok || (e.key !== "Enter" && e.key !== " ")) return;
+      if (!sent && !tok) return;
       e.preventDefault();
-      clickWord(tok);
+      if (sent) answerQuote(Number(sent.dataset.s));
+      else clickWord(tok);
     });
     $("#engReadGo")?.addEventListener("click", () => {
       if (runner.read.stage === "read") startQuestions();
@@ -4160,6 +4618,10 @@
     if (!box) return;
     // A new task brings the task box back if the passage was enlarged.
     setTextOpen(false);
+    // A quote question turns the text into sentences; the next question
+    // turns it back.
+    const text = $("#engReadText");
+    if (text && (runner.read.quoting || text.classList.contains("is-quoting"))) refreshPassage();
     if (runner.read.stage === "questions") renderQuestionTask(box);
     box.scrollTop = 0;
   }
@@ -4583,8 +5045,6 @@
       this.on = true;
       views.exercise().classList.add("is-words");
       this.mark();
-      const first = this.list()[0];
-      if (first) this.open(first);
     },
     stop() {
       this.close();
@@ -4734,6 +5194,47 @@
           <button type="button" class="eng-tf-btn eng-tf-btn--true js-answer" data-value="true">${ICONS.check}<span>${esc(t("trueBtn"))}</span></button>
           <button type="button" class="eng-tf-btn eng-tf-btn--false js-answer" data-value="false">${ICONS.cross}<span>${esc(t("falseBtn"))}</span></button>
         </div>`;
+    } else if (q.type === "multi") {
+      // Pick two (or as many as `answers`), then "Check".
+      const option = (oi) => {
+        const he = optionHe(q, oi);
+        const text = he ? biText(q.options[oi], he) : esc(q.options[oi]);
+        return `<button type="button" class="eng-read-option eng-exam-choice eng-exam-check js-answer${he ? " has-he" : ""}" data-i="${oi}" aria-pressed="false"${he ? "" : ' dir="ltr"'}><span class="eng-read-option-key eng-exam-box"></span><span class="eng-read-option-text">${text}</span></button>`;
+      };
+      body = `
+        ${questionHtml(q)}
+        ${examNote(t("examPickTwo", q.answers.length))}
+        <div class="eng-read-options">${runner.state.order.map(option).join("")}</div>
+        <p class="eng-exam-hint" id="engExamHint" aria-live="polite"></p>
+        ${checkBtnHtml(true)}`;
+    } else if (q.type === "sequence") {
+      // Tap the events in the order they happened, then "Check".
+      const item = (k) => {
+        const he = q.he && q.itemsHe?.[k];
+        const text = he ? `<span class="has-he">${biText(q.items[k], he)}</span>` : esc(q.items[k]);
+        return `<button type="button" class="eng-exam-seq-item js-answer" data-k="${k}" aria-pressed="false" dir="ltr"><span class="eng-exam-seq-num"></span><span class="eng-exam-seq-text">${text}</span></button>`;
+      };
+      body = `
+        ${questionHtml(q)}
+        ${examNote(t("examSequenceHow"))}
+        <div class="eng-exam-seq" id="engSeq">${runner.state.order.map(item).join("")}</div>
+        ${checkBtnHtml(true)}`;
+    } else if (q.type === "quote") {
+      // The sentence is picked in the text itself.
+      body = `
+        ${questionHtml(q)}
+        <div class="eng-exam-quote is-empty" id="engQuoteBox"><span>${esc(t("examQuoteNone"))}</span></div>
+        <div class="eng-exam-quote-actions"><button type="button" class="eng-read-back eng-exam-pick js-answer" id="engQuotePick">${ICONS.reading}<span>${esc(t("examQuotePick"))}</span></button></div>`;
+    } else if (q.type === "word" || q.type === "complete") {
+      // One word from the text, or the missing end of a sentence: typed in
+      // English and checked against the answer (or its keywords).
+      const word = q.type === "word";
+      body = `
+        ${word ? questionHtml(q) : blankQuestionHtml(q)}
+        ${examNote(t(word ? "examWordHow" : "examCompleteHow"))}
+        <input type="text" class="eng-input eng-exam-word${word ? "" : " eng-read-complete"}" id="engInput" dir="ltr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("typeHere"))}" placeholder="${esc(t("typeHere"))}" />
+        <div id="engModel"></div>
+        ${checkBtnHtml(false)}`;
     } else {
       const inHebrew = q.lang === "he";
       const langNote = inHebrew ? (lang() === "he" ? t("answerHe") : t("answerAny")) : t("answerEn");
@@ -4757,6 +5258,14 @@
       answerButtons().forEach((btn) => btn.addEventListener("click", () => answerMc(q, Number(btn.dataset.i))));
     } else if (q.type === "tf") {
       answerButtons().forEach((btn) => btn.addEventListener("click", () => answerTf(q, btn.dataset.value === "true")));
+    } else if (q.type === "multi") {
+      answerButtons().forEach((btn) => btn.addEventListener("click", () => toggleMultiPick(q, Number(btn.dataset.i))));
+      $("#engCheck").addEventListener("click", () => answerMulti(q));
+    } else if (q.type === "sequence") {
+      answerButtons().forEach((btn) => btn.addEventListener("click", () => toggleSeqItem(q, Number(btn.dataset.k))));
+      $("#engCheck").addEventListener("click", () => answerSequence(q));
+    } else if (q.type === "quote") {
+      $("#engQuotePick").addEventListener("click", () => setTextOpen(true));
     } else {
       const input = $("#engInput");
       input.addEventListener("keydown", (e) => {
@@ -4829,15 +5338,164 @@
     }
     runner.answered = true;
     input.readOnly = true;
-    const isRight = openIsRight(q, given);
+    const isRight = q.type === "open" ? openIsRight(q, given) : typedIsRight(q, given);
     input.classList.add(isRight ? "is-right" : "is-wrong");
     $("#engReadTask .eng-actions")?.classList.add("hidden");
+    // A word or a completed sentence has one right answer, shown when the
+    // student missed it.
+    if (q.type !== "open") {
+      if (isRight) readRight();
+      else readWrong(q, `${esc(t("wrong", ""))}<bdi dir="ltr">${esc(q.answer)}</bdi>`, given);
+      return;
+    }
     const model = lang() === "en" && q.answerEn ? q.answerEn : q.answer;
     $("#engModel").innerHTML = `<p class="eng-read-model"><span class="eng-read-model-label">${esc(t("modelAnswer"))}</span> <span dir="auto">${esc(model)}</span></p>`;
     // An open answer always waits for "Next", so there is time to compare it
     // with the sample answer.
     if (isRight) readRight(t("openRight"), false);
     else readWrong(q, esc(t("openWrong")), given);
+  }
+
+  /* The other kinds of unseen questions (as in the exams, english-exams.js),
+     each checked right away: complete the sentence, a word from the text,
+     two right answers, the events in order and a sentence quoted from the
+     text. */
+
+  function checkBtnHtml(disabled) {
+    return `<div class="eng-actions"><button type="button" class="btn btn-primary btn-candy font-cartoon eng-check" id="engCheck"${disabled ? " disabled" : ""}>${esc(t("check"))}</button></div>`;
+  }
+
+  // A complete-the-sentence question shows its blank as a line.
+  function blankQuestionHtml(q) {
+    return `<p class="eng-read-q" dir="ltr">${esc(q.q).split("___").join(`<span class="eng-exam-blank"></span>`)}</p>`;
+  }
+
+  // A typed word is right when it is the answer or one of `accept`; a
+  // completed sentence, when it has the keywords (if it lists any).
+  function typedIsRight(q, given) {
+    if (q.keywords?.length) return openIsRight(q, given);
+    const clean = (s) => normalize(s).replace(/^["“”'‘’]+|["“”'‘’.,!?]+$/g, "");
+    return [q.answer, ...(q.accept || [])].map(clean).includes(clean(given));
+  }
+
+  // The right answer of any question as plain text (for the mistakes list).
+  function rightAnswerText(q) {
+    if (q.type === "tf") return t(q.answer ? "trueBtn" : "falseBtn");
+    if (q.type === "multi") return q.answers.join(" · ");
+    if (q.type === "sequence") return q.items.join(" → ");
+    if (q.type === "quote") return [].concat(q.answer)[0];
+    if (q.type === "open" && lang() === "en" && q.answerEn) return q.answerEn;
+    return q.answer;
+  }
+
+  function toggleMultiPick(q, oi) {
+    if (runner.answered) return;
+    const picks = runner.state.picks;
+    const hint = $("#engExamHint");
+    if (picks.includes(oi)) picks.splice(picks.indexOf(oi), 1);
+    else if (picks.length >= q.answers.length) {
+      if (hint) hint.textContent = t("examPickedMax", q.answers.length);
+      return;
+    } else picks.push(oi);
+    if (hint) hint.textContent = "";
+    answerButtons().forEach((btn) => {
+      const on = picks.includes(Number(btn.dataset.i));
+      btn.classList.toggle("is-selected", on);
+      btn.setAttribute("aria-pressed", String(on));
+      $(".eng-exam-box", btn).innerHTML = on ? ICONS.check : "";
+    });
+    $("#engCheck").disabled = picks.length !== q.answers.length;
+  }
+
+  // The right options turn green (the student's wrong ones red), so the
+  // message only has to say so.
+  function answerMulti(q) {
+    const picks = runner.state.picks;
+    if (runner.answered || picks.length !== q.answers.length) return;
+    runner.answered = true;
+    lockAnswers();
+    $("#engReadTask .eng-actions")?.classList.add("hidden");
+    answerButtons().forEach((btn) => {
+      const oi = Number(btn.dataset.i);
+      btn.classList.remove("is-selected");
+      if (q.answers.includes(q.options[oi])) btn.classList.add("is-right");
+      else if (picks.includes(oi)) btn.classList.add("is-wrong");
+    });
+    const isRight = picks.every((oi) => q.answers.includes(q.options[oi]));
+    if (isRight) readRight();
+    else readWrong(q, esc(t("multiWrong")), picks.map((oi) => q.options[oi]).join(" · "));
+  }
+
+  function toggleSeqItem(q, k) {
+    if (runner.answered) return;
+    const placed = runner.state.placed;
+    if (placed.includes(k)) placed.splice(placed.indexOf(k), 1);
+    else placed.push(k);
+    answerButtons().forEach((btn) => {
+      const pos = placed.indexOf(Number(btn.dataset.k));
+      btn.classList.toggle("is-placed", pos >= 0);
+      btn.setAttribute("aria-pressed", String(pos >= 0));
+      $(".eng-exam-seq-num", btn).textContent = pos >= 0 ? String(pos + 1) : "";
+    });
+    $("#engCheck").disabled = placed.length !== q.items.length;
+  }
+
+  // After the check the events stand in the right order, numbered; the ones
+  // the student put somewhere else are marked.
+  function answerSequence(q) {
+    const placed = runner.state.placed;
+    if (runner.answered || placed.length !== q.items.length) return;
+    runner.answered = true;
+    $("#engReadTask .eng-actions")?.classList.add("hidden");
+    const list = $("#engSeq");
+    q.items.forEach((_, k) => {
+      const btn = $(`.eng-exam-seq-item[data-k="${k}"]`, list);
+      if (!btn) return;
+      btn.classList.remove("is-placed");
+      btn.classList.add(placed.indexOf(k) === k ? "is-right" : "is-wrong");
+      $(".eng-exam-seq-num", btn).textContent = String(k + 1);
+      list.appendChild(btn);
+    });
+    lockAnswers();
+    const isRight = placed.every((k, pos) => k === pos);
+    if (isRight) readRight();
+    else readWrong(q, esc(t("seqWrong")), placed.map((k) => q.items[k]).join(" → "));
+  }
+
+  // A sentence picked in the text: it lights up green or red (with the right
+  // one green), then the question comes back with what was picked.
+  function answerQuote(s) {
+    const q = runner.round[runner.index];
+    const st = runner.read;
+    if (runner.answered || q?.type !== "quote" || !st.quoting) return;
+    runner.answered = true;
+    const rights = [].concat(q.answer).map(normalize);
+    const isRight = rights.includes(normalize(st.sentences[s]));
+    const rightAt = st.sentences.findIndex((sent) => rights.includes(normalize(sent)));
+    st.quoteMarks = { [s]: isRight ? "is-quote-right" : "is-quote-wrong" };
+    if (!isRight && rightAt >= 0) st.quoteMarks[rightAt] = "is-quote-right";
+    refreshPassage();
+    lockAnswers();
+    const box = $("#engQuoteBox");
+    if (box) {
+      box.className = `eng-exam-quote ${isRight ? "is-right" : "is-wrong"}`;
+      box.innerHTML = `<span class="eng-exam-quote-label">${esc(t("examQuoteChosen"))}</span><span class="eng-exam-quote-text" dir="ltr" lang="en">${esc(st.sentences[s])}</span>`;
+    }
+    $(".eng-exam-quote-actions")?.classList.add("hidden");
+    // A wrong pick: the right sentence in a green box under it.
+    if (!isRight) {
+      box?.insertAdjacentHTML(
+        "afterend",
+        `<div class="eng-exam-quote is-right"><span class="eng-exam-quote-label">${esc(t("quoteRightLabel"))}</span><span class="eng-exam-quote-text" dir="ltr" lang="en">${esc(st.sentences[rightAt] || rightAnswerText(q))}</span></div>`
+      );
+    }
+    if (isRight) readRight(t("correct"), false);
+    else readWrong(q, esc(t("quoteWrong")), st.sentences[s]);
+    // A moment to see the sentence light up in the text, then the question.
+    const at = runner.index;
+    setTimeout(() => {
+      if (runner.read === st && runner.index === at) setTextOpen(false);
+    }, 900);
   }
 
   function readNextButton() {
@@ -4863,7 +5521,7 @@
     runner.mistakes.push({ kind: "q", q, given });
     runner.mistakeLog.push({
       prompt: openQuestionText(q),
-      answer: q.type === "tf" ? (q.answer ? "נכון" : "לא נכון") : q.answer,
+      answer: q.type === "tf" ? (q.answer ? "נכון" : "לא נכון") : rightAnswerText(q),
       given: q.type === "tf" ? (given ? "נכון" : "לא נכון") : String(given ?? ""),
     });
     playSfx("wrong");
@@ -4898,11 +5556,9 @@
       const { q, given } = m;
       const { en, he } = questionTexts(q);
       const question = he && he !== en ? `<span class="eng-review-line has-he">${biText(en, he)}</span>` : `<span class="eng-review-line" dir="auto">${esc(en)}</span>`;
-      const answer =
-        q.type === "mc"
-          ? mcAnswerHtml(q)
-          : `<bdi>${esc(q.type === "tf" ? t(q.answer ? "trueBtn" : "falseBtn") : lang() === "en" && q.answerEn ? q.answerEn : q.answer)}</bdi>`;
-      const yours = q.type === "open" ? `<span class="eng-review-line eng-review-he"><span>${esc(t("yourAnswer"))}</span> <bdi>${esc(given)}</bdi></span>` : "";
+      const answer = q.type === "mc" ? mcAnswerHtml(q) : `<bdi>${esc(rightAnswerText(q))}</bdi>`;
+      const typed = q.type === "open" || q.type === "word" || q.type === "complete";
+      const yours = typed ? `<span class="eng-review-line eng-review-he"><span>${esc(t("yourAnswer"))}</span> <bdi>${esc(given)}</bdi></span>` : "";
       return `${question}<span class="eng-review-line eng-review-answer">${ICONS.check}${answer}</span>${yours}`;
     },
   };
@@ -5066,6 +5722,10 @@
   }
 
   function renderResults() {
+    if (runner.review?.placement) {
+      renderPlacementResults();
+      return;
+    }
     if (runner.review?.test) {
       renderTestResults();
       return;
@@ -5103,7 +5763,7 @@
     // A mistakes-only retry is a partial round: only the round it fixed counts.
     if (!isRetry || fixed) saveBest(`${topic.id}/${exercise.id}`, shown.score, shown.total);
     // Exercises built in the browser (english-more.js) have no AI-made items.
-    if (!runner.prepared && !exercise.derived) {
+    if (!runner.prepared && !exercise.derived && !exercise.set) {
       runner.prepared = true;
       preparePractice(topic, exercise);
     }
@@ -5429,9 +6089,17 @@
      and each topic's grade, come once it is handed in, and go to the
      teacher. Leaving in the middle keeps the place on this device. A test is
      handed in once; then the student can ask for a retake, which the
-     teacher opens (lib/student-progress.js). ── */
+     teacher opens (lib/student-progress.js).
+
+     Stage tests (#stage-test/<stage id>.<kind>) run the same way, but
+     nobody sends them: the student's map has them at the end of every stage
+     of the path, many kinds (english-tests.js, ENGLISH_STAGE_TESTS), each on
+     all the stage's topics and handed in once, with no retake. Some ask
+     picture words (picture / listening / spelling), and the speed test has
+     a clock that hands it in when it runs out. ── */
 
   const TEST_ROUTE = "test";
+  const STAGE_TEST_ROUTE = "stage-test";
   const TEST_NEXT_MS = 350;
   const TEST_PROGRESS_KEY = "pleyi-test-progress";
   const TEST_LEVEL = { choice: 1, truefalse: 2, order: 2, write: 3 };
@@ -5453,8 +6121,10 @@
     return testExercises[ask];
   }
 
-  // "topicId:index" — a question of the topic's test bank.
-  function testItem(key) {
+  // "topicId:index" — a question of the topic's test bank; "topicId@wordId"
+  // — a picture word of a stage test, asked the way its kind says.
+  function testItem(key, test = null) {
+    if (String(key).includes("@")) return stageWordItem(key, test);
     const [topicId, index] = String(key).split(":");
     const topic = findTopic(topicId);
     const q = window.ENGLISH_TESTS?.[topicId]?.[Number(index)];
@@ -5463,9 +6133,75 @@
     return { id: key, topic, source: exercise, exercise, q, item: q };
   }
 
+  // How a stage test asks a picture word: one made-up exercise per test,
+  // with the stage's words as the other answers.
+  const WORD_TESTS = {
+    picture: { type: "picture", level: 1, instructions: "בחרו את המילה שמתאימה לתמונה.", instructionsEn: "Choose the word that matches the picture." },
+    listen: { type: "listen", level: 2, instructions: "הקשיבו למילה ובחרו את התמונה המתאימה.", instructionsEn: "Listen to the word and choose the matching picture." },
+    spell: { type: "letters", level: 3, instructions: "סדרו את האותיות למילה שבתמונה.", instructionsEn: "Put the letters in order to spell the word in the picture." },
+  };
+
+  function stageWordItem(key, test) {
+    const [topicId, word] = String(key).split("@");
+    const topic = findTopic(topicId);
+    const q = wordItem(word);
+    if (!topic || !q || !WORD_TESTS[test?.kind?.words]) return null;
+    test.wordExercise ||= {
+      id: `stage-${test.kind.id}`,
+      title: STR.he.testTitle,
+      titleEn: STR.en.testTitle,
+      words: window.ENGLISH_STAGE_POOL(test.stage, test.kind).map((k) => k.split("@")[1]),
+      ...WORD_TESTS[test.kind.words],
+    };
+    return { id: key, topic, source: test.wordExercise, exercise: test.wordExercise, q, item: q };
+  }
+
+  // A stage test from the linked student's file ("<stage id>.<kind>"), when
+  // the stage has that kind: handed in already or not, and the questions the
+  // stage's other tests asked.
+  function stageTestOf(id, student) {
+    const [stageId, kindId] = String(id).split(".");
+    const stage = (window.ENGLISH_PATH || []).find((s) => s.id === stageId);
+    const kind = stage && (window.ENGLISH_STAGE_KINDS?.(stage) || []).find((k) => k.id === kindId);
+    if (!kind || !student) return null;
+    const done = student.stageTests?.[id];
+    return {
+      id,
+      stage,
+      kind,
+      title: loc(kind, "title"),
+      topics: stage.topics.map((topicId) => ({ id: topicId, title: findTopic(topicId)?.title || topicId })),
+      allowed: 1,
+      attempts: done ? [done] : [],
+      asked: Object.entries(student.stageTests || {})
+        .filter(([other]) => other.startsWith(`${stageId}.`))
+        .flatMap(([, t]) => t.asked || []),
+    };
+  }
+
+  // A stage test's questions: `size` of its kind, spread over the stage's
+  // topics — first the ones the stage's other tests didn't ask.
+  function buildStageTest(test) {
+    const asked = new Set(test.asked);
+    const byTopic = new Map();
+    window.ENGLISH_STAGE_POOL(test.stage, test.kind).forEach((key) => {
+      const topicId = key.split(/[:@]/)[0];
+      byTopic.set(topicId, [...(byTopic.get(topicId) || []), key]);
+    });
+    const lists = shuffle([...byTopic.values()]).map((keys) => [...shuffle(keys.filter((k) => !asked.has(k))), ...shuffle(keys.filter((k) => asked.has(k)))]);
+    const picked = [];
+    for (let i = 0; picked.length < test.kind.size && lists.some((list) => list.length > i); i++) {
+      lists.forEach((list) => {
+        if (i < list.length && picked.length < test.kind.size) picked.push(list[i]);
+      });
+    }
+    return shuffle(picked).map((key) => testItem(key, test)).filter(Boolean);
+  }
+
   // `perTopic` questions of each topic, in the order the teacher picked them;
   // a retake asks first the ones the last hand-in didn't.
   function buildTest(test) {
+    if (test.stage) return buildStageTest(test);
     const last = new Set(test.attempts?.[test.attempts.length - 1]?.asked || []);
     return (test.topics || []).flatMap((tp) => {
       const keys = (window.ENGLISH_TESTS?.[tp.id] || []).map((_, i) => `${tp.id}:${i}`);
@@ -5509,6 +6245,7 @@
       wrong: runner.mistakes.map((q) => review.items.findIndex((it) => it.q === q)),
       log: runner.mistakeLog,
       startedAt: runner.startedAt,
+      deadline: review.deadline || 0,
     });
   }
 
@@ -5516,21 +6253,36 @@
     return window.StudentProgress?.homeUrl() || "#";
   }
 
+  // A stage test goes back to the map, a teacher's test to the tasks.
+  function testHomeOf(test) {
+    // The placement test goes back to the path on this page.
+    if (test?.placement) return "#";
+    const home = testHome();
+    return test?.stage && home !== "#" ? `${home}#map` : home;
+  }
+
+  function testBackLabel(test) {
+    if (test?.placement) return t("back");
+    return t(test?.stage ? "backToMap" : "backToHomework");
+  }
+
   function onTestRoute() {
-    return decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0] === TEST_ROUTE;
+    return [TEST_ROUTE, STAGE_TEST_ROUTE].includes(decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0]);
   }
 
   // The test comes from the linked student's file, as it is now (a retake
-  // may have been opened a minute ago).
-  async function openTest(testId) {
+  // may have been opened a minute ago). `stage`: a stage test.
+  async function openTest(testId, stage = false) {
     const token = ++testToken;
-    renderReviewMessage(t("loading"), "", testHome(), t("testTitle"));
+    const home = stage ? testHomeOf({ stage }) : testHome();
+    renderReviewMessage(t("loading"), "", home, t("testTitle"));
     const student = await window.StudentProgress?.profile({ fresh: true });
     if (token !== testToken || !onTestRoute()) return;
-    const test = (student?.tests || []).find((x) => x.id === testId);
+    const test = stage ? stageTestOf(testId, student) : (student?.tests || []).find((x) => x.id === testId);
     runner.review = null;
     if (!test) {
-      renderReviewMessage(t("testMissing"), t(student ? "testMissingLead" : "testLinkOnly"), testHome(), t("testTitle"), t("backToHomework"));
+      const lead = !student ? "testLinkOnly" : stage ? "stageTestMissingLead" : "testMissingLead";
+      renderReviewMessage(t("testMissing"), t(lead), home, t("testTitle"), testBackLabel({ stage }));
       return;
     }
     const saved = readTestProgress(test);
@@ -5544,6 +6296,7 @@
   }
 
   function testTopicsHtml(test) {
+    if (test.stage) return `<p class="eng-test-stage">${esc(t("stageTestOn"))} <b>${esc(loc(test.stage, "title"))}</b></p>`;
     return `<ul class="eng-test-topics">${(test.topics || []).map((tp) => `<li>${esc(loc(findTopic(tp.id) || tp, "title"))}</li>`).join("")}</ul>`;
   }
 
@@ -5551,7 +6304,7 @@
     return `
       <div class="eng-runner-head">
         <div class="eng-runner-top">
-          <a class="eng-back" href="${esc(testHome())}" aria-label="${esc(t("backToHomework"))}" title="${esc(t("backToHomework"))}">${ICONS.back}</a>
+          <a class="eng-back" href="${esc(testHomeOf(test))}" aria-label="${esc(testBackLabel(test))}" title="${esc(testBackLabel(test))}">${ICONS.back}</a>
           <div class="eng-runner-title-row"><h2 class="font-cartoon eng-runner-title">${esc(test.title || t("testTitle"))}</h2></div>
         </div>
       </div>`;
@@ -5562,8 +6315,13 @@
     runner.phase = "message";
     const view = views.exercise();
     view.classList.remove("is-reading");
-    const count = saved?.keys?.length || (test.topics || []).reduce((n, tp) => n + Math.min(test.perTopic || 5, window.ENGLISH_TESTS?.[tp.id]?.length || 0), 0);
+    const count =
+      saved?.keys?.length ||
+      (test.stage
+        ? Math.min(test.kind.size, window.ENGLISH_STAGE_POOL(test.stage, test.kind).length)
+        : (test.topics || []).reduce((n, tp) => n + Math.min(test.perTopic || 5, window.ENGLISH_TESTS?.[tp.id]?.length || 0), 0));
     const retake = (test.attempts || []).length > 0;
+    const rules = test.stage ? [...t("stageTestRules"), ...(test.kind.minutes ? [t("stageTestClock", test.kind.minutes)] : [])] : t("testRules");
     view.innerHTML = `
       ${testHeadHtml(test)}
       <div class="eng-runner-card eng-review-empty eng-test-intro">
@@ -5571,7 +6329,7 @@
         ${retake ? `<span class="eng-test-badge">${esc(t("testRetakeBadge"))}</span>` : ""}
         ${testTopicsHtml(test)}
         <p class="eng-test-count">${esc(t("testCount", count))}</p>
-        <ul class="eng-test-rules">${t("testRules").map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
+        <ul class="eng-test-rules">${rules.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
         ${saved?.index ? `<p class="eng-test-resume">${esc(t("testResume", saved.index, saved.keys.length))}</p>` : ""}
         ${test.note ? `<p class="eng-test-note"><b>${esc(t("testNote"))}</b> ${esc(test.note)}</p>` : ""}
         <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engTestGo">${esc(t(saved?.index ? "testGoOn" : "testStart"))}</button>
@@ -5585,18 +6343,21 @@
     clearTimeout(runner.timer);
     stopExamTimer();
     runner.exam = null;
-    let items = saved ? saved.keys.map(testItem) : null;
+    let items = saved ? saved.keys.map((key) => testItem(key, test)) : null;
     // The test bank changed since: start over with new questions.
     if (!items || !items.length || items.some((it) => !it)) {
       saved = null;
       items = buildTest(test);
     }
     if (!items.length) {
-      renderReviewMessage(t("testMissing"), t("testMissingLead"), testHome(), t("testTitle"), t("backToHomework"));
+      renderReviewMessage(t("testMissing"), t(test.stage ? "stageTestMissingLead" : "testMissingLead"), testHomeOf(test), t("testTitle"), testBackLabel(test));
       return;
     }
     runner.testSend = null;
-    startMixedRound({ test, items, out: 0, back: testHome() });
+    // A test on the clock ends when it says, on this device's saved place.
+    const deadline = test.kind?.minutes ? saved?.deadline || Date.now() + test.kind.minutes * 60000 : 0;
+    startMixedRound({ test, items, out: 0, back: testHomeOf(test), deadline });
+    startTestClock();
     if (!saved) {
       saveTestProgress(0);
       return;
@@ -5609,6 +6370,62 @@
     runner.startedAt = saved.startedAt || runner.startedAt;
     if (runner.index >= items.length) renderResults();
     else renderQuestion();
+  }
+
+  /* The clock of a test with `minutes`: on top of every question, amber in
+     the last minute and red in the last 20 seconds. When it runs out, every
+     question not answered yet counts as wrong and the test is handed in. */
+  let testClock = null;
+
+  function clockText(deadline) {
+    const sec = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+  }
+
+  function testClockHtml() {
+    const deadline = runner.review?.deadline;
+    if (!deadline || runner.phase === "results") return "";
+    return `<span class="eng-exam-timer eng-test-clock" id="engTestClock" role="timer" aria-label="${esc(t("testClock"))}">${ICONS.clock}<span id="engTestClockTime">${clockText(deadline)}</span></span>`;
+  }
+
+  function startTestClock() {
+    clearInterval(testClock);
+    const { review } = runner;
+    if (!review?.deadline) return;
+    const tick = () => {
+      if (runner.review !== review || runner.phase === "results" || !onTestRoute()) {
+        clearInterval(testClock);
+        return;
+      }
+      const left = review.deadline - Date.now();
+      const clock = $("#engTestClock");
+      if (clock) {
+        $("#engTestClockTime").textContent = clockText(review.deadline);
+        clock.classList.toggle("is-low", left <= 60000 && left > 20000);
+        clock.classList.toggle("is-urgent", left <= 20000);
+      }
+      if (left <= 0) testTimeUp();
+    };
+    testClock = setInterval(tick, 1000);
+    tick();
+  }
+
+  function testTimeUp() {
+    clearInterval(testClock);
+    clearTimeout(runner.timer);
+    const { review } = runner;
+    review.items.slice(runner.answered ? runner.index + 1 : runner.index).forEach((it) => {
+      runner.topic = it.topic;
+      runner.exercise = it.exercise;
+      runner.mistakes.push(it.q);
+      runner.mistakeLog.push({ ...mistakeRecord(it.q, ""), given: "לא הספיק לענות" });
+    });
+    review.timeUp = true;
+    runner.answered = true;
+    runner.index = review.items.length;
+    saveTestProgress(review.items.length);
+    renderResults();
+    playSfx("finish");
   }
 
   // Right answers and questions of every topic of the test.
@@ -5626,7 +6443,9 @@
     return total ? Math.round((score / total) * 100) : 0;
   }
 
+  // A stage of many topics shows the grade alone: the screen has no room.
   function testByTopicHtml(test, byTopic) {
+    if (test.stage && (test.topics || []).length > 5) return "";
     const rows = (test.topics || [])
       .filter((tp) => byTopic?.[tp.id]?.total)
       .map((tp) => {
@@ -5650,6 +6469,7 @@
           <p class="eng-score font-cartoon">${grade}</p>
         </div>
         <p class="eng-results-count">${esc(t("score", score, total))}</p>
+        ${review.timeUp ? `<p class="eng-test-asked">${esc(t("testTimeUp"))}</p>` : ""}
         ${testByTopicHtml(review.test, testByTopic())}
         <p class="eng-results-msg eng-test-status" id="engTestStatus" aria-live="polite"></p>
         <div class="eng-results-actions" id="engTestActions"></div>
@@ -5667,13 +6487,16 @@
     if (send.state === "idle" || send.state === "failed") {
       send.state = "sending";
       const levels = review.items.map((it) => exerciseLevel(it.exercise));
+      // The teacher's page is in Hebrew: a stage test is named by its kind
+      // and stage.
+      const stage = test.stage;
       const activity = {
         kind: "exercise",
-        topicId: TEST_ROUTE,
-        topicTitle: STR.he.testTitle,
+        topicId: stage ? STAGE_TEST_ROUTE : TEST_ROUTE,
+        topicTitle: stage ? `${STR.he.testTitle}: ${stage.title}` : STR.he.testTitle,
         exerciseId: test.id,
-        exerciseTitle: test.title || STR.he.testTitle,
-        type: "test",
+        exerciseTitle: stage ? `${test.kind.title} · ${stage.title}` : test.title || STR.he.testTitle,
+        type: stage ? "stage-test" : "test",
         level: Math.round(levels.reduce((a, b) => a + b, 0) / Math.max(1, levels.length)) || 1,
         score: runner.score,
         total: runner.total,
@@ -5714,14 +6537,21 @@
     actions.innerHTML = `
       ${send.state === "failed" ? `<button type="button" class="btn btn-primary btn-candy font-cartoon" id="engTestResend">${esc(t("testRetry"))}</button>` : ""}
       ${send.state === "sent" ? retakeHtml(test) : ""}
-      ${homeworkButtonHtml()}`;
+      ${testBackButtonHtml(test)}`;
     $("#engTestResend")?.addEventListener("click", sendTest);
     bindRetake(test);
   }
 
+  function testBackButtonHtml(test) {
+    if (!test.stage) return homeworkButtonHtml();
+    const home = testHomeOf(test);
+    return home !== "#" ? `<a class="btn btn-candy font-cartoon eng-btn-secondary" href="${esc(home)}">${esc(t("backToMap"))}</a>` : "";
+  }
+
   // The way to a retake once a test is handed in: a button, or where the
-  // request stands.
+  // request stands. A stage test has none.
   function retakeHtml(test) {
+    if (test.stage) return "";
     if (test.retakeAt) return `<p class="eng-test-asked">${esc(t("testAsked"))}</p>`;
     return `
       ${test.retakeDeclinedAt ? `<p class="eng-test-asked">${esc(t("testDeclined"))}</p>` : ""}
@@ -5766,16 +6596,345 @@
           </div>
           <p class="eng-results-count">${esc(t("score", last.score || 0, last.total || 0))}</p>
           ${testByTopicHtml(test, last.byTopic)}
+          ${test.stage ? `<p class="eng-test-asked">${esc(t("stageTestOnce"))}</p>` : ""}
           <p class="eng-results-msg eng-test-status" id="engTestStatus" aria-live="polite"></p>
-          <div class="eng-results-actions">${retakeHtml(test)}${homeworkButtonHtml()}</div>
+          <div class="eng-results-actions">${retakeHtml(test)}${testBackButtonHtml(test)}</div>
         </div>
       </div>`;
     bindRetake(test);
   }
 
+  /* ── The placement test (#placement): finds the stage of the learning
+     path (ENGLISH_PATH) to start in. It climbs the road's stages from the
+     first, with questions of each stage's test bank (english-tests.js): a
+     choice question, then one to type or put in order (hard to guess), and
+     a third only when one of the two was wrong. Two right answers pass a
+     stage and the test goes on to the next; the first stage it doesn't pass
+     is where the student starts, and the test ends there. Passing every
+     stage it asks about starts the student in the road's last stage.
+     As in a test, nothing is checked on the way; "לא יודע" counts as a
+     wrong answer. The result stays on this device (PLACEMENT_KEY, per
+     student link) and, for a linked student, goes to the file
+     (lib/student-progress.js): the teacher sees it and the student's map
+     starts from it. The topics page shows it above the path, and marks the
+     stage with "מתחילים כאן". ── */
+
+  const PLACEMENT_ROUTE = "placement";
+  const PLACEMENT_KEY = "pleyi-placement";
+  const PLACE_PASS = 2;
+  const PLACE_SLOTS = [["choice"], ["order", "write"], ["choice"]];
+  // The stage the topics page scrolls to once it is drawn.
+  let placeScrollTo = "";
+  // The linked student's result in the file: undefined until asked for.
+  let placeFromFile;
+
+  // The road: the path without the vocabulary stage, whose words go with
+  // every stage, and other side stages (the reading themes) —
+  // lib/english-map.js.
+  function roadStages() {
+    return PATH.filter((stage) => !stage.side && !stage.topics.includes("vocabulary"));
+  }
+
+  // The stages the test asks about: all of the road's but the last.
+  function placementStages() {
+    return roadStages()
+      .slice(0, -1)
+      .filter((stage) => stage.topics.some((id) => findTopic(id) && window.ENGLISH_TESTS?.[id]?.length));
+  }
+
+  function placementAvailable() {
+    return !SUBJECT && !!window.ENGLISH_TESTS && placementStages().length > 0;
+  }
+
+  function readPlacement() {
+    try {
+      const saved = (JSON.parse(localStorage.getItem(PLACEMENT_KEY)) || {})[window.StudentProgress?.key() || ""];
+      return saved && typeof saved.stageId === "string" ? saved : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function writePlacement(result) {
+    try {
+      const all = JSON.parse(localStorage.getItem(PLACEMENT_KEY)) || {};
+      all[window.StudentProgress?.key() || ""] = result;
+      localStorage.setItem(PLACEMENT_KEY, JSON.stringify(all));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // The last result: this device's or the file's, whichever is newer, with
+  // its stage and the stage's number on the path.
+  function placementResult() {
+    const own = readPlacement();
+    const file = placeFromFile || null;
+    const last = file && (!own || String(file.at) >= String(own.at)) ? file : own;
+    const stage = last && PATH.find((s) => s.id === last.stageId);
+    return stage ? { ...last, stage, num: PATH.indexOf(stage) + 1 } : null;
+  }
+
+  // A linked student's result from the file, once: the topics page is drawn
+  // again when it is there.
+  function loadPlacementFromFile() {
+    if (placeFromFile !== undefined || !window.StudentProgress?.isLinked()) return;
+    placeFromFile = null;
+    window.StudentProgress.profile().then((student) => {
+      if (!student?.placement) return;
+      placeFromFile = student.placement;
+      if (!views.topics()?.classList.contains("hidden")) renderTopicGrid();
+    });
+  }
+
+  // Above the path: the way to the test, or its result with a way to the
+  // stage (and to take it again).
+  function placementBoxHtml() {
+    if (!placementAvailable()) return "";
+    const result = placementResult();
+    if (!result) {
+      return `
+        <section class="eng-place" id="engPlace">
+          <span class="eng-place-icon" aria-hidden="true">${ICONS.stairs}</span>
+          <div class="eng-place-text">
+            <p class="eng-place-title"><span class="eng-place-key">${esc(t("placeAsk"))}</span></p>
+            <p class="eng-place-line">${esc(t("placeAskLead"))}</p>
+          </div>
+          <div class="eng-place-acts">
+            <a class="btn btn-primary btn-candy font-cartoon eng-place-btn" href="#${PLACEMENT_ROUTE}">${esc(t("placeOpen"))}</a>
+          </div>
+        </section>`;
+    }
+    return `
+      <section class="eng-place is-done" id="engPlace">
+        <span class="eng-place-icon" aria-hidden="true">${ICONS.stairs}</span>
+        <div class="eng-place-text">
+          <p class="eng-place-title"><span class="eng-place-key">${esc(t("placeResult"))}</span></p>
+          <p class="eng-place-line">${esc(t("placeResultLine", result.num, loc(result.stage, "title")))}</p>
+        </div>
+        <div class="eng-place-acts">
+          <button type="button" class="btn btn-primary btn-candy font-cartoon eng-place-btn" data-place-go="${esc(result.stage.id)}">${esc(t("placeGo", result.num))}</button>
+          <a class="eng-place-again" href="#${PLACEMENT_ROUTE}">${esc(t("placeAgain"))}</a>
+        </div>
+      </section>`;
+  }
+
+  function bindPlacementBox(grid) {
+    $("[data-place-go]", grid)?.addEventListener("click", (e) => {
+      placeScrollTo = e.currentTarget.dataset.placeGo;
+      scrollToPlacedStage();
+    });
+  }
+
+  // The stage the result goes to: a grade filter that hides it is let go.
+  function scrollToPlacedStage() {
+    if (!placeScrollTo) return;
+    const el = document.getElementById(`engStage-${placeScrollTo}`);
+    if (!el && GRADES && gradeFilter !== "all") {
+      gradeFilter = "all";
+      GRADES.setInUrl(gradeFilter);
+      renderTopicGrid();
+      return;
+    }
+    placeScrollTo = "";
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
+
+  function placementTest() {
+    return { id: PLACEMENT_ROUTE, title: t("placeTitle"), placement: true };
+  }
+
+  // The next question of the stage the test is in: of the slot's types if
+  // the stage has one left, else any choice question, else any; a topic of
+  // the stage it didn't ask about yet first.
+  function placementItem(place) {
+    const stage = place.stages[place.stage];
+    if (!stage) return null;
+    const keys = (fit) =>
+      stage.topics
+        .filter((id) => findTopic(id))
+        .flatMap((id) => (window.ENGLISH_TESTS?.[id] || []).map((q, i) => (fit(q) ? `${id}:${i}` : "")))
+        .filter((key) => key && !place.asked.has(key));
+    const types = PLACE_SLOTS[place.slot] || ["choice"];
+    let pool = keys((q) => types.includes(q.type));
+    if (!pool.length) pool = keys((q) => q.type === "choice");
+    if (!pool.length) pool = keys(() => true);
+    const fresh = pool.filter((key) => !place.stageTopics.has(key.split(":")[0]));
+    const key = shuffle(fresh.length ? fresh : pool)[0];
+    if (!key) return null;
+    place.asked.add(key);
+    place.stageTopics.add(key.split(":")[0]);
+    return testItem(key);
+  }
+
+  // After every answer: a stage is passed with two right, missed with two
+  // wrong. The next question joins the round; none ends the test.
+  function placementStep(isRight) {
+    const { review } = runner;
+    const place = review.placement;
+    if (isRight) place.right++;
+    place.slot++;
+    if (place.right >= PLACE_PASS) {
+      place.passed++;
+      place.stage++;
+      place.slot = 0;
+      place.right = 0;
+      place.stageTopics = new Set();
+      if (place.stage >= place.stages.length) return;
+    } else if (place.slot - place.right > PLACE_SLOTS.length - PLACE_PASS) {
+      return;
+    }
+    const item = placementItem(place);
+    if (!item) return;
+    review.items.push(item);
+    runner.round.push(item.q);
+    runner.total = runner.round.length;
+  }
+
+  // The stage to start in, and its number on the path.
+  function placementOutcome(place) {
+    const road = roadStages();
+    const stage = place.passed < place.stages.length ? place.stages[place.passed] : road[road.length - 1];
+    return { stage, num: PATH.indexOf(stage) + 1 };
+  }
+
+  function placeSkipHtml() {
+    if (!runner.review?.placement || runner.phase !== "question") return "";
+    return `<button type="button" class="eng-place-skip" id="engPlaceSkip">${esc(t("placeSkip"))}</button>`;
+  }
+
+  // "לא יודע": a wrong answer, kept for the teacher as such.
+  function placementSkip() {
+    if (!runner.review?.placement || runner.answered || runner.phase !== "question") return;
+    runner.answered = true;
+    lockAnswers();
+    $("#engPlaceSkip")?.setAttribute("disabled", "");
+    $("#engCheck")?.setAttribute("disabled", "");
+    testAnswer(runner.round[runner.index], false, STR.he.placeSkip);
+  }
+
+  function openPlacement() {
+    clearTimeout(runner.timer);
+    stopExamTimer();
+    runner.exam = null;
+    runner.review = null;
+    if (!placementAvailable()) {
+      renderReviewMessage(t("testMissing"), t("stageTestMissingLead"), "#", t("placeTitle"), t("back"));
+      return;
+    }
+    renderPlacementIntro();
+  }
+
+  // Before the first question: what the test is and how it goes.
+  function renderPlacementIntro() {
+    runner.phase = "message";
+    const view = views.exercise();
+    view.classList.remove("is-reading");
+    const last = placementResult();
+    view.innerHTML = `
+      ${testHeadHtml(placementTest())}
+      <div class="eng-runner-card eng-review-empty eng-test-intro eng-place-intro">
+        <span class="eng-review-empty-icon">${ICONS.stairs}</span>
+        <ul class="eng-test-rules">${t("placeLead").map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
+        ${last ? `<p class="eng-test-resume">${esc(t("placeLast", last.num, loc(last.stage, "title")))}</p>` : ""}
+        <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engPlaceGo">${esc(t("testStart"))}</button>
+      </div>`;
+    $("#engPlaceGo").addEventListener("click", startPlacement);
+    $("#engPlaceGo").focus({ preventScroll: true });
+  }
+
+  function startPlacement() {
+    clearTimeout(runner.timer);
+    const place = { stages: placementStages(), stage: 0, slot: 0, right: 0, passed: 0, asked: new Set(), stageTopics: new Set() };
+    const first = placementItem(place);
+    if (!first) return;
+    runner.placeSend = null;
+    startMixedRound({ test: placementTest(), placement: place, items: [first], out: 0, back: "#" });
+  }
+
+  // The stage to start in, big, and the way to it on the path (and to the
+  // student's map). The result is kept here at once, and sent to the file.
+  function renderPlacementResults() {
+    const { review } = runner;
+    const place = review.placement;
+    runner.phase = "results";
+    const { stage, num } = placementOutcome(place);
+    if (!place.saved) {
+      place.saved = { stageId: stage.id, at: new Date().toISOString() };
+      writePlacement(place.saved);
+    }
+    const all = place.passed >= place.stages.length;
+    const lead = all ? t("placeAll") : place.passed ? t("placeKnown", place.passed) : t("placeFromStart");
+    const home = window.StudentProgress?.homeUrl();
+    renderRunnerShell(`
+      <div class="eng-results eng-place-results">
+        <div class="eng-grade">
+          <span class="eng-grade-label">${esc(t("placeStartAt"))}</span>
+          <p class="eng-score font-cartoon">${num}</p>
+        </div>
+        <p class="eng-place-stage">${esc(loc(stage, "title"))}</p>
+        <p class="eng-results-count">${esc(lead)}</p>
+        <div class="eng-results-msg eng-test-status" id="engPlaceStatus" aria-live="polite"></div>
+        <div class="eng-results-actions">
+          <button type="button" class="btn btn-primary btn-candy font-cartoon" id="engPlaceToStage">${esc(t("placeGo", num))}</button>
+          ${home ? `<a class="btn btn-candy font-cartoon eng-btn-secondary" href="${esc(home)}#map">${esc(t("backToMap"))}</a>` : ""}
+        </div>
+      </div>`);
+    $("#engPlaceToStage").addEventListener("click", () => {
+      placeScrollTo = stage.id;
+      location.hash = "";
+    });
+    if (all) launchConfetti();
+    playSfx("finish");
+    sendPlacement();
+  }
+
+  // A linked student's result goes to the file once; a failed send can be
+  // sent again.
+  function sendPlacement() {
+    const { review } = runner;
+    if (!window.StudentProgress?.isLinked()) return;
+    const place = review.placement;
+    const send = (runner.placeSend ||= { state: "idle" });
+    if (send.state === "idle" || send.state === "failed") {
+      send.state = "sending";
+      const { stage, num } = placementOutcome(place);
+      window.StudentProgress.record({
+        kind: "exercise",
+        topicId: PLACEMENT_ROUTE,
+        topicTitle: STR.he.placeTitle,
+        exerciseId: PLACEMENT_ROUTE,
+        exerciseTitle: `${STR.he.placeTitle} · שלב ${num}: ${stage.title}`,
+        type: "placement",
+        level: 1,
+        score: runner.score,
+        total: runner.total,
+        durationSec: Math.round((Date.now() - runner.startedAt) / 1000),
+        mistakes: runner.mistakeLog,
+        stageId: stage.id,
+        passed: place.passed,
+      }).then((res) => {
+        send.state = res ? "sent" : "failed";
+        if (res) placeFromFile = { ...place.saved };
+        if (runner.review === review && runner.phase === "results") showPlacementStatus();
+      });
+    }
+    showPlacementStatus();
+  }
+
+  function showPlacementStatus() {
+    const box = $("#engPlaceStatus");
+    const send = runner.placeSend;
+    if (!box || !send) return;
+    const text = send.state === "sending" ? t("placeSaving") : send.state === "sent" ? t("placeSaved") : t("placeFailed");
+    box.classList.toggle("is-error", send.state === "failed");
+    box.innerHTML = `<span>${esc(text)}</span>${send.state === "failed" ? ` <button type="button" class="eng-place-again" id="engPlaceResend">${esc(t("placeRetry"))}</button>` : ""}`;
+    $("#engPlaceResend")?.addEventListener("click", sendPlacement);
+  }
+
   /* ── The daily challenge: five short questions a day, mixed from the
      exercises the student already finished (their file's and this
-     browser's), or from the first topics of the path for a new visitor.
+     browser's) — nothing else.
      Finishing a round on a new day keeps the streak of days in a row going:
      a linked student's in their file (lib/student-progress.js has the same
      rules), a visitor's in this browser.
@@ -5866,16 +7025,14 @@
     return ex && !["reading", "exam", "speak"].includes(ex.type);
   }
 
+  // Only the exercises the student solved, mixed: none yet, and the round
+  // asks them to solve one first.
   async function dailyKeys() {
     const student = await window.StudentProgress?.profile();
-    const solved = [...new Set([...(student?.finished || []), ...Object.keys(readBest())])].filter((key) => {
+    return [...new Set([...(student?.finished || []), ...Object.keys(readBest())])].filter((key) => {
       const [topicId, exerciseId] = key.split("/");
       return dailyFits(findExercise(findTopic(topicId), exerciseId));
     });
-    if (solved.length >= 2) return solved;
-    return pathTopics()
-      .slice(0, 3)
-      .flatMap((topic) => (topic.exercises || []).filter((ex) => dailyFits(ex) && exerciseLevel(ex) === 1).map((ex) => `${topic.id}/${ex.id}`));
   }
 
   async function openDaily() {
@@ -6278,7 +7435,7 @@
     runner.phase = "cards";
     const view = views.exercise();
     view.classList.remove("is-reading");
-    document.documentElement.classList.remove("eng-soft");
+    setSoft(false);
     view.innerHTML = `
       <div class="eng-runner-head">
         <div class="eng-runner-top">
@@ -7238,12 +8395,12 @@
   }
 
   // The exercise on paper (english-exercise-sheets.js), where it has a paper
-  // form.
+  // form. Shown only to a signed-in teacher (html.eng-teacher, set in init).
   function paperBtnHtml(topic, ex) {
     if (SUBJECT || !window.EnglishExerciseSheets?.canPrint(ex)) return "";
     const href = `/services/english-worksheet?topic=${encodeURIComponent(topic.id)}&exercise=${encodeURIComponent(ex.id)}`;
     const label = esc(t("paperSheet", exerciseName(ex)));
-    return `<a class="eng-info-btn" href="${esc(href)}" aria-label="${label}" title="${label}">${ICONS.download}</a>`;
+    return `<a class="eng-info-btn eng-paper-btn" href="${esc(href)}" aria-label="${label}" title="${label}">${ICONS.download}</a>`;
   }
 
   function infoBtnHtml(ex) {
@@ -7514,12 +8671,12 @@
     reading(ex) {
       // The shortest closed question, so the example stays small.
       const size = (item) => item.q.length + (item.options || ["true"]).join("").length;
-      const closed = ex.questions.filter((item) => item.type !== "open");
+      const closed = ex.questions.filter((item) => item.type === "mc" || item.type === "tf");
       const q = closed.length ? closed.reduce((a, b) => (size(b) < size(a) ? b : a)) : ex.questions[0];
       let answer = "";
       if (q.type === "mc") answer = helpOptions(answerInMiddle(q.options, q.answer), q.answer);
       else if (q.type === "tf") answer = helpBadge(q.answer);
-      else answer = `<p class="eng-help-tr">${esc(t("modelAnswer"))} ${esc(lang() === "en" && q.answerEn ? q.answerEn : q.answer)}</p>`;
+      else answer = `<p class="eng-help-tr">${esc(t("modelAnswer"))} ${esc(rightAnswerText(q))}</p>`;
       const question = `<p class="eng-help-q" dir="auto">${esc(q.type === "open" ? openQuestionText(q) : q.q)}</p>${answer}`;
       if (!ex.mark) return question;
       // A short stretch of the passage around the first word to find, with
@@ -7824,10 +8981,18 @@
       window.scrollTo({ top: 0 });
       return;
     }
-    if (topicId === TEST_ROUTE && !SUBJECT) {
+    if ((topicId === TEST_ROUTE || topicId === STAGE_TEST_ROUTE) && !SUBJECT) {
       if (gameLessonReturn) forgetLessonReturn();
       showView("exercise");
-      openTest(exerciseId || "");
+      openTest(exerciseId || "", topicId === STAGE_TEST_ROUTE);
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    // A teacher's task sends #placement/placement.
+    if (topicId === PLACEMENT_ROUTE && !SUBJECT) {
+      if (gameLessonReturn) forgetLessonReturn();
+      showView("exercise");
+      openPlacement();
       window.scrollTo({ top: 0 });
       return;
     }
@@ -7865,13 +9030,36 @@
       window.scrollTo({ top: 0 });
       return;
     }
+    // A teacher's own lesson's trivia: its questions came with the lesson's note.
+    if (topicId === MY_LESSONS_ROUTE && exerciseId === "game-trivia") {
+      const ret = readLessonReturn(`${MY_LESSONS_ROUTE}/game-trivia`);
+      const trivia = window.EnglishGames?.find("trivia");
+      if (ret?.trivia?.length >= (window.EnglishGames?.MIN_QUESTIONS || 4) && trivia) {
+        showView("exercise");
+        startGame({ id: MY_LESSONS_ROUTE, title: ret.lessonName || "", trivia: ret.trivia, subject: ret.subject }, trivia);
+        window.scrollTo({ top: 0 });
+        return;
+      }
+    }
     const topic = findTopic(topicId);
+    // The lesson's "practice" button: the topic page, at its exercises.
+    if (topic && exerciseId === PRACTICE_ANCHOR) {
+      history.replaceState(null, "", `${location.pathname}${location.search}#${encodeURIComponent(topic.id)}`);
+      if (gameLessonReturn) forgetLessonReturn();
+      showView("topic");
+      renderTopic(topic);
+      dockBack();
+      requestAnimationFrame(() => $("#engPractice")?.scrollIntoView({ block: "start" }));
+      return;
+    }
     const exercise = findExercise(topic, exerciseId);
     const game = !exercise && findGame(topic, exerciseId);
     // A lesson task's link (#<topic>/lesson-<id>): the topic's page with the
     // lesson open over it. The address drops the lesson, so closing it
     // leaves the student on the topic.
-    const lessonId = /^lesson-(.+)$/.exec(exerciseId || "")?.[1];
+    // A task sent before two short lessons were merged opens the merged one.
+    const taskLessonId = /^lesson-(.+)$/.exec(exerciseId || "")?.[1];
+    const lessonId = window.ENGLISH_LESSON_MERGED?.[taskLessonId] || taskLessonId;
     if (topic && lessonId && topicLessonIds(topic).includes(lessonId)) {
       history.replaceState(null, "", `${location.pathname}${location.search}#${encodeURIComponent(topic.id)}`);
       if (gameLessonReturn) forgetLessonReturn();
@@ -7887,13 +9075,14 @@
 
     if (topic && exercise) {
       showView("exercise");
+      runner.back = exerciseBack(topic, exercise);
       startExercise(topic, exercise);
     } else if (topic && game) {
       showView("exercise");
       startGame(topic, game);
     } else if (topic) {
       showView("topic");
-      renderTopic(topic);
+      renderTopic(topic, setIdOf(exerciseId));
       dockBack();
     } else {
       showView("topics");
@@ -7930,11 +9119,21 @@
 
   function refreshTopicStatus() {
     if (views.topic()?.classList.contains("hidden")) return;
-    const topic = findTopic(decodeURIComponent(location.hash.replace(/^#/, "")).split("/")[0]);
+    const [topicId, sub] = decodeURIComponent(location.hash.replace(/^#/, "")).split("/");
+    const topic = findTopic(topicId);
     if (topic) {
-      renderTopic(topic);
+      renderTopic(topic, setIdOf(sub));
       dockBack();
     }
+  }
+
+  // "#<topic>/practice": the topic page, scrolled to its exercises.
+  const PRACTICE_ANCHOR = "practice";
+  // "#my-lessons/game-trivia": a teacher's own lesson's trivia.
+  const MY_LESSONS_ROUTE = "my-lessons";
+
+  function setIdOf(part) {
+    return part?.startsWith(SET_PREFIX) ? part.slice(SET_PREFIX.length) : "";
   }
 
   function applyStaticLabels() {
@@ -7947,6 +9146,9 @@
   }
 
   function init() {
+    // Teacher-only bits (the exercise's paper-sheet download) show when a
+    // teacher is signed in; a student is never signed in on these pages.
+    window.GameAuth?.onUserChange?.((user) => document.documentElement.classList.toggle("eng-teacher", !!user));
     slideViewer.bind();
     bindRunnerKeys();
     applyStaticLabels();

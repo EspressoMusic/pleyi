@@ -1,7 +1,8 @@
 /* The demo on the home page ("מי אנחנו") — a short tour of the real site:
    library → a lesson → its games → exercises → the student's page.
    data-site-demo="road" plays the road-safety site's tour instead (on
-   /road-safety): lessons → a lesson → a game → an exercise.
+   /road-safety): lessons → a lesson → a game → an exercise; "english" the
+   English site's (/learn-english), the same way.
 
    - Every home screen is a real screenshot (images/demo/, taken at 1024x640
      from the "הר געש" lesson); a pretend cursor moves and clicks between
@@ -38,11 +39,11 @@
     { shot: "topic", path: "/services/health#volcano", wait: 800 },
     { click: [13.3, 38.1] },
     { shot: "slide1", path: "/services/ready-lessons?lesson=volcano", wait: 2000 },
-    { click: [3.3, 52.2] },
+    { click: [3.3, 51.6] },
     { shot: "slide2", wait: 2000 },
-    { click: [3.3, 52.2] },
+    { click: [3.3, 51.6] },
     { shot: "games", wait: 800 },
-    { click: [62.3, 36.3] },
+    { click: [62.3, 37] },
     { shot: "game", path: "/play/vocabulary-duel", wait: 1100 },
     { click: [66.8, 48.8] },
     { shot: "game-right", wait: 1700 },
@@ -64,6 +65,22 @@
     { click: "next2" },
     { shot: "game", wait: 1100 },
     { click: "safe" },
+    { done: true, wait: 1700 },
+    { shot: "exercise", wait: 1300 },
+    { click: "answer" },
+    { done: true, wait: 2200 },
+  ];
+  // The English site (/learn-english): lessons → a lesson → a word game →
+  // an exercise, in drawn screens like the road tour's.
+  TOURS.english = [
+    { shot: "lessons", wait: 1500 },
+    { click: "lesson" },
+    { shot: "slide1", wait: 2000 },
+    { click: "next1" },
+    { shot: "slide2", wait: 2000 },
+    { click: "next2" },
+    { shot: "game", wait: 1100 },
+    { click: "word" },
     { done: true, wait: 1700 },
     { shot: "exercise", wait: 1300 },
     { click: "answer" },

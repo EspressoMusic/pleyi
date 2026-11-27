@@ -180,14 +180,21 @@ window.StudentProgress = (() => {
     }
   }
 
-  /* Certificates (lib/english-map.js, one per stage, by its English title)
+  /* Certificates (lib/english-map.js, one per stage, by its English title;
+     the school subjects' stages and lib/certificates.js, by their id)
      earned since this device last showed the student's prizes. The first
      look takes the ones earned already as seen, so they don't all come at
      once. */
   const CERTS_SEEN_KEY = "pleyi-certs-seen";
 
   function earnedCertificates(student) {
-    return (student?.map?.stages || []).filter((stage) => stage.cert?.earned).map((stage) => stage.titleEn);
+    const english = (student?.map?.stages || []).filter((stage) => stage.cert?.earned).map((stage) => stage.titleEn);
+    const subjects = (student?.subjects || [])
+      .flatMap((subject) => subject.map?.stages || [])
+      .filter((stage) => stage.cert?.earned)
+      .map((stage) => stage.cert.id);
+    const more = (student?.moreCerts || []).filter((cert) => cert.earned).map((cert) => cert.id);
+    return [...english, ...subjects, ...more];
   }
 
   function markCertificatesSeen(student) {

@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="Pleyi"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="mobile-web-app-capable" content="yes"/>
-  <script src="/js/pwa.js?v=2"></script>
+  <script src="/js/pwa.js?v=4"></script>
   <title>Pleyi — לימוד דרך משחקים</title>
   <meta name="description" content="משחקי למידה למורים — פתחו חדר כיתה, התלמידים מצטרפים מהטלפון, ושחקו יחד בזמן אמת."/>
   <link rel="canonical" href="https://pleyschool.com/"/>
@@ -51,13 +51,14 @@
     }
   ]
   </script>
-  <link rel="stylesheet" href="styles.css?v=72"/>
+  <link rel="stylesheet" href="styles.css?v=80"/>
   <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
-  <link rel="stylesheet" href="css/clean-site.css?v=106"/>
+  <link rel="stylesheet" href="css/clean-site.css?v=110"/>
   <link rel="stylesheet" href="css/legal.css?v=3"/>
   <link rel="stylesheet" href="css/accessibility.css?v=1" />
-  <link rel="stylesheet" href="/css/site-fox.css?v=21"/>
-  <link rel="stylesheet" href="/css/site-pro.css?v=2"/>
+  <link rel="stylesheet" href="/css/site-fox.css?v=26"/>
+  <link rel="stylesheet" href="/css/site-pro.css?v=5"/>
+  <link rel="stylesheet" href="/css/newsletter.css?v=1"/>
 </head>
 <body class="clean-site">
 
@@ -97,7 +98,6 @@
       <a href="/services/ready-lessons" class="nav-services-link" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
       <a href="/services/worksheets" class="nav-services-link" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
       <a href="/services/class-games" class="nav-services-link" role="menuitem">משחקים</a>
-      <a href="/road-safety" class="nav-services-link" role="menuitem">זהירות בדרכים</a>
     </div>
   </header>
 
@@ -109,7 +109,6 @@
         <a href="/services/ready-lessons" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
         <a href="/services/worksheets" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
         <a href="/services/class-games" role="menuitem">משחקים</a>
-        <a href="/road-safety" role="menuitem">זהירות בדרכים</a>
       </div>
     </div>
     <a href="#about" data-i18n="nav.about">מי אנחנו</a>
@@ -163,9 +162,9 @@
               <img class="about-demo-shot" data-shot="library-menu" src="/images/demo/library-menu.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
               <img class="about-demo-shot" data-shot="subject" src="/images/demo/subject.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
               <img class="about-demo-shot" data-shot="topic" src="/images/demo/topic.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
-              <img class="about-demo-shot" data-shot="slide1" src="/images/demo/slide1.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
-              <img class="about-demo-shot" data-shot="slide2" src="/images/demo/slide2.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
-              <img class="about-demo-shot" data-shot="games" src="/images/demo/games.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="slide1" src="/images/demo/slide1.webp?v=3" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="slide2" src="/images/demo/slide2.webp?v=3" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
+              <img class="about-demo-shot" data-shot="games" src="/images/demo/games.webp?v=3" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
               <img class="about-demo-shot" data-shot="game" src="/images/demo/game.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
               <img class="about-demo-shot" data-shot="game-right" src="/images/demo/game-right.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
               <img class="about-demo-shot" data-shot="exercise" src="/images/demo/exercise.webp?v=2" alt="" width="1536" height="960" loading="lazy" decoding="async" draggable="false" />
@@ -254,6 +253,22 @@
           <button type="button" class="news-arrow news-arrow--prev" aria-label="העדכון הקודם"></button>
           <button type="button" class="news-arrow news-arrow--next" aria-label="העדכון הבא"></button>
         </div>
+        <!-- Newsletter sign-up into a Brevo list (newsletter.js);
+             stays hidden until the server has a Brevo key -->
+        <form class="newsletter-box" id="newsletterForm" hidden novalidate>
+          <h3 class="newsletter-title"><span class="newsletter-key">רוצים לשמוע על דברים חדשים?</span></h3>
+          <p class="newsletter-text">השאירו מייל</p>
+          <p class="newsletter-text">ונשלח עדכון כשיש משהו חדש באתר</p>
+          <div class="newsletter-row">
+            <label class="newsletter-label" for="newsletterEmail">כתובת מייל</label>
+            <input type="email" id="newsletterEmail" class="newsletter-input" name="email" dir="ltr" autocomplete="email" inputmode="email" maxlength="254" placeholder="name@example.com" required />
+            <button type="submit" class="newsletter-btn">הרשמה</button>
+          </div>
+          <input type="text" name="website" class="newsletter-trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <p class="newsletter-msg" role="status" aria-live="polite"></p>
+          <p class="newsletter-note">אפשר להסיר את עצמכם בכל רגע</p>
+          <p class="newsletter-note">בקישור שבתחתית כל מייל · <a href="/legal/privacy.html#newsletter">פרטיות</a></p>
+        </form>
       </div>
       <!-- A card's picture, big (news-carousel.js) -->
       <dialog class="news-zoom" aria-label="תמונה">
@@ -312,6 +327,8 @@
         <span data-i18n="footer.taglineLead">לימוד במשחקים&nbsp;— </span><span class="footer-tagline-accent" data-i18n="footer.taglineAccent">בכל שיעור!</span>
       </p>
       <nav class="site-legal-nav" aria-label="מידע משפטי">
+        <a href="/learn-english">אנגלית</a>
+        <a href="/road-safety">זהירות בדרכים</a>
         <a href="/blog">בלוג</a>
         <a href="/english">מדריך אנגלית</a>
         <a href="/legal/terms.html">תקנון</a>
@@ -571,12 +588,14 @@
   <script src="/js/ambient-bg.js?v=3"></script>
   <script src="js/scroll-animations.js?v=5"></script>
   <script src="/js/news-carousel.js?v=5"></script>
-  <script src="/js/about-demo.js?v=5"></script>
-  <script src="/js/i18n.js?v=10"></script>
+  <script src="/js/newsletter.js?v=1"></script>
+  <script src="/js/about-demo.js?v=7"></script>
+  <script src="/js/i18n.js?v=11"></script>
   <script src="/js/hero-title.js?v=6"></script>
   <script src="/js/logo-style.js?v=3"></script>
   <script src="/js/app.js?v=9"></script>
   <script src="js/cookie-consent.js?v=4"></script>
-  <script src="/js/site-fox.js?v=26" defer></script>
+  <script src="/js/site-fox.js?v=29" defer></script>
+  <script src="/js/title-colors.js?v=1" defer></script>
 </body>
 </html>

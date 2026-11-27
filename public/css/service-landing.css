@@ -73,8 +73,16 @@ body.page-ready-lessons .svc-page-title .line {
   display: block;
 }
 
+/* Its font is the site name's, as every yellow title's (styles.css). */
 body.page-ready-lessons .svc-page-title.font-cartoon {
-  font-size: clamp(2rem, 7vw, 4.5rem);
+  font-size: clamp(3.5rem, 15vw, 7.5rem);
+}
+
+/* One yellow for every letter (title-colors.js would color each its own);
+   the ink outline under the letters stays. */
+body.page-ready-lessons .svc-page-title .title-ch {
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
 }
 
 body.page-ready-lessons #library.clean-section--soft {
@@ -94,34 +102,122 @@ body.page-ready-lessons .scroll-section.in-view .svc-lesson-card {
   transform: none;
 }
 
+/* Lesson library filters: three separate stickers, each slightly tilted
+   with a strip of tape on top (like the path tiles). The tilt and grow use
+   the `rotate`/`scale` properties, so the scroll-in `transform` can't undo them. */
 body.page-ready-lessons .svc-filter-bar {
-  --filter-inner-radius: 15px;
-  max-width: 640px;
-  border: 3px solid var(--ink);
-  border-radius: 18px;
-  box-shadow: var(--shadow-sticker);
-  background: #cdf5ee;
+  --filter-inner-radius: 16px;
+  max-width: 600px;
+  gap: clamp(12px, 3vw, 24px);
+  padding-top: 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
   margin-bottom: clamp(60px, 8.5vw, 84px);
 }
 
+body.page-ready-lessons .svc-filter-divider {
+  display: none;
+}
+
+body.page-ready-lessons .svc-filter-dropdown[data-filter-key="subject"] {
+  --stk-bg: #cdf5ee;
+  --stk-tilt: -2deg;
+}
+
+body.page-ready-lessons .svc-filter-dropdown[data-filter-key="grade"] {
+  --stk-bg: #cdf5ee;
+  --stk-tilt: 1.5deg;
+}
+
+body.page-ready-lessons .svc-filter-dropdown[data-filter-key="topic"] {
+  --stk-bg: #dcfbe6;
+  --stk-tilt: -1deg;
+}
+
 body.page-ready-lessons .svc-filter-trigger {
-  padding: 14px 18px;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 100%;
+  padding: 18px 8px 12px;
+  border: 3px solid var(--ink);
+  border-radius: var(--filter-inner-radius);
+  box-shadow: var(--shadow-sticker);
+  background: var(--stk-bg, #cdf5ee);
+  text-align: center;
+  rotate: var(--stk-tilt, 0deg);
+  overflow: visible; /* styles.css clips triggers; the tape sticks out on top */
+  transition: scale 0.15s ease;
 }
 
-body.page-ready-lessons .svc-filter-trigger-label {
-  font-size: 1rem;
+/* the tape */
+body.page-ready-lessons .svc-filter-trigger::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 50px;
+  height: 19px;
+  translate: -50% 0;
+  rotate: 3deg;
+  background: rgba(234, 245, 255, 0.82);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  pointer-events: none;
 }
 
-body.page-ready-lessons .svc-filter-trigger-value {
-  font-size: 1.4rem;
+/* the arrow under the value */
+body.page-ready-lessons .svc-filter-trigger::after {
+  content: "";
+  width: 14px;
+  height: 9px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 9'%3E%3Cpath d='M1.5 1.5 7 7l5.5-5.5' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: rotate 0.15s ease;
+}
+
+body.page-ready-lessons .svc-filter-dropdown.is-open .svc-filter-trigger::after {
+  rotate: 180deg;
 }
 
 body.page-ready-lessons .svc-filter-trigger:hover,
 body.page-ready-lessons .svc-filter-dropdown.is-open .svc-filter-trigger {
-  background: color-mix(in srgb, #cdf5ee 55%, #a9ecdf 45%);
+  background: var(--stk-bg, #cdf5ee);
+  scale: 1.06;
+}
+
+/* label = the slides' teal marker */
+body.page-ready-lessons .svc-filter-trigger-label {
+  padding: 0 0.3em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  color: #000;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: normal;
+}
+
+body.page-ready-lessons .svc-filter-trigger-value {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1.15;
+  white-space: normal;
+  text-wrap: balance;
+  color: #000;
 }
 
 body.page-ready-lessons .svc-filter-menu {
+  top: calc(100% + 12px);
+  right: 0;
+  left: auto;
+  min-width: 100%;
+  width: max-content;
+  max-width: min(280px, 90vw);
   border: 3px solid var(--ink);
   border-radius: 12px;
   background: #eaf5ff;
@@ -129,19 +225,364 @@ body.page-ready-lessons .svc-filter-menu {
   max-height: min(380px, 60vh);
 }
 
+/* the leftmost sticker opens its list toward the inside */
+body.page-ready-lessons .svc-filter-dropdown:last-child .svc-filter-menu {
+  right: auto;
+  left: 0;
+}
+
 body.page-ready-lessons .svc-filter-menu button {
   padding: 10px 12px;
   font-size: 1.2rem;
 }
 
-body.page-ready-lessons .svc-filter-divider {
-  background: var(--ink);
-  opacity: 0.12;
+@media (max-width: 480px) {
+  body.page-ready-lessons .svc-filter-bar {
+    gap: 10px;
+  }
+
+  body.page-ready-lessons .svc-filter-trigger {
+    padding: 16px 4px 10px;
+  }
+
+  body.page-ready-lessons .svc-filter-trigger-label {
+    font-size: 0.9rem;
+  }
+
+  body.page-ready-lessons .svc-filter-trigger-value {
+    font-size: 1.1rem;
+  }
 }
 
-body.page-ready-lessons .svc-lesson-preview {
+@media (prefers-reduced-motion: reduce) {
+  body.page-ready-lessons .svc-filter-trigger,
+  body.page-ready-lessons .svc-filter-trigger::after {
+    transition: none;
+  }
+}
+
+/* dark theme: keep the bar itself see-through (dark-theme.css colors it) */
+html[data-theme="dark"] body.page-ready-lessons .svc-filter-bar {
+  background: transparent;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-preview {
   aspect-ratio: 1 / 1;
   background: #00c9b7 !important;
+}
+
+/* The cards look like the English path's topic tiles (english-learning.css
+   .eng-topic-tile): four sticker colors in turn (data-tone, ready-lessons.js),
+   a small tilt, the number as a black tab on the top edge and a yellow
+   "פתיחה" pill with an arrow. No yellow cards: the yellow is the buttons'.
+   The pro look keeps its own cards. */
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-grid {
+  row-gap: 46px;
+  padding-top: 30px;
+}
+
+/* Every part of the card is absolutely placed, so the square keeps its size
+   without clipping, and the number's tab can stick out over the top edge. */
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-preview {
+  --lesson-card-ink: #000;
+  overflow: visible;
+  border-radius: 22px;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+/* data-tone = the color (a row's on the library, 0-3; a card's own on the
+   English site, 0-5), data-tilt = the card's own tilt. */
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="0"] .svc-lesson-preview { background: var(--memteal) !important; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="1"] .svc-lesson-preview { background: #ffc4d6 !important; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="2"] .svc-lesson-preview { background: #dccbff !important; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="3"] .svc-lesson-preview { background: #a9dcff !important; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="4"] .svc-lesson-preview { background: #b8f0a6 !important; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="5"] .svc-lesson-preview { background: #ffbe94 !important; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tilt="0"] .svc-lesson-preview { rotate: -1.6deg; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tilt="1"] .svc-lesson-preview { rotate: 1.6deg; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tilt="2"] .svc-lesson-preview { rotate: 1.4deg; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tilt="3"] .svc-lesson-preview { rotate: -1.4deg; }
+
+/* Pressed: the card sinks into its shadow. */
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card:active .svc-lesson-preview {
+  transform: translate(3px, 4px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+  transition-duration: 0.08s;
+}
+
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-num {
+  top: -27px;
+  inset-inline: 0;
+  width: max-content;
+  min-width: 52px;
+  height: 52px;
+  margin-inline: auto;
+  padding: 0 8px;
+  border: 3px solid var(--ink);
+  background: #000;
+  box-shadow: none;
+  color: var(--memyellow);
+  font-size: 1.6rem;
+}
+
+/* With the number in the middle, the corner badges stay in their corner. */
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-preview:has(.svc-lesson-num) :is(.svc-lesson-learned-badge, .svc-lesson-premium-lock, .svc-lesson-recommended-badge) {
+  inset-inline-start: 8px;
+}
+
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-info-toggle {
+  background: #eaf5ff;
+}
+
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-preview .js-lesson-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-height: 42px;
+  bottom: 13px;
+  padding: 6px 22px;
+  border: 3px solid var(--ink) !important;
+  background: var(--memyellow);
+  color: #000;
+  font-size: clamp(1.05rem, 3vw, 1.22rem);
+  white-space: nowrap;
+}
+
+/* The title keeps clear of the bigger "פתיחה" pill. */
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-title-wrap {
+  padding-bottom: 64px;
+}
+
+/* The English tiles' arrow (ICONS.back), pointing forward in RTL. */
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-preview .js-lesson-open::after {
+  content: "";
+  flex-shrink: 0;
+  width: 1.05em;
+  height: 1.05em;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5M11 6l-6 6 6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5M11 6l-6 6 6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+@media (max-width: 768px) {
+  :is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-grid {
+    row-gap: 38px;
+    padding-top: 26px;
+  }
+
+  :is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-preview {
+    border-radius: 18px;
+  }
+
+  :is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-num {
+    top: -22px;
+    min-width: 42px;
+    height: 42px;
+    border-width: 2.5px;
+    font-size: 1.3rem;
+  }
+
+  :is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-preview:has(.svc-lesson-num) .svc-lesson-title-wrap {
+    padding-top: 1.6rem;
+  }
+
+  :is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-preview:has(.svc-lesson-num) :is(.svc-lesson-learned-badge, .svc-lesson-premium-lock, .svc-lesson-recommended-badge) {
+    inset-inline-start: 6px;
+  }
+
+  :is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-preview .js-lesson-open {
+    min-height: 36px;
+    bottom: 10px;
+    padding: 5px 16px;
+    font-size: clamp(0.95rem, 4.2vw, 1.08rem);
+  }
+
+  :is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-title-wrap {
+    padding-bottom: 50px;
+  }
+}
+
+/* The "i" turns the card over (ready-lessons.js flipLessonCard): the back is
+   the same sticker in the same color, with what the lesson is about. */
+html body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-grid > .svc-lesson-card {
+  transform-style: preserve-3d;
+  transition: opacity 0.7s var(--ease), transform 0.6s cubic-bezier(0.3, 0.7, 0.25, 1);
+}
+
+/* (:not() so it outweighs the scroll reveal's "transform: none".) */
+html body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-grid > .svc-lesson-card:not(.is-flipped) {
+  transform: perspective(1100px) rotateY(0deg);
+}
+
+html body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-grid > .svc-lesson-card.is-flipped {
+  transform: perspective(1100px) rotateY(180deg);
+}
+
+/* A hovered card grows over its neighbors. */
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-card:hover {
+  z-index: 2;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-card :is(.svc-lesson-preview, .svc-lesson-back) {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  background: #00c9b7;
+  box-shadow: var(--shadow-sticker);
+  color: #000;
+  text-align: center;
+  transform: rotateY(180deg);
+  cursor: pointer;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back :is(.svc-lesson-flip-back, .svc-lesson-more) {
+  position: absolute;
+  top: 8px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #eaf5ff;
+  color: #000;
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back .svc-lesson-flip-back {
+  inset-inline-end: 8px;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back .svc-lesson-more {
+  inset-inline-start: 8px;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back :is(.svc-lesson-flip-back, .svc-lesson-more):hover {
+  background: var(--memyellow);
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back :is(.svc-lesson-flip-back, .svc-lesson-more) svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* The summary's own box: as big as the back allows, the text centered in
+   it. Its font follows the card's width (cqi) and shrinks to fit. */
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-summary {
+  position: absolute;
+  inset: 42px 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  container-type: size;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-summary-text {
+  margin: 0;
+  width: 100%;
+  font-size: calc(var(--summary-fit, 1) * 10.5cqi);
+  font-weight: 700;
+  line-height: 1.32;
+  color: #000;
+  text-wrap: pretty;
+}
+
+body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-summary-text.is-clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* The sticker look: the back takes the row's color and the front's tilt
+   (mirrored, as the turned card mirrors it once more). */
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-back {
+  border-radius: 22px;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  background: var(--memteal);
+}
+
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="1"] .svc-lesson-back { background: #ffc4d6; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="2"] .svc-lesson-back { background: #dccbff; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="3"] .svc-lesson-back { background: #a9dcff; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="4"] .svc-lesson-back { background: #b8f0a6; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tone="5"] .svc-lesson-back { background: #ffbe94; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tilt="0"] .svc-lesson-back { rotate: 1.6deg; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tilt="1"] .svc-lesson-back { rotate: -1.6deg; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tilt="2"] .svc-lesson-back { rotate: -1.4deg; }
+:is(html:not([data-site-style="pro"]) body.page-ready-lessons, body.page-eng-site) .svc-lesson-card[data-tilt="3"] .svc-lesson-back { rotate: 1.4deg; }
+
+/* The pro look: the back is a plain card like its front. */
+html[data-site-style="pro"] body.page-ready-lessons .svc-lesson-back {
+  border: 1px solid var(--pro-line);
+  border-radius: 16px;
+  background: var(--pro-surface);
+  box-shadow: var(--pro-shadow);
+  color: var(--pro-text);
+}
+
+/* The pro look's number sits in the corner, where the back's "עוד" is. */
+html[data-site-style="pro"] body.page-ready-lessons .svc-lesson-back .svc-lesson-num {
+  display: none;
+}
+
+html[data-site-style="pro"] body.page-ready-lessons .svc-lesson-summary-text {
+  color: var(--pro-text);
+  font-weight: 500;
+}
+
+html[data-site-style="pro"] body.page-ready-lessons .svc-lesson-back :is(.svc-lesson-flip-back, .svc-lesson-more) {
+  border: 1px solid var(--pro-line);
+  background: var(--pro-surface-2);
+  color: var(--pro-muted);
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back {
+    border-radius: 18px;
+  }
+
+  body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back :is(.svc-lesson-flip-back, .svc-lesson-more) {
+    top: 6px;
+    width: 26px;
+    height: 26px;
+  }
+
+  body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back .svc-lesson-flip-back {
+    inset-inline-end: 6px;
+  }
+
+  body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back .svc-lesson-more {
+    inset-inline-start: 6px;
+  }
+
+  body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-back :is(.svc-lesson-flip-back, .svc-lesson-more) svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-summary {
+    inset: 36px 8px 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body:is(.page-ready-lessons, .page-eng-site) .svc-lesson-grid > .svc-lesson-card {
+    transition: opacity 0.7s var(--ease);
+  }
 }
 
 /* .clean-section's flat 72px top padding doesn't account for the fixed
@@ -206,7 +647,7 @@ body.clean-site .clean-section {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
-  max-width: 960px;
+  max-width: none;
   margin: 0 auto;
 }
 
@@ -257,7 +698,7 @@ body.clean-site .clean-section {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 18px;
-  max-width: 960px;
+  max-width: none;
   margin: 0 auto;
 }
 
@@ -383,6 +824,22 @@ body.page-worksheets .svc-filter-dropdown.is-open .svc-filter-trigger {
   display: none;
 }
 
+/* "עוד שיעורים" under the library's first rows (ready-lessons.js). */
+.svc-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.svc-more-wrap.hidden {
+  display: none;
+}
+
+.svc-more-btn {
+  min-width: 200px;
+  font-size: 1.25rem;
+}
+
 body.page-worksheets .svc-filter-menu {
   border: 3px solid var(--ink);
   border-radius: 12px;
@@ -425,7 +882,7 @@ body.page-worksheets .scroll-section .hero-title .line {
 body.page-worksheets .svc-tile-grid--coloring {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 28px;
-  max-width: 1180px;
+  max-width: none;
 }
 
 body.page-worksheets .svc-tile--coloring {
@@ -879,7 +1336,7 @@ body.coloring-zoom-open {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 18px;
-  max-width: 980px;
+  max-width: none;
   margin: 0 auto;
 }
 
@@ -968,7 +1425,7 @@ body.page-game-builder .svc-lesson-grid {
   grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   align-items: start;
   gap: 20px;
-  max-width: 960px;
+  max-width: none;
 }
 
 @media (max-width: 768px) {
@@ -1915,40 +2372,14 @@ body.page-game-builder .svc-custom-tile:active {
 }
 
 /* The library opened from a student's page (?from=student, set early in
-   ready-lessons.html): no site menu or account circle, a way back instead. */
+   ready-lessons.html): no site menu or account circle; the student's bar at
+   the bottom leads back. */
 html.from-student body.page-ready-lessons #navbar,
 html.from-student body.page-ready-lessons #mobileNav {
   display: none !important;
 }
 
-.svc-student-back {
-  display: none;
-}
-
-html.from-student .svc-student-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 12px 0 8px;
-  padding: 10px 22px;
-  background: #eaf5ff;
-  color: var(--ink);
-  font-size: 1.05rem;
-  text-decoration: none;
-}
-
-html.from-student .svc-student-back svg {
-  width: 20px;
-  height: 20px;
-}
-
 /* No navbar here, so the hero doesn't need the clean-site clearance for it. */
 html.from-student body.page-ready-lessons .clean-hero-inner {
   padding-top: 0;
-}
-
-@media (max-width: 768px) {
-  html.from-student .svc-student-back {
-    margin-bottom: 0;
-  }
 }

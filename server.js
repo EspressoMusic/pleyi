@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+// First, so the developer panel keeps every warning and error from the start.
+const devPanel = require("./lib/dev-panel");
 const express = require("express");
 const http = require("http");
 const fs = require("fs");
@@ -16,9 +18,17 @@ const studentProgress = require("./lib/student-progress");
 const aiLesson = require("./lib/ai-lesson");
 const englishPractice = require("./lib/english-practice");
 const teacherLessons = require("./lib/teacher-lessons");
+const classes = require("./lib/classes");
+const teacherDiary = require("./lib/teacher-diary")({ studentProgress, classes, teacherLessons });
 const seo = require("./lib/seo");
 const siteSearch = require("./lib/site-search");
+const foxChat = require("./lib/fox-chat");
 const together = require("./lib/together");
+const liveLessons = require("./lib/live-lessons");
+const newsletter = require("./lib/newsletter");
+const presence = require("./lib/presence");
+const devAuth = require("./lib/dev-auth");
+const siteStats = require("./lib/site-stats");
 const { extractText } = require("./lib/extract-text");
 const { verifyIdToken } = require("./lib/firebase-admin");
 const multer = require("multer");
@@ -65,6 +75,12 @@ app.get("/road-safety", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "road-safety.html"));
 });
 
+// אנגלית — the English mini site, built like the road-safety one
+// (public/learn-english.html). /english is the guide for search engines.
+app.get("/learn-english", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "learn-english.html"));
+});
+
 const blogPosts = [
   "english-games-for-classroom",
   "quick-lesson-plan-guide",
@@ -87,6 +103,8 @@ blogPosts.forEach((slug) => {
 // The English guide as plain HTML (/english/...), /sitemap.xml and /llms.txt.
 seo.mount(app);
 siteSearch.mount(app);
+// "שאלו את השועל": the fox points to lessons and exercises (lib/fox-chat.js).
+foxChat.mount(app, clientIp);
 
 // Play together is off for now, so its page file isn't served either.
 app.get("/together.html", (_req, res, next) => (together.ENABLED ? next() : res.redirect(302, "/services/class-games")));
@@ -94,7 +112,20 @@ app.get("/together.html", (_req, res, next) => (together.ENABLED ? next() : res.
 // The audio clips never change under the same address (speech.js has ?v=N).
 app.use("/audio", express.static(path.join(__dirname, "public", "audio"), { maxAge: "30d", immutable: true }));
 
-app.use(express.static(path.join(__dirname, "public")));
+// Speed: a file asked for with ?v=N (every script and style tag has one)
+// stays in the browser for 30 days without asking the server again — a new
+// version gets a new ?v=N, so it still comes right away. Pictures and fonts
+// without ?v=N are kept for a day. Pages themselves are always checked.
+const LONG_CACHE = "public, max-age=2592000, immutable";
+app.use(
+  express.static(path.join(__dirname, "public"), {
+    setHeaders(res, filePath) {
+      if (/\.html?$/i.test(filePath)) return;
+      if (res.req && res.req.query && res.req.query.v) res.setHeader("Cache-Control", LONG_CACHE);
+      else if (/\.(webp|png|jpe?g|gif|svg|ico|woff2?|ttf)$/i.test(filePath)) res.setHeader("Cache-Control", "public, max-age=86400");
+    },
+  })
+);
 
 app.get("/join", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "join.html"));
@@ -138,6 +169,17 @@ app.get("/admin/students", (_req, res) => {
 // A student's personal homework page — the link the teacher sends.
 app.get("/s/:key", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "student.html"));
+});
+
+// A live lesson (lib/live-lessons.js): students type the teacher's code, or
+// open /live/<code>, and see the slide the teacher shows.
+app.get(["/live", "/live/:code"], (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "live.html"));
+});
+
+// A class's join link — the teacher sends it to the whole class.
+app.get("/c/:code", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "class.html"));
 });
 
 // The parents' page — a second link the teacher sends, that only shows.
@@ -338,6 +380,42 @@ app.get("/api/admin/math-lessons/data.js", requireOwner, (_req, res) => {
   res.sendFile(path.join(PRIVATE_DIR, "math-lessons", "math-lessons-data.js"));
 });
 
+// The developer panel — a password page (lib/dev-auth.js); the page holds no data.
+app.get("/admin/dev", (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.sendFile(path.join(PRIVATE_DIR, "dev-panel", "index.html"));
+});
+
+app.get("/api/admin/dev/overview", requireOwner, async (req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  try {
+    res.json({
+      ok: true,
+      you: req.userEmail,
+      live: presence.live(),
+      ...(await devPanel.overview({ ownerEmails: OWNER_EMAILS, models: englishPractice.modelStatus() })),
+    });
+  } catch (err) {
+    console.error("[dev-panel]", err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// The panel's password sign-in (lib/dev-auth.js, DEV_PANEL_PASSWORD).
+devAuth.mount(app);
+
+// Who's on the site right now (lib/presence.js) — the panel asks every few seconds.
+// Also the most opened lessons, games and sheets (lib/site-stats.js).
+app.get("/api/admin/dev/live", devAuth.requireDevPassword, async (_req, res) => {
+  res.set("Cache-Control", "private, no-store");
+  res.json({ ok: true, live: presence.live(), stats: await siteStats.top(5) });
+});
+
+// Every open page says "here" (public/js/presence.js), and what it opened
+// (public/js/site-stats.js).
+presence.mount(app);
+siteStats.mount(app);
+
 app.get("/api/premium/status", requireAuth, async (req, res) => {
   res.json({ ok: true, ...(await premiumLib.getStatus(req.uid)) });
 });
@@ -397,6 +475,21 @@ function practiceRoute(handler) {
 
 app.post("/api/english/practice", practiceRoute(englishPractice.getPractice));
 app.post("/api/english/practice/prepare", practiceRoute(englishPractice.preparePractice));
+
+/* ── Newsletter sign-up (Brevo list) ── */
+app.get("/api/newsletter/status", (_req, res) => {
+  res.json({ ok: true, enabled: newsletter.isConfigured() });
+});
+
+app.post("/api/newsletter", async (req, res) => {
+  try {
+    // "website" is a hidden field only bots fill in: pretend it worked.
+    if (req.body?.website) return res.json({ ok: true, subscribed: true });
+    res.json({ ok: true, ...(await newsletter.subscribe({ email: req.body?.email, ip: clientIp(req) })) });
+  } catch (e) {
+    res.status(e.status || 500).json({ ok: false, error: e.message });
+  }
+});
 
 app.post("/api/extract-text", (req, res) => {
   materialUpload.single("file")(req, res, async (err) => {
@@ -586,6 +679,33 @@ app.post("/api/review", studentRoute((req) => studentProgress.recordReview(req.g
 app.get("/api/cards", studentRoute((req) => studentProgress.getCards(req.get("x-student-key"))));
 app.post("/api/cards", studentRoute((req) => studentProgress.recordCards(req.get("x-student-key"), req.body?.ops)));
 
+// A class's join page (/c/<code>): the class's name, and — when this device
+// is linked to a file of the same teacher — whose file it is.
+async function classByCode(code) {
+  const cls = await classes.findByCode(code);
+  if (!cls) throw Object.assign(new Error("הקישור לכיתה לא תקין"), { status: 404 });
+  return cls;
+}
+
+app.get("/api/class/:code", studentRoute(async (req) => {
+  const cls = await classByCode(req.params.code);
+  const key = req.get("x-student-key");
+  return {
+    class: { name: cls.name, teacherName: cls.teacherName || "", open: !!cls.open },
+    me: key ? await studentProgress.classGuest(cls, key) : null,
+  };
+}));
+
+app.post("/api/class/:code/join", studentRoute(async (req) => {
+  const cls = await classByCode(req.params.code);
+  return studentProgress.joinClass(cls, { key: req.get("x-student-key"), name: req.body?.name });
+}));
+
+// "סיימתי" on a task from the class (the student page's "הכיתה שלי").
+app.post("/api/class-done", studentRoute((req) =>
+  studentProgress.markClassPost(req.get("x-student-key"), String(req.body?.postId || ""), req.body?.done !== false)
+));
+
 // Teacher side: signed in (Google or email). Every file belongs to the teacher who
 // opened it, so each call is scoped to the verified uid.
 const studentAdmin = express.Router();
@@ -608,6 +728,11 @@ studentAdmin.post("/", studentRoute(async (req) => ({
 // The weekly report — before "/:id", which would take "report" for a file id.
 studentAdmin.get("/report", studentRoute(async (req) => ({
   report: await studentProgress.weeklyReport(req.uid, req.query.week),
+})));
+
+// The daily report (every student, day by day) — before "/:id" too.
+studentAdmin.get("/days", studentRoute(async (req) => ({
+  report: await studentProgress.daysReport(req.uid, req.query.from, req.query.to),
 })));
 
 // The class at a glance — before "/:id" too.
@@ -692,7 +817,46 @@ myLessons.put("/:id", studentRoute((req) => teacherLessons.saveLesson(req.uid, r
 myLessons.delete("/:id", studentRoute((req) => teacherLessons.deleteLesson(req.uid, req.params.id)));
 app.use("/api/my-lessons", myLessons);
 
+// The teacher's classes on /my-room ("הכיתות שלי"): each has a join link and
+// the updates the teacher posts to it. The students in a class are the
+// teacher's student files that joined it (/api/admin/students).
+const myClasses = express.Router();
+myClasses.use(requireAuth);
+myClasses.get("/", studentRoute(async (req) => ({ classes: await classes.listClasses(req.uid) })));
+myClasses.post("/", studentRoute(async (req) => ({
+  class: await classes.createClass({ uid: req.uid, email: req.userEmail }, pick(req.body, ["name", "teacherName"])),
+})));
+myClasses.patch("/:id", studentRoute(async (req) => ({ class: await classes.updateClass(req.uid, req.params.id, pick(req.body, ["name", "open"])) })));
+myClasses.post("/:id/code", studentRoute(async (req) => ({ class: await classes.newCode(req.uid, req.params.id) })));
+myClasses.delete("/:id", studentRoute(async (req) => {
+  await classes.deleteClass(req.uid, req.params.id);
+  await studentProgress.dropClass(req.uid, req.params.id);
+  return {};
+}));
+myClasses.post("/:id/posts", studentRoute(async (req) => ({
+  class: await classes.addPost(req.uid, req.params.id, pick(req.body, ["kind", "title", "text", "dueDate", "link", "task"])),
+})));
+myClasses.delete("/:id/posts/:postId", studentRoute(async (req) => ({ class: await classes.deletePost(req.uid, req.params.id, req.params.postId) })));
+// "הוספת תלמידים": files from the teacher's student list into the class.
+myClasses.post("/:id/members", studentRoute(async (req) =>
+  studentProgress.addStudentsToClass(req.uid, await classes.getOwn(req.uid, req.params.id), req.body?.ids)
+));
+myClasses.delete("/:id/members/:studentId", studentRoute((req) => studentProgress.leaveClass(req.uid, req.params.studentId, req.params.id)));
+app.use("/api/my-classes", myClasses);
+
 app.get("/api/lessons/custom/:id", studentRoute((req) => teacherLessons.getLesson(req.params.id)));
+
+// The teacher's diary on /my-room ("היומן שלי"): lessons and goals for every
+// day, and the lessons' tasks sent to the students, locked until their day.
+// The lessons to pick from are the site's own, so anyone may list them.
+app.get("/api/diary-catalog", studentRoute(async () => teacherDiary.getCatalog()));
+const myDiary = express.Router();
+myDiary.use(requireAuth);
+myDiary.get("/", studentRoute((req) => teacherDiary.get(req.uid)));
+myDiary.patch("/", studentRoute((req) => teacherDiary.saveSettings(req.uid, pick(req.body, ["auto", "target"]))));
+myDiary.put("/days/:day", studentRoute((req) => teacherDiary.saveDay(req.uid, req.params.day, pick(req.body, ["goals", "lessons"]))));
+myDiary.post("/send", studentRoute((req) => teacherDiary.send(req.uid, pick(req.body, ["days", "again"]))));
+app.use("/api/my-diary", myDiary);
 
 const rooms = new Map();
 
@@ -985,6 +1149,7 @@ function sendGameStateToSocket(socket, room) {
 }
 
 if (together.ENABLED) together.mount(io);
+liveLessons.mount(io);
 
 io.on("connection", (socket) => {
   socket.data.roomCode = null;

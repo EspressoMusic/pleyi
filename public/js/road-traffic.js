@@ -1,6 +1,7 @@
 /* The roads of /road-safety (road-traffic.css):
    - the background, as on the Pleyi site (ambient-bg.js) in sky blue: dots
-     falling slowly and two waves on the sides (html.rs-road-bg);
+     falling slowly (html.rs-road-bg), and a car's tyre tracks down its
+     sides that a car drives down now and then;
    - every empty <div class="rs-road"> becomes a strip of road between two
      parts of the page: a rough black road, a white dashed line and a zebra,
      one of the map's cars that stops before it and one of its people who
@@ -18,18 +19,12 @@
   const DOT_COLORS = ["rgba(0, 96, 176, 0.75)", "rgba(0, 78, 150, 0.82)", "rgba(0, 120, 200, 0.7)", "rgba(0, 66, 130, 0.78)"];
   const DOT_GLOWS = ["rgba(0, 78, 150, 0.35)", "rgba(0, 96, 176, 0.28)", "rgba(0, 66, 130, 0.32)"];
 
-  const sideSvg = () =>
-    `<svg viewBox="0 0 140 1000" preserveAspectRatio="none" aria-hidden="true">` +
-    `<path fill="rgba(0,96,176,0.16)" d="M0,0 C72,95 18,210 88,340 C118,420 42,560 96,690 C124,770 54,900 0,1000 L0,0 Z"/>` +
-    `<path fill="rgba(0,78,150,0.26)" d="M0,0 C48,160 92,300 36,460 C-8,610 64,760 28,1000 L0,1000 L0,0 Z"/>` +
-    `</svg>`;
-
   function background() {
     if (document.querySelector(".rs-ambient")) return;
     const layer = document.createElement("div");
     layer.className = "rs-ambient";
     layer.setAttribute("aria-hidden", "true");
-    let html = ["left", "right"].map((side) => `<div class="rs-amb-side rs-amb-side--${side}">${sideSvg()}</div>`).join("");
+    let html = "";
     for (let i = 0; i < (reduced ? 18 : 44); i++) {
       const dur = rand(14, 40);
       const style = [
@@ -49,14 +44,173 @@
     document.body.prepend(layer);
   }
 
-  // On the site's own pages (data-rs-page: home, lessons, games, practice);
-  // an exercise topic page or the exercise screen keeps the light sky.
+  /* ── A car's tyre tracks winding down both sides of the page, from its
+     very top to its bottom (road-traffic.css): one tile of marks per side,
+     drawn here, each mark of its own strength, some dark and some worn;
+     the right side half a wave on, so the two mirror each other, and more
+     tracks beside each out to the page's edge, so no blue is left there.
+     Now and then a car, seen from above, drives down one of them. ── */
+
+  // In units of a column 100 wide: one wave's height and swing, its marks, and waves to a tile.
+  const WAVE = 448;
+  const SWING = 25;
+  const MARKS = 18;
+  const WAVES = 4;
+  // A mark: one tread each side of the middle, from TREAD_OUT to TREAD_IN, slanting down to it (a V).
+  const TREAD_OUT = 20;
+  const TREAD_IN = 2.5;
+  const SLANT = 9;
+  const THICK = 10;
+  const TRACK_INK = "#0f3566";
+  // More tracks beside the one the cars drive down, out to the page's edge, PITCH apart, so the side is full of marks.
+  const OUTER = 2;
+  const PITCH = 2 * TREAD_OUT + 4;
+
+  // The tracks' middle at height y, on the left side (0) or the right (1), and its slope there.
+  const trackX = (y, side) => 50 + SWING * Math.cos((2 * Math.PI * y) / WAVE + side * Math.PI);
+  const trackSlope = (y, side) => ((-SWING * 2 * Math.PI) / WAVE) * Math.sin((2 * Math.PI * y) / WAVE + side * Math.PI);
+
+  function trackTile(side) {
+    // the marks evenly along the wave, not just down it
+    const steps = WAVE * 2;
+    const arc = [0];
+    for (let i = 1; i <= steps; i++) {
+      const y = (i * WAVE) / steps;
+      arc.push(arc[i - 1] + Math.hypot(trackX(y, side) - trackX(y - WAVE / steps, side), WAVE / steps));
+    }
+    const marksFrom = (f) => {
+      const ys = [];
+      for (let k = 0, i = 1; k < MARKS; k++) {
+        const s = ((k + f) * arc[steps]) / MARKS;
+        while (arc[i] < s) i++;
+        ys.push(((i - 1 + (s - arc[i - 1]) / (arc[i] - arc[i - 1])) * WAVE) / steps);
+      }
+      return ys;
+    };
+    const total = WAVES * MARKS;
+    const tileH = WAVE * WAVES;
+    let paths = "";
+    const mark = (cx, y, tx, ty, strength) => {
+      for (const sgn of [-1, 1]) {
+        const pts = [[TREAD_OUT, 0], [TREAD_IN, SLANT], [TREAD_IN, SLANT + THICK], [TREAD_OUT, THICK]].map(([u, v]) => {
+          u *= sgn;
+          v -= (SLANT + THICK) / 2;
+          return `${(cx + u * ty + v * tx).toFixed(1)} ${(y - u * tx + v * ty).toFixed(1)}`;
+        });
+        const o = Math.min(0.62, Math.max(0.07, strength + rand(-0.05, 0.05)));
+        paths += `<path fill-opacity="${o.toFixed(2)}" d="M${pts.join(" ")}z"/>`;
+      }
+    };
+    // the middle track, then the ones toward the page's edge (left of the left column's, right of the right's)
+    for (let t = 0; t <= OUTER; t++) {
+      const dx = (side ? 1 : -1) * t * PITCH;
+      // every other track half a mark on, so their marks don't line up in rows
+      const ys = marksFrom(t % 2 ? 0 : 0.5);
+      const p1 = rand(0, 2 * Math.PI);
+      const p2 = rand(0, 2 * Math.PI);
+      for (let k = 0; k < total; k++) {
+        const y = Math.floor(k / MARKS) * WAVE + ys[k % MARKS];
+        const cx = trackX(y, side) + dx;
+        const m = trackSlope(y, side);
+        const tx = m / Math.hypot(m, 1);
+        const ty = 1 / Math.hypot(m, 1);
+        // darker and fainter stretches along the tile, and now and then a mark nearly worn away
+        const a = (2 * Math.PI * k) / total;
+        let strength = 0.34 + 0.14 * Math.sin(2 * a + p1) + 0.08 * Math.sin(5 * a + p2);
+        if (Math.random() < 0.08) strength *= 0.3;
+        mark(cx, y, tx, ty, strength);
+        // a mark on the tile's top or bottom edge goes on over the next tile's
+        if (y < 20) mark(cx, y + tileH, tx, ty, strength);
+        if (y > tileH - 20) mark(cx, y - tileH, tx, ty, strength);
+      }
+    }
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 ${tileH}"><g fill="${TRACK_INK}">${paths}</g></svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  }
+
+  // The car, seen from above with its front down (drawn 30 by 52, its box a little wider for the wheels),
+  // and its box on the column, in units: wide enough to cover both treads.
+  const CAR_BOX = { w: 49, h: 76 };
+  const CAR_PAINT = ["#ff5a4e", "#ffcf3a", "#3fbf6a", "#ff8c3a", "#9b6bff", "#f4f2ea"];
+  const carSvg = (paint) => `<svg viewBox="-3 -2 36 56" aria-hidden="true">
+    <g fill="#111"><rect x="0" y="8" width="5" height="10" rx="2"/><rect x="25" y="8" width="5" height="10" rx="2"/><rect x="0" y="35" width="5" height="10" rx="2"/><rect x="25" y="35" width="5" height="10" rx="2"/></g>
+    <rect x="2" y="1" width="26" height="50" rx="8" fill="${paint}" stroke="#111" stroke-width="1.8"/>
+    <path d="M4.5 10H25.5L24 16H6Z" fill="#bfe6ff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>
+    <rect x="6" y="16" width="18" height="17" rx="2.5" fill="${paint}" stroke="#111" stroke-width="1.4"/>
+    <rect x="7.5" y="17.5" width="15" height="6" rx="2" fill="#fff" fill-opacity=".22"/>
+    <path d="M6 33H24L26 40H4Z" fill="#bfe6ff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/>
+    <rect x="6.5" y="46.5" width="5" height="3" rx="1.5" fill="#fff6b0" stroke="#111" stroke-width="1"/>
+    <rect x="18.5" y="46.5" width="5" height="3" rx="1.5" fill="#fff6b0" stroke="#111" stroke-width="1"/>
+    <rect x="7" y="2.6" width="4.5" height="2.4" rx="1" fill="#e0322b"/>
+    <rect x="18.5" y="2.6" width="4.5" height="2.4" rx="1" fill="#e0322b"/>
+  </svg>`;
+  // Seconds before the first car and between cars; pixels a second.
+  const FIRST_CAR = [3, 6];
+  const CAR_EVERY = [8, 18];
+  const CAR_SPEED = [150, 230];
+
+  function tracks() {
+    if (document.querySelector(".rs-tracks")) return;
+    const layer = document.createElement("div");
+    layer.className = "rs-tracks";
+    layer.setAttribute("aria-hidden", "true");
+    const cols = [0, 1].map((side) => {
+      const col = document.createElement("div");
+      col.className = `rs-tracks-col rs-tracks-col--${side ? "r" : "l"}`;
+      col.style.backgroundImage = trackTile(side);
+      layer.append(col);
+      return col;
+    });
+    // over the falling dots, under the page
+    (document.querySelector(".rs-ambient") || document.body.firstChild).after(layer);
+    if (!reduced) setTimeout(() => driveCar(cols), rand(...FIRST_CAR) * 1000);
+  }
+
+  // One car comes in at the top of the screen, follows a side's tracks down past its bottom, and the next one is due.
+  function driveCar(cols) {
+    const next = () => setTimeout(() => driveCar(cols), rand(...CAR_EVERY) * 1000);
+    const on = () => document.documentElement.classList.contains("rs-road-bg");
+    if (!on() || document.hidden) return next();
+    const side = Math.random() < 0.5 ? 0 : 1;
+    const col = cols[side];
+    const car = document.createElement("div");
+    car.className = "rs-tracks-car";
+    car.innerHTML = carSvg(pick(CAR_PAINT));
+    col.append(car);
+    const speed = rand(...CAR_SPEED);
+    let y = null;
+    let last = 0;
+    const step = (now) => {
+      const scale = col.clientWidth / 100;
+      const top = col.getBoundingClientRect().top;
+      const len = CAR_BOX.h * scale;
+      if (y === null) y = -top - len / 2;
+      y += last ? speed * Math.min(0.1, (now - last) / 1000) : 0;
+      last = now;
+      // gone past the screen's bottom (or the page's), or left far behind by scrolling down
+      if (!on() || !scale || y > -top + innerHeight + len || y > col.clientHeight + len || y < -top - innerHeight) {
+        car.remove();
+        return next();
+      }
+      const u = y / scale;
+      const x = trackX(u, side) * scale;
+      car.style.width = `${CAR_BOX.w * scale}px`;
+      car.style.height = `${len}px`;
+      car.style.transform = `translate(${(x - (CAR_BOX.w * scale) / 2).toFixed(1)}px, ${(y - len / 2).toFixed(1)}px) rotate(${(-Math.atan(trackSlope(u, side))).toFixed(3)}rad)`;
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // On the site's own pages (data-rs-page: home, lessons, games, practice)
+  // and on an exercise topic page; only the exercise screen keeps the light sky.
   function syncBackground() {
     const root = document.documentElement;
     const page = root.dataset.rsPage;
+    const runner = root.classList.contains("eng-runner-open");
     const on = page
-      ? page !== "engine"
-      : root.classList.contains("eng-topics-open") && !root.classList.contains("eng-runner-open");
+      ? page !== "engine" || !runner
+      : root.classList.contains("eng-topics-open") && !runner;
     if (root.classList.contains("rs-road-bg") !== on) root.classList.toggle("rs-road-bg", on);
   }
 
@@ -360,6 +514,7 @@
 
   function init() {
     background();
+    tracks();
     syncBackground();
     new MutationObserver(syncBackground).observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-rs-page"] });
     scan();

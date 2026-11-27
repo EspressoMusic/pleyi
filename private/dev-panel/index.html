@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#00C9B7" />
+<link rel="icon" href="/icons/icon.svg?v=2" type="image/svg+xml" />
+<title>פאנל מתכנת — Pleyi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400..900&display=swap" rel="stylesheet" />
+<style>
+  /* The developer panel — password only (lib/dev-auth.js). It shows how many
+     people are on the site (lib/presence.js) and the most opened lessons,
+     games and sheets (lib/site-stats.js). */
+  :root {
+    --bg: #62ebe0;
+    --marker: #8fe9df;
+    --tint: #eaf5ff;
+    --yellow: #ffe135;
+    --ink: #000;
+    --red: #b42318;
+    --shadow: 4px 4px 0 var(--ink);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Rubik", "Segoe UI", Arial, sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+  }
+
+  button, input { font: inherit; }
+
+  .hidden { display: none !important; }
+
+  .card {
+    width: min(360px, 100%);
+    padding: 28px 22px;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    background: var(--tint);
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0 0 18px;
+    font-size: 26px;
+    font-weight: 900;
+  }
+
+  h1 span {
+    padding: 0 0.2em;
+    border-radius: 6px;
+    background: var(--marker);
+  }
+
+  .field {
+    width: 100%;
+    padding: 12px 14px;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    background: #fff8d6;
+    box-shadow: 3px 3px 0 var(--ink);
+    font-size: 20px;
+    font-weight: 700;
+    direction: ltr;
+    text-align: center;
+  }
+
+  .field:focus { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+  .btn {
+    margin-top: 16px;
+    padding: 10px 26px;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    background: var(--yellow);
+    color: var(--ink);
+    font-size: 19px;
+    font-weight: 800;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: scale 0.15s ease;
+  }
+
+  .btn:hover { scale: 1.05; }
+  .btn:disabled { opacity: 0.6; cursor: default; scale: 1; }
+
+  .msg {
+    min-height: 1.4em;
+    margin: 12px 0 0;
+    color: var(--red);
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .count {
+    display: block;
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .count-label {
+    display: block;
+    margin-top: 6px;
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  .card.is-panel { width: min(520px, 100%); }
+
+  .box {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    background: #fff8d6;
+    box-shadow: 3px 3px 0 var(--ink);
+    text-align: right;
+  }
+
+  .box h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+  .box h2 span {
+    padding: 0 0.2em;
+    border-radius: 6px;
+    background: var(--marker);
+  }
+
+  .box h2 small {
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .top {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: top;
+  }
+
+  .top li {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 2px dashed rgba(0, 0, 0, 0.18);
+    font-size: 17px;
+    font-weight: 700;
+    counter-increment: top;
+  }
+
+  .top li:last-child { border-bottom: 0; }
+
+  .top li::before {
+    content: counter(top) ".";
+    font-weight: 900;
+  }
+
+  .top .name {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .top b {
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+  .none {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .since {
+    margin: 16px 0 0;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .out {
+    margin-top: 18px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<form class="card hidden" id="gate" autocomplete="on">
+  <h1><span>פאנל מתכנת</span></h1>
+  <input class="field" type="password" id="pw" autocomplete="current-password" aria-label="סיסמה" placeholder="סיסמה" required />
+  <button type="submit" class="btn" id="goBtn">כניסה</button>
+  <p class="msg" id="msg" role="alert"></p>
+</form>
+
+<main class="card is-panel hidden" id="panel">
+  <b class="count" id="count">0</b>
+  <span class="count-label">באתר עכשיו</span>
+
+  <section class="box">
+    <h2><span>השיעורים הכי נצפים</span><small id="lessonTotal"></small></h2>
+    <div id="lessonTop"></div>
+  </section>
+
+  <section class="box">
+    <h2><span>המשחקים הכי משוחקים</span><small id="gameTotal"></small></h2>
+    <div id="gameTop"></div>
+  </section>
+
+  <section class="box">
+    <h2><span>הורדות והדפסות</span><small id="downloadTotal"></small></h2>
+    <div id="downloadTop"></div>
+  </section>
+
+  <p class="since" id="since"></p>
+  <button type="button" class="out" id="outBtn">יציאה</button>
+</main>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const EVERY_MS = 10000;
+  let timer = null;
+
+  const esc = (value) =>
+    String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+  const NONE = { lesson: "עוד לא פתחו שיעורים", game: "עוד לא שיחקו במשחקים", download: "עוד לא הורידו או הדפיסו דפים" };
+
+  function renderStats(stats) {
+    if (!stats) return;
+    Object.keys(NONE).forEach((kind) => {
+      const s = stats[kind] || { total: 0, top: [] };
+      $(`${kind}Total`).textContent = s.total ? `סה״כ ${s.total}` : "";
+      $(`${kind}Top`).innerHTML = s.top.length
+        ? `<ol class="top">${s.top.map((e) => `<li><span class="name">${esc(e.title)}</span><b>${esc(e.count)}</b></li>`).join("")}</ol>`
+        : `<p class="none">${NONE[kind]}</p>`;
+    });
+    const since = stats.since ? new Date(stats.since) : null;
+    $("since").textContent = since ? `נספר מאז ${since.toLocaleDateString("he-IL")}` : "";
+  }
+
+  function show(which) {
+    $("gate").classList.toggle("hidden", which !== "gate");
+    $("panel").classList.toggle("hidden", which !== "panel");
+    if (which === "gate") $("pw").focus();
+  }
+
+  // true = shown, false = needs the password
+  async function refresh() {
+    try {
+      const res = await fetch("/api/admin/dev/live", { cache: "no-store", credentials: "same-origin" });
+      if (res.status === 401) return false;
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        $("count").textContent = data.live.now;
+        renderStats(data.stats);
+      }
+      return true;
+    } catch {
+      return true; // a network blip — the next round tries again
+    }
+  }
+
+  function startTimer() {
+    if (!timer) timer = setInterval(tick, EVERY_MS);
+  }
+
+  async function tick() {
+    if (document.visibilityState !== "visible") return;
+    if (!(await refresh())) {
+      clearInterval(timer);
+      timer = null;
+      show("gate");
+    }
+  }
+
+  $("gate").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = $("goBtn");
+    btn.disabled = true;
+    $("msg").textContent = "";
+    try {
+      const res = await fetch("/api/admin/dev/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ password: $("pw").value }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        $("msg").textContent = data.error || "הכניסה נכשלה. נסו שוב";
+        $("pw").select();
+        return;
+      }
+      $("pw").value = "";
+      await refresh();
+      show("panel");
+      startTimer();
+    } catch {
+      $("msg").textContent = "בעיית רשת — נסו שוב";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $("outBtn").addEventListener("click", async () => {
+    clearInterval(timer);
+    timer = null;
+    await fetch("/api/admin/dev/logout", { method: "POST", credentials: "same-origin" }).catch(() => {});
+    show("gate");
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && timer) tick();
+  });
+
+  (async () => {
+    if (await refresh()) {
+      show("panel");
+      startTimer();
+    } else {
+      show("gate");
+    }
+  })();
+})();
+</script>
+</body>
+</html>

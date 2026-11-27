@@ -11,9 +11,16 @@ body.stu-body {
 }
 
 .stu-main {
-  max-width: 760px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 8px 16px 72px;
+}
+
+/* Phones: a thinner side margin, so the task cards are a little wider. */
+@media (max-width: 600px) {
+  .stu-main {
+    padding-inline: 8px;
+  }
 }
 
 .stu-loading {
@@ -21,25 +28,33 @@ body.stu-body {
   font-weight: 800;
 }
 
+/* A rounded, hand-written Hebrew font for the hello (the logo's "kid"
+   font); commas and "!" come from Rubik. */
+@font-face {
+  font-family: "Playpen Sans Hebrew";
+  src: url("/fonts/PlaypenSansHebrew-ExtraBold-hebrew.woff2") format("woff2");
+  font-weight: 800;
+  font-display: swap;
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
 .stu-hello {
   margin: 0;
-  font-size: clamp(1.6rem, 6vw, 2.2rem);
-  font-weight: 900;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-family: "Playpen Sans Hebrew", var(--font-sans);
+  font-size: clamp(1.8rem, 7vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.3;
   text-align: center;
   color: var(--ink);
 }
 
-/* The student page's hello: yellow with a thick ink outline, as the
-   Learn English page's title. */
+/* The student page's hello: plain ink letters, no outline. */
 .stu-hello .line {
   display: block;
-  color: var(--memyellow);
-  -webkit-text-fill-color: var(--memyellow);
-  paint-order: stroke fill;
-  -webkit-text-stroke: 0.3em var(--ink);
-  letter-spacing: 0;
+}
+
+.stu-hello[hidden] {
+  display: none;
 }
 
 .stu-lead {
@@ -51,102 +66,32 @@ body.stu-body {
   text-align: center;
 }
 
-.stu-progress {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  padding: 6px 12px;
-  border: 2.5px solid var(--ink);
-  border-radius: 999px;
-  background: var(--white);
-  font-size: 0.95rem;
-}
-
-.stu-progress-label {
-  flex-shrink: 0;
-  font-weight: 900;
-}
-
-.stu-progress-bar {
-  flex: 1;
-  height: 10px;
-  overflow: hidden;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--stu-done-soft);
-}
-
-.stu-progress-bar span {
-  display: block;
-  height: 100%;
-  border-radius: 999px;
-  background: var(--stu-done);
-}
-
-/* The homework and the tests: a small box each, with a line for every
-   thing left. Tapping it (anywhere, while it's closed) opens the details. */
+/* The homework and the tests: straight on the page, no box — a title with
+   how many are left, then a row for each. */
 .stu-box {
-  position: relative;
   max-width: 520px;
-  margin: 16px auto 0;
-  padding: 10px 14px 12px;
-  border: 2.5px solid var(--ink);
-  border-radius: 18px;
-  background: #eaf5ff;
-  box-shadow: 4px 5px 0 0 var(--ink);
+  margin: 22px auto 0;
 }
 
 .stu-box-head {
-  display: grid;
-  grid-template-columns: 1fr auto auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-}
-
-/* Title and count in the middle, like the empty box; an empty first
-   column balances the chevron on the other side. */
-.stu-box-head::before {
-  content: "";
-}
-
-/* Open, only the head opens and closes it — the buttons under it work. */
-.stu-box.is-open .stu-box-head {
-  position: relative;
+  margin-bottom: 12px;
 }
 
 .stu-box-title {
   min-width: 0;
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: 900;
   color: #000;
 }
 
-.stu-box-open {
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.stu-box-open::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-}
-
-.stu-box-open:focus-visible {
-  outline: none;
-}
-
-.stu-box-open:focus-visible::after {
-  outline: 3px solid var(--ink);
-  outline-offset: 2px;
+/* Straight on the teal page, the teal marker turns light so it shows. */
+.stu-box-title .stu-key {
+  background: #eaf5ff;
 }
 
 .stu-box-count {
@@ -171,10 +116,12 @@ body.stu-body {
   height: 14px;
 }
 
+/* The map dialog's folds turn this arrow when open. */
 .stu-box-chev {
   justify-self: end;
   width: 20px;
   height: 20px;
+  pointer-events: none;
   transition: transform 0.2s ease;
 }
 
@@ -184,84 +131,13 @@ body.stu-body {
   height: 100%;
 }
 
-.stu-box.is-open .stu-box-chev {
-  transform: rotate(180deg);
-}
-
-.stu-box-left {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 10px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Open, the details show everything; the short lines step aside. */
-.stu-box.is-open .stu-box-left {
-  display: none;
-}
-
-.stu-box-left li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 0.98rem;
-  font-weight: 800;
-  line-height: 1.3;
-}
-
-.stu-box-num {
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--memyellow);
-  font-size: 0.8rem;
-  font-weight: 900;
-}
-
-.stu-box-name {
-  min-width: 0;
-}
-
-.stu-box-late {
-  flex-shrink: 0;
-  font-size: 0.82rem;
-  font-weight: 900;
-  color: var(--stu-late);
-}
-
-.stu-box-left li.is-late .stu-box-num {
-  background: var(--stu-late-soft);
-  border-color: var(--stu-late);
-}
-
-.stu-box-more {
-  display: grid;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.stu-box-more[hidden] {
-  display: none;
-}
-
 /* No homework yet: one line. */
 .stu-box--empty .stu-box-title {
   text-align: center;
 }
 
 .stu-box-none {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 8px 0 0;
+  margin: 0;
   font-size: 0.98rem;
   font-weight: 800;
   text-align: center;
@@ -270,6 +146,294 @@ body.stu-body {
 
 @media (prefers-reduced-motion: reduce) {
   .stu-box-chev {
+    transition: none;
+  }
+}
+
+/* ── The tasks: cards just like the exercise cards on the topic page
+   (english-learning.css .eng-ex-card) — two in a row, one on phones. ── */
+.stu-box--ex {
+  max-width: none;
+}
+
+.stu-ex-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Room for the "בוצע" / "באיחור" tags on the cards' top edge. */
+.stu-ex-grid:has(.stu-ex-tag) {
+  row-gap: 24px;
+  padding-top: 10px;
+}
+
+.stu-ex-card {
+  position: relative;
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px 14px;
+  padding: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #eaf5ff;
+  color: var(--ink);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  transition: transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+}
+
+.stu-ex-card:hover,
+.stu-ex-card:has(.stu-ex-title:focus-visible) {
+  transform: translateY(-2px);
+  background: #d6ebff;
+  box-shadow: 5px 7px 0 0 var(--ink);
+}
+
+.stu-ex-card:has(.stu-ex-title:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.stu-ex-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--memteal);
+}
+
+.stu-ex-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.stu-ex-icon--level svg {
+  width: 30px;
+  height: 30px;
+}
+
+.stu-ex-num {
+  fill: currentColor;
+  stroke: none;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.stu-ex-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* The name's link stretches over the whole card. */
+.stu-ex-title {
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: inherit;
+  text-decoration: none;
+  text-wrap: balance;
+}
+
+.stu-ex-title::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.stu-ex-title:focus-visible {
+  outline: none;
+}
+
+.stu-ex-action {
+  flex-shrink: 0;
+  padding: 5px 15px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1.65;
+}
+
+/* "בוצע" / "באיחור": a tag on the card's top edge; taps go through it. */
+.stu-ex-tag {
+  position: absolute;
+  top: -13px;
+  inset-inline-start: 18px;
+  z-index: 2;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  padding-inline-start: 6px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.stu-ex-tag svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.stu-ex-tag.is-done {
+  background: var(--stu-done-soft);
+}
+
+.stu-ex-tag.is-done svg {
+  color: var(--stu-done);
+}
+
+.stu-ex-tag.is-late {
+  background: var(--stu-late-soft);
+}
+
+.stu-ex-tag.is-late svg {
+  color: var(--stu-late);
+}
+
+/* A task from the teacher's diary before its day: locked, no button, the
+   day it opens on its tag. */
+.stu-ex-tag.is-locked {
+  background: #fff3c4;
+}
+
+.stu-ex-card.is-locked {
+  background: #e3e9ef;
+}
+
+.stu-ex-card.is-locked:hover {
+  transform: none;
+  background: #e3e9ef;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.stu-ex-card.is-locked .stu-ex-icon {
+  background: #c5d0da;
+}
+
+.stu-ex-card.is-locked .stu-ex-title {
+  color: #2c3a47;
+}
+
+/* "נפתח בקרוב" sits right under the tasks (styles.css pads every <section>). */
+.stu-box:has(+ .stu-box--soon) {
+  padding-bottom: 0;
+}
+
+.stu-box--soon {
+  margin-top: 36px;
+  padding-top: 0;
+}
+
+/* A lesson's practice under way: how many of its exercises are done. */
+.stu-ex-sub {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #24313d;
+}
+
+/* A narrow card: the button gets a row of its own under the name. */
+@container (max-width: 340px) {
+  .stu-ex-card .stu-ex-text {
+    flex-basis: calc(100% - 76px);
+  }
+}
+
+@media (max-width: 768px) {
+  .stu-ex-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phones: a smaller icon and pill, as on the topic page. */
+@media (max-width: 600px) {
+  .stu-ex-grid {
+    gap: 12px;
+  }
+
+  .stu-ex-card {
+    gap: 10px;
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .stu-ex-card .stu-ex-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+  }
+
+  .stu-ex-card .stu-ex-icon--level svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .stu-ex-card .stu-ex-icon:not(.stu-ex-icon--level) svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .stu-ex-title {
+    font-size: 1.02rem;
+  }
+
+  .stu-ex-card .stu-ex-action {
+    padding: 4px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .stu-ex-card {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .stu-ex-card .stu-ex-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .stu-ex-card .stu-ex-icon--level svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .stu-ex-title {
+    font-size: 0.98rem;
+  }
+
+  .stu-ex-card .stu-ex-action {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stu-ex-card {
     transition: none;
   }
 }
@@ -357,15 +521,20 @@ body.stu-body {
 }
 
 .stu-hw-note {
-  margin-top: 3px;
-  padding: 3px 8px;
-  width: fit-content;
-  max-width: 100%;
-  border-radius: 8px;
-  background: var(--clean-bg-cream);
-  border: 2px solid var(--ink);
-  font-size: 0.82rem;
+  margin-top: 2px;
+  font-size: 0.85rem;
   font-weight: 700;
+  color: #000;
+}
+
+/* Done, a row is short: the name, the score and the button beside it. */
+.stu-hw.is-done {
+  padding-block: 8px;
+}
+
+.stu-hw.is-done .stu-hw-action {
+  flex-direction: row;
+  gap: 10px;
 }
 
 .stu-hw-action {
@@ -494,6 +663,21 @@ body.stu-body {
     gap: 12px;
     width: 100%;
     padding-inline-start: 40px;
+  }
+
+  /* A done row stays one line. */
+  .stu-hw.is-done {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .stu-hw.is-done .stu-hw-body {
+    flex-basis: auto;
+  }
+
+  .stu-hw.is-done .stu-hw-action {
+    width: auto;
+    padding-inline-start: 0;
   }
 }
 
@@ -828,64 +1012,176 @@ body.stu-body {
   margin: 14px auto 0;
 }
 
-/* A bar that fills green. */
-.stu-bar {
-  display: block;
-  height: 12px;
-  overflow: hidden;
-  border: 2.5px solid var(--ink);
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.08);
-}
-
-.stu-bar > span {
-  display: block;
-  height: 100%;
-  background: var(--stu-done);
-}
-
-/* On top: how far the student got on the whole path. */
-.stu-map-sum {
+/* On top: how far the student got on the whole path — a box that fills
+   with moving water up to it (a little water shows even at 0%), and the
+   share on it. */
+.stu-tank {
+  position: relative;
+  isolation: isolate;
   display: grid;
-  gap: 8px;
+  place-items: center;
+  min-height: 116px;
   padding: 10px 14px;
-  border: 2.5px solid var(--ink);
-  border-radius: 18px;
+  overflow: hidden;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
   background: #fff4d6;
   box-shadow: 4px 5px 0 0 var(--ink);
 }
 
-.stu-sum-head {
-  display: flex;
+.stu-tank-liquid {
+  position: absolute;
+  z-index: -1;
+  inset-inline: 0;
+  bottom: 0;
+  height: max(calc(var(--p, 0) * 1%), 16%);
+  background: linear-gradient(#3aa7ef, #2185d4);
+  animation: stu-fill 1.4s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+/* Two waves on the water, sliding against each other. */
+.stu-tank-liquid::before,
+.stu-tank-liquid::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  background-repeat: repeat-x;
+  background-position: 0 100%;
+  background-size: 160px calc(100% + 2px);
+  animation: stu-wave 3.2s linear infinite;
+}
+
+.stu-tank-liquid::before {
+  bottom: calc(100% - 1px);
+  height: 22px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 18' preserveAspectRatio='none'%3E%3Cpath d='M0 9C20 0 60 0 80 9S140 18 160 9V18H0Z' fill='%239fdcff'/%3E%3C/svg%3E");
+  animation-duration: 5s;
+  animation-direction: reverse;
+}
+
+.stu-tank-liquid::after {
+  bottom: calc(100% - 2px);
+  height: 17px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 18' preserveAspectRatio='none'%3E%3Cpath d='M0 9C20 0 60 0 80 9S140 18 160 9V18H0Z' fill='%233aa7ef'/%3E%3C/svg%3E");
+}
+
+@keyframes stu-fill {
+  from {
+    height: 0;
+  }
+}
+
+@keyframes stu-wave {
+  to {
+    background-position-x: -160px;
+  }
+}
+
+.stu-tank-text {
+  display: grid;
+  justify-items: center;
+  line-height: 1.1;
+  color: #000;
+}
+
+.stu-tank-name {
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.stu-tank-pct {
+  font-size: 2.7rem;
+  font-weight: 900;
+}
+
+/* The box is a button: a tap lists the subjects the student started. */
+button.stu-tank {
+  width: 100%;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: scale 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.stu-tank:hover {
+  scale: 1.02;
+}
+
+button.stu-tank:active {
+  translate: 2px 3px;
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+button.stu-tank:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.stu-tank-name {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 6px;
 }
 
-.stu-sum-title {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 900;
-  line-height: 1.3;
+/* The stage the student goes on in: the topic under its name, and a
+   yellow way straight into it. */
+.stu-stage-next {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.35;
   color: #000;
 }
 
-.stu-sum-pct {
-  font-size: 1.1rem;
-  font-weight: 900;
+.stu-stage-go {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  box-shadow: 2px 3px 0 0 var(--ink);
   color: #000;
+  transition: scale 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.stu-sum-head .stu-bar {
-  flex: 1;
+.stu-stage-go:hover {
+  scale: 1.1;
+}
+
+.stu-stage-go:active {
+  translate: 2px 3px;
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.stu-stage-go:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.stu-stage-go svg {
+  width: 22px;
+  height: 22px;
+  animation: stu-nudge 1.4s ease-in-out infinite;
+}
+
+@keyframes stu-nudge {
+  50% {
+    translate: -4px 0;
+  }
 }
 
 /* A stage: a card that opens to its topics. */
 .stu-stage {
-  margin-top: 12px;
+  margin-top: 14px;
   padding: 0;
-  border: 2.5px solid var(--ink);
-  border-radius: 18px;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
   background: var(--tint, #eaf5ff);
   box-shadow: 4px 5px 0 0 var(--ink);
 }
@@ -894,8 +1190,9 @@ body.stu-body {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
+  gap: 12px;
+  min-height: 72px;
+  padding: 12px 14px;
 }
 
 /* How much of the stage is done: a ring that fills green, and a check once
@@ -904,14 +1201,14 @@ body.stu-body {
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border: 2.5px solid var(--ink);
+  width: 46px;
+  height: 46px;
+  border: 3px solid var(--ink);
   border-radius: 50%;
   background:
     radial-gradient(closest-side, var(--tint, #eaf5ff) calc(100% - 7px), transparent calc(100% - 6px)),
     conic-gradient(var(--stu-done) calc(var(--p, 0) * 1%), rgba(0, 0, 0, 0.12) 0);
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 900;
   color: #000;
 }
@@ -946,7 +1243,7 @@ body.stu-body {
   border: 0;
   background: none;
   font: inherit;
-  font-size: 1.02rem;
+  font-size: 1.12rem;
   font-weight: 900;
   line-height: 1.3;
   text-align: start;
@@ -993,13 +1290,15 @@ body.stu-body {
   padding: 0 14px 14px;
 }
 
-/* The open stage's topics: dots on a line, the picked one bigger. */
+/* The open stage's topics: dots on a thick line that looks like it's
+   loading — light stripes on the way ahead, green ones as far as the
+   student got — the picked dot bigger. */
 .stu-steps {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 18px 2px 16px;
+  margin: 22px 2px 20px;
 }
 
 .stu-steps::before,
@@ -1007,18 +1306,43 @@ body.stu-body {
   content: "";
   position: absolute;
   top: 50%;
-  inset-inline-start: 15px;
-  height: 3px;
-  margin-top: -1.5px;
+  inset-inline-start: 18px;
+  height: 14px;
+  margin-top: -7px;
+  box-sizing: border-box;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background-size: 18px 18px;
+  animation: stu-load 1.6s linear infinite;
 }
 
 .stu-steps::before {
-  inset-inline-end: 15px;
-  background: rgba(0, 0, 0, 0.2);
+  inset-inline-end: 18px;
+  background-color: #e3f2ff;
+  background-image: linear-gradient(-45deg, rgba(33, 133, 212, 0.18) 25%, transparent 25% 50%, rgba(33, 133, 212, 0.18) 50% 75%, transparent 75%);
+  box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.08);
 }
 
 .stu-steps-walked {
-  background: var(--stu-done);
+  background-color: var(--stu-done);
+  background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25% 50%, rgba(255, 255, 255, 0.3) 50% 75%, transparent 75%);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.16), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+  animation: stu-walk 1s cubic-bezier(0.2, 0.8, 0.3, 1) both, stu-load 0.9s linear infinite;
+}
+
+@keyframes stu-load {
+  from {
+    background-position: 18px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes stu-walk {
+  from {
+    width: 0;
+  }
 }
 
 /* The vocabulary topics have no order: no line, as many rows as they take. */
@@ -1032,19 +1356,23 @@ body.stu-body {
   display: none;
 }
 
+/* A topic's dot: a round candy — a shine on top, a darker rim at the
+   bottom and a hard shadow. */
 .stu-step {
+  --dot: #d9f7f3;
   position: relative;
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   padding: 0;
-  border: 2.5px solid var(--ink);
+  border: 3px solid var(--ink);
   border-radius: 50%;
-  background: #d9f7f3;
+  background: var(--dot);
+  box-shadow: 2px 3px 0 0 var(--ink);
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 900;
   line-height: 1;
   color: #000;
@@ -1054,37 +1382,38 @@ body.stu-body {
 }
 
 .stu-step svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
 .stu-step.is-done {
-  background: var(--stu-done);
+  --dot: var(--stu-done);
   color: var(--white);
 }
 
 /* Started: a ring that fills with how much of the topic is done. */
 .stu-step.is-started {
   background:
-    radial-gradient(closest-side, var(--memyellow) calc(100% - 5px), transparent calc(100% - 4px)),
+    radial-gradient(closest-side, var(--memyellow) calc(100% - 6px), transparent calc(100% - 5px)),
     conic-gradient(var(--stu-done) calc(var(--p, 0) * 1%), #fff6cf 0);
 }
 
 .stu-step.is-skipped {
-  border-style: dashed;
-  background: var(--stu-late-soft);
+  --dot: #8ff3e6;
 }
 
 .stu-step.is-ahead {
-  border-color: rgba(0, 0, 0, 0.35);
-  color: rgba(0, 0, 0, 0.55);
+  --dot: #f4f8fb;
+  border-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 3px 0 0 rgba(0, 0, 0, 0.25);
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .stu-step.is-picked {
   z-index: 1;
-  transform: scale(1.3);
+  transform: scale(1.25);
   border-color: var(--ink);
-  box-shadow: 2px 3px 0 0 var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
   color: #000;
 }
 
@@ -1098,7 +1427,12 @@ body.stu-body {
 }
 
 /* The topic the student practiced last glows. */
-.stu-step.is-here {
+.stu-step.is-here::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  pointer-events: none;
   animation: stu-here 1.8s ease-in-out infinite;
 }
 
@@ -1109,6 +1443,20 @@ body.stu-body {
   }
   50% {
     box-shadow: 0 0 0 10px rgba(255, 225, 53, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stu-tank-liquid,
+  .stu-tank-liquid::before,
+  .stu-tank-liquid::after,
+  .stu-stage-go svg,
+  .stu-finish-cup,
+  .stu-gate-flag,
+  .stu-gate-spark,
+  .stu-steps::before,
+  .stu-steps-walked {
+    animation: none;
   }
 }
 
@@ -1169,40 +1517,267 @@ body.stu-body {
   outline-offset: 3px;
 }
 
-/* After the stages: the goal, and the vocabulary topics under it. */
-.stu-goal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 20px 0 0;
-  font-size: 1rem;
-  font-weight: 900;
+/* The end of the road: a finish gate — a checkered banner on two striped
+   posts, a flag waving on each — with the trophy on a podium under it and
+   stars twinkling around it. The words in the page title's font on the
+   teal marker, how many topics are left under them. Once every topic is
+   done the trophy pops in, and confetti falls over it. */
+.stu-finish {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  margin: 30px 0 28px;
+  padding: 0;
+  text-align: center;
+}
+
+.stu-gate {
+  position: relative;
+  display: block;
+  width: min(100%, 340px);
+  aspect-ratio: 320 / 200;
+  margin-bottom: 6px;
+}
+
+.stu-gate-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.stu-gate-flag {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: stu-gate-flag 1.3s ease-in-out infinite alternate;
+}
+
+.stu-gate-flag.is-right {
+  transform-origin: right center;
+  animation-delay: -0.65s;
+}
+
+@keyframes stu-gate-flag {
+  to {
+    transform: scaleX(0.82) skewY(7deg);
+  }
+}
+
+.stu-gate-spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: stu-gate-spark 1.8s ease-in-out infinite;
+}
+
+@keyframes stu-gate-spark {
+  50% {
+    transform: scale(0.45) rotate(45deg);
+    opacity: 0.55;
+  }
+}
+
+/* The trophy stands on the podium (its top at y 166 of 200; the cup's
+   picture has a little room under its base) and rocks a little. */
+.stu-finish-cup {
+  position: absolute;
+  bottom: 12.4%;
+  left: 50%;
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  width: 27%;
+  padding: 0;
+  border: 0;
+  background: none;
+  transform-origin: 50% 90%;
+  animation: stu-cup-rock 2.4s ease-in-out infinite;
+}
+
+.stu-finish-cup svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@keyframes stu-cup-rock {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+.stu-finish-text {
+  font-family: "Playpen Sans Hebrew", var(--font-sans);
+  font-size: clamp(1.6rem, 6.5vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.stu-finish-text .stu-key {
+  padding: 0 0.3em;
+  border-radius: 10px;
+  background: #eaf5ff;
+  font-weight: inherit;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.stu-finish-left {
+  font-size: 1.05rem;
+  font-weight: 800;
   color: #000;
 }
 
-.stu-goal-icon {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 2.5px solid var(--ink);
+/* All done: the trophy is a button that pops in and throws confetti. */
+button.stu-finish-cup {
+  cursor: pointer;
+  transition: scale 0.15s ease;
+  animation: stu-cup-pop 0.8s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.stu-finish-cup:hover {
+  scale: 1.08;
+}
+
+button.stu-finish-cup:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+.stu-finish.is-done .stu-finish-cup {
+  width: 31%;
+}
+
+@keyframes stu-cup-pop {
+  from {
+    transform: scale(0.3) rotate(-14deg);
+    opacity: 0;
+  }
+}
+
+.stu-confetti {
+  position: absolute;
+  z-index: 2;
+  inset: -240px -8px 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.stu-confetti i {
+  position: absolute;
+  top: -16px;
+  left: var(--x);
+  width: 9px;
+  height: 15px;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  opacity: 0;
+  animation: stu-confetti var(--dur, 2.4s) var(--delay, 0s) cubic-bezier(0.3, 0.6, 0.5, 1) forwards;
+}
+
+.stu-confetti i.is-round {
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
+}
+
+@keyframes stu-confetti {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift, 0px), 460px) rotate(var(--spin, 360deg));
+  }
+}
+
+/* The subjects the student started (a tap on the box on top): a row for
+   each with how far they got; the one shown is teal. */
+.stu-subj-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stu-subj {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "name pct" "bar bar";
+  align-items: center;
+  gap: 8px 12px;
+  padding: 12px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font: inherit;
+  text-align: start;
+  color: #000;
+  cursor: pointer;
+  transition: scale 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stu-subj:hover {
+  scale: 1.03;
+}
+
+.stu-subj:active {
+  translate: 2px 3px;
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.stu-subj:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.stu-subj.is-on {
+  background: var(--memteal);
+}
+
+.stu-subj-name {
+  grid-area: name;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.stu-subj-pct {
+  grid-area: pct;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.stu-subj-bar {
+  grid-area: bar;
+  height: 14px;
+  overflow: hidden;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
   background: #fff6cf;
 }
 
-.stu-goal.is-done .stu-goal-icon {
-  background: var(--memyellow);
-  box-shadow: 2px 3px 0 0 var(--ink);
-}
-
-.stu-goal-icon svg {
-  width: 20px;
-  height: 20px;
-}
-
-.stu-goal + .stu-stage {
-  margin-top: 20px;
+.stu-subj-bar i {
+  display: block;
+  width: calc(var(--p, 0) * 1%);
+  height: 100%;
+  background: linear-gradient(#3aa7ef, #2185d4);
 }
 
 /* A topic's details. */
@@ -1297,7 +1872,7 @@ body.stu-body {
 }
 
 .stu-dlg-status.is-skipped {
-  background: var(--stu-late-soft);
+  background: #8ff3e6;
 }
 
 .stu-dlg-status.is-ahead {
@@ -1413,24 +1988,6 @@ body.stu-body {
   margin-top: 12px;
 }
 
-/* The tasks tab's box of every exercise solved: a line goes back to it. */
-.stu-solved-row {
-  color: inherit;
-  text-decoration: none;
-}
-
-.stu-solved-row:focus-visible {
-  outline: 3px solid var(--ink);
-  outline-offset: 2px;
-}
-
-.stu-solved-topic {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #333;
-}
-
 /* The button stays in view at the bottom while the lists scroll. */
 .stu-dlg-foot {
   position: sticky;
@@ -1446,7 +2003,7 @@ body.stu-body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stu-step.is-here {
+  .stu-step.is-here::after {
     animation: none;
   }
 
@@ -1552,162 +2109,10 @@ body.stu-body {
   height: 15px;
 }
 
-/* The bar of squares, glued to the bottom edge of the screen: the flame,
-   the map, the prizes and the books open in place of the tasks. Each
-   square has its name under it. */
-.stu-side-tiles {
-  position: fixed;
-  z-index: 130;
-  inset-inline: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: space-around;
-  gap: 4px;
-  margin: 0;
-  padding: 7px max(8px, calc((100% - 520px) / 2)) calc(6px + env(safe-area-inset-bottom, 0px));
-  border: 0;
-  border-top: 3px solid var(--ink);
-  border-radius: 0;
-  background: var(--memyellow);
-  box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.12);
-}
-
-/* Room under the page for the bar, and the corner fox sits above it. */
+/* The bar of squares at the bottom: css/student-bar.css. Room under the
+   page for it. */
 .stu-main:has(.stu-side-tiles) {
   padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
-}
-
-body:has(.stu-side-tiles) .site-fox-dock {
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
-}
-
-.stu-top-item {
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  min-width: 0;
-  max-width: 110px;
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.stu-top-label {
-  font-size: 0.85rem;
-  font-weight: 900;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-/* The square of what's open now: pressed in. */
-.stu-top-item.is-on .stu-daily-tile {
-  transform: translate(2px, 2px);
-  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12), 1px 1px 0 0 rgba(0, 0, 0, 0.85);
-}
-
-.stu-top-item.is-on .stu-top-label {
-  text-decoration: underline 3px;
-  text-underline-offset: 4px;
-}
-
-.stu-daily-tile.stu-map-tile {
-  background: linear-gradient(165deg, #e2f4ff, #8fd0ff);
-}
-
-.stu-daily-tile.stu-prizes-tile {
-  background: linear-gradient(165deg, #ffdbe5, #ff9fbb);
-}
-
-.stu-daily-tile.stu-library-tile {
-  background: linear-gradient(165deg, #fff7a8, #ffd23f);
-}
-
-.stu-daily-tile {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: min(46px, 100%);
-  aspect-ratio: 1;
-  padding: 0;
-  border: 2.5px solid var(--ink);
-  border-radius: 14px;
-  background: linear-gradient(165deg, #ffd08a, #ff9440);
-  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12), 3px 3px 0 0 rgba(0, 0, 0, 0.85);
-  color: var(--ink);
-  cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-/* A shine on the top of each square. */
-.stu-daily-tile::before {
-  content: "";
-  position: absolute;
-  top: 3px;
-  inset-inline: 5px;
-  height: 36%;
-  border-radius: 10px 10px 40% 40%;
-  background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
-  pointer-events: none;
-}
-
-.stu-daily-tile > svg {
-  position: relative;
-  width: 70%;
-  height: 70%;
-  transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
-}
-
-@media (hover: hover) {
-  .stu-top-item:not(.is-on):hover .stu-daily-tile {
-    transform: translateY(-2px) rotate(-4deg);
-  }
-
-  .stu-top-item:hover .stu-daily-tile > svg {
-    transform: scale(1.1);
-  }
-}
-
-.stu-top-item:focus-visible {
-  outline: none;
-}
-
-.stu-top-item:focus-visible .stu-daily-tile {
-  outline: 3px dashed var(--ink);
-  outline-offset: 4px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .stu-daily-tile,
-  .stu-daily-tile > svg {
-    transition: none;
-  }
-}
-
-.stu-daily-tile-check {
-  position: absolute;
-  top: -7px;
-  left: -7px;
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--stu-done);
-  color: var(--white);
-}
-
-.stu-daily-tile-check svg {
-  width: 12px;
-  height: 12px;
 }
 
 /* The daily challenge's tab (#daily): the flame with the streak's number,
@@ -1775,6 +2180,106 @@ body:has(.stu-side-tiles) .site-fox-dock {
 .stu-daily-go {
   margin-top: 4px;
   padding: 7px 28px;
+}
+
+/* The challenge's tab: a big card in the middle of the screen, between the
+   title and the bar at the bottom. */
+.stu-main:has(.stu-daily-page) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.stu-main:has(.stu-daily-page) #stuApp {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stu-daily.stu-daily-page {
+  gap: clamp(10px, 2.2vh, 18px);
+  width: 100%;
+  max-width: 640px;
+  margin: 16px auto;
+  padding: clamp(22px, 4vh, 36px) clamp(16px, 4vw, 32px);
+  border-width: 3px;
+  border-radius: 24px;
+  box-shadow: 6px 7px 0 0 var(--ink);
+}
+
+.stu-daily-page .stu-daily-line {
+  font-size: clamp(1.05rem, 3.6vw, 1.3rem);
+  line-height: 1.4;
+}
+
+.stu-daily-page .stu-daily-flame {
+  width: clamp(96px, 26vw, 124px);
+  height: clamp(96px, 26vw, 124px);
+}
+
+.stu-daily-page .stu-daily-flame svg {
+  width: 62%;
+  height: 62%;
+}
+
+.stu-daily-page .stu-daily-big {
+  font-size: clamp(1.4rem, 5vw, 1.8rem);
+}
+
+.stu-daily-page .stu-daily-week {
+  gap: clamp(6px, 2.2vw, 12px);
+}
+
+.stu-daily-page .stu-daily-week li {
+  gap: 5px;
+  font-size: clamp(0.9rem, 3vw, 1.05rem);
+}
+
+.stu-daily-page .stu-daily-week i {
+  width: clamp(30px, 8.5vw, 42px);
+  height: clamp(30px, 8.5vw, 42px);
+  border-width: 3px;
+}
+
+.stu-daily-page .stu-daily-week i svg {
+  width: 55%;
+  height: 55%;
+}
+
+.stu-daily-page .stu-daily-go {
+  margin-top: 8px;
+  padding: 11px 48px;
+  font-size: clamp(1.15rem, 4vw, 1.4rem);
+}
+
+/* A short screen: the same card, a little tighter, so it fits above the bar. */
+@media (max-height: 720px) {
+  .stu-daily.stu-daily-page {
+    gap: 8px;
+    margin-block: 8px;
+    padding-block: 16px;
+  }
+
+  .stu-daily-page .stu-daily-line {
+    font-size: 1.02rem;
+    line-height: 1.3;
+  }
+
+  .stu-daily-page .stu-daily-flame {
+    width: 84px;
+    height: 84px;
+  }
+
+  .stu-daily-page .stu-daily-big {
+    font-size: 1.35rem;
+  }
+
+  .stu-daily-page .stu-daily-go {
+    margin-top: 4px;
+    padding: 8px 44px;
+  }
 }
 
 /* ── The parents' page (/p/<key>, parent-portal.js) ── */
@@ -1923,18 +2428,6 @@ body:has(.stu-side-tiles) .site-fox-dock {
   color: #000;
 }
 
-/* A new sticker waits in "my prizes". */
-.stu-top-dot {
-  position: absolute;
-  top: -6px;
-  inset-inline-end: -6px;
-  width: 14px;
-  height: 14px;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: #ff6b6b;
-}
-
 /* ── The word cards and the new sticker, on "המשימות שלי" ── */
 
 .stu-cards {
@@ -1997,99 +2490,159 @@ body:has(.stu-side-tiles) .site-fox-dock {
   color: #000;
 }
 
-/* A tile per stage: yellow with a rosette once earned, grey with a lock and
-   how far the student got until then. */
+/* The certificates' box: in color, the tiles each in their own color on it.
+   Its title ("אנגלית") sits above the box, on the teal page. */
+.stu-prizes.is-certs {
+  margin-top: 8px;
+  background: linear-gradient(165deg, #ffc4da 0%, #d2c2ff 55%, #b7a3ff 100%);
+}
+
+.stu-prizes-title.is-out {
+  margin: 18px 0 0;
+  text-align: center;
+}
+
+.stu-prizes-title.is-out .stu-key {
+  background: #eaf5ff;
+}
+
+.stu-prizes.is-certs .stu-cert-tiles {
+  margin-top: 0;
+}
+
+/* A tile per stage, each in its own color: the number in a dashed circle
+   with a lock and how far the student got; a medal once earned. */
 .stu-cert-tiles {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 10px 0 0;
+  gap: 12px 10px;
+  margin: 12px 0 0;
   padding: 0;
   list-style: none;
 }
 
 .stu-cert-tile {
+  --tile: #c9f5d9;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 5px;
   width: 100%;
   height: 100%;
-  padding: 8px 4px;
+  padding: 10px 6px 11px;
   border: 2.5px solid var(--ink);
-  border-radius: 14px;
-  background: #e2ecf4;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.55), transparent 60%),
+    var(--tile);
   box-shadow: 3px 4px 0 0 var(--ink);
   color: #000;
   font: inherit;
   cursor: pointer;
+  transition: scale 0.15s ease;
 }
 
+.stu-cert-tile:hover,
+.stu-cert-tile:focus-visible {
+  scale: 1.05;
+}
+
+.stu-cert-tile.is-c0 { --tile: #b9f2cf; }
+.stu-cert-tile.is-c1 { --tile: #bfe0ff; }
+.stu-cert-tile.is-c2 { --tile: #ffec8f; }
+.stu-cert-tile.is-c3 { --tile: #ffcfa6; }
+.stu-cert-tile.is-c4 { --tile: #ffc9e0; }
+.stu-cert-tile.is-c5 { --tile: #a8efe6; }
+
+/* Earned: a thicker frame, a little tilt, like a sticker stuck on. */
 .stu-cert-tile.is-earned {
-  background: #fff4d6;
+  border-width: 3px;
+  box-shadow: 4px 5px 0 0 var(--ink);
 }
 
-/* The stage's number in a circle; a rosette on its corner once earned. */
+.stu-cert-tiles li:nth-child(odd) .stu-cert-tile.is-earned {
+  rotate: -2deg;
+}
+
+.stu-cert-tiles li:nth-child(even) .stu-cert-tile.is-earned {
+  rotate: 2deg;
+}
+
+/* The stage's number in a dashed circle, a bare lock just outside its
+   corner (no circle of its own: the user wants no circle in a circle). */
 .stu-cert-tile-num {
   position: relative;
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 2px dashed var(--ink);
+  width: 42px;
+  height: 42px;
+  border: 2.5px dashed var(--ink);
   border-radius: 50%;
-  background: #d7dee5;
-  font-size: 0.92rem;
+  background: color-mix(in srgb, var(--tile) 45%, #fff);
+  font-size: 1.15rem;
   font-weight: 900;
 }
 
 .stu-cert-tile-num.is-words {
-  font-size: 0.6rem;
+  font-size: 0.72rem;
 }
 
-.stu-cert-tile.is-earned .stu-cert-tile-num {
-  border-style: solid;
-  background: var(--memyellow);
-  box-shadow: 2px 3px 0 0 var(--ink);
+/* The whole road and the achievements: their drawing in the circle. */
+.stu-cert-tile-num.is-icon > svg {
+  width: 24px;
+  height: 24px;
 }
 
 .stu-cert-tile-num i {
   position: absolute;
-  bottom: -6px;
-  right: -10px;
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--memteal);
+  bottom: -4px;
+  right: -20px;
+  display: block;
+  width: 16px;
+  height: 16px;
 }
 
 .stu-cert-tile-num i svg {
-  width: 15px;
-  height: 15px;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Earned: the colored medal with its ribbons. */
+.stu-cert-tile-medal {
+  display: block;
+  width: 50px;
+  height: 50px;
+  margin: -4px 0 -4px;
+  color: var(--ink);
+  filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.18));
+}
+
+.stu-cert-tile-medal svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .stu-cert-tile-name {
   display: flex;
   align-items: center;
   min-height: 2.5em;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 900;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .stu-cert-tile-bar {
   display: block;
   width: 80%;
-  height: 8px;
+  height: 10px;
   margin-top: auto;
   overflow: hidden;
   border: 2px solid var(--ink);
   border-radius: 999px;
-  background: #f4f8fb;
+  background: color-mix(in srgb, var(--tile) 35%, #fff);
 }
 
 .stu-cert-tile-bar i {
@@ -2181,18 +2734,25 @@ body:has(.stu-side-tiles) .site-fox-dock {
   color: rgba(0, 0, 0, 0.6);
 }
 
+/* "חדש!": a red spiky badge over the tile's top left corner. */
 .stu-sticker-new {
   position: absolute;
-  top: -10px;
-  inset-inline-start: -6px;
-  padding: 2px 8px;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: #ff6b6b;
-  font-size: 0.9rem;
+  z-index: 2;
+  top: -16px;
+  left: -14px;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpolygon points='32.0 3.0 37.2 9.1 44.6 5.9 46.7 13.6 54.7 13.9 53.2 21.8 60.3 25.5 55.5 32.0 60.3 38.5 53.2 42.2 54.7 50.1 46.7 50.4 44.6 58.1 37.2 54.9 32.0 61.0 26.8 54.9 19.4 58.1 17.3 50.4 9.3 50.1 10.8 42.2 3.7 38.5 8.5 32.0 3.7 25.5 10.8 21.8 9.3 13.9 17.3 13.6 19.4 5.9 26.8 9.1' fill='%23ff6b6b' stroke='%23111' stroke-width='2.6' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  filter: drop-shadow(2px 3px 0 var(--ink));
+  font-size: 0.78rem;
   font-weight: 900;
+  line-height: 1;
   color: #000;
-  transform: rotate(-8deg);
+  transform: rotate(-12deg);
+  pointer-events: none;
 }
 
 /* A sticker's round drawing: a colour of its own once earned, grey with a
@@ -2254,8 +2814,37 @@ body:has(.stu-side-tiles) .site-fox-dock {
   text-align: center;
 }
 
+/* The "קיבלת!" / "עוד לא" line sits in the middle; the close button
+   keeps its corner. */
 .stu-sticker-info .stu-dlg-head {
+  position: relative;
   align-self: stretch;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.stu-sticker-info .stu-dlg-close {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+}
+
+/* "קיבלת!" and "כל הכבוד!": yellow with a thick ink outline, as the
+   student page's hello. */
+.stu-sticker-cheer {
+  display: block;
+  font-size: 1.9rem;
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--memyellow);
+  -webkit-text-fill-color: var(--memyellow);
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.3em var(--ink);
+}
+
+.stu-sticker-have .stu-sticker-cheer {
+  margin-top: 6px;
+  font-size: 1.7rem;
 }
 
 .stu-sticker-info .stu-sticker-art {
@@ -2291,7 +2880,7 @@ body:has(.stu-side-tiles) .site-fox-dock {
   }
 
   .stu-cert-tile-name {
-    font-size: 0.82rem;
+    font-size: 0.86rem;
   }
 }
 
@@ -2317,6 +2906,64 @@ body:has(.stu-side-tiles) .site-fox-dock {
   height: 100%;
 }
 
+/* The certificate is a button: a tap shows it up close. */
+.stu-cert-zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stu-cert-zoom:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: -3px;
+}
+
+/* Up close: the certificate over the whole screen, at least 1000px wide,
+   dragged around to see every part. */
+.stu-cert-full {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(10, 20, 40, 0.92);
+}
+
+.stu-cert-full::backdrop {
+  background: rgba(10, 20, 40, 0.92);
+}
+
+.stu-cert-full-scroll {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  direction: ltr;
+  overscroll-behavior: contain;
+}
+
+.stu-cert-full-scroll img {
+  flex-shrink: 0;
+  width: max(96%, 1000px);
+  height: auto;
+  margin: auto;
+  border-radius: 10px;
+}
+
+.stu-cert-full-close {
+  position: fixed;
+  z-index: 1;
+  top: 14px;
+  right: 14px;
+}
+
 .stu-cert-wait {
   margin: 0;
   font-weight: 800;
@@ -2324,23 +2971,40 @@ body:has(.stu-side-tiles) .site-fox-dock {
 
 .stu-cert-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 6px;
+  gap: 12px;
+  margin-top: 10px;
 }
 
-.stu-cert-act {
+/* Big, thick buttons with a hard shadow; printing is blue. */
+.btn-candy.stu-btn.stu-cert-act {
   flex: 1 1 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   min-width: 0;
-  padding-inline: 8px;
+  min-height: 58px;
+  padding: 10px 6px;
+  border-width: 3.5px !important;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.btn-candy.stu-btn.stu-cert-act:active {
+  transform: translate(3px, 4px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.stu-cert-act.stu-cert-print {
+  background: #5ab8ff;
+  color: #000;
 }
 
 .stu-cert-act svg {
-  width: 20px;
-  height: 20px;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
 }
 
 /* Printing: the certificate alone, on a landscape A4 page. */
@@ -2456,4 +3120,197 @@ body:has(.stu-side-tiles) .site-fox-dock {
 
 .stu-test-error {
   color: #c62828;
+}
+
+/* ── The class (lib/classes.js): the updates from
+   the teacher (#class), and the join page (/c/<code>, class-join.js) ── */
+
+.stu-new-class {
+  position: relative;
+  background: #c9f5d9;
+}
+
+.stu-new-class > .stu-top-dot {
+  top: -7px;
+  inset-inline-end: -7px;
+}
+
+.stu-new-class-art {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+}
+
+.stu-new-class-art svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Each class is a chat (class-chat.css); styles.css pads every <section>
+   80px top and bottom. */
+.stu-class.class-chat {
+  max-width: 560px;
+  height: min(72dvh, 680px);
+  min-height: 380px;
+  margin: 14px auto 0;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.stu-class + .stu-class {
+  margin-top: 24px;
+}
+
+.stu-post-undo {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--body);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* The join page: the class's name, then the name form. */
+.stu-join {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 420px;
+  margin: 18px auto 0;
+  padding: 18px 16px 20px;
+  border: 2.5px solid var(--ink);
+  border-radius: 18px;
+  background: #eaf5ff;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  text-align: center;
+}
+
+.stu-join-name {
+  margin: 0 0 2px;
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+.stu-join-line {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.5;
+  color: #000;
+}
+
+.stu-join-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.stu-join-label {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #000;
+}
+
+.stu-join-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 12px;
+  background: #fffdf3;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-align: center;
+  color: #000;
+}
+
+.stu-join-tip {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--body);
+}
+
+.stu-join-go {
+  align-self: center;
+  margin-top: 8px;
+  padding: 8px 26px;
+  font-size: 1.05rem;
+}
+
+.stu-join-other {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--body);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.stu-join-error {
+  margin-top: 4px;
+}
+
+.stu-join-error .stu-join-line {
+  font-size: 0.95rem;
+  color: #c62828;
+}
+
+/* A live lesson the teacher opened to the class (student-portal.js
+   liveHtml): on top of the personal area, into /live/<code>. */
+.stu-live-now {
+  background: var(--memteal);
+  transition: scale 0.12s;
+}
+
+.stu-live-now:hover {
+  scale: 1.03;
+}
+
+.stu-live-art {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  color: var(--ink);
+  animation: stu-live-pulse 1.6s ease-in-out infinite;
+}
+
+.stu-live-art svg {
+  width: 100%;
+  height: 100%;
+}
+
+.stu-live-now .stu-new-prize-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.stu-live-go {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 12px;
+  background: #fff8dc;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-weight: 900;
+}
+
+@keyframes stu-live-pulse {
+  50% { opacity: 0.45; }
 }

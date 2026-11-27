@@ -6,6 +6,7 @@ Disallow: /api/
 Disallow: /admin
 Disallow: /s/
 Disallow: /p/
+Disallow: /c/
 Disallow: /my-room
 Disallow: /student.html
 Disallow: /admin-students.html

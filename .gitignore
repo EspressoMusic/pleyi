@@ -9,3 +9,6 @@ data/premium-subscriptions.json
 data/student-progress.json
 data/english-practice.json
 data/teacher-lessons.json
+data/classes.json
+data/site-stats.json
+data/teacher-diary.json

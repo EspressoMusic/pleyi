@@ -141,15 +141,21 @@ async function main() {
       let e = [...document.querySelectorAll(".eng-ex-title")].find((t) => t.textContent.trim() === "הר געש");
       while (e && !leaf(e)) e = e.parentElement; return e && leaf(e); })()`);
 
-    // The lesson: its pictures load slowly.
+    // The lesson, on full screen: its pictures load slowly.
     await go("/services/ready-lessons?lesson=volcano", 9000);
+    await js(`document.querySelector('#lessonPlayerExpand').click()`);
+    await sleep(1200);
     const next = `document.querySelector('.lesson-player-nav[aria-label="שקופית הבאה"]')`;
     await shot("slide1");
     await spot("next slide", next);
     await js(`${next}.click()`);
     await sleep(4500);
     await shot("slide2");
-    await js(`document.querySelector('.lesson-player-dot[data-i="7"]').click()`);
+    // On to the games slide.
+    for (let i = 0; i < 20 && !(await js(`!!document.querySelector('.lp-game-btn[data-game-id="vocabulary-duel"]')`)); i++) {
+      await js(`${next}.click()`);
+      await sleep(1200);
+    }
     await sleep(1800);
     await shot("games");
     await spot("טריוויה", `document.querySelector('.lp-game-btn[data-game-id="vocabulary-duel"]')`);

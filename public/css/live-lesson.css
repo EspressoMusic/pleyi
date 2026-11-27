@@ -1,0 +1,577 @@
+/* Live lesson (live-lesson.js on the teacher's lesson pages, live-view.js
+   on /live). */
+
+/* ── The teacher: "הצגה לכיתה" on the player's top bar ── */
+body.lp-host .lesson-player-live,
+body.page-ready-lessons .lesson-player-live {
+  height: 36px;
+  min-width: 36px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 2px solid color-mix(in srgb, var(--ink) 20%, transparent);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-weight: 900;
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+  transition: background 0.12s, scale 0.12s, border-color 0.12s;
+}
+
+body:is(.lp-host, .page-ready-lessons) .lesson-player-live:hover {
+  scale: 1.06;
+  border-color: color-mix(in srgb, var(--ink) 35%, transparent);
+}
+
+body:is(.lp-host, .page-ready-lessons) .lesson-player-live.is-live {
+  background: var(--memteal);
+  border-color: var(--ink);
+}
+
+body:is(.lp-host, .page-ready-lessons) .lesson-player-live svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+body:is(.lp-host, .page-ready-lessons) .lesson-player-live.is-live svg {
+  animation: lp-live-pulse 1.6s ease-in-out infinite;
+}
+
+.lp-live-count.hidden {
+  display: none;
+}
+
+@keyframes lp-live-pulse {
+  50% { opacity: 0.45; }
+}
+
+/* ── A student's player follows the teacher's: no way to move it ── */
+.lesson-player.is-following .lesson-player-nav,
+.lesson-player.is-following .lesson-player-dots,
+.lesson-player.is-following .lesson-player-mobile-nav,
+.lesson-player.is-following .lesson-player-more,
+.lesson-player.is-following .lesson-player-pdf-toggle {
+  display: none !important;
+}
+
+.lesson-player.is-following .lesson-player-stage {
+  grid-template-columns: 1fr;
+}
+
+/* ── Where the teacher tapped on the slide (both screens) ── */
+.lesson-player-slide-wrap {
+  position: relative;
+}
+
+.lp-tap {
+  --tap: clamp(40px, 7vmin, 76px);
+  position: absolute;
+  z-index: 30;
+  width: var(--tap);
+  height: var(--tap);
+  margin: calc(var(--tap) / -2) 0 0 calc(var(--tap) / -2);
+  border: 4px solid #ff3b30;
+  border-radius: 50%;
+  background: color-mix(in srgb, #ff3b30 28%, transparent);
+  box-shadow: 0 0 0 2.5px #fff, inset 0 0 0 2px #fff;
+  box-sizing: border-box;
+  pointer-events: none;
+  animation: lp-tap-in 1.7s ease-out forwards;
+}
+
+.lp-tap::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 4px solid #ff3b30;
+  border-radius: 50%;
+  animation: lp-tap-ring 0.8s ease-out 2;
+}
+
+@keyframes lp-tap-in {
+  0% { scale: 0.3; opacity: 0; }
+  12% { scale: 1.12; opacity: 1; }
+  22% { scale: 1; }
+  75% { opacity: 1; }
+  100% { scale: 0.9; opacity: 0; }
+}
+
+@keyframes lp-tap-ring {
+  from { scale: 1; opacity: 0.9; }
+  to { scale: 2.3; opacity: 0; }
+}
+
+/* ── The teacher's window over the slide: just the code and the address
+   (a tap copies the link), who joined in one quiet line, "סיום" at the
+   bottom. X goes back to the lesson. ── */
+.lp-live-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  container-type: size;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2cqh, 16px);
+  padding: clamp(14px, 3cqh, 28px) clamp(16px, 3cqw, 32px);
+  background: #eaf5ff;
+  color: #000;
+  overflow: hidden;
+}
+
+.lp-live-x {
+  position: absolute;
+  top: clamp(10px, 2.4cqh, 20px);
+  inset-inline-end: clamp(10px, 2.4cqw, 22px);
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #000;
+  cursor: pointer;
+  transition: scale 0.12s;
+}
+
+.lp-live-x svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 3;
+}
+
+.lp-live-x:hover {
+  scale: 1.12;
+}
+
+.lp-live-wait {
+  margin: auto;
+  font-size: clamp(1.1rem, 5cqh, 1.6rem);
+  font-weight: 800;
+  text-align: center;
+}
+
+.lp-live-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.8cqh, 24px);
+  text-align: center;
+}
+
+.lp-live-code {
+  margin: 0;
+  font-size: clamp(3rem, min(24cqh, 27cqw), 11rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  padding-inline-start: 0.1em;
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-live-url {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  border-bottom: 2.5px dashed color-mix(in srgb, #000 40%, transparent);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: clamp(1.05rem, min(5cqh, 6cqw), 2rem);
+  font-weight: 800;
+  color: #000;
+  cursor: pointer;
+  transition: scale 0.12s;
+}
+
+.lp-live-url span {
+  overflow-wrap: anywhere;
+}
+
+.lp-live-url svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.lp-live-url:hover {
+  scale: 1.05;
+}
+
+.lp-live-names {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  max-width: 40em;
+  margin: 0;
+  overflow: hidden;
+  font-size: clamp(0.95rem, 3.2cqh, 1.15rem);
+  font-weight: 700;
+  color: color-mix(in srgb, #000 62%, transparent);
+}
+
+.lp-live-names .is-away {
+  opacity: 0.5;
+}
+
+.lp-live-classes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+}
+
+.lp-live-label {
+  font-weight: 800;
+  color: color-mix(in srgb, #000 62%, transparent);
+}
+
+.lp-live-class {
+  padding: 4px 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 12px;
+  background: #eaf5ff;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #000;
+  cursor: pointer;
+  transition: scale 0.12s, background 0.12s;
+}
+
+.lp-live-class:hover {
+  scale: 1.05;
+}
+
+.lp-live-class.is-on {
+  background: var(--memteal);
+}
+
+.lp-live-foot {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  font-size: clamp(1rem, 3.4cqh, 1.2rem);
+  font-weight: 800;
+}
+
+.lp-live-sep {
+  color: color-mix(in srgb, #000 35%, transparent);
+}
+
+.lp-live-end {
+  padding: 4px 2px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 800;
+  color: #a1180f;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: scale 0.12s;
+}
+
+.lp-live-end:hover {
+  scale: 1.08;
+}
+
+/* "לנסות שוב" when the live lesson couldn't open. */
+.lp-live-actions {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.lp-live-go {
+  padding: clamp(8px, 2cqh, 13px) clamp(16px, 3cqw, 28px);
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--memteal);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  font: inherit;
+  font-size: clamp(1rem, 3.6cqh, 1.25rem);
+  font-weight: 900;
+  color: #000;
+  cursor: pointer;
+  transition: scale 0.12s;
+}
+
+.lp-live-go:hover {
+  scale: 1.04;
+}
+
+/* ── The page, while a live lesson goes on and the player is closed ── */
+.lp-live-bar {
+  position: fixed !important;
+  inset-inline: 0;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  z-index: 1900 !important;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: #eaf5ff;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  color: #000;
+  font-weight: 800;
+}
+
+.lp-live-dot {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff3b30;
+  animation: lp-live-pulse 1.4s ease-in-out infinite;
+}
+
+.lp-live-bar-text b {
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.lp-live-bar-hint {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: color-mix(in srgb, #000 60%, transparent);
+}
+
+.lp-live-bar-end {
+  padding: 5px 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 12px;
+  background: #ffd9d4;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font: inherit;
+  font-weight: 900;
+  color: #000;
+  cursor: pointer;
+  transition: scale 0.12s;
+}
+
+.lp-live-bar-end:hover {
+  scale: 1.06;
+}
+
+@media (max-width: 640px) {
+  .lp-live-bar-hint {
+    display: none;
+  }
+}
+
+/* ── The students' page (/live) ── */
+html:has(body.live-body),
+body.live-body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body.live-body {
+  margin: 0;
+  background: linear-gradient(160deg, #f1eefb 0%, #e6def7 100%);
+}
+
+.lv-main {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.lv-loading {
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.lv-card {
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 22px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: #eaf5ff;
+  box-shadow: 6px 8px 0 0 var(--ink);
+  color: #000;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.lv-art {
+  width: 56px;
+  height: 56px;
+  color: var(--ink);
+}
+
+.lv-art svg {
+  width: 100%;
+  height: 100%;
+}
+
+.lv-card.is-waiting .lv-art {
+  animation: lp-live-pulse 1.8s ease-in-out infinite;
+}
+
+.lv-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 7vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.lv-line {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.lv-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  text-align: start;
+}
+
+.lv-label {
+  font-weight: 900;
+}
+
+.lv-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #000;
+  box-sizing: border-box;
+}
+
+.lv-input:focus {
+  outline: 3px solid var(--memteal);
+  outline-offset: 1px;
+}
+
+.lv-input--code {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-align: center;
+  padding-inline-start: calc(14px + 0.3em);
+}
+
+.lv-error {
+  margin: 2px 0 0;
+  font-weight: 800;
+  color: #c0271d;
+}
+
+.lv-error.hidden {
+  display: none;
+}
+
+.lv-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.lv-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--memteal);
+  box-shadow: 4px 5px 0 0 var(--ink);
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: scale 0.12s;
+}
+
+.lv-actions .lv-btn {
+  margin-top: 0;
+}
+
+.lv-btn:hover {
+  scale: 1.03;
+}
+
+.lv-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.lv-btn--soft {
+  background: #fff8dc;
+}
+
+/* "שיעור חי" on a student's player bar. */
+.lv-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-inline-start: 10px;
+  margin-inline-end: auto;
+  padding: 3px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #000;
+  white-space: nowrap;
+}
+
+.lv-tag i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff3b30;
+  animation: lp-live-pulse 1.4s ease-in-out infinite;
+}
+
+.lv-tag.is-away i {
+  background: #9a9a9a;
+  animation: none;
+}

@@ -23,6 +23,7 @@
   }
 
   function printWorksheetImage(src, title) {
+    window.PleyiStats?.hit("download", String(src).split("?")[0], title);
     const area = getPrintArea();
     area.innerHTML = "";
     const img = document.createElement("img");

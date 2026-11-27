@@ -23,6 +23,10 @@
 
   const ICONS = {
     info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><circle cx="12" cy="7.4" r="0.9" fill="currentColor"/></svg>`,
+    // Just the "i", for a round button (no circle in a circle).
+    infoMark: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke-width="1.6"/><path d="M12 11v8.5"/></svg>`,
+    // A turning arrow: the flipped lesson tile's "turn back".
+    turnBack: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 3.5V9h5.5"/></svg>`,
     heart: (full) =>
       `<svg class="rs-heart${full ? "" : " is-empty"}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.2 3 4.5 6.6 4.5c2.1 0 3.6 1.2 5.4 3.2 1.8-2 3.3-3.2 5.4-3.2 3.6 0 5.7 3.7 4.2 7.2C19.5 16.4 12 21 12 21Z" stroke="#000" stroke-width="3" stroke-linejoin="round"/></svg>`,
     star: (on) =>
@@ -142,15 +146,113 @@
 
   const LESSONS = () => (window.SUBJECT_SHORT_LESSONS || []).filter((l) => l.subject === "road");
 
+  // The back of a lesson tile: the lesson in two short lines.
+  const LESSON_BRIEF = {
+    "road-street": ["מדרכה – להולכי רגל", "כביש – למכוניות"],
+    "road-body": ["הגוף שלנו תופס מקום", "נשארים רחוק מהכביש"],
+    "road-moves": ["ליד הכביש – בזהירות", "מסובבים את כל הראש"],
+    "road-stop": ["עוצרים בשפת המדרכה", "מכונית לא עוצרת מיד"],
+    "road-walk": ["הולכים על המדרכה", "ביד של מבוגר"],
+    "road-park": ["רכב נוסע גם אחורה", "לא משחקים ליד רכב"],
+    "road-cross": ["חוצים במעבר חצייה", "שמאלה, ימינה ושוב שמאלה"],
+    "road-lights": ["באדום – מחכים", "בירוק – מסתכלים וחוצים"],
+    "road-group": ["בטיול הולכים בטור", "חוצים רק כשהמורה אומר"],
+    "road-school": ["דרך בטוחה לבית הספר", "יוצאים בזמן"],
+    "road-signs": ["תמרור אומר מה לעשות", "משולש, עיגול ומרובע"],
+    "road-signs2": ["שלושה סוגי תמרורים", "אזהרה, הוריה ומודיעין"],
+    "road-marks": ["סימונים על הכביש", "אדום-לבן – אסור לעצור"],
+    "road-see": ["רואים את המכוניות", "והנהג רואה אותנו"],
+    "road-rail": ["חוצים כשהמחסום למעלה", "רכבת לא עוצרת מהר"],
+    "road-car": ["ברכב חוגרים תמיד", "יוצאים לצד המדרכה"],
+    "road-shuttle": ["בהסעה – חוגרים", "לא רצים לאוטובוס"],
+    "road-bike": ["רוכבים תמיד עם קסדה", "במעבר חצייה – יורדים"],
+    "road-ride": ["רוכבים בשביל אופניים", "לפני פנייה מסמנים ביד"],
+    "road-electric": ["חשמליים – רק מגיל 16", "עם קסדה, לא על המדרכה"],
+    "road-city": ["יש כמה סוגי דרכים", "בכל דרך – סכנה אחרת"],
+    "road-busy": ["בעיר הצפופה יש סכנות", "מכירים אותן ונזהרים"],
+    "road-free": ["אין מעבר חצייה?", "בוחרים מקום שרואים רחוק"],
+    "road-why": ["למה המעבר דווקא כאן?", "גם שם עוצרים ומסתכלים"],
+    "road-wide": ["בכביש רחב – כמה נתיבים", "בודקים כל נתיב"],
+    "road-junction": ["בצומת מכוניות גם פונות", "גם בירוק – מסתכלים"],
+    "road-route": ["קצר זה לא תמיד בטוח", "מתכננים עם מבוגר"],
+    "road-speed": ["מכונית לא עוצרת מיד", "לא חוצים מול מכונית"],
+    "road-focus": ["בדרך – בלי טלפון", "ובלי אוזניות"],
+    "road-choice": ["אנחנו אחראים על עצמנו", "מותר לסרב לדבר מסוכן"],
+    "road-help": ["ראינו תאונה – לא רצים", "קוראים למבוגר"],
+    "road-winter": ["בגשם הכביש חלק", "מכונית עוצרת לאט יותר"],
+    "road-holiday": ["בחגים יוצאים יותר", "ונזהרים יותר"],
+  };
+
+  // A lesson without a brief: the summary's first sentence.
+  const lessonBrief = (lesson) =>
+    LESSON_BRIEF[lesson.id] || [String(lesson.summary || "").split(/(?<=[.!?])\s+/)[0]].filter(Boolean);
+
+  // The whole tile opens the lesson ("פתיחה" stretches over it, road-safety.css);
+  // the "i" in the corner flips the tile to its back: the lesson in short.
   function lessonTile(lesson, num) {
     return `
       <article class="eng-topic-card">
-        <button type="button" class="eng-topic-tile has-num" data-rs-lesson="${esc(lesson.id)}" aria-label="${esc(`שיעור ${num} – ${lesson.name}`)}">
+        <div class="eng-topic-tile has-num rs-lesson-tile">
           <span class="eng-path-num" aria-hidden="true">${num}</span>
           <span class="eng-topic-title">${esc(lesson.name)}</span>
-          <span class="font-cartoon eng-topic-open">פתיחה</span>
-        </button>
+          <span class="rs-lesson-back" aria-hidden="true"><span class="rs-lesson-back-text">${lessonBrief(lesson).map((line) => `<span>${esc(line)}</span>`).join("")}</span></span>
+          <span class="rs-lesson-actions">
+            <button type="button" class="rs-info-btn rs-lesson-info" data-rs-lesson-info="${esc(lesson.id)}" aria-pressed="false" aria-label="${esc(`בקצרה על השיעור ${lesson.name}`)}" title="בקצרה">${ICONS.infoMark}</button>
+            <button type="button" class="font-cartoon eng-topic-open rs-lesson-open" data-rs-lesson="${esc(lesson.id)}" aria-label="${esc(`שיעור ${num} – ${lesson.name}`)}">פתיחה</button>
+          </span>
+        </div>
       </article>`;
+  }
+
+  // The back's lines sit between the "i" and "פתיחה", as big as fit there.
+  function fitLessonBack(tile) {
+    const back = tile.querySelector(".rs-lesson-back");
+    const text = back?.firstElementChild;
+    const actions = tile.querySelector(".rs-lesson-actions");
+    if (!text || !actions) return;
+    back.style.bottom = `${tile.clientHeight - actions.offsetTop + 6}px`;
+    text.style.fontSize = "";
+    let size = parseFloat(getComputedStyle(text).fontSize);
+    while (text.offsetHeight > back.clientHeight && size > 13) {
+      size -= 1;
+      text.style.fontSize = `${size}px`;
+    }
+  }
+
+  // The "i": the tile turns over (half a turn, swap the faces, half a turn
+  // back); pressed again, it turns back to the front.
+  function flipLessonTile(btn) {
+    const tile = btn.closest(".rs-lesson-tile");
+    const card = tile?.closest(".eng-topic-card");
+    if (!card || card.dataset.flipping) return;
+    const flipped = !tile.classList.contains("is-flipped");
+    const name = tile.querySelector(".eng-topic-title")?.textContent || "";
+    const swap = () => {
+      tile.classList.toggle("is-flipped", flipped);
+      tile.querySelector(".rs-lesson-back")?.setAttribute("aria-hidden", flipped ? "false" : "true");
+      btn.setAttribute("aria-pressed", flipped ? "true" : "false");
+      btn.setAttribute("aria-label", flipped ? `חזרה לכרטיס ${name}` : `בקצרה על השיעור ${name}`);
+      btn.title = flipped ? "חזרה" : "בקצרה";
+      btn.innerHTML = flipped ? ICONS.turnBack : ICONS.infoMark;
+      if (flipped) fitLessonBack(tile);
+    };
+    if (!card.animate || matchMedia("(prefers-reduced-motion: reduce)").matches) return swap();
+    card.dataset.flipping = "1";
+    const turn = (from, to, easing) =>
+      card.animate(
+        [{ transform: `perspective(900px) rotateY(${from}deg)` }, { transform: `perspective(900px) rotateY(${to}deg)` }],
+        { duration: 180, easing, fill: "forwards" }
+      );
+    const first = turn(0, 90, "ease-in");
+    first.finished
+      .then(() => {
+        swap();
+        const second = turn(-90, 0, "ease-out");
+        first.cancel();
+        return second.finished.then(() => second.cancel());
+      })
+      .catch(() => swap())
+      .finally(() => delete card.dataset.flipping);
   }
 
   // The table of contents under the title, as on the English page: each stage
@@ -175,8 +277,15 @@
     const list = $("#rsLessonList");
     if (!list) return;
     const lessons = LESSONS();
-    const stages = (window.LEARN_SUBJECT?.path || []).map((stage) => ({
+    // A stage's tiles share one color by how hard it is, as on the exercises'
+    // path (english-learning.js): green first, red and gray last.
+    const path = window.LEARN_SUBJECT?.path || [];
+    const graded = path.filter((stage) => stage.level == null);
+    const level = (stage) =>
+      stage.level ?? (graded.length > 1 ? Math.round((graded.indexOf(stage) * 7) / (graded.length - 1)) : 0);
+    const stages = path.map((stage) => ({
       title: stage.title,
+      level: level(stage),
       lessons: lessons.filter((l) => stage.topics.includes(l.topic)),
     }));
     // A lesson outside the stages still shows, at the end.
@@ -192,7 +301,7 @@
       numbered
         .map(
           (s) => `
-        <div class="eng-topic-group eng-path-stage">
+        <div class="eng-topic-group eng-path-stage"${s.level != null ? ` data-level="${s.level}"` : ""}>
           ${s.title ? `<h3 class="eng-group-title eng-path-title"><span class="eng-path-stage-num">שלב ${s.stageNum}</span>${esc(s.title)}</h3>` : ""}
           <div class="eng-topic-grid">${s.lessons.map(({ lesson, num }) => lessonTile(lesson, num)).join("")}</div>
         </div>`
@@ -268,7 +377,7 @@
       id: "light",
       title: "חוצים בירוק",
       art: () => fig("plight", { on: "green" }),
-      how: ["מחכים לאיש הירוק – ואז לוחצים „חוצים!”", "באדום או בירוק מהבהב – לא לוחצים", "מכונית לא עצרה? מחכים שתעבור", "8 חציות בבטחה – וניצחתם"],
+      how: ["מחכים לאיש הירוק – ואז לוחצים „חוצים!”", "באדום – לא לוחצים", "מכונית לא עצרה? מחכים שתעבור", "8 חציות בבטחה – וניצחתם"],
       start: lightGame,
     },
     {
@@ -356,6 +465,7 @@
     open(game) {
       this.close(false);
       this.game = game;
+      window.PleyiStats?.hit("game", `road-${game.id}`, game.title);
       $("#rsGameTitle").textContent = game.title;
       // A question game (soft) looks like the exercises: their round back
       // arrow instead of the cross (road-safety.css, .rs-game.is-soft).
@@ -477,10 +587,8 @@
           car.classList.add("is-driving");
           later(() => (carOn = false), 1500);
         }
-        later(() => setPhase("blink"), 2900);
-      } else if (p === "blink") {
-        draw("blink");
-        later(() => setPhase("red"), 1300);
+        // In Israel the walkers' green doesn't flash: it turns straight to red.
+        later(() => setPhase("red"), 3600);
       }
     }
 
@@ -508,7 +616,7 @@
       hearts--;
       mistakes++;
       road.classList.add("is-bad");
-      const why = phase === "green" ? "מכונית לא עצרה – מחכים שתעבור" : phase === "blink" ? "ירוק מהבהב – לא מתחילים לחצות" : "אדום – עומדים ומחכים";
+      const why = phase === "green" ? "מכונית לא עצרה – מחכים שתעבור" : "אדום – עומדים ומחכים";
       say(msg, why, "bad");
       status();
       if (hearts <= 0) {
@@ -1105,6 +1213,8 @@
 
     document.addEventListener("click", (e) => {
       if (barBack(e)) return;
+      const lessonInfo = e.target.closest("[data-rs-lesson-info]");
+      if (lessonInfo) return flipLessonTile(lessonInfo);
       const lessonBtn = e.target.closest("[data-rs-lesson]");
       if (lessonBtn) return openLesson(lessonBtn.dataset.rsLesson);
 
@@ -1124,6 +1234,9 @@
       if (e.target.closest("[data-rs-again]")) return shell.run();
       if (e.target.closest("[data-rs-close]")) return shell.close();
     });
+
+    // A flipped tile's lines refit when the page's width changes.
+    window.addEventListener("resize", () => document.querySelectorAll(".rs-lesson-tile.is-flipped").forEach(fitLessonBack));
 
     $("#rsInfoGo")?.addEventListener("click", () => {
       const run = infoGo;
@@ -1224,14 +1337,15 @@
     );
   }
 
-  // Red 4 s, green 5 s, flashing 2 s. The title's words light with it.
+  // Red 4 s, green 5 s (the walkers' green doesn't flash in Israel). The
+  // title's words light with it.
   function runHeroLight(svg) {
     const lights = [svg, $("#rsTitle")].filter(Boolean);
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
       lights.forEach((el) => setLights(el, "green"));
       return;
     }
-    const steps = [["red", 4000], ["green", 5000], ["blink", 2000]];
+    const steps = [["red", 4000], ["green", 5000]];
     let i = 0;
     const next = (wait) =>
       setTimeout(() => {

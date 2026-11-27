@@ -1,4 +1,4 @@
-@import url("css/fonts.css?v=3");
+@import url("css/fonts.css?v=4");
 @import url("css/ambient-bg.css?v=9");
 @import url("css/dark-theme.css?v=1");
 
@@ -52,6 +52,8 @@
   --glow-blue: rgba(0, 229, 204, 0.2);
   --radius: 24px;
   --container: 1180px;
+  /* desktop: the whole page, clear of the side waves */
+  --container-wide: calc(100% - 2 * clamp(0px, 9vw - 28px, 142px));
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --success: #00C9B7;
   --danger: #e07070;
@@ -218,6 +220,59 @@ body.clean-site h2.font-cartoon,
 .clean-section--contact .clean-section-title.font-cartoon {
   color: var(--memyellow);
   -webkit-text-fill-color: var(--memyellow);
+}
+
+/* The yellow outlined titles (and the hero lines beside them) in the home
+   page's site-name font, Fredoka (fonts.css). The pro look sets
+   --title-font back to its calm font (site-pro.css). */
+:is(
+  .hero-title.font-cartoon,
+  .clean-section-title.font-cartoon,
+  .room-title.font-cartoon,
+  .room-hello-title,
+  .eng-topic-heading.font-cartoon,
+  .eng-fc-sub.font-cartoon,
+  .svc-my-games-title.font-cartoon,
+  .hub-body :is(.hub-title, .teacher-room-name, .hub-custom-header h2, .modal-custom-title, .game-info-title).font-cartoon,
+  .rs-heading:is(.rs-page-title, .rs-section-title),
+  .rs-hero-line,
+  .es-heading:is(.es-page-title, .es-section-title),
+  .es-hero-line,
+  .adm-top-title
+) {
+  font-family: var(--title-font, "Fredoka"), var(--font-sans);
+  font-weight: 700;
+}
+
+/* The yellow titles colored letter by letter like the home's "פלייסקול"
+   (js/title-colors.js, which keeps its own copy of the list above). The ink
+   outline is drawn once, under the letters, so no letter's outline covers
+   the next one. */
+.title-colored {
+  isolation: isolate;
+}
+
+.title-colored--placed {
+  position: relative;
+}
+
+.title-colored::before {
+  content: attr(data-title-text);
+  content: attr(data-title-text) / "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  box-sizing: border-box;
+  padding: inherit;
+  color: var(--title-ink, var(--ink));
+  -webkit-text-fill-color: var(--title-ink, var(--ink));
+  pointer-events: none;
+}
+
+.title-colored > .title-ch {
+  color: var(--ch-color);
+  -webkit-text-fill-color: var(--ch-color);
+  -webkit-text-stroke-width: 0;
 }
 
 .how-timeline-body h3 {
@@ -553,6 +608,15 @@ button { font-family: inherit; }
   max-width: var(--container);
   margin: 0 auto;
   padding: 0 28px;
+}
+
+/* Desktop: the content spreads across the whole page instead of a narrow
+   column in the middle, and only keeps clear of the side waves. Pages that
+   set their own max-width (my-room, legal) keep it. */
+@media (min-width: 1024px) {
+  .container {
+    max-width: var(--container-wide);
+  }
 }
 
 .hidden { display: none !important; }
@@ -1243,6 +1307,11 @@ button.nav-pill.active,
 }
 
 .mobile-nav.open { opacity: 1; visibility: visible; }
+
+/* A short screen scrolls the menu instead of squeezing (and clipping) its buttons —
+   "יציאה" sits inside a display:contents wrapper, so it's listed too */
+.mobile-nav > *,
+.mobile-nav-auth { flex-shrink: 0; }
 
 .mobile-nav a { font-size: 22px; font-weight: 800; }
 
@@ -4457,12 +4526,12 @@ body.in-room .game-actions .btn {
   text-decoration: none;
   color: var(--white);
   font-weight: 900;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, scale 0.18s ease;
 }
 
+/* On hover the button grows; the shadow stays as it is. */
 .whatsapp-btn:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 0 0 var(--ink), 0 0 28px rgba(37, 211, 102, 0.55);
+  scale: 1.05;
 }
 
 .whatsapp-icon {
@@ -5265,4 +5334,276 @@ body.clean-site .clean-memphis-svg circle:nth-child(2) { fill: var(--shape-tq-pa
 body.clean-site .clean-memphis-zigzag path {
   stroke: var(--shape-tq-accent) !important;
   stroke-width: 3;
+}
+
+/* ===== Phone menu = colored stickers (option א, 2026-11-27) =====
+   Main site menu only (#mobileNav): the mini sites (.es-menu / .rs-menu) and the
+   "pro" / minimal looks keep their own menus. Each link is a tilted sticker with an
+   icon (picked by its href), they pop in one after another, login sits at the bottom. */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav {
+  --mn-i-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11.5 12 4l9 7.5'/%3E%3Cpath d='M5.5 10v10h13V10'/%3E%3Cpath d='M10 20v-5.5h4V20'/%3E%3C/svg%3E");
+  --mn-i-book: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 5.5c3-1.6 6.6-1.4 9.5 1 2.9-2.4 6.5-2.6 9.5-1v13c-3-1.6-6.6-1.4-9.5 1-2.9-2.4-6.5-2.6-9.5-1z'/%3E%3Cpath d='M12 6.5v13'/%3E%3C/svg%3E");
+  --mn-i-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='4' width='7' height='7' rx='1.8'/%3E%3Crect x='13' y='4' width='7' height='7' rx='1.8'/%3E%3Crect x='4' y='13' width='7' height='7' rx='1.8'/%3E%3Crect x='13' y='13' width='7' height='7' rx='1.8'/%3E%3C/svg%3E");
+  --mn-i-about: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='3.6'/%3E%3Cpath d='M5 20.5c1-4 3.8-6.2 7-6.2s6 2.2 7 6.2'/%3E%3C/svg%3E");
+  --mn-i-chat: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H10l-6 4.5z'/%3E%3C/svg%3E");
+  --mn-i-download: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4v11'/%3E%3Cpath d='M7 10.5l5 5 5-5'/%3E%3Cpath d='M5 20h14'/%3E%3C/svg%3E");
+  --mn-i-user: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E");
+  --mn-i-exit: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 4H5v16h5'/%3E%3Cpath d='M15 8l4 4-4 4'/%3E%3Cpath d='M19 12H9'/%3E%3C/svg%3E");
+  --mn-i-sheet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='3' width='14' height='18' rx='2'/%3E%3Cpath d='M8.5 8h7M8.5 12h7M8.5 16h4'/%3E%3C/svg%3E");
+  --mn-i-pen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3Cpath d='M13.5 6.5l4 4'/%3E%3C/svg%3E");
+  --mn-i-abc: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 18 7.5 6 12 18'/%3E%3Cpath d='M4.7 14h5.6'/%3E%3Cpath d='M15 6v12h3a3 3 0 0 0 0-6h-3'/%3E%3Cpath d='M15 12h2.5a3 3 0 0 0 0-6H15'/%3E%3C/svg%3E");
+  --mn-i-road: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='8' y='2.5' width='8' height='19' rx='3'/%3E%3Ccircle cx='12' cy='7.5' r='1.3'/%3E%3Ccircle cx='12' cy='12' r='1.3'/%3E%3Ccircle cx='12' cy='16.5' r='1.3'/%3E%3C/svg%3E");
+  --mn-i-door: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 21V4h12v17'/%3E%3Cpath d='M3 21h18'/%3E%3Cpath d='M14.5 12.5h.01'/%3E%3C/svg%3E");
+  --mn-i-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z'/%3E%3C/svg%3E");
+  --mn-i-down: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+
+  background: #eaf5ff;
+  align-items: stretch;
+  gap: 13px;
+  padding: calc(max(16px, env(safe-area-inset-top, 0px)) + 78px)
+    max(18px, calc((100% - 440px) / 2))
+    calc(20px + env(safe-area-inset-bottom, 0px));
+}
+
+html[data-theme="dark"]:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav {
+  background: #0f2220;
+}
+
+/* Full-width column from the top — no centering spacers */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav::before,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav::after {
+  display: none;
+}
+
+/* The stickers */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > .mobile-nav-services,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav #mobileUserLinks > a {
+  --mn-c: #9fdcff;
+  --mn-ic: var(--mn-i-star);
+  --mn-r: -1.2deg;
+  --mn-i: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: auto;
+  max-width: none;
+  /* Grow to fill the whole phone screen (capped so few links don't turn into giant blocks) */
+  flex: 1 0 auto;
+  max-height: 124px;
+  margin: 0;
+  padding: 14px 20px;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: start;
+  text-decoration: none;
+  color: #000;
+  background: var(--mn-c);
+  border: 3px solid #000;
+  border-radius: 16px;
+  box-shadow: 4px 5px 0 #000;
+  opacity: 0;
+  transform: rotate(var(--mn-r)) translateY(18px) scale(0.82);
+  transition:
+    transform 0.42s cubic-bezier(0.3, 1.5, 0.5, 1) calc(var(--mn-i) * 50ms),
+    opacity 0.22s ease calc(var(--mn-i) * 50ms),
+    scale 0.15s ease;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :nth-child(even) { --mn-r: 1deg; }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :nth-child(2) { --mn-i: 1; }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :nth-child(3) { --mn-i: 2; }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :nth-child(4) { --mn-i: 3; }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :nth-child(5) { --mn-i: 4; }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :nth-child(6) { --mn-i: 5; }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :nth-child(n+7),
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav #mobileUserLinks > * { --mn-i: 6; }
+
+/* Colors + icons by destination */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :is(a[href="/"], a[href="#home"]) { --mn-c: #ffe135; --mn-ic: var(--mn-i-home); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > .mobile-nav-services { --mn-c: #00e0c6; --mn-ic: var(--mn-i-grid); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a[href="/services/ready-lessons"] { --mn-c: #00e0c6; --mn-ic: var(--mn-i-book); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a[href="/lesson-plans"] { --mn-c: #00e0c6; --mn-ic: var(--mn-i-sheet); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a[href$="#about"] { --mn-c: #ff9ecb; --mn-ic: var(--mn-i-about); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a[href$="#contact"] { --mn-c: #ffb04a; --mn-ic: var(--mn-i-chat); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a[href="/download"] { --mn-c: #c3b1ff; --mn-ic: var(--mn-i-download); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a[href="/blog"] { --mn-c: #a8e6a1; --mn-ic: var(--mn-i-pen); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > :is(a[href="/english"], a[href="/learn-english"]) { --mn-c: #9fdcff; --mn-ic: var(--mn-i-abc); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a[href="/road-safety"] { --mn-c: #ff8a65; --mn-ic: var(--mn-i-road); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav #mobileUserLinks > a[href="/my-room"] { --mn-c: #a8e6a1; --mn-ic: var(--mn-i-door); }
+
+/* Icons */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a::before,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav #mobileUserLinks > a::before,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-btn::before,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-auth::before {
+  content: "";
+  flex: none;
+  width: 34px;
+  height: 34px;
+  background: currentColor;
+  -webkit-mask: var(--mn-ic) center / contain no-repeat;
+  mask: var(--mn-ic) center / contain no-repeat;
+}
+
+/* Services = one teal sticker; its links show as small chips inside it */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > .mobile-nav-services {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+}
+
+/* Open services: the sticker sizes to its chips instead of the height cap */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > .mobile-nav-services:has(.mobile-nav-services-btn[aria-expanded="true"]) {
+  max-height: none;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-btn,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-btn[aria-expanded="true"] {
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 20px;
+  font: inherit;
+  font-weight: 800;
+  text-align: start;
+  color: #000;
+  background: transparent;
+  border: 0;
+  border-radius: 13px;
+  box-shadow: none;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-btn::after {
+  content: "";
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-inline-start: auto;
+  background: currentColor;
+  -webkit-mask: var(--mn-i-down) center / contain no-repeat;
+  mask: var(--mn-i-down) center / contain no-repeat;
+  transition: transform 0.2s ease;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-btn[aria-expanded="true"]::after {
+  transform: rotate(180deg);
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-panel {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 0 16px 14px;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-panel a {
+  padding: 7px 15px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #000;
+  opacity: 1;
+  background: #eaf5ff;
+  border: 2px solid #000;
+  border-radius: 999px;
+  box-shadow: 2px 3px 0 #000;
+  transition: scale 0.15s ease;
+}
+
+/* Login / logout: black bar pinned to the bottom */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-auth {
+  --mn-ic: var(--mn-i-user);
+  --mn-i: 7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: auto;
+  min-height: 0;
+  margin: auto 0 0;
+  padding: 18px 14px;
+  font-size: 25px;
+  font-weight: 900;
+  color: #ffe135;
+  background: #000;
+  border: 3px solid #000;
+  border-radius: 16px;
+  box-shadow: 4px 5px 0 #00e0c6;
+  opacity: 0;
+  transform: translateY(18px) scale(0.82);
+  transition:
+    transform 0.42s cubic-bezier(0.3, 1.5, 0.5, 1) calc(var(--mn-i) * 50ms),
+    opacity 0.22s ease calc(var(--mn-i) * 50ms),
+    scale 0.15s ease;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav #mobileLogoutBtn { --mn-ic: var(--mn-i-exit); }
+
+/* Open: stickers pop in one after another */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav.open > a,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav.open > .mobile-nav-services,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav.open #mobileUserLinks > a {
+  opacity: 1;
+  transform: rotate(var(--mn-r));
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav.open .mobile-nav-auth {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hover grows (scale, not transform — transform holds the tilt) */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a:hover,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav #mobileUserLinks > a:hover,
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-auth:hover {
+  scale: 1.03;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-panel a:hover {
+  scale: 1.06;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav :is(a, button):focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 3px;
+}
+
+@media (max-height: 700px) {
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav { gap: 9px; }
+
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > a,
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav #mobileUserLinks > a,
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-btn,
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-services-btn[aria-expanded="true"] {
+    padding-block: 9px;
+    font-size: 21px;
+  }
+
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-auth {
+    padding: 12px;
+    font-size: 21px;
+  }
+}
+
+/* Open: the menu button's three lines turn into an X */
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #menuToggle span {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #menuToggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #menuToggle.open span:nth-child(2) { opacity: 0; }
+html:not([data-site-style="pro"]):not([data-visual="minimal"]) #menuToggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav > *,
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav #mobileUserLinks > *,
+  html:not([data-site-style="pro"]):not([data-visual="minimal"]) #mobileNav .mobile-nav-auth {
+    transition: none;
+  }
 }

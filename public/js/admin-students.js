@@ -6,7 +6,9 @@
 
    Routes (hash): ""        → all files
                   "#class"  → the class at a glance
+                  "#activity" → who is active, less active, not active
                   "#report" → the weekly report
+                  "#days" / "#week" / "#month" → the students' reports
                   "#<id>"   → one student's file */
 
 (function () {
@@ -19,6 +21,9 @@
   const TREND_ROUNDS = 30;
   // The parents' link is off for now (and in server.js too).
   const PARENTS_ENABLED = false;
+  // Due dates and "באיחור" are off for now (on the student's page too);
+  // true brings the date fields back.
+  const DUE_DATES = false;
 
   const TYPE_LABELS = {
     choice: "בחירה",
@@ -76,6 +81,9 @@
   ICONS.check = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>`;
   // Books on a shelf: the library the tasks are chosen from.
   ICONS.books = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="4.5" height="16" rx="1"/><rect x="9.5" y="4" width="4.5" height="16" rx="1"/><path d="m16.2 5.2 3.9-1 2.6 15.4-3.9 1z"/><path d="M3 20h19"/></svg>`;
+  ICONS.download = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5"/><path d="M5 20h14"/></svg>`;
+  ICONS.print = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>`;
+  ICONS.pulse = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>`;
   ICONS.calendar = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>`;
 
   // The signed-in teacher ({ name, email, photoURL }), null when signed out.
@@ -227,8 +235,10 @@
     return `${location.origin}/s/${encodeURIComponent(s.key)}`;
   }
 
+  // A task from the teacher's diary may be in a school subject's area (`page`).
   function exerciseUrl(s, hw) {
-    return `${location.origin}/services/english?s=${encodeURIComponent(s.key)}#${hw.topicId}/${hw.exerciseId}`;
+    const page = /^\/[a-z/-]+$/.test(hw.page || "") ? hw.page : "/services/english";
+    return `${location.origin}${page}?s=${encodeURIComponent(s.key)}#${hw.topicId}/${hw.exerciseId}`;
   }
 
   function shareText(s) {
@@ -258,11 +268,17 @@
 
   function homeworkStatus(hw) {
     if (hw.doneAt && hw.type === "lesson") return { done: true, html: pill("good", "צפה בשיעור") };
+    // The placement test's right answers are no grade: it asks until the student doesn't know.
+    if (hw.doneAt && hw.topicId === "placement") return { done: true, html: pill("good", "בוצע") };
     if (hw.doneAt) {
       const p = pct(hw.score, hw.total);
       return { done: true, html: pill(level(p).cls, `בוצע · <span dir="ltr">${hw.score}/${hw.total}</span>`) };
     }
-    if (hw.dueDate && hw.dueDate < todayKey()) return { late: true, html: pill("low", "באיחור") };
+    if (DUE_DATES && hw.dueDate && hw.dueDate < todayKey()) return { late: true, html: pill("low", "באיחור") };
+    // From the diary: locked for the student until the lesson's day.
+    if (hw.opensOn && hw.opensOn > todayKey()) return { html: pill("none", `נפתח: ${esc(fmtDue(hw.opensOn))}`) };
+    // A lesson's practice under way: how many of its exercises are done.
+    if (hw.type === "set" && hw.parts?.length) return { html: pill("none", `בתהליך · <span dir="ltr">${hw.parts.length}/${(hw.items || []).length}</span>`) };
     return { html: pill("none", "ממתין") };
   }
 
@@ -415,7 +431,7 @@
     }
     try {
       await FirebaseApp.auth.sendPasswordResetEmail(email);
-      showGate("", `אם המייל ⁨${email}⁩ רשום, שלחנו אליו קישור לבחירת סיסמה חדשה.`);
+      showGate("", `אם המייל ⁨${email}\u2069 רשום, שלחנו אליו קישור לבחירת סיסמה חדשה.`);
     } catch (err) {
       showGate(SIGN_IN_ERRORS[err?.code] || "השליחה נכשלה. נסו שוב");
     }
@@ -465,6 +481,7 @@
 
       <div class="adm-students adm-add-row">
         ${foldToggleHtml("admAddToggle", "admCreateForm", ICONS.plus, "הוספת תלמיד")}
+        ${students.length ? activityLinkHtml() + reportsLinkHtml() : ""}
       </div>
 
       <div class="adm-install" data-pwa-install>
@@ -496,6 +513,21 @@
       ${students.length ? `<div class="adm-students">${students.map(studentCardHtml).join("")}</div>` : ""}`;
 
     bindFold($("#admAddToggle"), $("#admCreateForm"), "#admNewName");
+
+    // The trash on a card deletes the whole file, after a confirm.
+    $$("[data-del-student]", view).forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const s = students.find((x) => x.id === btn.dataset.delStudent);
+        if (!s) return;
+        if (!confirm(`למחוק את ${s.name}?\nכל ההתקדמות, המשימות וההערות יימחקו.\nהקישור שלו יפסיק לעבוד, ואי אפשר לבטל את זה.`)) return;
+        withBusy(btn, async () => {
+          await api(`/api/admin/students/${encodeURIComponent(s.id)}`, { method: "DELETE" });
+          students = students.filter((x) => x.id !== s.id);
+          renderList();
+          showToast("התלמיד נמחק");
+        });
+      })
+    );
 
     $("#admCreateForm").addEventListener("submit", (e) => {
       e.preventDefault();
@@ -629,6 +661,7 @@
           <span class="adm-student-score-val">${avg == null ? "—" : `${avg}%`}</span>
           <span class="adm-student-score-label">${lv ? `ציון כללי · ${lv.label}` : "ציון כללי"}</span>
         </div>
+        <button type="button" class="adm-student-del" data-del-student="${esc(s.id)}" aria-label="מחיקת ${esc(s.name)}" title="מחיקת התלמיד">${ICONS.trash}</button>
       </div>`;
   }
 
@@ -755,6 +788,7 @@
       <h2 class="adm-h1 adm-solved-head adm-file-section">מבחנים</h2>
       ${testFormHtml()}
       <div id="admTests">${testListHtml(s)}</div>
+      <div id="admPlacement">${placementCardHtml(s)}</div>
 
       <h2 class="adm-h1 adm-solved-head">תרגילים</h2>
       ${solvedGridHtml(s)}
@@ -1054,7 +1088,7 @@
      until the form adds it to the tasks. */
 
   const PATH = window.ENGLISH_PATH || [];
-  const LESSONS_SRC = "/js/english-lessons.js?v=9";
+  const LESSONS_SRC = "/js/english-lessons.js?v=11";
   // "topicId/exerciseId" (or "mix") → the task the form sends.
   let picked = new Map();
   let lessonsLoading = null;
@@ -1421,13 +1455,17 @@
         </button>
         <ul class="adm-hw-chosen hidden" id="admHwChosen" aria-label="מה נבחר"></ul>
         <div class="adm-hw-extras">
-          <button type="button" class="adm-hw-extra" data-hw-extra="admHwDueField" aria-expanded="false" aria-controls="admHwDueField">${ICONS.calendar}<span>תאריך</span></button>
+          ${DUE_DATES ? `<button type="button" class="adm-hw-extra" data-hw-extra="admHwDueField" aria-expanded="false" aria-controls="admHwDueField">${ICONS.calendar}<span>תאריך</span></button>` : ""}
           <button type="button" class="adm-hw-extra" data-hw-extra="admHwNoteField" aria-expanded="false" aria-controls="admHwNoteField">${ICONS.pencil}<span>הערה</span></button>
         </div>
-        <label class="adm-field hidden" id="admHwDueField">
+        ${
+          DUE_DATES
+            ? `<label class="adm-field hidden" id="admHwDueField">
           <span>עד תאריך</span>
           <input type="date" id="admHwDue" min="${todayKey()}" />
-        </label>
+        </label>`
+            : ""
+        }
         <label class="adm-field hidden" id="admHwNoteField">
           <span>הערה לתלמיד</span>
           <input type="text" id="admHwNote" maxlength="300" placeholder="למשל: שימו לב להבדל בין is ל-are" />
@@ -1451,7 +1489,7 @@
               <li class="adm-solved-card adm-task${status.done ? " is-done" : ""}${status.late ? " is-late" : ""}">
                 <span class="adm-solved-topic">${esc(hw.topicTitle)}</span>
                 <span class="adm-solved-title">${esc(hw.exerciseTitle)}</span>
-                ${hw.dueDate ? `<span class="adm-task-due">עד: ${esc(fmtDue(hw.dueDate))}</span>` : ""}
+                ${DUE_DATES && hw.dueDate ? `<span class="adm-task-due">עד: ${esc(fmtDue(hw.dueDate))}</span>` : ""}
                 ${hw.note ? `<span class="adm-task-note">הערה: ${esc(hw.note)}</span>` : ""}
                 <span class="adm-task-foot">
                   ${status.html}
@@ -1463,6 +1501,38 @@
               </li>`;
           })
           .join("")}
+      </ul>`;
+  }
+
+  /* ── The placement test (#placement on the English page): the stage it
+     said the student should start in, and a way to send it as a task
+     (lib/student-progress.js). ── */
+
+  const PLACEMENT = "placement";
+  const PLACEMENT_TASK = { topicId: PLACEMENT, exerciseId: PLACEMENT, topicTitle: "מבחן מיון", exerciseTitle: "מבחן מיון", type: PLACEMENT };
+
+  // { num, title } of the stage a result is for, by its place on the path.
+  function placementStage(placement) {
+    const i = PATH.findIndex((stage) => stage.id === placement?.stageId);
+    return i >= 0 ? { num: i + 1, title: PATH[i].title } : null;
+  }
+
+  function placementCardHtml(s) {
+    const stage = placementStage(s.placement);
+    const waiting = (s.homework || []).some((hw) => hw.topicId === PLACEMENT && !hw.doneAt);
+    const send = waiting
+      ? pill("none", "נשלח כמשימה")
+      : `<button type="button" class="btn btn-primary btn-candy btn-sm" id="admPlaceSend">${stage ? "שליחה שוב" : "שליחה כמשימה"}</button>`;
+    return `
+      <ul class="adm-solved adm-tasks adm-place">
+        <li class="adm-solved-card adm-task${stage ? " is-done" : ""}">
+          <span class="adm-solved-topic">מבחן מיון</span>
+          <span class="adm-solved-title">${stage ? esc(`מתחילים בשלב ${stage.num} · ${stage.title}`) : "עוד לא נעשה"}</span>
+          <span class="adm-task-foot">
+            ${stage ? pill("good", esc(fmtDate(s.placement.at))) : "<span></span>"}
+            <span class="adm-hw-actions">${send}</span>
+          </span>
+        </li>
       </ul>`;
   }
 
@@ -1538,10 +1608,14 @@
             <span id="admTestLibLabel">בחירת נושאים</span>
           </button>
         </div>
-        <label class="adm-field adm-hw-due">
+        ${
+          DUE_DATES
+            ? `<label class="adm-field adm-hw-due">
           <span>עד תאריך (לא חובה)</span>
           <input type="date" id="admTestDue" min="${todayKey()}" />
-        </label>
+        </label>`
+            : ""
+        }
         <ul class="adm-hw-chosen hidden" id="admTestChosen" aria-label="הנושאים שנבחרו"></ul>
         <p class="adm-test-sum hidden" id="admTestSum" aria-live="polite"></p>
         <p class="adm-test-about">השאלות במבחן חדשות — הן לא מופיעות בתרגולים.</p>
@@ -1565,7 +1639,7 @@
       const p = pct(last.score, last.total);
       return { done: true, html: pill(level(p).cls, `ציון ${p}`) };
     }
-    if (test.dueDate && test.dueDate < todayKey()) return { late: true, html: pill("low", "באיחור") };
+    if (DUE_DATES && test.dueDate && test.dueDate < todayKey()) return { late: true, html: pill("low", "באיחור") };
     return { html: pill("none", "ממתין") };
   }
 
@@ -1597,7 +1671,7 @@
               <li class="adm-solved-card adm-task adm-test${status.done ? " is-done" : ""}${status.late ? " is-late" : ""}${status.asked ? " is-asked" : ""}">
                 <span class="adm-solved-topic">מבחן · ${esc(testTopicsLine(test))}</span>
                 <span class="adm-solved-title">${esc(test.title)}</span>
-                ${test.dueDate && testIsOpen(test) ? `<span class="adm-task-due">עד: ${esc(fmtDue(test.dueDate))}</span>` : ""}
+                ${DUE_DATES && test.dueDate && testIsOpen(test) ? `<span class="adm-task-due">עד: ${esc(fmtDue(test.dueDate))}</span>` : ""}
                 ${
                   status.asked
                     ? `<span class="adm-test-ask">
@@ -1666,7 +1740,7 @@
         <div class="adm-info-head">
           <div class="adm-student-id">
             <h2 class="adm-info-title" id="admInfoTitle">${esc(test.title)}</h2>
-            <span class="adm-student-sub">נשלח: ${esc(fmtDate(test.assignedAt))}${test.dueDate ? ` · עד: ${esc(fmtDue(test.dueDate))}` : ""}</span>
+            <span class="adm-student-sub">נשלח: ${esc(fmtDate(test.assignedAt))}${DUE_DATES && test.dueDate ? ` · עד: ${esc(fmtDue(test.dueDate))}` : ""}</span>
           </div>
           <button type="button" class="adm-info-close" data-info-close aria-label="סגירה">${ICONS.cross}</button>
         </div>
@@ -1719,7 +1793,7 @@
       withBusy(e.submitter, async () => {
         const res = await api(`/api/admin/students/${id}/tests`, {
           method: "POST",
-          body: { topics: [...testPicked.values()], title: $("#admTestTitle").value, dueDate: $("#admTestDue").value, note: $("#admTestNote").value },
+          body: { topics: [...testPicked.values()], title: $("#admTestTitle").value, dueDate: $("#admTestDue")?.value || "", note: $("#admTestNote").value },
         });
         current.tests = res.tests;
         syncListEntry();
@@ -1728,7 +1802,7 @@
         renderTestPicked();
         $("#admTestTitle").value = "";
         $("#admTestNote").value = "";
-        $("#admTestDue").value = "";
+        if ($("#admTestDue")) $("#admTestDue").value = "";
         showToast("המבחן נשלח — התלמיד יראה אותו בקישור שלו");
       });
     });
@@ -1756,7 +1830,8 @@
 
   function trendRounds(s) {
     return (s.activity || [])
-      .filter((a) => a.kind === "exercise" && !a.isRetry && a.total)
+      // The placement test asks until the student doesn't know: no grade.
+      .filter((a) => a.kind === "exercise" && !a.isRetry && a.total && a.type !== PLACEMENT)
       .slice(0, TREND_ROUNDS)
       .reverse();
   }
@@ -2125,7 +2200,7 @@
       withBusy(e.submitter, async () => {
         const res = await api(`/api/admin/students/${id}/homework`, {
           method: "POST",
-          body: { items, dueDate: $("#admHwDue").value, note: $("#admHwNote").value },
+          body: { items, dueDate: $("#admHwDue")?.value || "", note: $("#admHwNote").value },
         });
         current.homework = res.homework;
         syncListEntry();
@@ -2152,6 +2227,21 @@
         current.homework = res.homework;
         syncListEntry();
         redrawHomework();
+        $("#admPlacement").innerHTML = placementCardHtml(current);
+      });
+    });
+
+    // "שליחה כמשימה" on the placement test's rectangle.
+    $("#admPlacement").addEventListener("click", (e) => {
+      const btn = e.target.closest("#admPlaceSend");
+      if (!btn) return;
+      withBusy(btn, async () => {
+        const res = await api(`/api/admin/students/${id}/homework`, { method: "POST", body: { items: [PLACEMENT_TASK] } });
+        current.homework = res.homework;
+        syncListEntry();
+        redrawHomework();
+        $("#admPlacement").innerHTML = placementCardHtml(current);
+        showToast(res.added ? "מבחן המיון נשלח כמשימה" : "מבחן המיון כבר במשימות");
       });
     });
 
@@ -2368,7 +2458,7 @@
               (s) => `
             <li class="adm-report-chip">
               ${studentLinkHtml(s)}
-              ${s.homeworkLate ? pill("low", `משימות באיחור: ${s.homeworkLate === 1 ? "תרגיל אחד" : `${s.homeworkLate} תרגילים`}`) : ""}
+              ${DUE_DATES && s.homeworkLate ? pill("low", `משימות באיחור: ${s.homeworkLate === 1 ? "תרגיל אחד" : `${s.homeworkLate} תרגילים`}`) : ""}
             </li>`
             )
             .join("")}
@@ -2460,6 +2550,8 @@
 
   const CLASS_MISTAKES = 10;
   const CLASS_TOPIC_MISTAKES = 5;
+  // The same line as lib/student-progress.js REPORT_LOW.
+  const CLASS_LOW = 70;
 
   let classData = null;
 
@@ -2500,6 +2592,8 @@
             <span class="adm-fold-icon">${ICONS.clock}</span>
             <span>הדוח השבועי</span>
           </a>
+          ${activityLinkHtml()}
+          ${reportsLinkHtml()}
         </div>
       </div>
       <h2 class="adm-h1 adm-solved-head">דוח הכיתה</h2>
@@ -2526,11 +2620,104 @@
              <p class="adm-muted adm-class-lead">כדאי לעבור עליהן בכיתה.</p>
              ${classMistakesHtml(c.mistakes.slice(0, CLASS_MISTAKES))}`
           : `<p class="adm-muted">אין כרגע שאלות שהתלמידים טועים בהן.</p>`
-      }`;
+      }
+
+      <h2 class="adm-h1 adm-solved-head adm-file-section">מבחן מיון</h2>
+      <div id="admClassPlace">${classPlacementHtml()}</div>`;
 
     $("#admClassTopics")?.addEventListener("click", (e) => {
       const card = e.target.closest("[data-class-topic]");
-      if (card) infoDialog.open(classTopicDialogHtml(card.dataset.classTopic), card);
+      if (!card) return;
+      infoDialog.open(classTopicDialogHtml(card.dataset.classTopic), card);
+      $("#admWeakSend")?.addEventListener("click", (ev) => sendWeakPractice(ev.currentTarget, ev.currentTarget.dataset.topic));
+    });
+    $("#admClassPlace").addEventListener("click", (e) => {
+      const btn = e.target.closest("#admClassPlaceSend");
+      if (btn) sendPlacementToClass(btn);
+    });
+  }
+
+  /* The placement test in the class report: the students by the stage it
+     said they start in (the path's order), and the ones who haven't taken
+     it, with one button that sends it to them all as a task. */
+
+  function placementWaiting() {
+    return classData.students.filter((s) => !s.placement);
+  }
+
+  function classPlacementHtml() {
+    const byStage = new Map();
+    classData.students.forEach((s) => {
+      const stage = placementStage(s.placement);
+      if (!stage) return;
+      const row = byStage.get(stage.num) || { ...stage, students: [] };
+      row.students.push(s);
+      byStage.set(stage.num, row);
+    });
+    const rows = [...byStage.values()]
+      .sort((a, b) => a.num - b.num)
+      .map(
+        (row) => `
+          <li class="adm-solved-card adm-class-place-row">
+            <span class="adm-solved-title">שלב ${row.num} · ${esc(row.title)}</span>
+            <ul class="adm-report-chips">${row.students
+              .sort((a, b) => a.name.localeCompare(b.name, "he"))
+              .map((s) => `<li class="adm-report-chip adm-class-chip">${studentLinkHtml(s)}</li>`)
+              .join("")}</ul>
+          </li>`
+      )
+      .join("");
+    const waiting = placementWaiting().sort((a, b) => a.name.localeCompare(b.name, "he"));
+    return `
+      <p class="adm-muted adm-class-lead">המבחן מוצא את השלב שבו כל תלמיד מתחיל.</p>
+      <p class="adm-muted adm-class-lead">התלמידים עושים אותו בדף האנגלית, או ממשימה.</p>
+      ${rows ? `<ul class="adm-solved adm-class-place">${rows}</ul>` : ""}
+      ${
+        waiting.length
+          ? `<h3 class="adm-lib-heading"><b class="adm-lib-key">עוד לא עשו</b></h3>
+             <ul class="adm-report-chips">${waiting.map((s) => `<li class="adm-report-chip adm-class-chip">${studentLinkHtml(s)}</li>`).join("")}</ul>
+             <button type="button" class="btn btn-primary btn-candy btn-sm adm-class-place-send" id="admClassPlaceSend">שליחת מבחן מיון כמשימה ל${waiting.length === 1 ? "תלמיד אחד" : `-${waiting.length} תלמידים`}</button>`
+          : ""
+      }`;
+  }
+
+  // One request per student; a student who has it as an open task already
+  // isn't sent it twice (lib/student-progress.js addHomework).
+  async function sendPlacementToClass(btn) {
+    const waiting = placementWaiting();
+    if (!waiting.length) return;
+    await withBusy(btn, async () => {
+      let sent = 0;
+      for (const s of waiting) {
+        const res = await api(`/api/admin/students/${encodeURIComponent(s.id)}/homework`, { method: "POST", body: { items: [PLACEMENT_TASK] } });
+        sent += res.added ? 1 : 0;
+      }
+      showToast(sent ? (sent === 1 ? "מבחן המיון נשלח לתלמיד אחד" : `מבחן המיון נשלח ל-${sent} תלמידים`) : "מבחן המיון כבר במשימות של כולם");
+    });
+  }
+
+  // "שליחת תרגול חוזר" in a topic's window: every student under REPORT_LOW
+  // there gets the topic's exercises they scored under it in, as tasks.
+  const EXERCISES_BY_KEY = new Map(TOPICS.flatMap((topic) => (topic.exercises || []).map((ex) => [`${topic.id}/${ex.id}`, ex])));
+
+  function weakTasks(topicId, student) {
+    return (student.weak || [])
+      .map((exId) => EXERCISES_BY_KEY.get(`${topicId}/${exId}`) && { exId, ex: EXERCISES_BY_KEY.get(`${topicId}/${exId}`) })
+      .filter(Boolean)
+      .map(({ exId, ex }) => ({ topicId, exerciseId: exId, topicTitle: TOPIC_TITLES.get(topicId) || "", exerciseTitle: ex.title, type: ex.type }));
+  }
+
+  async function sendWeakPractice(btn, topicId) {
+    const topic = classData.topics.find((tp) => tp.id === topicId);
+    const list = (topic?.students || []).map((s) => ({ id: s.id, items: weakTasks(topicId, s) })).filter((s) => s.items.length);
+    if (!list.length) return;
+    await withBusy(btn, async () => {
+      let students = 0;
+      for (const s of list) {
+        const res = await api(`/api/admin/students/${encodeURIComponent(s.id)}/homework`, { method: "POST", body: { items: s.items } });
+        students += res.added ? 1 : 0;
+      }
+      showToast(students ? (students === 1 ? "התרגול נשלח לתלמיד אחד" : `התרגול נשלח ל-${students} תלמידים`) : "התרגילים האלה כבר במשימות שלהם");
     });
   }
 
@@ -2589,6 +2776,14 @@
       .join("");
     const notYet = c.students.filter((s) => !done.has(s.id)).sort((a, b) => a.name.localeCompare(b.name, "he"));
     const mistakes = c.mistakes.filter((m) => m.topicId === topicId).slice(0, CLASS_TOPIC_MISTAKES);
+    const weak = topic.students.filter((s) => weakTasks(topicId, s).length).length;
+    const practice = weak
+      ? `<div class="adm-class-weak-send">
+           <p class="adm-muted adm-class-lead">${weak === 1 ? "תלמיד אחד קיבל" : `${weak} תלמידים קיבלו`} פחות מ-${CLASS_LOW}% בחלק מהתרגילים.</p>
+           <p class="adm-muted adm-class-lead">כל אחד יקבל את התרגילים שלו שוב, כמשימה.</p>
+           <button type="button" class="btn btn-primary btn-candy btn-sm" id="admWeakSend" data-topic="${esc(topicId)}">שליחת תרגול חוזר</button>
+         </div>`
+      : "";
     return `
       <div class="adm-info-backdrop" data-info-close></div>
       <div class="adm-info-card">
@@ -2601,6 +2796,7 @@
         </div>
         <h3 class="adm-lib-heading"><b class="adm-lib-key">לפי תלמיד</b></h3>
         <ul class="adm-ex-list adm-report-rows adm-class-rows">${rows}</ul>
+        ${practice}
         ${
           notYet.length
             ? `<h3 class="adm-lib-heading"><b class="adm-lib-key">עוד לא תרגלו</b></h3>
@@ -2609,6 +2805,870 @@
         }
         ${mistakes.length ? `<h3 class="adm-lib-heading"><b class="adm-lib-key">טעויות נפוצות</b></h3>${classMistakesHtml(mistakes)}` : ""}
       </div>`;
+  }
+
+  /* ── The students' reports: daily (#days, or #days/<from>/<to>), weekly
+     (#week/<Sunday>) and monthly (#month/<YYYY-MM>). Every student gets a
+     few written lines — how much they practiced, what they learned, their
+     average, what went well and what to go over — and then the details: the
+     days one by one, the week's days and topics, or the month's weeks and
+     topics. One student or all of them; printed (or saved as a PDF) and
+     downloaded as a file Excel opens. All three are summed up here from the
+     same days (/api/admin/students/days). ── */
+
+  const REPORT_MODES = [
+    ["days", "יומי"],
+    ["week", "שבועי"],
+    ["month", "חודשי"],
+  ];
+  const REPORT_TITLES = { days: "דוח יומי", week: "דוח שבועי", month: "דוח חודשי" };
+  // Rounds that mix many topics (no topic of their own), and tests.
+  const MIXED_ROUNDS = new Set(["mix", "daily", "review"]);
+  const TEST_ROUNDS = new Set(["test", "stage-test"]);
+  const WEEKDAY_LETTERS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
+  // The report the teacher opened last ("days" / "week" / "month").
+  const REPORT_MODE_KEY = "pleyi-adm-report";
+  const REPORT_TOP_TOPICS = 3;
+
+  // { mode, period (the week's Sunday / "YYYY-MM"), from, to, data }
+  let rep = null;
+  // The student picked in the report ("" = everyone); kept while the period changes.
+  let repStudent = "";
+
+  function lastReportMode() {
+    try {
+      const mode = localStorage.getItem(REPORT_MODE_KEY);
+      return REPORT_TITLES[mode] ? mode : "days";
+    } catch {
+      return "days";
+    }
+  }
+
+  function reportsLinkHtml() {
+    return `<a class="adm-fold-toggle" href="#${lastReportMode()}"><span class="adm-fold-icon">${ICONS.calendar}</span><span>דוחות</span></a>`;
+  }
+
+  function activityLinkHtml() {
+    return `<a class="adm-fold-toggle" href="#activity"><span class="adm-fold-icon">${ICONS.pulse}</span><span>פעילות התלמידים</span></a>`;
+  }
+
+  /* ── Who is active (#activity): every student in one of three groups by
+     the days they practiced in the last ACTIVITY_DAYS days (any lesson,
+     exercise or game, from the days report), with a square per day. ── */
+
+  const ACTIVITY_DAYS = 14;
+  const ACTIVE_MIN_DAYS = 4;
+  const ACTIVITY_GROUPS = [
+    { key: "on", title: "פעילים", cls: "good" },
+    { key: "some", title: "פעילים פחות", cls: "ok" },
+    { key: "off", title: "לא פעילים", cls: "low" },
+  ];
+  const ACTIVITY_INFO = [
+    `<b>פעילים</b>: תרגלו לפחות ${ACTIVE_MIN_DAYS} ימים בשבועיים האחרונים.`,
+    "וגם תרגלו בשבוע האחרון.",
+    "<b>פעילים פחות</b>: תרגלו, אבל פחות מזה.",
+    "<b>לא פעילים</b>: לא תרגלו בכלל בשבועיים האחרונים.",
+    "כל ריבוע הוא יום. ריבוע ירוק = התלמיד תרגל באותו יום.",
+    "היום הוא הריבוע השמאלי.",
+    "נחשב כל שיעור, תרגיל או משחק.",
+  ];
+
+  async function loadActivity() {
+    showOnly("admDetailView");
+    const view = $("#admDetailView");
+    view.innerHTML = `<p class="adm-loading">טוען את הפעילות…</p>`;
+    try {
+      const today = todayKey();
+      const [list, days] = await Promise.all([
+        api("/api/admin/students"),
+        api(`/api/admin/students/days?from=${addDays(today, 1 - ACTIVITY_DAYS)}&to=${today}`),
+      ]);
+      students = list.students || [];
+      renderActivity(days.report);
+    } catch (e) {
+      if (account) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
+    }
+  }
+
+  // Each student's group, active days and the range's days (oldest first).
+  function activityRows(report) {
+    const byId = new Map(report.students.map((r) => [r.id, r]));
+    const weekFrom = addDays(report.to, -6);
+    return students.map((s) => {
+      const days = new Set((byId.get(s.id)?.days || []).filter((d) => d.entries.length).map((d) => d.day));
+      const thisWeek = [...days].some((d) => d >= weekFrom);
+      const group = days.size >= ACTIVE_MIN_DAYS && thisWeek ? "on" : days.size ? "some" : "off";
+      return { s, days, group };
+    });
+  }
+
+  function lastSeenText(s) {
+    if (!s.lastActive) return "עוד לא נכנס";
+    return `פעם אחרונה: ${relTime(s.lastActive)}`;
+  }
+
+  function activityCardHtml(row, range) {
+    const { s, days, group } = row;
+    const strip = group === "off"
+      ? ""
+      : `<span class="adm-act-days" role="img" aria-label="תרגל ב-${days.size} מתוך ${range.length} הימים האחרונים">${range
+          .map((d) => `<span class="adm-act-day${days.has(d) ? " is-on" : ""}"></span>`)
+          .join("")}</span>`;
+    return `
+      <a class="adm-act-card" href="#${encodeURIComponent(s.id)}">
+        <span class="adm-act-top">
+          ${avatarHtml(s)}
+          <span class="adm-act-id">
+            <span class="adm-act-name">${esc(s.name)}</span>
+            <span class="adm-act-seen">${esc(lastSeenText(s))}</span>
+          </span>
+          ${group === "off" ? "" : `<span class="adm-act-count">${days.size === 1 ? "יום אחד" : `${days.size} ימים`}</span>`}
+        </span>
+        ${strip}
+      </a>`;
+  }
+
+  function renderActivity(report) {
+    const view = $("#admDetailView");
+    const range = [];
+    for (let d = report.from; d <= report.to; d = addDays(d, 1)) range.push(d);
+    const rows = activityRows(report);
+    const byGroup = Object.fromEntries(ACTIVITY_GROUPS.map((g) => [g.key, rows.filter((r) => r.group === g.key)]));
+    // Most days first; then (and in "לא פעילים") the most recently seen first.
+    const seen = (r) => String(r.s.lastActive || "");
+    Object.values(byGroup).forEach((list) =>
+      list.sort((a, b) => b.days.size - a.days.size || seen(b).localeCompare(seen(a)) || a.s.name.localeCompare(b.s.name, "he"))
+    );
+
+    view.innerHTML = `
+      <div class="adm-page-head adm-act-head">
+        <h2 class="adm-h1">פעילות התלמידים</h2>
+        <button type="button" class="adm-info-btn" id="admActInfo" aria-haspopup="dialog" aria-label="איך מחלקים לקבוצות" title="איך מחלקים לקבוצות">${ICONS.info}</button>
+      </div>
+      <p class="adm-muted adm-act-lead">השבועיים האחרונים</p>
+      ${
+        rows.length
+          ? `
+        <div class="adm-act-tiles">
+          ${ACTIVITY_GROUPS.map(
+            (g) => `
+            <button type="button" class="adm-act-tile adm-act-tile--${g.cls}" data-act-jump="${g.key}">
+              <span class="adm-act-tile-value">${byGroup[g.key].length}</span>
+              <span class="adm-act-tile-label">${g.title}</span>
+            </button>`
+          ).join("")}
+        </div>
+        <div class="adm-act-bar" role="img" aria-label="${ACTIVITY_GROUPS.map((g) => `${g.title}: ${byGroup[g.key].length}`).join(", ")}">
+          ${ACTIVITY_GROUPS.filter((g) => byGroup[g.key].length)
+            .map((g) => `<span class="adm-act-bar-part adm-act-tile--${g.cls}" style="flex-grow:${byGroup[g.key].length}"></span>`)
+            .join("")}
+        </div>
+        ${ACTIVITY_GROUPS.map(
+          (g) => `
+          <section class="adm-act-group" id="admAct-${g.key}">
+            <h3 class="adm-lib-heading"><b class="adm-lib-key">${g.title}</b><span class="adm-act-group-count">${byGroup[g.key].length}</span></h3>
+            ${
+              byGroup[g.key].length
+                ? `<div class="adm-act-list">${byGroup[g.key].map((r) => activityCardHtml(r, range)).join("")}</div>`
+                : `<p class="adm-muted">אין תלמידים בקבוצה הזאת.</p>`
+            }
+          </section>`
+        ).join("")}`
+          : `<p class="adm-muted adm-report-none">עוד אין תלמידים ברשימה.</p>`
+      }`;
+
+    $("#admActInfo").addEventListener("click", (e) =>
+      infoDialog.open(
+        `
+        <div class="adm-info-backdrop" data-info-close></div>
+        <div class="adm-info-card">
+          <div class="adm-info-head">
+            <h2 class="adm-info-title" id="admInfoTitle">פעילות התלמידים</h2>
+            <button type="button" class="adm-info-close" data-info-close aria-label="סגירה">${ICONS.cross}</button>
+          </div>
+          ${ACTIVITY_INFO.map((line) => `<p class="adm-row-info">${line}</p>`).join("")}
+        </div>`,
+        e.currentTarget
+      )
+    );
+    $$("[data-act-jump]", view).forEach((btn) =>
+      btn.addEventListener("click", () => $(`#admAct-${btn.dataset.actJump}`)?.scrollIntoView({ behavior: "smooth", block: "start" }))
+    );
+  }
+
+  function parseDay(day) {
+    const [y, m, d] = day.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function addDays(day, n) {
+    const d = parseDay(day);
+    d.setDate(d.getDate() + n);
+    return dayKey(d);
+  }
+
+  function weekStart(day) {
+    return addDays(day, -parseDay(day).getDay());
+  }
+
+  function monthRange(month) {
+    const [y, m] = month.split("-").map(Number);
+    return [`${month}-01`, dayKey(new Date(y, m, 0))];
+  }
+
+  function shiftMonth(month, n) {
+    const [y, m] = month.split("-").map(Number);
+    return dayKey(new Date(y, m - 1 + n, 1)).slice(0, 7);
+  }
+
+  function monthName(month, year = true) {
+    return parseDay(`${month}-01`).toLocaleDateString("he-IL", { month: "long", ...(year ? { year: "numeric" } : {}) });
+  }
+
+  // The daily report's quick ranges: this week (from Sunday), last week, this month.
+  const DAYS_QUICK = [
+    ["week", "השבוע"],
+    ["last-week", "השבוע שעבר"],
+    ["month", "החודש"],
+  ];
+
+  function quickRange(kind) {
+    const today = todayKey();
+    const sunday = weekStart(today);
+    if (kind === "last-week") return [addDays(sunday, -7), addDays(sunday, -1)];
+    if (kind === "month") return [`${today.slice(0, 8)}01`, today];
+    return [sunday, today];
+  }
+
+  function daysHash(from, to) {
+    return `#days/${from}/${to}`;
+  }
+
+  function periodHash() {
+    return rep.mode === "days" ? daysHash(rep.from, rep.to) : `#${rep.mode}/${rep.period}`;
+  }
+
+  // "16–22 בנובמבר 2026", "26 באוקטובר – 3 בנובמבר 2026", or one day.
+  function rangeLabel(from, to, year = true) {
+    const a = parseDay(from);
+    const b = parseDay(to);
+    const full = (d, withYear) => d.toLocaleDateString("he-IL", { day: "numeric", month: "long", ...(withYear ? { year: "numeric" } : {}) });
+    if (from === to) return full(b, year);
+    if (a.getFullYear() !== b.getFullYear()) return `${full(a, true)} – ${full(b, true)}`;
+    // The numbers left to right ("22–28"), as Hebrew writes a range.
+    if (a.getMonth() === b.getMonth()) return `\u2066${a.getDate()}–${b.getDate()}\u2069 ${full(b, year).replace(/^\d+\s*/, "")}`;
+    return `${full(a)} – ${full(b, year)}`;
+  }
+
+  function periodLabel() {
+    if (rep.mode === "week") return rangeLabel(rep.from, rep.to);
+    if (rep.mode === "month") return monthName(rep.period);
+    return rangeLabel(rep.from, rep.to);
+  }
+
+  // How a sentence says the period: "השבוע", "בחודש אוקטובר", "בימים האלה".
+  function periodWords() {
+    const today = todayKey();
+    if (rep.mode === "week") return rep.period === weekStart(today) ? "השבוע" : "בשבוע הזה";
+    if (rep.mode === "month") return rep.period === today.slice(0, 7) ? "החודש" : `בחודש ${monthName(rep.period, false)}`;
+    return rep.from === rep.to ? (rep.to === today ? "היום" : "ביום הזה") : "בימים האלה";
+  }
+
+  function reportDayTitle(day) {
+    return parseDay(day).toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" });
+  }
+
+  function countText(n, one, many) {
+    return n === 1 ? one : `${fmtNum(n)} ${many}`;
+  }
+
+  // "א, ב ו-ג": the last one with "ו", joined to a Hebrew word and with a
+  // hyphen before anything else (a number, English).
+  function heJoin(list) {
+    if (list.length < 2) return list.join("");
+    const last = list[list.length - 1];
+    const and = /^[֐-׿]/.test(last.replace(/^<[^>]+>/, "")) ? "ו" : "ו-";
+    return `${list.slice(0, -1).join(", ")} ${and}${last}`;
+  }
+
+  function entryTitle(e) {
+    if (e.kind === "exercise") return EXERCISE_TITLES.get(`${e.topicId}/${e.exerciseId}`) || e.title || e.exerciseId || "";
+    return e.title || e.itemId || e.gameId || "";
+  }
+
+  function entryTopic(e) {
+    return e.topicId ? TOPIC_TITLES.get(e.topicId) || e.topicTitle || "" : "";
+  }
+
+  function entryKind(e) {
+    if (e.kind === "exercise") return TEST_ROUNDS.has(e.topicId) || e.type === "test" || e.type === "stage-test" ? "מבחן" : "תרגיל";
+    if (e.kind === "game") return "משחק";
+    return e.kind === "presentation" ? "מצגת" : "שיעור";
+  }
+
+  /* One student's period: the totals, every topic with its lessons and
+     exercises (the best round of the period) and its average, the tests,
+     and the rounds that mixed many topics. */
+  function studentSummary(s) {
+    const topics = new Map();
+    const tests = [];
+    const lessons = new Set();
+    let mixedRounds = 0;
+    const topicOf = (e) => {
+      const id = e.topicId || "";
+      if (!topics.has(id)) topics.set(id, { id, title: id ? entryTopic(e) : "עוד שיעורים", lessons: new Map(), exercises: new Map(), rounds: 0 });
+      return topics.get(id);
+    };
+    s.days.forEach((d) => {
+      d.entries.forEach((e) => {
+        if (e.kind === "game") return;
+        if (e.kind !== "exercise") {
+          lessons.add(`${e.kind}:${e.itemId}`);
+          topicOf(e).lessons.set(e.itemId, entryTitle(e));
+          return;
+        }
+        if (TEST_ROUNDS.has(e.topicId) || e.type === "test" || e.type === "stage-test") {
+          if (e.total != null) tests.push({ title: entryTitle(e), score: e.score, total: e.total, day: d.day });
+          return;
+        }
+        if (MIXED_ROUNDS.has(e.topicId)) {
+          mixedRounds += e.rounds;
+          return;
+        }
+        const topic = topicOf(e);
+        topic.rounds += e.rounds;
+        const key = e.exerciseId;
+        const ex = topic.exercises.get(key) || { title: entryTitle(e), type: e.type, score: null, total: null, rounds: 0 };
+        ex.rounds += e.rounds;
+        if (e.total != null && (ex.total == null || pct(e.score, e.total) > pct(ex.score, ex.total))) {
+          ex.score = e.score;
+          ex.total = e.total;
+        }
+        topic.exercises.set(key, ex);
+      });
+    });
+    const list = [...topics.values()].map((t) => {
+      const scored = [...t.exercises.values()].filter((ex) => ex.total != null);
+      return { ...t, average: scored.length ? Math.round(scored.reduce((n, ex) => n + pct(ex.score, ex.total), 0) / scored.length) : null };
+    });
+    const scored = list.filter((t) => t.id && t.average != null);
+    return {
+      ...s.totals,
+      lessons: lessons.size,
+      topics: list,
+      tests,
+      mixedRounds,
+      strong: scored.filter((t) => t.average >= 90).sort((a, b) => b.average - a.average),
+      weak: scored.filter((t) => t.average < 70).sort((a, b) => a.average - b.average),
+    };
+  }
+
+  function topicScoresText(list) {
+    return heJoin(list.slice(0, REPORT_TOP_TOPICS).map((t) => `${esc(t.title)} (${t.average}%)`));
+  }
+
+  // The written part: one short sentence per idea.
+  function studentLines(s, sum) {
+    const when = periodWords();
+    if (!s.days.length) return [`לא תרגל ${when}.`];
+    const lines = [];
+    // Out of the period's days so far.
+    const today = todayKey();
+    const span = Math.round((parseDay(rep.to < today ? rep.to : today) - parseDay(rep.from)) / DAY_MS) + 1;
+    const days = `<b>${sum.days === 1 ? "ביום אחד" : `ב-${fmtNum(sum.days)} ימים`}</b> מתוך ${fmtNum(span)}`;
+    const practiced = span === 1 ? `תרגל ${when}` : rep.mode === "days" ? `תרגל ${days}` : `תרגל ${when} ${days}`;
+    lines.push(`${practiced}${sum.practiceSec ? `, בסך הכול <b>${esc(fmtDuration(sum.practiceSec))}</b>` : ""}.`);
+    const did = [
+      sum.lessons ? `למד <b>${countText(sum.lessons, "שיעור אחד", "שיעורים")}</b>` : "",
+      sum.rounds ? `פתר <b>${countText(sum.rounds, "סבב תרגול אחד", "סבבי תרגול")}</b>` : "",
+      sum.games ? `שיחק <b>${countText(sum.games, "משחק אחד", "משחקים")}</b>` : "",
+    ].filter(Boolean);
+    if (did.length) lines.push(`${heJoin(did)}.`);
+    const named = sum.topics.filter((t) => t.id);
+    if (named.length === 1) lines.push(`עבד על הנושא <b>${esc(named[0].title)}</b>.`);
+    else if (named.length > 1) lines.push(`עבד על ${countText(named.length, "נושא אחד", "נושאים")}: ${heJoin(named.map((t) => `<b>${esc(t.title)}</b>`))}.`);
+    if (sum.average != null) lines.push(`הציון הממוצע: <b>${sum.average}%</b> — ${level(sum.average).label}.`);
+    sum.tests.forEach((t) => lines.push(`מבחן "${esc(t.title)}": <b>${pct(t.score, t.total)}%</b> (<span dir="ltr">${t.score}/${t.total}</span>).`));
+    if (sum.strong.length) lines.push(`<span class="adm-lib-key">הצליח במיוחד</span> ${topicScoresText(sum.strong)}.`);
+    if (sum.weak.length) lines.push(`<span class="adm-lib-key">כדאי לחזור על</span> ${topicScoresText(sum.weak)}.`);
+    return lines;
+  }
+
+  function dayEntryHtml(e) {
+    const topic = entryTopic(e);
+    if (e.kind === "exercise") {
+      const meta = [topic, TYPE_LABELS[e.type] || "", countText(e.rounds, "סבב אחד", "סבבים"), e.practiceSec ? fmtDuration(e.practiceSec) : ""];
+      return `
+        <li class="adm-act">
+          <span class="adm-act-icon">${ICONS.exercise}</span>
+          <div class="adm-act-body">
+            <div class="adm-act-line">
+              <span class="adm-act-title">${esc(entryTitle(e))}</span>
+              ${e.total == null ? pill("none", "תרגול טעויות") : scorePill(e.score, e.total)}
+            </div>
+            <span class="adm-act-meta">${esc(meta.filter(Boolean).join(" · "))}</span>
+          </div>
+        </li>`;
+    }
+    if (e.kind === "game") {
+      const meta = [countText(e.rounds, "פעם אחת", "פעמים"), e.score ? `ניקוד הכי גבוה: ${fmtNum(e.score)}` : ""];
+      return `
+        <li class="adm-act">
+          <span class="adm-act-icon">${ICONS.game}</span>
+          <div class="adm-act-body">
+            <span class="adm-act-title">משחק: ${esc(entryTitle(e))}</span>
+            <span class="adm-act-meta">${esc(meta.filter(Boolean).join(" · "))}</span>
+          </div>
+        </li>`;
+    }
+    return `
+      <li class="adm-act">
+        <span class="adm-act-icon">${ICONS.lesson}</span>
+        <div class="adm-act-body">
+          <span class="adm-act-title">${entryKind(e)}: ${esc(entryTitle(e))}</span>
+          ${topic ? `<span class="adm-act-meta">${esc(topic)}</span>` : ""}
+        </div>
+      </li>`;
+  }
+
+  function sectionTitle(text) {
+    return `<h4 class="adm-day-title adm-rep-section">${esc(text)}</h4>`;
+  }
+
+  function daysDetailHtml(s) {
+    return s.days
+      .map(
+        (d) => `
+        <div class="adm-day adm-days-day">
+          <h4 class="adm-day-title">${esc(reportDayTitle(d.day))}</h4>
+          <ul class="adm-acts">${d.entries.map(dayEntryHtml).join("")}</ul>
+        </div>`
+      )
+      .join("");
+  }
+
+  // The week's seven days, the ones practiced filled in.
+  function weekStripHtml(s) {
+    const today = todayKey();
+    const done = new Set(s.days.map((d) => d.day));
+    return `
+      <div class="adm-days-day">
+        ${sectionTitle("ימי תרגול")}
+        <ol class="adm-rep-strip">
+          ${WEEKDAY_LETTERS.map((letter, i) => {
+            const day = addDays(rep.period, i);
+            const state = done.has(day) ? "is-on" : day > today ? "is-future" : "";
+            const said = `${reportDayTitle(day)}: ${done.has(day) ? "תרגל" : day > today ? "עוד לא הגיע" : "לא תרגל"}`;
+            return `<li class="adm-rep-day ${state}" title="${esc(said)}" aria-label="${esc(said)}">${done.has(day) ? ICONS.check : ""}<span>${letter}'</span></li>`;
+          }).join("")}
+        </ol>
+      </div>`;
+  }
+
+  // The month's weeks (Sunday to Saturday, cut at the month's ends), up to today.
+  function monthWeeksHtml(s) {
+    const today = todayKey();
+    const rows = [];
+    for (let start = weekStart(rep.from); start <= rep.to; start = addDays(start, 7)) {
+      const from = start < rep.from ? rep.from : start;
+      const end = addDays(start, 6);
+      const to = end > rep.to ? rep.to : end;
+      if (from > today) break;
+      const days = s.days.filter((d) => d.day >= from && d.day <= to);
+      const best = new Map();
+      let rounds = 0;
+      let sec = 0;
+      days.forEach((d) =>
+        d.entries.forEach((e) => {
+          if (e.kind !== "exercise") return;
+          rounds += e.rounds;
+          sec += e.practiceSec || 0;
+          if (e.total == null || MIXED_ROUNDS.has(e.topicId)) return;
+          const key = `${e.topicId}/${e.exerciseId}`;
+          best.set(key, Math.max(best.get(key) ?? -1, pct(e.score, e.total)));
+        })
+      );
+      const avg = best.size ? Math.round([...best.values()].reduce((n, p) => n + p, 0) / best.size) : null;
+      const meta = days.length
+        ? [countText(days.length, "יום אחד", "ימים"), rounds ? countText(rounds, "סבב אחד", "סבבים") : "", sec ? fmtDuration(sec) : ""].filter(Boolean).join(" · ")
+        : "";
+      rows.push(`
+        <li class="adm-ex${days.length ? "" : " is-untouched"}">
+          <span class="adm-ex-text">
+            <span class="adm-ex-title">${esc(rangeLabel(from, to, false))}</span>
+            ${meta ? `<span class="adm-ex-meta">${esc(meta)}</span>` : ""}
+          </span>
+          ${!days.length ? pill("none", "לא תרגל") : avg == null ? pill("none", "בלי ציון") : pill(level(avg).cls, `${avg}% · ${level(avg).label}`)}
+        </li>`);
+    }
+    return `
+      <div class="adm-days-day">
+        ${sectionTitle("שבוע אחרי שבוע")}
+        <ul class="adm-ex-list adm-report-rows adm-rep-weeks">${rows.join("")}</ul>
+      </div>`;
+  }
+
+  // Every topic: its lessons and exercises, and its average.
+  function topicsDetailHtml(sum) {
+    const rows = sum.topics.map((t) => {
+      const lessons = [...t.lessons.values()];
+      const exercises = [...t.exercises.values()].map((ex) =>
+        ex.total == null ? `${ex.title} (תרגול טעויות)` : `${ex.title} (${ex.score}/${ex.total})`
+      );
+      return `
+        <li class="adm-act adm-rep-topic">
+          <div class="adm-act-body">
+            <div class="adm-act-line">
+              <span class="adm-act-title">${esc(t.title)}</span>
+              ${t.average == null ? "" : pill(level(t.average).cls, `${t.average}% · ${level(t.average).label}`)}
+            </div>
+            ${lessons.length ? `<span class="adm-act-meta"><b>${lessons.length === 1 ? "שיעור" : "שיעורים"}:</b> ${esc(lessons.join(" · "))}</span>` : ""}
+            ${exercises.length ? `<span class="adm-act-meta"><b>${exercises.length === 1 ? "תרגיל" : "תרגילים"}:</b> ${esc(exercises.join(" · "))}</span>` : ""}
+          </div>
+        </li>`;
+    });
+    if (sum.mixedRounds) {
+      rows.push(`
+        <li class="adm-act adm-rep-topic">
+          <div class="adm-act-body">
+            <span class="adm-act-title">תרגול מעורב וחזרה על טעויות</span>
+            <span class="adm-act-meta">${esc(countText(sum.mixedRounds, "סבב אחד", "סבבים"))}</span>
+          </div>
+        </li>`);
+    }
+    if (!rows.length) return "";
+    return `
+      <div class="adm-days-day">
+        ${sectionTitle("מה למד")}
+        <ul class="adm-acts">${rows.join("")}</ul>
+      </div>`;
+  }
+
+  function studentReportHtml(s) {
+    const sum = studentSummary(s);
+    const lv = sum.average == null ? null : level(sum.average);
+    const detail = rep.mode === "days" ? daysDetailHtml(s) : `${rep.mode === "week" ? weekStripHtml(s) : monthWeeksHtml(s)}${topicsDetailHtml(sum)}`;
+    return `
+      <article class="adm-card adm-days-student">
+        <div class="adm-days-head">
+          <a class="adm-report-name adm-days-name" href="#${encodeURIComponent(s.id)}">${esc(s.name)}</a>
+          ${lv ? pill(lv.cls, `ממוצע ${sum.average}% · ${lv.label}`) : ""}
+        </div>
+        <ul class="adm-rep-lines">${studentLines(s, sum).map((line) => `<li>${line}</li>`).join("")}</ul>
+        ${detail}
+      </article>`;
+  }
+
+  // The class in a few lines: who practiced, the topics most of them
+  // practiced, and the ones that were hard for the class.
+  function classLinesHtml(shown, active) {
+    const when = periodWords();
+    const topics = new Map();
+    active.forEach((s) => {
+      studentSummary(s).topics.forEach((t) => {
+        if (!t.id) return;
+        const entry = topics.get(t.id) || { title: t.title, students: 0, averages: [] };
+        entry.students++;
+        if (t.average != null) entry.averages.push(t.average);
+        topics.set(t.id, entry);
+      });
+    });
+    const list = [...topics.values()].map((t) => ({
+      ...t,
+      average: t.averages.length ? Math.round(t.averages.reduce((n, a) => n + a, 0) / t.averages.length) : null,
+    }));
+    // Topics more than one student worked on (any, when only one practiced).
+    const popular = list
+      .filter((t) => active.length < 2 || t.students > 1)
+      .sort((a, b) => b.students - a.students || a.title.localeCompare(b.title, "he"))
+      .slice(0, REPORT_TOP_TOPICS);
+    const hard = list.filter((t) => t.average != null && t.average < 70).sort((a, b) => a.average - b.average).slice(0, REPORT_TOP_TOPICS);
+    const lines = [
+      shown.length === 1
+        ? `התלמיד תרגל ${when}.`
+        : active.length === shown.length
+          ? `<b>כל ${fmtNum(shown.length)} התלמידים</b> תרגלו ${when}.`
+          : `<b>${fmtNum(active.length)} מתוך ${fmtNum(shown.length)}</b> התלמידים תרגלו ${when}.`,
+    ];
+    if (popular.length) lines.push(`הנושאים שהכי הרבה תלמידים עבדו עליהם: ${heJoin(popular.map((t) => `<b>${esc(t.title)}</b> (${studentsText(t.students)})`))}.`);
+    if (hard.length) lines.push(`<span class="adm-lib-key">כדאי לחזור בכיתה על</span> ${heJoin(hard.map((t) => `${esc(t.title)} (ממוצע ${t.average}%)`))}.`);
+    return `
+      <div class="adm-card adm-rep-class">
+        <h3 class="adm-h3">סיכום הכיתה</h3>
+        <ul class="adm-rep-lines">${lines.map((line) => `<li>${line}</li>`).join("")}</ul>
+      </div>`;
+  }
+
+  async function loadReports(mode, a, b) {
+    showOnly("admDetailView");
+    const view = $("#admDetailView");
+    view.innerHTML = `<p class="adm-loading">טוען את הדוח…</p>`;
+    try {
+      localStorage.setItem(REPORT_MODE_KEY, mode);
+    } catch {
+      /* private window: the daily report next time */
+    }
+    const today = todayKey();
+    let period = "";
+    let from = a;
+    let to = b;
+    if (mode === "week") {
+      period = weekStart(a && a <= today ? a : today);
+      from = period;
+      to = addDays(period, 6);
+    } else if (mode === "month") {
+      period = a && `${a}-01` <= today ? a : today.slice(0, 7);
+      [from, to] = monthRange(period);
+    }
+    try {
+      const query = from ? `?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}` : "";
+      const data = (await api(`/api/admin/students/days${query}`)).report;
+      // The daily report's range as the server cut it (no future days, up to `max` days).
+      rep = mode === "days" ? { mode, period, from: data.from, to: data.to, data } : { mode, period, from, to, data };
+      if ((a || mode !== "days") && location.hash !== periodHash()) history.replaceState(null, "", periodHash());
+      if (repStudent && !data.students.some((s) => s.id === repStudent)) repStudent = "";
+      renderReports();
+    } catch (e) {
+      if (account) view.innerHTML = `<p class="adm-error">${esc(e.message)}</p>`;
+    }
+  }
+
+  function repShown() {
+    const all = rep.data.students;
+    return repStudent ? all.filter((s) => s.id === repStudent) : all;
+  }
+
+  // The daily report: two dates and quick ranges; the weekly and monthly: arrows.
+  function periodPickerHtml() {
+    const r = rep.data;
+    if (rep.mode === "days") {
+      return `
+        <div class="adm-days-fields">
+          <label class="adm-field">
+            <span>מתאריך</span>
+            <input type="date" id="admDaysFrom" value="${esc(rep.from)}" max="${esc(r.today)}" required />
+          </label>
+          <label class="adm-field">
+            <span>עד תאריך</span>
+            <input type="date" id="admDaysTo" value="${esc(rep.to)}" max="${esc(r.today)}" required />
+          </label>
+          ${studentPickerHtml()}
+        </div>
+        <div class="adm-days-quick">
+          ${DAYS_QUICK.map(([kind, label]) => {
+            const [from, to] = quickRange(kind);
+            const on = from === rep.from && to === rep.to;
+            return `<a class="adm-days-chip${on ? " is-on" : ""}" href="${daysHash(from, to)}"${on ? ` aria-current="true"` : ""}>${label}</a>`;
+          }).join("")}
+        </div>
+        <p class="adm-muted adm-small">אפשר לבחור עד ${r.max} ימים.</p>`;
+    }
+    const today = todayKey();
+    const week = rep.mode === "week";
+    const current = week ? weekStart(today) : today.slice(0, 7);
+    const prev = week ? addDays(rep.period, -7) : shiftMonth(rep.period, -1);
+    const next = week ? addDays(rep.period, 7) : shiftMonth(rep.period, 1);
+    const unit = week ? "השבוע" : "החודש";
+    const label = rep.period === current ? `${unit} · ${periodLabel()}` : periodLabel();
+    return `
+      <div class="adm-rep-period">
+        <nav class="adm-week" aria-label="${week ? "בחירת שבוע" : "בחירת חודש"}">
+          <a class="adm-week-btn adm-week-btn--prev" href="#${rep.mode}/${prev}" aria-label="${unit} הקודם" title="${unit} הקודם">${ICONS.chevron}</a>
+          <span class="adm-week-label">${esc(label)}</span>
+          ${
+            rep.period === current
+              ? `<span class="adm-week-btn is-off" aria-hidden="true">${ICONS.chevron}</span>`
+              : `<a class="adm-week-btn" href="#${rep.mode}/${next}" aria-label="${unit} הבא" title="${unit} הבא">${ICONS.chevron}</a>`
+          }
+        </nav>
+        ${studentPickerHtml()}
+      </div>`;
+  }
+
+  function studentPickerHtml() {
+    return `
+      <label class="adm-field">
+        <span>תלמיד</span>
+        <select id="admDaysStudent">
+          <option value="">כל התלמידים</option>
+          ${rep.data.students.map((s) => `<option value="${esc(s.id)}"${s.id === repStudent ? " selected" : ""}>${esc(s.name)}</option>`).join("")}
+        </select>
+      </label>`;
+  }
+
+  function renderReports() {
+    const all = rep.data.students;
+    const shown = repShown();
+    const active = shown.filter((s) => s.days.length);
+    const idle = shown.filter((s) => !s.days.length);
+    const sums = active.map(studentSummary);
+    const total = (key) => sums.reduce((n, sum) => n + sum[key], 0);
+    const one = repStudent ? shown[0] : null;
+    const title = REPORT_TITLES[rep.mode];
+    const view = $("#admDetailView");
+    view.innerHTML = `
+      <div class="adm-page-head adm-days-title">
+        <h2 class="adm-h1">${title}</h2>
+      </div>
+      <div class="adm-days-print-head">
+        <h2 class="adm-h1">${title} · ${esc(one ? one.name : "כל התלמידים")}</h2>
+        <p class="adm-muted">${esc(periodLabel())}</p>
+      </div>
+
+      <nav class="adm-rep-tabs" aria-label="סוג הדוח">
+        ${REPORT_MODES.map(([mode, label]) => `<a class="adm-rep-tab${mode === rep.mode ? " is-on" : ""}" href="#${mode}"${mode === rep.mode ? ` aria-current="page"` : ""}>${label}</a>`).join("")}
+      </nav>
+
+      <form class="adm-card adm-days-form" id="admDaysForm" novalidate>
+        ${periodPickerHtml()}
+      </form>
+
+      ${
+        all.length
+          ? `
+        <div class="adm-file-tools adm-days-tools">
+          <button type="button" class="adm-fold-toggle" id="admDaysExcel">
+            <span class="adm-fold-icon">${ICONS.download}</span>
+            <span>הורדה לאקסל</span>
+          </button>
+          <button type="button" class="adm-fold-toggle" id="admDaysPrint">
+            <span class="adm-fold-icon">${ICONS.print}</span>
+            <span>הדפסה / PDF</span>
+          </button>
+        </div>
+        <div class="adm-tiles">
+          ${
+            one
+              ? tile("ימים שתרגל", fmtNum(one.totals.days), rep.mode === "week" ? "מתוך 7" : "")
+              : tile("תרגלו", `<span dir="ltr">${active.length}/${shown.length}</span>`, "תלמידים")
+          }
+          ${tile("שיעורים", fmtNum(total("lessons")))}
+          ${tile("סבבי תרגול", fmtNum(total("rounds")))}
+          ${tile("זמן תרגול", esc(fmtDuration(total("practiceSec"))))}
+        </div>
+        ${!one && active.length ? classLinesHtml(shown, active) : ""}
+        ${active.length ? `<div class="adm-days-students">${active.map(studentReportHtml).join("")}</div>` : ""}
+        ${
+          one && idle.length
+            ? `<p class="adm-muted adm-report-none">${esc(one.name)} לא תרגל ${esc(periodWords())}.</p>`
+            : idle.length
+              ? reportCard(
+                  `לא תרגלו ${periodWords()}`,
+                  idle.length,
+                  "",
+                  `<ul class="adm-report-chips">${idle.map((s) => `<li class="adm-report-chip">${studentLinkHtml(s)}</li>`).join("")}</ul>`,
+                  true
+                )
+              : ""
+        }`
+          : `<p class="adm-muted adm-report-none">עוד אין תלמידים ברשימה. הוסיפו תלמידים, והדוח יתמלא כשיתרגלו.</p>`
+      }`;
+
+    if (rep.mode === "days") {
+      const go = () => {
+        const from = $("#admDaysFrom").value;
+        const to = $("#admDaysTo").value;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(from) && /^\d{4}-\d{2}-\d{2}$/.test(to)) location.hash = daysHash(from, to);
+      };
+      $("#admDaysFrom").addEventListener("change", go);
+      $("#admDaysTo").addEventListener("change", go);
+    }
+    $("#admDaysForm").addEventListener("submit", (e) => e.preventDefault());
+    $("#admDaysStudent").addEventListener("change", (e) => {
+      repStudent = e.target.value;
+      renderReports();
+      $("#admDaysStudent").focus();
+    });
+    $("#admDaysExcel")?.addEventListener("click", downloadReport);
+    $("#admDaysPrint")?.addEventListener("click", printReport);
+  }
+
+  function reportFileName() {
+    const one = repStudent ? repShown()[0] : null;
+    const when = rep.mode === "month" ? rep.period : `${rep.from} עד ${rep.to}`;
+    return `${REPORT_TITLES[rep.mode]} ${one ? `${one.name} ` : ""}${when}`.replace(/[\\/:*?"<>|]+/g, "-");
+  }
+
+  // A value Excel shows as written: quoted when needed, and never read as a
+  // formula (a name that starts with "=").
+  function csvCell(value) {
+    let text = String(value ?? "");
+    if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
+    return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  }
+
+  // The daily report: a row per day's entry. The weekly and monthly: a row
+  // per student. A student who didn't practice gets a row too.
+  function reportRows() {
+    if (rep.mode !== "days") {
+      const rows = [["תלמיד", "ימי תרגול", "שיעורים", "סבבי תרגול", "משחקים", "זמן תרגול (דקות)", "ציון ממוצע", "נושאים", "הצליח במיוחד", "כדאי לחזור על"]];
+      // "; " between topics, since a topic's name can have commas.
+      const scores = (list) => list.map((t) => `${t.title} (${t.average}%)`).join("; ");
+      repShown().forEach((s) => {
+        const sum = studentSummary(s);
+        rows.push([
+          s.name,
+          sum.days,
+          sum.lessons,
+          sum.rounds,
+          sum.games,
+          Math.round(sum.practiceSec / 60),
+          sum.average ?? "",
+          sum.topics.filter((t) => t.id).map((t) => t.title).join("; "),
+          scores(sum.strong),
+          scores(sum.weak),
+        ]);
+      });
+      return rows;
+    }
+    const rows = [["תאריך", "יום", "תלמיד", "סוג", "נושא", "פעילות", "סבבים", "ציון", "אחוז", "זמן תרגול (דקות)"]];
+    repShown().forEach((s) => {
+      if (!s.days.length) {
+        rows.push(["", "", s.name, "לא תרגל בימים האלה", "", "", "", "", "", ""]);
+        return;
+      }
+      s.days.forEach((d) => {
+        const weekday = parseDay(d.day).toLocaleDateString("he-IL", { weekday: "long" });
+        d.entries.forEach((e) => {
+          const scored = e.kind === "exercise" && e.total != null;
+          rows.push([
+            d.day,
+            weekday,
+            s.name,
+            entryKind(e),
+            entryTopic(e),
+            entryTitle(e),
+            e.rounds,
+            scored ? `${e.score} מתוך ${e.total}` : e.kind === "game" && e.score ? `ניקוד ${e.score}` : "",
+            scored ? pct(e.score, e.total) : "",
+            e.kind === "exercise" ? Math.round((e.practiceSec || 0) / 60) : "",
+          ]);
+        });
+      });
+    });
+    return rows;
+  }
+
+  function downloadReport() {
+    // The BOM lets Excel read the Hebrew as UTF-8.
+    const csv = `﻿${reportRows().map((row) => row.map(csvCell).join(",")).join("\r\n")}\r\n`;
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${reportFileName()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // The browser's print window, where "שמירה כ-PDF" saves it too. The page's
+  // title becomes the PDF's file name.
+  function printReport() {
+    const title = document.title;
+    document.title = reportFileName();
+    window.addEventListener("afterprint", () => (document.title = title), { once: true });
+    window.print();
   }
 
   /* ── Routing ── */
@@ -2623,8 +3683,13 @@
     }
     const id = decodeURIComponent(location.hash.replace(/^#/, ""));
     const week = id.match(/^report(?:\/(\d{4}-\d{2}-\d{2}))?$/);
+    const days = id.match(/^days(?:\/(\d{4}-\d{2}-\d{2})\/(\d{4}-\d{2}-\d{2}))?$/);
+    const period = id.match(/^(week|month)(?:\/(\d{4}-\d{2}(?:-\d{2})?))?$/);
     if (week) loadReport(week[1]);
+    else if (days) loadReports("days", days[1], days[2]);
+    else if (period) loadReports(period[1], period[2]);
     else if (id === "class") loadClass();
+    else if (id === "activity") loadActivity();
     else if (id) loadStudent(id);
     else loadList();
     window.scrollTo({ top: 0 });

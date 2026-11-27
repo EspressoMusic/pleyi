@@ -9,17 +9,20 @@
      visit it says that it searches, and every so often it says hello.
    - The corner fox steps aside while a dialog, a lesson or an exercise
      screen is open (site-fox.css).
-   - The guide: the first time someone opens a part of the site, the fox
-     shows it around (PleyiFox.tour). It is off until someone turns it on
-     with the "מדריך" button beside the corner fox.
+   - "שאלו את השועל": in the same list, the fox answers questions in a few
+     short lines with links to lessons, exercises and pages (the AI behind
+     it: lib/fox-chat.js).
+   - The guide: the "הפעלת מדריך" button in the list the fox opens makes the
+     fox show around the page you are on (PleyiFox.tour), from the start,
+     every time it is pressed. Other pages stay without it.
    - Instead of the fox it can be another animal (a cat, a bear…), picked
      with "נראות" on the home page and kept in this browser. */
 
 (function () {
-  const GREETING = "היי! לחצו עליי כדי לחפש באתר";
+  const GREETING = "היי! לחצו עליי ושאלו אותי מה ללמוד";
   const GREETED_KEY = "pleyi-fox-greeted";
   const BUBBLE_MS = 3600;
-  const CHAT = "היי, למידה נעימה! אני פה לעזור!";
+  const CHAT = ["היי, למידה נעימה! אני פה לעזור!", "לא יודעים מה ללמוד? לחצו עליי ושאלו"];
   const CHAT_FIRST_MS = 20000;
   const CHAT_EVERY_MS = 60000;
 
@@ -337,15 +340,31 @@
           <p class="site-search-title" id="site-search-title"><span class="site-search-key">מה מחפשים?</span></p>
           <button type="button" class="site-search-close" aria-label="סגירה"></button>
         </div>
-        <label class="site-search-field">
-          <svg class="site-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
-          <input type="search" class="site-search-input" placeholder="שיעור, נושא או דף" autocomplete="off" enterkeyhint="search" aria-label="חיפוש באתר"/>
-        </label>
-        <p class="site-search-note" role="status"></p>
-        <ul class="site-search-results"></ul>
+        <div class="site-search-view">
+          <label class="site-search-field">
+            <svg class="site-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+            <input type="search" class="site-search-input" placeholder="שיעור, נושא או דף" autocomplete="off" enterkeyhint="search" aria-label="חיפוש באתר"/>
+          </label>
+          <p class="site-search-note" role="status"></p>
+          <ul class="site-search-results"></ul>
+          <div class="site-search-actions">
+            <button type="button" class="site-ask-btn"><span class="site-ask-btn-icon" aria-hidden="true">${ICON_ASK}</span><span class="site-ask-btn-text">AI</span></button>
+          </div>
+        </div>
+        <div class="site-chat">
+          <ol class="site-chat-log" aria-live="polite"></ol>
+          <form class="site-chat-form">
+            <input type="text" class="site-chat-input" maxlength="${ASK_MAX}" placeholder="כתבו כאן מה רוצים ללמוד" autocomplete="off" enterkeyhint="send" aria-label="שאלה"/>
+            <button type="submit" class="site-chat-send" aria-label="שליחה">${ICON_SEND}</button>
+          </form>
+          <div class="site-chat-foot">
+            <button type="button" class="site-chat-back">${ICON_BACK}<span>חזרה לחיפוש</span></button>
+            <button type="button" class="site-chat-new">שיחה חדשה</button>
+          </div>
+        </div>
       </div>`;
     const guideBtn = makeGuideButton();
-    if (guideBtn) el.querySelector(".site-search-box").append(guideBtn);
+    if (guideBtn) el.querySelector(".site-search-actions").append(guideBtn);
     const input = el.querySelector(".site-search-input");
     input.addEventListener("input", render);
     input.addEventListener("keydown", (e) => {
@@ -353,6 +372,10 @@
       if (e.key === "Enter" && first) {
         e.preventDefault();
         first.click();
+      } else if (e.key === "Enter" && norm(input.value)) {
+        // Nothing found: the fox is asked instead.
+        e.preventDefault();
+        openChat(input.value);
       } else if (e.key === "ArrowDown" && first) {
         e.preventDefault();
         first.focus();
@@ -370,13 +393,15 @@
     el.querySelector(".site-search-results").addEventListener("click", (e) => {
       if (e.target.closest("a")) closeSearch(false);
     });
+    el.querySelector(".site-ask-btn").addEventListener("click", () => openChat(input.value));
+    bindChat(el);
     el.querySelector(".site-search-backdrop").addEventListener("click", () => closeSearch());
     el.querySelector(".site-search-close").addEventListener("click", () => closeSearch());
     el.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeSearch();
       if (e.key !== "Tab") return;
-      // Focus stays inside the panel.
-      const stops = [...el.querySelectorAll("button, input, a")];
+      // Focus stays inside the panel, on what can be seen.
+      const stops = [...el.querySelectorAll("button, input, a")].filter((stop) => stop.getClientRects().length && !stop.disabled);
       const edge = e.shiftKey ? stops[0] : stops[stops.length - 1];
       if (document.activeElement === edge) {
         e.preventDefault();
@@ -405,7 +430,7 @@
       (items) => {
         if (input.value !== query) return;
         const hits = find(items, query);
-        note.textContent = hits.length ? "" : "לא מצאנו. נסו מילה אחרת";
+        note.textContent = hits.length ? "" : `לא מצאנו. נסו לשאול את ה${animalName()}`;
         list.innerHTML = "";
         hits.forEach((item) => {
           const li = document.createElement("li");
@@ -433,10 +458,14 @@
     opener = fox.tagName === "BUTTON" ? fox : null;
     panel.hidden = false;
     document.documentElement.classList.add("site-search-open");
+    panel.querySelector(".site-ask-btn").setAttribute("aria-label", `AI – שאלו את ה${animalName()}`);
     const input = panel.querySelector(".site-search-input");
     input.value = "";
     render();
-    input.focus();
+    // Back in the talk, if that is where the list was closed (a link was
+    // followed from it).
+    if (lastView() === "chat") openChat();
+    else showSearchView();
   }
 
   function closeSearch(returnFocus = true) {
@@ -444,6 +473,213 @@
     panel.hidden = true;
     document.documentElement.classList.remove("site-search-open");
     if (returnFocus) opener?.focus();
+  }
+
+  /* ── "שאלו את השועל" ──
+     The fox answers in the same list (POST /api/fox/ask, lib/fox-chat.js): a
+     few short lines and up to 4 links to lessons, exercises and pages. The
+     talk lasts while the tab is open (sessionStorage), so it is still there
+     after a link from it is followed. */
+
+  const ASK_MAX = 300;
+  const TALK_KEY = "pleyi-fox-talk";
+  const VIEW_KEY = "pleyi-fox-view";
+  const TALK_KEEP = 20;
+  const TALK_SENT = 6;
+  const SUGGESTIONS = ["שברים לכיתה ד", "אנגלית למתחילים", "משחק לכל הכיתה"];
+  // Sparkles, for the "AI" button.
+  const ICON_ASK =
+    '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 3l1.9 5.6L17.5 10.5l-5.6 1.9L10 18l-1.9-5.6L2.5 10.5l5.6-1.9z"/><path d="M18 14l.9 2.6 2.6.9-2.6.9L18 21l-.9-2.6-2.6-.9 2.6-.9z"/></svg>';
+  const ICON_SEND = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5M11 5.5L4.5 12l6.5 6.5"/></svg>';
+  const ICON_BACK = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 5.5l6.5 6.5-6.5 6.5"/></svg>';
+  let talk = loadTalk();
+  let asking = false;
+
+  function animalName() {
+    return (ANIMALS.find((a) => a.id === animal) || ANIMALS[0]).name;
+  }
+
+  function loadTalk() {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(TALK_KEY));
+      return Array.isArray(saved) ? saved.slice(-TALK_KEEP) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveTalk() {
+    try {
+      sessionStorage.setItem(TALK_KEY, JSON.stringify(talk.slice(-TALK_KEEP)));
+    } catch {}
+  }
+
+  function lastView() {
+    try {
+      return sessionStorage.getItem(VIEW_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  function setView(view) {
+    panel.classList.toggle("is-chat", view === "chat");
+    panel.querySelector(".site-search-key").textContent = view === "chat" ? `שאלו את ה${animalName()}` : "מה מחפשים?";
+    try {
+      sessionStorage.setItem(VIEW_KEY, view);
+    } catch {}
+  }
+
+  function showSearchView() {
+    setView("search");
+    panel.querySelector(".site-search-input").focus();
+  }
+
+  // `question`: what was typed in the search, asked right away.
+  function openChat(question = "") {
+    setView("chat");
+    drawTalk();
+    panel.querySelector(".site-chat-input").focus();
+    if (norm(question)) ask(question);
+  }
+
+  function lines(text) {
+    const p = document.createElement("p");
+    p.className = "site-chat-text";
+    String(text)
+      .split("\n")
+      .filter((line) => line.trim())
+      .forEach((line) => {
+        const span = document.createElement("span");
+        span.className = "site-chat-line";
+        span.textContent = line;
+        p.append(span);
+      });
+    return p;
+  }
+
+  function message(m) {
+    const li = document.createElement("li");
+    li.className = `site-chat-msg site-chat-msg--${m.role === "fox" ? "fox" : "me"}`;
+    li.append(lines(m.text));
+    if (m.links?.length) {
+      const list = document.createElement("ul");
+      list.className = "site-chat-links";
+      m.links.forEach((link) => {
+        const a = document.createElement("a");
+        a.className = "site-chat-link";
+        a.href = link.u;
+        a.innerHTML = `<span class="site-chat-link-title"></span><span class="site-chat-link-kind"></span>`;
+        a.firstElementChild.textContent = link.t;
+        a.lastElementChild.textContent = link.k;
+        const item = document.createElement("li");
+        item.append(a);
+        list.append(item);
+      });
+      li.append(list);
+    }
+    if (m.chips?.length) {
+      const chips = document.createElement("div");
+      chips.className = "site-chat-chips";
+      m.chips.forEach((chip) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "site-chat-chip";
+        btn.textContent = chip;
+        btn.addEventListener("click", () => ask(chip));
+        chips.append(btn);
+      });
+      li.append(chips);
+    }
+    return li;
+  }
+
+  function drawTalk() {
+    const log = panel.querySelector(".site-chat-log");
+    const hello = {
+      role: "fox",
+      text: `היי! אני ה${animalName()} של האתר\nכתבו לי מה רוצים ללמוד\nואמצא לכם שיעור או תרגיל`,
+      chips: talk.length ? [] : SUGGESTIONS,
+    };
+    const rows = [hello, ...talk].map(message);
+    if (asking) {
+      const typing = document.createElement("li");
+      typing.className = "site-chat-msg site-chat-msg--fox site-chat-typing";
+      typing.setAttribute("aria-label", "כותב…");
+      typing.innerHTML = '<span class="site-chat-dot"></span><span class="site-chat-dot"></span><span class="site-chat-dot"></span>';
+      rows.push(typing);
+    }
+    log.replaceChildren(...rows);
+    panel.querySelector(".site-chat-send").disabled = asking;
+    requestAnimationFrame(() => (log.scrollTop = log.scrollHeight));
+  }
+
+  function talkHop() {
+    const fox = panel.querySelector(".site-search-fox");
+    if (motionOff() || !fox) return;
+    fox.classList.remove("is-talk");
+    void fox.offsetWidth;
+    fox.classList.add("is-talk");
+  }
+
+  async function ask(text) {
+    const question = String(text).replace(/\s+/g, " ").trim().slice(0, ASK_MAX);
+    if (!question || asking) return;
+    const history = talk
+      .filter((m) => !m.failed)
+      .slice(-TALK_SENT)
+      .map(({ role, text: said }) => ({ role, text: said }));
+    talk.push({ role: "user", text: question });
+    saveTalk();
+    asking = true;
+    drawTalk();
+    let answer;
+    try {
+      const res = await fetch("/api/fox/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: question, history, page: location.pathname + location.hash, animal: animalName() }),
+      });
+      const data = await res.json();
+      if (!data.ok || !data.reply) throw new Error(data.error || res.status);
+      answer = { role: "fox", text: data.reply, links: data.links || [] };
+    } catch {
+      answer = { role: "fox", text: "אופס, משהו לא עבד\nנסו לשאול שוב", failed: true };
+    }
+    asking = false;
+    talk.push(answer);
+    saveTalk();
+    if (!panel.hidden && panel.classList.contains("is-chat")) {
+      drawTalk();
+      talkHop();
+    }
+  }
+
+  function bindChat(el) {
+    const input = el.querySelector(".site-chat-input");
+    el.querySelector(".site-chat-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (asking) return;
+      const text = input.value;
+      input.value = "";
+      ask(text);
+      input.focus();
+    });
+    el.querySelector(".site-chat-back").addEventListener("click", showSearchView);
+    el.querySelector(".site-chat-new").addEventListener("click", () => {
+      if (asking) return;
+      talk = [];
+      saveTalk();
+      drawTalk();
+      input.focus();
+    });
+    // A link to a place on this page only changes the hash: the list closes.
+    el.querySelector(".site-chat-log").addEventListener("click", (e) => {
+      if (e.target.closest("a")) closeSearch(false);
+    });
+    el.querySelector(".site-search-fox").addEventListener("animationend", (e) => {
+      if (e.animationName === "site-search-fox-talk") e.currentTarget.classList.remove("is-talk");
+    });
   }
 
   /* ── The guide ──
@@ -456,9 +692,9 @@
      button only some lessons have), and then comes on its own. */
 
   const TOUR_KEY = "pleyi-tour-";
-  // Set by the guide button (makeGuideButton): each person turns it on for
-  // themselves, in their own browser.
-  const GUIDE_ON_KEY = "pleyi-guide-on";
+  // Set by the guide button (makeGuideButton), for this page only: the next
+  // page starts without the guide.
+  let guideHere = false;
   // Set by the screenshot scripts (scripts/capture-home-demo.js): no guide.
   const TOUR_OFF_KEY = "pleyi-tour-off";
   const TOUR_PAD = 6;
@@ -495,7 +731,7 @@
 
   function guideEnabled() {
     try {
-      return localStorage.getItem(GUIDE_ON_KEY) === "1" && !localStorage.getItem(TOUR_OFF_KEY);
+      return guideHere && !localStorage.getItem(TOUR_OFF_KEY);
     } catch {
       return false;
     }
@@ -759,7 +995,6 @@
         { id: "open", el: ".svc-lesson-card[data-lesson] .js-lesson-open", title: "פתיחה", text: "פותחים את השיעור" },
         { id: "save", el: "#lessonInfoFavBtn", title: "שמירה", text: "שומרים את השיעור לפעם אחרת" },
         { id: "share", el: "#lessonInfoShareBtn", title: "שיתוף", text: "שולחים את השיעור לתלמידים" },
-        { id: "back", el: "#studentBack", title: "חזרה", text: "חוזרים לעמוד שלכם" },
       ],
     },
     {
@@ -824,36 +1059,26 @@
     soon();
   }
 
-  // In the list the fox opens, on pages that have a guide. Turning it on
-  // closes the list and starts the guide over from the beginning, everywhere;
-  // tapping again turns it off.
+  // In the list the fox opens, on pages that have a guide. It closes the list
+  // and shows this page's guide from the beginning, even steps seen before;
+  // what opens later on this page (a topic, an exercise) is shown when it
+  // comes on screen.
   function makeGuideButton() {
     if (!GUIDES.some(guideOn)) return null;
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "site-guide-btn";
-    btn.innerHTML = `<span class="site-guide-btn-icon" aria-hidden="true">?</span><span class="site-guide-btn-text"></span>`;
-    const sync = () => {
-      const on = guideEnabled();
-      btn.setAttribute("aria-pressed", String(on));
-      btn.querySelector(".site-guide-btn-text").textContent = on ? "כיבוי מדריך" : "הפעלת מדריך";
-    };
+    btn.innerHTML = `<span class="site-guide-btn-icon" aria-hidden="true">?</span><span class="site-guide-btn-text">הפעלת מדריך</span>`;
     btn.addEventListener("click", () => {
-      const on = !guideEnabled();
       try {
-        if (on) {
-          Object.keys(localStorage)
-            .filter((key) => key.startsWith(TOUR_KEY) && key !== TOUR_OFF_KEY)
-            .forEach((key) => localStorage.removeItem(key));
-          localStorage.setItem(GUIDE_ON_KEY, "1");
-        } else localStorage.removeItem(GUIDE_ON_KEY);
+        Object.keys(localStorage)
+          .filter((key) => key.startsWith(TOUR_KEY) && key !== TOUR_OFF_KEY)
+          .forEach((key) => localStorage.removeItem(key));
       } catch {}
-      sync();
-      if (!on) return;
+      guideHere = true;
       closeSearch(false);
       startGuides();
     });
-    sync();
     return btn;
   }
 
@@ -887,7 +1112,7 @@
     dock.className = "site-fox-dock";
     const fox = makeFox("button", "dock");
     fox.type = "button";
-    fox.setAttribute("aria-label", "חיפוש באתר");
+    fox.setAttribute("aria-label", "חיפוש באתר ושאלות לשועל");
     fox.querySelector(".site-fox-bubble").setAttribute("role", "status");
     dock.append(fox);
     document.body.append(dock);
@@ -959,12 +1184,13 @@
   // background, the search is open, or the fox is away or under a dialog.
   function chatNowAndThen(dock) {
     const fox = dock.querySelector(".site-fox");
+    let chats = 0;
     const tick = () => {
       const searching = panel && !panel.hidden;
       const away = dock.classList.contains("is-away");
       if (!document.hidden && !searching && !away && !touring && fox.getBoundingClientRect().width) {
         hop(fox);
-        say(fox, CHAT);
+        say(fox, CHAT[chats++ % CHAT.length]);
       }
       setTimeout(tick, CHAT_EVERY_MS);
     };
@@ -985,7 +1211,6 @@
     followPointer(heroFox ? [heroFox, cornerFox] : [cornerFox]);
     greetOnce(dock);
     chatNowAndThen(dock);
-    startGuides();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

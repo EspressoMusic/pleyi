@@ -11,7 +11,7 @@ body.page-class-games #games.clean-section--soft {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 22px;
-  max-width: 960px;
+  max-width: none;
   margin: 0 auto;
 }
 

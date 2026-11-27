@@ -2322,3 +2322,82 @@ html.eng-runner-open .eng-runner-card--game > .eng-snake-stage {
     animation: none;
   }
 }
+
+/* ── Trivia (game 11): the practice screens' look (html.eng-soft) — the
+   exercises' bar and answer buttons, soft pills with no outline, and a thin
+   bar for the speed bonus that drains until the answer. ── */
+
+.eng-game-badge--trivia { background: #ffd84d; }
+
+html.eng-soft .eng-game-topic,
+html.eng-soft .eng-game-best,
+html.eng-soft .eng-hud-pill {
+  border-color: transparent;
+  background: var(--soft-fill);
+  box-shadow: 0 3px 0 var(--soft-edge);
+}
+
+html.eng-soft .eng-game-badge {
+  border-color: transparent;
+  box-shadow: 0 4px 0 var(--soft-yellow-edge);
+}
+
+html.eng-soft .eng-game-hud {
+  flex-wrap: nowrap;
+  gap: 12px;
+  width: min(100%, 520px);
+  align-self: center;
+}
+
+html.eng-soft .eng-game-hud .eng-progress {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+
+.eng-trivia-q .eng-speak {
+  margin-inline-start: 0.3em;
+  vertical-align: middle;
+}
+
+.eng-trivia-hint {
+  margin: 0.35em 0 0;
+  color: var(--soft-muted, var(--body));
+  font-size: 0.6em;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.eng-trivia-time {
+  align-self: center;
+  width: min(100%, 360px);
+  height: 6px;
+  border-radius: 999px;
+  background: var(--soft-fill, #dbf2ee);
+  overflow: hidden;
+}
+
+.eng-trivia-time-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #7fd8cd;
+  transform-origin: right;
+  transition: background-color 0.3s ease;
+}
+
+html[dir="ltr"] .eng-trivia-time-fill {
+  transform-origin: left;
+}
+
+.eng-trivia-time-fill.is-low {
+  background: #ffb13d;
+}
+
+.eng-trivia-why {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.88em;
+  font-weight: 700;
+  color: var(--ink);
+}

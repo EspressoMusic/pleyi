@@ -82,6 +82,7 @@
     document.getElementById("playQuestionPill")?.classList.add("hidden");
     document.getElementById("playTimerPill")?.classList.add("hidden");
     applyGameData();
+    window.PleyiStats?.hit("game", gameId, SoloGames.names[gameId] || displayTitle);
     cleanup = SoloGames.mount(gameId, root, ui);
   }
 

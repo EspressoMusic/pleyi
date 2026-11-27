@@ -98,6 +98,19 @@ body.clean-site .hero-title .line:nth-child(2) {
   transition-delay: 0.12s;
 }
 
+/* Contact buttons grow on hover with `scale`, not `transform`, so the
+   reveal's transform:none above can't cancel it. Only the reveal waits. */
+body.clean-site .scroll-section .contact-channel-btn {
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.18s ease;
+}
+
+body.clean-site .scroll-section .contact-channel-btn:nth-child(2) {
+  transition-delay: 0.12s, 0.12s, 0s;
+}
+
 body.clean-site .about-service-card:nth-child(3),
 body.clean-site .svc-family-step:nth-child(3),
 body.clean-site .how-timeline-step:nth-child(3),
@@ -591,23 +604,8 @@ body.clean-site .clean-hero-inner .hero-title {
   min-width: 0;
 }
 
-/* Fonts for the home title and its looks (logo-style.js) */
-@font-face {
-  font-family: "Fredoka";
-  src: url("/fonts/Fredoka-Bold-hebrew.woff2") format("woff2");
-  font-weight: 700;
-  font-display: swap;
-  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
-}
-
-@font-face {
-  font-family: "Fredoka";
-  src: url("/fonts/Fredoka-Bold-latin.woff2") format("woff2");
-  font-weight: 700;
-  font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+FEFF, U+FFFD;
-}
-
+/* Fonts for the home title's looks (logo-style.js). Fredoka, the default
+   look and the site's titles' font, is in fonts.css. */
 @font-face {
   font-family: "Playpen Sans Hebrew";
   src: url("/fonts/PlaypenSansHebrew-ExtraBold-hebrew.woff2") format("woff2");
@@ -1173,8 +1171,8 @@ body.clean-site .hero-top + .clean-hero-actions {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 32px;
-  font-size: clamp(28px, 4.8vw, 42px);
+  padding: 22px 44px;
+  font-size: clamp(32px, 5.2vw, 50px);
   min-height: auto;
   border-width: 5px;
   white-space: nowrap;
@@ -2085,10 +2083,6 @@ body.clean-site .clean-section--contact .clean-section-title.font-cartoon {
 }
 
 /* Games panel */
-#games .container {
-  max-width: 1320px;
-}
-
 #games .clean-section-title {
   margin-bottom: 80px;
   padding-bottom: 16px;
@@ -2261,12 +2255,12 @@ button.clean-panel--card {
   text-decoration: none;
   color: var(--text-soft-turquoise);
   font-weight: 900;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, scale 0.18s ease;
 }
 
+/* On hover the button grows; the shadow stays as it is. */
 .email-btn:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 0 0 var(--ink), 0 0 28px rgba(0, 158, 142, 0.45);
+  scale: 1.05;
 }
 
 .email-icon {
@@ -2550,7 +2544,8 @@ body.in-room {
     width: fit-content;
     max-width: none;
     padding: 16px 28px;
-    font-size: clamp(24px, 6.5vw, 34px);
+    /* As big as fits one line beside the 16px side gutters. */
+    font-size: clamp(22px, calc(11vw - 8px), 40px);
     min-height: auto;
     border-width: 5px;
   }

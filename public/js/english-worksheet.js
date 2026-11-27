@@ -575,8 +575,16 @@
       saveLang(state.lang);
       render();
     });
-    $("#wsPrint").addEventListener("click", () => window.print());
-    $("#wsDownload").addEventListener("click", downloadPdf);
+    // The developer panel's downloads (site-stats.js): one per topic.
+    const countDownload = () => window.PleyiStats?.hit("download", `english-sheet-${topicId}`, `דף עבודה · ${topic?.title || topicId}`);
+    $("#wsPrint").addEventListener("click", () => {
+      countDownload();
+      window.print();
+    });
+    $("#wsDownload").addEventListener("click", () => {
+      countDownload();
+      downloadPdf();
+    });
     window.addEventListener("resize", fitPages);
   }
 

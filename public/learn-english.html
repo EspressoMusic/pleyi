@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light" data-site-fox="drawing">
+<head>
+  <script src="/js/theme.js?v=2"></script>
+  <!-- The page part from the address, before the first paint: home, lessons,
+       games, practice, news, or engine (an English topic, an exercise or a
+       game). english-site.js keeps it. -->
+  <script>(function (h) { document.documentElement.dataset.esPage = !h ? "home" : /^(lessons|games|practice|news)$/.test(h) ? h : "engine"; })(location.hash.slice(1));</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#9f8cff" />
+  <link rel="manifest" href="/manifest.webmanifest"/>
+  <link rel="icon" href="/icons/icon.svg?v=2" type="image/svg+xml"/>
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2"/>
+  <meta name="apple-mobile-web-app-title" content="Pleyi"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <script src="/js/pwa.js?v=4"></script>
+  <title>אנגלית — שיעורים, משחקים ותרגילים</title>
+  <meta name="description" content="אנגלית לילדים: שיעורים קצרים, משחקים ותרגילים — מה־ABC וצירופי אותיות, דרך פועל להיות והזמנים, ועד אוצר מילים בתמונות וקטעי קריאה."/>
+  <link rel="canonical" href="https://pleyschool.com/learn-english"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="Pleyi"/>
+  <meta property="og:title" content="אנגלית — שיעורים, משחקים ותרגילים"/>
+  <meta property="og:description" content="אנגלית לילדים: שיעורים קצרים, משחקים ותרגילים — מה־ABC וצירופי אותיות, דרך פועל להיות והזמנים, ועד אוצר מילים בתמונות וקטעי קריאה."/>
+  <meta property="og:url" content="https://pleyschool.com/learn-english"/>
+  <meta property="og:image" content="https://pleyschool.com/images/pleyi-logo.png"/>
+  <meta property="og:locale" content="he_IL"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="אנגלית — שיעורים, משחקים ותרגילים"/>
+  <meta name="twitter:description" content="אנגלית לילדים: שיעורים קצרים, משחקים ותרגילים — מה־ABC וצירופי אותיות, דרך פועל להיות והזמנים, ועד אוצר מילים בתמונות וקטעי קריאה."/>
+  <meta name="twitter:image" content="https://pleyschool.com/images/pleyi-logo.png"/>
+  <link rel="stylesheet" href="/styles.css?v=80"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=110"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=78"/>
+  <link rel="stylesheet" href="/css/lesson-player.css?v=129"/>
+  <link rel="stylesheet" href="/css/live-lesson.css?v=3"/>
+  <link rel="stylesheet" href="/css/english-learning.css?v=115"/>
+  <link rel="stylesheet" href="/css/english-games.css?v=9"/>
+  <link rel="stylesheet" href="/css/leaderboard.css?v=3"/>
+  <link rel="stylesheet" href="/css/premium.css"/>
+  <link rel="stylesheet" href="/css/legal.css?v=3"/>
+  <link rel="stylesheet" href="/css/accessibility.css?v=1" />
+  <link rel="stylesheet" href="/css/site-fox.css?v=26"/>
+  <link rel="stylesheet" href="/css/english-site.css?v=6"/>
+</head>
+<body class="clean-site page-english page-eng-site lp-host no-ambient-bg">
+
+  <!-- The English mini site: its own name, colors and menu, inside the
+       Pleyi site (the footer's Pleyi link leads back). -->
+  <header class="es-bar" id="esBar">
+    <div class="container es-bar-inner">
+      <div class="eng-bar-back" id="engBarBack"></div>
+      <nav class="es-tabs" aria-label="חלקי האתר">
+        <a class="es-tab" href="#lessons" data-es-page="lessons">שיעורים</a>
+        <a class="es-tab" href="#games" data-es-page="games">משחקים</a>
+        <a class="es-tab" href="#practice" data-es-page="practice">תרגילים</a>
+        <a class="es-tab" href="#news" data-es-page="news">מה חדש</a>
+      </nav>
+      <div class="es-bar-end">
+        <button type="button" class="es-login" id="authLoginBtn" data-i18n="nav.login">התחברות</button>
+        <div class="nav-user hidden" id="authUserMenu">
+          <button type="button" class="nav-user-avatar" id="authUserAvatar" aria-label="תפריט משתמש" aria-haspopup="true" aria-expanded="false">
+            <img id="authUserPhoto" alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            <span class="nav-user-initial hidden" id="authUserInitial" aria-hidden="true"></span>
+          </button>
+          <div class="nav-user-dropdown hidden" id="authUserDropdown" role="menu">
+            <p class="nav-user-name" id="authUserName"></p>
+            <a href="/my-room" class="nav-user-link" role="menuitem" data-i18n="nav.myRoom">החדר שלי</a>
+            <button type="button" class="nav-user-logout" id="authLogoutBtn" role="menuitem" data-i18n="nav.logout">יציאה</button>
+          </div>
+        </div>
+        <button type="button" class="menu-toggle es-menu-toggle" id="esMenuToggle" aria-label="תפריט" aria-expanded="false" aria-controls="esMenu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Phones: the bar's tabs move into this menu, a page of an English
+       notebook. -->
+  <nav class="es-menu" id="esMenu" aria-label="תפריט">
+    <a class="es-menu-link" href="#" data-es-page="home">דף הבית</a>
+    <a class="es-menu-link" href="#lessons" data-es-page="lessons">שיעורים</a>
+    <a class="es-menu-link" href="#games" data-es-page="games">משחקים</a>
+    <a class="es-menu-link" href="#practice" data-es-page="practice">תרגילים</a>
+    <a class="es-menu-link" href="#news" data-es-page="news">מה חדש</a>
+    <a class="es-menu-link es-menu-link--home" href="/">לאתר Pleyi</a>
+    <button type="button" class="mobile-nav-auth es-menu-login" id="mobileLoginBtn" data-i18n="nav.login">התחברות</button>
+  </nav>
+
+  <main>
+    <!-- Home: the title with the ABC blocks beside it, a few words and the
+         button to the lessons library; below them מי אנחנו, מה חדש and
+         צור קשר. -->
+    <section class="es-hero es-page-home" id="engHero">
+      <div class="container es-hero-inner">
+        <h1 class="es-title" id="esTitle" dir="ltr" lang="en">English</h1>
+        <div class="es-hero-art" id="esHeroArt" aria-hidden="true"></div>
+      </div>
+      <div class="container es-hero-text">
+        <p class="es-hero-line font-cartoon">לומדים אנגלית <span class="es-hero-accent">בכיף</span></p>
+        <p class="es-hero-line font-cartoon">שיעורים, <span class="es-hero-accent">משחקים ותרגילים</span></p>
+        <div class="es-hero-actions">
+          <a href="#lessons" class="btn btn-primary btn-candy font-cartoon">לספריית השיעורים</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="es-section es-about es-page-home" id="esAbout">
+      <div class="container">
+        <h2 class="es-heading es-section-title font-cartoon">מי אנחנו</h2>
+        <div class="es-about-lead">
+          <p>לומדים <mark class="about-key">אנגלית</mark> דרך משחק</p>
+          <p>המורה מראה <mark class="about-key">שיעור קצר</mark></p>
+          <p>הילדים <mark class="about-key">משחקים ומתרגלים</mark></p>
+        </div>
+        <!-- A short tour of this site in simple drawn screens, no browser
+             bar (about-demo.js, the "english" tour; the cursor clicks the
+             data-hit spots) -->
+        <div class="about-demo-scene" data-site-demo="english">
+          <div class="about-demo-frame es-demo" aria-hidden="true">
+            <div class="about-demo-screen">
+              <div class="about-demo-shot es-demo-shot" data-shot="lessons">
+                <div class="es-demo-tiles">
+                  <span class="es-demo-tile es-demo-tile--teal">ה־ABC</span>
+                  <span class="es-demo-tile es-demo-tile--yellow" data-hit="lesson">פועל להיות</span>
+                  <span class="es-demo-tile es-demo-tile--lilac">צבעים</span>
+                </div>
+              </div>
+              <div class="about-demo-shot es-demo-shot" data-shot="slide1">
+                <p class="es-demo-title">פועל <mark>להיות</mark></p>
+                <div class="es-demo-examples">
+                  <p class="es-demo-ex"><span dir="ltr" lang="en">I <b>am</b> happy</span><span class="es-demo-he">אני שמח</span></p>
+                  <p class="es-demo-ex"><span dir="ltr" lang="en">He <b>is</b> tall</span><span class="es-demo-he">הוא גבוה</span></p>
+                </div>
+                <span class="es-demo-next" data-hit="next1">הבא<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>
+              </div>
+              <div class="about-demo-shot es-demo-shot" data-shot="slide2">
+                <p class="es-demo-title">מי <mark>ומה</mark></p>
+                <div class="es-demo-table" dir="ltr" lang="en">
+                  <span>I</span><i aria-hidden="true"></i><b>am</b>
+                  <span>He</span><i aria-hidden="true"></i><b>is</b>
+                  <span>We</span><i aria-hidden="true"></i><b>are</b>
+                </div>
+                <span class="es-demo-next" data-hit="next2">הבא<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span>
+              </div>
+              <div class="about-demo-shot es-demo-shot" data-shot="game">
+                <img class="es-demo-pic" src="/images/english/vocab/cat.svg" alt="" width="120" height="120" loading="lazy" draggable="false" />
+                <div class="es-demo-choices" dir="ltr" lang="en">
+                  <span class="es-demo-btn es-demo-btn--right" data-hit="word">cat</span>
+                  <span class="es-demo-btn">dog</span>
+                  <span class="es-demo-btn">sun</span>
+                </div>
+                <span class="es-demo-yes">נכון!</span>
+              </div>
+              <div class="about-demo-shot es-demo-shot" data-shot="exercise">
+                <p class="es-demo-q" dir="ltr" lang="en">He ___ happy.</p>
+                <div class="es-demo-options" dir="ltr" lang="en">
+                  <span class="es-demo-opt">am</span>
+                  <span class="es-demo-opt es-demo-opt--right" data-hit="answer">is</span>
+                  <span class="es-demo-opt">are</span>
+                </div>
+                <span class="es-demo-yes">נכון!</span>
+              </div>
+              <span class="about-demo-click"></span>
+              <!-- An arrow on the computer, a fingertip on the phone -->
+              <svg class="about-demo-cursor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path class="es-demo-arrow" d="M5 2 L5 19 L9 15.2 L12.3 21.6 L15.4 20.1 L12.1 13.7 L18 13.6 Z" fill="#fff" stroke="#000" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+                <circle class="es-demo-touch" cx="12" cy="12" r="9.5" fill="#fff" fill-opacity="0.75" stroke="#000" stroke-width="1.8"/>
+              </svg>
+            </div>
+          </div>
+          <div class="es-monitor-stand" aria-hidden="true">
+            <svg viewBox="0 0 520 72">
+              <path d="M228 0h64l8 50h-80z" fill="#2a2e33" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+              <rect x="248" y="18" width="24" height="12" rx="6" fill="#151b20"/>
+              <rect x="156" y="51" width="220" height="18" rx="9" fill="#000"/>
+              <rect x="150" y="44" width="220" height="18" rx="9" fill="#2a2e33" stroke="#000" stroke-width="4"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- מה חדש: the newest updates, one card at a time, as on the Pleyi home
+         page (english-site.js fills it before news-carousel.js turns it); a
+         card opens #news, the page with every update. -->
+    <section class="es-section es-news es-page-home" id="esNews">
+      <div class="container news-wrap">
+        <h2 class="es-heading es-section-title font-cartoon">מה חדש</h2>
+        <div class="news-carousel" data-news-carousel aria-roledescription="carousel" aria-label="מה חדש">
+          <ol class="news-list" id="esNewsList" aria-live="off"></ol>
+          <button type="button" class="news-arrow news-arrow--prev" aria-label="העדכון הקודם"></button>
+          <button type="button" class="news-arrow news-arrow--next" aria-label="העדכון הבא"></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="es-section es-contact es-page-home" id="esContact">
+      <div class="container">
+        <h2 class="es-heading es-section-title font-cartoon">צור קשר</h2>
+        <div class="clean-contact">
+          <div class="contact-info contact-info--simple">
+            <a href="https://wa.me/972586122187" class="whatsapp-btn contact-channel-btn" target="_blank" rel="noopener noreferrer">
+              <span class="whatsapp-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="56" height="56" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+              </span>
+              <span class="contact-channel-text">
+                <span class="whatsapp-label">פנו בוואטסאפ</span>
+              </span>
+            </a>
+            <a href="mailto:shilohdhd1@gmail.com" class="email-btn contact-channel-btn">
+              <span class="email-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="56" height="56" fill="currentColor" aria-hidden="true">
+                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z"/>
+                </svg>
+              </span>
+              <span class="contact-channel-text">
+                <span class="email-label">פנו במייל</span>
+                <span class="email-address" dir="ltr">shilohdhd1@gmail.com</span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The lessons library: every short English lesson, in the learning
+         path's stages (english-site.js) -->
+    <section class="es-section es-page-lessons" id="esLessons">
+      <div class="container">
+        <h2 class="es-heading es-page-title font-cartoon">ספריית השיעורים</h2>
+        <div class="eng-topic-groups es-lessons" id="esLessonList"></div>
+      </div>
+    </section>
+
+    <!-- The games: the English games, with the words of the topic picked on
+         top; a game runs in the exercises' screen (#<topic>/game-<id>) -->
+    <section class="es-section es-page-games" id="esGames">
+      <div class="container">
+        <h2 class="es-heading es-page-title font-cartoon">משחקים</h2>
+        <div id="esGameTopic"></div>
+        <div class="es-cards es-games" id="esGameList"></div>
+      </div>
+    </section>
+
+    <!-- מה חדש (#news): every update for teachers, by kind, each with a
+         button to the material (english-site.js) -->
+    <section class="es-section es-page-news" id="esNewsPage">
+      <div class="container es-news-page">
+        <h2 class="es-heading es-page-title font-cartoon">מה חדש</h2>
+        <div class="es-news-lead">
+          <p>כל מה שנוסף לאתר</p>
+          <p>שיעורים, משחקים ותרגילים לכיתה</p>
+        </div>
+        <div id="esNewsFeed"></div>
+      </div>
+    </section>
+
+    <!-- A news card's picture, big (news-carousel.js). Not in a section: it
+         opens from the home page and from #news. -->
+    <dialog class="news-zoom" aria-label="תמונה">
+      <h3 class="news-zoom-title"><span class="news-zoom-key"></span></h3>
+      <img class="news-zoom-img" alt="" width="618" height="1372" />
+      <div class="news-zoom-nav">
+        <button type="button" class="news-zoom-arrow news-zoom-arrow--prev" aria-label="התמונה הקודמת"></button>
+        <p class="news-zoom-count" aria-live="polite"></p>
+        <button type="button" class="news-zoom-arrow news-zoom-arrow--next" aria-label="התמונה הבאה"></button>
+      </div>
+      <button type="button" class="news-zoom-close" aria-label="סגירה"></button>
+    </dialog>
+
+    <!-- The exercises (#practice): the English learning path, and a topic,
+         an exercise or a game (english-learning.js) -->
+    <section class="es-section eng-section es-practice" id="engMain">
+      <div class="container">
+        <div id="engTopicsView">
+          <h2 class="es-heading es-page-title font-cartoon" id="esPractice">תרגילים</h2>
+          <div class="eng-topic-groups" id="engTopicGrid"></div>
+        </div>
+        <div id="engTopicView" class="eng-topic-view hidden"></div>
+        <div id="engExerciseView" class="eng-exercise-view hidden"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="es-footer">
+    <div class="container es-footer-inner">
+      <p class="es-footer-brand font-cartoon" dir="ltr" lang="en">English</p>
+      <p class="es-footer-by"><a href="/">Pleyi</a> – לימוד במשחקים</p>
+      <nav class="es-legal" aria-label="מידע משפטי">
+        <a href="/legal/terms.html">תקנון</a>
+        <a href="/legal/privacy.html">פרטיות</a>
+        <a href="/legal/cookies.html">עוגיות</a>
+        <a href="/legal/accessibility.html">נגישות</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="eng-slide-viewer hidden" id="engSlideViewer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="engSlideTitle">
+    <div class="eng-slide-backdrop" id="engSlideBackdrop"></div>
+    <div class="eng-slide-shell" id="engSlideShell">
+      <header class="eng-slide-top">
+        <h2 class="eng-slide-title" id="engSlideTitle"></h2>
+        <span class="eng-slide-counter" id="engSlideCounter" dir="ltr">1 / 1</span>
+        <div class="eng-slide-actions">
+          <button type="button" class="eng-slide-icon-btn" id="engSlideFullscreen" aria-label="מסך מלא"></button>
+          <button type="button" class="eng-slide-icon-btn" id="engSlideClose" aria-label="סגירה">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="eng-slide-stage">
+        <button type="button" class="eng-slide-nav eng-slide-nav--prev" id="engSlidePrev" aria-label="שקופית קודמת">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="eng-slide-frame">
+          <img class="eng-slide-img" id="engSlideImg" alt="" />
+        </div>
+        <button type="button" class="eng-slide-nav eng-slide-nav--next" id="engSlideNext" aria-label="שקופית הבאה">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal modal-login">
+      <button class="modal-close" id="loginClose" type="button">×</button>
+      <h2 data-i18n="auth.loginTitle">התחברות</h2>
+      <button type="button" id="googleSignInBtn" class="btn btn-google btn-full">
+        <span class="btn-google-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+        </span>
+        <span data-i18n="auth.google">התחברות עם Google</span>
+      </button>
+      <p class="form-error hidden" id="loginError"></p>
+      <p class="login-legal-note">בהתחברות אתם מאשרים את <a href="/legal/terms.html" target="_blank" rel="noopener">התקנון</a> ואת <a href="/legal/privacy.html" target="_blank" rel="noopener">מדיניות הפרטיות</a></p>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <div class="lesson-player hidden" id="lessonPlayer" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="lesson-player-backdrop" id="lessonPlayerBackdrop"></div>
+    <div class="lesson-player-shell">
+      <header class="lesson-player-top">
+        <span class="lesson-player-progress" id="lessonPlayerProgress" dir="ltr">1 / 1</span>
+        <div class="lesson-player-top-actions">
+          <div class="lesson-player-bg-wrap">
+            <button type="button" class="lesson-player-bg-btn" id="lessonPlayerBg" aria-label="רקע לשקופיות" aria-expanded="false" title="רקע לשקופיות">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.4-.3-.4-.5-.9-.5-1.4 0-1.1.9-2 2-2h2.3A4.2 4.2 0 0 0 21.5 11c0-5-4.3-9-9.5-9Z"/>
+                <circle cx="7" cy="12" r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="8.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="14" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+              </svg>
+            </button>
+            <div class="lesson-player-bg-menu hidden" id="lessonPlayerBgMenu" role="menu"></div>
+          </div>
+          <button type="button" class="lesson-player-pdf-toggle hidden" id="lessonPlayerPdfToggle" aria-label="הצג את מצגת ה-PDF" aria-pressed="false" title="מצגת PDF">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/>
+              <path d="M14 3v5h5"/>
+            </svg>
+          </button>
+          <button type="button" class="lesson-player-expand" id="lessonPlayerExpand" aria-label="הגדל למסך מלא" aria-pressed="false" title="מסך מלא"></button>
+          <button type="button" class="lesson-player-close" id="lessonPlayerClose" aria-label="סגירה">
+            <svg class="lesson-player-close-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="lesson-player-stage">
+        <button type="button" class="lesson-player-nav" id="lessonPlayerPrev" aria-label="שקופית קודמת">→</button>
+        <div class="lesson-player-slide-wrap">
+          <div class="lesson-player-slide" id="lessonPlayerSlide"></div>
+        </div>
+        <button type="button" class="lesson-player-nav" id="lessonPlayerNext" aria-label="שקופית הבאה">←</button>
+      </div>
+      <div class="lesson-player-dots" id="lessonPlayerDots"></div>
+      <div class="lesson-player-mobile-nav">
+        <button type="button" class="lesson-player-nav" id="lessonPlayerPrevMobile" aria-label="שקופית קודמת">→</button>
+        <button type="button" class="lesson-player-nav" id="lessonPlayerNextMobile" aria-label="שקופית הבאה">←</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/games-catalog.js"></script>
+  <script src="/js/create-game-flow.js?v=1"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-app.js"></script>
+  <script src="/js/i18n.js?v=11"></script>
+  <script src="/js/auth.js?v=8"></script>
+  <script src="/js/user-data.js?v=2"></script>
+  <script src="/js/credits.js"></script>
+  <script src="/js/premium.js"></script>
+  <script src="/js/english-vocab.js?v=4"></script>
+  <script src="/js/lesson-sentences-he.js?v=5"></script>
+  <script src="/js/english-lessons.js?v=11"></script>
+  <script src="/js/lesson-figures.js?v=21"></script>
+  <script src="/js/subject-lessons.js?v=25"></script>
+  <script src="/js/curriculum-grades.js?v=8"></script>
+  <script src="/js/english-audio-clips.js?v=5"></script>
+  <script src="/js/speech.js?v=1"></script>
+  <script src="/js/ready-lessons.js?v=153"></script>
+  <script src="/js/live-lesson.js?v=3"></script>
+  <script src="/js/english-data.js?v=32"></script>
+  <script src="/js/english-printables.js?v=19"></script>
+  <script src="/js/english-vocab-sheets.js?v=2"></script>
+  <script src="/js/english-reading.js?v=12"></script>
+  <script src="/js/english-reading-sets.js?v=1"></script>
+  <script src="/js/english-dict.js?v=6"></script>
+  <script src="/js/english-more.js?v=5"></script>
+  <script src="/js/english-chat.js?v=1"></script>
+  <script src="/js/english-exams.js?v=2"></script>
+  <script src="/js/english-exercise-sheets.js?v=2"></script>
+  <script src="/js/student-progress.js?v=9"></script>
+  <script src="/js/mistake-bank.js?v=1"></script>
+  <script src="/js/leaderboard.js?v=5"></script>
+  <script src="/js/english-hunt-scenes.js?v=2"></script>
+  <script src="/js/english-bingo.js?v=1"></script>
+  <script src="/js/english-games.js?v=8"></script>
+  <script src="/js/english-tests.js?v=2"></script>
+  <script src="/js/ambient-bg.js?v=4"></script>
+  <script src="/js/english-learning.js?v=120"></script>
+  <script src="/js/service-landing.js?v=5"></script>
+  <script src="/js/site-fox.js?v=29"></script>
+  <script src="/js/english-site.js?v=7"></script>
+  <script src="/js/news-carousel.js?v=5"></script>
+  <script src="/js/about-demo.js?v=7"></script>
+  <script src="/js/cookie-consent.js?v=4"></script>
+  <script src="/js/title-colors.js?v=1" defer></script>
+</body>
+</html>

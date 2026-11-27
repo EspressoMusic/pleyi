@@ -37,15 +37,16 @@
   /* ── Paths: keys [t, x, y, opts], as in road-cases.js ── */
 
   // From (x, y): ["to", x, y, speed?] at a steady speed, ["brake", x, y] to
-  // a stop, ["start", x, y] from a stop, ["wait", seconds, face?].
+  // a stop, ["start", x, y] from a stop, ["wait", seconds, face?], ["till",
+  // time, face?] (waits there until that time in the loop).
   function path(x, y, steps, v = WALK) {
     const keys = [[0, x, y, {}]];
     let t = 0;
     for (const [kind, a, b, c] of steps) {
       const cur = keys[keys.length - 1];
-      if (kind === "wait") {
+      if (kind === "wait" || kind === "till") {
         if (b != null) cur[3].face = b;
-        t += a;
+        t = kind === "till" ? Math.max(t, a) : t + a;
       } else {
         const speed = c ?? v;
         const ease = kind === "brake" ? "out" : kind === "start" ? "in" : null;
@@ -157,8 +158,8 @@
 
   // A car driving from (x0, y0) to (x1, y1) heading h, setting off `at`
   // seconds into a loop of `loop`, and again every loop.
-  function drive(x0, y0, x1, y1, h, at, look, loop) {
-    const keys = path(x0, y0, [["to", x1, y1, DRIVE]], DRIVE);
+  function drive(x0, y0, x1, y1, h, at, look, loop, v = DRIVE) {
+    const keys = path(x0, y0, [["to", x1, y1, v]], v);
     return (t) => {
       const u = mod(t - at, loop);
       return u > endOf(keys) ? null : { type: "car", ...track(keys, u), h, look };
@@ -186,10 +187,15 @@
   }
 
   // A light's states from times on: [[0, "red"], [2, "green"], ...];
-  // "blink" is a flashing green.
-  function steps(list, t) {
+  // "blink" is a flashing green — only on the cars' light: in Israel the
+  // walkers' green doesn't flash, it turns straight to red.
+  function stateAt(list, t) {
     let on = list[0][1];
     for (const [at, s] of list) if (t >= at) on = s;
+    return on;
+  }
+  function steps(list, t) {
+    const on = stateAt(list, t);
     return on === "blink" ? (Math.floor(t * 2.5) % 2 === 0 ? "green" : "off") : on;
   }
 
@@ -210,6 +216,63 @@
 
   // A word over a spot on the ground.
   const label = (x, y, text, z = 6, color) => () => ({ type: "bubble", x, y, z, text, color });
+
+  // Paint on the ground (road-city.js's marks), its points from the scene's
+  // spot: "fill" (a wider road, a field's grass), "line", "dashes", "curb",
+  // "trail" (a way to walk), "cross", "rails".
+  const mark = (kind, pts, opts) => () => ({ type: "mark", x: 0, y: 0, kind, pts, ...opts });
+  // A glowing ring round a spot that pulses, to point it out, while `on(t)`.
+  const glow = (pts, on = () => true) => (t) => (on(t) ? { type: "mark", x: 0, y: 0, kind: "area", pts, alpha: 0.65 + 0.35 * Math.sin(t * 4.5) } : null);
+  // One of the city's own things (a tree, flowers) put on a tile.
+  const prop = (defId, x, y) => () => ({ type: "prop", defId, x, y });
+
+  // A car on a path that turns: it faces the way it goes.
+  function turner(keys, look) {
+    return (t) => {
+      const p = track(keys, t);
+      return { type: "car", x: p.x, y: p.y, h: headingAt(keys, p), look };
+    };
+  }
+
+  // A car that comes to the stop line of its light (`lane` as in pass()),
+  // stands there from `arrive` till `go`, and drives on — every loop.
+  const STOPS = {
+    w: [13, WL, 4.35, WL, -9, WL, 2],
+    e: [-9, EL, -1.85, EL, 13, EL, 0],
+    s: [0.5, -9, 0.5, -1.85, 0.5, 11, 1],
+    n: [1.5, 11, 1.5, 3.85, 1.5, -9, 3],
+  };
+  function stopGo(lane, arrive, go, look, loop) {
+    const [x0, y0, sx, sy, x1, y1, h] = STOPS[lane];
+    const ux = Math.sign(sx - x0);
+    const uy = Math.sign(sy - y0);
+    const keys = path(x0, y0, [["to", sx - ux * 3.4, sy - uy * 3.4, DRIVE], ["brake", sx, sy], ["wait", go - arrive], ["start", sx + ux * 3.4, sy + uy * 3.4], ["to", x1, y1]], DRIVE);
+    const at = arrive - keys[2][0];
+    const end = endOf(keys);
+    return (t) => {
+      const u = mod(t - at, loop);
+      if (u > end) return null;
+      const p = track(keys, u);
+      return { type: "car", x: p.x, y: p.y, h, look, back: u > keys[1][0] && u < keys[3][0] ? "brake" : null };
+    };
+  }
+
+  // A level crossing's barrier: its arm points along heading `dir`; down
+  // from `down[0]` to `down[1]`, up again from `up[0]` to `up[1]`; its lamps
+  // flash from the first to the last.
+  const gate = (x, y, dir, down, up) => (t) => {
+    const k = (t - down[0]) / (down[1] - down[0]);
+    const r = (t - up[0]) / (up[1] - up[0]);
+    const raised = t < down[0] ? 1 : t < down[1] ? 1 - k : t < up[0] ? 0 : t < up[1] ? r : 1;
+    return { type: "gate", x, y, dir, up: raised, flash: t >= down[0] - 0.6 && t < up[1] };
+  };
+
+  // A train of carriages (the engine first) along heading h on the line y
+  // (h 0: going down-right along x), its engine's middle at x0 + v(t - at).
+  function train(y, h, x0, at, v, cars = 3) {
+    const step = h === 0 ? -2.62 : 2.62;
+    return [...Array(cars)].map((_, i) => (t) => (t < at ? null : { type: "train", x: x0 + (h === 0 ? 1 : -1) * v * (t - at) + i * step, y, h, engine: i === 0 }));
+  }
 
   // A bubble over someone while one of the cars is near them.
   function whenNear(of, cars, text, color) {
@@ -237,6 +300,148 @@
   const parked = (x, lane, look) => car(path(x, lane === "w" ? WL : EL, [["wait", 99]]), lane === "w" ? 2 : 0, look);
 
   const [A, B, C, D] = CROSSROADS;
+
+  // The class on the sidewalk, one after another a step apart, a grown-up
+  // first; on a trip one last too, and the kids in bright vests.
+  function column({ word, trip = false }) {
+    const Y = -1.25;
+    const V = 1.2;
+    const D = 8;
+    const loop = D / V + 1.4;
+    const walk = (x, kind, v, wear) => walker(path(x, Y, [["to", x + D, Y]], V), kind, v, [0, D / V], wear);
+    const lead = walk(7.4, "man", 1);
+    const kids = [6.3, 5.35, 4.4, 3.45].map((x, i) => walk(x, "kid", i % 3, trip ? { vest: true } : {}));
+    const cast = [pass("w", 0.6, 4, loop), pass("e", 3.6, 1, loop), pass("w", 6.6, 3, loop), lead, ...kids];
+    if (trip) {
+      const last = walk(2.35, "man", 2);
+      cast.push(last, bubble(lead, "מבוגר", 50, 0, Infinity, GREEN_INK), bubble(last, "מבוגר", 50, 0, Infinity, GREEN_INK));
+    } else cast.push(bubble(kids[1], word, 46, 0, Infinity, GREEN_INK));
+    return { at: A, cam: trip ? [8.1, -2.1] : [8.9, -1.85], view: trip ? [290, 218] : VIEW, loop, still: 3.4, cast };
+  }
+
+  // From home to school at the lights: along the sidewalk to the crosswalk,
+  // over it on green, and back along the other sidewalk (the green way).
+  // `short`: also the short way straight over the road (red, crossed out),
+  // which the cars drive over.
+  function toSchool(short) {
+    const HOME = 6.4;
+    const Y0 = -1.3;
+    const Y1 = 2.75;
+    const loop = 11.2;
+    const CARS = [[0, "green"], [1.6, "blink"], [2.8, "yellow"], [4, "red"], [9.6, "redyellow"], [10.4, "green"]];
+    const WALKS = [[0, "red"], [4.8, "green"], [9.2, "red"]];
+    const GO = 5;
+    const way = (dx, dy) => path(HOME + dx, Y0 + dy, [["to", Z + dx, Y0 + dy], ["to", Z + dx, -0.45], ["till", GO, 1], ["to", Z + dx, Y1 + dy], ["to", HOME + dx, Y1 + dy]]);
+    const boy = way(0, 0);
+    const dad = way(0.45, -0.4);
+    const k = walker(boy, "kid", 0, [0, endOf(boy)]);
+    const cast = [
+      mark("trail", [[HOME, Y0], [Z, Y0], [Z, Y1], [HOME - 0.6, Y1]], { color: GREEN_INK }),
+      bothLights(CARS, WALKS, 3.7),
+      pass("w", 0.1, 1, loop),
+      stopGo("w", 5.6, 10.6, 4, loop),
+      pass("e", 0, 5, loop),
+      k,
+      walker(dad, "man", 1, [0, endOf(dad)]),
+    ];
+    if (short) {
+      cast.unshift(mark("trail", [[HOME + 1.2, Y0 + 0.3], [HOME + 1.2, Y1 - 0.3]], { color: RED_INK }), mark("cross", [[HOME + 1.2, 1]]));
+      cast.push(label(HOME + 1.2, 1, "קצר", 18, RED_INK), label(Z, 1, "בטוח", 18, GREEN_INK));
+    } else {
+      cast.push(label(HOME, Y0, "הבית", 10), label(HOME - 0.6, Y1, "בית הספר", 10));
+    }
+    return { at: C, cam: [4.2, 0.4], view: [300, 226], loop, still: 6, cast };
+  }
+
+  // Signs in a row on the sidewalk, each with its name over it; a boy walks
+  // by and cars go past. list: [kind, name].
+  function signRow(list) {
+    const loop = 10;
+    const x0 = 5.2;
+    const STEP = 2.5;
+    const cast = [];
+    list.forEach(([kind, name], i) => cast.push(sign(kind, x0 + i * STEP, 2.4), label(x0 + i * STEP, 2.4, name, 59)));
+    cast.push(kid(path(2.6, 3.3, [["to", 13.4, 3.3]], 1.3)), pass("w", 1, 3, loop), pass("e", 4.4, 1, loop), pass("w", 6.8, 5, loop));
+    return { at: D, cam: [x0 + ((list.length - 1) * STEP) / 2 - 1.1, 1.3], view: list.length > 2 ? [290, 218] : NEAR, loop, still: 2.4, cast };
+  }
+
+  // The markings at the crosswalk (from the street's crossroads): the zebra,
+  // the stop line before it, the solid line down the middle and the red-and-
+  // white curb by it; `at`: where its name goes.
+  const MARKS = {
+    zebra: { pts: [[2.04, 0.04], [2.96, 0.04], [2.96, 1.96], [2.04, 1.96]], word: "מעבר חצייה", at: [2.5, 1.5] },
+    stop: { pts: [[3.38, 0.05], [3.66, 0.05], [3.66, 0.95], [3.38, 0.95]], word: "קו עצירה", at: [3.52, 0.5] },
+    center: { pts: [[4, 0.88], [9.4, 0.88], [9.4, 1.12], [4, 1.12]], word: "קו הפרדה", at: [7.2, 1] },
+    curb: { pts: [[3.2, -0.16], [6.4, -0.16], [6.4, 0.24], [3.2, 0.24]], word: "אדום-לבן", at: [4.8, 0] },
+  };
+  const PAINTED = [mark("line", [[3.52, 0.05], [3.52, 0.95]], { w: 4.6 }), mark("line", [[3.66, 1], [15, 1]], { w: 2.6 }), mark("curb", [[3.2, 0], [6.4, 0]])];
+  const STOP = 4.42;
+
+  // The street with its markings; `ids`: the ones pointed out (a glowing
+  // ring and its name), one after another every 2.6 s when there are more.
+  function markings(ids) {
+    const on = (i) => (t) => ids.length === 1 || Math.floor(t / 2.6) % ids.length === i;
+    const show = ids.flatMap((id, i) => {
+      const m = MARKS[id];
+      const lit = on(i);
+      return [glow(m.pts, lit), (t) => (lit(t) ? { type: "bubble", x: m.at[0], y: m.at[1], z: 10, text: m.word } : null)];
+    });
+    if (ids.length === 1 && ids[0] === "curb") {
+      // nobody stops by the curb, so the boy sees and is seen; the cars park further on
+      const f = across(Z, [["wait", 2.6, 1]]);
+      const k = kid(f);
+      const curb = reach(f, "y", -0.4);
+      const loop = endOf(f) + 0.6;
+      return {
+        at: B,
+        cam: [3.6, -0.1],
+        loop,
+        still: curb + 1.4,
+        cast: [...PAINTED, ...show, parked(8.2, "w", 3), pass("e", curb - 1.2, 5, loop), k, bubble(k, "רואים טוב", 46, curb, curb + 2.6, GREEN_INK)],
+      };
+    }
+    // the boy crosses on the zebra; the car stops before the stop line for him
+    const f = across(Z, [["wait", 0.8, 1]]);
+    const curb = reach(f, "y", -0.4);
+    const off = reach(f, "y", 2.3);
+    const c = path(13, WL, [["wait", Math.max(0, curb + 0.2 - toStop(13, STOP))], ["to", 7.8, WL, DRIVE], ["brake", STOP, WL], ["wait", off - curb], ["start", 1, WL], ["to", -9, WL]], DRIVE);
+    const loop = Math.max(endOf(c), endOf(f)) + 0.6;
+    const cr = car(c, 2, 1, (t) => (t >= c[2][0] && t < c[4][0] ? "brake" : null));
+    const cast = [...PAINTED, ...show, cr, pass("e", -1.4, 5, loop), pass("e", off + 0.8, 0, loop), kid(f)];
+    return { at: B, cam: [3.5, 0.2], loop, still: reach(f, "y", 0.6), cast };
+  }
+
+  // Out of town, on the bare land past downtown's front edge: a field
+  // painted green, with trees on it.
+  const GRASS = "#a6d176";
+  const TREES = ["streetTree", "parkPine", "yardTree", "yardPine"];
+  const field = (x0, y0, x1, y1) => mark("fill", [[x0, y0], [x1, y1]], { color: GRASS });
+  const treeRow = (x0, x1, y, step = 3, skip = () => false) => {
+    const out = [];
+    for (let x = x0, i = 0; x <= x1; x += step, i++) if (!skip(x)) out.push(prop(TREES[(i + Math.round(y)) % TREES.length], Math.round(x), y));
+    return out;
+  };
+
+  // The intercity road: 4 lanes along x (y 95..99), a solid line down the
+  // middle. Cars going up-left keep to y 95.5 / 96.5, down-right to 97.5 / 98.5.
+  const HW = 95;
+  const FAST = 5;
+  const highway = (x0, x1) => [
+    field(x0 - 6, 86, x1 + 6, 110),
+    mark("fill", [[x0, HW], [x1, HW + 4]]),
+    mark("line", [[x0, HW + 0.14], [x1, HW + 0.14]], { w: 2 }),
+    mark("line", [[x0, HW + 3.86], [x1, HW + 3.86]], { w: 2 }),
+    mark("dashes", [[x0, HW + 1], [x1, HW + 1]]),
+    mark("dashes", [[x0, HW + 3], [x1, HW + 3]]),
+    mark("line", [[x0, HW + 2], [x1, HW + 2]], { w: 3 }),
+    ...treeRow(x0 - 2, x1 + 2, HW - 3),
+    ...treeRow(x0 - 0.7, x1 + 2, HW + 6),
+  ];
+  // A car on the intercity road: lane 0..3 from the top, setting off at `at` in a loop.
+  const hwCar = (lane, at, look, loop, x0, x1, v = FAST) => {
+    const y = HW + 0.5 + lane;
+    return lane < 2 ? drive(x1, y, x0, y, 2, at, look, loop, v) : drive(x0, y, x1, y, 0, at, look, loop, v);
+  };
 
   const SCENES = {
     // מדרכה וכביש: a boy on the sidewalk, cars on the road.
@@ -358,8 +563,8 @@
     // מה זה רמזור: the crossroads' lights go round; cars and the boy follow them.
     lights: () => {
       const loop = 15;
-      const CARS = [[0, "green"], [5.5, "yellow"], [6.8, "red"], [13.8, "redyellow"]];
-      const WALKS = [[0, "red"], [7.6, "green"], [11.4, "blink"], [12.6, "red"]];
+      const CARS = [[0, "green"], [4.3, "blink"], [5.5, "yellow"], [6.8, "red"], [13.8, "redyellow"]];
+      const WALKS = [[0, "red"], [7.6, "green"], [12.6, "red"]];
       // the boy gets to the curb on red and crosses on green
       const f = path(Z, -3.2, [["wait", 3.4], ["to", Z, -0.4], ["wait", 7.8 - 3.4 - 2.8 / WALK, 1], ["to", Z, 3], ["to", Z + 3.4, 3]]);
       // a car waits on red at the end of the loop, and goes on green at its start
@@ -419,39 +624,38 @@
       };
     },
 
-    // ירוק מהבהב: the boy gets there as it blinks, and waits for the next green.
-    plightBlink: () => {
-      const loop = 16;
-      const WALKS = [[0, "blink"], [3.2, "red"], [11.4, "green"]];
-      const CARS = [[0, "red"], [4, "redyellow"], [4.8, "green"], [9.6, "yellow"], [10.6, "red"]];
-      const f = path(Z - 0.1, -3.2, [["to", Z - 0.1, -0.45], ["wait", 11.6 - 2.75 / WALK, 1], ["to", Z - 0.1, 3], ["to", Z + 2.5, 3]]);
+    // התחלף לאדום באמצע: the boy starts over on green; halfway the man turns
+    // red (in Israel it doesn't flash first), and he walks on to the other
+    // side. The cars wait for him.
+    plightMidway: () => {
+      const f = across(Z - 0.1, [["wait", 0.3, 1]]);
+      const mid = reach(f, "y", 1);
+      const over = reach(f, "y", 2.4);
+      const loop = endOf(f) + 0.6;
       const k = kid(f);
-      const waits = car(path(4.6, WL, [["wait", 4.9], ["start", 0, WL], ["to", -9, WL]], DRIVE), 2, 4);
-      const comes = car(path(13, WL, [["wait", 9.4], ["to", 7.6, WL, DRIVE], ["brake", 4.6, WL], ["wait", 99]], DRIVE), 2, 4);
       return {
         at: C,
         cam: [3.1, 0.8],
         view: NEAR,
         loop,
-        still: 2.2,
+        still: mid + 0.5,
         cast: [
-          walkLight(WALKS),
-          carLight(CARS),
-          (t) => (t < 9.4 ? waits(t) : comes(t)),
-          pass("w", 6.2, 1, loop),
-          pass("e", 5.4, 5, loop),
-          pass("e", 7, 0, loop),
+          walkLight([[0, "green"], [mid, "red"]]),
+          carLight([[0, "red"], [over + 0.6, "redyellow"]]),
+          car(path(4.6, WL, [["wait", 99]]), 2, 4),
+          pass("s", 1, 5, loop),
           k,
-          bubble(k, "מחכים", 46, reach(f, "y", -0.45), 11.4, RED_INK),
+          bubble(k, "ממשיכים", 46, mid, over, GREEN_INK),
         ],
       };
     },
 
-    // רמזור למכוניות: red, red and yellow, green, yellow — the car does as it says.
+    // רמזור למכוניות: red, red and yellow, green, flashing green, yellow —
+    // the car does as it says.
     clight: () => {
       const loop = 12;
-      const CARS = [[0, "red"], [3, "redyellow"], [4, "green"], [8.4, "yellow"], [9.6, "red"]];
-      const NAMES = { red: ["אדום", RED_INK], redyellow: ["אדום וצהוב", "#b26a00"], green: ["ירוק", GREEN_INK], yellow: ["צהוב", "#b26a00"] };
+      const CARS = [[0, "red"], [3, "redyellow"], [4, "green"], [7, "blink"], [8.4, "yellow"], [9.6, "red"]];
+      const NAMES = { red: ["אדום", RED_INK], redyellow: ["אדום וצהוב", "#b26a00"], green: ["ירוק", GREEN_INK], blink: ["ירוק מהבהב", GREEN_INK], yellow: ["צהוב", "#b26a00"] };
       const waits = car(path(4.2, WL, [["wait", 4.2], ["start", 0, WL], ["to", -9, WL]], DRIVE), 2, 0);
       const comes = car(path(13, WL, [["wait", 8], ["to", 7.6, WL, DRIVE], ["brake", 4.2, WL], ["wait", 99]], DRIVE), 2, 0);
       return {
@@ -466,7 +670,7 @@
           pass("w", 5, 5, loop),
           pass("s", 9.7, 3, loop),
           (t) => {
-            const [text, color] = NAMES[steps(CARS, t)];
+            const [text, color] = NAMES[stateAt(CARS, t)];
             return { type: "bubble", x: 3.6, y: -0.4, z: 78, text, color };
           },
         ],
@@ -762,6 +966,269 @@
         cast: [rider(path(63.4, 76.4, [["to", 69.6, 76.4, 2]], 2), { lamps: true }), rider(path(69.6, 75.6, [["wait", 3.6], ["to", 63.4, 75.6, 2]], 2), { v: 0, lamps: true })],
       };
     },
+
+    // מרווח בטור: one after another, a step apart.
+    groupGap: () => column({ word: "מרווח" }),
+    // יוצאים לטיול: the class with a grown-up first and one last.
+    groupTrip: () => column({ trip: true }),
+    // בוחרים דרך בטוחה: the way to school we chose.
+    schoolRoute: () => toSchool(false),
+    // קצר או בטוח?: the short way over the road, or the safe one at the lights.
+    shortSafe: () => toSchool(true),
+
+    // The three kinds of signs, and stop / give way.
+    signsWarn: () => signRow([["children", "ילדים"], ["walkers", "מעבר חצייה"]]),
+    signsBan: () => signRow([["noentry", "אין כניסה"], ["nowalk", "אסור ללכת"]]),
+    signsStop: () => signRow([["stop", "עצור"], ["giveway", "תן זכות קדימה"]]),
+    signsInfo: () => signRow([["crosswalk", "מעבר חצייה"], ["bus", "תחנה"], ["parking", "חניה"]]),
+
+    // ציורים על הכביש: each marking pointed out in turn; then one each.
+    marksAll: () => markings(["zebra", "stop", "center", "curb"]),
+    marksZebra: () => markings(["zebra"]),
+    marksStop: () => markings(["stop"]),
+    marksCenter: () => markings(["center"]),
+    marksCurb: () => markings(["curb"]),
+
+    // כביש רחב: two lanes each way, the solid line between them.
+    wideRoad: () => {
+      const loop = 10;
+      const x0 = 3.1;
+      const x1 = 22;
+      const lanes = [-0.5, 0.5, 1.5, 2.5];
+      const go = (lane, at, look, v = DRIVE) =>
+        lane < 2 ? drive(x1 - 0.5, lanes[lane], x0 + 0.3, lanes[lane], 2, at, look, loop, v) : drive(x0 + 0.3, lanes[lane], x1 - 0.5, lanes[lane], 0, at, look, loop, v);
+      return {
+        at: D,
+        cam: [9.8, 0.5],
+        loop,
+        still: 2.6,
+        cast: [
+          mark("fill", [[x0, -1], [x1, 0.3]]),
+          mark("fill", [[x0, 1.92], [x1, 3]]),
+          mark("curb", [[x0, -1], [x1, -1]], { color: "#a9a191" }),
+          mark("line", [[x0, 3], [x1, 3]], { color: "rgba(43,29,14,0.32)", w: 1.2 }),
+          mark("dashes", [[x0, 0], [x1, 0]]),
+          mark("dashes", [[x0, 2], [x1, 2]]),
+          mark("line", [[x0, 1], [x1, 1]], { w: 2.6 }),
+          glow([[6.6, 0.88], [13.4, 0.88], [13.4, 1.12], [6.6, 1.12]]),
+          go(0, 0.3, 1),
+          go(1, 2.2, 3, 2.8),
+          go(2, 1, 5),
+          go(3, 3.4, 6, 2.8),
+          go(0, 5.6, 4),
+          go(1, 7.4, 0),
+          go(2, 6.2, 2),
+          go(3, 8.6, 1, 2.8),
+          kid(path(5.6, -1.5, [["to", 14.4, -1.5]], 1.2), 1),
+          label(8.8, 0, "2 נתיבים", 12),
+          label(11.8, 2, "2 נתיבים", 12),
+        ],
+      };
+    },
+
+    // מפגש עם מסילה: out of town the road crosses the railway; the lights
+    // flash, the barriers come down, the cars and the boy wait for the train.
+    railCross: () => {
+      const RX = 40;
+      const RY = 96;
+      const loop = 13.6;
+      const down = [1.8, 3];
+      const up = [8.2, 9.2];
+      const go = 9.6;
+      const braking = (t) => (t >= 1.8 && t < go ? "brake" : null);
+      const north = path(RX + 0.5, 84, [["to", RX + 0.5, 90.1, DRIVE], ["brake", RX + 0.5, 93.5], ["till", go], ["start", RX + 0.5, 96.9], ["to", RX + 0.5, 112]], DRIVE);
+      const south = path(RX + 1.5, 108, [["to", RX + 1.5, 101.9, DRIVE], ["brake", RX + 1.5, 98.5], ["till", go + 0.3], ["start", RX + 1.5, 95.1], ["to", RX + 1.5, 80]], DRIVE);
+      const f = path(RX - 1.7, 89.4, [["to", RX - 1.7, 94.1], ["till", up[1] + 0.2, 1], ["to", RX - 1.7, 101.4]]);
+      const k = walker(f, "kid", 2, [0, endOf(f)]);
+      return {
+        at: [0, 0],
+        cam: [RX + 0.2, RY - 1.6],
+        view: [290, 218],
+        loop,
+        still: 5.9,
+        cast: [
+          field(26, 86, 56, 110),
+          mark("fill", [[RX, 86], [RX + 2, 110]]),
+          mark("line", [[RX + 0.12, 86], [RX + 0.12, 110]], { w: 2 }),
+          mark("line", [[RX + 1.88, 86], [RX + 1.88, 110]], { w: 2 }),
+          mark("dashes", [[RX + 1, 86], [RX + 1, 110]]),
+          mark("line", [[RX + 0.06, 94.1], [RX + 0.94, 94.1]], { w: 4.4 }),
+          mark("line", [[RX + 1.06, 97.9], [RX + 1.94, 97.9]], { w: 4.4 }),
+          mark("rails", [[26, RY], [56, RY]], { gap: [13.9, 16.1] }),
+          prop("streetTree", 36, 92),
+          prop("parkPine", 35, 99),
+          prop("yardPine", 44, 92),
+          prop("streetTree", 45, 100),
+          prop("parkPine", 37, 102),
+          prop("yardTree", 47, 93),
+          prop("parkFlowers", 43, 94),
+          sign("rail", RX - 0.45, 90.4),
+          gate(RX - 0.35, RY - 1.4, 0, down, up),
+          gate(RX + 2.35, RY + 1.4, 2, down, up),
+          car(north, 1, 1, braking),
+          car(south, 3, 5, braking),
+          ...train(RY, 0, 24, 3.2, 6.5),
+          k,
+          bubble(k, "מחכים", 46, down[0], up[1], RED_INK),
+        ],
+      };
+    },
+
+    // חגורת בטיחות: dad and the boy get in on the sidewalk's side and buckle
+    // up — over the shoulder and the hips — and only then the car goes.
+    beltCar: () => {
+      const loop = 11.6;
+      const CX = 7;
+      const boy = path(9.8, -1.2, [["to", CX + 0.35, -1.2], ["to", CX + 0.35, -0.3, 1.2]]);
+      const dad = path(10.4, -1.6, [["to", CX - 0.3, -1.6], ["to", CX - 0.3, -0.3, 1.2]]);
+      const sit = Math.max(endOf(boy), endOf(dad)) + 0.3;
+      const go = sit + 3.9;
+      const drives = car(path(CX, WL, [["till", go], ["start", CX - 3.4, WL], ["to", -9, WL]], DRIVE), 2, 1);
+      const cr = (t) => ({ ...drives(t), alpha: fade(t, 0, Infinity) });
+      const says = [["חוגרים", sit, sit + 1.3], ["על הכתף", sit + 1.3, sit + 2.6], ["ועל הירכיים", sit + 2.6, go]];
+      return {
+        at: D,
+        cam: [7.6, -0.3],
+        view: NEAR,
+        loop,
+        still: sit + 1.8,
+        cast: [
+          cr,
+          pass("e", 1.2, 3, loop),
+          pass("e", 7.6, 0, loop),
+          walker(boy, "kid", 0, [0, endOf(boy)]),
+          walker(dad, "man", 1, [0, endOf(dad)]),
+          ...says.map(([text, from, to]) => bubble(cr, text, 46, from, to, GREEN_INK)),
+          bubble(cr, "חגורים", 46, go, go + 2.4, GREEN_INK),
+        ],
+      };
+    },
+
+    // יושבים וחוגרים: the shuttle stops, the kids get on one by one, sit
+    // down and buckle up; only then it goes.
+    beltShuttle: () => {
+      const s = R.busStop;
+      const road = [1, 2, 3, 4, 5].map((d) => s.y + d).find((y) => R.isRoad(s.x, y));
+      const lane = road + 0.5;
+      const door = s.x;
+      const mid = door + 1.02;
+      const b = path(mid + 13, lane, [["to", mid + 4.5, lane, DRIVE], ["brake", mid, lane], ["wait", 5.6], ["start", mid - 4, lane], ["to", mid - 9, lane]], DRIVE);
+      const stop = b[2][0];
+      const leave = b[3][0];
+      const wait = s.y + 1.3;
+      const kids = [0, 1, 2].map((i) => {
+        const keys = path(door + 0.6 + i * 0.75, wait, [["till", stop + 0.4 + i * 1, 1], ["to", door, road - 0.25, 0.9]]);
+        return walker(keys, "kid", i, [0, endOf(keys)]);
+      });
+      const bs = bus(b, 2);
+      return {
+        at: [0, 0],
+        cam: [s.x, s.y + 1.35],
+        view: NEAR,
+        loop: endOf(b) + 0.4,
+        still: leave - 0.8,
+        cast: [bs, ...kids, bubble(bs, "יושבים וחוגרים", 62, stop + 3.4, leave, GREEN_INK), bubble(bs, "חגורים", 62, leave, leave + 2.2, GREEN_INK)],
+      };
+    },
+
+    // נסיעה בחג: a long way on the intercity road, buckled up all the way;
+    // the camera rides along with the family's car.
+    beltTrip: () => {
+      const x0 = 12;
+      const x1 = 72;
+      const V = 3.4;
+      const loop = 36 / V;
+      const fx = (t) => 21 + V * t;
+      const fam = (t) => ({ type: "car", x: fx(t), y: HW + 3.5, h: 0, look: 4 });
+      return {
+        at: [0, 0],
+        cam: (t) => [fx(t) + 0.5, HW + 2.1],
+        loop,
+        still: 3,
+        cast: [
+          ...highway(x0, x1),
+          fam,
+          hwCar(2, 1, 1, loop, x0, x1, 5.4),
+          hwCar(1, 0.4, 3, loop, x0, x1),
+          hwCar(0, 2.6, 5, loop, x0, x1),
+          hwCar(1, 5.2, 0, loop, x0, x1),
+          hwCar(0, 7.4, 2, loop, x0, x1),
+          bubble(fam, "חגורים כל הדרך", 46, 0, Infinity, GREEN_INK),
+        ],
+      };
+    },
+
+    // כביש בין-עירוני: fast cars on four lanes, no sidewalk, and the sign: no walking here.
+    intercity: () => {
+      const x0 = 26;
+      const x1 = 56;
+      const loop = 8;
+      return {
+        at: [0, 0],
+        cam: [40.8, HW + 2.2],
+        loop,
+        still: 2.2,
+        cast: [
+          ...highway(x0, x1),
+          sign("nowalk", 41.2, HW + 4.4),
+          label(41.2, HW + 4.4, "אסור ללכת", 59, RED_INK),
+          sign("speed", 44.4, HW + 4.4, 90),
+          hwCar(0, 0.2, 1, loop, x0, x1),
+          hwCar(1, 1.6, 3, loop, x0, x1),
+          hwCar(2, 0.8, 5, loop, x0, x1),
+          hwCar(3, 2.4, 0, loop, x0, x1),
+          hwCar(0, 4.2, 4, loop, x0, x1),
+          hwCar(2, 4.8, 2, loop, x0, x1),
+          hwCar(3, 6.2, 6, loop, x0, x1),
+          hwCar(1, 5.6, 1, loop, x0, x1),
+        ],
+      };
+    },
+
+    // צומת: cars come from every side and take turns by the lights; the boy
+    // crosses on his green.
+    junction: () => {
+      const loop = 16;
+      const STREET = [[0, "green"], [4.8, "blink"], [6, "yellow"], [7, "red"], [15.2, "redyellow"]];
+      const CROSS = [[0, "red"], [7.6, "redyellow"], [8.2, "green"], [12.4, "blink"], [13.6, "yellow"], [14.6, "red"]];
+      const WALKS = [[0, "red"], [8.4, "green"], [13.2, "red"]];
+      const f = path(Z, -3.2, [["to", Z, -0.45], ["till", 8.6, 1], ["to", Z, 3], ["to", Z + 3.4, 3]]);
+      return {
+        at: C,
+        cam: [1.4, 0.9],
+        loop,
+        still: 4.6,
+        cast: [
+          bothLights(STREET, WALKS, 3.7),
+          carLight(CROSS, -0.4, -1.5),
+          pass("w", 0.2, 1, loop),
+          pass("e", 1, 5, loop),
+          stopGo("w", 8.6, 16.3, 3, loop),
+          stopGo("e", 9.2, 16.5, 6, loop),
+          stopGo("s", 2.6, 8.4, 4, loop),
+          stopGo("n", 3.4, 8.6, 2, loop),
+          pass("s", 9.6, 0, loop),
+          pass("n", 10.4, 5, loop),
+          walker(f, "kid", 0, [0, endOf(f)]),
+        ],
+      };
+    },
+
+    // ליד הצומת: by the crossroads the cars slow down, so it's easy for
+    // them to stop for the boy.
+    junctionSlow: () => {
+      const c = path(12, WL, [["to", 8.8, WL, DRIVE], ["to", 6.6, WL, 1.6], ["brake", STOP, WL, 1.6], ["wait", 3.2], ["start", 1, WL], ["to", -9, WL]], DRIVE);
+      const stop = c[3][0];
+      const cr = car(c, 2, 1, (t) => (t >= c[2][0] && t < c[4][0] ? "brake" : null));
+      const f = across(Z, [["till", stop + 0.2, 1]]);
+      return {
+        at: B,
+        cam: [3.8, 0],
+        loop: endOf(c) + 0.4,
+        still: c[2][0] + 0.6,
+        cast: [cr, pass("e", 0.6, 5, endOf(c) + 0.4), kid(f), bubble(cr, "מאטה", 40, c[1][0], stop, GREEN_INK)],
+      };
+    },
   };
 
   /* ── Playing them ── */
@@ -773,7 +1240,9 @@
     const { scene, plan } = b;
     const [ax, ay] = plan.at;
     const view = plan.view || VIEW;
-    scene.cam = { x: ax + plan.cam[0], y: ay + plan.cam[1], zoom: Math.min(scene.w / view[0], scene.h / view[1]) };
+    // a camera that moves (following a car) is a function of the time
+    const cam = typeof plan.cam === "function" ? plan.cam(t) : plan.cam;
+    scene.cam = { x: ax + cam[0], y: ay + cam[1], zoom: Math.min(scene.w / view[0], scene.h / view[1]) };
     scene.night = !!plan.night;
     const actors = [];
     for (const part of plan.cast) {

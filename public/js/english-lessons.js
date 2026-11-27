@@ -1,7 +1,8 @@
-/* Short English lessons — every grammar topic split into short lessons, one
-   idea per slide, in very simple Hebrew. ready-lessons.js turns each entry
-   into a full lesson (shortLesson): it adds the quiz, the class
-   discussion, the games and the end slides.
+/* English lessons — one idea per slide, in very simple Hebrew. A topic has
+   one full lesson (10-16 slides), or two when it is big; never split a topic
+   into many short lessons. ready-lessons.js turns each entry into a full
+   lesson (shortLesson): it adds the quiz, the class discussion and the end
+   slide, which leads to the topic's exercises or to the trivia.
 
    Lesson: { id, topic, name, part?, summary, vocab, slides, quiz, discuss }
    - topic: the english-data.js topic; its `lessons` list sets the order.
@@ -26,9 +27,9 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "letters-1",
     topic: "letters",
     name: "אותיות וצלילים",
-    part: "ה־ABC",
-    summary: "מכירים את ה־ABC – 26 אותיות, אות גדולה ואות קטנה, שם וצליל.",
-    vocab: [["A", "אֵי"], ["B", "בִּי"], ["C", "סִי"], ["D", "דִי"], ["ball", "כדור"], ["dog", "כלב"], ["moon", "ירח"], ["bed", "מיטה"]],
+    part: "ה־ABC ו־A עד G",
+    summary: "מכירים את ה־ABC – 26 אותיות, אות גדולה ואות קטנה – ולומדים את A עד G: השם, הצליל ומילה שמתחילה בה.",
+    vocab: [["A", "אֵי"], ["B", "בִּי"], ["C", "סִי"], ["D", "דִי"], ["ball", "כדור"], ["dog", "כלב"], ["apple", "תפוח"], ["cat", "חתול"], ["egg", "ביצה"], ["fish", "דג"], ["moon", "ירח"], ["bed", "מיטה"]],
     slides: [
       {
         title: "**ה־ABC**",
@@ -101,29 +102,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["**d**og", "כלב"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        lines: ["לכל אות יש צורה גדולה, צורה קטנה וצליל"],
-        table: [["B b", "בּ"], ["M m", "מ"], ["S s", "ס"]],
-      },
-    ],
-    quiz: [
-      ["___og", "כלב – dog", ["d", "b", "p"], 0, "dog מתחיל בצליל ד"],
-      ["G → ___", "האות הקטנה של G", ["g", "q", "j"], 0, "G גדולה ו־g קטנה"],
-      ["___all", "כדור – ball", ["b", "d", "p"], 0, "ball מתחיל בצליל בּ"],
-    ],
-    discuss: ["איזו מילה באנגלית אתם כבר מכירים? באיזו אות היא מתחילה?", "מצאו בכיתה משהו שמתחיל בצליל בּ"],
-  },
-  // One letter on each slide: its name, its sound and a word that starts
-  // with it. The ids keep "letters-2" for the vowels lesson, which came first.
-  {
-    id: "letters-a-g",
-    topic: "letters",
-    name: "אותיות וצלילים",
-    part: "A עד G",
-    summary: "לומדים את האותיות A עד G – השם של כל אות, הצליל שלה ומילה שמתחילה בה.",
-    vocab: [["apple", "תפוח"], ["ball", "כדור"], ["cat", "חתול"], ["dog", "כלב"], ["egg", "ביצה"], ["fish", "דג"], ["goat", "עז"]],
-    slides: [
       {
         title: "**A a**",
         lines: ["השם שלה: אֵי", "הצליל שלה: אֶ"],
@@ -211,19 +189,24 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["___og", "כלב – dog", ["d", "b", "p"], 0, "dog מתחיל בצליל ד"],
+      ["G → ___", "האות הקטנה של G", ["g", "q", "j"], 0, "G גדולה ו־g קטנה"],
+      ["___all", "כדור – ball", ["b", "d", "p"], 0, "ball מתחיל בצליל בּ"],
       ["___oat", "עז – goat", ["g", "c", "d"], 0, "goat מתחיל בצליל ג"],
       ["___ish", "דג – fish", ["b", "f", "e"], 1, "fish מתחיל בצליל פ"],
       ["___gg", "ביצה – egg", ["a", "o", "e"], 2, "egg מתחיל בצליל אֶ של e"],
     ],
-    discuss: ["איזו מילה בעברית מתחילה בצליל פ? ובצליל ד?", "מצאו בכיתה משהו שמתחיל באחת מהאותיות של היום"],
+    discuss: ["איזו מילה באנגלית אתם כבר מכירים? באיזו אות היא מתחילה?", "איזו מילה בעברית מתחילה בצליל פ? ובצליל ד?"],
   },
+  // One letter on each slide: its name, its sound and a word that starts
+  // with it.
   {
     id: "letters-h-n",
     topic: "letters",
     name: "אותיות וצלילים",
-    part: "H עד N",
-    summary: "לומדים את האותיות H עד N – השם של כל אות, הצליל שלה ומילה שמתחילה בה.",
-    vocab: [["hat", "כובע"], ["in", "בתוך"], ["juice", "מיץ"], ["key", "מפתח"], ["lion", "אריה"], ["moon", "ירח"], ["nose", "אף"]],
+    part: "H עד T",
+    summary: "לומדים את האותיות H עד T – השם של כל אות, הצליל שלה ומילה שמתחילה בה.",
+    vocab: [["hat", "כובע"], ["in", "בתוך"], ["juice", "מיץ"], ["key", "מפתח"], ["lion", "אריה"], ["moon", "ירח"], ["octopus", "תמנון"], ["pen", "עט"], ["quiz", "חידון"], ["rabbit", "ארנב"], ["sun", "שמש"], ["ten", "עשר"]],
     slides: [
       {
         title: "**H h**",
@@ -303,26 +286,6 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
-        table: [["H h", "ה"], ["I i", "אִ"], ["J j", "ג׳"], ["K k", "ק"], ["L l", "ל"], ["M m", "מ"], ["N n", "נ"]],
-      },
-    ],
-    quiz: [
-      ["___at", "כובע – hat", ["h", "k", "n"], 0, "hat מתחיל בצליל ה"],
-      ["___ey", "מפתח – key", ["l", "k", "j"], 1, "key מתחיל בצליל ק של k"],
-      ["___ose", "אף – nose", ["m", "l", "n"], 2, "nose מתחיל בצליל נ"],
-    ],
-    discuss: ["אמרו את השם של האות m – ואחר כך את הצליל שלה", "איזו חיה מתחילה בצליל ל באנגלית?"],
-  },
-  {
-    id: "letters-o-t",
-    topic: "letters",
-    name: "אותיות וצלילים",
-    part: "O עד T",
-    summary: "לומדים את האותיות O עד T – השם של כל אות, הצליל שלה ומילה שמתחילה בה.",
-    vocab: [["octopus", "תמנון"], ["pen", "עט"], ["quiz", "חידון"], ["rabbit", "ארנב"], ["sun", "שמש"], ["ten", "עשר"]],
-    slides: [
-      {
         title: "**O o**",
         lines: ["השם שלה: אוֹ", "הצליל שלה: אוֹ"],
         examples: [["**o**ctopus", "תמנון"]],
@@ -395,19 +358,22 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["___at", "כובע – hat", ["h", "k", "n"], 0, "hat מתחיל בצליל ה"],
+      ["___ey", "מפתח – key", ["l", "k", "j"], 1, "key מתחיל בצליל ק של k"],
+      ["___ose", "אף – nose", ["m", "l", "n"], 2, "nose מתחיל בצליל נ"],
       ["___en", "עט – pen", ["p", "b", "q"], 0, "pen מתחיל בצליל פּ"],
       ["___abbit", "ארנב – rabbit", ["l", "r", "t"], 1, "rabbit מתחיל בצליל ר"],
       ["___en", "עשר – ten", ["d", "s", "t"], 2, "ten מתחיל בצליל ט"],
     ],
-    discuss: ["מה ההבדל בין השם של האות לבין הצליל שלה?", "תנו מילה באנגלית שמתחילה בצליל ס"],
+    discuss: ["אמרו את השם של האות m – ואחר כך את הצליל שלה", "מה ההבדל בין השם של האות לבין הצליל שלה?"],
   },
   {
     id: "letters-u-z",
     topic: "letters",
     name: "אותיות וצלילים",
-    part: "U עד Z",
-    summary: "לומדים את האותיות U עד Z – השם של כל אות, הצליל שלה ומילה שבה היא נשמעת.",
-    vocab: [["umbrella", "מטרייה"], ["vet", "וטרינר"], ["water", "מים"], ["box", "קופסה"], ["yellow", "צהוב"], ["zoo", "גן חיות"]],
+    part: "U עד Z ותנועות",
+    summary: "לומדים את האותיות U עד Z, את חמש התנועות, וקוראים מילים קצרות.",
+    vocab: [["umbrella", "מטרייה"], ["vet", "וטרינר"], ["water", "מים"], ["box", "קופסה"], ["yellow", "צהוב"], ["zoo", "גן חיות"], ["cat", "חתול"], ["bed", "מיטה"], ["six", "שש"], ["dog", "כלב"], ["sun", "שמש"], ["hat", "כובע"]],
     slides: [
       {
         title: "**U u**",
@@ -477,25 +443,9 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         table: [["U u", "אַ"], ["V v", "ו"], ["W w", "וו"], ["X x", "קְס"], ["Y y", "י"], ["Z z", "ז"]],
       },
-    ],
-    quiz: [
-      ["___et", "וטרינר – vet", ["v", "w", "f"], 0, "vet מתחיל בצליל ו של v"],
-      ["___ellow", "צהוב – yellow", ["j", "y", "u"], 1, "yellow מתחיל בצליל י"],
-      ["bo___", "קופסה – box", ["s", "z", "x"], 2, "x נשמעת קְס בסוף המילה"],
-    ],
-    discuss: ["איזו אות באה בדרך כלל בסוף מילה? תנו דוגמה", "שירו יחד את כל ה־ABC – מ־A ועד Z"],
-  },
-  {
-    id: "letters-2",
-    topic: "letters",
-    name: "אותיות וצלילים",
-    part: "תנועות וקריאה",
-    summary: "לומדים את חמש התנועות וקוראים מילים קצרות.",
-    vocab: [["cat", "חתול"], ["bed", "מיטה"], ["six", "שש"], ["dog", "כלב"], ["sun", "שמש"], ["hat", "כובע"], ["hot", "חם"]],
-    slides: [
       {
         title: "**התנועות**",
         lines: ["חמש אותיות מיוחדות", "הן כמו הניקוד בעברית"],
@@ -584,19 +534,21 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["___et", "וטרינר – vet", ["v", "w", "f"], 0, "vet מתחיל בצליל ו של v"],
+      ["___ellow", "צהוב – yellow", ["j", "y", "u"], 1, "yellow מתחיל בצליל י"],
+      ["bo___", "קופסה – box", ["s", "z", "x"], 2, "x נשמעת קְס בסוף המילה"],
       ["איזו אות היא תנועה?", "", ["m", "a", "t"], 1, "a היא אחת מחמש התנועות"],
       ["s + u + n = ___", "", ["sun", "bus", "nut"], 0, "מחברים את הצלילים לפי הסדר"],
       ["d + o + g = ___", "", ["dig", "dog", "dot"], 1, "o נשמעת אוֹ"],
     ],
-    discuss: ["כמה תנועות יש באנגלית? מי זוכר את כולן?", "קראו יחד: cat, dog, sun"],
+    discuss: ["איזו אות באה בדרך כלל בסוף מילה? תנו דוגמה", "כמה תנועות יש באנגלית? מי זוכר את כולן?"],
   },
   {
     id: "phonics-1",
     topic: "phonics",
     name: "צירופי אותיות",
-    part: "sh, ch, th",
-    summary: "לומדים את sh, ch, th – שתי אותיות שעושות צליל אחד.",
-    vocab: [["fish", "דג"], ["shoe", "נעל"], ["ship", "ספינה"], ["chair", "כיסא"], ["lunch", "ארוחת צהריים"], ["three", "שלוש"], ["bath", "אמבטיה"]],
+    summary: "שתי אותיות שעושות צליל אחד – sh, ch, th, ee ו־oo – ואת ה־e השקטה בסוף המילה.",
+    vocab: [["fish", "דג"], ["shoe", "נעל"], ["ship", "ספינה"], ["chair", "כיסא"], ["lunch", "ארוחת צהריים"], ["three", "שלוש"], ["tree", "עץ"], ["green", "ירוק"], ["moon", "ירח"], ["school", "בית ספר"], ["cake", "עוגה"], ["bike", "אופניים"]],
     slides: [
       {
         title: "שתי אותיות – **צליל אחד**",
@@ -659,26 +611,6 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
-        table: [["sh", "ש"], ["ch", "צ׳"], ["th", "לשון בין השיניים"]],
-      },
-    ],
-    quiz: [
-      ["___ip", "ספינה – ship", ["sh", "ch", "th"], 0, "ship מתחיל בצליל ש"],
-      ["___air", "כיסא – chair", ["sh", "ch", "th"], 1, "ch עושה צ׳"],
-      ["___ree", "שלוש – three", ["sh", "ch", "th"], 2, "three מתחיל ב־th"],
-    ],
-    discuss: ["תנו דוגמה למילה באנגלית עם sh", "איזו מילה בעברית מתחילה בצליל צ׳?"],
-  },
-  {
-    id: "phonics-2",
-    topic: "phonics",
-    name: "צירופי אותיות",
-    part: "ee, oo, e שקטה",
-    summary: "לומדים את ee ו־oo – ואת ה־e השקטה בסוף המילה.",
-    vocab: [["tree", "עץ"], ["green", "ירוק"], ["moon", "ירח"], ["school", "בית ספר"], ["cake", "עוגה"], ["bike", "אופניים"], ["home", "בית"]],
-    slides: [
-      {
         title: "**ee** – אִי ארוך",
         lines: ["שתי e יחד עושות אִי ארוך"],
         examples: [["tr**ee**", "עץ"], ["gr**ee**n", "ירוק"]],
@@ -740,15 +672,18 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["ee", "אִי ארוך"], ["oo", "אוּ ארוך"], ["e בסוף", "לא נשמעת"]],
+        table: [["sh", "ש"], ["ch", "צ׳"], ["th", "לשון בין השיניים"], ["ee", "אִי ארוך"], ["oo", "אוּ ארוך"], ["e בסוף", "לא נשמעת"]],
       },
     ],
     quiz: [
+      ["___ip", "ספינה – ship", ["sh", "ch", "th"], 0, "ship מתחיל בצליל ש"],
+      ["___air", "כיסא – chair", ["sh", "ch", "th"], 1, "ch עושה צ׳"],
+      ["___ree", "שלוש – three", ["sh", "ch", "th"], 2, "three מתחיל ב־th"],
       ["tr___", "עץ – tree", ["ee", "oo"], 0, "ee עושה אִי ארוך"],
       ["sch___l", "בית ספר – school", ["ee", "oo"], 1, "oo עושה אוּ ארוך"],
       ["bik___", "אופניים – bike", ["e", "a", "o"], 0, "e שקטה בסוף משנה את i"],
     ],
-    discuss: ["תנו דוגמה למילה עם ee או עם oo", "מה עושה ה־e השקטה בסוף המילה?"],
+    discuss: ["תנו דוגמה למילה באנגלית עם sh", "תנו דוגמה למילה עם ee או עם oo"],
   },
 
   /* ---------- Stage 3: first sentence ---------- */
@@ -1067,7 +1002,7 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
-      ["___ is a ball.", "זה כדור", ["He", "It", "They"], 1, "על חפץ אומרים it"],
+      ["the ball → ___", "הכדור", ["he", "it", "they"], 1, "על חפץ אומרים it"],
       ["Tom and I → ___", "טום ואני", ["we", "they", "he"], 0, "אני ועוד מישהו – אנחנו"],
       ["Dan and Ben → ___", "דן ובן", ["he", "we", "they"], 2, "הם – they"],
     ],
@@ -1077,9 +1012,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "tobe-1",
     topic: "tobe",
     name: "פועל להיות",
-    part: "am, is, are",
-    summary: "לומדים מתי אומרים am, מתי is ומתי are – עם דוגמאות קלות.",
-    vocab: [["am", "בא עם I"], ["is", "בא עם he, she, it"], ["are", "בא עם you, we, they"], ["I'm", "קיצור של I am"], ["He's", "קיצור של He is"], ["They're", "קיצור של They are"], ["happy", "שמח"], ["tall", "גבוה"], ["friends", "חברים"]],
+    summary: "מתי אומרים am, מתי is ומתי are – ואיך אומרים לא, שואלים שאלה ועונים בקצרה.",
+    vocab: [["am", "בא עם I"], ["is", "בא עם he, she, it"], ["are", "בא עם you, we, they"], ["I'm", "קיצור של I am"], ["He's", "קיצור של He is"], ["They're", "קיצור של They are"], ["not", "לא – בא אחרי am, is, are"], ["isn't", "קיצור של is not"], ["aren't", "קיצור של are not"], ["Is he", "האם הוא"], ["Are you", "האם אתה"], ["ready", "מוכן"]],
     slides: [
       {
         title: "פועל **להיות**",
@@ -1156,33 +1090,6 @@ window.ENGLISH_SHORT_LESSONS = [
           "I am הופך ל־I'm",
           "He is הופך ל־He's",
           "They are הופך ל־They're",
-        ],
-      },
-    ],
-    quiz: [
-      ["I ___ happy.", "אני שמח", ["am", "is", "are"], 0, "עם I תמיד אומרים am"],
-      ["The dog ___ big.", "הכלב גדול", ["am", "is", "are"], 1, "כלב אחד הוא כמו it ולכן is"],
-      ["We ___ friends.", "אנחנו חברים", ["am", "is", "are"], 2, "עם we אומרים are"],
-    ],
-    discuss: ["ספרו על עצמכם במשפט אחד עם I am", "ספרו על חבר במשפט אחד עם He is"],
-  },
-  {
-    id: "tobe-2",
-    topic: "tobe",
-    name: "פועל להיות",
-    part: "לא ושאלות",
-    summary: "לומדים להגיד לא עם not, לשאול שאלה ולענות בקצרה.",
-    vocab: [["not", "לא – בא אחרי am, is, are"], ["isn't", "קיצור של is not"], ["aren't", "קיצור של are not"], ["Is he", "האם הוא"], ["Are you", "האם אתה"], ["ready", "מוכן"], ["here", "כאן"], ["tired", "עייף"]],
-    slides: [
-      {
-        title: "**נזכרים**",
-        lines: ["היום לומדים להגיד **לא** ולשאול **שאלה**"],
-        table: [["I", "**am**"], ["he, she, it", "**is**"], ["you, we, they", "**are**"]],
-        more: [
-          "עם I – am",
-          "עם he, she, it – is",
-          "עם you, we, they – are",
-          "היום נלמד להגיד **לא** ולשאול **שאלה**",
         ],
       },
       {
@@ -1264,19 +1171,21 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ happy.", "אני שמח", ["am", "is", "are"], 0, "עם I תמיד אומרים am"],
+      ["The dog ___ big.", "הכלב גדול", ["am", "is", "are"], 1, "כלב אחד הוא כמו it ולכן is"],
+      ["We ___ friends.", "אנחנו חברים", ["am", "is", "are"], 2, "עם we אומרים are"],
       ["He ___ here.", "הוא לא כאן", ["isn't", "aren't"], 0, "עם he אומרים is ולכן isn't"],
       ["___ you ready?", "האם אתה מוכן?", ["Am", "Is", "Are"], 2, "עם you אומרים are – ובשאלה הוא בא ראשון"],
       ["Is he happy? Yes, he ___.", "האם הוא שמח? כן", ["is", "isn't", "are"], 0, "כן – עונים עם is"],
     ],
-    discuss: ["שאלו חבר שאלה שמתחילה ב־Are you", "ענו על השאלה בתשובה קצרה – כן או לא"],
+    discuss: ["ספרו על עצמכם במשפט אחד עם I am", "שאלו חבר שאלה שמתחילה ב־Are you"],
   },
   {
     id: "articles-1",
     topic: "articles",
     name: "מילות הצבעה ויידוע",
-    part: "a / an / the",
-    summary: "מתי אומרים a, מתי an ומתי the – עם דוגמאות קלות.",
-    vocab: [["a", "אחד – לפני עיצור"], ["an", "אחד – לפני תנועה"], ["the", "ה׳ הידיעה"], ["apple", "תפוח"], ["egg", "ביצה"], ["dog", "כלב"], ["sun", "שמש"]],
+    summary: "מתי אומרים a, an או the – ואיך מצביעים על דברים קרובים ורחוקים, אחד או הרבה.",
+    vocab: [["a", "אחד – לפני עיצור"], ["an", "אחד – לפני תנועה"], ["the", "ה׳ הידיעה"], ["apple", "תפוח"], ["egg", "ביצה"], ["dog", "כלב"], ["this", "זה – קרוב"], ["that", "ההוא – רחוק"], ["these", "אלה – קרובים"], ["those", "ההם – רחוקים"], ["book", "ספר"], ["tree", "עץ"]],
     slides: [
       {
         title: "**a** – אחד",
@@ -1328,35 +1237,19 @@ window.ENGLISH_SHORT_LESSONS = [
       {
         title: "מתי **a** ומתי **the**",
         lines: ["פעם ראשונה – a", "אחר כך – the"],
-        examples: [["I have **a** dog.", "יש לי כלב"], ["**The** dog is big.", "הכלב גדול"]],
+        examples: [["This is **a** dog.", "זה כלב"], ["**The** dog is big.", "הכלב גדול"]],
         more: [
           "מספרים על משהו **בפעם הראשונה** – a",
           "מדברים עליו **שוב** – the",
           "כי עכשיו כולם יודעים על איזה כלב מדברים",
-          ["I have **a** dog.", "יש לי כלב"],
+          ["This is **a** dog.", "זה כלב"],
           ["**The** dog is big.", "הכלב גדול"],
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         table: [["דבר אחד", "**a**"], ["לפני תנועה", "**an**"], ["ה׳ הידיעה", "**the**"]],
       },
-    ],
-    quiz: [
-      ["I eat ___ apple.", "אני אוכל תפוח", ["a", "an"], 1, "apple מתחיל בתנועה ולכן an"],
-      ["He has ___ cat.", "יש לו חתול", ["a", "an"], 0, "cat מתחיל בעיצור ולכן a"],
-      ["Look at ___ moon!", "תסתכלו על הירח", ["a", "the"], 1, "יש רק ירח אחד ולכן the"],
-    ],
-    discuss: ["מה יש לכם בתיק? ענו עם a או an", "מצאו בכיתה דבר ששמו באנגלית מתחיל בתנועה"],
-  },
-  {
-    id: "articles-2",
-    topic: "articles",
-    name: "מילות הצבעה ויידוע",
-    part: "this / that / these / those",
-    summary: "מצביעים על דברים קרובים ורחוקים – אחד או הרבה.",
-    vocab: [["this", "זה – קרוב"], ["that", "ההוא – רחוק"], ["these", "אלה – קרובים"], ["those", "ההם – רחוקים"], ["book", "ספר"], ["tree", "עץ"], ["shoes", "נעליים"]],
-    slides: [
       {
         title: "**this** – זה",
         lines: ["this – דבר אחד שקרוב אליי"],
@@ -1418,19 +1311,21 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I eat ___ apple.", "אני אוכל תפוח", ["a", "an"], 1, "apple מתחיל בתנועה ולכן an"],
+      ["He has ___ cat.", "יש לו חתול", ["a", "an"], 0, "cat מתחיל בעיצור ולכן a"],
+      ["Look at ___ moon!", "תסתכלו על הירח", ["a", "the"], 1, "יש רק ירח אחד ולכן the"],
       ["___ is my pen.", "זה העט שלי – קרוב", ["This", "These"], 0, "דבר אחד קרוב – this"],
       ["___ are my friends.", "אלה החברים שלי – קרובים", ["This", "These", "That"], 1, "הרבה וקרובים – these"],
       ["Look at ___ star!", "תסתכלו על הכוכב ההוא – רחוק", ["this", "that", "these"], 1, "דבר אחד רחוק – that"],
     ],
-    discuss: ["הצביעו על משהו קרוב ואמרו This is", "הצביעו על משהו רחוק ואמרו That is"],
+    discuss: ["מה יש לכם בתיק? ענו עם a או an", "הצביעו על משהו קרוב ואמרו This is"],
   },
   {
     id: "plurals-1",
     topic: "plurals",
     name: "יחיד ורבים",
-    part: "s / es",
-    summary: "אחד או הרבה? מוסיפים s או es בסוף המילה.",
-    vocab: [["cat", "חתול"], ["cats", "חתולים"], ["box", "קופסה"], ["boxes", "קופסאות"], ["bus", "אוטובוס"], ["buses", "אוטובוסים"], ["books", "ספרים"]],
+    summary: "אחד או הרבה? מוסיפים s או es – ומילים שמשתנות ברבים כמו baby, leaf ו־child.",
+    vocab: [["cat", "חתול"], ["cats", "חתולים"], ["box", "קופסה"], ["boxes", "קופסאות"], ["bus", "אוטובוס"], ["buses", "אוטובוסים"], ["baby", "תינוק"], ["babies", "תינוקות"], ["leaf", "עלה"], ["leaves", "עלים"], ["child", "ילד"], ["children", "ילדים"]],
     slides: [
       {
         title: "אחד או **הרבה**?",
@@ -1494,25 +1389,9 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         table: [["רוב המילים", "**s**"], ["s, x, sh, ch בסוף", "**es**"]],
       },
-    ],
-    quiz: [
-      ["three ___", "שלושה חתולים", ["cat", "cats", "cates"], 1, "ברוב המילים מוסיפים s"],
-      ["two ___", "שתי קופסאות", ["boxs", "boxes"], 1, "box נגמרת ב־x ולכן es"],
-      ["The dogs ___ big.", "הכלבים גדולים", ["is", "are"], 1, "הרבה – are"],
-    ],
-    discuss: ["ספרו מה יש בכיתה בעזרת מספר – two, three, four", "מה יש לכם בתיק? אמרו את זה ברבים"],
-  },
-  {
-    id: "plurals-2",
-    topic: "plurals",
-    name: "יחיד ורבים",
-    part: "מילים מיוחדות",
-    summary: "מילים שמשתנות ברבים – baby, leaf, child ועוד.",
-    vocab: [["baby", "תינוק"], ["babies", "תינוקות"], ["leaf", "עלה"], ["leaves", "עלים"], ["child", "ילד"], ["children", "ילדים"], ["man", "איש"], ["men", "אנשים"]],
-    slides: [
       {
         title: "**y** הופכת ל־**ies**",
         lines: ["לפני y אין a, e, o או u", "מורידים את y ומוסיפים ies"],
@@ -1603,12 +1482,15 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["three ___", "שלושה חתולים", ["cat", "cats", "cates"], 1, "ברוב המילים מוסיפים s"],
+      ["two ___", "שתי קופסאות", ["boxs", "boxes"], 1, "box נגמרת ב־x ולכן es"],
+      ["The dogs ___ big.", "הכלבים גדולים", ["is", "are"], 1, "הרבה – are"],
       ["two ___", "שני ילדים", ["childs", "children"], 1, "ילדים – children"],
       ["three ___", "שלושה תינוקות", ["babys", "babies"], 1, "y הופכת ל־ies"],
       ["many ___", "הרבה צעצועים", ["toies", "toys"], 1, "לפני y יש o ולכן רק s"],
       ["many ___", "הרבה עלים", ["leafs", "leaves"], 1, "f הופכת ל־ves"],
     ],
-    discuss: ["כמה ילדים יש בכיתה שלנו? ענו עם children", "מה עוד יש הרבה בכיתה? אמרו את זה באנגלית"],
+    discuss: ["ספרו מה יש בכיתה בעזרת מספר – two, three, four", "כמה ילדים יש בכיתה שלנו? ענו עם children"],
   },
 
   /* ---------- Stage 4: what I have and where ---------- */
@@ -1616,9 +1498,9 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "possessives-1",
     topic: "possessives",
     name: "כינויי שייכות",
-    part: "my, your, his",
-    summary: "של מי זה? לומדים את my, your, his ועוד – עם דוגמאות קלות.",
-    vocab: [["my", "שלי"], ["your", "שלך / שלכם"], ["his", "שלו"], ["her", "שלה"], ["its", "שלו – של חפץ או חיה"], ["our", "שלנו"], ["their", "שלהם"]],
+    part: "my, your, Tom's",
+    summary: "של מי זה? my, your, his ועוד – וגם Tom's ball והשאלה Whose",
+    vocab: [["my", "שלי"], ["your", "שלך / שלכם"], ["his", "שלו"], ["her", "שלה"], ["its", "שלו – של חפץ או חיה"], ["our", "שלנו"], ["Tom's", "של טום"], ["Whose", "של מי"], ["Dad's", "של אבא"], ["the dog's", "של הכלב"], ["their", "שלהם"], ["there", "שם"]],
     slides: [
       {
         title: "של **מי** זה?",
@@ -1679,25 +1561,9 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         table: [["I", "**my**"], ["you", "**your**"], ["he", "**his**"], ["she", "**her**"], ["it", "**its**"], ["we", "**our**"], ["they", "**their**"]],
       },
-    ],
-    quiz: [
-      ["This is ___ ball.", "זה הכדור שלי", ["my", "me", "I"], 0, "שלי – my"],
-      ["Tom has a dog. ___ dog is big.", "הכלב שלו גדול", ["His", "Her", "Its"], 0, "של טום – his"],
-      ["We love ___ school.", "אנחנו אוהבים את בית הספר שלנו", ["their", "our", "your"], 1, "שלנו – our"],
-    ],
-    discuss: ["ספרו על משהו שלכם במשפט עם my", "ספרו על חבר במשפט עם his"],
-  },
-  {
-    id: "possessives-2",
-    topic: "possessives",
-    name: "כינויי שייכות",
-    part: "Tom's, Whose",
-    summary: "לומדים להגיד של מי – Tom's ball – ולשאול עם Whose",
-    vocab: [["Tom's", "של טום"], ["Whose", "של מי"], ["Dad's", "של אבא"], ["the dog's", "של הכלב"], ["their", "שלהם"], ["there", "שם"]],
-    slides: [
       {
         title: "של מי? – **Tom's**",
         lines: ["מוסיפים לשם גרש ואות s", "וזה אומר של"],
@@ -1763,11 +1629,14 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["This is ___ ball.", "זה הכדור שלי", ["my", "me", "I"], 0, "שלי – my"],
+      ["Tom has a dog. ___ dog is big.", "הכלב שלו גדול", ["His", "Her", "Its"], 0, "של טום – his"],
+      ["We love ___ school.", "אנחנו אוהבים את בית הספר שלנו", ["their", "our", "your"], 1, "שלנו – our"],
       ["This is ___ bike.", "אלה האופניים של דן", ["Dan", "Dan's", "Dans"], 1, "של דן – Dan's"],
       ["___ pen is this?", "של מי העט הזה?", ["Who", "Whose", "What"], 1, "של מי – Whose"],
       ["The boys play with ___ ball.", "הבנים משחקים עם הכדור שלהם", ["their", "there"], 0, "שלהם – their"],
     ],
-    discuss: ["הרימו חפץ של חבר ואמרו This is Tom's", "שאלו חבר: Whose bag is this"],
+    discuss: ["ספרו על משהו שלכם במשפט עם my", "הרימו חפץ של חבר ואמרו This is Tom's"],
   },
   {
     id: "possessives-3",
@@ -1877,9 +1746,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "have-has-1",
     topic: "have-has",
     name: "יש לי, יש לו",
-    part: "have / has",
-    summary: "איך אומרים יש לי ויש לו – עם have ועם has",
-    vocab: [["have", "יש ל־ (I, you, we, they)"], ["has", "יש ל־ (he, she, it)"], ["bike", "אופניים"], ["dog", "כלב"], ["brother", "אח"], ["ball", "כדור"]],
+    summary: "איך אומרים יש לי ויש לו עם have ו־has – ואיך אומרים אין לי ושואלים יש לך.",
+    vocab: [["have", "יש ל־ (I, you, we, they)"], ["has", "יש ל־ (he, she, it)"], ["bike", "אופניים"], ["dog", "כלב"], ["brother", "אח"], ["ball", "כדור"], ["don't have", "אין לי / אין לנו"], ["doesn't have", "אין לו"], ["Do you have", "יש לך?"], ["Does he have", "יש לו?"], ["pet", "חיית מחמד"]],
     slides: [
       {
         title: "איך אומרים **יש לי**?",
@@ -1927,26 +1795,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["He **has** a bike.", "יש לו אופניים"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["I, you, we, they", "**have**"], ["he, she, it", "**has**"]],
-      },
-    ],
-    quiz: [
-      ["I ___ a cat.", "יש לי חתול", ["have", "has"], 0, "עם I אומרים have"],
-      ["Tom ___ a red bike.", "לטום יש אופניים אדומים", ["have", "has"], 1, "טום זה he ולכן has"],
-      ["We ___ a big garden.", "יש לנו גינה גדולה", ["have", "has"], 0, "עם we אומרים have"],
-    ],
-    discuss: ["ספרו מה יש לכם במשפט עם I have", "ספרו מה יש לחבר במשפט עם He has"],
-  },
-  {
-    id: "have-has-2",
-    topic: "have-has",
-    name: "יש לי, יש לו",
-    part: "לא ושאלות",
-    summary: "אומרים אין לי ושואלים יש לך – עם don't ועם Do",
-    vocab: [["don't have", "אין לי / אין לנו"], ["doesn't have", "אין לו"], ["Do you have", "יש לך?"], ["Does he have", "יש לו?"], ["pet", "חיית מחמד"]],
-    slides: [
       {
         title: "**אין** לי",
         lines: ["אין לי? אומרים don't have"],
@@ -2006,23 +1854,25 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["יש לי", "I **have**"], ["אין לי", "I **don't have**"], ["יש לך?", "**Do** you have?"]],
+        table: [["I, you, we, they", "**have**"], ["he, she, it", "**has**"], ["יש לי", "I **have**"], ["אין לי", "I **don't have**"], ["יש לך?", "**Do** you have?"]],
       },
     ],
     quiz: [
+      ["I ___ a cat.", "יש לי חתול", ["have", "has"], 0, "עם I אומרים have"],
+      ["Tom ___ a red bike.", "לטום יש אופניים אדומים", ["have", "has"], 1, "טום זה he ולכן has"],
+      ["We ___ a big garden.", "יש לנו גינה גדולה", ["have", "has"], 0, "עם we אומרים have"],
       ["I ___ a phone.", "אין לי טלפון", ["don't have", "doesn't have"], 0, "עם I אומרים don't"],
       ["He ___ a dog.", "אין לו כלב", ["don't have", "doesn't have"], 1, "עם he אומרים doesn't"],
       ["___ you have a pen?", "יש לך עט?", ["Do", "Does", "Are"], 0, "עם you שואלים עם Do"],
     ],
-    discuss: ["שאלו חבר: Do you have a pet", "ענו בתשובה קצרה – Yes, I do או No, I don't"],
+    discuss: ["ספרו מה יש לכם במשפט עם I have", "שאלו חבר: Do you have a pet"],
   },
   {
     id: "there-is-1",
     topic: "there-is",
     name: "There is",
-    part: "יש אחד, יש הרבה",
-    summary: "אומרים יש – There is לדבר אחד ו־There are להרבה דברים",
-    vocab: [["There is", "יש – דבר אחד"], ["There are", "יש – הרבה"], ["table", "שולחן"], ["garden", "גינה"], ["tree", "עץ"], ["room", "חדר"]],
+    summary: "There is לדבר אחד ו־There are להרבה – וגם איך אומרים אין, שואלים אם יש ושואלים כמה.",
+    vocab: [["There is", "יש – דבר אחד"], ["There are", "יש – הרבה"], ["table", "שולחן"], ["garden", "גינה"], ["tree", "עץ"], ["room", "חדר"], ["There isn't", "אין – דבר אחד"], ["There aren't", "אין – הרבה"], ["Is there", "יש? – דבר אחד"], ["Are there", "יש? – הרבה"], ["How many", "כמה"]],
     slides: [
       {
         title: "איך אומרים **יש**?",
@@ -2080,26 +1930,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["**There are** two books on the table.", "יש שני ספרים על השולחן"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["דבר אחד", "There **is**"], ["הרבה", "There **are**"]],
-      },
-    ],
-    quiz: [
-      ["There ___ a bird in the tree.", "יש ציפור על העץ", ["is", "are"], 0, "ציפור אחת – is"],
-      ["There ___ five boys in the room.", "יש חמישה בנים בחדר", ["is", "are"], 1, "הרבה – are"],
-      ["There ___ an apple in my bag.", "יש תפוח בתיק שלי", ["is", "are"], 0, "תפוח אחד – is"],
-    ],
-    discuss: ["מה יש בכיתה שלנו? ענו עם There is", "מה יש בתיק שלכם? ענו עם There are"],
-  },
-  {
-    id: "there-is-2",
-    topic: "there-is",
-    name: "There is",
-    part: "אין, שאלות ו־How many",
-    summary: "אומרים אין, שואלים אם יש, ושואלים כמה עם How many",
-    vocab: [["There isn't", "אין – דבר אחד"], ["There aren't", "אין – הרבה"], ["Is there", "יש? – דבר אחד"], ["Are there", "יש? – הרבה"], ["How many", "כמה"]],
-    slides: [
       {
         title: "**אין**",
         lines: ["אין? מוסיפים not ומקצרים"],
@@ -2162,23 +1992,25 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["יש", "There **is**"], ["אין", "There **isn't**"], ["יש?", "**Is** there?"], ["כמה?", "**How many**"]],
+        table: [["דבר אחד", "There **is**"], ["הרבה", "There **are**"], ["אין", "There **isn't**"], ["יש?", "**Is** there?"], ["כמה?", "**How many**"]],
       },
     ],
     quiz: [
+      ["There ___ a bird in the tree.", "יש ציפור על העץ", ["is", "are"], 0, "ציפור אחת – is"],
+      ["There ___ five boys in the room.", "יש חמישה בנים בחדר", ["is", "are"], 1, "הרבה – are"],
+      ["There ___ an apple in my bag.", "יש תפוח בתיק שלי", ["is", "are"], 0, "תפוח אחד – is"],
       ["There ___ a pool here.", "אין פה בריכה", ["isn't", "aren't"], 0, "דבר אחד – isn't"],
       ["___ there a shop near here?", "יש חנות קרוב לכאן?", ["Is", "Are"], 0, "חנות אחת – Is"],
       ["How ___ chairs are there?", "כמה כיסאות יש?", ["many", "much", "is"], 0, "כמה – How many"],
     ],
-    discuss: ["שאלו חבר: Is there a park near your house", "כמה כיסאות יש בכיתה? ענו עם There are"],
+    discuss: ["מה יש בכיתה שלנו? ענו עם There is", "שאלו חבר: Is there a park near your house"],
   },
   {
     id: "prepositions-1",
     topic: "prepositions",
     name: "מילות יחס",
-    part: "in, on, under",
-    summary: "איפה זה נמצא? בתוך, על ומתחת – in, on, under",
-    vocab: [["in", "בתוך"], ["on", "על"], ["under", "מתחת"], ["box", "קופסה"], ["table", "שולחן"], ["bed", "מיטה"], ["chair", "כיסא"]],
+    summary: "איפה זה נמצא? בתוך, על, מתחת, ליד, בין ומאחורי – in, on, under, next to, between, behind",
+    vocab: [["in", "בתוך"], ["on", "על"], ["under", "מתחת"], ["box", "קופסה"], ["table", "שולחן"], ["bed", "מיטה"], ["next to", "ליד"], ["between", "בין"], ["behind", "מאחורי"], ["in front of", "לפני, מול"], ["at", "ב־ (מקום)"], ["chair", "כיסא"]],
     slides: [
       {
         title: "איפה **זה**?",
@@ -2237,25 +2069,9 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         table: [["בתוך", "**in**"], ["על", "**on**"], ["מתחת", "**under**"]],
       },
-    ],
-    quiz: [
-      ["The fish is ___ the water.", "הדג בתוך המים", ["in", "on", "under"], 0, "בתוך – in"],
-      ["The lamp is ___ the desk.", "המנורה על השולחן", ["in", "on", "under"], 1, "על – on"],
-      ["The cat is ___ the table.", "החתול מתחת לשולחן", ["in", "on", "under"], 2, "מתחת – under"],
-    ],
-    discuss: ["איפה התיק שלכם עכשיו? ענו עם in, on או under", "שימו עיפרון במקום אחר ושאלו חבר: Where is the pencil"],
-  },
-  {
-    id: "prepositions-2",
-    topic: "prepositions",
-    name: "מילות יחס",
-    part: "next to, between, behind",
-    summary: "עוד מילים של מקום – ליד, בין, מאחורי ולפני",
-    vocab: [["next to", "ליד"], ["between", "בין"], ["behind", "מאחורי"], ["in front of", "לפני, מול"], ["at", "ב־ (מקום)"]],
-    slides: [
       {
         title: "**next to** – ליד",
         lines: ["next to – ממש קרוב, בצד"],
@@ -2318,11 +2134,14 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["The fish is ___ the water.", "הדג בתוך המים", ["in", "on", "under"], 0, "בתוך – in"],
+      ["The lamp is ___ the desk.", "המנורה על השולחן", ["in", "on", "under"], 1, "על – on"],
+      ["The cat is ___ the table.", "החתול מתחת לשולחן", ["in", "on", "under"], 2, "מתחת – under"],
       ["The bag is ___ the chair.", "התיק ליד הכיסא", ["next to", "under", "behind"], 0, "ליד – next to"],
       ["I sit ___ Tom and Ben.", "אני יושב בין טום לבן", ["behind", "between", "on"], 1, "בין שניים – between"],
       ["We are ___ school now.", "אנחנו בבית הספר עכשיו", ["at", "on", "under"], 0, "במקום – at"],
     ],
-    discuss: ["ליד מי אתם יושבים בכיתה? ענו עם next to", "מה יש מאחוריכם עכשיו? ענו עם behind"],
+    discuss: ["איפה התיק שלכם עכשיו? ענו עם in, on או under", "ליד מי אתם יושבים בכיתה? ענו עם next to"],
   },
 
   /* ---------- Stage 5: what I do ---------- */
@@ -2330,9 +2149,9 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "verbs-1",
     topic: "verbs",
     name: "פעלים",
-    part: "מה עושים?",
-    summary: "פועל אומר מה עושים – ובכל משפט יש פועל.",
-    vocab: [["play", "לשחק"], ["eat", "לאכול"], ["read", "לקרוא"], ["run", "לרוץ"], ["drink", "לשתות"], ["sleep", "לישון"], ["go", "ללכת"]],
+    part: "מה עושים ו־he plays",
+    summary: "פועל אומר מה עושים – ועם he, she, it מוסיפים לו s, כמו he plays",
+    vocab: [["play", "לשחק"], ["eat", "לאכול"], ["read", "לקרוא"], ["run", "לרוץ"], ["drink", "לשתות"], ["sleep", "לישון"], ["plays", "משחק (הוא)"], ["eats", "אוכל (הוא)"], ["goes", "הולך (הוא)"], ["watches", "צופה (הוא)"], ["has", "יש לו"], ["runs", "רץ (הוא)"]],
     slides: [
       {
         title: "מה זה **פועל**?",
@@ -2393,26 +2212,10 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         lines: ["מי – ואז מה עושה"],
         table: [["אני משחק", "I **play**"], ["אנחנו אוכלים", "We **eat**"], ["הם קוראים", "They **read**"]],
       },
-    ],
-    quiz: [
-      ["I ___ water.", "אני שותה מים", ["drink", "eat", "sleep"], 0, "לשתות – drink"],
-      ["We ___ football.", "אנחנו משחקים כדורגל", ["read", "play", "go"], 1, "לשחק – play"],
-      ["They ___ books.", "הם קוראים ספרים", ["read", "run", "eat"], 0, "לקרוא – read"],
-    ],
-    discuss: ["מה אתם עושים כל יום? ענו במשפט שמתחיל ב־I", "מה אתם אוהבים לשחק? ענו עם I play"],
-  },
-  {
-    id: "verbs-2",
-    topic: "verbs",
-    name: "פעלים",
-    part: "he plays",
-    summary: "עם he, she, it מוסיפים s לפועל – כמו he plays",
-    vocab: [["plays", "משחק (הוא)"], ["eats", "אוכל (הוא)"], ["goes", "הולך (הוא)"], ["watches", "צופה (הוא)"], ["has", "יש לו"], ["runs", "רץ (הוא)"]],
-    slides: [
       {
         title: "מוסיפים **s**",
         lines: ["עם he, she, it – מוסיפים s לפועל"],
@@ -2481,11 +2284,14 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ water.", "אני שותה מים", ["drink", "eat", "sleep"], 0, "לשתות – drink"],
+      ["We ___ football.", "אנחנו משחקים כדורגל", ["read", "play", "go"], 1, "לשחק – play"],
+      ["They ___ books.", "הם קוראים ספרים", ["read", "run", "eat"], 0, "לקרוא – read"],
       ["He ___ football.", "הוא משחק כדורגל", ["play", "plays"], 1, "עם he מוסיפים s"],
       ["We ___ TV.", "אנחנו צופים בטלוויזיה", ["watch", "watches"], 0, "עם we – בלי s"],
       ["Ben ___ to school.", "בן הולך לבית הספר", ["go", "gos", "goes"], 2, "go נגמר ב־o ולכן goes"],
     ],
-    discuss: ["מה חבר שלכם עושה אחרי בית הספר? ענו במשפט שמתחיל ב־He", "מה הכלב או החתול עושה? ענו במשפט שמתחיל ב־It"],
+    discuss: ["מה אתם עושים כל יום? ענו במשפט שמתחיל ב־I", "מה חבר שלכם עושה אחרי בית הספר? ענו במשפט שמתחיל ב־He"],
   },
   {
     id: "verbs-3",
@@ -2521,13 +2327,13 @@ window.ENGLISH_SHORT_LESSONS = [
       {
         title: "**finish** ו־**stop**",
         lines: ["גם אחריהם – **ing**"],
-        examples: [["I finished **eating**.", "סיימתי לאכול"], ["Stop **talking**, please.", "תפסיקו לדבר, בבקשה"]],
+        examples: [["I finish **eating**.", "אני מסיים לאכול"], ["He stops **talking**.", "הוא מפסיק לדבר"]],
         more: [
           "finish – **לסיים**",
           "stop – **להפסיק**",
           "גם אחריהם בא פועל עם **ing**",
-          ["I finished **eating**.", "סיימתי לאכול"],
-          ["Stop **talking**, please.", "תפסיקו לדבר, בבקשה"],
+          ["I finish **eating**.", "אני מסיים לאכול"],
+          ["He stops **talking**.", "הוא מפסיק לדבר"],
         ],
       },
       {
@@ -2573,9 +2379,9 @@ window.ENGLISH_SHORT_LESSONS = [
     quiz: [
       ["I enjoy ___ books.", "אני נהנה לקרוא ספרים", ["reading", "to read"], 0, "אחרי enjoy – ing"],
       ["I want ___ home.", "אני רוצה ללכת הביתה", ["to go", "going"], 0, "אחרי want – to"],
-      ["He finished ___ his homework.", "הוא סיים להכין את שיעורי הבית", ["doing", "to do"], 0, "אחרי finish – ing"],
+      ["He finishes ___ his homework.", "הוא מסיים להכין את שיעורי הבית", ["doing", "to do"], 0, "אחרי finish – ing"],
       ["We need ___ now.", "אנחנו צריכים לישון עכשיו", ["to sleep", "sleeping"], 0, "אחרי need – to"],
-      ["Stop ___, please!", "תפסיקו לדבר, בבקשה!", ["talking", "to talk"], 0, "אחרי stop – ing"],
+      ["The baby stops ___.", "התינוק מפסיק לבכות", ["crying", "to cry"], 0, "אחרי stop – ing"],
       ["They want ___ football.", "הם רוצים לשחק כדורגל", ["to play", "playing"], 0, "אחרי want – to"],
     ],
     discuss: ["ממה אתם נהנים? ענו עם I enjoy", "מה אתם רוצים לעשות אחרי בית הספר? ענו עם I want to"],
@@ -2584,9 +2390,9 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "object-pronouns-1",
     topic: "object-pronouns",
     name: "אותי, אותו, אותם",
-    part: "me, him, them",
-    summary: "מילים כמו me, him ו־them באות אחרי הפועל",
-    vocab: [["me", "אותי, לי"], ["him", "אותו, לו"], ["her", "אותה, לה"], ["us", "אותנו, לנו"], ["them", "אותם, להם"], ["it", "את זה"]],
+    part: "me, him ו־with me",
+    summary: "מילים כמו me, him ו־them באות אחרי הפועל – וגם אחרי with, to ו־for",
+    vocab: [["me", "אותי, לי"], ["him", "אותו, לו"], ["her", "אותה, לה"], ["us", "אותנו, לנו"], ["them", "אותם, להם"], ["it", "את זה"], ["with me", "איתי"], ["with him", "איתו"], ["to me", "אליי"], ["to us", "אלינו"], ["for him", "בשבילו"], ["for them", "בשבילם"]],
     slides: [
       {
         title: "מי עושה **ולמי**?",
@@ -2669,30 +2475,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["He helps **me**.", "הוא עוזר לי"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        lines: ["לפני הפועל – he", "אחרי הפועל – him"],
-        examples: [["**He** sees **me**.", "הוא רואה אותי"], ["**I** see **him**.", "אני רואה אותו"]],
-      },
-    ],
-    quiz: [
-      ["Dan helps ___.", "דן עוזר לי", ["I", "me", "my"], 1, "אחרי הפועל – me"],
-      ["I see ___ every day.", "אני רואה אותו כל יום", ["he", "him"], 1, "he הופך ל־him"],
-      ["Dad calls ___.", "אבא קורא לנו", ["us", "we"], 0, "we הופך ל־us"],
-      ["We like ___.", "אנחנו אוהבים אותם", ["they", "them", "their"], 1, "they הופך ל־them"],
-      ["This is my bag. I like ___.", "זה התיק שלי. אני אוהב אותו", ["it", "they"], 0, "על דבר אחד – it"],
-      ["The boys are here. I see ___.", "הבנים כאן. אני רואה אותם", ["they", "them"], 1, "אחרי הפועל – them"],
-    ],
-    discuss: ["אמרו משפט על חבר עם המילה him", "מי עוזר לכם בבית? ענו עם helps me"],
-  },
-  {
-    id: "object-pronouns-2",
-    topic: "object-pronouns",
-    name: "אותי, אותו, אותם",
-    part: "with me, to him, for them",
-    summary: "המילים האלה באות גם אחרי with, to ו־for",
-    vocab: [["with me", "איתי"], ["with him", "איתו"], ["to me", "אליי"], ["to us", "אלינו"], ["for him", "בשבילו"], ["for them", "בשבילם"]],
-    slides: [
       {
         title: "**אחרי** מילים קטנות",
         lines: ["גם אחרי with, to, for"],
@@ -2779,14 +2561,16 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["Dan helps ___.", "דן עוזר לי", ["I", "me", "my"], 1, "אחרי הפועל – me"],
+      ["I see ___ every day.", "אני רואה אותו כל יום", ["he", "him"], 1, "he הופך ל־him"],
+      ["Dad calls ___.", "אבא קורא לנו", ["us", "we"], 0, "we הופך ל־us"],
+      ["We like ___.", "אנחנו אוהבים אותם", ["they", "them", "their"], 1, "they הופך ל־them"],
       ["Come with ___.", "בוא איתי", ["I", "me"], 1, "אחרי with – me"],
       ["This cake is for ___.", "העוגה הזאת בשבילו", ["him", "he"], 0, "אחרי for – him"],
       ["He talks to ___.", "הוא מדבר אלינו", ["we", "us"], 1, "אחרי to – us"],
       ["I play with Dan and Ben. I play with ___.", "אני משחק עם דן ובן. אני משחק איתם", ["them", "they", "him"], 0, "שני בנים – them"],
-      ["I read the book. I read ___.", "קראתי את הספר. קראתי אותו", ["him", "it"], 1, "ספר הוא דבר – it"],
-      ["Grandpa sits with Ben and me. He sits with ___.", "סבא יושב איתי ועם בן. הוא יושב איתנו", ["us", "them", "we"], 0, "אני ועוד מישהו – us"],
     ],
-    discuss: ["עם מי אתם יושבים בכיתה? ענו עם with", "למי כדאי לתת מתנה? ענו עם for him או for them"],
+    discuss: ["אמרו משפט על חבר עם המילה him", "עם מי אתם יושבים בכיתה? ענו עם with"],
   },
   {
     id: "object-pronouns-3",
@@ -2831,23 +2615,23 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**דוגמאות**",
-        examples: [["He made **himself** a sandwich.", "הוא הכין לעצמו כריך"], ["We enjoyed **ourselves**.", "נהנינו"]],
+        examples: [["He makes **himself** a sandwich.", "הוא מכין לעצמו כריך"], ["We enjoy **ourselves**.", "אנחנו נהנים"]],
         more: [
-          "הוא הכין כריך – בשביל **עצמו**",
-          "We enjoyed ourselves – נהנינו",
-          ["He made **himself** a sandwich.", "הוא הכין לעצמו כריך"],
-          ["We enjoyed **ourselves**.", "נהנינו"],
+          "הוא מכין כריך – בשביל **עצמו**",
+          "We enjoy ourselves – אנחנו נהנים",
+          ["He makes **himself** a sandwich.", "הוא מכין לעצמו כריך"],
+          ["We enjoy **ourselves**.", "אנחנו נהנים"],
         ],
       },
       {
         title: "**by myself** – לבד",
         lines: ["by myself – **בלי עזרה**"],
-        examples: [["I did it **by myself**.", "עשיתי את זה לבד"], ["They built the sukkah **by themselves**.", "הם בנו את הסוכה לבד"]],
+        examples: [["I do it **by myself**.", "אני עושה את זה לבד"], ["They build the sukkah **by themselves**.", "הם בונים את הסוכה לבד"]],
         more: [
           "by myself – **לבד**",
-          "עשיתי את זה בלי שאף אחד עזר",
-          ["I did it **by myself**.", "עשיתי את זה לבד"],
-          ["They built the sukkah **by themselves**.", "הם בנו את הסוכה לבד"],
+          "אני עושה את זה בלי שאף אחד עוזר",
+          ["I do it **by myself**.", "אני עושה את זה לבד"],
+          ["They build the sukkah **by themselves**.", "הם בונים את הסוכה לבד"],
         ],
       },
       {
@@ -2864,12 +2648,12 @@ window.ENGLISH_SHORT_LESSONS = [
       {
         title: "שימו **לב**",
         lines: ["אומרים himself – לא hisself"],
-        compare: ["He looked at hisself.", "He looked at **himself**."],
+        compare: ["He looks at hisself.", "He looks at **himself**."],
         more: [
           "himself – מ־**him**",
           "לא אומרים hisself",
           "וגם לא theirselves – אלא themselves",
-          ["He looked at **himself**.", "הוא הסתכל על עצמו"],
+          ["He looks at **himself**.", "הוא מסתכל על עצמו"],
         ],
       },
       {
@@ -2879,11 +2663,11 @@ window.ENGLISH_SHORT_LESSONS = [
     ],
     quiz: [
       ["I look at ___ in the mirror.", "אני מסתכל על עצמי במראה", ["myself", "me"], 0, "אני על עצמי – myself"],
-      ["He made ___ a sandwich.", "הוא הכין לעצמו כריך", ["himself", "him"], 0, "לעצמו – himself"],
-      ["We made ___ a cake.", "הכנו לעצמנו עוגה", ["ourselves", "us"], 0, "לעצמנו – ourselves"],
-      ["They cleaned the room by ___.", "הם ניקו את החדר לבד", ["themselves", "them"], 0, "לבד – by themselves"],
-      ["Did you make it ___, Tom?", "הכנת את זה בעצמך, תום?", ["yourself", "you"], 0, "בעצמך – yourself"],
-      ["The cat is washing ___.", "החתול מנקה את עצמו", ["itself", "himself"], 0, "חתול – it, לכן itself"],
+      ["He makes ___ a sandwich.", "הוא מכין לעצמו כריך", ["himself", "him"], 0, "לעצמו – himself"],
+      ["We make ___ a cake.", "אנחנו מכינים לעצמנו עוגה", ["ourselves", "us"], 0, "לעצמנו – ourselves"],
+      ["They clean the room by ___.", "הם מנקים את החדר לבד", ["themselves", "them"], 0, "לבד – by themselves"],
+      ["You make it ___, Tom.", "אתה מכין את זה בעצמך, תום", ["yourself", "you"], 0, "בעצמך – yourself"],
+      ["The cat washes ___.", "החתול מנקה את עצמו", ["itself", "himself"], 0, "חתול – it, לכן itself"],
     ],
     discuss: ["מה אתם יודעים לעשות לבד? ענו עם by myself", "ספרו על משהו שהכנתם בעצמכם"],
   },
@@ -2891,9 +2675,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "negation-1",
     topic: "negation",
     name: "שלילה ושאלות",
-    part: "don't / doesn't",
-    summary: "אומרים לא עם don't ועם doesn't לפני הפועל",
-    vocab: [["don't", "לא – עם I, you, we, they"], ["doesn't", "לא – עם he, she, it"], ["like", "לאהוב"], ["eat", "לאכול"], ["swim", "לשחות"], ["play", "לשחק"]],
+    summary: "אומרים לא עם don't ו־doesn't לפני הפועל – ושואלים עם Do ו־Does ועונים בקצרה.",
+    vocab: [["don't", "לא – עם I, you, we, they"], ["doesn't", "לא – עם he, she, it"], ["like", "לאהוב"], ["eat", "לאכול"], ["swim", "לשחות"], ["play", "לשחק"], ["Do", "שואלים עם I, you, we, they"], ["Does", "שואלים עם he, she, it"], ["Yes, I do", "כן"], ["No, I don't", "לא"], ["live", "לגור"]],
     slides: [
       {
         title: "איך אומרים **לא**?",
@@ -2953,26 +2736,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["I **don't** run.", "אני לא רץ"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["I, you, we, they", "**don't**"], ["he, she, it", "**doesn't**"]],
-      },
-    ],
-    quiz: [
-      ["I ___ like milk.", "אני לא אוהב חלב", ["don't", "doesn't"], 0, "עם I – don't"],
-      ["Tom ___ play the piano.", "טום לא מנגן בפסנתר", ["don't", "doesn't"], 1, "טום זה he ולכן doesn't"],
-      ["He doesn't ___ TV.", "הוא לא צופה בטלוויזיה", ["watch", "watches"], 0, "אחרי doesn't – בלי s"],
-    ],
-    discuss: ["ספרו משהו שאתם לא אוהבים – עם I don't like", "ספרו משהו שחבר לא עושה – עם He doesn't"],
-  },
-  {
-    id: "negation-2",
-    topic: "negation",
-    name: "שלילה ושאלות",
-    part: "Do / Does – שאלות",
-    summary: "שואלים עם Do ועם Does ועונים בקצרה",
-    vocab: [["Do", "שואלים עם I, you, we, they"], ["Does", "שואלים עם he, she, it"], ["Yes, I do", "כן"], ["No, I don't", "לא"], ["like", "לאהוב"], ["live", "לגור"]],
-    slides: [
       {
         title: "איך **שואלים**?",
         lines: ["משפט עם פועל – מוסיפים Do בהתחלה"],
@@ -3034,15 +2797,18 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["I, you, we, they", "**Do** you like it?"], ["he, she, it", "**Does** he like it?"]],
+        table: [["I, you, we, they", "**don't**"], ["he, she, it", "**doesn't**"], ["I, you, we, they", "**Do** you like it?"], ["he, she, it", "**Does** he like it?"]],
       },
     ],
     quiz: [
+      ["I ___ like milk.", "אני לא אוהב חלב", ["don't", "doesn't"], 0, "עם I – don't"],
+      ["Tom ___ play the piano.", "טום לא מנגן בפסנתר", ["don't", "doesn't"], 1, "טום זה he ולכן doesn't"],
+      ["He doesn't ___ TV.", "הוא לא צופה בטלוויזיה", ["watch", "watches"], 0, "אחרי doesn't – בלי s"],
       ["___ you like apples?", "אתה אוהב תפוחים?", ["Do", "Does"], 0, "עם you – Do"],
       ["___ he play football?", "הוא משחק כדורגל?", ["Do", "Does"], 1, "עם he – Does"],
       ["Do you swim? Yes, I ___.", "אתה שוחה? כן", ["do", "does", "am"], 0, "על Do עונים עם do"],
     ],
-    discuss: ["שאלו חבר: Do you like pizza", "ענו בתשובה קצרה – Yes, I do או No, I don't"],
+    discuss: ["ספרו משהו שאתם לא אוהבים – עם I don't like", "שאלו חבר: Do you like pizza"],
   },
   {
     id: "imperatives-1",
@@ -3162,9 +2928,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "questions-1",
     topic: "questions",
     name: "מילות שאלה",
-    part: "What, Who, Where",
-    summary: "שואלים מה, מי ואיפה – What, Who, Where",
-    vocab: [["What", "מה"], ["Who", "מי"], ["Where", "איפה"], ["name", "שם"], ["live", "לגור"], ["teacher", "מורה"]],
+    summary: "שואלים מה, מי, איפה, מתי, למה ואיך – What, Who, Where, When, Why, How",
+    vocab: [["What", "מה"], ["Who", "מי"], ["Where", "איפה"], ["name", "שם"], ["live", "לגור"], ["teacher", "מורה"], ["When", "מתי"], ["Why", "למה"], ["How", "איך"], ["How many", "כמה"], ["How old", "בן כמה"], ["because", "כי"]],
     slides: [
       {
         title: "מילות **שאלה**",
@@ -3236,22 +3001,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["**Where** is my bag?", "איפה התיק שלי?"],
         ],
       },
-    ],
-    quiz: [
-      ["___ is your name?", "מה השם שלך?", ["What", "Who", "Where"], 0, "מה – What"],
-      ["___ is that boy?", "מי הילד ההוא?", ["What", "Who", "Where"], 1, "מי – Who"],
-      ["___ is the park?", "איפה הפארק?", ["What", "Who", "Where"], 2, "איפה – Where"],
-    ],
-    discuss: ["שאלו חבר: What is your name", "שאלו חבר: Where do you live"],
-  },
-  {
-    id: "questions-2",
-    topic: "questions",
-    name: "מילות שאלה",
-    part: "When, Why, How",
-    summary: "שואלים מתי, למה, איך וכמה – When, Why, How",
-    vocab: [["When", "מתי"], ["Why", "למה"], ["How", "איך"], ["How many", "כמה"], ["How old", "בן כמה"], ["because", "כי"]],
-    slides: [
       {
         title: "**When** – מתי",
         lines: ["When – שואלים על זמן"],
@@ -3317,11 +3066,14 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["___ is your name?", "מה השם שלך?", ["What", "Who", "Where"], 0, "מה – What"],
+      ["___ is that boy?", "מי הילד ההוא?", ["What", "Who", "Where"], 1, "מי – Who"],
+      ["___ is the park?", "איפה הפארק?", ["What", "Who", "Where"], 2, "איפה – Where"],
       ["___ is the party?", "מתי המסיבה?", ["When", "Why", "How"], 0, "מתי – When"],
       ["___ are you sad?", "למה אתה עצוב?", ["When", "Why", "Where"], 1, "למה – Why"],
       ["___ many pens do you have?", "כמה עטים יש לך?", ["What", "How", "Who"], 1, "כמה – How many"],
     ],
-    discuss: ["שאלו חבר: How old are you", "שאלו חבר: When is your birthday"],
+    discuss: ["שאלו חבר: What is your name", "שאלו חבר: How old are you"],
   },
   {
     id: "frequency",
@@ -3411,9 +3163,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "calendar-1",
     topic: "calendar",
     name: "ימים, חודשים ועונות",
-    part: "ימי השבוע",
-    summary: "לומדים את שבעת ימי השבוע ואיך אומרים ביום מסוים.",
-    vocab: [["Sunday", "ראשון"], ["Monday", "שני"], ["Tuesday", "שלישי"], ["Wednesday", "רביעי"], ["Thursday", "חמישי"], ["Friday", "שישי"], ["Saturday", "שבת"]],
+    summary: "שבעת ימי השבוע, שנים עשר החודשים וארבע העונות – ומתי אומרים on ומתי in.",
+    vocab: [["Sunday", "ראשון"], ["Monday", "שני"], ["Tuesday", "שלישי"], ["Wednesday", "רביעי"], ["Thursday", "חמישי"], ["Friday", "שישי"], ["January", "ינואר"], ["May", "מאי"], ["July", "יולי"], ["winter", "חורף"], ["spring", "אביב"], ["summer", "קיץ"]],
     slides: [
       {
         title: "ימי **השבוע**",
@@ -3481,22 +3232,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["Today is **Sunday**.", "היום יום ראשון"],
         ],
       },
-    ],
-    quiz: [
-      ["Today is ___.", "היום יום שני", ["Sunday", "Monday", "Friday"], 1, "שני – Monday"],
-      ["I go to the park ___ Friday.", "אני הולך לפארק ביום שישי", ["in", "on", "at"], 1, "ביום – on"],
-      ["The day after Sunday is ___.", "היום שאחרי ראשון", ["Monday", "Saturday", "Thursday"], 0, "אחרי ראשון בא שני – Monday"],
-    ],
-    discuss: ["איזה יום היום? ענו עם Today is", "איזה יום בשבוע אתם הכי אוהבים? למה?"],
-  },
-  {
-    id: "calendar-2",
-    topic: "calendar",
-    name: "ימים, חודשים ועונות",
-    part: "חודשים ועונות",
-    summary: "שנים עשר החודשים, ארבע העונות, ומתי אומרים in",
-    vocab: [["January", "ינואר"], ["May", "מאי"], ["July", "יולי"], ["winter", "חורף"], ["spring", "אביב"], ["summer", "קיץ"], ["autumn", "סתיו"]],
-    slides: [
       {
         title: "**החודשים** 1",
         table: [["ינואר", "January"], ["פברואר", "February"], ["מרץ", "March"], ["אפריל", "April"], ["מאי", "May"], ["יוני", "June"]],
@@ -3566,11 +3301,14 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["Today is ___.", "היום יום שני", ["Sunday", "Monday", "Friday"], 1, "שני – Monday"],
+      ["I go to the park ___ Friday.", "אני הולך לפארק ביום שישי", ["in", "on", "at"], 1, "ביום – on"],
+      ["The day after Sunday is ___.", "היום שאחרי ראשון", ["Monday", "Saturday", "Thursday"], 0, "אחרי ראשון בא שני – Monday"],
       ["My birthday is ___ June.", "יום ההולדת שלי ביוני", ["on", "in"], 1, "בחודש – in"],
       ["It is cold in ___.", "קר בחורף", ["summer", "winter"], 1, "חורף – winter"],
       ["We have a test ___ Sunday.", "יש לנו מבחן ביום ראשון", ["on", "in"], 0, "ביום – on"],
     ],
-    discuss: ["מתי יום ההולדת שלכם? ענו עם My birthday is in", "איזו עונה אתם הכי אוהבים? למה?"],
+    discuss: ["איזה יום היום? ענו עם Today is", "מתי יום ההולדת שלכם? ענו עם My birthday is in"],
   },
   {
     id: "ordinals-1",
@@ -3887,9 +3625,9 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "present-simple-1",
     topic: "present-simple",
     name: "הווה פשוט",
-    part: "I play / he plays",
-    summary: "דברים שקורים כל יום – I play, ועם he מוסיפים s",
-    vocab: [["every day", "כל יום"], ["always", "תמיד"], ["usually", "בדרך כלל"], ["play", "לשחק"], ["plays", "משחק (הוא)"], ["eats", "אוכל (הוא)"]],
+    part: "he plays – s, es, ies",
+    summary: "דברים שקורים כל יום – I play, ועם he מוסיפים לפועל s, es או ies.",
+    vocab: [["every day", "כל יום"], ["always", "תמיד"], ["usually", "בדרך כלל"], ["play", "לשחק"], ["plays", "משחק (הוא)"], ["eats", "אוכל (הוא)"], ["watches", "צופה (הוא)"], ["goes", "הולך (הוא)"], ["does", "עושה (הוא)"], ["studies", "לומד (הוא)"], ["has", "יש לו"]],
     slides: [
       {
         title: "מה זה **הווה פשוט**?",
@@ -3964,29 +3702,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["Tom eat**s** pizza.", "טום אוכל פיצה"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["I, you, we, they", "**play**"], ["he, she, it", "play**s**"]],
-      },
-    ],
-    quiz: [
-      ["I ___ to school every day.", "אני הולך ברגל לבית הספר כל יום", ["walk", "walks"], 0, "עם I – בלי s"],
-      ["He ___ football on Sundays.", "הוא משחק כדורגל בימי ראשון", ["play", "plays"], 1, "עם he מוסיפים s"],
-      ["We ___ TV in the evening.", "אנחנו צופים בטלוויזיה בערב", ["watches", "watch"], 1, "עם we – בלי s"],
-      ["The cat ___ milk.", "החתול שותה חלב", ["drinks", "drink"], 0, "חתול אחד – כמו it ולכן s"],
-      ["Dan always ___ apples.", "דן תמיד אוכל תפוחים", ["eats", "eat"], 0, "דן זה he ולכן s"],
-      ["My friends ___ in the park.", "החברים שלי משחקים בפארק", ["plays", "play"], 1, "הרבה חברים – כמו they ולכן בלי s"],
-    ],
-    discuss: ["מה אתם עושים כל יום? ענו במשפט שמתחיל ב־I", "מה חבר שלכם עושה כל יום? ענו במשפט שמתחיל ב־He"],
-  },
-  {
-    id: "present-simple-2",
-    topic: "present-simple",
-    name: "הווה פשוט",
-    part: "s / es / ies",
-    summary: "איך כותבים את הפועל עם he – s, es או ies",
-    vocab: [["plays", "משחק (הוא)"], ["watches", "צופה (הוא)"], ["goes", "הולך (הוא)"], ["does", "עושה (הוא)"], ["studies", "לומד (הוא)"], ["has", "יש לו"]],
-    slides: [
       {
         title: "רוב הפעלים – **s**",
         lines: ["לרוב הפעלים מוסיפים רק s"],
@@ -4073,18 +3788,20 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["play", "play**s**"], ["watch", "watch**es**"], ["study", "stud**ies**"], ["have", "**has**"]],
+        table: [["I, you, we, they", "**play**"], ["he, she, it", "play**s**"], ["watch", "watch**es**"], ["study", "stud**ies**"], ["have", "**has**"]],
       },
     ],
     quiz: [
+      ["I ___ to school every day.", "אני הולך ברגל לבית הספר כל יום", ["walk", "walks"], 0, "עם I – בלי s"],
+      ["He ___ football on Sundays.", "הוא משחק כדורגל בימי ראשון", ["play", "plays"], 1, "עם he מוסיפים s"],
+      ["We ___ TV in the evening.", "אנחנו צופים בטלוויזיה בערב", ["watches", "watch"], 1, "עם we – בלי s"],
+      ["The cat ___ milk.", "החתול שותה חלב", ["drinks", "drink"], 0, "חתול אחד – כמו it ולכן s"],
       ["He ___ TV every evening.", "הוא צופה בטלוויזיה כל ערב", ["watchs", "watches"], 1, "watch נגמר ב־ch ולכן es"],
       ["Dan ___ to school by bus.", "דן נוסע לבית הספר באוטובוס", ["goes", "gos"], 0, "go מקבל es"],
       ["The baby ___ at night.", "התינוק בוכה בלילה", ["cries", "crys"], 0, "y בסוף – ies"],
       ["He ___ with his dog.", "הוא משחק עם הכלב שלו", ["plaies", "plays"], 1, "לפני y יש a ולכן רק s"],
-      ["My dad ___ a big car.", "לאבא שלי יש מכונית גדולה", ["haves", "has"], 1, "עם he – has"],
-      ["He ___ his homework after school.", "הוא עושה שיעורי בית אחרי בית הספר", ["does", "dos"], 0, "do מקבל es"],
     ],
-    discuss: ["מה אבא שלכם עושה כל בוקר? ענו במשפט שמתחיל ב־He", "איזה פועל עם es אתם זוכרים? אמרו משפט איתו"],
+    discuss: ["מה אתם עושים כל יום? ענו במשפט שמתחיל ב־I", "מה אבא שלכם עושה כל בוקר? ענו במשפט שמתחיל ב־He"],
   },
   {
     id: "present-simple-3",
@@ -4183,9 +3900,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "progressive-1",
     topic: "progressive",
     name: "הווה ממושך",
-    part: "מה קורה עכשיו?",
-    summary: "משהו שקורה עכשיו – am, is, are ועוד פועל עם ing",
-    vocab: [["playing", "משחק עכשיו"], ["eating", "אוכל עכשיו"], ["reading", "קורא עכשיו"], ["running", "רץ עכשיו"], ["swimming", "שוחה עכשיו"], ["now", "עכשיו"]],
+    summary: "משהו שקורה עכשיו – am, is, are ופועל עם ing – וגם לא, שאלות, ועכשיו או כל יום.",
+    vocab: [["playing", "משחק עכשיו"], ["eating", "אוכל עכשיו"], ["reading", "קורא עכשיו"], ["running", "רץ עכשיו"], ["swimming", "שוחה עכשיו"], ["now", "עכשיו"], ["isn't playing", "לא משחק עכשיו"], ["Are you", "האם אתה"], ["every day", "כל יום"], ["at the moment", "ברגע זה"]],
     slides: [
       {
         title: "מה קורה **עכשיו**?",
@@ -4243,26 +3959,10 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         lines: ["עכשיו – am, is, are ועוד ing"],
         examples: [["We **are** watch**ing** TV now.", "אנחנו צופים בטלוויזיה עכשיו"]],
       },
-    ],
-    quiz: [
-      ["I ___ reading now.", "אני קורא עכשיו", ["am", "is", "are"], 0, "עם I – am"],
-      ["They are ___.", "הם שוחים עכשיו", ["swim", "swiming", "swimming"], 2, "ב־swim מכפילים את m"],
-      ["He is ___ a cake.", "הוא מכין עוגה עכשיו", ["makeing", "making"], 1, "מורידים את e – making"],
-    ],
-    discuss: ["מה אתם עושים עכשיו? ענו עם I am", "מה החבר שיושב לידכם עושה עכשיו? ענו עם He is"],
-  },
-  {
-    id: "progressive-2",
-    topic: "progressive",
-    name: "הווה ממושך",
-    part: "לא, שאלות, עכשיו או כל יום",
-    summary: "אומרים לא, שואלים, ומבדילים בין עכשיו לבין כל יום",
-    vocab: [["isn't playing", "לא משחק עכשיו"], ["Are you", "האם אתה"], ["now", "עכשיו"], ["every day", "כל יום"], ["at the moment", "ברגע זה"]],
-    slides: [
       {
         title: "**לא** – not",
         lines: ["מוסיפים not אחרי am, is, are"],
@@ -4334,19 +4034,22 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ reading now.", "אני קורא עכשיו", ["am", "is", "are"], 0, "עם I – am"],
+      ["They are ___.", "הם שוחים עכשיו", ["swim", "swiming", "swimming"], 2, "ב־swim מכפילים את m"],
+      ["He is ___ a cake.", "הוא מכין עוגה עכשיו", ["makeing", "making"], 1, "מורידים את e – making"],
       ["He ___ sleeping now.", "הוא לא ישן עכשיו", ["isn't", "aren't"], 0, "עם he – isn't"],
       ["___ they eating?", "הם אוכלים עכשיו?", ["Is", "Are", "Do"], 1, "עם they – Are"],
       ["I ___ football every day.", "אני משחק כדורגל כל יום", ["play", "am playing"], 0, "כל יום – פועל רגיל"],
     ],
-    discuss: ["שאלו חבר: Are you reading now", "מה אתם עושים כל יום? ומה אתם עושים עכשיו?"],
+    discuss: ["מה אתם עושים עכשיו? ענו עם I am", "שאלו חבר: Are you reading now"],
   },
   {
     id: "past-simple-1",
     topic: "past-simple",
     name: "עבר פשוט",
-    part: "פעלים עם ed",
-    summary: "מספרים מה קרה אתמול – מוסיפים ed לפועל",
-    vocab: [["played", "שיחק"], ["cleaned", "ניקה"], ["liked", "אהב"], ["studied", "למד"], ["stopped", "עצר"], ["yesterday", "אתמול"]],
+    part: "ed ופעלים מיוחדים",
+    summary: "מספרים מה קרה אתמול – מוסיפים ed לפועל, ויש פעלים שמשנים צורה כמו go שהופך ל־went.",
+    vocab: [["played", "שיחק"], ["cleaned", "ניקה"], ["liked", "אהב"], ["studied", "למד"], ["stopped", "עצר"], ["yesterday", "אתמול"], ["went", "הלך"], ["ate", "אכל"], ["saw", "ראה"], ["had", "היה לו"], ["did", "עשה"], ["came", "בא"]],
     slides: [
       {
         title: "מה זה **עבר פשוט**?",
@@ -4445,25 +4148,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["I play**ed** yesterday.", "שיחקתי אתמול"],
         ],
       },
-    ],
-    quiz: [
-      ["I ___ football yesterday.", "שיחקתי כדורגל אתמול", ["play", "played"], 1, "אתמול – מוסיפים ed"],
-      ["He ___ his room last night.", "הוא ניקה את החדר שלו אתמול בלילה", ["cleaned", "cleans"], 0, "אתמול בלילה – עבר"],
-      ["We ___ the game.", "אהבנו את המשחק", ["liked", "likeed"], 0, "e בסוף – מוסיפים רק d"],
-      ["He ___ for the test.", "הוא למד למבחן", ["studyed", "studied"], 1, "y בסוף – ied"],
-      ["The bus ___ near my house.", "האוטובוס עצר ליד הבית שלי", ["stoped", "stopped"], 1, "ב־stop מכפילים את p"],
-      ["Yesterday they ___ to the park.", "אתמול הם הלכו ברגל לפארק", ["walk", "walks", "walked"], 2, "אתמול – ed לכולם"],
-    ],
-    discuss: ["מה עשיתם אתמול אחרי בית הספר? ענו עם פועל שנגמר ב־ed", "מה עשיתם בשבת שעברה? ספרו במשפט אחד"],
-  },
-  {
-    id: "past-simple-2",
-    topic: "past-simple",
-    name: "עבר פשוט",
-    part: "פעלים מיוחדים",
-    summary: "יש פעלים שבעבר משנים צורה – go הופך ל־went",
-    vocab: [["went", "הלך"], ["ate", "אכל"], ["saw", "ראה"], ["had", "היה לו"], ["did", "עשה"], ["came", "בא"], ["bought", "קנה"], ["made", "הכין"]],
-    slides: [
       {
         title: "פעלים **מיוחדים**",
         lines: ["יש פעלים שלא מקבלים ed", "בעבר הם משנים צורה"],
@@ -4550,14 +4234,16 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ football yesterday.", "שיחקתי כדורגל אתמול", ["play", "played"], 1, "אתמול – מוסיפים ed"],
+      ["He ___ his room last night.", "הוא ניקה את החדר שלו אתמול בלילה", ["cleaned", "cleans"], 0, "אתמול בלילה – עבר"],
+      ["We ___ the game.", "אהבנו את המשחק", ["liked", "likeed"], 0, "e בסוף – מוסיפים רק d"],
+      ["He ___ for the test.", "הוא למד למבחן", ["studyed", "studied"], 1, "y בסוף – ied"],
       ["Yesterday I ___ to the beach.", "אתמול הלכתי לחוף", ["goed", "go", "went"], 2, "go בעבר – went"],
       ["We ___ pizza last night.", "אכלנו פיצה אתמול בלילה", ["ate", "eated"], 0, "eat בעבר – ate"],
       ["He ___ a big dog in the park.", "הוא ראה כלב גדול בפארק", ["seed", "saw"], 1, "see בעבר – saw"],
       ["I ___ my homework.", "הכנתי את שיעורי הבית", ["doed", "did"], 1, "do בעבר – did"],
-      ["Dad ___ a new bike for me.", "אבא קנה לי אופניים חדשים", ["bought", "buyed"], 0, "buy בעבר – bought"],
-      ["They ___ home at five.", "הם באו הביתה בחמש", ["comed", "came", "come"], 1, "come בעבר – came"],
     ],
-    discuss: ["לאן הלכתם בשבוע שעבר? ענו עם I went", "מה אכלתם אתמול? ענו עם I ate"],
+    discuss: ["מה עשיתם אתמול אחרי בית הספר? ענו עם פועל שנגמר ב־ed", "לאן הלכתם בשבוע שעבר? ענו עם I went"],
   },
   {
     id: "past-simple-3",
@@ -4655,9 +4341,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "future-simple-1",
     topic: "future-simple",
     name: "עתיד פשוט",
-    part: "will",
-    summary: "מדברים על מה שיקרה – will ועוד פועל",
-    vocab: [["will", "עתיד – יקרה"], ["tomorrow", "מחר"], ["next week", "בשבוע הבא"], ["soon", "בקרוב"], ["later", "אחר כך"], ["I'll", "קיצור של I will"]],
+    summary: "מדברים על מה שיקרה עם will – אומרים לא עם won't ושואלים עם Will.",
+    vocab: [["will", "עתיד – יקרה"], ["tomorrow", "מחר"], ["next week", "בשבוע הבא"], ["soon", "בקרוב"], ["later", "אחר כך"], ["I'll", "קיצור של I will"], ["won't", "לא – בעתיד"], ["will not", "לא – בעתיד"], ["Will you", "האם תעשה"], ["Yes, I will", "כן"], ["No, I won't", "לא"]],
     slides: [
       {
         title: "מה זה **עתיד פשוט**?",
@@ -4740,25 +4425,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["He **will** visit Grandpa.", "הוא יבקר את סבא"],
         ],
       },
-    ],
-    quiz: [
-      ["I ___ my homework later.", "אכין את שיעורי הבית אחר כך", ["will do", "did"], 0, "אחר כך – will"],
-      ["Tomorrow it ___ cold.", "מחר יהיה קר", ["was", "will be", "is"], 1, "מחר – will"],
-      ["He will ___ Grandpa next week.", "הוא יבקר את סבא בשבוע הבא", ["visits", "visit"], 1, "אחרי will – בלי s"],
-      ["We will ___ to Eilat.", "ניסע לאילת", ["travel", "to travel"], 0, "אחרי will – בלי to"],
-      ["___ call you tomorrow.", "אני אתקשר אליך מחר", ["I'm", "I'll"], 1, "I will בקיצור – I'll"],
-      ["They ___ the game soon.", "הם יתחילו את המשחק בקרוב", ["started", "will start"], 1, "בקרוב – will"],
-    ],
-    discuss: ["מה תעשו מחר אחרי בית הספר? ענו עם I will", "איך יהיה מזג האוויר מחר? ענו עם It will"],
-  },
-  {
-    id: "future-simple-2",
-    topic: "future-simple",
-    name: "עתיד פשוט",
-    part: "won't / Will",
-    summary: "אומרים לא עם won't ושואלים עם Will",
-    vocab: [["won't", "לא – בעתיד"], ["will not", "לא – בעתיד"], ["Will you", "האם תעשה"], ["Yes, I will", "כן"], ["No, I won't", "לא"]],
-    slides: [
       {
         title: "**לא** בעתיד",
         lines: ["מוסיפים not אחרי will"],
@@ -4832,22 +4498,24 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ my homework later.", "אכין את שיעורי הבית אחר כך", ["will do", "did"], 0, "אחר כך – will"],
+      ["Tomorrow it ___ cold.", "מחר יהיה קר", ["was", "will be", "is"], 1, "מחר – will"],
+      ["He will ___ Grandpa next week.", "הוא יבקר את סבא בשבוע הבא", ["visits", "visit"], 1, "אחרי will – בלי s"],
+      ["We will ___ to Eilat.", "ניסע לאילת", ["travel", "to travel"], 0, "אחרי will – בלי to"],
       ["I ___ be late. I promise!", "לא אאחר. אני מבטיח", ["don't", "won't"], 1, "בעתיד – won't"],
       ["It won't ___ tomorrow.", "מחר לא ירד גשם", ["rain", "rains"], 0, "אחרי won't – הפועל הרגיל"],
       ["___ you help me?", "תעזור לי?", ["Did", "Will", "Are"], 1, "שאלה בעתיד – Will"],
       ["Will he come? No, he ___.", "הוא יבוא? לא", ["doesn't", "will", "won't"], 2, "על Will עונים עם won't או will"],
-      ["Will they ___ football?", "הם ישחקו כדורגל?", ["play", "played"], 0, "אחרי will – הפועל הרגיל"],
-      ["We ___ go to school on Saturday.", "לא נלך לבית הספר בשבת", ["wasn't", "won't"], 1, "בעתיד – won't"],
     ],
-    discuss: ["שאלו חבר: Will you play football tomorrow", "ספרו משהו שלא תעשו מחר – עם I won't"],
+    discuss: ["מה תעשו מחר אחרי בית הספר? ענו עם I will", "שאלו חבר: Will you play football tomorrow"],
   },
   {
     id: "tenses-1",
     topic: "tenses",
     name: "זמנים",
-    part: "was / were",
-    summary: "בעבר am ו־is הופכים ל־was – ו־are הופך ל־were",
-    vocab: [["was", "היה – עם I, he, she, it"], ["were", "היו – עם you, we, they"], ["wasn't", "לא היה"], ["weren't", "לא היו"], ["yesterday", "אתמול"]],
+    part: "was / were ועבר עם ed",
+    summary: "בעבר am ו־is הופכים ל־was ו־are הופך ל־were – ולפעלים מוסיפים ed.",
+    vocab: [["was", "היה – עם I, he, she, it"], ["were", "היו – עם you, we, they"], ["wasn't", "לא היה"], ["weren't", "לא היו"], ["yesterday", "אתמול"], ["played", "שיחק"], ["walked", "הלך"], ["watched", "צפה"], ["liked", "אהב"], ["last week", "בשבוע שעבר"]],
     slides: [
       {
         title: "**עבר** של להיות",
@@ -4917,25 +4585,9 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         table: [["am, is", "**was**"], ["are", "**were**"]],
       },
-    ],
-    quiz: [
-      ["I ___ at the park yesterday.", "הייתי בפארק אתמול", ["was", "were"], 0, "עם I – was"],
-      ["We ___ happy.", "היינו שמחים", ["was", "were"], 1, "עם we – were"],
-      ["___ you at school yesterday?", "היית בבית הספר אתמול?", ["Was", "Were"], 1, "עם you – Were"],
-    ],
-    discuss: ["איפה הייתם אתמול? ענו עם I was", "איך היה מזג האוויר אתמול? ענו עם It was"],
-  },
-  {
-    id: "tenses-2",
-    topic: "tenses",
-    name: "זמנים",
-    part: "עבר עם ed",
-    summary: "מספרים מה עשינו אתמול – מוסיפים ed לפועל",
-    vocab: [["played", "שיחק"], ["walked", "הלך"], ["watched", "צפה"], ["liked", "אהב"], ["yesterday", "אתמול"], ["last week", "בשבוע שעבר"]],
-    slides: [
       {
         title: "מה **עשינו** אתמול?",
         lines: ["משהו שכבר קרה – מוסיפים ed"],
@@ -5005,19 +4657,22 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ at the park yesterday.", "הייתי בפארק אתמול", ["was", "were"], 0, "עם I – was"],
+      ["We ___ happy.", "היינו שמחים", ["was", "were"], 1, "עם we – were"],
+      ["___ you at school yesterday?", "היית בבית הספר אתמול?", ["Was", "Were"], 1, "עם you – Were"],
       ["I ___ football yesterday.", "שיחקתי כדורגל אתמול", ["play", "played"], 1, "אתמול – מוסיפים ed"],
       ["He ___ TV last night.", "הוא צפה בטלוויזיה אתמול בלילה", ["watched", "watches"], 0, "בעבר – watched"],
       ["We ___ the movie.", "אהבנו את הסרט", ["liked", "likeed"], 0, "e בסוף – מוסיפים רק d"],
     ],
-    discuss: ["מה עשיתם אתמול? ענו עם פועל שנגמר ב־ed", "ספרו משהו שעשיתם בשבוע שעבר"],
+    discuss: ["איפה הייתם אתמול? ענו עם I was", "מה עשיתם אתמול? ענו עם פועל שנגמר ב־ed"],
   },
   {
     id: "tenses-3",
     topic: "tenses",
     name: "זמנים",
-    part: "didn't / Did",
-    summary: "אומרים לא בעבר עם didn't ושואלים עם Did",
-    vocab: [["didn't", "לא – בעבר"], ["Did", "שואלים בעבר"], ["Yes, I did", "כן"], ["No, I didn't", "לא"], ["homework", "שיעורי בית"]],
+    part: "didn't, Did והזמנים",
+    summary: "אומרים לא בעבר עם didn't ושואלים עם Did – ומבדילים בין כל יום, אתמול ומחר.",
+    vocab: [["didn't", "לא – בעבר"], ["Did", "שואלים בעבר"], ["Yes, I did", "כן"], ["No, I didn't", "לא"], ["homework", "שיעורי בית"], ["every day", "כל יום"], ["yesterday", "אתמול"], ["tomorrow", "מחר"], ["will", "עתיד – יקרה"], ["now", "עכשיו"]],
     slides: [
       {
         title: "**לא** בעבר",
@@ -5066,25 +4721,9 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         table: [["שיחקתי", "I play**ed**"], ["לא שיחקתי", "I **didn't** play"], ["שיחקת?", "**Did** you play?"]],
       },
-    ],
-    quiz: [
-      ["I ___ go to school yesterday.", "לא הלכתי לבית הספר אתמול", ["don't", "didn't"], 1, "אתמול – didn't"],
-      ["___ you see the game?", "ראית את המשחק?", ["Do", "Did"], 1, "בעבר שואלים עם Did"],
-      ["He didn't ___ his homework.", "הוא לא עשה את שיעורי הבית", ["do", "did"], 0, "אחרי didn't – הפועל הרגיל"],
-    ],
-    discuss: ["שאלו חבר: Did you play yesterday", "ספרו משהו שלא עשיתם אתמול – עם I didn't"],
-  },
-  {
-    id: "tenses-4",
-    topic: "tenses",
-    name: "זמנים",
-    part: "הווה, עבר ועתיד",
-    summary: "מתי זה קורה? מבדילים בין כל יום, אתמול ומחר.",
-    vocab: [["every day", "כל יום"], ["yesterday", "אתמול"], ["tomorrow", "מחר"], ["will", "עתיד – יקרה"], ["now", "עכשיו"]],
-    slides: [
       {
         title: "מתי **זה קורה**?",
         table: [["כל יום", "I **play**"], ["אתמול", "I **played**"], ["מחר", "I **will play**"]],
@@ -5150,19 +4789,21 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ go to school yesterday.", "לא הלכתי לבית הספר אתמול", ["don't", "didn't"], 1, "אתמול – didn't"],
+      ["___ you see the game?", "ראית את המשחק?", ["Do", "Did"], 1, "בעבר שואלים עם Did"],
+      ["He didn't ___ his homework.", "הוא לא עשה את שיעורי הבית", ["do", "did"], 0, "אחרי didn't – הפועל הרגיל"],
       ["Yesterday I ___ my room.", "אתמול ניקיתי את החדר", ["clean", "cleaned", "will clean"], 1, "אתמול – עבר"],
       ["Tomorrow we ___ a test.", "מחר יהיה לנו מבחן", ["had", "have", "will have"], 2, "מחר – will"],
       ["He ___ milk every day.", "הוא שותה חלב כל יום", ["drinks", "drank", "will drink"], 0, "כל יום – הווה"],
     ],
-    discuss: ["ספרו משהו שעשיתם אתמול ומשהו שתעשו מחר", "מה אתם עושים כל יום אחרי בית הספר?"],
+    discuss: ["שאלו חבר: Did you play yesterday", "ספרו משהו שעשיתם אתמול ומשהו שתעשו מחר"],
   },
   {
     id: "irregular-verbs-1",
     topic: "irregular-verbs",
     name: "פעלים חשובים",
-    part: "went, ate, saw",
-    summary: "פעלים שבעבר משתנים לגמרי – go, eat, see ועוד",
-    vocab: [["went", "הלך"], ["ate", "אכל"], ["saw", "ראה"], ["had", "היה לו"], ["came", "בא"], ["took", "לקח"], ["made", "הכין"]],
+    summary: "פעלים שבעבר משתנים לגמרי – go, eat, see – ו־can שהופך ל־could.",
+    vocab: [["went", "הלך"], ["ate", "אכל"], ["saw", "ראה"], ["had", "היה לו"], ["came", "בא"], ["took", "לקח"], ["can", "יכול"], ["can't", "לא יכול"], ["could", "יכול – בעבר"], ["couldn't", "לא יכול – בעבר"], ["swim", "לשחות"], ["ride", "לרכוב"]],
     slides: [
       {
         title: "פעלים **מיוחדים**",
@@ -5232,22 +4873,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["He **went** home.", "הוא הלך הביתה"],
         ],
       },
-    ],
-    quiz: [
-      ["Yesterday I ___ to the park.", "אתמול הלכתי לפארק", ["goed", "went", "go"], 1, "go בעבר – went"],
-      ["We ___ pizza last night.", "אכלנו פיצה אתמול בלילה", ["ate", "eated"], 0, "eat בעבר – ate"],
-      ["He ___ a bird.", "הוא ראה ציפור", ["see", "saw"], 1, "see בעבר – saw"],
-    ],
-    discuss: ["לאן הלכתם בחופש? ענו עם I went", "מה אכלתם אתמול? ענו עם I ate"],
-  },
-  {
-    id: "irregular-verbs-2",
-    topic: "irregular-verbs",
-    name: "פעלים חשובים",
-    part: "can / could",
-    summary: "can – יכול עכשיו, could – יכול בעבר",
-    vocab: [["can", "יכול"], ["can't", "לא יכול"], ["could", "יכול – בעבר"], ["couldn't", "לא יכול – בעבר"], ["swim", "לשחות"], ["ride", "לרכוב"]],
-    slides: [
       {
         title: "**can** – יכול",
         lines: ["can ועוד פועל – יכול לעשות"],
@@ -5311,19 +4936,21 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["Yesterday I ___ to the park.", "אתמול הלכתי לפארק", ["goed", "went", "go"], 1, "go בעבר – went"],
+      ["We ___ pizza last night.", "אכלנו פיצה אתמול בלילה", ["ate", "eated"], 0, "eat בעבר – ate"],
+      ["He ___ a bird.", "הוא ראה ציפור", ["see", "saw"], 1, "see בעבר – saw"],
       ["I ___ ride a bike.", "אני יודע לרכוב על אופניים", ["can", "cans"], 0, "can – תמיד בלי s"],
       ["Fish ___ walk.", "דגים לא יכולים ללכת", ["can", "can't"], 1, "לא יכול – can't"],
       ["Last year I ___ swim.", "בשנה שעברה לא ידעתי לשחות", ["can't", "couldn't"], 1, "בעבר – couldn't"],
     ],
-    discuss: ["מה אתם יודעים לעשות? ענו עם I can", "מה לא יכולתם לעשות כשהייתם קטנים? ענו עם I couldn't"],
+    discuss: ["לאן הלכתם בחופש? ענו עם I went", "מה אתם יודעים לעשות? ענו עם I can"],
   },
   {
     id: "past-progressive-1",
     topic: "past-progressive",
     name: "עבר ממושך",
-    part: "מה קרה באותו רגע?",
-    summary: "משהו שנמשך בעבר – was, were ועוד פועל עם ing",
-    vocab: [["was playing", "שיחק (באותו רגע)"], ["were playing", "שיחקו (באותו רגע)"], ["was reading", "קרא (באותו רגע)"], ["wasn't sleeping", "לא ישן (באותו רגע)"], ["Were you", "האם היית"], ["yesterday", "אתמול"]],
+    summary: "משהו שנמשך בעבר – was, were ופועל עם ing – ודבר אחר שקרה באמצע עם when ו־while.",
+    vocab: [["was playing", "שיחק (באותו רגע)"], ["were playing", "שיחקו (באותו רגע)"], ["was reading", "קרא (באותו רגע)"], ["wasn't sleeping", "לא ישן (באותו רגע)"], ["Were you", "האם היית"], ["yesterday", "אתמול"], ["when", "כאשר"], ["while", "בזמן ש"], ["was walking", "הלך (באותו רגע)"], ["came", "בא"], ["saw", "ראה"], ["all morning", "כל הבוקר"]],
     slides: [
       {
         title: "מה קרה **באותו רגע**?",
@@ -5412,25 +5039,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["He **was** eat**ing** lunch.", "הוא אכל ארוחת צהריים"],
         ],
       },
-    ],
-    quiz: [
-      ["I ___ reading at eight.", "קראתי בשמונה", ["was", "were", "am"], 0, "עם I בעבר – was"],
-      ["They ___ playing football.", "הם שיחקו כדורגל", ["was", "were"], 1, "עם they – were"],
-      ["He was ___ lunch.", "הוא אכל ארוחת צהריים", ["eat", "eating", "eats"], 1, "אחרי was – פועל עם ing"],
-      ["We ___ sleeping.", "לא ישנו", ["wasn't", "weren't"], 1, "עם we – weren't"],
-      ["___ you reading?", "קראת?", ["Was", "Were", "Did"], 1, "עם you – Were"],
-      ["Was he eating? Yes, he ___.", "הוא אכל? כן", ["was", "were", "did"], 0, "שואלים עם Was ועונים עם was"],
-    ],
-    discuss: ["מה עשיתם אתמול בשעה שמונה בערב? ענו עם I was", "שאלו חבר: Were you sleeping"],
-  },
-  {
-    id: "past-progressive-2",
-    topic: "past-progressive",
-    name: "עבר ממושך",
-    part: "when ו־while",
-    summary: "דבר אחד נמשך ודבר אחר קרה באמצע – when, while ועבר פשוט",
-    vocab: [["when", "כאשר"], ["while", "בזמן ש"], ["was walking", "הלך (באותו רגע)"], ["came", "בא"], ["saw", "ראה"], ["all morning", "כל הבוקר"]],
-    slides: [
       {
         title: "**שני** דברים בעבר",
         lines: ["דבר אחד נמשך", "ודבר אחר קרה **באמצע**"],
@@ -5516,22 +5124,23 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ reading at eight.", "קראתי בשמונה", ["was", "were", "am"], 0, "עם I בעבר – was"],
+      ["They ___ playing football.", "הם שיחקו כדורגל", ["was", "were"], 1, "עם they – were"],
+      ["He was ___ lunch.", "הוא אכל ארוחת צהריים", ["eat", "eating", "eats"], 1, "אחרי was – פועל עם ing"],
+      ["We ___ sleeping.", "לא ישנו", ["wasn't", "weren't"], 1, "עם we – weren't"],
       ["I was reading ___ Dad came.", "קראתי כשאבא בא", ["when", "while"], 0, "אחרי when – עבר פשוט"],
       ["___ I was walking, I saw a dog.", "בזמן שהלכתי, ראיתי כלב", ["When", "While"], 1, "אחרי while – was ועוד ing"],
       ["We were eating when Dad ___.", "אכלנו כשאבא בא", ["came", "was coming"], 0, "הדבר הקצר – עבר פשוט"],
       ["He ___ when I came.", "הוא ישן כשבאתי", ["slept", "was sleeping"], 1, "הדבר הארוך – was ועוד ing"],
-      ["I ___ football yesterday.", "שיחקתי כדורגל אתמול", ["played", "was play"], 0, "משהו שנגמר – עבר פשוט"],
-      ["I was reading while he ___.", "קראתי בזמן שהוא שיחק", ["were playing", "was playing"], 1, "עם he – was"],
     ],
-    discuss: ["מה עשיתם כשהמורה נכנס לכיתה? ענו עם I was", "ספרו על משהו שראיתם בזמן שהלכתם ברחוב – While I was walking"],
+    discuss: ["מה עשיתם אתמול בשעה שמונה בערב? ענו עם I was", "מה עשיתם כשהמורה נכנס לכיתה? ענו עם I was"],
   },
   {
     id: "used-to-1",
     topic: "used-to",
     name: "פעם – used to",
-    part: "מה היה פעם?",
-    summary: "משהו שהיה קורה פעם והיום כבר לא – used to ועוד פועל",
-    vocab: [["used to", "פעם (היה קורה)"], ["used to play", "פעם שיחק"], ["used to live", "פעם גר"], ["used to go", "פעם הלך"], ["now", "עכשיו"], ["little", "קטן"]],
+    summary: "משהו שהיה קורה פעם והיום כבר לא – used to – וגם לא, שאלות, ומתי בוחרים בעבר פשוט.",
+    vocab: [["used to", "פעם (היה קורה)"], ["used to play", "פעם שיחק"], ["used to live", "פעם גר"], ["used to go", "פעם הלך"], ["now", "עכשיו"], ["little", "קטן"], ["didn't use to", "פעם לא (היה קורה)"], ["Did you use to", "האם פעם"], ["years ago", "לפני שנים"], ["when I was little", "כשהייתי קטן"], ["not anymore", "כבר לא"], ["every summer", "כל קיץ"]],
     slides: [
       {
         title: "**פעם** כן – היום לא",
@@ -5607,30 +5216,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["He **used to** walk to school.", "פעם הוא הלך לבית הספר ברגל"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        lines: ["פעם – used to ועוד פועל רגיל"],
-        examples: [["They **used to** play here.", "פעם הם שיחקו כאן"]],
-      },
-    ],
-    quiz: [
-      ["I ___ live in Haifa.", "פעם גרתי בחיפה", ["used to", "use"], 0, "פעם – used to"],
-      ["He used to ___ to school.", "פעם הוא הלך לבית הספר", ["walks", "walk", "walked"], 1, "אחרי used to – פועל רגיל"],
-      ["They used to ___ here.", "פעם הם שיחקו כאן", ["play", "played"], 0, "בלי ed"],
-      ["We ___ to live in Eilat.", "פעם גרנו באילת", ["used", "use", "using"], 0, "כותבים used to"],
-      ["He used to ___ small.", "פעם הוא היה קטן", ["is", "be", "was"], 1, "אחרי used to – be"],
-      ["Ben ___ to go there.", "פעם בן הלך לשם", ["used", "uses"], 0, "used to – אותו דבר לכולם"],
-    ],
-    discuss: ["מה אהבתם לעשות כשהייתם קטנים? ענו עם I used to", "איפה גרתם פעם? מה השתנה?"],
-  },
-  {
-    id: "used-to-2",
-    topic: "used-to",
-    name: "פעם – used to",
-    part: "לא, שאלות, ועבר פשוט",
-    summary: "didn't use to ו־Did you use to – ומתי בוחרים בעבר פשוט",
-    vocab: [["didn't use to", "פעם לא (היה קורה)"], ["Did you use to", "האם פעם"], ["years ago", "לפני שנים"], ["when I was little", "כשהייתי קטן"], ["not anymore", "כבר לא"], ["every summer", "כל קיץ"]],
-    slides: [
       {
         title: "**לא** – didn't use to",
         lines: ["אחרי didn't – use to בלי d"],
@@ -5712,14 +5297,16 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I ___ live in Haifa.", "פעם גרתי בחיפה", ["used to", "use"], 0, "פעם – used to"],
+      ["He used to ___ to school.", "פעם הוא הלך לבית הספר", ["walks", "walk", "walked"], 1, "אחרי used to – פועל רגיל"],
+      ["They used to ___ here.", "פעם הם שיחקו כאן", ["play", "played"], 0, "בלי ed"],
+      ["We ___ to live in Eilat.", "פעם גרנו באילת", ["used", "use", "using"], 0, "כותבים used to"],
       ["I didn't ___ like fish.", "פעם לא אהבתי דגים", ["used to", "use to"], 1, "אחרי didn't – use to"],
       ["___ you use to play here?", "פעם שיחקת כאן?", ["Did", "Do", "Was"], 0, "שואלים עם Did"],
       ["Did he use to swim? No, he ___.", "פעם הוא שחה? לא", ["didn't", "doesn't"], 0, "שואלים עם Did ועונים עם didn't"],
       ["I ___ to Eilat last year.", "נסעתי לאילת בשנה שעברה", ["used to go", "went"], 1, "קרה פעם אחת – עבר פשוט"],
-      ["I ___ to Eilat every summer.", "פעם נסעתי לאילת כל קיץ", ["used to go", "went to go"], 0, "קרה הרבה פעמים – used to"],
-      ["We ___ use to have a car.", "פעם לא הייתה לנו מכונית", ["didn't", "weren't"], 0, "שלילה – didn't use to"],
     ],
-    discuss: ["שאלו חבר: Did you use to play with toys", "מה לא אהבתם פעם ועכשיו אתם אוהבים? ענו עם I didn't use to"],
+    discuss: ["מה אהבתם לעשות כשהייתם קטנים? ענו עם I used to", "שאלו חבר: Did you use to play with toys"],
   },
   {
     id: "going-to",
@@ -5803,9 +5390,9 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "modals-1",
     topic: "modals",
     name: "חובה, עצה ואפשרות",
-    part: "must / mustn't",
-    summary: "must – חייבים, mustn't – אסור",
-    vocab: [["must", "חייב"], ["mustn't", "אסור"], ["rule", "חוק"], ["helmet", "קסדה"], ["listen", "להקשיב"]],
+    part: "must, should, have to",
+    summary: "must – חייבים, mustn't – אסור, should – כדאי, have to – צריך",
+    vocab: [["must", "חייב"], ["mustn't", "אסור"], ["rule", "חוק"], ["helmet", "קסדה"], ["listen", "להקשיב"], ["should", "כדאי"], ["shouldn't", "לא כדאי"], ["have to", "צריך"], ["has to", "צריך (הוא)"], ["study", "ללמוד"]],
     slides: [
       {
         title: "**must** – חייבים",
@@ -5853,26 +5440,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["We **must** listen.", "אנחנו חייבים להקשיב"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["חייבים", "**must**"], ["אסור", "**mustn't**"]],
-      },
-    ],
-    quiz: [
-      ["You ___ wear a seat belt.", "חייבים לחגור חגורת בטיחות", ["must", "mustn't"], 0, "חייבים – must"],
-      ["You ___ touch the fire.", "אסור לגעת באש", ["must", "mustn't"], 1, "אסור – mustn't"],
-      ["We must ___ quiet.", "אנחנו חייבים להיות בשקט", ["be", "to be"], 0, "אחרי must – בלי to"],
-    ],
-    discuss: ["תנו חוק אחד של הכיתה עם You must", "תנו חוק אחד של הכיתה עם You mustn't"],
-  },
-  {
-    id: "modals-2",
-    topic: "modals",
-    name: "חובה, עצה ואפשרות",
-    part: "should / have to",
-    summary: "should – כדאי, have to – צריך",
-    vocab: [["should", "כדאי"], ["shouldn't", "לא כדאי"], ["have to", "צריך"], ["has to", "צריך (הוא)"], ["study", "ללמוד"]],
-    slides: [
       {
         title: "**should** – כדאי",
         lines: ["נותנים עצה עם should"],
@@ -5928,15 +5495,18 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["חייבים", "**must**"], ["צריך", "**have to**"], ["כדאי", "**should**"]],
+        table: [["חייבים", "**must**"], ["אסור", "**mustn't**"], ["צריך", "**have to**"], ["כדאי", "**should**"]],
       },
     ],
     quiz: [
+      ["You ___ wear a seat belt.", "חייבים לחגור חגורת בטיחות", ["must", "mustn't"], 0, "חייבים – must"],
+      ["You ___ touch the fire.", "אסור לגעת באש", ["must", "mustn't"], 1, "אסור – mustn't"],
+      ["We must ___ quiet.", "אנחנו חייבים להיות בשקט", ["be", "to be"], 0, "אחרי must – בלי to"],
       ["You ___ see a doctor.", "כדאי לך ללכת לרופא", ["should", "shouldn't"], 0, "כדאי – should"],
       ["I ___ to do my homework.", "אני צריך לעשות שיעורי בית", ["have", "has"], 0, "עם I – have to"],
       ["He ___ to wake up early.", "הוא צריך לקום מוקדם", ["have", "has"], 1, "עם he – has to"],
     ],
-    discuss: ["תנו עצה לחבר עם You should", "מה אתם צריכים לעשות היום? ענו עם I have to"],
+    discuss: ["תנו חוק אחד של הכיתה עם You must", "תנו עצה לחבר עם You should"],
   },
   {
     id: "modals-3",
@@ -6031,9 +5601,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "connectors-1",
     topic: "connectors",
     name: "מילות קישור",
-    part: "and, but, because",
-    summary: "מחברים שני משפטים – and, but, because, or",
-    vocab: [["and", "ו־"], ["but", "אבל"], ["because", "כי"], ["or", "או"], ["tired", "עייף"], ["hungry", "רעב"]],
+    summary: "מחברים שני משפטים – and, but, because, or, so, before, after",
+    vocab: [["and", "ו־"], ["but", "אבל"], ["because", "כי"], ["or", "או"], ["tired", "עייף"], ["hungry", "רעב"], ["so", "אז, לכן"], ["before", "לפני"], ["after", "אחרי"], ["first", "קודם"], ["then", "ואז"]],
     slides: [
       {
         title: "מילים **שמחברות**",
@@ -6100,22 +5669,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["I am happy **because** it is Friday.", "אני שמח כי היום שישי"],
         ],
       },
-    ],
-    quiz: [
-      ["I have a cat ___ a dog.", "יש לי חתול וכלב", ["and", "but", "because"], 0, "ו – and"],
-      ["He is small, ___ he is strong.", "הוא קטן, אבל הוא חזק", ["and", "but", "because"], 1, "אבל – but"],
-      ["I eat ___ I am hungry.", "אני אוכל כי אני רעב", ["and", "but", "because"], 2, "כי – because"],
-    ],
-    discuss: ["ספרו שני דברים שאתם אוהבים – עם and", "למה אתם אוהבים את היום האהוב עליכם? ענו עם because"],
-  },
-  {
-    id: "connectors-2",
-    topic: "connectors",
-    name: "מילות קישור",
-    part: "so, before, after",
-    summary: "so – אז, before – לפני, after – אחרי",
-    vocab: [["so", "אז, לכן"], ["before", "לפני"], ["after", "אחרי"], ["first", "קודם"], ["then", "ואז"]],
-    slides: [
       {
         title: "**so** – אז",
         lines: ["so – מה קרה בגלל זה"],
@@ -6175,19 +5728,21 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I have a cat ___ a dog.", "יש לי חתול וכלב", ["and", "but", "because"], 0, "ו – and"],
+      ["He is small, ___ he is strong.", "הוא קטן, אבל הוא חזק", ["and", "but", "because"], 1, "אבל – but"],
+      ["I eat ___ I am hungry.", "אני אוכל כי אני רעב", ["and", "but", "because"], 2, "כי – because"],
       ["It rained, ___ we stayed home.", "ירד גשם, אז נשארנו בבית", ["so", "because"], 0, "אז – so"],
       ["I brush my teeth ___ bed.", "אני מצחצח שיניים לפני השינה", ["before", "after"], 0, "לפני – before"],
       ["We eat dinner ___ we come home.", "אנחנו אוכלים ארוחת ערב אחרי שחוזרים הביתה", ["before", "after"], 1, "אחרי – after"],
     ],
-    discuss: ["מה אתם עושים לפני בית הספר? ענו עם before", "ספרו מה עשיתם אתמול לפי הסדר – עם first ו־then"],
+    discuss: ["ספרו שני דברים שאתם אוהבים – עם and", "מה אתם עושים לפני בית הספר? ענו עם before"],
   },
   {
     id: "comparatives-1",
     topic: "comparatives",
     name: "השוואה",
-    part: "bigger, the biggest",
-    summary: "יותר והכי – מוסיפים er ו־est",
-    vocab: [["bigger", "יותר גדול"], ["the biggest", "הכי גדול"], ["taller", "יותר גבוה"], ["the tallest", "הכי גבוה"], ["than", "מאשר"], ["faster", "יותר מהיר"]],
+    summary: "יותר והכי – מוסיפים er ו־est, במילים ארוכות more ו־most, ומילים מיוחדות כמו good.",
+    vocab: [["bigger", "יותר גדול"], ["the biggest", "הכי גדול"], ["taller", "יותר גבוה"], ["the tallest", "הכי גבוה"], ["than", "מאשר"], ["faster", "יותר מהיר"], ["more", "יותר"], ["the most", "הכי"], ["better", "יותר טוב"], ["the best", "הכי טוב"], ["worse", "יותר גרוע"], ["interesting", "מעניין"]],
     slides: [
       {
         title: "גדול, יותר גדול, **הכי** גדול",
@@ -6246,25 +5801,9 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         table: [["יותר", "**er** + than"], ["הכי", "the + **est**"]],
       },
-    ],
-    quiz: [
-      ["An elephant is ___ than a dog.", "פיל יותר גדול מכלב", ["big", "bigger", "biggest"], 1, "יותר – er"],
-      ["He is the ___ boy in the class.", "הוא הילד הכי גבוה בכיתה", ["taller", "tallest"], 1, "הכי – est"],
-      ["Today is ___ than yesterday.", "היום יותר חם מאתמול", ["hoter", "hotter"], 1, "ב־hot מכפילים את t"],
-    ],
-    discuss: ["השוו בין שני דברים בכיתה עם bigger", "מי הכי מהיר במשפחה שלכם? ענו עם the fastest"],
-  },
-  {
-    id: "comparatives-2",
-    topic: "comparatives",
-    name: "השוואה",
-    part: "more, most, better",
-    summary: "מילים ארוכות עם more ו־most – ומילים מיוחדות כמו good",
-    vocab: [["more", "יותר"], ["the most", "הכי"], ["better", "יותר טוב"], ["the best", "הכי טוב"], ["worse", "יותר גרוע"], ["interesting", "מעניין"]],
-    slides: [
       {
         title: "מילים **ארוכות**",
         lines: ["במילה ארוכה לא מוסיפים er", "אומרים more"],
@@ -6330,19 +5869,22 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["An elephant is ___ than a dog.", "פיל יותר גדול מכלב", ["big", "bigger", "biggest"], 1, "יותר – er"],
+      ["He is the ___ boy in the class.", "הוא הילד הכי גבוה בכיתה", ["taller", "tallest"], 1, "הכי – est"],
+      ["Today is ___ than yesterday.", "היום יותר חם מאתמול", ["hoter", "hotter"], 1, "ב־hot מכפילים את t"],
       ["Math is ___ difficult than art.", "חשבון יותר קשה מאומנות", ["more", "most"], 0, "יותר – more"],
       ["He is the ___ player.", "הוא השחקן הכי טוב", ["good", "better", "best"], 2, "הכי טוב – best"],
       ["This movie is ___ than that one.", "הסרט הזה יותר טוב מההוא", ["gooder", "better"], 1, "good הופך ל־better"],
     ],
-    discuss: ["מה האוכל הכי טוב בעיניכם? ענו עם the best", "מה יותר מעניין – ספר או סרט? ענו עם more interesting"],
+    discuss: ["השוו בין שני דברים בכיתה עם bigger", "מה האוכל הכי טוב בעיניכם? ענו עם the best"],
   },
   {
     id: "quantifiers-1",
     topic: "quantifiers",
     name: "כמויות",
-    part: "some / any",
-    summary: "some – קצת, any – בשאלה ובמשפט עם לא",
-    vocab: [["some", "קצת, כמה"], ["any", "בכלל – בשאלה ובשלילה"], ["milk", "חלב"], ["apples", "תפוחים"], ["bread", "לחם"]],
+    part: "some, any, many, much",
+    summary: "some ו־any – קצת, many ו־much – הרבה: many לדברים שסופרים ו־much לדברים שלא סופרים.",
+    vocab: [["some", "קצת, כמה"], ["any", "בכלל – בשאלה ובשלילה"], ["milk", "חלב"], ["apples", "תפוחים"], ["bread", "לחם"], ["many", "הרבה – סופרים"], ["much", "הרבה – לא סופרים"], ["a lot of", "הרבה"], ["water", "מים"], ["How much", "כמה – לא סופרים"]],
     slides: [
       {
         title: "**some** – קצת",
@@ -6385,26 +5927,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["I don't have **any** apples.", "אין לי תפוחים בכלל"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["משפט רגיל", "**some**"], ["לא", "**any**"], ["שאלה", "**any**"]],
-      },
-    ],
-    quiz: [
-      ["There is ___ milk in the fridge.", "יש קצת חלב במקרר", ["some", "any"], 0, "משפט רגיל – some"],
-      ["I don't have ___ pencils.", "אין לי עפרונות", ["some", "any"], 1, "משפט עם לא – any"],
-      ["Are there ___ cookies?", "יש עוגיות?", ["some", "any"], 1, "שאלה – any"],
-    ],
-    discuss: ["מה יש לכם בתיק? ענו עם some", "שאלו חבר: Do you have any pets"],
-  },
-  {
-    id: "quantifiers-2",
-    topic: "quantifiers",
-    name: "כמויות",
-    part: "many / much / a lot of",
-    summary: "הרבה – many לדברים שסופרים, much לדברים שלא סופרים",
-    vocab: [["many", "הרבה – סופרים"], ["much", "הרבה – לא סופרים"], ["a lot of", "הרבה"], ["water", "מים"], ["How much", "כמה – לא סופרים"]],
-    slides: [
       {
         title: "סופרים או **לא**?",
         lines: ["יש דברים שסופרים – ספר, שני ספרים", "ויש דברים שלא סופרים – מים, חלב"],
@@ -6464,15 +5986,18 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["סופרים", "**many**"], ["לא סופרים", "**much**"], ["הכל", "**a lot of**"]],
+        table: [["משפט רגיל", "**some**"], ["לא", "**any**"], ["שאלה", "**any**"], ["סופרים", "**many**"], ["לא סופרים", "**much**"], ["הכל", "**a lot of**"]],
       },
     ],
     quiz: [
+      ["There is ___ milk in the fridge.", "יש קצת חלב במקרר", ["some", "any"], 0, "משפט רגיל – some"],
+      ["I don't have ___ pencils.", "אין לי עפרונות", ["some", "any"], 1, "משפט עם לא – any"],
+      ["Are there ___ cookies?", "יש עוגיות?", ["some", "any"], 1, "שאלה – any"],
       ["How ___ apples do you want?", "כמה תפוחים אתה רוצה?", ["much", "many"], 1, "תפוחים סופרים – many"],
       ["I don't drink ___ juice.", "אני לא שותה הרבה מיץ", ["much", "many"], 0, "מיץ לא סופרים – much"],
       ["He has ___ toys.", "יש לו הרבה צעצועים", ["a lot of", "much"], 0, "הרבה – a lot of"],
     ],
-    discuss: ["כמה ספרים יש לכם בבית? ענו עם many", "כמה מים אתם שותים ביום? ענו עם a lot of"],
+    discuss: ["מה יש לכם בתיק? ענו עם some", "כמה ספרים יש לכם בבית? ענו עם many"],
   },
   {
     id: "quantifiers-3",
@@ -6566,9 +6091,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "word-building-1",
     topic: "word-building",
     name: "בניית מילים",
-    part: "un, dis, re",
-    summary: "מוסיפים חלק קטן בתחילת המילה – ומקבלים מילה חדשה.",
-    vocab: [["happy", "שמח"], ["unhappy", "לא שמח"], ["like", "לאהוב"], ["dislike", "לא לאהוב"], ["redo", "לעשות שוב"], ["rewrite", "לכתוב שוב"]],
+    summary: "מוסיפים חלק קטן בתחילת המילה או בסופה – un, dis, re, er, ful, less, ly – ומקבלים מילה חדשה.",
+    vocab: [["happy", "שמח"], ["unhappy", "לא שמח"], ["like", "לאהוב"], ["dislike", "לא לאהוב"], ["redo", "לעשות שוב"], ["rewrite", "לכתוב שוב"], ["teacher", "מורה"], ["player", "שחקן"], ["helpful", "עוזר, מועיל"], ["careless", "לא זהיר"], ["slowly", "לאט"], ["quickly", "מהר"]],
     slides: [
       {
         title: "בונים **מילים**",
@@ -6630,26 +6154,6 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
-        table: [["לא", "**un**, **dis**"], ["שוב", "**re**"]],
-      },
-    ],
-    quiz: [
-      ["___happy", "לא שמח", ["un", "dis", "re"], 0, "לא שמח – unhappy"],
-      ["___like", "לא אוהב", ["un", "dis", "re"], 1, "לא אוהב – dislike"],
-      ["___write", "לכתוב שוב", ["un", "dis", "re"], 2, "שוב – re"],
-    ],
-    discuss: ["תנו מילה עם un ואמרו מה היא אומרת", "מה צריך לפעמים לעשות שוב? ענו עם מילה שמתחילה ב־re"],
-  },
-  {
-    id: "word-building-2",
-    topic: "word-building",
-    name: "בניית מילים",
-    part: "er, ful, less, ly",
-    summary: "מוסיפים חלק קטן בסוף המילה – er, ful, less, ly",
-    vocab: [["teacher", "מורה"], ["player", "שחקן"], ["helpful", "עוזר, מועיל"], ["careless", "לא זהיר"], ["slowly", "לאט"], ["quickly", "מהר"]],
-    slides: [
-      {
         title: "**er** – מי שעושה",
         lines: ["פועל ועוד er – מי שעושה את זה"],
         table: [["teach", "teach**er**"], ["play", "play**er**"], ["paint", "paint**er**"]],
@@ -6708,15 +6212,18 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["מי שעושה", "**er**"], ["מלא", "**ful**"], ["בלי", "**less**"], ["איך", "**ly**"]],
+        table: [["לא", "**un**, **dis**"], ["שוב", "**re**"], ["מי שעושה", "**er**"], ["מלא", "**ful**"], ["בלי", "**less**"], ["איך", "**ly**"]],
       },
     ],
     quiz: [
+      ["___happy", "לא שמח", ["un", "dis", "re"], 0, "לא שמח – unhappy"],
+      ["___like", "לא אוהב", ["un", "dis", "re"], 1, "לא אוהב – dislike"],
+      ["___write", "לכתוב שוב", ["un", "dis", "re"], 2, "שוב – re"],
       ["A person who plays is a ___.", "מי שמשחק", ["player", "playful", "playly"], 0, "מי שעושה – er"],
       ["Be ___ on the road!", "תהיו זהירים בכביש", ["careful", "careless"], 0, "זהיר – careful"],
       ["He talks ___.", "הוא מדבר בשקט", ["quiet", "quietly"], 1, "איך – ly"],
     ],
-    discuss: ["תנו מילה עם er – מי עושה מה?", "איך אתם הולכים לבית הספר? ענו עם מילה שנגמרת ב־ly"],
+    discuss: ["תנו מילה עם un ואמרו מה היא אומרת", "תנו מילה עם er – מי עושה מה?"],
   },
 
   /* ---------- Stage 8: advanced sentences ---------- */
@@ -6724,9 +6231,9 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "present-perfect-1",
     topic: "present-perfect",
     name: "הווה מושלם",
-    part: "have / has + פועל",
-    summary: "משהו שכבר קרה – והתוצאה רואים עכשיו: I have finished",
-    vocab: [["have finished", "סיימתי"], ["has cleaned", "ניקה"], ["eaten", "אכל (have eaten)"], ["seen", "ראה (have seen)"], ["gone", "הלך (have gone)"], ["done", "עשה (have done)"], ["haven't", "לא (have not)"]],
+    part: "have / has, ever / never",
+    summary: "משהו שכבר קרה והתוצאה רואים עכשיו – I have finished – ושואלים אם פעם עשית משהו עם Have you ever",
+    vocab: [["have finished", "סיימתי"], ["has cleaned", "ניקה"], ["eaten", "אכל (have eaten)"], ["seen", "ראה (have seen)"], ["gone", "הלך (have gone)"], ["done", "עשה (have done)"], ["ever", "אי פעם"], ["never", "אף פעם"], ["been", "היה (have been)"], ["Have you ever", "האם אי פעם"], ["flown", "טס (have flown)"], ["snow", "שלג"]],
     slides: [
       {
         title: "**כבר** עשיתי",
@@ -6803,27 +6310,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["He **has washed** the car.", "הוא שטף את המכונית"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["אני, אתה, אנחנו", "**have** + פועל"], ["הוא", "**has** + פועל"], ["לא", "**haven't** / **hasn't**"]],
-      },
-    ],
-    quiz: [
-      ["I ___ finished my work.", "סיימתי את העבודה שלי", ["have", "has"], 0, "עם I – have"],
-      ["He ___ cleaned his room.", "הוא ניקה את החדר שלו", ["have", "has"], 1, "עם he – has"],
-      ["We have ___ pizza.", "אכלנו פיצה", ["ate", "eaten", "eat"], 1, "eat – eaten"],
-      ["Dan ___ seen this movie.", "דן לא ראה את הסרט הזה", ["hasn't", "haven't"], 0, "עם Dan – hasn't"],
-    ],
-    discuss: ["מה כבר עשיתם היום? ענו עם I have", "איזה סרט עוד לא ראיתם? ענו עם I haven't seen"],
-  },
-  {
-    id: "present-perfect-2",
-    topic: "present-perfect",
-    name: "הווה מושלם",
-    part: "ever / never",
-    summary: "שואלים אם פעם עשית משהו – Have you ever – ועונים עם never",
-    vocab: [["ever", "אי פעם"], ["never", "אף פעם"], ["been", "היה (have been)"], ["Have you ever", "האם אי פעם"], ["flown", "טס (have flown)"], ["snow", "שלג"]],
-    slides: [
       {
         title: "**פעם** בחיים",
         lines: ["Have you ever – האם אי פעם"],
@@ -6903,16 +6389,20 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["אי פעם?", "**Have** you **ever**"], ["אף פעם", "**never**"], ["הייתי ב־", "**been** to"]],
+        table: [["אני, אתה, אנחנו", "**have** + פועל"], ["הוא", "**has** + פועל"], ["לא", "**haven't** / **hasn't**"], ["אי פעם?", "**Have** you **ever**"], ["אף פעם", "**never**"], ["הייתי ב־", "**been** to"]],
       },
     ],
     quiz: [
+      ["I ___ finished my work.", "סיימתי את העבודה שלי", ["have", "has"], 0, "עם I – have"],
+      ["He ___ cleaned his room.", "הוא ניקה את החדר שלו", ["have", "has"], 1, "עם he – has"],
+      ["We have ___ pizza.", "אכלנו פיצה", ["ate", "eaten", "eat"], 1, "eat – eaten"],
+      ["Dan ___ seen this movie.", "דן לא ראה את הסרט הזה", ["hasn't", "haven't"], 0, "עם Dan – hasn't"],
       ["___ you ever seen a camel?", "ראית פעם גמל?", ["Have", "Has"], 0, "עם you – Have"],
       ["Has he ever ___ to Paris?", "הוא היה פעם בפריז?", ["be", "been", "was"], 1, "be – been"],
       ["I have ___ eaten snails.", "אף פעם לא אכלתי חלזונות", ["ever", "never"], 1, "אף פעם – never"],
       ["Have you ever ridden a horse? Yes, I ___.", "רכבת פעם על סוס? כן", ["did", "has", "have"], 2, "עונים עם have"],
     ],
-    discuss: ["שאלו חבר: Have you ever been to Eilat", "ספרו משהו שאף פעם לא עשיתם – עם I have never"],
+    discuss: ["מה כבר עשיתם היום? ענו עם I have", "שאלו חבר: Have you ever been to Eilat"],
   },
   {
     id: "present-perfect-3",
@@ -7016,9 +6506,9 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "conditionals-1",
     topic: "conditionals",
     name: "משפטי תנאי",
-    part: "If + will",
-    summary: "אם יקרה דבר אחד – יקרה דבר אחר: If it rains, I will stay home",
-    vocab: [["if", "אם"], ["will", "עתיד – יקרה"], ["rain", "גשם, לרדת גשם"], ["stay home", "להישאר בבית"], ["pass", "לעבור (מבחן)"], ["hungry", "רעב"]],
+    part: "If + will ועובדות",
+    summary: "אם יקרה דבר אחד – יקרה דבר אחר: If it rains, I will stay home – ודברים שקורים תמיד: If you heat ice, it melts",
+    vocab: [["if", "אם"], ["will", "עתיד – יקרה"], ["rain", "גשם, לרדת גשם"], ["stay home", "להישאר בבית"], ["pass", "לעבור (מבחן)"], ["hungry", "רעב"], ["heat", "לחמם"], ["melt", "להימס"], ["freeze", "לקפוא"], ["mix", "לערבב"], ["get", "לקבל"], ["when", "כש־"]],
     slides: [
       {
         title: "**if** – אם",
@@ -7089,27 +6579,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["**If** it rains, I will stay home.", "אם ירד גשם, אשאר בבית"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["התנאי", "**If** + הווה"], ["מה יקרה", "**will** + פועל"]],
-      },
-    ],
-    quiz: [
-      ["If it ___, we will play inside.", "אם ירד גשם, נשחק בפנים", ["rains", "will rain"], 0, "אחרי if – הווה"],
-      ["If you eat too much, you ___ sick.", "אם תאכל יותר מדי, תהיה חולה", ["are", "will be"], 1, "מה יקרה – will"],
-      ["If he ___ hungry, he will eat.", "אם הוא יהיה רעב, הוא יאכל", ["will be", "is"], 1, "אחרי if – בלי will"],
-      ["I will help you ___ you call me.", "אעזור לך אם תתקשר אליי", ["if", "will", "is"], 0, "if – אם"],
-    ],
-    discuss: ["מה תעשו אם ירד גשם מחר? ענו עם If it rains", "השלימו בקול: If I have time"],
-  },
-  {
-    id: "conditionals-2",
-    topic: "conditionals",
-    name: "משפטי תנאי",
-    part: "עובדות והרגלים",
-    summary: "דברים שקורים תמיד – הווה בשני החלקים: If you heat ice, it melts",
-    vocab: [["heat", "לחמם"], ["melt", "להימס"], ["freeze", "לקפוא"], ["mix", "לערבב"], ["get", "לקבל"], ["when", "כש־"]],
-    slides: [
       {
         title: "**תמיד** קורה",
         lines: ["יש דברים שקורים כל פעם", "עובדות מהמדע ומהחיים"],
@@ -7185,16 +6654,20 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["תמיד", "**If** + הווה, הווה"], ["פעם אחת", "**If** + הווה, **will**"]],
+        table: [["התנאי", "**If** + הווה"], ["מה יקרה", "**will** + פועל"], ["תמיד", "**If** + הווה, הווה"], ["פעם אחת", "**If** + הווה, **will**"]],
       },
     ],
     quiz: [
+      ["If it ___, we will play inside.", "אם ירד גשם, נשחק בפנים", ["rains", "will rain"], 0, "אחרי if – הווה"],
+      ["If you eat too much, you ___ sick.", "אם תאכל יותר מדי, תהיה חולה", ["are", "will be"], 1, "מה יקרה – will"],
+      ["If he ___ hungry, he will eat.", "אם הוא יהיה רעב, הוא יאכל", ["will be", "is"], 1, "אחרי if – בלי will"],
+      ["I will help you ___ you call me.", "אעזור לך אם תתקשר אליי", ["if", "will", "is"], 0, "if – אם"],
       ["If you heat water, it ___.", "אם מחממים מים, הם רותחים", ["boils", "boiled"], 0, "עובדה – הווה"],
       ["If you mix red and white, you ___ pink.", "אם מערבבים אדום ולבן, מקבלים ורוד", ["got", "get"], 1, "תמיד – הווה"],
       ["If my cat is hungry, it ___.", "כשהחתול שלי רעב, הוא מיילל", ["meow", "meows"], 1, "עם it – s בסוף"],
       ["If it rains tomorrow, I ___ stay home.", "אם ירד גשם מחר, אשאר בבית", ["will", "am"], 0, "מחר – will"],
     ],
-    discuss: ["מה קורה אם שמים קרח בשמש?", "מה אתם עושים כשאתם עייפים? ענו עם If I am tired"],
+    discuss: ["מה תעשו אם ירד גשם מחר? ענו עם If it rains", "מה קורה אם שמים קרח בשמש?"],
   },
   {
     id: "conditionals-3",
@@ -7309,9 +6782,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "passive-1",
     topic: "passive",
     name: "סביל",
-    part: "is / are made",
-    summary: "לא חשוב מי עושה – חשוב מה קורה לדבר: The room is cleaned every day",
-    vocab: [["is made", "עשוי, מיוצר"], ["is cleaned", "מנוקה"], ["is spoken", "מדברים בה"], ["are grown", "מגדלים אותם"], ["made of", "עשוי מ־"], ["wood", "עץ (חומר)"], ["glass", "זכוכית"]],
+    summary: "לא חשוב מי עושה – חשוב מה קורה לדבר: is made, was built – ומי עשה את זה עם by",
+    vocab: [["is made", "עשוי, מיוצר"], ["is cleaned", "מנוקה"], ["is spoken", "מדברים בה"], ["are grown", "מגדלים אותם"], ["made of", "עשוי מ־"], ["wood", "עץ (חומר)"], ["was built", "נבנה"], ["was broken", "נשבר"], ["were eaten", "נאכלו"], ["was written", "נכתב"], ["by", "על ידי"], ["found", "נמצא (was found)"]],
     slides: [
       {
         title: "**מי** עושה?",
@@ -7391,27 +6863,6 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
-        table: [["דבר אחד", "**is** + פועל"], ["הרבה דברים", "**are** + פועל"], ["עשוי מ־", "**made of**"]],
-      },
-    ],
-    quiz: [
-      ["The shop ___ closed on Shabbat.", "החנות סגורה בשבת", ["is", "are"], 0, "דבר אחד – is"],
-      ["Oranges are ___ in Israel.", "מגדלים תפוזים בישראל", ["grow", "grown", "growing"], 1, "grow – grown"],
-      ["Many books ___ written in English.", "הרבה ספרים כתובים באנגלית", ["is", "are"], 1, "הרבה ספרים – are"],
-      ["The chair is made ___ wood.", "הכיסא עשוי מעץ", ["at", "on", "of"], 2, "עשוי מ־ – made of"],
-    ],
-    discuss: ["ממה עשוי השולחן שלכם? ענו עם It is made of", "אילו שפות מדברים בישראל? ענו עם is spoken"],
-  },
-  {
-    id: "passive-2",
-    topic: "passive",
-    name: "סביל",
-    part: "was built / by",
-    summary: "סביל בעבר – was / were – ומי עשה את זה עם by",
-    vocab: [["was built", "נבנה"], ["was broken", "נשבר"], ["were eaten", "נאכלו"], ["was written", "נכתב"], ["by", "על ידי"], ["found", "נמצא (was found)"]],
-    slides: [
-      {
         title: "סביל **בעבר**",
         lines: ["משהו שנעשה פעם – was / were"],
         examples: [["The Temple **was built** in Jerusalem.", "בית המקדש נבנה בירושלים"]],
@@ -7489,24 +6940,27 @@ window.ENGLISH_SHORT_LESSONS = [
       },
       {
         title: "**לסיכום**",
-        table: [["היום", "**is** / **are** + פועל"], ["בעבר", "**was** / **were** + פועל"], ["מי עשה", "**by**"]],
+        table: [["דבר אחד", "**is** + פועל"], ["הרבה דברים", "**are** + פועל"], ["עשוי מ־", "**made of**"], ["היום", "**is** / **are** + פועל"], ["בעבר", "**was** / **were** + פועל"], ["מי עשה", "**by**"]],
       },
     ],
     quiz: [
+      ["The shop ___ closed on Shabbat.", "החנות סגורה בשבת", ["is", "are"], 0, "דבר אחד – is"],
+      ["Oranges are ___ in Israel.", "מגדלים תפוזים בישראל", ["grow", "grown", "growing"], 1, "grow – grown"],
+      ["Many books ___ written in English.", "הרבה ספרים כתובים באנגלית", ["is", "are"], 1, "הרבה ספרים – are"],
+      ["The chair is made ___ wood.", "הכיסא עשוי מעץ", ["at", "on", "of"], 2, "עשוי מ־ – made of"],
       ["The window ___ broken yesterday.", "החלון נשבר אתמול", ["was", "were"], 0, "דבר אחד – was"],
       ["The letters ___ written by Ben.", "המכתבים נכתבו על ידי בן", ["was", "were"], 1, "הרבה מכתבים – were"],
       ["The house was built ___ my grandpa.", "הבית נבנה על ידי סבא שלי", ["of", "by", "from"], 1, "על ידי – by"],
       ["The keys were ___ under the bed.", "המפתחות נמצאו מתחת למיטה", ["found", "find"], 0, "find – found"],
     ],
-    discuss: ["מתי נבנה בית הספר שלכם? ענו עם It was built", "מה נשבר פעם אצלכם בבית? ענו עם was broken"],
+    discuss: ["ממה עשוי השולחן שלכם? ענו עם It is made of", "מתי נבנה בית הספר שלכם? ענו עם It was built"],
   },
   {
     id: "reported-speech-1",
     topic: "reported-speech",
     name: "דיבור עקיף",
-    part: "said that",
-    summary: "מספרים מה מישהו אמר: Dan said that he was tired",
-    vocab: [["said", "אמר"], ["said that", "אמר ש־"], ["was", "היה (am / is)"], ["were", "היו (are)"], ["would", "will אחרי said"], ["tired", "עייף"]],
+    summary: "מספרים מה מישהו אמר – said that – ומספרים על בקשה ועל שאלה עם told ו־asked.",
+    vocab: [["said", "אמר"], ["said that", "אמר ש־"], ["was", "היה (am / is)"], ["were", "היו (are)"], ["would", "will אחרי said"], ["tired", "עייף"], ["told me to", "אמר לי ל־"], ["told me not to", "אמר לי לא ל־"], ["asked", "שאל"], ["asked me if", "שאל אותי אם"], ["where I lived", "איפה אני גר"], ["sit down", "לשבת"]],
     slides: [
       {
         title: "**מה** הוא אמר?",
@@ -7589,27 +7043,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["Dan **said that** he **was** tired.", "דן אמר שהוא עייף"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        table: [["אמר ש־", "**said that**"], ["I", "**he**"], ["am / is", "**was**"], ["will", "**would**"]],
-      },
-    ],
-    quiz: [
-      ["Dan said that he ___ happy.", "דן אמר שהוא שמח", ["is", "was"], 1, "אחרי said – was"],
-      ["Tom: “I am cold.” Tom said that ___ was cold.", "תום אמר שקר לו", ["he", "I"], 0, "I הופך he"],
-      ["Ben said that he ___ pizza.", "בן אמר שהוא אוהב פיצה", ["likes", "liked"], 1, "like – liked"],
-      ["Dad said that he ___ help me.", "אבא אמר שהוא יעזור לי", ["will", "would"], 1, "will – would"],
-    ],
-    discuss: ["מה המורה אמר לכם היום? ענו עם The teacher said that", "טלפון שבור: אחד אומר משפט, והשני מספר עם He said that"],
-  },
-  {
-    id: "reported-speech-2",
-    topic: "reported-speech",
-    name: "דיבור עקיף",
-    part: "told / asked",
-    summary: "מספרים על בקשה ועל שאלה – told me to / asked me",
-    vocab: [["told me to", "אמר לי ל־"], ["told me not to", "אמר לי לא ל־"], ["asked", "שאל"], ["asked me if", "שאל אותי אם"], ["where I lived", "איפה אני גר"], ["sit down", "לשבת"]],
-    slides: [
       {
         title: "**בקשה** – told me to",
         lines: ["told me to – אמר לי ל־"],
@@ -7698,20 +7131,23 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["Dan said that he ___ happy.", "דן אמר שהוא שמח", ["is", "was"], 1, "אחרי said – was"],
+      ["Tom: “I am cold.” Tom said that ___ was cold.", "תום אמר שקר לו", ["he", "I"], 0, "I הופך he"],
+      ["Ben said that he ___ pizza.", "בן אמר שהוא אוהב פיצה", ["likes", "liked"], 1, "like – liked"],
+      ["Dad said that he ___ help me.", "אבא אמר שהוא יעזור לי", ["will", "would"], 1, "will – would"],
       ["The teacher told us ___ be quiet.", "המורה אמר לנו לשמור על שקט", ["to", "that", "if"], 0, "בקשה – told us to"],
       ["Dad told me ___ to run.", "אבא אמר לי לא לרוץ", ["don't", "not"], 1, "לא לעשות – not to"],
       ["He asked me where I ___.", "הוא שאל אותי איפה אני גר", ["do live", "lived"], 1, "סדר רגיל, וזמן עבר"],
       ["Ben asked me ___ I was hungry.", "בן שאל אותי אם אני רעב", ["that", "to", "if"], 2, "שאלת כן או לא – if"],
     ],
-    discuss: ["מה ההורים אמרו לכם לעשות הבוקר? ענו עם They told me to", "שאלו חבר שאלה, ואחר כך ספרו לכיתה עם I asked him"],
+    discuss: ["מה המורה אמר לכם היום? ענו עם The teacher said that", "מה ההורים אמרו לכם לעשות הבוקר? ענו עם They told me to"],
   },
   {
     id: "relative-clauses-1",
     topic: "relative-clauses",
     name: "משפטי זיקה",
-    part: "who – על אנשים",
-    summary: "מחברים שני משפטים בעזרת who – ש על אנשים",
-    vocab: [["who", "ש (על אנשים)"], ["a boy who", "ילד ש"], ["a friend who", "חבר ש"], ["the man who", "האיש ש"], ["lives", "גר"], ["next door", "בבית הסמוך"]],
+    summary: "מחברים שני משפטים – who על אנשים, which על דברים וחיות, ו־that גם וגם.",
+    vocab: [["who", "ש (על אנשים)"], ["a boy who", "ילד ש"], ["a friend who", "חבר ש"], ["the man who", "האיש ש"], ["lives", "גר"], ["next door", "בבית הסמוך"], ["which", "ש (על דברים וחיות)"], ["that", "ש (על הכול)"], ["the book which", "הספר ש"], ["a dog which", "כלב ש"], ["the bus that", "האוטובוס ש"], ["the boy that", "הילד ש"]],
     slides: [
       {
         title: "**שני** משפטים",
@@ -7787,30 +7223,6 @@ window.ENGLISH_SHORT_LESSONS = [
           ["a boy **who** sings", "ילד ששר"],
         ],
       },
-      {
-        title: "**לסיכום**",
-        lines: ["אדם ואחריו who ואז הפועל"],
-        examples: [["The boy **who** sits here is my friend.", "הילד שיושב כאן הוא חבר שלי"]],
-      },
-    ],
-    quiz: [
-      ["I have a friend ___ lives in Haifa.", "יש לי חבר שגר בחיפה", ["who", "he"], 0, "על אדם – who"],
-      ["The man ___ lives here is a doctor.", "האיש שגר כאן הוא רופא", ["he", "who"], 1, "who בא במקום he"],
-      ["I know a boy who ___ swim.", "אני מכיר ילד שיודע לשחות", ["can", "he can"], 0, "אחרי who לא כותבים שוב he"],
-      ["boys who ___ football", "בנים שמשחקים כדורגל", ["plays", "play"], 1, "boys זה רבים – play"],
-      ["a boy who ___", "ילד ששר", ["sings", "sing"], 0, "boy זה יחיד – sings"],
-      ["a teacher ___ helps me", "מורה שעוזר לי", ["who", "they", "he"], 0, "על אדם – who"],
-    ],
-    discuss: ["תארו חבר עם who: I have a friend who", "מי בכיתה? השלימו: The boy who sits next to me"],
-  },
-  {
-    id: "relative-clauses-2",
-    topic: "relative-clauses",
-    name: "משפטי זיקה",
-    part: "which ו־that",
-    summary: "which על דברים וחיות, ו־that גם וגם",
-    vocab: [["which", "ש (על דברים וחיות)"], ["that", "ש (על הכול)"], ["the book which", "הספר ש"], ["a dog which", "כלב ש"], ["the bus that", "האוטובוס ש"], ["the boy that", "הילד ש"]],
-    slides: [
       {
         title: "**which** – על דברים",
         lines: ["המילה which אומרת ש", "והיא באה אחרי דבר או חיה"],
@@ -7889,14 +7301,16 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["I have a friend ___ lives in Haifa.", "יש לי חבר שגר בחיפה", ["who", "he"], 0, "על אדם – who"],
+      ["The man ___ lives here is a doctor.", "האיש שגר כאן הוא רופא", ["he", "who"], 1, "who בא במקום he"],
+      ["I know a boy who ___ swim.", "אני מכיר ילד שיודע לשחות", ["can", "he can"], 0, "אחרי who לא כותבים שוב he"],
+      ["boys who ___ football", "בנים שמשחקים כדורגל", ["plays", "play"], 1, "boys זה רבים – play"],
       ["the book ___ is on the table", "הספר שעל השולחן", ["which", "who"], 0, "על דבר – which"],
       ["I have a dog ___ runs fast.", "יש לי כלב שרץ מהר", ["who", "which"], 1, "על חיה – which"],
       ["the boy ___ sings", "הילד ששר", ["which", "that"], 1, "על אדם – who או that"],
       ["This is the bus ___ goes to Haifa.", "זה האוטובוס שנוסע לחיפה", ["that", "who"], 0, "על דבר – that או which"],
-      ["This is a bag which ___ big.", "זה תיק שהוא גדול", ["is", "it is"], 0, "אחרי which לא כותבים שוב it"],
-      ["The man ___ lives here is kind.", "האיש שגר כאן נחמד", ["which", "who"], 1, "על אדם – who"],
     ],
-    discuss: ["תארו חפץ בכיתה עם which: This is the", "איזה סרט או ספר אתם אוהבים? השלימו: The book that I like"],
+    discuss: ["תארו חבר עם who: I have a friend who", "תארו חפץ בכיתה עם which: This is the"],
   },
 
   /* ---------- Stage 9: reading and understanding ---------- */
@@ -7904,9 +7318,8 @@ window.ENGLISH_SHORT_LESSONS = [
     id: "bagrut-1",
     topic: "bagrut",
     name: "שאלות בגרות",
-    part: "איך קוראים קטע",
-    summary: "איך ניגשים לקטע – קודם השאלות, ואז מחפשים את התשובה בקטע.",
-    vocab: [["question", "שאלה"], ["answer", "תשובה"], ["true", "נכון"], ["false", "לא נכון"], ["text", "קטע"], ["word", "מילה"]],
+    summary: "איך ניגשים לקטע – קודם השאלות ואז מחפשים בקטע – ואיך עונים במשפט מלא ומשלימים משפט.",
+    vocab: [["question", "שאלה"], ["answer", "תשובה"], ["true", "נכון"], ["false", "לא נכון"], ["text", "קטע"], ["word", "מילה"], ["complete", "להשלים"], ["sentence", "משפט"], ["because", "כי"], ["Why", "למה"], ["full answer", "תשובה מלאה"]],
     slides: [
       {
         title: "**קודם** השאלות",
@@ -7955,26 +7368,10 @@ window.ENGLISH_SHORT_LESSONS = [
         ],
       },
       {
-        title: "**לסיכום**",
+        title: "**חזרה** קצרה",
         lines: ["התשובה תמיד נמצאת בקטע"],
         table: [["1", "השאלות"], ["2", "הקטע"], ["3", "התשובה"]],
       },
-    ],
-    quiz: [
-      ["מה עושים קודם?", "", ["קוראים את השאלות", "כותבים תשובה"], 0, "קודם קוראים את השאלות"],
-      ["True = ___", "", ["נכון", "לא נכון"], 0, "True – נכון"],
-      ["False = ___", "", ["נכון", "לא נכון"], 1, "False – לא נכון"],
-    ],
-    discuss: ["מה עוזר לכם להבין קטע באנגלית?", "למה כדאי לקרוא קודם את השאלות?"],
-  },
-  {
-    id: "bagrut-2",
-    topic: "bagrut",
-    name: "שאלות בגרות",
-    part: "שאלה פתוחה ומשלימים משפט",
-    summary: "עונים במשפט מלא ומשלימים משפט לפי הקטע.",
-    vocab: [["complete", "להשלים"], ["sentence", "משפט"], ["because", "כי"], ["Why", "למה"], ["full answer", "תשובה מלאה"]],
-    slides: [
       {
         title: "שאלה **פתוחה**",
         lines: ["כותבים את התשובה במילים", "ומשתמשים במילים מהשאלה"],
@@ -8028,10 +7425,55 @@ window.ENGLISH_SHORT_LESSONS = [
       },
     ],
     quiz: [
+      ["מה עושים קודם?", "", ["קוראים את השאלות", "כותבים תשובה"], 0, "קודם קוראים את השאלות"],
+      ["True = ___", "", ["נכון", "לא נכון"], 0, "True – נכון"],
+      ["False = ___", "", ["נכון", "לא נכון"], 1, "False – לא נכון"],
       ["Why is Ben sad? Ben is sad ___ his dog is sick.", "", ["because", "but", "so"], 0, "על Why עונים עם because"],
       ["איך עונים על שאלה פתוחה?", "", ["במשפט מלא", "במילה אחת"], 0, "תמיד עונים במשפט מלא"],
       ["מאיפה לוקחים את התשובה?", "", ["מהקטע", "מהראש"], 0, "התשובה תמיד נמצאת בקטע"],
     ],
-    discuss: ["ענו במשפט מלא: What is your favorite food", "ענו במשפט מלא עם because על השאלה Why do you like summer"],
+    discuss: ["מה עוזר לכם להבין קטע באנגלית?", "ענו במשפט מלא: What is your favorite food"],
   },
 ];
+
+/* Lessons that were merged into the lesson before them (2026-11-22: two short
+   lessons became one): old id → the lesson it is part of now. Old links,
+   saved lessons and lesson tasks open the merged lesson. */
+window.ENGLISH_LESSON_MERGED = {
+  "letters-a-g": "letters-1",
+  "letters-o-t": "letters-h-n",
+  "letters-2": "letters-u-z",
+  "phonics-2": "phonics-1",
+  "tobe-2": "tobe-1",
+  "articles-2": "articles-1",
+  "plurals-2": "plurals-1",
+  "possessives-2": "possessives-1",
+  "have-has-2": "have-has-1",
+  "there-is-2": "there-is-1",
+  "prepositions-2": "prepositions-1",
+  "verbs-2": "verbs-1",
+  "object-pronouns-2": "object-pronouns-1",
+  "negation-2": "negation-1",
+  "questions-2": "questions-1",
+  "calendar-2": "calendar-1",
+  "present-simple-2": "present-simple-1",
+  "progressive-2": "progressive-1",
+  "past-simple-2": "past-simple-1",
+  "future-simple-2": "future-simple-1",
+  "tenses-2": "tenses-1",
+  "tenses-4": "tenses-3",
+  "irregular-verbs-2": "irregular-verbs-1",
+  "past-progressive-2": "past-progressive-1",
+  "used-to-2": "used-to-1",
+  "modals-2": "modals-1",
+  "connectors-2": "connectors-1",
+  "comparatives-2": "comparatives-1",
+  "quantifiers-2": "quantifiers-1",
+  "word-building-2": "word-building-1",
+  "present-perfect-2": "present-perfect-1",
+  "conditionals-2": "conditionals-1",
+  "passive-2": "passive-1",
+  "reported-speech-2": "reported-speech-1",
+  "relative-clauses-2": "relative-clauses-1",
+  "bagrut-2": "bagrut-1",
+};

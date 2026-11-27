@@ -1,7 +1,7 @@
 /* Personal room (/my-room) — "שלום" + a bell with the students' updates
-   (a task done, a request for help), then one equal tile per category:
-   students, recent activity, saved lessons and games. A tile opens its
-   list in a dialog. */
+   (a task done, a request for help, joining a class), then one equal tile
+   per category: students, the teacher's classes, recent activity, saved
+   lessons and games. A tile opens its list in a dialog. */
 
 (function () {
   const catalog = window.GAMES_CATALOG;
@@ -20,6 +20,9 @@
 
   const HOUR = 3600000;
   const DAY = 86400000;
+  // A due date on a class post is off for now (as on the student's page);
+  // true brings the "עד מתי?" field back.
+  const DUE_DATES = false;
 
   const PREVIEW_SAVED = [
     {
@@ -54,6 +57,19 @@
         { exerciseTitle: "Present Simple — השלמה", assignedAt: new Date(Date.now() - DAY - 2 * HOUR).toISOString(), doneAt: null },
       ],
       help: [{ text: "לא הבנתי מתי מוסיפים s", at: new Date(Date.now() - 2 * HOUR).toISOString() }],
+      classIds: ["preview-class"],
+      classJoinedAt: { "preview-class": new Date(Date.now() - 5 * HOUR).toISOString() },
+      classDone: { "preview-post": new Date(Date.now() - HOUR).toISOString() },
+      best: {
+        "greetings/greetings-when": {
+          score: 8,
+          total: 10,
+          lastScore: 8,
+          lastTotal: 10,
+          bestAt: new Date(Date.now() - 30 * 60000).toISOString(),
+          lastAt: new Date(Date.now() - 30 * 60000).toISOString(),
+        },
+      },
     },
     {
       id: "preview-yosef",
@@ -63,6 +79,33 @@
         { exerciseTitle: "מילות שאלה", assignedAt: new Date(Date.now() - 3 * DAY).toISOString(), doneAt: new Date(Date.now() - DAY - 5 * HOUR).toISOString(), score: 7, total: 10 },
       ],
       help: [],
+      classIds: ["preview-class"],
+    },
+    { id: "preview-ariel", name: "אריאל", createdAt: new Date(Date.now() - 2 * DAY).toISOString(), homework: [], help: [] },
+    { id: "preview-noam", name: "נועם", createdAt: new Date(Date.now() - 2 * DAY).toISOString(), homework: [], help: [] },
+  ];
+
+  const PREVIEW_CLASSES = [
+    {
+      id: "preview-class",
+      name: "ו׳2",
+      code: "K7M2QX",
+      open: true,
+      posts: [
+        { id: "preview-note", kind: "note", title: "", text: "שלום לכולם!\nברוכים הבאים לכיתה.", dueDate: "", link: "", at: new Date(Date.now() - DAY - 2 * HOUR).toISOString() },
+        { id: "preview-guide", kind: "guide", title: "", text: "איך מתרגלים באתר:\nנכנסים לקישור האישי ובוחרים תרגול.", dueDate: "", link: "/services/english", at: new Date(Date.now() - DAY - HOUR).toISOString() },
+        { id: "preview-post", kind: "task", title: "", text: "לתרגל את Present Simple\nועונים על כל השאלות.", dueDate: new Date(Date.now() + DAY).toLocaleDateString("en-CA"), link: "", at: new Date(Date.now() - 3 * HOUR).toISOString() },
+        {
+          id: "preview-exercise",
+          kind: "exercise",
+          title: "",
+          text: "עושים עד מחר בבוקר",
+          task: { topicId: "greetings", exerciseId: "greetings-when", topicTitle: "ברכות והיכרות", exerciseTitle: "מה אומרים?", type: "choice" },
+          dueDate: "",
+          link: "",
+          at: new Date(Date.now() - 2 * HOUR).toISOString(),
+        },
+      ],
     },
   ];
 
@@ -76,6 +119,7 @@
   let lessonHistory = [];
   let students = [];
   let myLessons = [];
+  let classes = [];
 
   // Saved lessons are opened from the lessons library (?lesson= opens the slides).
   const LESSON_OPEN_PATH = "/services/ready-lessons";
@@ -93,8 +137,11 @@
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     chart: '<path d="M3 20h18M6 16v-4M11 16V6M16 16v-7"/>',
+    pulse: '<path d="M3 12h4l3-7 4 14 3-7h4"/>',
     heart: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z"/>',
     create: '<path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>',
+    board: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20l1.5-4M16 20l-1.5-4M7 8.5h6M7 11.5h4"/>',
+    calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h2M14 14h2M8 17.5h2"/>',
     misc: '<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
   };
 
@@ -280,8 +327,29 @@
 
   function studentUpdates() {
     const list = [];
+    const classById = new Map(classes.map((c) => [c.id, c]));
+    const postById = new Map(classes.flatMap((c) => c.posts.map((p) => [p.id, p])));
     students.forEach((s) => {
       const href = `/admin/students#${encodeURIComponent(s.id)}`;
+      // Joined one of the classes, and a class task marked done.
+      (s.classIds || []).forEach((id) => {
+        const c = classById.get(id);
+        const at = s.classJoinedAt?.[id];
+        if (c && at) list.push({ at: ms(at), icon: "student", who: s.name, verb: "הצטרף לכיתה", title: c.name, href });
+      });
+      Object.entries(s.classDone || {}).forEach(([id, at]) => {
+        const post = postById.get(id);
+        if (post) list.push({ at: ms(at), icon: "done", who: s.name, verb: `סיים ${POST_KINDS[post.kind] || "משימה"}`, title: postLabel(post), href });
+      });
+      // An exercise sent to one of the student's classes, solved.
+      (s.classIds || []).forEach((id) => {
+        (classById.get(id)?.posts || []).forEach((p) => {
+          const done = p.kind === "exercise" && taskDone(s, p);
+          if (!done) return;
+          const verb = p.task.type === "lesson" ? "צפה בשיעור מהכיתה" : "פתר תרגיל מהכיתה";
+          list.push({ at: ms(done.doneAt), icon: "done", who: s.name, verb, title: p.task.exerciseTitle, score: done.total ? `${done.score}/${done.total}` : "", href });
+        });
+      });
       (s.homework || []).forEach((hw) => {
         if (!hw.doneAt) return;
         const score = hw.total ? `${hw.score}/${hw.total}` : "";
@@ -726,22 +794,914 @@
     dialog.scrollTop = keepScroll ? scroll : 0;
   }
 
-  // "שונות": recent activity and saved lessons, one under the other.
+  /* ── "הכיתות שלי": the teacher opens a class and sends its join link
+     (/c/<code>); each student who opens it writes their name and gets a
+     file in the class (lib/classes.js). The updates the teacher writes to
+     the class — a message, a task, an assignment, a guide — show on the
+     students' pages, and the teacher sees who finished each task. The
+     students in a class are the student files with its id in `classIds`. ── */
+
+  const POST_KINDS = { note: "הודעה", exercise: "תרגיל", task: "משימה", assignment: "מטלה", guide: "הדרכה" };
+  const DONE_KINDS = ["task", "assignment"];
+
+  // An exercise sent to the class (kind "exercise": an exercise or a lesson
+  // from the English library, `task`) is done once the student solved it —
+  // or saw the lesson — after it was sent. Same as classTaskDone in
+  // lib/student-progress.js.
+  function taskDone(s, p) {
+    const task = p.task;
+    if (!task) return null;
+    if (task.type === "lesson") {
+      const seen = s.lessonsSeen?.[task.exerciseId.replace(/^lesson-/, "")];
+      return seen && seen >= p.at ? { doneAt: seen } : null;
+    }
+    const entry = s.best?.[`${task.topicId}/${task.exerciseId}`];
+    if (!entry?.lastAt || entry.lastAt < p.at) return null;
+    const best = entry.bestAt && entry.bestAt >= p.at;
+    return { doneAt: entry.lastAt, score: best ? entry.score : entry.lastScore, total: best ? entry.total : entry.lastTotal };
+  }
+
+  // The teacher opens the exercise as it is, to see it.
+  function taskUrl(task) {
+    return `/services/english#${encodeURIComponent(task.topicId)}/${encodeURIComponent(task.exerciseId)}`;
+  }
+
+  async function classesApi(method = "GET", path = "", body) {
+    const token = await window.FirebaseApp?.auth?.currentUser?.getIdToken().catch(() => "");
+    if (!token) throw new Error("צריך להתחבר כדי לנהל כיתות");
+    const res = await fetch(`/api/my-classes${path}`, {
+      method,
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || "משהו השתבש — נסו שוב");
+    return data;
+  }
+
+  async function getClasses() {
+    const token = await window.FirebaseApp?.auth?.currentUser?.getIdToken().catch(() => "");
+    if (!token) return [];
+    return (await classesApi()).classes || [];
+  }
+
+  function classMembers(c) {
+    return students.filter((s) => (s.classIds || []).includes(c.id)).sort((a, b) => a.name.localeCompare(b.name, "he"));
+  }
+
+  function studentsCount(n) {
+    if (!n) return "עוד אין תלמידים";
+    return n === 1 ? "תלמיד אחד" : `${n} תלמידים`;
+  }
+
+  function joinUrl(c) {
+    return `${location.origin}/c/${encodeURIComponent(c.code)}`;
+  }
+
+  function joinWhatsappUrl(c) {
+    return `https://wa.me/?text=${encodeURIComponent(`הצטרפו לכיתה "${c.name}" ב־Pleyi:\n${joinUrl(c)}`)}`;
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.cssText = "position:fixed;top:0;opacity:0";
+      document.body.appendChild(area);
+      area.select();
+      const ok = document.execCommand("copy");
+      area.remove();
+      return ok;
+    }
+  }
+
+  function fmtDue(day) {
+    const [y, m, d] = day.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" });
+  }
+
+  function classRowHtml(c) {
+    return `
+      <div class="room-note room-mine">
+        <span class="room-act-icon">${icon("board")}</span>
+        <span class="room-note-main">
+          <span class="room-note-line room-note-title"><bdi>${escapeHtml(c.name)}</bdi></span>
+          <span class="room-note-line room-note-verb">${escapeHtml(studentsCount(classMembers(c).length))}</span>
+        </span>
+        <button type="button" class="room-list-play" data-open-class="${escapeHtml(c.id)}">כניסה</button>
+      </div>`;
+  }
+
+  // A new class = a yellow rectangle like a class's, with a plus. A tap
+  // turns it into the name field and the "פתיחת כיתה" button.
+  function classesHtml() {
+    return `
+      <div class="room-notes">
+        <button type="button" class="room-note room-class-add" data-class-add>
+          <span class="room-act-icon">${icon("created")}</span>
+          <span class="room-note-main">
+            <span class="room-note-line room-note-title">הוספת כיתה חדשה</span>
+          </span>
+        </button>
+        <form class="room-note room-class-add room-class-add-form" id="roomClassForm" hidden>
+          <label class="room-create-label" for="roomClassName">איך קוראים לכיתה?</label>
+          <input type="text" class="room-create-input" id="roomClassName" name="name" maxlength="60" required placeholder="למשל: ו׳2 או קבוצת אנגלית" />
+          <button type="submit" class="room-create-go">פתיחת כיתה</button>
+        </form>
+        ${classes.map(classRowHtml).join("")}
+      </div>
+      ${classes.length ? "" : `<p class="room-box-empty">עוד אין כיתות.<br>פותחים כיתה ושולחים לתלמידים את הקישור.<br>כל עדכון שכותבים לכיתה מגיע אליהם.</p>`}`;
+  }
+
+  function bindClasses(container) {
+    const add = container.querySelector("[data-class-add]");
+    const form = container.querySelector("#roomClassForm");
+    add?.addEventListener("click", () => {
+      add.hidden = true;
+      form.hidden = false;
+      // A fresh list arriving now must not wipe the name being typed.
+      container.dataset.dirty = "1";
+      form.elements.name.focus();
+    });
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const go = form.querySelector(".room-create-go");
+      go.disabled = true;
+      try {
+        const data = await classesApi("POST", "", { name: form.elements.name.value, teacherName: currentUser?.name || "" });
+        classes = [data.class, ...classes];
+        openClass(data.class.id);
+        showToast("הכיתה נפתחה!");
+      } catch (err) {
+        showToast(err.message);
+        go.disabled = false;
+      }
+    });
+    container.querySelectorAll("[data-open-class]").forEach((btn) => {
+      btn.addEventListener("click", () => openClass(btn.dataset.openClass));
+    });
+  }
+
+  /* ── The class is a chat, as in a WhatsApp group where only the teacher
+     writes (class-chat.css): on top the class's name — a tap opens its
+     details (who joined, the join switch, rename / new link / delete) — and
+     the buttons that add students from the teacher's list and copy or
+     share the join link; the messages, oldest on top; at the bottom what to
+     send (הודעה / תרגיל / משימה / מטלה / הדרכה), the words and "+" for a
+     due date and a link. A "תרגיל" is picked from the English library and
+     every student in the class opens it from the chat. The details, the
+     students to add and the library take the messages' place (panes). ── */
+
+  const KIND_HINTS = {
+    note: "כתבו הודעה לכיתה",
+    exercise: "מילה לכיתה (לא חובה)",
+    task: "מה המשימה?",
+    assignment: "מה צריך להגיש?",
+    guide: "כתבו את ההדרכה",
+  };
+
+  const CHAT_ICONS = {
+    back: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6h.01"/>',
+    link: '<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/>',
+    share: '<circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.3 10.7 7.4-4.3M8.3 13.3l7.4 4.3"/>',
+    send: '<path d="M21 11.5 3 3l6.5 18 3-7.5L21 11.5Z"/><path d="M12.5 13.5 3 3"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    ticks: '<path d="m2 12.5 4.5 4.5L15 8.5"/><path d="m10.5 16.5.5.5 8.5-8.5"/>',
+    calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    addUser: '<circle cx="9.5" cy="8" r="3.8"/><path d="M2.5 20.5a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/>',
+    books: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+    pencil: '<path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>',
+  };
+
+  function chatIcon(name) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CHAT_ICONS[name]}</svg>`;
+  }
+
+  const chatDay = (iso) => new Date(iso).toLocaleDateString("en-CA", { timeZone: "Asia/Jerusalem" });
+
+  // The day chip between the messages.
+  function chatDayLabel(iso) {
+    if (chatDay(iso) === chatDay(new Date().toISOString())) return "היום";
+    if (chatDay(iso) === chatDay(new Date(Date.now() - DAY).toISOString())) return "אתמול";
+    return new Date(iso).toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long", timeZone: "Asia/Jerusalem" });
+  }
+
+  function chatTime(iso) {
+    return new Date(iso).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jerusalem" });
+  }
+
+  // Older updates had a title; a chat message is just its words.
+  function postLabel(p) {
+    if (p.kind === "exercise" && p.task) return p.task.exerciseTitle;
+    return p.title || String(p.text || "").split("\n")[0].slice(0, 80);
+  }
+
+  const TYPE_LABELS = {
+    choice: "בחירה",
+    truefalse: "נכון / לא נכון",
+    write: "כתיבה",
+    order: "סידור משפט",
+    picture: "תמונות",
+    "pick-picture": "תמונות",
+    listen: "האזנה",
+    match: "התאמה",
+    reading: "קטע קריאה",
+    "find-error": "מציאת טעות",
+    "sentence-choice": "בחירת משפט",
+    letters: "בניית מילה",
+    dictation: "הכתבה",
+    translate: "תרגום",
+    exam: "מבחן הבנת הנקרא",
+    speak: "דיבור",
+    chat: "שיחה עם הבוט",
+  };
+
+  // The exercise in a message, or the one picked in the composer: its name,
+  // and its topic under it.
+  function taskCardHtml(task, tag = "span", attrs = "") {
+    const lesson = task.type === "lesson";
+    const type = !lesson && TYPE_LABELS[task.type] ? ` · ${TYPE_LABELS[task.type]}` : "";
+    return `
+      <${tag} class="cc-task"${attrs}>
+        <span class="cc-task-icon">${chatIcon(lesson ? "books" : "pencil")}</span>
+        <span class="cc-task-text">
+          <b><bdi>${escapeHtml(task.exerciseTitle)}</bdi></b>
+          <small><bdi>${escapeHtml(task.topicTitle)}</bdi>${escapeHtml(type)}</small>
+        </span>
+      </${tag}>`;
+  }
+
+  // One message sent; on a task, an assignment or an exercise, who finished
+  // it (from the class's files) — on an exercise with each one's score. The
+  // first of a day has the bubble's tail.
+  function chatMsgHtml(p, members, tail) {
+    const exercise = p.kind === "exercise" && p.task;
+    const doneOf = (s) => (exercise ? taskDone(s, p) : s.classDone?.[p.id] ? {} : null);
+    const tracked = (exercise || DONE_KINDS.includes(p.kind)) && members.length;
+    const rows = tracked ? members.map((s) => ({ s, done: doneOf(s) })) : [];
+    // Who finished first, by name; then who didn't yet.
+    rows.sort((a, b) => Number(!a.done) - Number(!b.done));
+    const names = rows
+      .map(({ s, done }) => {
+        const score = done?.total ? ` <span dir="ltr">${done.score}/${done.total}</span>` : "";
+        return `<li${done ? ' class="is-done"' : ""}>${done ? icon("done") : ""}<bdi>${escapeHtml(s.name)}</bdi>${score}</li>`;
+      })
+      .join("");
+    const doneCount = rows.filter((r) => r.done).length;
+    const verb = exercise ? (p.task.type === "lesson" ? "צפו" : "פתרו") : "סיימו";
+    return `
+      <li class="cc-msg is-out is-${escapeHtml(p.kind)}${tail ? " has-tail" : ""}">
+        ${p.kind !== "note" ? `<span class="cc-kind">${escapeHtml(POST_KINDS[p.kind] || POST_KINDS.note)}</span>` : ""}
+        ${exercise ? taskCardHtml(p.task, "a", ` href="${escapeHtml(taskUrl(p.task))}" target="_blank" rel="noopener" title="פתיחת התרגיל"`) : ""}
+        ${p.title ? `<p class="cc-title"><bdi>${escapeHtml(p.title)}</bdi></p>` : ""}
+        ${p.text ? `<p class="cc-text">${escapeHtml(p.text)}</p>` : ""}
+        ${DUE_DATES && p.dueDate ? `<span class="cc-due">${chatIcon("calendar")}עד ${escapeHtml(fmtDue(p.dueDate))}</span>` : ""}
+        ${p.link ? `<a class="cc-link" href="${escapeHtml(p.link)}" target="_blank" rel="noopener noreferrer">${chatIcon("link")}<bdi dir="ltr">${escapeHtml(p.link)}</bdi></a>` : ""}
+        ${tracked ? `<details class="cc-done"><summary>${verb} ${doneCount} מתוך ${members.length}</summary><ul>${names}</ul></details>` : ""}
+        <span class="cc-meta">
+          <button type="button" class="cc-del" data-delete-post="${escapeHtml(p.id)}" aria-label="מחיקת ההודעה" title="מחיקת ההודעה">${TRASH_ICON_SVG}</button>
+          <span class="cc-time">${escapeHtml(chatTime(p.at))}</span>
+          <span class="cc-ticks" role="img" aria-label="נשלח">${chatIcon("ticks")}</span>
+        </span>
+      </li>`;
+  }
+
+  function chatLogHtml(c, members) {
+    const notes = [];
+    if (!members.length) {
+      notes.push(`
+        <li class="cc-notice">
+          עוד אין תלמידים בכיתה.<br>מוסיפים את התלמידים שלך מהרשימה,<br>או שולחים להם את הקישור בכפתורים למעלה.
+          <button type="button" class="cc-invite-btn cc-notice-btn" data-class-add-students>${chatIcon("addUser")}הוספת התלמידים שלי</button>
+        </li>`);
+    }
+    if (!c.posts.length) notes.push(`<li class="cc-notice">בוחרים למטה מה שולחים: הודעה, תרגיל, משימה, מטלה או הדרכה.<br>כל מה ששולחים כאן מגיע לכל התלמידים בכיתה.</li>`);
+    let lastDay = "";
+    const messages = [...c.posts]
+      .sort((a, b) => a.at.localeCompare(b.at))
+      .map((p) => {
+        const newDay = chatDay(p.at) !== lastDay;
+        lastDay = chatDay(p.at);
+        return `${newDay ? `<li class="cc-day"><span>${escapeHtml(chatDayLabel(p.at))}</span></li>` : ""}${chatMsgHtml(p, members, newDay)}`;
+      });
+    return notes.join("") + messages.join("");
+  }
+
+  function memberRowHtml(s) {
+    return `
+      <div class="room-note room-mine">
+        <span class="room-act-icon">${icon("student")}</span>
+        <a class="room-note-main room-member-link" href="/admin/students#${encodeURIComponent(s.id)}">
+          <span class="room-note-line room-note-title"><bdi>${escapeHtml(s.name)}</bdi></span>
+        </a>
+        <button type="button" class="room-list-delete" data-remove-member="${escapeHtml(s.id)}" aria-label="הוצאה מהכיתה" title="הוצאה מהכיתה">${REMOVE_ICON_SVG}</button>
+      </div>`;
+  }
+
+  /* "הוספת תלמידים": the teacher's student files not in the class yet, all
+     ticked, to add in one tap. */
+  function notInClass(c) {
+    return students.filter((s) => !(s.classIds || []).includes(c.id)).sort((a, b) => a.name.localeCompare(b.name, "he"));
+  }
+
+  function addCountText(n) {
+    if (!n) return "בחרו תלמידים";
+    return n === 1 ? "הוספת תלמיד אחד לכיתה" : `הוספת ${n} תלמידים לכיתה`;
+  }
+
+  function addPaneHtml(c) {
+    const others = notInClass(c);
+    const head = `<h3 class="room-mine-head"><span class="room-key">הוספת תלמידים לכיתה</span></h3>`;
+    if (!students.length) {
+      return `${head}<p class="room-box-empty">עוד אין לך תלמידים ברשימה.<br>מוסיפים תלמידים ב<a href="/admin/students">ניהול תלמידים</a>,<br>או שולחים להם את הקישור לכיתה.</p>`;
+    }
+    if (!others.length) return `${head}<p class="room-box-empty">כל התלמידים שלך כבר בכיתה.</p>`;
+    const rows = others
+      .map(
+        (s) => `
+          <label class="room-note room-mine cc-add-row">
+            <input type="checkbox" class="cc-add-check" value="${escapeHtml(s.id)}" checked />
+            <span class="room-note-main"><span class="room-note-line room-note-title"><bdi>${escapeHtml(s.name)}</bdi></span></span>
+          </label>`
+      )
+      .join("");
+    return `
+      ${head}
+      <p class="room-edit-tip">התלמידים המסומנים ייכנסו לכיתה.</p>
+      <p class="room-edit-tip">הם יראו את כל מה ששולחים בכיתה, בדף האישי שלהם.</p>
+      <button type="button" class="room-edit-small cc-add-all" data-add-all>ביטול הבחירה</button>
+      <div class="room-notes cc-add-list">${rows}</div>
+      <button type="button" class="room-create-go cc-add-go" data-add-go>${addCountText(others.length)}</button>`;
+  }
+
+  function classViewHtml(c) {
+    const members = classMembers(c);
+    const kinds = Object.entries(POST_KINDS)
+      .map(
+        ([id, label], i) => `
+          <label class="cc-pick is-${id}">
+            <input type="radio" name="kind" value="${id}"${i === 0 ? " checked" : ""} />
+            <span>${label}</span>
+          </label>`
+      )
+      .join("");
+    return `
+      <div class="class-chat room-chat">
+        <header class="cc-head">
+          <button type="button" class="cc-head-btn" data-class-back aria-label="חזרה" title="חזרה">${chatIcon("back")}</button>
+          <button type="button" class="cc-head-main" data-class-info>
+            <span class="cc-avatar" aria-hidden="true">${icon("board")}</span>
+            <span class="cc-head-text">
+              <b class="cc-name" id="roomBoxTitle"><bdi>${escapeHtml(c.name)}</bdi></b>
+              <span class="cc-sub">${escapeHtml(studentsCount(members.length))}</span>
+            </span>
+          </button>
+          <button type="button" class="cc-head-btn" data-class-info aria-pressed="false" aria-label="פרטי הכיתה" title="פרטי הכיתה">${chatIcon("info")}</button>
+          <button type="button" class="room-dlg-close" data-close aria-label="סגירה">${icon("close")}</button>
+        </header>
+        <div class="cc-invite">
+          <button type="button" class="cc-invite-btn" data-class-add-students>${chatIcon("addUser")}הוספת תלמידים</button>
+          <button type="button" class="cc-invite-btn" data-class-copy>${chatIcon("link")}העתקת הקישור</button>
+          <button type="button" class="cc-invite-btn" data-class-share>${chatIcon("share")}שיתוף הזמנה</button>
+        </div>
+        <ol class="cc-log" aria-label="ההודעות לכיתה">${chatLogHtml(c, members)}</ol>
+        <form class="cc-compose" id="roomPostForm">
+          <div class="cc-kinds" role="radiogroup" aria-label="מה שולחים?">
+            <span class="cc-kinds-label" aria-hidden="true">שולחים:</span>
+            ${kinds}
+          </div>
+          <div class="cc-task-pick" hidden></div>
+          <div class="cc-extra" hidden>
+            ${DUE_DATES ? `<label class="cc-field"><span>עד מתי?</span><input type="date" class="cc-field-input" name="dueDate" /></label>` : ""}
+            <label class="cc-field"><span>קישור</span><input type="text" class="cc-field-input" name="link" maxlength="500" dir="ltr" inputmode="url" placeholder="https://" /></label>
+          </div>
+          <div class="cc-row">
+            <button type="button" class="cc-attach" data-chat-extra aria-expanded="false" aria-label="${DUE_DATES ? "הוספת תאריך או קישור" : "הוספת קישור"}" title="${DUE_DATES ? "תאריך או קישור" : "קישור"}">${chatIcon("plus")}</button>
+            <textarea class="cc-input" name="text" rows="1" maxlength="1500" placeholder="${KIND_HINTS.note}" aria-label="ההודעה"></textarea>
+            <button type="submit" class="cc-send" aria-label="שליחה לכיתה" title="שליחה">${chatIcon("send")}</button>
+          </div>
+        </form>
+        <div class="cc-pane cc-info" data-pane="info" hidden>
+          <section class="room-class-join">
+            <p class="room-edit-tip">מוסיפים את התלמידים שלך בכפתור "הוספת תלמידים".</p>
+            <p class="room-edit-tip">או שולחים להם את הקישור בכפתורים למעלה.</p>
+            <p class="room-edit-tip">מי שנכנס בקישור כותב את השם שלו ונכנס לכיתה.</p>
+            <label class="room-class-open">
+              <input type="checkbox" data-class-open${c.open ? " checked" : ""} />
+              <span>תלמידים חדשים יכולים להצטרף בקישור</span>
+            </label>
+          </section>
+          <h3 class="room-mine-head"><span class="room-key">תלמידים בכיתה</span></h3>
+          ${
+            members.length
+              ? `<div class="room-notes">${members.map(memberRowHtml).join("")}</div>`
+              : `<p class="room-box-empty">עוד אין תלמידים בכיתה.</p>`
+          }
+          <button type="button" class="room-edit-small cc-info-add" data-class-add-students>+ הוספת תלמידים מהרשימה</button>
+          <div class="room-edit-foot">
+            <button type="button" class="room-edit-small" data-class-rename>שינוי שם</button>
+            <button type="button" class="room-edit-small" data-class-code>קישור חדש</button>
+            <button type="button" class="room-edit-small is-danger" data-class-delete>מחיקת הכיתה</button>
+          </div>
+        </div>
+        <div class="cc-pane cc-add" data-pane="add" hidden>${addPaneHtml(c)}</div>
+        <div class="cc-pane cc-lib" data-pane="lib" hidden aria-live="polite"></div>
+      </div>`;
+  }
+
+  function replaceClass(updated) {
+    classes = classes.map((c) => (c.id === updated.id ? updated : c));
+  }
+
+  // A pane — the class's details ("info"), the students to add ("add") or
+  // the library ("lib") — instead of the chat, or back to the chat ("").
+  // Back in the chat it opens at the newest message.
+  function showClassPane(dialog, pane = "") {
+    dialog.dataset.classPane = pane;
+    dialog.querySelectorAll(".cc-pane").forEach((el) => (el.hidden = el.dataset.pane !== pane));
+    dialog.querySelector(".cc-log").hidden = !!pane;
+    dialog.querySelector(".cc-compose").hidden = !!pane;
+    dialog.querySelectorAll(".cc-head [aria-pressed]").forEach((btn) => btn.setAttribute("aria-pressed", String(pane === "info")));
+    if (!pane) {
+      const log = dialog.querySelector(".cc-log");
+      log.scrollTop = log.scrollHeight;
+    } else {
+      dialog.querySelector(`.cc-pane[data-pane="${pane}"]`).scrollTop = 0;
+    }
+  }
+
+  /* ── The library for a "תרגיל": the English path's stages with a
+     numbered tile per topic (as on the English page), and inside a topic
+     its lessons, exercises, reading passages and exams. One tap picks it.
+     The English page's data loads the first time the library opens. ── */
+
+  const ENGLISH_DATA_SCRIPTS = [
+    "/js/english-data.js?v=32",
+    "/js/english-reading.js?v=12",
+    "/js/english-reading-sets.js?v=1",
+    "/js/english-more.js?v=5",
+    "/js/english-chat.js?v=1",
+    "/js/english-exams.js?v=2",
+  ];
+  const loadedScripts = new Set();
+  let englishLoading = null;
+
+  // In order: each one adds to the topics of the one before. A script that
+  // loaded stays loaded, so a retry never runs it twice.
+  function loadEnglishLibrary() {
+    englishLoading ||= ENGLISH_DATA_SCRIPTS.reduce(
+      (chain, src) =>
+        chain.then(() => {
+          if (loadedScripts.has(src)) return null;
+          return new Promise((resolve, reject) => {
+            const el = document.createElement("script");
+            el.src = src;
+            el.onload = () => {
+              loadedScripts.add(src);
+              resolve();
+            };
+            el.onerror = reject;
+            document.head.appendChild(el);
+          });
+        }),
+      Promise.resolve()
+    ).then(
+      () => (window.ENGLISH_TOPICS || []).length > 0,
+      () => {
+        englishLoading = null;
+        return false;
+      }
+    );
+    return englishLoading;
+  }
+
+  function libLessonTasks(topic) {
+    const ids = topic.lessons || (topic.lesson ? [topic.lesson] : []);
+    const short = window.ENGLISH_SHORT_LESSONS || [];
+    return ids.map((id, i) => {
+      const lesson = short.find((l) => l.id === id);
+      const title =
+        ids.length > 1
+          ? lesson?.part ? `שיעור ${i + 1} – ${lesson.part}` : `שיעור ${i + 1}`
+          : `שיעור – ${lesson?.name || topic.title}`;
+      return { topicId: topic.id, exerciseId: `lesson-${id}`, topicTitle: topic.title, exerciseTitle: title, type: "lesson" };
+    });
+  }
+
+  // Practice in level order, easiest first, as on the topic's page.
+  function practiceLevel(ex) {
+    return Math.min(3, Math.max(1, ex.level || window.ENGLISH_TYPE_LEVEL?.[ex.type] || 1));
+  }
+
+  function libGroups(topic) {
+    const task = (ex) => ({ topicId: topic.id, exerciseId: ex.id, topicTitle: topic.title, exerciseTitle: ex.title, type: ex.type });
+    const exercises = topic.exercises || [];
+    const byLevel = (a, b) => (a.level || 1) - (b.level || 1);
+    return [
+      {
+        title: "תרגילים",
+        tasks: exercises
+          .filter((ex) => ex.type !== "reading" && ex.type !== "exam")
+          .sort((a, b) => practiceLevel(a) - practiceLevel(b))
+          .map(task),
+      },
+      { title: "שיעורים", tasks: libLessonTasks(topic) },
+      { title: "קטעי קריאה", tasks: exercises.filter((ex) => ex.type === "reading").sort(byLevel).map(task) },
+      { title: "מבחנים", tasks: exercises.filter((ex) => ex.type === "exam").map(task) },
+    ].filter((group) => group.tasks.length);
+  }
+
+  function libHomeHtml() {
+    const topics = window.ENGLISH_TOPICS || [];
+    const path = window.ENGLISH_PATH || [];
+    const inPath = new Set(path.flatMap((stage) => stage.topics));
+    const stages = path.map((stage, i) => ({
+      title: `שלב ${i + 1} · ${stage.title}`,
+      topics: stage.topics.map((id) => topics.find((tp) => tp.id === id)).filter(Boolean),
+    }));
+    const rest = topics.filter((tp) => !inPath.has(tp.id));
+    if (rest.length) stages.push({ title: "עוד נושאים", topics: rest });
+    let num = 0;
+    const tile = (topic) => `
+      <button type="button" class="cc-lib-tile" data-lib-topic="${escapeHtml(topic.id)}">
+        <span class="cc-lib-num" aria-hidden="true">${++num}</span>
+        <span class="cc-lib-tile-title">${escapeHtml(topic.title)}</span>
+        ${topic.titleEn ? `<span class="cc-lib-tile-sub" dir="ltr">${escapeHtml(topic.titleEn)}</span>` : ""}
+      </button>`;
+    return `
+      <h3 class="room-mine-head"><span class="room-key">בחירת תרגיל לכיתה</span></h3>
+      <p class="room-edit-tip">בוחרים נושא, ואז תרגיל או שיעור.</p>
+      ${stages
+        .map((stage) => `<h4 class="cc-lib-stage">${escapeHtml(stage.title)}</h4><div class="cc-lib-tiles">${stage.topics.map(tile).join("")}</div>`)
+        .join("")}`;
+  }
+
+  // `shown` gets the topic's tasks, by their place on screen.
+  function libTopicHtml(topic, shown) {
+    const groups = libGroups(topic);
+    const body = groups.length
+      ? groups
+          .map((group) => {
+            const items = group.tasks
+              .map((task) => {
+                shown.push(task);
+                const sub = group.title === "תרגילים" ? TYPE_LABELS[task.type] || "" : "";
+                return `
+                  <button type="button" class="cc-lib-item" data-lib-pick="${shown.length - 1}">
+                    <span class="cc-lib-item-title"><bdi>${escapeHtml(task.exerciseTitle)}</bdi></span>
+                    ${sub ? `<span class="cc-lib-item-sub">${escapeHtml(sub)}</span>` : ""}
+                  </button>`;
+              })
+              .join("");
+            return `<h4 class="cc-lib-stage">${group.title}</h4><div class="cc-lib-items">${items}</div>`;
+          })
+          .join("")
+      : `<p class="room-box-empty">בנושא הזה אין עדיין תרגילים.</p>`;
+    return `
+      <button type="button" class="room-edit-small cc-lib-up" data-lib-home>חזרה לכל הנושאים</button>
+      <h3 class="room-mine-head"><span class="room-key">${escapeHtml(topic.title)}</span></h3>
+      <p class="room-edit-tip">לוחצים על תרגיל כדי לבחור אותו.</p>
+      ${body}`;
+  }
+
+  function bindClassView(dialog, c) {
+    const run = async (button, fn) => {
+      if (button) button.disabled = true;
+      try {
+        await fn();
+      } catch (err) {
+        showToast(err.message);
+        if (button) button.disabled = false;
+      }
+    };
+    const path = `/${encodeURIComponent(c.id)}`;
+    const fine = () => matchMedia("(pointer: fine)").matches;
+    const pane = () => dialog.dataset.classPane || "";
+
+    dialog.querySelector("[data-class-copy]")?.addEventListener("click", async () => {
+      showToast((await copyText(joinUrl(c))) ? "הקישור הועתק" : "לא הצלחנו להעתיק — נסו שוב");
+    });
+
+    // On a phone the phone's own share menu; on a computer WhatsApp.
+    dialog.querySelector("[data-class-share]")?.addEventListener("click", async () => {
+      if (navigator.share && !fine()) {
+        try {
+          await navigator.share({ title: c.name, text: `הצטרפו לכיתה "${c.name}" ב־Pleyi:`, url: joinUrl(c) });
+          return;
+        } catch (err) {
+          if (err.name === "AbortError") return;
+        }
+      }
+      window.open(joinWhatsappUrl(c), "_blank", "noopener");
+    });
+
+    dialog.querySelectorAll("[data-class-info]").forEach((btn) =>
+      btn.addEventListener("click", () => showClassPane(dialog, pane() === "info" ? "" : "info"))
+    );
+
+    // Inside a topic of the library back to its topics; from a pane back to
+    // the chat; from the chat back to the classes.
+    dialog.querySelector("[data-class-back]")?.addEventListener("click", () => {
+      if (pane() === "lib" && libAt) showLib("");
+      else if (pane()) showClassPane(dialog, "");
+      else if (mayClose(dialog)) openBox("classes");
+    });
+
+    /* ── Adding students from the list ── */
+    const addPane = dialog.querySelector(".cc-add");
+    const addChecks = () => [...addPane.querySelectorAll(".cc-add-check")];
+    const refreshAdd = () => {
+      const checks = addChecks();
+      const picked = checks.filter((el) => el.checked).length;
+      const go = addPane.querySelector("[data-add-go]");
+      if (go) {
+        go.textContent = addCountText(picked);
+        go.disabled = !picked;
+      }
+      const all = addPane.querySelector("[data-add-all]");
+      if (all) all.textContent = picked === checks.length ? "ביטול הבחירה" : "בחירת כולם";
+    };
+    dialog.querySelectorAll("[data-class-add-students]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        showClassPane(dialog, "add");
+        refreshAdd();
+      })
+    );
+    addPane.addEventListener("change", refreshAdd);
+    addPane.querySelector("[data-add-all]")?.addEventListener("click", () => {
+      const checks = addChecks();
+      const on = !checks.every((el) => el.checked);
+      checks.forEach((el) => (el.checked = on));
+      refreshAdd();
+    });
+    addPane.querySelector("[data-add-go]")?.addEventListener("click", (e) => {
+      const ids = addChecks()
+        .filter((el) => el.checked)
+        .map((el) => el.value);
+      if (!ids.length) return;
+      run(e.currentTarget, async () => {
+        const { added = [] } = await classesApi("POST", `${path}/members`, { ids });
+        const now = new Date().toISOString();
+        students.forEach((s) => {
+          if (!added.includes(s.id)) return;
+          s.classIds = [...(s.classIds || []), c.id];
+          s.classJoinedAt = { ...(s.classJoinedAt || {}), [c.id]: now };
+        });
+        dialog.dataset.classPane = "";
+        openClass(c.id);
+        showToast(added.length === 1 ? "תלמיד אחד נוסף לכיתה" : `${added.length} תלמידים נוספו לכיתה`);
+      });
+    });
+
+    const openToggle = dialog.querySelector("[data-class-open]");
+    openToggle?.addEventListener("change", async () => {
+      try {
+        replaceClass((await classesApi("PATCH", path, { open: openToggle.checked })).class);
+        showToast(openToggle.checked ? "אפשר להצטרף לכיתה" : "ההצטרפות לכיתה נסגרה");
+      } catch (err) {
+        openToggle.checked = !openToggle.checked;
+        showToast(err.message);
+      }
+    });
+
+    const form = dialog.querySelector("#roomPostForm");
+    const input = form.elements.text;
+    const extra = form.querySelector(".cc-extra");
+    const extraBtn = form.querySelector("[data-chat-extra]");
+    const taskPick = form.querySelector(".cc-task-pick");
+    // The exercise picked for a "תרגיל", till it's sent.
+    let chosen = null;
+    const markDirty = () => {
+      if (chosen || [input, form.elements.dueDate, form.elements.link].some((el) => el?.value.trim())) dialog.dataset.dirty = "1";
+      else delete dialog.dataset.dirty;
+    };
+    const renderTaskPick = () => {
+      taskPick.hidden = form.elements.kind.value !== "exercise";
+      taskPick.innerHTML = chosen
+        ? `${taskCardHtml(chosen)}<button type="button" class="room-edit-small cc-task-change" data-lib-open>החלפה</button>`
+        : `<button type="button" class="cc-task-choose" data-lib-open>${chatIcon("books")}<span>בחירת תרגיל מהספרייה</span></button>`;
+    };
+    renderTaskPick();
+    taskPick.addEventListener("click", (e) => {
+      if (e.target.closest("[data-lib-open]")) openLib();
+    });
+
+    /* ── The library pane ── */
+    const libPane = dialog.querySelector(".cc-lib");
+    let libAt = "";
+    let libShown = [];
+
+    async function showLib(topicId) {
+      libAt = topicId;
+      if (!(window.ENGLISH_TOPICS || []).length) {
+        libPane.innerHTML = `<p class="room-box-empty">טוענים את הספרייה…</p>`;
+        if (!(await loadEnglishLibrary())) {
+          libPane.innerHTML = `<p class="room-box-empty">לא הצלחנו לטעון את הספרייה.<br><button type="button" class="room-edit-small" data-lib-retry>לנסות שוב</button></p>`;
+          return;
+        }
+        if (pane() !== "lib") return;
+      }
+      const topic = topicId && window.ENGLISH_TOPICS.find((tp) => tp.id === topicId);
+      libShown = [];
+      libPane.innerHTML = topic ? libTopicHtml(topic, libShown) : libHomeHtml();
+      libPane.scrollTop = 0;
+      if (!topic && libReturnTo) {
+        libPane.querySelector(`[data-lib-topic="${CSS.escape(libReturnTo)}"]`)?.scrollIntoView({ block: "center" });
+      }
+      libReturnTo = topic ? topic.id : "";
+    }
+    let libReturnTo = "";
+
+    function openLib() {
+      showClassPane(dialog, "lib");
+      showLib("");
+    }
+
+    libPane.addEventListener("click", (e) => {
+      const el = e.target.closest("button");
+      if (!el) return;
+      if (el.matches("[data-lib-retry]")) showLib(libAt);
+      else if (el.matches("[data-lib-home]")) showLib("");
+      else if (el.dataset.libTopic) showLib(el.dataset.libTopic);
+      else if (el.dataset.libPick) {
+        chosen = libShown[Number(el.dataset.libPick)] || null;
+        libAt = "";
+        libReturnTo = "";
+        renderTaskPick();
+        markDirty();
+        showClassPane(dialog, "");
+        if (fine()) input.focus();
+      }
+    });
+
+    const showExtra = (on) => {
+      extra.hidden = !on;
+      extraBtn.setAttribute("aria-expanded", String(on));
+    };
+    extraBtn.addEventListener("click", () => showExtra(extra.hidden));
+    // A task or an assignment usually has a date: its fields open. A
+    // "תרגיל" opens the library, till one is picked.
+    form.addEventListener("change", (e) => {
+      if (e.target.name !== "kind") return;
+      input.placeholder = KIND_HINTS[e.target.value] || KIND_HINTS.note;
+      if (DONE_KINDS.includes(e.target.value)) showExtra(true);
+      renderTaskPick();
+      if (e.target.value === "exercise" && !chosen) openLib();
+    });
+    // The box grows with the words; what's typed isn't wiped by a refresh.
+    form.addEventListener("input", () => {
+      input.style.height = "auto";
+      input.style.height = `${Math.min(input.scrollHeight + 5, 140)}px`;
+      markDirty();
+    });
+    // On a computer Enter sends and Shift+Enter starts a new line.
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing && fine()) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const kind = form.elements.kind.value;
+      if (kind === "exercise" && !chosen) {
+        showToast("בחרו תרגיל לשליחה");
+        openLib();
+        return;
+      }
+      if (kind !== "exercise" && !input.value.trim()) {
+        input.focus();
+        showToast("כתבו מה לשלוח לכיתה");
+        return;
+      }
+      run(form.querySelector(".cc-send"), async () => {
+        const data = await classesApi("POST", `${path}/posts`, {
+          kind,
+          text: input.value,
+          dueDate: form.elements.dueDate?.value || "",
+          link: form.elements.link.value,
+          ...(kind === "exercise" ? { task: chosen } : {}),
+        });
+        replaceClass(data.class);
+        delete dialog.dataset.dirty;
+        openClass(c.id);
+        if (kind === "exercise") showToast("התרגיל נשלח לכל התלמידים בכיתה");
+        if (fine()) dialog.querySelector(".cc-input")?.focus();
+      });
+    });
+
+    dialog.querySelectorAll("[data-delete-post]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        if (!confirm("למחוק את ההודעה? התלמידים לא יראו אותה יותר")) return;
+        run(btn, async () => {
+          replaceClass((await classesApi("DELETE", `${path}/posts/${encodeURIComponent(btn.dataset.deletePost)}`)).class);
+          openClass(c.id, { keepScroll: true });
+        });
+      })
+    );
+
+    dialog.querySelectorAll("[data-remove-member]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const s = students.find((x) => x.id === btn.dataset.removeMember);
+        if (!s || !confirm(`להוציא את ${s.name} מהכיתה? התיק שלו יישאר ברשימת התלמידים`)) return;
+        run(btn, async () => {
+          await classesApi("DELETE", `${path}/members/${encodeURIComponent(s.id)}`);
+          s.classIds = (s.classIds || []).filter((id) => id !== c.id);
+          openClass(c.id, { keepScroll: true });
+        });
+      })
+    );
+
+    dialog.querySelector("[data-class-rename]")?.addEventListener("click", (e) => {
+      const name = prompt("השם החדש של הכיתה", c.name);
+      if (!name || name.trim() === c.name) return;
+      run(e.currentTarget, async () => {
+        replaceClass((await classesApi("PATCH", path, { name })).class);
+        openClass(c.id, { keepScroll: true });
+      });
+    });
+
+    dialog.querySelector("[data-class-code]")?.addEventListener("click", (e) => {
+      if (!confirm("הקישור הישן יפסיק לעבוד. תלמידים שכבר בכיתה יישארו בה. ליצור קישור חדש?")) return;
+      run(e.currentTarget, async () => {
+        replaceClass((await classesApi("POST", `${path}/code`)).class);
+        openClass(c.id, { keepScroll: true });
+        showToast("נוצר קישור חדש");
+      });
+    });
+
+    dialog.querySelector("[data-class-delete]")?.addEventListener("click", (e) => {
+      if (!confirm(`למחוק את הכיתה "${c.name}"? ההודעות יימחקו. התלמידים יישארו ברשימת התלמידים`)) return;
+      run(e.currentTarget, async () => {
+        await classesApi("DELETE", path);
+        classes = classes.filter((x) => x.id !== c.id);
+        students.forEach((s) => {
+          s.classIds = (s.classIds || []).filter((id) => id !== c.id);
+        });
+        delete dialog.dataset.dirty;
+        openBox("classes");
+        showToast("הכיתה נמחקה");
+      });
+    });
+  }
+
+  // `keepScroll`: a refresh of the same class keeps the chat (or the
+  // details) where it was; otherwise the chat opens at the newest message.
+  // The library and the students to add are never kept: back to the chat.
+  function openClass(id, { keepScroll = false } = {}) {
+    const dialog = document.getElementById("roomBoxDlg");
+    const c = classes.find((x) => x.id === id);
+    if (!dialog || !c) return;
+    const same = dialog.open && dialog.dataset.box === "class" && dialog.dataset.classId === c.id;
+    const logScroll = dialog.querySelector(".cc-log")?.scrollTop;
+    const infoScroll = dialog.querySelector(".cc-info")?.scrollTop;
+    dialog.dataset.box = "class";
+    dialog.dataset.classId = c.id;
+    delete dialog.dataset.dirty;
+    dialog.innerHTML = classViewHtml(c);
+    bindClassView(dialog, c);
+    if (!dialog.open) dialog.showModal();
+    const info = same && dialog.dataset.classPane === "info";
+    showClassPane(dialog, info ? "info" : "");
+    if (same && keepScroll) {
+      if (info) dialog.querySelector(".cc-info").scrollTop = infoScroll || 0;
+      else dialog.querySelector(".cc-log").scrollTop = logScroll || 0;
+    }
+  }
+
+  // "שונות": recent activity, saved lessons and the games lists, one under
+  // the other. An empty games list is left out.
   function miscHtml() {
+    const games = [
+      ["favorites", "משחקים שאהבתי"],
+      ["created", "משחקים שיצרתי"],
+    ]
+      .filter(([section]) => getSectionItems(section).items.length)
+      .map(([section, title]) => `
+        <h3 class="room-mine-head"><span class="room-key">${title}</span></h3>
+        ${sectionHtml(section)}`)
+      .join("");
     return `
       <div class="room-misc">
         <h3 class="room-mine-head"><span class="room-key">פעילות אחרונה</span></h3>
         ${activityHtml()}
         <h3 class="room-mine-head"><span class="room-key">שיעורים ששמרתי</span></h3>
         ${sectionHtml("lessons")}
+        ${games}
       </div>`;
   }
 
+  // "היומן שלי": public/js/my-room-diary.js draws and runs it.
   const BOX_BODIES = {
     misc: miscHtml,
-    favorites: () => sectionHtml("favorites"),
-    created: () => sectionHtml("created"),
     create: createHtml,
+    classes: classesHtml,
+    diary: () => window.RoomDiary?.html() || "",
   };
 
   function openBox(key) {
@@ -753,6 +1713,8 @@
     dialog.innerHTML = dialogHtml("roomBoxTitle", tile.querySelector(".room-tile-title").textContent.trim(), BOX_BODIES[key]());
     bindSectionActions(dialog);
     bindCreate(dialog);
+    bindClasses(dialog);
+    if (key === "diary") window.RoomDiary?.bind(dialog);
     if (!dialog.open) dialog.showModal();
   }
 
@@ -762,15 +1724,18 @@
   });
 
   function renderAll() {
-    // An empty games tile is hidden.
-    ["favorites", "created"].forEach((section) => {
-      document.querySelector(`.room-tile[data-box="${section}"]`)?.classList.toggle("hidden", !getSectionItems(section).items.length);
-    });
     // A dialog left open shows the fresh list (after a star, a remove…).
     const dialog = document.getElementById("roomBoxDlg");
-    if (dialog?.open && dialog.dataset.box !== "edit") openBox(dialog.dataset.box);
+    if (dialog?.open && dialog.dataset.box === "class") {
+      // Not while the teacher picks an exercise or students to add.
+      const picking = ["lib", "add"].includes(dialog.dataset.classPane);
+      if (dialog.dataset.dirty !== "1" && !picking) openClass(dialog.dataset.classId, { keepScroll: true });
+    } else if (dialog?.open && dialog.dataset.box === "diary") {
+      // The diary keeps its own place (the week, the day being edited).
+      window.RoomDiary?.refresh();
+    } else if (dialog?.open && dialog.dataset.box !== "edit" && dialog.dataset.dirty !== "1") openBox(dialog.dataset.box);
     renderBell();
-    document.getElementById("roomFootLink")?.classList.toggle("hidden", !savedGames.length && !playHistory.length);
+    // The "+ פתיחת חדר" button under the tiles is hidden for now.
   }
 
   function bindSectionActions(container) {
@@ -841,12 +1806,13 @@
       lessonHistory = [{ id: ids[2], at: Date.now() - HOUR }, { id: ids[0], at: Date.now() - DAY - 4 * HOUR }].filter((e) => e.id);
       students = PREVIEW_STUDENTS;
       myLessons = PREVIEW_MY_LESSONS;
+      classes = PREVIEW_CLASSES;
       renderAll();
       return;
     }
 
     // Each list loads on its own, so one failed query (e.g. a missing index) doesn't blank the others.
-    const names = ["savedGames", "playHistory", "favoriteLessons", "lessonHistory", "students", "myLessons"];
+    const names = ["savedGames", "playHistory", "favoriteLessons", "lessonHistory", "students", "myLessons", "classes"];
     const results = await Promise.allSettled([
       UserData.getSavedGames(),
       UserData.getPlayHistory(120),
@@ -854,11 +1820,12 @@
       UserData.getLessonHistory(),
       getStudents(),
       getMyLessons(),
+      getClasses(),
     ]);
     results.forEach((r, i) => {
       if (r.status === "rejected") console.error(`my-room: ${names[i]} failed to load`, r.reason);
     });
-    [savedGames, playHistory, savedLessons, lessonHistory, students, myLessons] = results.map((r) => (r.status === "fulfilled" ? r.value : []));
+    [savedGames, playHistory, savedLessons, lessonHistory, students, myLessons, classes] = results.map((r) => (r.status === "fulfilled" ? r.value : []));
     // Newest saved lesson first.
     savedLessons.sort((a, b) => b.at - a.at);
     renderAll();
@@ -983,6 +1950,20 @@
   }
 
   window.GameAuth?.onUserChange(handleAuthState);
+
+  // What the diary (my-room-diary.js) takes from the room: the sign-in, the
+  // teacher's students, classes and own lessons, the preview mode, the
+  // toast and the dialog's guard against closing with unsaved changes.
+  window.MyRoom = {
+    token: () => window.FirebaseApp?.auth?.currentUser?.getIdToken().catch(() => "") || Promise.resolve(""),
+    students: () => students,
+    classes: () => classes,
+    myLessons: () => myLessons,
+    preview: usePreviewData,
+    toast: showToast,
+    mayClose,
+    icon,
+  };
 
   if (PREVIEW) applyPreviewUser();
   else if (window.GameAuth?.getUser()) showRoom(window.GameAuth.getUser());

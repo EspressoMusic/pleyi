@@ -1,6 +1,7 @@
 /* The roads of /road-safety (road-traffic.js): the page's background as on
-   the Pleyi site (ambient-bg.css: dots falling slowly and two waves on the
-   sides) in sky blue, and the road between two parts of the page.
+   the Pleyi site (ambient-bg.css: dots falling slowly) in sky blue, with a
+   car's winding tyre tracks down its sides, and the road between two parts
+   of the page.
    html.rs-road-bg is on while the background shows. */
 
 /* ── The background ── */
@@ -28,32 +29,6 @@ html.rs-road-bg body.page-road {
 
 html:not(.rs-road-bg) .rs-ambient {
   display: none;
-}
-
-.rs-amb-side {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: clamp(72px, 11vw, 148px);
-  overflow: hidden;
-}
-
-.rs-amb-side--left {
-  left: 0;
-}
-
-.rs-amb-side--right {
-  right: 0;
-}
-
-.rs-amb-side svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.rs-amb-side--right svg {
-  transform: scaleX(-1);
 }
 
 .rs-amb-dot {
@@ -85,13 +60,6 @@ html:not(.rs-road-bg) .rs-ambient {
   }
 }
 
-@media (max-width: 720px) {
-  .rs-amb-side {
-    width: clamp(48px, 14vw, 72px);
-    opacity: 0.85;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .rs-amb-dot {
     animation: none;
@@ -106,21 +74,64 @@ html.rs-road-bg body.page-road footer {
   z-index: 1;
 }
 
-/* A car's tyre tracks down both sides of the page, from top to bottom,
-   scrolling with it. */
-html.rs-road-bg body.page-road main {
-  --rs-track: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 28'%3E%3Cg fill='%23153f73' fill-opacity='.22'%3E%3Cpath d='M2 3 18 11v8L2 11z'/%3E%3Cpath d='M38 3 22 11v8l16-8z'/%3E%3C/g%3E%3C/svg%3E");
-  --rs-track-w: 40px;
-  --rs-track-x: max(14px, calc(50% - 660px));
-  background:
-    var(--rs-track) left var(--rs-track-x) top 0 / var(--rs-track-w) calc(var(--rs-track-w) * 0.7) repeat-y,
-    var(--rs-track) right var(--rs-track-x) top 0 / var(--rs-track-w) calc(var(--rs-track-w) * 0.7) repeat-y;
+/* A car's tyre tracks winding down both sides of the page, from its very
+   top (behind the bar) to its bottom, scrolling with it: a layer over the
+   background (road-traffic.js draws the marks, some dark and some worn,
+   and now and then drives a car down them). */
+body.page-road {
+  position: relative;
+}
+
+.rs-tracks {
+  --rs-track-w: 130px;
+  --rs-track-x: 0px;
+  position: absolute !important;
+  inset: 0;
+  z-index: 0 !important;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+html:not(.rs-road-bg) .rs-tracks {
+  display: none;
+}
+
+.rs-tracks-col {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--rs-track-w);
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+}
+
+.rs-tracks-col--l {
+  left: var(--rs-track-x);
+}
+
+.rs-tracks-col--r {
+  right: var(--rs-track-x);
+}
+
+.rs-tracks-car {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+  filter: drop-shadow(2px 3px 0 rgba(10, 40, 80, 0.28));
+}
+
+.rs-tracks-car svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 @media (max-width: 720px) {
-  html.rs-road-bg body.page-road main {
-    --rs-track-w: 26px;
-    --rs-track-x: 3px;
+  .rs-tracks {
+    --rs-track-w: 62px;
+    --rs-track-x: -4px;
   }
 }
 

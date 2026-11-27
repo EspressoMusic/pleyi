@@ -65,6 +65,15 @@ body.page-road .eng-path-title .eng-path-stage-num {
   color: #fff;
 }
 
+/* The table of contents' "שלב 1" in the same asphalt: black, white letters. */
+body.page-road .eng-toc-stage-head .eng-path-stage-num {
+  flex-shrink: 0;
+  padding: 2px 10px;
+  border-radius: 8px;
+  background: #26282c;
+  color: #fff;
+}
+
 /* ── Top bar: no strip, only the buttons over the page, as on the Pleyi
    site — the three pages as separate white pills (the open page yellow),
    sign-in, and on phones the menu button. ── */
@@ -375,20 +384,10 @@ body.page-road .rs-menu .mobile-nav-auth {
   animation: rs-ch-on 0.3s steps(1) var(--ch-delay, 0s) backwards;
 }
 
-/* A word whose lamp is off: dark and dull, like an unlit lamp. While the
-   light flashes, the green word flashes with it (the light's rs-tl-blink). */
+/* A word whose lamp is off: dark and dull, like an unlit lamp. */
 .rs-title[data-on="red"] .rs-word--green .rs-ch,
-.rs-title[data-on="green"] .rs-word--red .rs-ch,
-.rs-title[data-on="blink"] .rs-word--red .rs-ch {
+.rs-title[data-on="green"] .rs-word--red .rs-ch {
   filter: var(--rs-ch-off);
-}
-
-.rs-title[data-on="blink"] .rs-word--green .rs-ch {
-  animation: rs-ch-blink 0.5s steps(1) infinite;
-}
-
-@keyframes rs-ch-blink {
-  50% { filter: var(--rs-ch-off); }
 }
 
 @keyframes rs-ch-on {
@@ -431,16 +430,16 @@ body.page-road .rs-menu .mobile-nav-auth {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 30px;
+  padding: 20px 42px;
   border-width: 5px;
-  font-size: clamp(24px, 3.4vw, 36px);
+  font-size: clamp(30px, 4.2vw, 46px);
   white-space: nowrap;
   text-decoration: none;
 }
 
 /* The pedestrian light, as tall as the title's two words and standing on
    the last word's line, close to its letters (road-safety.js switches
-   data-on: red, green, blink). The negative margins take away the svg's
+   data-on: red, green; the walkers' green doesn't flash in Israel). The negative margins take away the svg's
    empty room beside the light. */
 .rs-hero-art {
   --rs-light-h: calc(var(--rs-title-size) * 2.1);
@@ -463,23 +462,13 @@ body.page-road .rs-menu .mobile-nav-auth {
 
 .rs-tl .rs-tl-on,
 .rs-tl[data-on="red"] .rs-tl-red .rs-tl-off,
-.rs-tl[data-on="green"] .rs-tl-green .rs-tl-off,
-.rs-tl[data-on="blink"] .rs-tl-green .rs-tl-off {
+.rs-tl[data-on="green"] .rs-tl-green .rs-tl-off {
   opacity: 0;
 }
 
 .rs-tl[data-on="red"] .rs-tl-red .rs-tl-on,
-.rs-tl[data-on="green"] .rs-tl-green .rs-tl-on,
-.rs-tl[data-on="blink"] .rs-tl-green .rs-tl-on {
+.rs-tl[data-on="green"] .rs-tl-green .rs-tl-on {
   opacity: 1;
-}
-
-.rs-tl[data-on="blink"] .rs-tl-green .rs-tl-on {
-  animation: rs-tl-blink 0.5s steps(1) infinite;
-}
-
-@keyframes rs-tl-blink {
-  50% { opacity: 0; }
 }
 
 /* ── The mascot: the Pleyi fox (its drawing and colors: site-fox.js and
@@ -1097,6 +1086,11 @@ body.page-road .rs-menu .mobile-nav-auth {
   font-size: clamp(2.35rem, 6.8vw, 3.75rem);
 }
 
+/* The games page: a little more room between its title and the cards. */
+.rs-page-games .rs-heading.rs-page-title {
+  margin-bottom: clamp(30px, 5vw, 46px);
+}
+
 /* The lessons' table of contents: buttons in the English page's link rows. */
 .rs-toc-lesson {
   border: 0;
@@ -1132,9 +1126,9 @@ html[data-rs-page="news"] #engMain {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* The pale blue tint read as white on the blue page: a soft yellow. */
+/* The pale blue tint read as white on the blue page: a cream white. */
 .news-item.rs-news-open {
-  background: #fff1a6;
+  background: #fff8e7;
 }
 
 .rs-news-open .news-shot {
@@ -1208,7 +1202,7 @@ html[data-rs-page="news"] #engMain {
   padding: clamp(16px, 3.5vw, 22px) clamp(16px, 4vw, 26px);
   border: 3px solid var(--ink);
   border-radius: 18px;
-  background: #fff1a6;
+  background: #fff8e7;
   box-shadow: var(--shadow-sticker);
   color: #000;
 }
@@ -1245,13 +1239,150 @@ html[data-rs-page="news"] #engMain {
   cursor: pointer;
 }
 
-/* No yellow tiles here: the yellow is the "פתיחה" buttons'. */
-.rs-lessons .eng-topic-card:nth-child(4n + 2) .eng-topic-tile {
-  background: #ffc4d6;
-}
-
 .rs-lessons .eng-topic-tile .eng-topic-open {
   background: var(--rs-yellow);
+}
+
+/* A lesson tile: the "i" in the top-right corner, the name in the middle and
+   "פתיחה" at the bottom. The pill's ::after covers the whole tile, so a tap
+   anywhere opens the lesson; only the "i" sits above it. */
+.rs-lessons .rs-lesson-tile {
+  padding-top: 52px;
+  padding-bottom: 12px;
+}
+
+.rs-lessons .rs-lesson-tile .eng-topic-title {
+  margin-block: auto;
+}
+
+/* The tile's back (the "i" flips it, road-safety.js): the lesson in two short
+   lines between the "i" and "פתיחה". The name and number stay in place,
+   hidden, so the tile keeps its size; road-safety.js sets the bottom and
+   shrinks the lines until they fit. */
+.rs-lessons .rs-lesson-back {
+  position: absolute;
+  top: 48px;
+  bottom: 64px;
+  inset-inline: 8px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.rs-lessons .rs-lesson-tile.is-flipped .rs-lesson-back {
+  display: flex;
+}
+
+.rs-lessons .rs-lesson-tile.is-flipped :is(.eng-topic-title, .eng-path-num) {
+  visibility: hidden;
+}
+
+.rs-lesson-back-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 100%;
+  color: #000;
+  font-size: clamp(1.1rem, 4.4vw, 1.35rem);
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.rs-lesson-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+  margin-top: 10px;
+}
+
+.rs-lessons .rs-lesson-tile .rs-lesson-open {
+  position: static;
+  transform: none;
+  cursor: pointer;
+}
+
+.rs-lessons .rs-lesson-open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.rs-lessons .rs-lesson-tile .rs-lesson-open:focus-visible {
+  outline: 3px solid var(--rs-ink);
+  outline-offset: 2px;
+}
+
+.rs-lessons .rs-lesson-tile:has(.rs-lesson-open:focus-visible) {
+  transform: scale(1.06);
+}
+
+.rs-lessons .rs-lesson-info {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  transition: scale 0.14s ease;
+}
+
+.rs-lessons .rs-lesson-info svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rs-lessons .rs-lesson-info:hover,
+.rs-lessons .rs-lesson-info:focus-visible {
+  scale: 1.12;
+}
+
+.rs-lessons .rs-lesson-info:active {
+  translate: 1px 2px;
+  box-shadow: 1px 1px 0 0 var(--rs-ink);
+}
+
+/* Over the "i" the tile stays put: only the "i" grows or sinks. */
+.rs-lessons .rs-lesson-tile:has(.rs-lesson-info:hover),
+.rs-lessons .eng-topic-grid .rs-lesson-tile:has(.rs-lesson-info:active) {
+  transform: none;
+  box-shadow: var(--eng-card-shadow);
+}
+
+@media (max-width: 480px) {
+  .rs-lessons .rs-lesson-tile .rs-lesson-open {
+    padding-inline: 12px;
+  }
+
+  .rs-lessons .rs-lesson-tile {
+    padding-top: 46px;
+  }
+
+  .rs-lessons .rs-lesson-back {
+    top: 42px;
+    inset-inline: 6px;
+  }
+
+  .rs-lessons .rs-lesson-info {
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .rs-lessons .rs-lesson-info svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Bigger lesson names than the English tiles (1.2rem on phones) */
+.rs-lessons .eng-topic-title {
+  font-size: clamp(1.5rem, 6.5vw, 2.1rem);
 }
 
 /* ── Game cards: same size, the picture, the title and two buttons; the
@@ -1315,8 +1446,8 @@ html[data-rs-page="news"] #engMain {
 }
 
 .rs-card-actions .rs-open {
-  padding: 10px 20px;
-  font-size: 1.05rem;
+  padding: 13px 30px;
+  font-size: 1.3rem;
   border-width: 3px !important;
   box-shadow: 4px 5px 0 0 var(--rs-ink);
 }
@@ -2479,9 +2610,10 @@ html.rs-game-open body {
   }
 
   .rs-hero-actions .btn {
-    padding: 13px 24px;
-    border-width: 4px;
-    font-size: clamp(21px, 6.4vw, 28px);
+    padding: 16px 28px;
+    border-width: 5px;
+    /* As big as fits one line beside the 16px side gutters. */
+    font-size: clamp(22px, calc(11vw - 8px), 40px);
   }
 
   .rs-doors {
@@ -2525,8 +2657,8 @@ html.rs-game-open body {
   }
 
   .rs-card-actions .rs-open {
-    padding: 8px 14px;
-    font-size: 0.98rem;
+    padding: 11px 26px;
+    font-size: 1.22rem;
   }
 
   /* A game's name big, and its play button at the left end. */

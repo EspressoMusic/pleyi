@@ -551,8 +551,11 @@ function tryStartPendingRoomGame() {
     sessionStorage.removeItem("gameclass-pending-room-game");
     if (!pending.gameId || !socket) return;
     socket.emit("game:start", { gameId: pending.gameId }, (res) => {
-      if (res?.ok) showToast("המשחק התחיל בחדר!");
-      else showToast(res?.error || "לא ניתן להתחיל את המשחק");
+      if (res?.ok) {
+        const btn = document.querySelector(`.room-game-btn[data-game="${CSS.escape(pending.gameId)}"]`);
+        window.PleyiStats?.hit("game", pending.gameId, btn?.querySelector(".room-game-btn-label")?.textContent);
+        showToast("המשחק התחיל בחדר!");
+      } else showToast(res?.error || "לא ניתן להתחיל את המשחק");
     });
   } catch {
     /* ignore */
@@ -1084,6 +1087,7 @@ $$(".room-game-btn").forEach((btn) => {
     const idToken = await window.FirebaseApp?.auth?.currentUser?.getIdToken?.().catch(() => null);
     socket.emit("game:start", { gameId, idToken }, (res) => {
       if (res?.ok) {
+        window.PleyiStats?.hit("game", gameId, btn.querySelector(".room-game-btn-label")?.textContent);
         closeGamesPanel();
         showToast("המשחק התחיל!");
       } else showToast(res?.error || "לא ניתן להתחיל משחק");

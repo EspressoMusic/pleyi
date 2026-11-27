@@ -103,21 +103,24 @@
     return { ...lesson, ...lesson.en, id: lesson.id };
   }
 
-  // Ink-line icons for the games slide, drawn like the picture games' icons
-  // (english-games.js ICONS) and shown on a colored tile — no emoji.
+  // Ink-line icons for the lesson's end slide and for the games on a topic
+  // page, drawn like the picture games' icons (english-games.js ICONS) and
+  // shown on a colored tile — no emoji.
   const LESSON_GAME_ICONS = {
     trivia: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5h-6L7 20v-4h-.5A2.5 2.5 0 0 1 4 13.5v-8A2.5 2.5 0 0 1 6.5 3Z"/><path d="M10 7.6a2.1 2.1 0 1 1 2.9 1.9c-.6.3-.9.8-.9 1.4v.3"/><circle cx="12" cy="13.2" r=".9" fill="currentColor" stroke="none"/></svg>`,
+    practice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9.5L19 6.5V21H6z"/><path d="M9 10.5h7M9 14h7M9 17.5h4"/></svg>`,
     tower: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="16.5" width="18" height="5" rx="1.3"/><rect x="5.5" y="10.5" width="13" height="5" rx="1.3"/><rect x="8" y="3.5" width="8" height="5" rx="1.3" transform="rotate(-9 12 6)"/></svg>`,
     letters: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 13 12 4l3.5 9M9.7 10h4.6"/><path d="M3 19.5h4M10 19.5h4M17 19.5h4"/></svg>`,
     compare: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="9" height="14" rx="2"/><rect x="13" y="5" width="9" height="14" rx="2"/><circle cx="6.5" cy="12" r="2.2"/><rect x="15.3" y="9.8" width="4.4" height="4.4" rx=".7"/></svg>`,
-    play: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8h10a4.5 4.5 0 0 1 4.3 5.8l-1 3.2a2.4 2.4 0 0 1-4 1L14.6 16H9.4l-1.7 2a2.4 2.4 0 0 1-4-1l-1-3.2A4.5 4.5 0 0 1 7 8Z"/><path d="M7.5 11v3M6 12.5h3"/><circle cx="16" cy="11.5" r=".8" fill="currentColor" stroke="none"/><circle cx="17.6" cy="13.6" r=".8" fill="currentColor" stroke="none"/></svg>`,
   };
 
-  const STANDARD_LESSON_GAMES = [
-    { id: "vocabulary-duel", label: "טריוויה", labelEn: "Trivia", icon: LESSON_GAME_ICONS.trivia },
-    { id: "tower-stack", label: "מגדל מילים", labelEn: "Word Tower", icon: LESSON_GAME_ICONS.tower },
-    { id: "hangman", label: "איש תלוי", labelEn: "Hangman", icon: LESSON_GAME_ICONS.letters },
-    { id: "spot-diff", label: "מצא הבדלים", labelEn: "Spot the Differences", icon: LESSON_GAME_ICONS.compare },
+  // The /play games a topic page offers on its lessons' words, after its
+  // exercises (english-learning.js). The trivia is english-games.js's, in the
+  // practice screens' look. minItems: as create-game-flow.js GAME_RULES.
+  const PLAY_GAMES = [
+    { id: "tower-stack", label: "מגדל מילים", labelEn: "Word Tower", icon: LESSON_GAME_ICONS.tower, minItems: 3 },
+    { id: "hangman", label: "איש תלוי", labelEn: "Hangman", icon: LESSON_GAME_ICONS.letters, minItems: 3 },
+    { id: "spot-diff", label: "מצא הבדלים", labelEn: "Spot the Differences", icon: LESSON_GAME_ICONS.compare, minItems: 6 },
   ];
 
   // Picture vocabulary shared by the vocabulary lesson's picture slides
@@ -186,16 +189,6 @@
         { en: "וולקנולוגים", he: "מדענים שחוקרים הרי געש" },
         { en: "קרום כדור הארץ", he: "השכבה החיצונית והמוצקה שעליה אנחנו חיים" },
       ],
-      games: STANDARD_LESSON_GAMES,
-      pdfSlides: [
-        "/images/lessons/volcano/slide-1.png",
-        "/images/lessons/volcano/slide-2.png",
-        "/images/lessons/volcano/slide-3.png",
-        "/images/lessons/volcano/slide-4.png",
-        "/images/lessons/volcano/slide-5.png",
-        "/images/lessons/volcano/slide-6.png",
-        "/images/lessons/volcano/slide-7.png",
-      ],
       slides: [
         {
           type: "content",
@@ -253,7 +246,6 @@
           subtitle: "שאלות על השיעור",
           body: "אם הייתם **וולקנולוגים** וגיליתם שהר געש עלול להתפרץ בקרוב, מה הייתם עושים כדי לשמור על התושבים בסביבה?\n\nמה מכל מה שלמדנו על הרי געש הפתיע אתכם הכי הרבה?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -339,7 +331,6 @@
             subtitle: "Questions about the lesson",
             body: "If you were **volcanologists** and discovered that a volcano might erupt soon, what would you do to keep nearby residents safe?\n\nWhat surprised you the most about everything we learned about volcanoes?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -375,7 +366,6 @@
         { en: "התעמלות", he: "פעילות גופנית שמחזקת את שריר הלב" },
         { en: "רופא לב", he: "רופא מומחה שבודק ושומר על בריאות הלב" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -419,7 +409,6 @@
           subtitle: "שאלות על השיעור",
           body: "אילו פעילויות במהלך היום גורמות ל**דופק** שלכם להיות מהיר יותר?\n\nמה אתם יכולים להתחיל לעשות מהיום כדי לחזק את הלב שלכם?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -490,7 +479,6 @@
             subtitle: "Questions about the lesson",
             body: "Which activities during your day make your **pulse** beat faster?\n\nWhat can you start doing today to strengthen your heart?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -524,7 +512,6 @@
         { en: "נשימה עמוקה", he: "שאיפה איטית ומלאה של אוויר שמרגיעה את הגוף" },
         { en: "ריאות בריאות", he: "ריאות שעובדות היטב ולא נפגעות מעשן או זיהום" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -568,7 +555,6 @@
           subtitle: "שאלות על השיעור",
           body: "שימו רגע יד על החזה ונשמו עמוק — מתי אתם שמים לב שה**נשימה** שלכם משתנה?\n\nמה אתם יכולים לעשות כדי לשמור על ריאות בריאות?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -637,7 +623,6 @@
             subtitle: "Questions about the lesson",
             body: "Put a hand on your chest for a moment and breathe deeply — when do you notice your **breathing** change?\n\nWhat can you do to keep your lungs healthy?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -671,7 +656,6 @@
         { en: "ריכוז", he: "היכולת להתמקד במשימה אחת לאורך זמן" },
         { en: "שינה", he: "זמן מנוחה שבו המוח מעבד ומסדר את מה שלמדנו" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -715,7 +699,6 @@
           subtitle: "שאלות על השיעור",
           body: "מתי אתם מרגישים שה**מוח** שלכם עובד הכי טוב, ומתי הכי קשה לכם להתרכז?\n\nמה אתם עושים כדי לתת למוח שלכם לנוח ולהתחזק?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -784,7 +767,6 @@
             subtitle: "Questions about the lesson",
             body: "When do you feel your **brain** working best, and when is it hardest for you to focus?\n\nWhat do you do to let your brain rest and grow stronger?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -818,7 +800,6 @@
         { en: "שבר", he: "סדק או שבירה בעצם" },
         { en: "סידן", he: "חומר מזין שמחזק את העצמות" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -862,7 +843,6 @@
           subtitle: "שאלות על השיעור",
           body: "אילו פעילויות גופניות אתם עושים שמחזקות **שרירים** ו**עצמות**?\n\nמה חשוב לעשות כשחבר נפגע ואתם חושבים שהוא עבר **שבר**?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -931,7 +911,6 @@
             subtitle: "Questions about the lesson",
             body: "What physical activities do you do that strengthen your **muscles** and **bones**?\n\nWhat's important to do when a friend is hurt and you think they might have a **fracture**?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -965,7 +944,6 @@
         { en: "מעי גס", he: "החלק האחרון של המעיים, שסופג מים ומכין את הפסולת ליציאה" },
         { en: "תזונה מאוזנת", he: "אכילה של מגוון מזונות בריאים בכמות מתאימה" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -1009,7 +987,6 @@
           subtitle: "שאלות על השיעור",
           body: "אילו מזונות אתם אוכלים שעוזרים ל**מערכת העיכול** לעבוד טוב?\n\nלמה חשוב ללעוס אוכל לאט ולא למהר לבלוע?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -1078,7 +1055,6 @@
             subtitle: "Questions about the lesson",
             body: "Which foods do you eat that help your **digestive system** work well?\n\nWhy is it important to chew food slowly instead of rushing to swallow it?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -1116,7 +1092,6 @@
         { en: "ריבית", he: "תוספת כסף קטנה שהבנק נותן על כסף ששמור בחיסכון" },
         { en: "יעד חיסכון", he: "סכום כסף שמציבים לעצמנו מטרה לחסוך לקראתו" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -1172,7 +1147,6 @@
           subtitle: "שאלות על השיעור",
           body: "חשבו על משהו שקניתם לאחרונה — זה היה **צורך** או **רצון**? איך החלטתם?\n\nאם הייתם מקבלים 50 שקלים **דמי כיס** השבוע, איך הייתם מחלקים אותם בין הוצאות ל**חיסכון**?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -1257,7 +1231,6 @@
             subtitle: "Questions about the lesson",
             body: "Think of something you bought recently — was it a **need** or a **want**? How did you decide?\n\nIf you got $10 **allowance** this week, how would you split it between spending and **saving**?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -1294,7 +1267,6 @@
         { en: "איזון", he: "חלוקה נכונה של זמן בין לימודים, משחק ומנוחה" },
         { en: "ריכוז", he: "היכולת להישאר ממוקדים במשימה אחת לאורך זמן" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -1350,7 +1322,6 @@
           subtitle: "שאלות על השיעור",
           body: "מה הדבר שאתם הכי נוטים לדחות בגלל **דחיינות**? למה אתם חושבים שזה קורה?\n\nאיזו **הסחת דעת** הכי מפריעה לכם להתרכז, ואיך אפשר להתמודד איתה?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -1434,7 +1405,6 @@
             subtitle: "Questions about the lesson",
             body: "What's the thing you tend to put off most because of **procrastination**? Why do you think that happens?\n\nWhich **distraction** bothers your focus the most, and how can you deal with it?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -1471,7 +1441,6 @@
         { en: "הסכמה", he: "מצב שבו שני צדדים מסכימים על משהו ביחד" },
         { en: "נקודת מבט", he: "הדרך שבה אדם מסוים רואה ומבין מצב מסוים" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -1527,7 +1496,6 @@
           subtitle: "שאלות על השיעור",
           body: "תחשבו על **קונפליקט** קטן שהיה לכם עם חבר או עם אח או אחות — איך פתרתם אותו?\n\nמה ההבדל בין להקשיב \"סתם\" לבין **הקשבה פעילה**?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -1611,7 +1579,6 @@
             subtitle: "Questions about the lesson",
             body: "Think of a small **conflict** you had with a friend or a sibling — how did you resolve it?\n\nWhat's the difference between listening \"just because\" and **active listening**?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -1648,7 +1615,6 @@
         { en: "זמן מסך", he: "הזמן שמבלים מול מסכים כמו טלפון או מחשב" },
         { en: "מבוגר אחראי", he: "הורה, מורה או מבוגר אחר שאפשר לפנות אליו בבעיה" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -1704,7 +1670,6 @@
           subtitle: "שאלות על השיעור",
           body: "אילו סוגי **מידע אישי** אסור לשתף ברשת, ולמה?\n\nמה הייתם עושים אם הייתם מקבלים **הודעה חשודה** ממישהו שאתם לא מכירים באמת?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -1788,7 +1753,6 @@
             subtitle: "Questions about the lesson",
             body: "What kinds of **personal information** should never be shared online, and why?\n\nWhat would you do if you got a **suspicious message** from someone you don't really know?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -1822,7 +1786,6 @@
         { en: "מערכת התרעה מוקדמת", he: "מערכת שמזהה רעידות אדמה ימיות ומזהירה תושבים לפני שהצונאמי מגיע" },
         { en: "סייסמולוג", he: "מדען שחוקר רעידות אדמה וצונאמי" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -1866,7 +1829,6 @@
           subtitle: "שאלות על השיעור",
           body: "אם הייתם בחוף וראיתם את המים נסוגים בפתאומיות אחורה, מה הייתם עושים?\n\nלמה חשוב שיהיו מערכות התרעה מוקדמת לצונאמי, גם אם הן לא תמיד מדויקות ב-100%?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -1935,7 +1897,6 @@
             subtitle: "Questions about the lesson",
             body: "If you were at the beach and saw the water suddenly pull back, what would you do?\n\nWhy is it important to have early warning systems for tsunamis, even if they're not always 100% accurate?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -1969,7 +1930,6 @@
         { en: "רעידת משנה", he: "רעידה קטנה יותר שקורית אחרי הרעידה העיקרית" },
         { en: "סייסמולוג", he: "מדען שחוקר רעידות אדמה" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -2013,7 +1973,6 @@
           subtitle: "שאלות על השיעור",
           body: "אם הייתם מרגישים רעידת אדמה עכשיו בכיתה, לאן הייתם הולכים כדי להיות הכי בטוחים?\n\nלמה חשוב שמשפחות באזורי רעידות אדמה יכינו מראש ערכת חירום?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -2082,7 +2041,6 @@
             subtitle: "Questions about the lesson",
             body: "If you felt an earthquake right now in class, where would you go to be the safest?\n\nWhy is it important for families in earthquake areas to prepare an emergency kit in advance?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -2116,7 +2074,6 @@
         { en: "מרכז הוריקנים", he: "מקום שבו מדענים עוקבים אחרי הוריקנים ומזהירים מפניהם" },
         { en: "עונת הוריקנים", he: "תקופת השנה שבה יש הכי הרבה הוריקנים" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -2160,7 +2117,6 @@
           subtitle: "שאלות על השיעור",
           body: "למה חשוב לעזוב אזור מסוכן מיד כשמכריזים על פינוי, גם אם ההוריקן עוד לא הגיע?\n\nמה מכל מה שלמדנו על הוריקנים הפתיע אתכם הכי הרבה?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -2229,7 +2185,6 @@
             subtitle: "Questions about the lesson",
             body: "Why is it important to leave a dangerous area right away when an evacuation is announced, even if the hurricane hasn't arrived yet?\n\nWhat surprised you the most about everything we learned about hurricanes?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -2262,7 +2217,6 @@
         { en: "ציידי סופות", he: "אנשים שעוקבים אחרי טורנדו כדי ללמוד עליו ולהזהיר אחרים" },
         { en: "מסלול הרס", he: "השביל שבו הטורנדו עובר ומשאיר נזק אחריו" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -2306,7 +2260,6 @@
           subtitle: "שאלות על השיעור",
           body: "אם הייתם בבית ושומעים אזעקת טורנדו, לאיזה חדר בבית הייתם הולכים ולמה?\n\nמה ההבדל בין סופת רעמים רגילה לבין סופת רעמים שיוצרת טורנדו?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -2374,7 +2327,6 @@
             subtitle: "Questions about the lesson",
             body: "If you were at home and heard a tornado warning, which room in the house would you go to, and why?\n\nWhat's the difference between a regular thunderstorm and one that produces a tornado?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -2407,7 +2359,6 @@
         { en: "מהירות קול", he: "המהירות שבה הרעם מגיע לאוזניים שלנו, לאט יותר מהאור" },
         { en: "סופת קיץ", he: "סופת רעמים שקורית בדרך כלל בימי קיץ חמים" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -2451,7 +2402,6 @@
           subtitle: "שאלות על השיעור",
           body: "למה חשוב להיכנס פנימה מיד כששומעים רעם קרוב, גם אם עדיין לא יורד גשם?\n\nאיך אפשר לדעת בקירוב כמה רחוק פגע ברק, לפי מה שלמדנו היום?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -2519,7 +2469,6 @@
             subtitle: "Questions about the lesson",
             body: "Why is it important to go inside right away when you hear thunder close by, even if it's not raining yet?\n\nBased on what we learned today, how can you roughly tell how far away a lightning strike was?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -2552,7 +2501,6 @@
         { en: "כלב חילוץ", he: "כלב מאומן שמריח ומוצא אנשים קבורים מתחת לשלג" },
         { en: "אזור סיכון", he: "מקום בהר שבו יש סיכוי גבוה יותר למפולת שלגים" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -2596,7 +2544,6 @@
           subtitle: "שאלות על השיעור",
           body: "למה חשוב לבדוק תחזית סיכון למפולות לפני שיוצאים להר בחורף?\n\nמה מכל מה שלמדנו על מפולות שלגים הפתיע אתכם הכי הרבה?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -2664,7 +2611,6 @@
             subtitle: "Questions about the lesson",
             body: "Why is it important to check the avalanche risk forecast before heading into the mountains in winter?\n\nWhat surprised you the most about everything we learned about avalanches?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -2696,7 +2642,6 @@
         { en: "קשת כפולה", he: "שתי קשתות שנראות יחד בשמיים, כשהצבעים בשנייה הפוכים" },
         { en: "זווית ראייה", he: "הכיוון שממנו האדם מסתכל על הקשת ביחס לשמש" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -2740,7 +2685,6 @@
           subtitle: "שאלות על השיעור",
           body: "איפה ראיתם קשת בעצמכם, וכמה צבעים הצלחתם לזהות בה?\n\nלמה לדעתכם צריך גם שמש וגם גשם ביחד כדי לראות קשת?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -2807,7 +2751,6 @@
             subtitle: "Questions about the lesson",
             body: "Where have you seen a rainbow yourself, and how many colors were you able to spot in it?\n\nWhy do you think you need both sun and rain together to see a rainbow?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -2839,7 +2782,6 @@
         { en: "התנגשות", he: "כשחלקיק מהשמש פוגע במולקולת אוויר וגורם לה לזרוח" },
         { en: "צבעי הזוהר", he: "הגוונים השונים של הזוהר הקוטבי, כמו ירוק, ורוד וסגול" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -2883,7 +2825,6 @@
           subtitle: "שאלות על השיעור",
           body: "אילו צבעים הייתם הכי רוצים לראות בזוהר קוטבי, ולמה?\n\nלמה לדעתכם צריך שמיים חשוכים ונקיים מעננים כדי לראות זוהר קוטבי טוב?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -2950,7 +2891,6 @@
             subtitle: "Questions about the lesson",
             body: "Which colors would you most want to see in an aurora, and why?\n\nWhy do you think you need dark, cloud-free skies to see a good aurora?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -2982,7 +2922,6 @@
         { en: "מרווח התפרצות", he: "משך הזמן שעובר בין התפרצות אחת לשנייה באותו גייזר" },
         { en: "מעיין חם", he: "מקור מים חמים שיוצא מהאדמה בלי להתפרץ, בניגוד לגייזר" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -3026,7 +2965,6 @@
           subtitle: "שאלות על השיעור",
           body: "למה לדעתכם גייזר מתפרץ כל פרק זמן קבוע, ולא נשאר פשוט זורם כמו מעיין רגיל?\n\nהאם הייתם רוצים לראות גייזר מתפרץ מקרוב? למה כן או לא?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -3093,7 +3031,6 @@
             subtitle: "Questions about the lesson",
             body: "Why do you think a geyser erupts at set intervals, instead of just flowing steadily like a regular spring?\n\nWould you want to see a geyser erupt up close? Why or why not?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -3125,7 +3062,6 @@
         { en: "שכבת קרח", he: "שכבה אחת מתוך שכבות רבות שמרכיבות את הקרחון, כל אחת מתקופה אחרת" },
         { en: "מי קרחונים", he: "מים נקיים שמגיעים מהתכת קרחונים ומזינים נהרות ואגמים" },
       ],
-      games: STANDARD_LESSON_GAMES,
       slides: [
         {
           type: "content",
@@ -3169,7 +3105,6 @@
           subtitle: "שאלות על השיעור",
           body: "למה לדעתכם חשוב לשמור על קרחונים בריאים, גם אם הם נמצאים רחוק מהבית שלנו?\n\nמה מכל מה שלמדנו על קרחונים הפתיע אתכם הכי הרבה?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -3236,7 +3171,6 @@
             subtitle: "Questions about the lesson",
             body: "Why do you think it's important to keep glaciers healthy, even if they're far from our home?\n\nWhat surprised you the most about everything we learned about glaciers?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -3259,7 +3193,6 @@
       duration: "25 דק'",
       summary: "מכירים 20 מילים בסיסיות באנגלית דרך תמונות — בעלי חיים, אוכל, חפצים ודברים בטבע — ובונים איתן משפט ראשון. עם משחק בסוף.",
       vocab: Object.values(VOCAB_PICTURES).map(({ en, he }) => ({ en, he })),
-      games: STANDARD_LESSON_GAMES,
       gameTopic: "vocabulary",
       slides: [
         {
@@ -3366,7 +3299,6 @@
           subtitle: "שאלות על השיעור",
           body: "איזו מילה חדשה אהבתם הכי הרבה היום?\n\nמה בכיתה אתם כבר יודעים להגיד באנגלית?",
         },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         {
           type: "content",
           title: "סוף השיעור",
@@ -3416,7 +3348,6 @@
             subtitle: "Questions about the lesson",
             body: "Which new word did you like most today? How do you say it in English?\n\nLook around the classroom — which objects can you already name in English?",
           },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           {
             type: "content",
             title: "End of lesson",
@@ -3461,7 +3392,6 @@
       duration: "20 דק'",
       summary: `מכירים ${count} מילים באנגלית בנושא ${cat.title} — לכל מילה יש תמונה, ואפשר לשמוע איך אומרים אותה. עם משחק בסוף.`,
       vocab: pictures.map(({ en, he }) => ({ en, he })),
-      games: STANDARD_LESSON_GAMES,
       gameTopic: `vocab-${cat.id}`,
       slides: [
         {
@@ -3473,7 +3403,6 @@
         ...groups.map((group) => ({ type: "content", title: `**${cat.title}**`, subtitle: cat.titleEn, pictures: group })),
         { type: "content", title: "משפטים עם **המילים**", subtitle: "משפטים", body: sentences },
         { type: "content", title: "דיון כיתתי", subtitle: "שאלות על השיעור", body: cat.discussion.he.join("\n\n") },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         { type: "content", title: "סוף השיעור", subtitle: "כל הכבוד!", body: "תודה על ההשתתפות!" },
       ],
       en: {
@@ -3491,7 +3420,6 @@
           ...groups.map((group) => ({ type: "content", title: `**${cat.titleEn}**`, subtitle: cat.title, pictures: group })),
           { type: "content", title: "Sentences with **the words**", subtitle: "Sentences", body: sentencesEn },
           { type: "content", title: "Class discussion", subtitle: "Questions about the lesson", body: cat.discussion.en.join("\n\n") },
-          { type: "games", title: "Time to practice!", subtitle: "Games" },
           { type: "content", title: "End of lesson", subtitle: "Well done!", body: "Thanks for participating!" },
         ],
       },
@@ -3504,8 +3432,9 @@
 
   // Short lessons (english-lessons.js, and subject-lessons.js for the other
   // subjects): a topic split into short lessons. Each entry gets the slides
-  // every lesson ends with — the quiz, the class discussion, the games and
-  // the end slide. `num` / `count` number the lesson inside its topic
+  // every lesson ends with — the quiz, the class discussion and the end slide
+  // (its buttons lead to the topic's exercises and to the trivia; the games
+  // are on the topic page, after the exercises). `num` / `count` number the lesson inside its topic
   // ("פועל להיות 2 – לא ושאלות").
   // Subject lessons are written with the right answer anywhere (usually
   // first); the quiz moves it to a different place in each question, keeping
@@ -3534,7 +3463,6 @@
       duration: "15 דק'",
       summary: entry.summary,
       vocab: entry.vocab.map(([en, he]) => ({ en, he })),
-      games: STANDARD_LESSON_GAMES,
       slides: [
         ...entry.slides.map(({ examples, compare, ...slide }) => ({
           type: "content",
@@ -3556,7 +3484,6 @@
           })),
         },
         { type: "content", title: "דיון כיתתי", subtitle: "שאלות על השיעור", body: entry.discuss.join("\n\n") },
-        { type: "games", title: "זמן לתרגל!", subtitle: "משחקים" },
         { type: "content", title: "סוף השיעור", subtitle: "כל הכבוד!", body: "תודה על ההשתתפות!" },
       ],
     };
@@ -3577,6 +3504,12 @@
     if (LESSON_CATALOG[entry.topic]) return;
     Object.defineProperty(LESSON_CATALOG, entry.topic, { value: LESSON_CATALOG[entry.id], enumerable: false });
   });
+  // Short lessons merged into the one before them ("there-is-2" is part of
+  // "there-is-1" now): old links and saved lessons open the merged lesson.
+  Object.entries(window.ENGLISH_LESSON_MERGED || {}).forEach(([oldId, id]) => {
+    if (LESSON_CATALOG[oldId] || !LESSON_CATALOG[id]) return;
+    Object.defineProperty(LESSON_CATALOG, oldId, { value: LESSON_CATALOG[id], enumerable: false });
+  });
 
   // Each lesson's grades in the curriculum (curriculum-grades.js): by its own
   // id, else by its topic. English goes by the topics of the English area.
@@ -3590,10 +3523,6 @@
   // An English area topic's grades ("tobe", "vocab-animals", "reading").
   function englishTopicGrades(topicId) {
     return CURRICULUM_EN[topicId] || [];
-  }
-
-  function englishInGrade(grade) {
-    return grade === "all" || Object.values(CURRICULUM_EN).some((grades) => grades.includes(Number(grade)));
   }
 
   function lessonInGrade(lesson, grade) {
@@ -4184,12 +4113,32 @@
     const topicValue = $("#filterTopicValue");
     const cards = $$(".svc-lesson-card[data-lesson]");
     const empty = $("#lessonEmptyState");
-    // The English lessons live in the English area (/services/english), so
-    // the library shows it as one card instead of a card per lesson.
-    const practiceCard = $("#englishPracticeCard");
-    // The English word cards (#cards on the English page) get a card of their own.
-    const wordCardsCard = $("#englishCardsCard");
     if (!filtersRoot || !topicMenu || !cards.length) return;
+
+    // A filter's value is never cut: if a word doesn't fit its box (or the
+    // text runs past 2 lines) the font shrinks until it does.
+    const fitFilterValues = () => {
+      [subjectValue, gradeValue, topicValue].forEach((el) => {
+        if (!el || !el.clientWidth) return;
+        el.style.fontSize = "";
+        let size = parseFloat(getComputedStyle(el).fontSize);
+        const tooBig = () => el.scrollWidth > el.clientWidth + 0.5 || el.scrollHeight > el.clientHeight + 0.5;
+        while (size > 10 && tooBig()) {
+          size -= 0.5;
+          el.style.fontSize = `${size}px`;
+        }
+      });
+    };
+    let fitFrame = 0;
+    const queueFit = () => {
+      cancelAnimationFrame(fitFrame);
+      fitFrame = requestAnimationFrame(fitFilterValues);
+    };
+    const fitWatch = new MutationObserver(queueFit);
+    [subjectValue, gradeValue, topicValue].forEach((el) => el && fitWatch.observe(el, { childList: true, characterData: true, subtree: true }));
+    window.addEventListener("resize", queueFit);
+    document.fonts?.ready.then(queueFit);
+    queueFit();
 
     // The cards are in each subject's learning-path order (subject-practice.js),
     // so a lesson's number is its place among its subject's cards. Numbered
@@ -4206,22 +4155,6 @@
       num.textContent = subjectCount[subject];
       preview.prepend(num);
     });
-
-    // Capture: the card's "פתיחה" button stops its click from bubbling up.
-    practiceCard?.addEventListener(
-      "click",
-      () => {
-        window.location.href = state.grade === "all" ? SUBJECT_AREAS.english : `${SUBJECT_AREAS.english}?grade=${state.grade}`;
-      },
-      true
-    );
-    wordCardsCard?.addEventListener(
-      "click",
-      () => {
-        window.location.href = `${SUBJECT_AREAS.english}#cards`;
-      },
-      true
-    );
 
     const state = { subject: "all", grade: gradeFromUrl(), topic: "all" };
     const catalogLessons = Object.values(LESSON_CATALOG);
@@ -4266,8 +4199,7 @@
     }
 
     function getTopicOptions() {
-      // The English topics are in the English area, not in the grid.
-      const subjects = state.subject === "all" ? ACTIVE_SUBJECTS.filter((s) => s !== "english") : [state.subject];
+      const subjects = state.subject === "all" ? ACTIVE_SUBJECTS : [state.subject];
       const seen = new Map();
       // With a grade chosen, only the topics that have a lesson in it.
       const inGrade = (topicId) =>
@@ -4320,7 +4252,8 @@
     }
 
     function applyFilters() {
-      let visible = 0;
+      if (flippedLessonCard) flipLessonCard(flippedLessonCard, false, false);
+      matching = [];
       cards.forEach((card) => {
         const lesson = LESSON_CATALOG[card.dataset.lesson];
         if (!lesson) {
@@ -4333,14 +4266,104 @@
         const matchGrade = lessonInGrade(lesson, state.grade);
         const matchTopic = state.topic === "all" || lesson.topic === state.topic;
         const show = matchSubject && matchGrade && matchTopic;
-        card.classList.toggle("hidden", !show);
-        if (show) visible += 1;
+        if (show) matching.push(card);
+        else card.classList.add("hidden");
       });
-      const showPractice = state.subject === "all" && state.topic === "all" && englishInGrade(state.grade);
-      practiceCard?.classList.toggle("hidden", !showPractice);
-      wordCardsCard?.classList.toggle("hidden", !showPractice);
-      if (showPractice) visible += 1;
-      empty?.classList.toggle("hidden", visible > 0);
+      // A new filter starts again from the first rows.
+      morePages = 1;
+      applyPaging();
+      updateEmptyState(matching.length);
+      toneRows();
+    }
+
+    // A subject with no cards on this page (its lessons only in its own
+    // area): the empty note offers a button there instead.
+    const emptyText = empty?.textContent || "";
+    function updateEmptyState(visible) {
+      if (!empty) return;
+      empty.classList.toggle("hidden", visible > 0);
+      if (visible > 0) return;
+      const area = SUBJECT_AREAS[state.subject];
+      const hasCards = cards.some((card) => LESSON_CATALOG[card.dataset.lesson]?.subject === state.subject);
+      if (!area || hasCards) {
+        empty.textContent = emptyText;
+        return;
+      }
+      // The chosen grade goes along; a student's library keeps their bar there.
+      const params = new URLSearchParams();
+      if (state.grade !== "all") params.set("grade", state.grade);
+      if (document.documentElement.classList.contains("from-student")) params.set("from", "student");
+      const href = params.size ? `${area}?${params}` : area;
+      empty.innerHTML =
+        `השיעורים במקצוע הזה נמצאים באזור משלו.` +
+        `<span style="display:block;margin-top:18px"><a class="btn btn-primary btn-candy font-cartoon" href="${href}">מעבר לאזור ${subjectLabel(state.subject)}</a></span>`;
+    }
+
+    // The sticker colors (service-landing.css) go row by row over the cards
+    // that show: one color for a whole row, the next row the next color. The
+    // tilt still changes card by card.
+    function toneRows() {
+      let row = -1;
+      let top = null;
+      const shown = $$(".svc-lesson-grid > .svc-lesson-card:not(.hidden)");
+      // Read every position first, then write: a write between two reads
+      // makes the browser lay the page out again for every card.
+      const tops = shown.map((card) => card.offsetTop);
+      shown.forEach((card, i) => {
+        if (top === null || Math.abs(tops[i] - top) > 4) {
+          top = tops[i];
+          row += 1;
+        }
+        card.dataset.tone = row % 4;
+        card.dataset.tilt = i % 4;
+      });
+    }
+    const lessonGrid = $(".svc-lesson-grid");
+
+    // Not all the lessons at once: about MORE_STEP cards (whole rows), and an
+    // "עוד שיעורים" button under them shows the next ones.
+    const MORE_STEP = 24;
+    let matching = [];
+    let morePages = 1;
+    let moreCols = 0;
+    const moreWrap = document.createElement("div");
+    moreWrap.className = "svc-more-wrap hidden";
+    const moreBtn = document.createElement("button");
+    moreBtn.type = "button";
+    moreBtn.className = "btn btn-primary btn-candy font-cartoon svc-more-btn";
+    moreBtn.textContent = "עוד שיעורים";
+    moreWrap.append(moreBtn);
+    lessonGrid?.after(moreWrap);
+
+    function gridCols() {
+      if (!lessonGrid) return 1;
+      const tracks = getComputedStyle(lessonGrid).gridTemplateColumns;
+      return tracks && tracks !== "none" ? Math.max(1, tracks.split(/\s+/).filter(Boolean).length) : 1;
+    }
+
+    function applyPaging() {
+      moreCols = gridCols();
+      const limit = morePages * Math.ceil(MORE_STEP / moreCols) * moreCols;
+      matching.forEach((card, i) => card.classList.toggle("hidden", i >= limit));
+      moreWrap.classList.toggle("hidden", matching.length <= limit);
+    }
+
+    moreBtn.addEventListener("click", () => {
+      if (flippedLessonCard) flipLessonCard(flippedLessonCard, false, false);
+      const firstNew = matching.find((card) => card.classList.contains("hidden"));
+      morePages += 1;
+      applyPaging();
+      toneRows();
+      // Keyboard users carry on from the first new card.
+      if (firstNew) $(".svc-lesson-info-toggle", firstNew)?.focus({ preventScroll: true });
+    });
+
+    // The number of cards in a row changes with the width.
+    if (lessonGrid && typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(() => {
+        if (gridCols() !== moreCols) applyPaging();
+        toneRows();
+      }).observe(lessonGrid);
     }
 
     // Card titles sit in a fixed square (see lesson-player.css) with
@@ -4350,45 +4373,67 @@
     // fitSlideContent() shrinks dense lesson slides, instead of clipping.
     const CARD_FIT_MIN = 0.55;
     const CARD_FIT_STEP = 0.05;
-    function fitLessonCardTitle(wrap) {
-      if (!wrap) return;
-      wrap.style.removeProperty("--card-fit");
-      // A hidden card has no size to fit into; the observer refits it once shown.
-      if (!wrap.clientHeight) return;
-      const nameEl = $(".svc-lesson-name", wrap);
-      const partEl = $(".svc-lesson-part", wrap);
-      if (!nameEl && !partEl) return;
-      // wrap is absolutely positioned (inset: 0) so its own scrollHeight
-      // never reflects overflowing children — measure the two text lines
-      // directly against the padding-box space actually available for them.
-      const cs = getComputedStyle(wrap);
-      const available = wrap.clientHeight - parseFloat(cs.paddingTop || "0") - parseFloat(cs.paddingBottom || "0");
-      const gap = nameEl && partEl ? parseFloat(cs.rowGap || cs.gap || "0") || 0 : 0;
-      const needed = () => (nameEl?.offsetHeight || 0) + (partEl?.offsetHeight || 0) + gap;
-      let scale = 1;
-      while (scale > CARD_FIT_MIN + 1e-6 && needed() > available) {
-        scale = Math.max(CARD_FIT_MIN, scale - CARD_FIT_STEP);
-        wrap.style.setProperty("--card-fit", scale.toFixed(2));
+    // Fits many cards together: all the writes, then all the reads, step by
+    // step. Fitting card by card (write, measure, write…) made the browser lay
+    // out the whole page again for each of the ~280 cards, and the page took
+    // over 10 seconds to open.
+    function fitLessonCardTitles(wraps) {
+      wraps = wraps.filter(Boolean);
+      wraps.forEach((wrap) => wrap.style.removeProperty("--card-fit"));
+      const items = [];
+      wraps.forEach((wrap) => {
+        // A hidden card has no size to fit into; the observer refits it once shown.
+        if (!wrap.clientHeight) return;
+        const nameEl = $(".svc-lesson-name", wrap);
+        const partEl = $(".svc-lesson-part", wrap);
+        if (!nameEl && !partEl) return;
+        // wrap is absolutely positioned (inset: 0) so its own scrollHeight
+        // never reflects overflowing children — measure the two text lines
+        // directly against the padding-box space actually available for them.
+        const cs = getComputedStyle(wrap);
+        const available = wrap.clientHeight - parseFloat(cs.paddingTop || "0") - parseFloat(cs.paddingBottom || "0");
+        const gap = nameEl && partEl ? parseFloat(cs.rowGap || cs.gap || "0") || 0 : 0;
+        items.push({ wrap, nameEl, partEl, available, gap, scale: 1 });
+      });
+      const tooBig = (it) =>
+        it.scale > CARD_FIT_MIN + 1e-6 &&
+        (it.nameEl?.offsetHeight || 0) + (it.partEl?.offsetHeight || 0) + it.gap > it.available;
+      let todo = items.filter(tooBig);
+      while (todo.length) {
+        todo.forEach((it) => {
+          it.scale = Math.max(CARD_FIT_MIN, it.scale - CARD_FIT_STEP);
+          it.wrap.style.setProperty("--card-fit", it.scale.toFixed(2));
+        });
+        todo = todo.filter(tooBig);
       }
     }
+    const allTitleWraps = () => cards.map((card) => $(".svc-lesson-title-wrap", card));
 
-    // The English practice and word-cards cards aren't lessons, but have the
-    // same square title, so they are fitted too.
-    const fitCards = [...cards, practiceCard, wordCardsCard].filter(Boolean);
     if (typeof ResizeObserver !== "undefined") {
-      fitCards.forEach((card) => {
+      // One observer for all the cards, so a resize refits them in one batch.
+      // It watches the fixed-size outer square, not the wrap we resize the
+      // font of, so shrinking the font doesn't retrigger the observer.
+      const fitObserver = new ResizeObserver((entries) =>
+        fitLessonCardTitles(entries.map((e) => $(".svc-lesson-title-wrap", e.target)))
+      );
+      cards.forEach((card) => {
         const preview = $(".svc-lesson-preview", card);
-        const wrap = $(".svc-lesson-title-wrap", card);
-        if (!preview || !wrap) return;
-        // Observe the fixed-size outer square, not the wrap we resize the
-        // font of, so shrinking the font doesn't retrigger the observer.
-        new ResizeObserver(() => fitLessonCardTitle(wrap)).observe(preview);
+        if (preview && $(".svc-lesson-title-wrap", preview)) fitObserver.observe(preview);
       });
     }
 
     // The site font arrives after the first fit, and its wider letters ran
-    // the titles past the card — so fit again whenever a font finishes loading.
-    const refitLessonCards = () => fitCards.forEach((card) => fitLessonCardTitle($(".svc-lesson-title-wrap", card)));
+    // the titles past the card — so fit again whenever a font finishes loading
+    // (once per frame, however many fonts finish together).
+    let refitQueued = false;
+    const refitLessonCards = () => {
+      if (refitQueued) return;
+      refitQueued = true;
+      requestAnimationFrame(() => {
+        refitQueued = false;
+        fitLessonCardTitles(allTitleWraps());
+      });
+    };
     document.fonts?.ready.then(refitLessonCards);
     document.fonts?.addEventListener?.("loadingdone", refitLessonCards);
 
@@ -4426,8 +4471,9 @@
         if (infoToggle) infoToggle.setAttribute("aria-label", lang === "en" ? "Lesson info" : "מידע על השיעור");
         const badge = $(".svc-lesson-learned-badge", card);
         if (badge) badge.textContent = lang === "en" ? "Learned" : "נלמד";
-        fitLessonCardTitle($(".svc-lesson-title-wrap", card));
       });
+      fitLessonCardTitles(allTitleWraps());
+      moreBtn.textContent = lang === "en" ? "More lessons" : "עוד שיעורים";
       if (empty) {
         empty.textContent =
           lang === "en" ? "No lessons match these filters." : "לא נמצאו שיעורים לפי הסינון.";
@@ -4458,17 +4504,8 @@
       $("#filterSubjectTrigger"),
       $("#filterSubjectMenu"),
       (btn) => {
-        // English and the school subjects have their own area (learning
-        // path, exercises): choosing one goes straight there instead of
-        // filtering the cards.
-        // The chosen grade goes along: the area opens on that grade's topics.
-        const area = SUBJECT_AREAS[btn.dataset.subject];
-        if (area) {
-          btn.classList.remove("active");
-          $(`#filterSubjectMenu button[data-subject="${state.subject}"]`)?.classList.add("active");
-          window.location.href = state.grade === "all" ? area : `${area}?grade=${state.grade}`;
-          return;
-        }
+        // Choosing a subject filters the cards on this page (it no longer
+        // goes to the subject's area).
         state.subject = btn.dataset.subject;
         if (subjectValue) subjectValue.textContent = btn.textContent;
         renderTopicMenu();
@@ -4503,6 +4540,40 @@
     renderTopicMenu();
     applyFilters();
     relabelFilterMenus();
+    fitFilterValues([subjectValue, gradeValue, topicValue].filter(Boolean), filtersRoot);
+  }
+
+  // A chosen filter value ("כישורי חיים") is never cut with "...": its text
+  // shrinks until it fits the box, and only if it still doesn't fit at the
+  // smallest size does it wrap onto a second line.
+  function fitFilterValues(values, root) {
+    const fit = (el) => {
+      el.style.fontSize = "";
+      el.style.whiteSpace = "";
+      if (!el.clientWidth) return;
+      const base = parseFloat(getComputedStyle(el).fontSize);
+      let size = base;
+      while (el.scrollWidth > el.clientWidth + 1 && size > base * 0.55) {
+        size -= 1;
+        el.style.fontSize = `${size}px`;
+      }
+      if (el.scrollWidth > el.clientWidth + 1) el.style.whiteSpace = "normal";
+    };
+    const fitAll = () => values.forEach(fit);
+    fitAll();
+    const textChanged = new MutationObserver((records) => {
+      new Set(records.map((r) => (r.target.nodeType === 1 ? r.target : r.target.parentElement))).forEach(
+        (el) => values.includes(el) && fit(el)
+      );
+    });
+    values.forEach((el) => textChanged.observe(el, { childList: true, characterData: true, subtree: true }));
+    let lastWidth = root.clientWidth;
+    new ResizeObserver(() => {
+      if (root.clientWidth === lastWidth) return;
+      lastWidth = root.clientWidth;
+      fitAll();
+    }).observe(root);
+    document.fonts?.ready.then(fitAll);
   }
 
   function showToast(msg) {
@@ -4545,6 +4616,11 @@
     modalBtn.classList.toggle("is-active", active);
     modalBtn.setAttribute("aria-pressed", active ? "true" : "false");
     modalBtn.setAttribute("aria-label", label);
+    const shortLabel = $("#lessonInfoFavLabel");
+    if (shortLabel) {
+      shortLabel.textContent =
+        curLang() === "en" ? (active ? "Saved" : "Save") : active ? "נשמר" : "שמירה";
+    }
   }
 
   function syncAllFavButtons() {
@@ -4644,7 +4720,7 @@
     const shareBtn = $("#lessonInfoShareBtn");
     if (shareBtn) shareBtn.dataset.lesson = lessonId;
     const shareLabel = $("#lessonInfoShareLabel");
-    if (shareLabel) shareLabel.textContent = curLang() === "en" ? "Share lesson" : "שיתוף השיעור";
+    if (shareLabel) shareLabel.textContent = curLang() === "en" ? "Share" : "שיתוף";
     const links = buildShareLinks(lessonId);
     const waLink = $("#lessonInfoShareWhatsapp");
     if (waLink && links) waLink.href = links.whatsapp;
@@ -4716,8 +4792,8 @@
     try {
       await navigator.clipboard.writeText(links.url);
       if (shareLabel) {
-        const copiedLabel = curLang() === "en" ? "Link copied!" : "הקישור הועתק!";
-        const shareLabelText = curLang() === "en" ? "Share lesson" : "שיתוף השיעור";
+        const copiedLabel = curLang() === "en" ? "Copied!" : "הועתק!";
+        const shareLabelText = curLang() === "en" ? "Share" : "שיתוף";
         shareLabel.textContent = copiedLabel;
         setTimeout(() => {
           if (shareLabel.textContent === copiedLabel) shareLabel.textContent = shareLabelText;
@@ -4728,15 +4804,107 @@
     }
   }
 
+  // The card's "i" turns the card over: its back says what the lesson is
+  // about (the lesson's summary). A tap on the back turns it over again; the
+  // back's "עוד" opens the dialog with saving, sharing and copying.
+  const CARD_FLIP_BACK_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>';
+  const CARD_MORE_SVG =
+    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2.3"/><circle cx="12" cy="12" r="2.3"/><circle cx="19" cy="12" r="2.3"/></svg>';
+  const SUMMARY_FIT_MIN = 0.72;
+  const SUMMARY_FIT_STEP = 0.04;
+  let flippedLessonCard = null;
+
+  function buildLessonCardBack(card) {
+    const back = document.createElement("div");
+    back.className = "svc-lesson-back";
+    back.inert = true;
+    back.setAttribute("aria-hidden", "true");
+    const num = $(".svc-lesson-preview .svc-lesson-num", card);
+    // "עוד" opens the lesson's dialog; a page without it (the English
+    // mini site's library, flipCard) has no "עוד".
+    back.innerHTML = `${num ? `<span class="svc-lesson-num" aria-hidden="true">${num.textContent}</span>` : ""}
+      <button type="button" class="svc-lesson-flip-back">${CARD_FLIP_BACK_SVG}</button>
+      ${$("#lessonInfoModal") ? `<button type="button" class="svc-lesson-more">${CARD_MORE_SVG}</button>` : ""}
+      <div class="svc-lesson-summary"><p class="svc-lesson-summary-text"></p></div>`;
+    back.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.target.closest(".svc-lesson-more")) {
+        openLessonInfoModal(card.dataset.lesson);
+        return;
+      }
+      flipLessonCard(card, false);
+    });
+    card.appendChild(back);
+    return back;
+  }
+
+  // The summary fills the back without scrolling: the font goes down step by
+  // step, and a summary that still doesn't fit keeps only its first
+  // sentences (the whole summary is in the "עוד" dialog).
+  function fitLessonCardSummary(back, text) {
+    const box = $(".svc-lesson-summary", back);
+    const p = $(".svc-lesson-summary-text", back);
+    if (!box || !p) return;
+    box.style.removeProperty("--summary-fit");
+    p.style.removeProperty("-webkit-line-clamp");
+    p.classList.remove("is-clamped");
+    p.textContent = text;
+    if (!box.clientHeight) return;
+    const cs = getComputedStyle(box);
+    const room = box.clientHeight - parseFloat(cs.paddingTop || "0") - parseFloat(cs.paddingBottom || "0");
+    const fits = () => p.offsetHeight <= room + 1;
+    let scale = 1;
+    while (!fits() && scale > SUMMARY_FIT_MIN + 1e-6) {
+      scale = Math.max(SUMMARY_FIT_MIN, scale - SUMMARY_FIT_STEP);
+      box.style.setProperty("--summary-fit", scale.toFixed(2));
+    }
+    if (fits()) return;
+    const sentences = text.match(/[^.!?]+[.!?]+["״']?\s*|[^.!?]+$/g) || [text];
+    for (let n = sentences.length - 1; n >= 1; n -= 1) {
+      p.textContent = sentences.slice(0, n).join("").trim();
+      if (fits()) return;
+    }
+    // One sentence that is still too long: as many lines as there is room for.
+    const lineHeight = parseFloat(getComputedStyle(p).lineHeight) || 16;
+    p.classList.add("is-clamped");
+    p.style.setProperty("-webkit-line-clamp", String(Math.max(1, Math.floor(room / lineHeight))));
+  }
+
+  function flipLessonCard(card, toBack, moveFocus = true) {
+    if (toBack && flippedLessonCard && flippedLessonCard !== card) flipLessonCard(flippedLessonCard, false, false);
+    const back = $(".svc-lesson-back", card) || buildLessonCardBack(card);
+    const preview = $(".svc-lesson-preview", card);
+    const toggle = $(".svc-lesson-info-toggle", card);
+    const en = curLang() === "en";
+    if (toBack) {
+      const lesson = localizeLesson(LESSON_CATALOG[card.dataset.lesson]);
+      $(".svc-lesson-flip-back", back)?.setAttribute("aria-label", en ? "Turn the card back" : "חזרה לכרטיס");
+      $(".svc-lesson-more", back)?.setAttribute("aria-label", en ? "More: save and share" : "עוד: שמירה ושיתוף");
+      fitLessonCardSummary(back, lesson?.summary || "");
+    }
+    card.classList.toggle("is-flipped", toBack);
+    back.inert = !toBack;
+    back.setAttribute("aria-hidden", String(!toBack));
+    if (preview) preview.inert = toBack;
+    toggle?.setAttribute("aria-expanded", String(toBack));
+    flippedLessonCard = toBack ? card : null;
+    if (moveFocus) (toBack ? $(".svc-lesson-flip-back", back) : toggle)?.focus({ preventScroll: true });
+  }
+
   function bindLessonInfoModal() {
     const modal = $("#lessonInfoModal");
     if (!modal) return;
 
     $$(".svc-lesson-card[data-lesson]").forEach((card) => {
       const toggle = $(".svc-lesson-info-toggle", card);
+      toggle?.removeAttribute("aria-haspopup");
+      toggle?.setAttribute("aria-expanded", "false");
       toggle?.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        openLessonInfoModal(card.dataset.lesson);
+        flipLessonCard(card, true);
       });
 
       const preview = $(".svc-lesson-preview", card);
@@ -4744,7 +4912,7 @@
         if (e.target.closest(".svc-lesson-info-toggle")) {
           e.preventDefault();
           e.stopPropagation();
-          openLessonInfoModal(card.dataset.lesson);
+          flipLessonCard(card, true);
           return;
         }
         const lessonId = card.dataset.lesson;
@@ -4757,6 +4925,28 @@
           return;
         }
         openLessonSlides?.(lessonId);
+      });
+    });
+
+    // A tap anywhere else, Escape, or a new filter turns the card back.
+    document.addEventListener("click", (e) => {
+      if (flippedLessonCard && !flippedLessonCard.contains(e.target) && !modal.contains(e.target)) {
+        flipLessonCard(flippedLessonCard, false, false);
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && flippedLessonCard && modal.classList.contains("hidden")) {
+        flipLessonCard(flippedLessonCard, false);
+      }
+    });
+    let refitFrame = 0;
+    window.addEventListener("resize", () => {
+      cancelAnimationFrame(refitFrame);
+      refitFrame = requestAnimationFrame(() => {
+        if (!flippedLessonCard) return;
+        const back = $(".svc-lesson-back", flippedLessonCard);
+        const lesson = localizeLesson(LESSON_CATALOG[flippedLessonCard.dataset.lesson]);
+        if (back) fitLessonCardSummary(back, lesson?.summary || "");
       });
     });
 
@@ -5344,32 +5534,79 @@
       .join("<br>");
   }
 
-  function launchLessonGame(lesson, gameId, slideIndex) {
-    const text = lesson.vocab.map((v) => `${v.en}=${v.he}`).join("\n");
-    sessionStorage.setItem(
-      LESSON_RETURN_KEY,
-      JSON.stringify({
-        lessonId: lesson.id,
-        slideIndex,
-        // Back to whichever page opened the lesson (lessons library or the
-        // Learn English page), including its #topic hash.
-        returnUrl: `${window.location.pathname}${window.location.hash}`,
-        lessonName: lesson.name,
-      })
-    );
-    window.CreateGameFlow?.launchGame({
-      text,
-      items: lesson.vocab,
-      subject: lesson.subject,
-      gamePick: gameId,
-    });
+  // Where a lesson's practice is: its topic on its learning area's page —
+  // the English page, a subject's page or the road-safety site. The page in
+  // front of us comes first when it has the lesson (english-learning.js
+  // LearnArea; the English mini site too). Null for a lesson a teacher wrote.
+  // A long lesson whose topic has another id: AREA_TOPIC.
+  const AREA_TOPIC = { health: "heart" };
+
+  function lessonArea(lesson) {
+    if (!lesson || lesson.topic === "my-lessons" || String(lesson.id).startsWith("my-")) return null;
+    const here = window.LearnArea?.topicOfLesson(lesson.id);
+    if (here) return { path: window.location.pathname, topic: here, here: true };
+    const subject = lesson.subject || "english";
+    const path = subject === "english" ? "/services/english" : subject === "road" ? "/road-safety" : `/services/${subject}`;
+    return { path, topic: lesson.gameTopic || AREA_TOPIC[lesson.id] || lesson.topic, here: false };
   }
 
-  // A picture game runs on the Learn English page, on the lesson's topic; its
-  // results screen leads back to this slide (english-learning.js reads the
-  // same return key that play.html does, plus which game it is for).
-  function launchPictureGame(lesson, gameId, slideIndex, closePlayer) {
-    const target = `${lesson.gameTopic}/game-${gameId}`;
+  // The trivia's questions for a lesson (english-games.js "trivia"): its quiz,
+  // and a question per word it teaches — an English word with its meaning to
+  // choose, or a subject's meaning with its term to choose. Letters alone
+  // ("A" – אֵי) are left out: their "meaning" is only how they are read.
+  function triviaFor(lessonOrId) {
+    const lesson = typeof lessonOrId === "string" ? LESSON_CATALOG[lessonOrId] : lessonOrId;
+    if (!lesson) return [];
+    const out = [];
+    (lesson.slides || [])
+      .filter((slide) => slide.type === "quiz")
+      .forEach((slide) =>
+        (slide.questions || []).forEach((q) => {
+          const options = [...new Set((q.options || []).map(String))];
+          const answer = String(q.options?.[q.answer] ?? "");
+          if (options.length < 2 || !options.includes(answer)) return;
+          out.push({ q: q.q, ...(q.he && { he: q.he }), ...(q.math && { math: q.math }), options, answer, ...(q.why && { why: q.why }) });
+        })
+      );
+    const english = (lesson.subject || "english") === "english";
+    const seen = new Set();
+    const words = (lesson.vocab || []).filter((v) => {
+      const key = `${v?.en}|${v?.he}`;
+      if (!v?.en || !v?.he || seen.has(key) || (english && String(v.en).trim().length < 2)) return false;
+      seen.add(key);
+      return true;
+    });
+    const pick = (list, n) => {
+      const pool = [...list];
+      const got = [];
+      while (pool.length && got.length < n) got.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      return got;
+    };
+    words.forEach((w) => {
+      // English: the word, and its meaning to choose. A subject: the meaning,
+      // and its term to choose (the terms are the short ones).
+      const [shown, right] = english ? [w.en, w.he] : [w.he, w.en];
+      const others = [...new Set(words.map((o) => (english ? o.he : o.en)).filter((x) => x !== right))];
+      if (others.length < 2) return;
+      out.push({
+        q: shown,
+        ask: english ? "word" : "term",
+        ...(english && { say: w.en }),
+        options: [right, ...pick(others, 3)],
+        answer: right,
+      });
+    });
+    return out;
+  }
+
+  // The lesson's trivia runs on its learning area's page (english-learning.js
+  // with english-games.js), on the lesson's topic; its back arrow and
+  // results lead back to this slide (it reads the same return key that
+  // play.html does, plus which game it is for). A teacher's own lesson has
+  // no topic: its questions go with the return key, to the English page.
+  function launchLessonTrivia(lesson, slideIndex, closePlayer) {
+    const area = lessonArea(lesson);
+    const target = `${area ? area.topic : "my-lessons"}/game-trivia`;
     sessionStorage.setItem(
       LESSON_RETURN_KEY,
       JSON.stringify({
@@ -5378,18 +5615,35 @@
         returnUrl: `${window.location.pathname}${window.location.hash}`,
         lessonName: lesson.name,
         pictureGame: target,
+        ...(!area && { trivia: triviaFor(lesson), subject: lesson.subject || "english" }),
       })
     );
-    if (/^\/services\/english(\.html)?$/.test(window.location.pathname)) {
+    if (area?.here) {
       closePlayer();
       window.location.hash = target;
     } else {
-      window.location.href = `/services/english#${target}`;
+      window.location.href = `${area ? area.path : "/services/english"}#${target}`;
+    }
+  }
+
+  // "Practice": the lesson's own exercises (english-learning.js reads
+  // #<topic>/set-<lesson id>: the lesson's set on a topic of a few lessons,
+  // the topic page at its exercises on a topic of one).
+  function openLessonPractice(lesson, closePlayer) {
+    const area = lessonArea(lesson);
+    if (!area) return;
+    const target = `${area.topic}/set-${lesson.id}`;
+    if (area.here) {
+      closePlayer();
+      window.location.hash = target;
+    } else {
+      window.location.href = `${area.path}#${target}`;
     }
   }
 
   let openLessonSlides = null;
   let resumeLessonSlides = null;
+  let livePlayer = null;
 
   function bindLessonPlayer() {
     const player = $("#lessonPlayer");
@@ -5460,9 +5714,14 @@
       });
     }
 
+    // A slide that has to shrink a lot (a long "הסבר מורחב" over example
+    // cards, on a small screen) tries its cards side by side in one row
+    // (.lp-compact) and keeps that only if it fits bigger that way.
+    const LP_COMPACT_BELOW = 0.8;
+
     function fitSlideContent() {
       if (!slideWrapEl) return;
-      slideEl.style.removeProperty("--lp-fit");
+      slideEl.classList.remove("lp-compact");
       // The same rounded zoom as the CSS gets: the zoomed slide's min-height
       // is the wrap's height over it, and scrollHeight rounds that up — so
       // the check allows a pixel, or it shrank every fullscreen slide to
@@ -5473,14 +5732,24 @@
       const available = slideWrapEl.clientHeight / zoom;
       if (!available) return;
       const pairs = nowrapBoxes();
-      let scale = 1;
-      while (
-        scale > LP_FIT_MIN + 1e-6 &&
-        (slideEl.scrollHeight > available + 1 || spillsSideways(pairs, zoom))
-      ) {
-        scale = Math.max(LP_FIT_MIN, scale - LP_FIT_STEP);
-        slideEl.style.setProperty("--lp-fit", scale.toFixed(2));
-      }
+      const fits = () => slideEl.scrollHeight <= available + 1 && !spillsSideways(pairs, zoom);
+      // The scale it fits at — or, when even LP_FIT_MIN is too big, minus
+      // how far it still spills, so the layout that spills less wins.
+      const shrink = () => {
+        slideEl.style.removeProperty("--lp-fit");
+        let scale = 1;
+        while (scale > LP_FIT_MIN + 1e-6 && !fits()) {
+          scale = Math.max(LP_FIT_MIN, scale - LP_FIT_STEP);
+          slideEl.style.setProperty("--lp-fit", scale.toFixed(2));
+        }
+        return fits() ? scale : available - slideEl.scrollHeight;
+      };
+      const scale = shrink();
+      if (scale >= LP_COMPACT_BELOW || !slideEl.querySelector(".lp-ex-list:not(.is-flow) > .lp-ex + .lp-ex")) return;
+      slideEl.classList.add("lp-compact");
+      if (shrink() > scale) return;
+      slideEl.classList.remove("lp-compact");
+      shrink();
     }
     if (typeof ResizeObserver !== "undefined" && slideWrapEl) {
       new ResizeObserver(fitSlideContent).observe(slideWrapEl);
@@ -5498,6 +5767,12 @@
     let steps = [];
     let index = 0;
     let pdfMode = false;
+    // A live lesson (live-lesson.js): a student's player follows the
+    // teacher's — no arrows, no end-slide games, "הסבר מורחב" and the
+    // picture slides as the teacher set them. followExit runs instead of
+    // closing (the student leaves the live lesson).
+    let following = false;
+    let followExit = null;
 
     // "הסבר מורחב": a square button beside the other top-bar buttons, on a
     // lesson whose slides have `more` (lines of simple Hebrew, one idea
@@ -5525,6 +5800,7 @@
 
     moreBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+      if (following) return;
       moreMode = !moreMode;
       try {
         localStorage.setItem(MORE_KEY, moreMode ? "1" : "0");
@@ -5757,50 +6033,25 @@
     window.addEventListener("resize", () => closeWordPopup());
     window.addEventListener("scroll", () => closeWordPopup(), true);
 
-    function renderGamesSlide(slide) {
+    // The end slide asks what's next: the lesson's exercises on its topic
+    // page, or its trivia — each only when the lesson has it.
+    function endActionsHtml() {
+      if (following) return "";
       const en = curLang() === "en";
-      const classGames = (lesson.games || [])
-        .map(
-          (g) =>
-            `<button type="button" class="lp-game-btn lp-game-btn--${g.id}" data-game-id="${g.id}">
-              <span class="lp-game-btn-icon" aria-hidden="true">${g.icon || LESSON_GAME_ICONS.play}</span>
-              <span class="lp-game-btn-label">${en ? g.labelEn : g.label}</span>
-            </button>`
-        )
-        .join("");
-      // Vocabulary lessons also offer the picture games of the Learn English
-      // page (english-games.js), played there on the lesson's words.
-      // Bingo needs more words than the other games (EnglishGames.listFor).
-      const pictureGames = lesson.gameTopic ? window.EnglishGames?.listFor(lesson.vocab || []) || [] : [];
-      const options = pictureGames.length
-        ? `
-          <div class="lp-game-group">
-            <p class="lp-game-group-title">${en ? "Picture games" : "משחקי תמונות"}</p>
-            <div class="lp-game-options lp-game-options--wide">
-              ${pictureGames
-                .map(
-                  (g) =>
-                    `<button type="button" class="lp-game-btn lp-game-btn--picture lp-game-btn--${g.id}" data-picture-game="${g.id}">
-                      <span class="lp-game-btn-icon" aria-hidden="true">${g.icon}</span>
-                      <span class="lp-game-btn-label">${en ? g.titleEn : g.title}</span>
-                    </button>`
-                )
-                .join("")}
-            </div>
-          </div>
-          <div class="lp-game-group">
-            <p class="lp-game-group-title">${en ? "More games" : "משחקים נוספים"}</p>
-            <div class="lp-game-options lp-game-options--wide">${classGames}</div>
-          </div>`
-        : `<div class="lp-game-options">${classGames}</div>`;
+      const btn = (kind, icon, label) =>
+        `<button type="button" class="lp-game-btn lp-end-btn lp-end-btn--${kind}" data-end-action="${kind}">
+          <span class="lp-game-btn-icon" aria-hidden="true">${icon}</span>
+          <span class="lp-game-btn-label">${label}</span>
+        </button>`;
+      const btns = [
+        lessonArea(lesson) ? btn("practice", LESSON_GAME_ICONS.practice, en ? "Practice" : "תרגול") : "",
+        triviaFor(lesson).length >= 4 ? btn("trivia", LESSON_GAME_ICONS.trivia, en ? "Trivia" : "טריוויה") : "",
+      ].join("");
+      if (!btns) return "";
       return `
-        <div class="lp-slide-inner">
-          <div class="lp-slide-head">
-            <h2 class="lp-slide-title">${slide.title}</h2>
-          </div>
-          <div class="lp-slide-body-wrap">
-            <div class="lp-slide-games">${options}</div>
-          </div>
+        <div class="lp-end-actions">
+          <p class="lp-end-ask">${en ? "What's next?" : "מה עכשיו?"}</p>
+          <div class="lp-game-options lp-end-options">${btns}</div>
         </div>`;
     }
 
@@ -6382,6 +6633,7 @@
             </div>
             <div class="lp-slide-body-wrap">
               ${bodyHtml}
+              ${isLast ? endActionsHtml() : ""}
             </div>
           </div>
           ${sideHtml}
@@ -6431,11 +6683,11 @@
           requestAnimationFrame(() => inner.classList.add("is-visible"));
         });
 
-        $$(".lp-game-btn[data-game-id]", slideEl).forEach((btn) => {
-          btn.addEventListener("click", () => launchLessonGame(lesson, btn.dataset.gameId, index));
-        });
-        $$(".lp-game-btn[data-picture-game]", slideEl).forEach((btn) => {
-          btn.addEventListener("click", () => launchPictureGame(lesson, btn.dataset.pictureGame, index, close));
+        $$("[data-end-action]", slideEl).forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (btn.dataset.endAction === "practice") openLessonPractice(lesson, close);
+            else launchLessonTrivia(lesson, index, close);
+          });
         });
         bindTermHover();
       };
@@ -6481,10 +6733,10 @@
 
     function renderStep(direction = 0) {
       const slide = steps[index];
+      // A live lesson's tap marks belong to the slide that was there.
+      slideWrapEl?.querySelectorAll(".lp-tap").forEach((el) => el.remove());
       const html =
-        slide.type === "games"
-          ? renderGamesSlide(slide)
-          : slide.type === "quiz"
+        slide.type === "quiz"
             ? renderQuizSlide(slide)
           : slide.type === "pdf-image"
             ? renderPdfImageSlide(slide)
@@ -6495,12 +6747,32 @@
       animateSlide(html, direction);
       updateNav();
       if (index === steps.length - 1) markLessonLearned(lesson.id);
+      // open() tells once the player shows.
+      if (!player.classList.contains("hidden")) announce();
+    }
+
+    // What the player shows — for a live lesson the teacher presents
+    // (live-lesson.js sends it to the students). null = closed.
+    function playerState() {
+      if (!lesson || player.classList.contains("hidden")) return null;
+      return {
+        lessonId: player.dataset.lessonId,
+        index,
+        total: steps.length,
+        more: moreMode && !!steps[index]?.more?.length,
+        pdf: pdfMode,
+        title: lesson.nameMain || lesson.name || "",
+      };
+    }
+
+    function announce() {
+      document.dispatchEvent(new CustomEvent("lessonplayer:change", { detail: playerState() }));
     }
 
     function buildSteps() {
       if (pdfMode && lesson.pdfSlides?.length) {
         const pdfImageSteps = lesson.pdfSlides.map((src) => ({ type: "pdf-image", src }));
-        const tailSteps = (lesson.slides || []).filter((s) => s.type === "games" || s === lesson.slides[lesson.slides.length - 1]);
+        const tailSteps = (lesson.slides || []).slice(-1);
         return [...pdfImageSteps, ...tailSteps];
       }
       return lesson.slides || [];
@@ -6525,20 +6797,25 @@
 
     // startIndex: open straight on that slide (back from a picture game) —
     // rendering slide 0 first would race its exit animation.
-    function open(lessonId, startIndex = 0) {
+    function open(lessonId, startIndex = 0, opts = {}) {
       lesson = localizeLesson(LESSON_CATALOG[lessonId]);
       if (!lesson) return;
-      if (lesson.premium && !window.PleyiPremium?.hasPremium?.()) {
+      // Following a live lesson: the teacher opened it, so it's theirs to show.
+      following = !!opts.follow;
+      player.classList.toggle("is-following", following);
+      if (lesson.premium && !following && !window.PleyiPremium?.hasPremium?.()) {
         window.PleyiPremium?.ensureLessonAccess?.(lessonId, lesson.nameMain || lesson.name);
         lesson = null;
         return;
       }
       // A signed-in teacher's "my activity" on /my-room.
-      Promise.resolve(window.UserData?.recordLessonOpen?.(lessonId)).catch(() => {});
+      if (!following) Promise.resolve(window.UserData?.recordLessonOpen?.(lessonId)).catch(() => {});
+      // The developer panel's "most opened lessons" (site-stats.js).
+      window.PleyiStats?.hit("lesson", lessonId, lesson.nameMain || lesson.name);
       // The PDF slide images are baked-in Hebrew graphics that can't be
       // localized — fall back to the (translatable) text slides in English.
       const hasPdf = curLang() !== "en" && !!lesson.pdfSlides?.length;
-      pdfMode = hasPdf;
+      pdfMode = following ? hasPdf && !!opts.pdf : hasPdf;
       if (pdfBtn) {
         pdfBtn.classList.toggle("hidden", curLang() === "en" || !lesson.pdfSlides?.length);
         pdfBtn.setAttribute("aria-pressed", pdfMode ? "true" : "false");
@@ -6551,8 +6828,10 @@
       renderStep();
       player.classList.remove("hidden");
       player.setAttribute("aria-hidden", "false");
-      setExpanded(pdfMode);
+      setExpanded(following || pdfMode);
       document.body.style.overflow = "hidden";
+      announce();
+      if (following) return;
       // The first lesson someone opens: the fox shows the buttons
       // (site-fox.js), once the slide has come in. A button only some
       // lessons have is shown the first time a lesson has it.
@@ -6585,6 +6864,8 @@
           text: ["בשיעור הזה יש גם מצגת תמונות", "כאן עוברים בין התמונות לשקופיות"],
         },
         { id: "expand", el: expandBtn, title: "מסך מלא", text: ["מגדילים את המצגת לכל המסך", "טוב ללוח בכיתה"] },
+        // live-lesson.js adds it (not for a student).
+        { id: "live", el: $(".lesson-player-live", player), title: "הצגה לכיתה", text: ["התלמידים רואים את השיעור אצלם", "לוחצים ומקבלים קוד לכיתה"] },
         { id: "close", el: closeBtn, title: "יציאה", text: "סוגרים את המצגת" },
       ];
     }
@@ -6597,6 +6878,48 @@
       setExpanded(false);
       document.body.style.overflow = "";
       lesson = null;
+      if (following) {
+        following = false;
+        player.classList.remove("is-following");
+      }
+      announce();
+    }
+
+    // The student's close button / Escape / a tap outside, while following.
+    function closeOrExit() {
+      if (following && followExit) followExit();
+      else close();
+    }
+
+    // A student's player shows what the teacher's shows (live-lesson.js).
+    // false = this page can't show that lesson.
+    function follow(state) {
+      if (!state?.lessonId) {
+        if (following) close();
+        return true;
+      }
+      if (!LESSON_CATALOG[state.lessonId]) return false;
+      const same = following && lesson && player.dataset.lessonId === state.lessonId && !player.classList.contains("hidden");
+      const wasMore = moreMode;
+      moreMode = !!state.more;
+      if (!same) {
+        closeWordPopup();
+        open(state.lessonId, Number(state.index) || 0, { follow: true, pdf: state.pdf });
+        return !!lesson;
+      }
+      let changed = wasMore !== moreMode && !!steps[index]?.more?.length;
+      const wantPdf = !!state.pdf && curLang() !== "en" && !!lesson.pdfSlides?.length;
+      if (wantPdf !== pdfMode) {
+        pdfMode = wantPdf;
+        steps = buildSteps();
+        renderDots();
+        changed = true;
+      }
+      syncMoreBtn();
+      const target = Math.max(0, Math.min(steps.length - 1, Number(state.index) || 0));
+      if (target !== index) goTo(target);
+      else if (changed) renderStep();
+      return true;
     }
 
     function step(delta) {
@@ -6610,7 +6933,7 @@
       });
     });
 
-    closeBtn?.addEventListener("click", close);
+    closeBtn?.addEventListener("click", closeOrExit);
     pdfBtn?.addEventListener("click", (e) => {
       e.stopPropagation();
       const next = !pdfMode;
@@ -6621,7 +6944,7 @@
       e.stopPropagation();
       setExpanded(!player.classList.contains("is-expanded"));
     });
-    backdrop?.addEventListener("click", close);
+    backdrop?.addEventListener("click", closeOrExit);
     $(".lesson-player-shell", player)?.addEventListener("click", (e) => e.stopPropagation());
     prevBtn?.addEventListener("click", () => step(-1));
     nextBtn?.addEventListener("click", () => step(1));
@@ -6632,8 +6955,9 @@
       if (player.classList.contains("hidden")) return;
       if (e.key === "Escape") {
         if (closeWordPopup()) return;
-        close();
+        closeOrExit();
       }
+      if (following) return;
       if (e.key === "ArrowLeft") step(1);
       if (e.key === "ArrowRight") step(-1);
     });
@@ -6661,6 +6985,165 @@
     }
 
     tryRestoreLessonFromGame();
+
+    /* ── A live lesson: where the teacher taps shows on the students' slide ──
+       The students' screens are other sizes, so the slide is laid out
+       differently there. A tap is kept as a place on the slide itself: the
+       letter it hit (text), or the element it hit and where inside it — so
+       it lands on the same word or picture on every screen. The slide's
+       share of the stage is the fallback. */
+
+    const tapSlideKey = (s) => (s ? `${s.lessonId}|${s.index}|${s.more ? 1 : 0}|${s.pdf ? 1 : 0}` : "");
+
+    function tapNodePath(node) {
+      const path = [];
+      while (node && node !== slideEl) {
+        const parent = node.parentNode;
+        if (!parent) return null;
+        path.unshift(Array.prototype.indexOf.call(parent.childNodes, node));
+        node = parent;
+      }
+      return node === slideEl && path.length ? path : null;
+    }
+
+    function tapNodeAt(path) {
+      let node = slideEl;
+      for (const i of path || []) {
+        node = node?.childNodes?.[i];
+        if (!node) return null;
+      }
+      return node === slideEl ? null : node;
+    }
+
+    function tapCaret(x, y) {
+      try {
+        if (document.caretPositionFromPoint) {
+          const p = document.caretPositionFromPoint(x, y);
+          return p ? { node: p.offsetNode, offset: p.offset } : null;
+        }
+        if (document.caretRangeFromPoint) {
+          const r = document.caretRangeFromPoint(x, y);
+          return r ? { node: r.startContainer, offset: r.startOffset } : null;
+        }
+      } catch {
+        /* ignore */
+      }
+      return null;
+    }
+
+    function tapCharRect(textNode, offset) {
+      if (!(offset >= 0 && offset < textNode.length)) return null;
+      const range = document.createRange();
+      range.setStart(textNode, offset);
+      range.setEnd(textNode, offset + 1);
+      const r = range.getBoundingClientRect();
+      return r.width && r.height ? r : null;
+    }
+
+    // The letter right under the finger (not one beside an empty spot).
+    function tapLetter(x, y) {
+      const caret = tapCaret(x, y);
+      const node = caret?.node;
+      if (node?.nodeType !== 3 || !slideEl.contains(node)) return null;
+      let best = null;
+      [caret.offset, caret.offset - 1].forEach((o) => {
+        if (!/\S/.test(node.data[o] || "")) return;
+        const r = tapCharRect(node, o);
+        if (!r) return;
+        const d = Math.hypot(Math.max(r.left - x, 0, x - r.right), Math.max(r.top - y, 0, y - r.bottom));
+        if (!best || d < best.d) best = { node, offset: o, d, r };
+      });
+      return best && best.d <= best.r.height * 0.4 ? best : null;
+    }
+
+    const round3 = (n) => Math.round(n * 1000) / 1000;
+
+    // The teacher's tap → a place the students' player can find. Not while
+    // the slide is on its way out (that's the slide before).
+    function tapPoint(x, y, target) {
+      const key = tapSlideKey(playerState());
+      const wrap = slideWrapEl.getBoundingClientRect();
+      if (!key || !wrap.width || !wrap.height || $(".lp-slide-inner.is-exiting", slideEl)) return null;
+      const point = { s: key, k: "wrap", p: [], t: "", o: 0, x: 0, y: 0, wx: round3((x - wrap.left) / wrap.width), wy: round3((y - wrap.top) / wrap.height) };
+      const letter = tapLetter(x, y);
+      const letterPath = letter && tapNodePath(letter.node);
+      if (letterPath) {
+        const r = letter.r;
+        return { ...point, k: "text", p: letterPath, o: letter.offset, x: round3((x - (r.left + r.width / 2)) / r.height), y: round3((y - (r.top + r.height / 2)) / r.height) };
+      }
+      const el = target instanceof Element && target !== slideEl && slideEl.contains(target) ? target : null;
+      const elPath = el && tapNodePath(el);
+      const r = el?.getBoundingClientRect();
+      if (elPath && r.width && r.height) {
+        return { ...point, k: "el", p: elPath, t: el.tagName.toLowerCase(), x: round3((x - r.left) / r.width), y: round3((y - r.top) / r.height) };
+      }
+      return point;
+    }
+
+    function showTapAt(x, y) {
+      const box = slideWrapEl.getBoundingClientRect();
+      const dot = document.createElement("span");
+      dot.className = "lp-tap";
+      dot.setAttribute("aria-hidden", "true");
+      dot.style.left = `${x - box.left - slideWrapEl.clientLeft + slideWrapEl.scrollLeft}px`;
+      dot.style.top = `${y - box.top - slideWrapEl.clientTop + slideWrapEl.scrollTop}px`;
+      slideWrapEl.appendChild(dot);
+      setTimeout(() => dot.remove(), 1800);
+    }
+
+    // The slide in its place: the one before has gone, this one is done
+    // sliding in (it comes in 18px to the side). At most about a second.
+    async function tapSettled() {
+      for (let i = 0; i < 20; i++) {
+        const inner = $(".lp-slide-inner", slideEl);
+        if (!inner) return;
+        if (inner.classList.contains("is-visible") && !inner.classList.contains("is-exiting")) {
+          const moving = (inner.getAnimations?.() || []).map((a) => a.finished.catch(() => {}));
+          await Promise.race([Promise.all(moving), new Promise((r) => setTimeout(r, 700))]);
+          return;
+        }
+        await new Promise((r) => setTimeout(r, 50));
+      }
+    }
+
+    // A student's player: show the teacher's tap — only on the same slide.
+    async function showTap(tap) {
+      if (!tap || tap.s !== tapSlideKey(playerState())) return false;
+      await tapSettled();
+      if (tap.s !== tapSlideKey(playerState())) return false;
+      const node = tap.k === "wrap" ? null : tapNodeAt(tap.p);
+      let at = null;
+      if (tap.k === "text" && node?.nodeType === 3) {
+        const r = tapCharRect(node, tap.o);
+        if (r) at = [r.left + r.width / 2 + tap.x * r.height, r.top + r.height / 2 + tap.y * r.height];
+      } else if (tap.k === "el" && node?.nodeType === 1 && node.tagName.toLowerCase() === tap.t) {
+        const r = node.getBoundingClientRect();
+        if (r.width && r.height) at = [r.left + tap.x * r.width, r.top + tap.y * r.height];
+      }
+      if (!at) {
+        const wrap = slideWrapEl.getBoundingClientRect();
+        at = [wrap.left + tap.wx * wrap.width, wrap.top + tap.wy * wrap.height];
+      }
+      showTapAt(at[0], at[1]);
+      return true;
+    }
+
+    livePlayer = {
+      state: playerState,
+      follow,
+      onExit: (fn) => {
+        followExit = typeof fn === "function" ? fn : null;
+      },
+      close,
+      // The player's top bar, for the live-lesson button.
+      actions: () => $(".lesson-player-top-actions", player),
+      shell: () => shell,
+      isFollowing: () => following,
+      slideWrap: () => slideWrapEl,
+      tapPoint,
+      showTap,
+      showTapAt,
+    };
   }
 
   function syncLessonCardTitles() {
@@ -6729,6 +7212,28 @@
     subjectLabels: SUBJECT_LABELS,
     openLesson: (lessonId) => openLessonSlides?.(lessonId),
     resumeLesson: (lessonId, slideIndex) => resumeLessonSlides?.(lessonId, slideIndex),
+    // The live lesson (live-lesson.js): the teacher's player reports what it
+    // shows, a student's player follows it. null on a page with no player.
+    player: () => livePlayer,
+    // A lesson a teacher created (`my-<id>`), loaded into the catalog so a
+    // student's player can show it. Resolves to whether it's there.
+    loadCustom: async (lessonId) => {
+      if (LESSON_CATALOG[lessonId]) return true;
+      const m = /^my-(.+)$/.exec(String(lessonId || ""));
+      if (!m) return false;
+      try {
+        const data = await (await fetch(`/api/lessons/custom/${encodeURIComponent(m[1])}`)).json();
+        if (!data.ok) return false;
+        addCustomLesson(data.lesson);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    // Turns a library card (.svc-lesson-card[data-lesson]) drawn by another
+    // page over to its summary, and back (the English mini site's library).
+    flipCard: (card, toBack, moveFocus = true) => flipLessonCard(card, toBack, moveFocus),
+    learned: getLearnedLessons,
     localize: localizeLesson,
     // The curriculum grades, for the subject areas' grade filter.
     grades: { count: GRADE_LETTERS.length, name: gradeName, fromUrl: gradeFromUrl, setInUrl: setGradeInUrl, has: lessonInGrade, englishTopic: englishTopicGrades },
@@ -6737,5 +7242,10 @@
     mathHtml,
     textHtml: subjectTextHtml,
     autoHtml: (src) => subjectAutoHtml(src).html,
+    // A lesson's trivia questions, and the /play games a topic page offers
+    // after its exercises (english-learning.js).
+    triviaFor,
+    playGames: PLAY_GAMES,
+    gameIcons: LESSON_GAME_ICONS,
   };
 })();

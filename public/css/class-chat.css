@@ -1,0 +1,806 @@
+/* The class as a WhatsApp-like chat: the teacher writes (my-room.js, in
+   the class dialog), the students read (student-portal.js, #class). Only
+   the teacher sends; the page is always right-to-left, so the teacher's
+   messages sit on the left and the students see them on the right. */
+
+.class-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  color: #000;
+  background-color: #efe7dc;
+  background-image:
+    radial-gradient(circle, rgba(70, 50, 30, 0.09) 1.6px, transparent 1.9px),
+    radial-gradient(circle, rgba(70, 50, 30, 0.06) 1.2px, transparent 1.5px);
+  background-size: 28px 28px, 28px 28px;
+  background-position: 0 0, 14px 14px;
+}
+
+/* On top: the class's picture, its name, a line under it. */
+.cc-head {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #c9f5d9;
+  border-bottom: 3px solid var(--ink);
+}
+
+.cc-head-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  font: inherit;
+  color: #000;
+  text-align: start;
+  background: none;
+  border: 0;
+}
+
+button.cc-head-main {
+  cursor: pointer;
+}
+
+.cc-avatar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  background: var(--memyellow, #ffe066);
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+}
+
+.cc-avatar svg {
+  width: 30px;
+  height: 30px;
+}
+
+.cc-head-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.cc-name {
+  margin: 0;
+  overflow: hidden;
+  font-size: 1.15rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cc-sub {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.cc-head-btn {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: #000;
+  background: #eaf5ff;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.15s ease;
+}
+
+.cc-head-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.cc-head-btn[aria-pressed="true"] {
+  background: var(--memyellow, #ffe066);
+}
+
+/* Under the name: copy the join link, or share an invitation. */
+.cc-invite {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #eaf5ff;
+  border-bottom: 3px solid var(--ink);
+}
+
+.cc-invite-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #000;
+  background: #fff8d6;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.15s ease;
+}
+
+.cc-invite-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* A phone: the three buttons on one line, without their icons. */
+@media (max-width: 480px) {
+  .cc-invite {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .cc-invite .cc-invite-btn {
+    padding: 5px 9px;
+    font-size: 0.8rem;
+  }
+
+  .cc-invite .cc-invite-btn svg {
+    display: none;
+  }
+}
+
+/* "הוספת התלמידים שלי" in the note of an empty class. */
+.cc-notice-btn {
+  margin: 8px auto 2px;
+  display: flex;
+  width: fit-content;
+}
+
+/* The messages, oldest on top. */
+.cc-log {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 14px 20px 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+.cc-day,
+.cc-unread,
+.cc-notice {
+  align-self: center;
+  text-align: center;
+}
+
+.cc-day {
+  margin: 6px 0 2px;
+}
+
+.cc-day span {
+  display: inline-block;
+  padding: 2px 12px;
+  font-size: 0.8rem;
+  font-weight: 900;
+  background: #eaf5ff;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+
+.cc-unread {
+  align-self: stretch;
+  margin: 4px -20px;
+  padding: 3px 0;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.cc-unread span {
+  display: inline-block;
+  padding: 1px 12px;
+  font-size: 0.8rem;
+  font-weight: 900;
+  background: var(--memyellow, #ffe066);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+
+.cc-notice {
+  max-width: 92%;
+  margin: 8px 0;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.5;
+  background: #fff8d6;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+}
+
+/* One message: a bubble with a hard shadow (drop-shadow, so the tail
+   gets it too). The first after a day chip has the tail. */
+.cc-msg {
+  position: relative;
+  max-width: min(86%, 440px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 8px 12px 5px;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+.cc-msg.is-out {
+  align-self: flex-end;
+  background: #d9fdd3;
+}
+
+.cc-msg.is-in {
+  align-self: flex-start;
+  background: #eaf5ff;
+}
+
+.cc-msg.has-tail.is-out {
+  border-top-left-radius: 0;
+}
+
+.cc-msg.has-tail.is-in {
+  border-top-right-radius: 0;
+}
+
+.cc-msg.has-tail::before,
+.cc-msg.has-tail::after {
+  content: "";
+  position: absolute;
+}
+
+.cc-msg.has-tail::before {
+  top: -2.5px;
+  width: 12.5px;
+  height: 15px;
+  background: var(--ink);
+}
+
+.cc-msg.has-tail::after {
+  top: 0;
+  width: 9.5px;
+  height: 10px;
+  background: inherit;
+}
+
+.cc-msg.has-tail.is-out::before {
+  left: -14px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+.cc-msg.has-tail.is-out::after {
+  left: -8.5px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+.cc-msg.has-tail.is-in::before {
+  right: -14px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.cc-msg.has-tail.is-in::after {
+  right: -8.5px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.cc-msg > * {
+  max-width: 100%;
+}
+
+.cc-kind {
+  padding: 0 10px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  background: #a9c4ff;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+
+.cc-msg.is-task .cc-kind { background: var(--memyellow, #ffe066); }
+.cc-msg.is-assignment .cc-kind { background: #ffb27a; }
+.cc-msg.is-guide .cc-kind { background: #9de39d; }
+.cc-msg.is-exercise .cc-kind { background: #c9b6ff; }
+
+/* The exercise in a message (and the one picked in the composer): its
+   name, and its topic under it. */
+.cc-task {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 2px 0;
+  padding: 8px 12px 8px 14px;
+  color: #000;
+  text-decoration: none;
+  background: #f1ecff;
+  border: 2.5px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  transition: scale 0.15s ease;
+}
+
+.cc-task-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: #c9b6ff;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.cc-task-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.cc-task-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.cc-task-text b {
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.cc-task-text small {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.cc-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.cc-text {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.cc-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 9px;
+  font-size: 0.85rem;
+  font-weight: 900;
+  background: #fff8d6;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+}
+
+.cc-due.is-late {
+  background: #ffd6d6;
+}
+
+.cc-due svg {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+}
+
+.cc-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #000;
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 8px;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.cc-link svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.cc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 2px 0;
+}
+
+.cc-actions .stu-hw-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cc-actions .stu-hw-done svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Who finished a task (the teacher's side). */
+.cc-done > summary {
+  width: fit-content;
+  padding: 1px 10px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  background: #c9f5d9;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.cc-done ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 7px 0 2px;
+  padding: 0;
+  list-style: none;
+}
+
+.cc-done li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 9px 1px 7px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  background: #eaf5ff;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+
+.cc-done li.is-done {
+  background: #c9f5d9;
+}
+
+.cc-done li span[dir="ltr"] {
+  font-weight: 900;
+}
+
+.cc-done li svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* The time at the bottom corner (and, for the teacher, delete + ticks). */
+.cc-meta {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-height: 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #333;
+}
+
+.cc-ticks {
+  display: inline-grid;
+  color: #1e88e5;
+}
+
+.cc-ticks svg {
+  width: 17px;
+  height: 17px;
+}
+
+.cc-del {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-inline-end: auto;
+  padding: 0;
+  color: #333;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cc-del svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* The students' side: only the teacher writes. */
+.cc-locked {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  background: #c9f5d9;
+  border-top: 3px solid var(--ink);
+}
+
+.cc-locked svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* The teacher writes at the bottom: what to send (a chip each), then the
+   words; "+" adds a due date and a link. */
+.cc-compose {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px 12px;
+  background: #c9f5d9;
+  border-top: 3px solid var(--ink);
+}
+
+.cc-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.cc-kinds-label {
+  font-size: 0.9rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* A phone: the chips without the label. */
+@media (max-width: 440px) {
+  .cc-kinds {
+    gap: 5px;
+  }
+
+  .cc-kinds-label {
+    display: none;
+  }
+
+  .cc-kinds .cc-pick span {
+    padding: 3px 8px;
+    font-size: 0.86rem;
+  }
+}
+
+.cc-pick {
+  position: relative;
+  cursor: pointer;
+}
+
+.cc-pick input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.cc-pick span {
+  display: inline-block;
+  padding: 3px 10px;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 900;
+  background: #eaf5ff;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  transition: scale 0.15s ease;
+}
+
+.cc-pick input:checked + span {
+  box-shadow: 2px 3px 0 0 var(--ink);
+}
+
+.cc-pick.is-note input:checked + span { background: #a9c4ff; }
+.cc-pick.is-task input:checked + span { background: var(--memyellow, #ffe066); }
+.cc-pick.is-assignment input:checked + span { background: #ffb27a; }
+.cc-pick.is-guide input:checked + span { background: #9de39d; }
+.cc-pick.is-exercise input:checked + span { background: #c9b6ff; }
+
+/* A "תרגיל": the exercise picked from the library, or the button that
+   opens it. */
+.cc-task-pick {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cc-task-pick[hidden] {
+  display: none;
+}
+
+.cc-task-pick .cc-task {
+  flex: 1;
+  min-width: 0;
+}
+
+.cc-task-pick .cc-task-change {
+  flex-shrink: 0;
+}
+
+.cc-task-choose {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #000;
+  background: #c9b6ff;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.15s ease;
+}
+
+.cc-task-choose svg {
+  width: 19px;
+  height: 19px;
+}
+
+.cc-pick input:focus-visible + span {
+  outline: 3px solid #1e88e5;
+  outline-offset: 2px;
+}
+
+.cc-extra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cc-extra[hidden] {
+  display: none;
+}
+
+.cc-field {
+  flex: 1 1 120px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.cc-field-input {
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #000;
+  background: #eaf5ff;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+}
+
+.cc-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.cc-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  max-height: 140px;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #000;
+  resize: none;
+  background: #eaf5ff;
+  border: 2.5px solid var(--ink);
+  border-radius: 23px;
+}
+
+.cc-input:focus,
+.cc-field-input:focus {
+  outline: 3px solid #1e88e5;
+  outline-offset: 1px;
+}
+
+.cc-attach,
+.cc-send {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #000;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.15s ease;
+}
+
+.cc-attach {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 3px;
+  background: #eaf5ff;
+}
+
+.cc-attach[aria-expanded="true"] {
+  background: var(--memyellow, #ffe066);
+}
+
+.cc-attach svg {
+  width: 20px;
+  height: 20px;
+}
+
+.cc-send {
+  width: 48px;
+  height: 48px;
+  background: #25d366;
+}
+
+.cc-send svg {
+  width: 22px;
+  height: 22px;
+}
+
+.cc-send:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+@media (hover: hover) {
+  .cc-head-btn:hover,
+  .cc-invite-btn:hover,
+  .cc-attach:hover,
+  .cc-send:hover:not(:disabled),
+  .cc-task-choose:hover,
+  a.cc-task:hover,
+  .cc-pick:hover span {
+    scale: 1.08;
+  }
+}

@@ -44,6 +44,7 @@ html[data-site-style="pro"] body.clean-site {
   --hero-accent: var(--pro-accent);
   --shadow-sticker: var(--pro-shadow);
   --shadow-candy: var(--pro-shadow);
+  --title-font: var(--font-sans);
   background: var(--pro-bg);
   color: var(--pro-text);
 }
@@ -312,11 +313,6 @@ html[data-site-style="pro"] body.clean-site :is(.whatsapp-btn, .email-btn) {
   background: var(--pro-surface);
   box-shadow: var(--pro-shadow) !important;
   color: var(--pro-text);
-}
-
-html[data-site-style="pro"] body.clean-site :is(.whatsapp-btn, .email-btn):hover {
-  transform: translateY(-2px);
-  box-shadow: var(--pro-shadow-lg) !important;
 }
 
 html[data-site-style="pro"] body.clean-site :is(.whatsapp-icon, .email-icon) {
@@ -598,8 +594,8 @@ html[data-site-style="pro"] body.clean-site .svc-tile-print {
   -webkit-text-fill-color: currentColor;
 }
 
-/* Worksheets and class games: each filter is a box of its own. */
-html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games) .svc-filter-bar {
+/* Worksheets, class games and the lesson library: each filter is a box of its own. */
+html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games, .page-ready-lessons) .svc-filter-bar {
   border: 0;
   background: transparent;
   box-shadow: none !important;
@@ -609,15 +605,29 @@ html[data-site-style="pro"] body.clean-site .svc-filter-trigger {
   background: transparent;
 }
 
-html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games) .svc-filter-trigger {
+html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games, .page-ready-lessons) .svc-filter-trigger {
   border: 1px solid var(--pro-line);
   border-radius: var(--pro-radius);
   background: var(--pro-surface);
   box-shadow: var(--pro-shadow) !important;
 }
 
-html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games) :is(.svc-filter-trigger:hover, .svc-filter-dropdown.is-open .svc-filter-trigger) {
+html[data-site-style="pro"] body.clean-site:is(.page-worksheets, .page-class-games, .page-ready-lessons) :is(.svc-filter-trigger:hover, .svc-filter-dropdown.is-open .svc-filter-trigger) {
   background: var(--pro-accent-soft);
+}
+
+/* The library's sticker filters: no tilt, tape or marker in the clean look. */
+html[data-site-style="pro"] body.clean-site.page-ready-lessons .svc-filter-trigger {
+  rotate: none;
+}
+
+html[data-site-style="pro"] body.clean-site.page-ready-lessons .svc-filter-trigger::before {
+  content: none;
+}
+
+html[data-site-style="pro"] body.clean-site.page-ready-lessons .svc-filter-trigger-label {
+  padding: 0;
+  background: none;
 }
 
 html[data-site-style="pro"] body.clean-site :is(.svc-tile, .svc-tile-image--turquoise, .svc-tile-print) {

@@ -45,8 +45,10 @@ export type LightOn = 'red' | 'redyellow' | 'yellow' | 'green' | 'off'
 
 export type BackLights = 'reverse' | 'brake'
 
-export type SignKind = 'stop' | 'speed' | 'crosswalk' | 'giveway' | 'children' | 'walkers' | 'noparking' | 'noentry' | 'bike' | 'bus'
+export type SignKind = 'stop' | 'speed' | 'crosswalk' | 'giveway' | 'children' | 'walkers' | 'noparking' | 'noentry' | 'bike' | 'bus' | 'nowalk' | 'parking' | 'rail'
 export type ServiceKind = 'police' | 'ambulance' | 'fire'
+/** Paint on the ground (see paintMark). */
+export type MarkKind = 'line' | 'dashes' | 'curb' | 'trail' | 'cross' | 'area' | 'rails' | 'fill' | 'clear'
 
 export type Actor =
   /** `back`: the lights at its back lit — white as it backs up, bright red as it brakes. */
@@ -75,6 +77,16 @@ export type Actor =
   | { type: 'sign'; x: number; y: number; kind: SignKind; value?: number }
   | { type: 'ball'; x: number; y: number; z?: number }
   | { type: 'bubble'; x: number; y: number; z?: number; text: string; color?: string }
+  /** Paint on the ground under everything standing, its points (tiles) from (x, y): see paintMark. A `fill` or a
+   *  `clear` takes the city's own things (trees, lamps, houses) off its rect. */
+  | { type: 'mark'; x: number; y: number; kind: MarkKind; pts: [number, number][]; color?: string; w?: number; alpha?: number; gap?: [number, number] }
+  /** A level crossing's barrier on its post: its arm points along heading `dir`, raised by `up` (0 down, 1 up); its
+   *  two red lamps flash while `flash`. */
+  | { type: 'gate'; x: number; y: number; dir: Heading; up: number; flash?: boolean }
+  /** One carriage of a train going along heading h (the engine when `engine`), its middle at (x, y). */
+  | { type: 'train'; x: number; y: number; h: Heading; engine?: boolean }
+  /** One of the city's own things (a tree, a lamp, flowers), put where the city has none, as PAT draws it. */
+  | { type: 'prop'; x: number; y: number; defId: string }
 
 /** The way a person faces on screen, walking along a heading (as PAT's headingOf, the other way round). */
 export function facing(h: Heading): { back: boolean; flip: boolean } {
@@ -425,6 +437,36 @@ function paintSign(ctx: Ctx, kind: SignKind, value = 30) {
   } else if (kind === 'speed') {
     circlePlate(ctx, cy, '#e8382f', '#ffffff')
     plateText(ctx, String(value), 0, cy, value >= 100 ? 6.4 : 8, '#1b1407')
+  } else if (kind === 'nowalk') {
+    // no walking: a walker in a red ring, crossed out
+    circlePlate(ctx, cy, '#e8382f', '#ffffff')
+    ctx.save()
+    ctx.translate(0.2, cy + 0.4)
+    ctx.scale(0.8, 0.8)
+    walker(ctx, 0, 0, true, '#1b1407')
+    ctx.restore()
+    ctx.beginPath()
+    ctx.moveTo(-5.5, cy - 5.5)
+    ctx.lineTo(5.5, cy + 5.5)
+    ctx.strokeStyle = '#e8382f'
+    ctx.lineWidth = 2.2
+    ctx.stroke()
+  } else if (kind === 'parking') {
+    ctx.beginPath()
+    ctx.roundRect(-10.5, cy - 10.5, 21, 21, 2.5)
+    fillStroke(ctx, '#2f7fc0', OUTLINE, 1.5)
+    plateText(ctx, 'P', 0, cy, 15, '#ffffff')
+  } else if (kind === 'rail') {
+    // a railway ahead: a warning triangle with a little engine
+    trianglePlate(ctx, cy + 1, false)
+    ctx.fillStyle = '#1b1407'
+    ctx.fillRect(-4.6, cy + 0.6, 8, 3.6)
+    ctx.fillRect(0.6, cy - 2.2, 2.8, 3)
+    for (const x of [-3, 1.6]) {
+      ctx.beginPath()
+      ctx.arc(x, cy + 5, 1.3, 0, Math.PI * 2)
+      ctx.fill()
+    }
   } else {
     ctx.beginPath()
     ctx.roundRect(-10.5, cy - 10.5, 21, 21, 2.5)
@@ -469,15 +511,218 @@ function paintBall(ctx: Ctx, z: number) {
   ctx.stroke()
 }
 
-/** A bubble over someone (a car's speed, a word): screen-sized, so it reads at any zoom. */
-function drawBubble(ctx: Ctx, at: Point, text: string, color: string, zoom: number) {
+// ---------- paint on the ground: road lines, a red-and-white curb, a way to walk, rails ----------
+
+const LINE_WHITE = '#f6efd4'
+const ROAD_GREY = '#8b8f99'
+
+type Mark = Extract<Actor, { type: 'mark' }>
+
+/** A mark's rect, in tiles: between its first two points. */
+function markRect(m: Mark) {
+  const [[x0, y0], [x1, y1]] = m.pts
+  return { x: m.x + Math.min(x0, x1), y: m.y + Math.min(y0, y1), w: Math.abs(x1 - x0), h: Math.abs(y1 - y0) }
+}
+
+function strokeAlong(ctx: Ctx, pts: Point[], color: string, w: number) {
+  ctx.beginPath()
+  pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)))
+  ctx.strokeStyle = color
+  ctx.lineWidth = w
+  ctx.stroke()
+}
+
+/** `fill`: the rect between its two points in a color (asphalt when none) — a wider road, a field's grass; `line`: a
+ *  solid line (the one down the middle, a stop line); `dashes`: the dashes between two lanes; `curb`: the step down
+ *  from the sidewalk, red and white (or `color`); `trail`: a dashed way to walk with an arrow at its end; `cross`: a
+ *  red X on a spot; `area`: a glowing ring round its points, to point them out; `rails`: a railway with its sleepers
+ *  (on the bare ground) between its two points; `clear`: nothing painted, only the city's things taken off. */
+function paintMark(ctx: Ctx, m: Mark) {
+  const alpha = m.alpha ?? 1
+  if (alpha <= 0) return
+  const T = (px: number, py: number) => tileToWorld(m.x + px, m.y + py)
+  const pts = m.pts.map(([px, py]) => T(px, py))
+  ctx.save()
+  ctx.globalAlpha = alpha
+  ctx.lineJoin = 'round'
+  ctx.lineCap = 'butt'
+  if (m.kind === 'fill') {
+    const r = markRect(m)
+    poly(ctx, [tileToWorld(r.x, r.y), tileToWorld(r.x + r.w, r.y), tileToWorld(r.x + r.w, r.y + r.h), tileToWorld(r.x, r.y + r.h)])
+    ctx.fillStyle = m.color ?? ROAD_GREY
+    ctx.fill()
+  } else if (m.kind === 'line') {
+    strokeAlong(ctx, pts, m.color ?? LINE_WHITE, m.w ?? 2.4)
+  } else if (m.kind === 'dashes') {
+    ctx.setLineDash([18, 18])
+    strokeAlong(ctx, pts, m.color ?? LINE_WHITE, m.w ?? 2)
+  } else if (m.kind === 'curb') {
+    const [p, q] = pts
+    const n = Math.max(1, Math.round(Math.hypot(q.x - p.x, q.y - p.y) / 18))
+    const at = (k: number) => ({ x: p.x + (q.x - p.x) * k, y: p.y + (q.y - p.y) * k })
+    for (let i = 0; i < n; i++) {
+      const a = at(i / n)
+      const b = at((i + 1) / n)
+      poly(ctx, [a, b, { x: b.x, y: b.y + 3.5 }, { x: a.x, y: a.y + 3.5 }])
+      fillStroke(ctx, m.color ?? (i % 2 ? '#ffffff' : '#e8382f'), OUTLINE, 0.7)
+    }
+  } else if (m.kind === 'trail') {
+    const w = m.w ?? 4
+    const color = m.color ?? '#1b7a3a'
+    ctx.lineCap = 'round'
+    ctx.setLineDash([9, 8])
+    strokeAlong(ctx, pts, OUTLINE, w + 2.6)
+    strokeAlong(ctx, pts, color, w)
+    ctx.setLineDash([])
+    const end = pts[pts.length - 1]
+    const from = pts[pts.length - 2]
+    const d = Math.hypot(end.x - from.x, end.y - from.y) || 1
+    const ux = (end.x - from.x) / d
+    const uy = (end.y - from.y) / d
+    const s = 11
+    poly(ctx, [
+      { x: end.x + ux * s * 0.6, y: end.y + uy * s * 0.6 },
+      { x: end.x - ux * s * 0.6 - uy * s * 0.6, y: end.y - uy * s * 0.6 + ux * s * 0.6 },
+      { x: end.x - ux * s * 0.6 + uy * s * 0.6, y: end.y - uy * s * 0.6 - ux * s * 0.6 },
+    ])
+    fillStroke(ctx, color, OUTLINE, 1.4)
+  } else if (m.kind === 'cross') {
+    const p = pts[0]
+    const s = m.w ?? 8
+    ctx.lineCap = 'round'
+    for (const [color, w] of [[OUTLINE, 7.4], [m.color ?? '#e8382f', 4.2]] as const) {
+      ctx.beginPath()
+      ctx.moveTo(p.x - s, p.y - s * 0.6)
+      ctx.lineTo(p.x + s, p.y + s * 0.6)
+      ctx.moveTo(p.x + s, p.y - s * 0.6)
+      ctx.lineTo(p.x - s, p.y + s * 0.6)
+      ctx.strokeStyle = color
+      ctx.lineWidth = w
+      ctx.stroke()
+    }
+  } else if (m.kind === 'area') {
+    poly(ctx, pts)
+    ctx.fillStyle = 'rgba(255,210,63,0.3)'
+    ctx.fill()
+    ctx.strokeStyle = OUTLINE
+    ctx.lineWidth = 6.4
+    ctx.stroke()
+    ctx.strokeStyle = m.color ?? '#ffd23f'
+    ctx.lineWidth = 3.6
+    ctx.stroke()
+  } else if (m.kind === 'rails') {
+    const [[x0, y0], [x1, y1]] = m.pts
+    const len = Math.hypot(x1 - x0, y1 - y0)
+    const ux = (x1 - x0) / len
+    const uy = (y1 - y0) / len
+    const at = (s: number, c: number) => T(x0 + ux * s - uy * c, y0 + uy * s + ux * c)
+    // `gap`: where (along it, in tiles) a road painted with a fill crosses it
+    const bare = (s: number) => !(m.gap && s >= m.gap[0] && s <= m.gap[1]) && !isRoad(Math.floor(m.x + x0 + ux * s), Math.floor(m.y + y0 + uy * s))
+    // the stones under it and the sleepers, where it runs on the ground (on the road only the rails show)
+    for (let s = 0; s < len; s += 0.5) {
+      if (!bare(s + 0.25)) continue
+      poly(ctx, [at(s, -0.46), at(s + 0.5, -0.46), at(s + 0.5, 0.46), at(s, 0.46)])
+      ctx.fillStyle = '#b9ad98'
+      ctx.fill()
+    }
+    for (let s = 0.16; s < len; s += 0.32) {
+      if (!bare(s)) continue
+      poly(ctx, [at(s - 0.06, -0.36), at(s + 0.06, -0.36), at(s + 0.06, 0.36), at(s - 0.06, 0.36)])
+      fillStroke(ctx, '#7a5a3c', OUTLINE, 0.6)
+    }
+    for (const c of [-0.21, 0.21]) {
+      strokeAlong(ctx, [at(0, c), at(len, c)], '#4d5560', 2.6)
+      strokeAlong(ctx, [at(0, c), at(len, c)], '#c9d0d6', 0.9)
+    }
+  }
+  ctx.restore()
+}
+
+// ---------- a level crossing's barrier, and a train ----------
+
+const GATE_ARM = 1.05
+const GATE_BOX = { x: -48, y: -74, w: 96, h: 96 }
+
+/** The barrier's post with the crossing's X on top, its two red lamps (`lit`: which one is on, -1 none) and its arm,
+ *  red and white, pointing along heading `dir` and raised by `up` (0 down, 1 up). */
+function paintGate(ctx: Ctx, dir: Heading, up: number, lit: number) {
+  groundShadow(ctx, { x: 0, y: 0 }, 5, 2.2)
+  pole(ctx, 50)
+  for (const turn of [0.6, -0.6]) {
+    ctx.save()
+    ctx.translate(0, -54)
+    ctx.rotate(turn)
+    ctx.beginPath()
+    ctx.roundRect(-11, -2.4, 22, 4.8, 1.2)
+    fillStroke(ctx, '#ffffff', OUTLINE, 1.1)
+    ctx.fillStyle = '#e8382f'
+    ctx.fillRect(-9.6, -1.1, 4.4, 2.2)
+    ctx.fillRect(5.2, -1.1, 4.4, 2.2)
+    ctx.restore()
+  }
+  ctx.beginPath()
+  ctx.roundRect(-10.5, -40, 21, 11, 5)
+  fillStroke(ctx, '#2f3540', OUTLINE, 1.2)
+  lamp(ctx, -5, -34.5, 3.2, RED, lit === 0)
+  lamp(ctx, 5, -34.5, 3.2, RED, lit === 1)
+  const f = HEADINGS[dir]
+  const k = up * Math.PI * 0.46
+  const hinge = { x: 0, y: -14 }
+  const end = {
+    x: hinge.x + (f.x - f.y) * HALF_W * GATE_ARM * Math.cos(k),
+    y: hinge.y + (f.x + f.y) * HALF_H * GATE_ARM * Math.cos(k) - GATE_ARM * 44 * Math.sin(k),
+  }
+  ctx.lineCap = 'round'
+  strokeAlong(ctx, [hinge, end], OUTLINE, 5.6)
+  strokeAlong(ctx, [hinge, end], '#ffffff', 3.4)
+  ctx.setLineDash([5, 5])
+  ctx.lineCap = 'butt'
+  strokeAlong(ctx, [hinge, end], '#e8382f', 3.4)
+  ctx.setLineDash([])
+  ctx.beginPath()
+  ctx.roundRect(-3.4, -18, 6.8, 8, 1.6)
+  fillStroke(ctx, '#2f3540', OUTLINE, 1)
+}
+
+const TRAIN_BOX = { x: -76, y: -86, w: 152, h: 130 }
+const TRAIN_INK = inkForSize(120, 80)
+
+/** One carriage, white with a blue band; the engine's nose red, with a big windshield (seen when it comes towards us). */
+function paintTrain(ctx: Ctx, h: Heading, engine: boolean) {
+  const v = carView(h)
+  const { P } = v
+  const L = TRAIN_SHAPE.halfL
+  const C = TRAIN_SHAPE.halfC
+  softFx(ctx, 'under', (g) => {
+    poly(g, [P(-L - 0.06, -C - 0.08, 0), P(L + 0.06, -C - 0.08, 0), P(L + 0.06, C + 0.08, 0), P(-L - 0.06, C + 0.08, 0)])
+    g.fillStyle = 'rgba(30,40,10,0.2)'
+    g.fill()
+  })
+  wheelRow(ctx, v, TRAIN_SHAPE, false)
+  solid(ctx, v, -L, L, -C, C, 5, 36, '#f4f3ee')
+  band(ctx, v, -L, L, C, 7.5, 12.5, '#2a5db0', !engine)
+  band(ctx, v, -L, L, C, 32.5, 34.5, '#e8382f', !engine)
+  const sc = v.right ? C : -C
+  for (let a = -L + 0.16; a < L - 0.3; a += 0.4) glass(ctx, [P(a, sc, 16), P(a + 0.28, sc, 16), P(a + 0.28, sc, 28), P(a, sc, 28)])
+  if (engine && v.front) {
+    face(ctx, [P(L, -C, 5), P(L, C, 5), P(L, C, 15), P(L, -C, 15)], '#e8382f', 1)
+    glass(ctx, [P(L, -C + 0.06, 18), P(L, C - 0.06, 18), P(L, C - 0.06, 31), P(L, -C + 0.06, 31)])
+    for (const c of [-0.26, 0.26]) face(ctx, [P(L, c - 0.07, 8), P(L, c + 0.07, 8), P(L, c + 0.07, 11.5), P(L, c - 0.07, 11.5)], '#fff6c8', 0.8)
+  }
+  wheelRow(ctx, v, TRAIN_SHAPE, true)
+}
+
+/** A bubble over someone (a car's speed, a word): screen-sized, so it reads at any zoom; kept inside `box` (the
+ *  part of the world on the canvas), its tail still pointing at them. */
+function drawBubble(ctx: Ctx, at: Point, text: string, color: string, zoom: number, box: { minX: number; maxX: number; minY: number }) {
   const k = 1 / zoom
   const size = 15 * k
   ctx.font = `900 ${size}px ${FONT}`
   const w = ctx.measureText(text).width + 18 * k
   const h = size + 12 * k
-  const x = at.x - w / 2
-  const y = at.y - h - 9 * k
+  const x = Math.max(box.minX + 3 * k, Math.min(box.maxX - 6 * k - w, at.x - w / 2))
+  const y = Math.max(box.minY + 3 * k, at.y - h - 9 * k)
+  const tail = Math.max(x + 12 * k, Math.min(x + w - 12 * k, at.x))
   ctx.save()
   ctx.direction = 'rtl'
   ctx.beginPath()
@@ -486,9 +731,11 @@ function drawBubble(ctx: Ctx, at: Point, text: string, color: string, zoom: numb
   ctx.fill()
   ctx.beginPath()
   ctx.roundRect(x, y, w, h, 9 * k)
-  ctx.moveTo(at.x - 6 * k, y + h)
-  ctx.lineTo(at.x, at.y - 1 * k)
-  ctx.lineTo(at.x + 6 * k, y + h)
+  if (at.y > y + h + 2 * k) {
+    ctx.moveTo(tail - 6 * k, y + h)
+    ctx.lineTo(at.x, at.y - 1 * k)
+    ctx.lineTo(tail + 6 * k, y + h)
+  }
   ctx.fillStyle = '#fffaf0'
   ctx.fill()
   ctx.strokeStyle = OUTLINE
@@ -498,7 +745,7 @@ function drawBubble(ctx: Ctx, at: Point, text: string, color: string, zoom: numb
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillStyle = color
-  ctx.fillText(text, at.x, y + h / 2 + 1 * k)
+  ctx.fillText(text, x + w / 2, y + h / 2 + 1 * k)
   ctx.restore()
 }
 
@@ -791,6 +1038,7 @@ function sirenGlow(ctx: Ctx, kind: ServiceKind, h: Heading, flash: number) {
 const BUS_SHAPE: ServiceShape = { halfL: 1.3, halfC: 0.4, wheels: [-0.85, 0.85], bar: { a0: 0, a1: 0, z: 0, colors: ['', ''] } }
 const BUS_BODY = '#f6f4ee'
 const BUS_BAND = '#2f9e6e'
+const TRAIN_SHAPE: ServiceShape = { halfL: 1.25, halfC: 0.42, wheels: [-0.92, -0.62, 0.62, 0.92], bar: { a0: 0, a1: 0, z: 0, colors: ['', ''] } }
 const BUS_BOX = { x: -66, y: -74, w: 132, h: 108 }
 const BUS_INK = inkForSize(110, 70)
 
@@ -1082,11 +1330,19 @@ export class Scene {
     drawLand(ctx, t, view, z >= SPECK_MIN_ZOOM)
     drawStreets(ctx, view)
     drawHoodStreets(ctx, view)
+    const marks = actors.filter((a): a is Mark => a.type === 'mark')
+    for (const m of marks) paintMark(ctx, m)
+    // nothing of the city's stands on a mark's fill (a wider road, a field)
+    const cleared = marks.filter((m) => m.kind === 'fill' || m.kind === 'clear').map(markRect)
+    const free = (o: PlacedObject) => {
+      const def = OBJECTS_BY_ID[o.defId]
+      return !cleared.some((r) => o.x < r.x + r.w && o.x + def.width > r.x && o.y < r.y + r.h && o.y + def.height > r.y)
+    }
 
     const tiles = viewTiles(view)
     const objects = world
       .objectsIn({ x: tiles.x, y: tiles.y, w: tiles.w + 6, h: tiles.h + 6 })
-      .filter((o) => OBJECTS_BY_ID[o.defId].look.type !== 'escapeSign')
+      .filter((o) => OBJECTS_BY_ID[o.defId].look.type !== 'escapeSign' && free(o))
       .sort((a, b) => depthOf(a) - depthOf(b))
 
     // flat things first: paths, flower beds, ponds
@@ -1119,9 +1375,11 @@ export class Scene {
     const bubbles: Actor[] = []
     actors.forEach((a, i) => {
       if (a.type === 'bubble') return bubbles.push(a)
+      if (a.type === 'mark') return
       const at = tileToWorld(a.x, a.y)
       if (!visible(at)) return
-      standing.push({ depth: actorDepth(a.x, a.y, objects) + i * 1e-6, draw: () => this.drawActor(a, at, t) })
+      const depth = a.type === 'prop' ? a.x + a.y + a.x * 0.001 : actorDepth(a.x, a.y, objects)
+      standing.push({ depth: depth + i * 1e-6, draw: () => this.drawActor(a, at, t) })
     })
     standing.sort((a, b) => a.depth - b.depth).forEach((s) => s.draw())
 
@@ -1134,7 +1392,7 @@ export class Scene {
     for (const b of bubbles) {
       if (b.type !== 'bubble') continue
       const p = tileToWorld(b.x, b.y)
-      drawBubble(ctx, { x: p.x, y: p.y - (b.z ?? 60) }, b.text, b.color ?? OUTLINE, z)
+      drawBubble(ctx, { x: p.x, y: p.y - (b.z ?? 60) }, b.text, b.color ?? OUTLINE, z, { minX: c.x - w / 2 / z, maxX: c.x + w / 2 / z, minY: c.y - h / 2 / z })
     }
   }
 
@@ -1230,6 +1488,25 @@ export class Scene {
         const key = String(Math.round((a.z ?? 0) * 2) / 2)
         inker.draw(ctx, `ball:${key}`, key, PROP_BOX, (g) => paintBall(g, a.z ?? 0), inkForSize(12, 12))
         break
+      }
+      case 'gate': {
+        const lit = a.flash ? Math.floor(t * FLASH_HZ) % 2 : -1
+        const key = `${a.dir}:${Math.round(a.up * 24)}:${lit}`
+        inker.draw(ctx, `gate:${key}`, key, GATE_BOX, (g) => paintGate(g, a.dir, Math.round(a.up * 24) / 24, lit), PROP_INK)
+        break
+      }
+      case 'train': {
+        const key = `${a.h}:${a.engine ? 1 : 0}`
+        inker.draw(ctx, `train:${key}`, key, TRAIN_BOX, (g) => paintTrain(g, a.h, !!a.engine), TRAIN_INK)
+        break
+      }
+      case 'prop': {
+        ctx.translate(-at.x, -at.y)
+        const def = OBJECTS_BY_ID[a.defId]
+        const tInk = Math.floor(t * INK_FPS) / INK_FPS
+        const key = `${a.defId},${isAnimatedLook(def.look) ? tInk : 0}`
+        inker.draw(ctx, `prop:${a.defId}:${a.x},${a.y}`, key, objectBox(a.defId, a.x, a.y), (g) => drawObjectSprite(g, def.look, a.x, a.y, def.width, def.height, tInk), objectInk(a.defId))
+        return
       }
     }
     ctx.translate(-at.x, -at.y)

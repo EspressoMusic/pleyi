@@ -393,8 +393,18 @@
 
   TOPICS.forEach((topic) => {
     if (!topic.exercises || topic.group === "reading") return;
-    // Any topic with enough picture words gets the vocabulary exercises too.
-    const extra = [...grammarExercises(topic), ...vocabExercises(topic)];
+    // A topic of a few lessons builds each lesson's exercises from that
+    // lesson's own (`lesson`), so they practice only what it taught; their
+    // ids start with the lesson's. Any group with enough picture words gets
+    // the vocabulary exercises too.
+    const lessons = [...new Set(topic.exercises.filter((ex) => ex.lesson && !ex.derived).map((ex) => ex.lesson))];
+    const groups = [
+      ...lessons.map((lesson) => ({ id: lesson, lesson, exercises: topic.exercises.filter((ex) => ex.lesson === lesson) })),
+      { id: topic.id, lesson: "", exercises: topic.exercises.filter((ex) => !ex.lesson) },
+    ];
+    const extra = groups.flatMap((group) =>
+      [...grammarExercises(group), ...vocabExercises(group)].map((ex) => (group.lesson ? { ...ex, lesson: group.lesson } : ex))
+    );
     // A topic's own exercise with the same id wins.
     const taken = new Set(topic.exercises.map((ex) => ex.id));
     extra.forEach((ex) => {

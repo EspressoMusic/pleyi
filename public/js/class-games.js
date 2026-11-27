@@ -1188,6 +1188,7 @@
 
   function openGame(target) {
     game = target;
+    window.PleyiStats?.hit("game", `class-${target.id}`, target.title);
     deck = makeDeck();
     pos = 0;
     freshView();

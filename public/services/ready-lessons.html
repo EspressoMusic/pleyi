@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="Pleyi"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="mobile-web-app-capable" content="yes"/>
-  <script src="/js/pwa.js?v=2"></script>
+  <script src="/js/pwa.js?v=4"></script>
   <title>שיעורים מוכנים — Pleyi</title>
   <meta name="description" content="ספריית שיעורי אנגלית מוכנים עם מערך שיעור פשוט — מוכן להצגה על הלוח כמו מצגת."/>
   <link rel="canonical" href="https://pleyschool.com/services/ready-lessons"/>
@@ -26,35 +26,31 @@
   <meta name="twitter:title" content="שיעורים מוכנים — Pleyi"/>
   <meta name="twitter:description" content="ספריית שיעורי אנגלית מוכנים עם מערך שיעור פשוט — מוכן להצגה על הלוח כמו מצגת."/>
   <meta name="twitter:image" content="https://pleyschool.com/images/pleyi-logo.png"/>
-  <link rel="stylesheet" href="/styles.css?v=73"/>
+  <link rel="stylesheet" href="/styles.css?v=80"/>
   <link rel="stylesheet" href="/css/ambient-bg.css?v=9"/>
-  <link rel="stylesheet" href="/css/clean-site.css?v=106"/>
-  <link rel="stylesheet" href="/css/lesson-player.css?v=122"/>
-  <link rel="stylesheet" href="/css/service-landing.css?v=64"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=110"/>
+  <link rel="stylesheet" href="/css/lesson-player.css?v=129"/>
+  <link rel="stylesheet" href="/css/live-lesson.css?v=3"/>
+  <link rel="stylesheet" href="/css/service-landing.css?v=78"/>
   <link rel="stylesheet" href="/css/premium.css"/>
   <link rel="stylesheet" href="/css/legal.css?v=3"/>
   <link rel="stylesheet" href="/css/accessibility.css?v=1" />
-  <link rel="stylesheet" href="/css/site-fox.css?v=21"/>
+  <link rel="stylesheet" href="/css/site-fox.css?v=26"/>
+  <link rel="stylesheet" href="/css/student-bar.css?v=3"/>
   <script>
     // Opened from a student's own page (student-portal.js): no site menu or
-    // account circle, just a way back to that page. Set before the page draws
-    // so the menu never flashes.
+    // account circle; the student's bar at the bottom leads back. Set before
+    // the page draws so the menu never flashes.
     (() => {
       if (new URLSearchParams(location.search).get("from") !== "student") return;
       document.documentElement.classList.add("from-student");
       document.addEventListener("DOMContentLoaded", () => {
-        let key = "";
-        try {
-          key = localStorage.getItem("pleyi-student-key") || "";
-        } catch {
-          /* ignore */
-        }
-        const back = document.getElementById("studentBack");
-        if (back && key) back.href = `/s/${encodeURIComponent(key)}`;
+        // The bar of the student's page stays at the bottom (student-bar.js).
+        window.StudentBar?.mount();
       });
     })();
   </script>
-  <link rel="stylesheet" href="/css/site-pro.css?v=2"/>
+  <link rel="stylesheet" href="/css/site-pro.css?v=5"/>
 </head>
 <body class="clean-site page-ready-lessons">
 
@@ -91,7 +87,6 @@
       <a href="/services/ready-lessons" class="nav-services-link active" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
       <a href="/services/worksheets" class="nav-services-link" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
       <a href="/services/class-games" class="nav-services-link" role="menuitem">משחקים</a>
-      <a href="/road-safety" class="nav-services-link" role="menuitem">זהירות בדרכים</a>
     </div>
   </header>
 
@@ -103,7 +98,6 @@
         <a href="/services/ready-lessons" role="menuitem" data-i18n="services.readyLessons">שיעורים</a>
         <a href="/services/worksheets" role="menuitem" data-i18n="services.worksheets">דפי עבודה</a>
         <a href="/services/class-games" role="menuitem">משחקים</a>
-        <a href="/road-safety" role="menuitem">זהירות בדרכים</a>
       </div>
     </div>
     <a href="/#about" data-i18n="nav.about">מי אנחנו</a>
@@ -114,12 +108,8 @@
   <main>
     <section class="clean-section clean-section--hero scroll-section">
       <div class="container clean-hero-inner">
-        <a class="btn btn-candy svc-student-back" id="studentBack" href="/">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          <span>חזרה לדף שלי</span>
-        </a>
         <h1 class="hero-title font-cartoon svc-page-title">
-          <span class="line accent" data-i18n="readyLessons.hero">שיעורים מוכנים לכיתה!</span>
+          <span class="line accent" data-i18n="readyLessons.hero">שיעורים</span>
         </h1>
       </div>
     </section>
@@ -179,23 +169,891 @@
         <!-- Each subject's cards in its learning-path order (subject-practice.js):
              ready-lessons.js numbers them in this order. -->
         <div class="svc-lesson-grid">
-          <article class="svc-lesson-card" id="englishPracticeCard">
+          <article class="svc-lesson-card" data-lesson="letters-1">
             <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
               <div class="svc-lesson-title-wrap">
                 <span class="svc-lesson-name">אנגלית</span>
-                <span class="svc-lesson-part">לומדים אנגלית</span>
+                <span class="svc-lesson-part">אותיות וצלילים 1 – ה־ABC ו־A עד G</span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open">פתיחה</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="letters-1">פתיחה</button>
             </div>
           </article>
 
-          <article class="svc-lesson-card" id="englishCardsCard">
+          <article class="svc-lesson-card" data-lesson="letters-h-n">
             <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
               <div class="svc-lesson-title-wrap">
                 <span class="svc-lesson-name">אנגלית</span>
-                <span class="svc-lesson-part">כרטיסיות מילים</span>
+                <span class="svc-lesson-part">אותיות וצלילים 2 – H עד T</span>
               </div>
-              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open">פתיחה</button>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="letters-h-n">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="letters-u-z">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אותיות וצלילים 3 – U עד Z ותנועות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="letters-u-z">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="phonics-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">צירופי אותיות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="phonics-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="greetings-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">ברכות והיכרות 1 – Hello, Goodbye</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="greetings-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="greetings-2">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">ברכות והיכרות 2 – My name is, How are you</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="greetings-2">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="pronouns">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">כינויי גוף</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="pronouns">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="tobe-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">פועל להיות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="tobe-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="articles-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">מילות הצבעה ויידוע</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="articles-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="plurals-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">יחיד ורבים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="plurals-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="possessives-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">כינויי שייכות 1 – my, your, Tom's</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="possessives-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="possessives-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">כינויי שייכות 2 – mine, yours</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="possessives-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="have-has-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">יש לי, יש לו</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="have-has-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="there-is-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">There is</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="there-is-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="prepositions-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">מילות יחס</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="prepositions-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="verbs-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">פעלים 1 – מה עושים ו־he plays</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="verbs-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="verbs-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">פעלים 2 – enjoy swimming, want to swim</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="verbs-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="object-pronouns-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אותי, אותו, אותם 1 – me, him ו־with me</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="object-pronouns-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="object-pronouns-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אותי, אותו, אותם 2 – myself, himself</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="object-pronouns-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="negation-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">שלילה ושאלות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="negation-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="imperatives-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">ציווי ו־Let's – Sit down, Don't run, Let's play</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="imperatives-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="questions-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">מילות שאלה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="questions-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="frequency">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">תדירות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="frequency">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="calendar-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">ימים, חודשים ועונות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="calendar-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="ordinals-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">מספרים סודרים – first, second, third</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="ordinals-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="telling-time">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">מה השעה?</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="telling-time">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="time-prepositions-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">מתי? at, on, in – at, on, in של זמן</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="time-prepositions-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="present-simple-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">הווה פשוט 1 – he plays – s, es, ies</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="present-simple-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="present-simple-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">הווה פשוט 2 – לא ושאלות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="present-simple-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="progressive-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">הווה ממושך</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="progressive-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="past-simple-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">עבר פשוט 1 – ed ופעלים מיוחדים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="past-simple-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="past-simple-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">עבר פשוט 2 – didn't / Did</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="past-simple-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="irregular-verbs-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">פעלים חשובים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="irregular-verbs-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="past-progressive-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">עבר ממושך</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="past-progressive-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="used-to-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">פעם – used to</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="used-to-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="future-simple-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">עתיד פשוט</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="future-simple-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="going-to">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">עתיד: going to</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="going-to">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="tenses-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">זמנים 1 – was / were ועבר עם ed</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="tenses-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="tenses-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">זמנים 2 – didn't, Did והזמנים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="tenses-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="modals-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">חובה, עצה ואפשרות 1 – must, should, have to</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="modals-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="modals-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">חובה, עצה ואפשרות 2 – might / may</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="modals-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="connectors-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">מילות קישור</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="connectors-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="comparatives-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">השוואה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="comparatives-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="quantifiers-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">כמויות 1 – some, any, many, much</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="quantifiers-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="quantifiers-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">כמויות 2 – too / enough</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="quantifiers-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="word-building-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">בניית מילים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="word-building-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="present-perfect-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">הווה מושלם 1 – have / has, ever / never</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="present-perfect-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="present-perfect-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">הווה מושלם 2 – for / since</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="present-perfect-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="conditionals-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">משפטי תנאי 1 – If + will ועובדות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="conditionals-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="conditionals-3">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">משפטי תנאי 2 – If I were, I would</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="conditionals-3">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="passive-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">סביל</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="passive-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="reported-speech-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">דיבור עקיף</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="reported-speech-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="relative-clauses-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">משפטי זיקה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="relative-clauses-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="bagrut-1">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">שאלות בגרות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="bagrut-1">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocabulary">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים בתמונות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocabulary">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-numbers">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: מספרים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-numbers">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-colors">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: צבעים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-colors">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-animals">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: בעלי חיים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-animals">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-family">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: משפחה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-family">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-body">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: הגוף שלנו</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-body">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-school">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: בית הספר</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-school">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-feelings">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: רגשות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-feelings">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-food">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: אוכל ושתייה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-food">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-kitchen">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: כלי מטבח</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-kitchen">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-clothes">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: בגדים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-clothes">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-home">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: בבית</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-home">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-places">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: מקומות בעיר</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-places">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-transport">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: תחבורה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-transport">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-actions">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: פעולות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-actions">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-hobbies">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: ספורט ותחביבים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-hobbies">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-jobs">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: מקצועות</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-jobs">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-nature">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: מזג אוויר וטבע</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-nature">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-holidays">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: שבת וחגים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-holidays">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="vocab-opposites">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">אנגלית</span>
+                <span class="svc-lesson-part">אוצר מילים: תארים והפכים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="vocab-opposites">פתיחה</button>
             </div>
           </article>
 
@@ -3570,6 +4428,402 @@
               <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="digestion">פתיחה</button>
             </div>
           </article>
+
+          <article class="svc-lesson-card" data-lesson="road-street">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">מה יש ברחוב?</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-street">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-body">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">הגוף שלי תופס מקום</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-body">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-moves">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">קדימה, אחורה, ימין ושמאל</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-moves">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-stop">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">עוצרים בזמן</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-stop">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-walk">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">הולכים ברחוב</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-walk">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-park">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">בחניה ובחניון</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-park">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-cross">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">חוצים את הכביש</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-cross">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-lights">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">רמזורים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-lights">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-group">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">הולכים בקבוצה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-group">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-school">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">הדרך לבית הספר</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-school">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-signs">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">תמרורים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-signs">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-signs2">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">סוגי תמרורים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-signs2">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-marks">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">סימונים על הכביש</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-marks">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-see">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">רואים ונראים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-see">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-rail">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">מסילת רכבת</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-rail">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-car">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">ברכב ובהסעה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-car">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-shuttle">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">בהסעה ובאוטובוס</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-shuttle">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-bike">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">אופניים וקורקינט</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-bike">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-ride">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">רוכבים נכון</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-ride">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-electric">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">אופניים וקורקינט חשמליים</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-electric">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-city">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">הדרכים בעיר</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-city">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-busy">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">העיר הצפופה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-busy">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-free">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">חוצים בלי מעבר חצייה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-free">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-why">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">למה כאן מעבר חצייה?</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-why">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-wide">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">חוצים כביש רחב</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-wide">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-junction">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">חוצים בצומת</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-junction">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-route">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">בוחרים מסלול בטוח</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-route">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-speed">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">מהירות ועצירה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-speed">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-focus">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">מרוכזים בדרך</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-focus">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-choice">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">אחריות ובחירה</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-choice">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-help">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">ראינו תאונה – מה עושים?</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-help">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-winter">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">בחורף ובגשם</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-winter">פתיחה</button>
+            </div>
+          </article>
+
+          <article class="svc-lesson-card" data-lesson="road-holiday">
+            <div class="svc-lesson-preview">
+              <button type="button" class="svc-lesson-info-toggle" aria-label="מידע על השיעור" aria-haspopup="dialog">i</button>
+              <span class="svc-lesson-learned-badge hidden">נלמד</span>
+              <div class="svc-lesson-title-wrap">
+                <span class="svc-lesson-name">זהירות בדרכים</span>
+                <span class="svc-lesson-part">בחגים ובחופש</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" data-lesson="road-holiday">פתיחה</button>
+            </div>
+          </article>
         </div>
 
         <p class="svc-empty-state hidden" id="lessonEmptyState">לא נמצאו שיעורים לפי הסינון.</p>
@@ -3581,6 +4835,8 @@
     <div class="container footer-inner">
       <p class="footer-tagline font-cartoon"><span>לימוד במשחקים&nbsp;— </span><span class="footer-tagline-accent">בכל שיעור!</span></p>
       <nav class="site-legal-nav" aria-label="מידע משפטי">
+        <a href="/learn-english">אנגלית</a>
+        <a href="/road-safety">זהירות בדרכים</a>
         <a href="/blog">בלוג</a>
         <a href="/english">מדריך אנגלית</a>
         <a href="/legal/terms.html">תקנון</a>
@@ -3605,19 +4861,20 @@
         <h2 class="font-cartoon lesson-info-title" id="lessonInfoTitle"></h2>
         <span class="lesson-info-learned-badge hidden" id="lessonInfoLearnedBadge" data-i18n="readyLessons.badge.learned">נלמד</span>
       </header>
-      <p class="lesson-info-summary" id="lessonInfoSummary"></p>
       <dl class="lesson-info-meta">
         <div><dt data-i18n="readyLessons.info.subject">מקצוע</dt><dd id="lessonInfoSubject"></dd></div>
-        <div><dt data-i18n="readyLessons.info.grade">כיתות</dt><dd id="lessonInfoGrade"></dd></div>      </dl>
+        <div><dt data-i18n="readyLessons.info.grade">כיתות</dt><dd id="lessonInfoGrade"></dd></div>
+      </dl>
+      <p class="lesson-info-summary" id="lessonInfoSummary"></p>
+      <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open lesson-info-open" id="lessonInfoOpenBtn">פתיחה</button>
       <div class="lesson-info-actions">
-        <button type="button" class="btn btn-primary btn-candy font-cartoon js-lesson-open" id="lessonInfoOpenBtn">פתיחה</button>
         <div class="lesson-info-share-wrap">
           <button type="button" class="lesson-info-share-btn" id="lessonInfoShareBtn" aria-haspopup="menu" aria-expanded="false">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
               <path d="M8.6 10.5 15.4 6.5M8.6 13.5 15.4 17.5"/>
             </svg>
-            <span id="lessonInfoShareLabel">שיתוף השיעור</span>
+            <span id="lessonInfoShareLabel">שיתוף</span>
           </button>
           <div class="lesson-info-share-menu hidden" id="lessonInfoShareMenu" role="menu">
             <a class="lesson-info-share-option" id="lessonInfoShareWhatsapp" role="menuitem" target="_blank" rel="noopener">
@@ -3640,14 +4897,15 @@
             </button>
           </div>
         </div>
-        <button type="button" class="lesson-info-share-btn lesson-info-mine-btn hidden" id="lessonInfoMineBtn">
+        <button type="button" class="lesson-info-share-btn lesson-info-mine-btn hidden" id="lessonInfoMineBtn" title="העתקה לשיעורים שלי ועריכה">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>
           </svg>
-          <span>לשיעורים שלי – לעריכה</span>
+          <span>עריכה</span>
         </button>
-        <button type="button" class="lesson-info-fav-btn" id="lessonInfoFavBtn" aria-pressed="false" aria-label="שמירת השיעור">
+        <button type="button" class="lesson-info-share-btn lesson-info-fav-btn" id="lessonInfoFavBtn" aria-pressed="false" aria-label="שמירת השיעור">
           <svg viewBox="-1 -1 26 26" aria-hidden="true"><path d="M6 3h12a2 2 0 0 1 2 2v16l-8-4-8 4V5a2 2 0 0 1 2-2z"/></svg>
+          <span id="lessonInfoFavLabel">שמירה</span>
         </button>
       </div>
     </div>
@@ -3729,25 +4987,28 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-app.js"></script>
-  <script src="/js/i18n.js?v=10"></script>
+  <script src="/js/i18n.js?v=11"></script>
   <script src="/js/auth.js?v=8"></script>
   <script src="/js/user-data.js?v=2"></script>
   <script src="/js/credits.js"></script>
   <script src="/js/premium.js"></script>
   <script src="/js/english-vocab.js?v=4"></script>
   <script src="/js/english-bingo.js?v=1"></script>
-  <script src="/js/english-games.js?v=7"></script>
+  <script src="/js/english-games.js?v=8"></script>
   <script src="/js/lesson-sentences-he.js?v=5"></script>
-  <script src="/js/english-dict.js?v=5"></script>
-  <script src="/js/english-lessons.js?v=9"></script>
-  <script src="/js/lesson-figures.js?v=19"></script>
-  <script src="/js/subject-lessons.js?v=23"></script>
-  <script src="/js/curriculum-grades.js?v=7"></script>
+  <script src="/js/english-dict.js?v=6"></script>
+  <script src="/js/english-lessons.js?v=11"></script>
+  <script src="/js/lesson-figures.js?v=21"></script>
+  <script src="/js/subject-lessons.js?v=25"></script>
+  <script src="/js/curriculum-grades.js?v=8"></script>
   <script src="/js/english-audio-clips.js?v=5"></script>
   <script src="/js/speech.js?v=1"></script>
-  <script src="/js/student-progress.js?v=8"></script>
-  <script src="/js/ready-lessons.js?v=132"></script>
+  <script src="/js/student-progress.js?v=9"></script>
+  <script src="/js/student-bar.js?v=4"></script>
+  <script src="/js/ready-lessons.js?v=153"></script>
+  <script src="/js/live-lesson.js?v=3"></script>
   <script src="/js/cookie-consent.js?v=4"></script>
-  <script src="/js/site-fox.js?v=26" defer></script>
+  <script src="/js/site-fox.js?v=29" defer></script>
+  <script src="/js/title-colors.js?v=1" defer></script>
 </body>
 </html>

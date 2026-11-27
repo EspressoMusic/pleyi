@@ -10,11 +10,16 @@
                                   play (bingo needs more: game.minWords).
    EnglishGames.bestText(topicId, gameId) — "Your record: …" or "".
    EnglishGames.start(gameId, ctx) → { stop(), relabel() }
-     ctx: { topic, words: [{ word, en, he, img }], shell(inner, hud),
+     ctx: { topic, words: [{ word, en, he, img }], shell(inner, hud, opts),
             speak(text), canSpeak(), sfx(name), homeworkHtml(), copyLink(),
             record(activity), icons: { listen, star, link },
             backToLesson — set when the game was opened from a lesson's
-            games slide; the results then lead back there }
+            end slide; the results then lead back there.
+            The trivia: questions, textHtml, mathHtml, progressHtml, fit }
+
+   The trivia (`questions: true`) is not a word game: its questions come
+   from the topic's lessons (ReadyLessons.triviaFor), and it has the practice
+   screens' look (`soft`). listFor() leaves it out.
 
    Every game opens on a how-to screen with a start button, so timers only
    run once the student is ready, and ends on a results screen with stars,
@@ -57,6 +62,7 @@
     dictation: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5a5.5 5.5 0 0 1 11 0c0 3.2-3.2 4.2-3.2 7.3a3.3 3.3 0 0 1-6.1 1.7"/><path d="M9.6 9.8a2.4 2.4 0 0 1 4.8 0c0 1.4-1.2 1.9-1.8 2.8"/><path d="M19.5 3.5c1.3 1.2 2 2.9 2 4.7s-.7 3.5-2 4.7"/></svg>`,
     snake: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h9a3.5 3.5 0 0 0 0-7H8.5a3.5 3.5 0 0 1 0-7H15"/><circle cx="17.8" cy="6" r="2.8"/><path d="M20.6 6h1.9"/><circle cx="18.3" cy="5.2" r=".5" fill="currentColor"/></svg>`,
     arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19.5v-15M5 11.5l7-7 7 7"/></svg>`,
+    trivia: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5h-6L7 20v-4h-.5A2.5 2.5 0 0 1 4 13.5v-8A2.5 2.5 0 0 1 6.5 3Z"/><path d="M10 7.6a2.1 2.1 0 1 1 2.9 1.9c-.6.3-.9.8-.9 1.4v.3"/><circle cx="12" cy="13.2" r=".9" fill="currentColor" stroke="none"/></svg>`,
     slow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 16.5h13a3 3 0 0 0 3-3v-1.5"/><path d="M5.5 16.5a6 6 0 0 1 12 0"/><path d="M19.5 12h1.5a1.5 1.5 0 0 0 0-3h-1.5v3Z"/><path d="M7 16.5V19M15.5 16.5V19"/></svg>`,
   };
 
@@ -168,6 +174,19 @@
       snakeTail: "אוי! הנחש נגע בזנב",
       snakeKeys: { up: "למעלה", down: "למטה", left: "שמאלה", right: "ימינה" },
       snakeResult: (n) => (n === 1 ? "הנחש אכל תמונה אחת" : `הנחש אכל ${n} תמונות`),
+
+      triviaHow: "שאלות על מה שלמדנו בשיעור.\nבוחרים את התשובה הנכונה.\nעונים מהר? מקבלים יותר נקודות!\n3 תשובות נכונות ברצף נותנות בונוס.",
+      triviaAskBlank: "בחרו מה חסר",
+      triviaAskWord: "מה הפירוש?",
+      triviaAskTerm: "איזה מושג מתאים?",
+      triviaAsk: "בחרו את התשובה הנכונה",
+      triviaRight: (n) => `נכון! +${n}`,
+      triviaStreak: (n) => `רצף של ${n}!`,
+      triviaAnswer: "התשובה הנכונה:",
+      triviaNext: "הבא",
+      triviaFinish: "לתוצאות",
+      triviaProgress: (i, t) => `שאלה ${i} מתוך ${t}`,
+      triviaResult: (right, total) => `${right} מתוך ${total} תשובות נכונות`,
     },
     en: {
       start: "Start!",
@@ -275,6 +294,19 @@
       snakeTail: "Oops! The snake hit its tail",
       snakeKeys: { up: "Up", down: "Down", left: "Left", right: "Right" },
       snakeResult: (n) => (n === 1 ? "The snake ate 1 picture" : `The snake ate ${n} pictures`),
+
+      triviaHow: "Questions about what we learned in the lesson.\nChoose the right answer.\nAnswer fast? You get more points!\n3 right answers in a row give a bonus.",
+      triviaAskBlank: "Choose what's missing",
+      triviaAskWord: "What does it mean?",
+      triviaAskTerm: "Which term fits?",
+      triviaAsk: "Choose the right answer",
+      triviaRight: (n) => `Right! +${n}`,
+      triviaStreak: (n) => `${n} in a row!`,
+      triviaAnswer: "The right answer:",
+      triviaNext: "Next",
+      triviaFinish: "Results",
+      triviaProgress: (i, t) => `Question ${i} of ${t}`,
+      triviaResult: (right, total) => `${right} of ${total} right`,
     },
   };
 
@@ -424,8 +456,9 @@
         run.stopped = true;
         run.clear();
       },
-      shell(inner, hud = "") {
-        return ctx.shell(inner, hud);
+      // opts.question: a trivia question, laid out like an exercise's.
+      shell(inner, hud = "", opts = {}) {
+        return ctx.shell(inner, hud, opts);
       },
       sfx(name) {
         ctx.sfx?.(name);
@@ -2640,7 +2673,183 @@
     run.later(() => flash(""), 1300);
   }
 
+  /* ════════ Game 11: Trivia — the lessons' questions, in the practice
+     screens' look (html.eng-soft, the exercises' answer buttons and bar) ════════
+     ctx.questions: [{ q, ask?, he?, math?, say?, options, answer, why? }]
+       ask: "word" | "term" — the line over the question (else by the blank).
+     ctx.textHtml(str) draws a question or an answer (a subject's math marks
+     too), ctx.mathHtml(q) its big math line, ctx.progressHtml(...) the
+     exercises' bar and ctx.fit() grows the text to fill the screen. */
+
+  const TRIVIA_ROUND = 10;
+  const TRIVIA_POINTS = 10;
+  // The speed bonus drains over this time; the question itself never ends.
+  const TRIVIA_BONUS = 5;
+  const TRIVIA_BONUS_MS = 15000;
+  // Every TRIVIA_STREAK right answers in a row give TRIVIA_STREAK_BONUS more.
+  const TRIVIA_STREAK = 3;
+  const TRIVIA_STREAK_BONUS = 5;
+  const HEBREW_RE = /[֐-׿]/;
+
+  function playTrivia(run) {
+    const { ctx } = run;
+    const textHtml = ctx.textHtml || esc;
+    const round = shuffle(ctx.questions || []).slice(0, TRIVIA_ROUND);
+    const st = { i: 0, score: 0, right: 0, streak: 0, locked: false, shownAt: 0 };
+
+    const hud = () =>
+      `${ctx.progressHtml?.({ label: T("triviaProgress", st.i + 1, round.length), total: round.length, done: st.i, current: st.i, fresh: st.i - 1 }) || ""}${pillHtml("engHudScore", ctx.icons.star, T("hudScore"), st.score)}`;
+
+    const askLine = (q) =>
+      T(q.ask === "word" ? "triviaAskWord" : q.ask === "term" ? "triviaAskTerm" : String(q.q).includes("___") ? "triviaAskBlank" : "triviaAsk");
+
+    // The question with its blank; once answered, the blank shows the answer.
+    function questionHtml(q, filled, state) {
+      const letter = q.options.every((o) => String(o).length === 1) ? " is-letter" : "";
+      const blank = filled
+        ? `<span class="eng-blank${letter} is-${state}">${textHtml(filled)}</span>`
+        : `<span class="eng-blank${letter}">&nbsp;</span>`;
+      return `${textHtml(q.q).split("___").join(blank)}${q.say ? speakBtnHtml(run, q.say) : ""}`;
+    }
+
+    function bindSpeak() {
+      $$(".eng-trivia-q .eng-speak[data-say]").forEach((btn) => btn.addEventListener("click", () => run.speak(btn.dataset.say)));
+    }
+
+    function show() {
+      const q = round[st.i];
+      st.locked = false;
+      const options = shuffle(q.options);
+      const qDir = HEBREW_RE.test(q.q) ? "rtl" : "ltr";
+      const optDir = options.some((o) => HEBREW_RE.test(o)) ? "rtl" : "ltr";
+      run.shell(
+        `
+        <div class="eng-instructions eng-instr eng-trivia-ask"><div class="eng-instr-main"><div class="eng-instr-text">${esc(askLine(q))}</div></div></div>
+        <div class="eng-sentence eng-trivia-q" dir="${qDir}">
+          <p id="engTriviaText">${questionHtml(q)}</p>
+          ${q.math ? ctx.mathHtml?.(q) || "" : ""}
+          ${q.he ? `<p class="eng-trivia-hint" dir="rtl">${esc(q.he)}</p>` : ""}
+        </div>
+        <div class="eng-trivia-time" aria-hidden="true"><span class="eng-trivia-time-fill" id="engTriviaTime"></span></div>
+        <div class="eng-options" dir="${optDir}">
+          ${options
+            .map(
+              (o, k) =>
+                `<button type="button" class="eng-option eng-trivia-option" data-k="${k}"><span class="eng-option-key">${k + 1}</span>${textHtml(o)}</button>`
+            )
+            .join("")}
+        </div>
+        <div class="eng-feedback" id="engFeedback" aria-live="polite"></div>`,
+        hud(),
+        { question: true }
+      );
+      $$(".eng-trivia-option").forEach((btn) => btn.addEventListener("click", () => answer(q, options, btn)));
+      bindSpeak();
+      if (q.say) run.later(() => !st.locked && run.speak(q.say), 350);
+      st.shownAt = performance.now();
+      ctx.fit?.();
+      tick();
+    }
+
+    // The speed bonus's bar, draining until the answer.
+    function tick() {
+      const fill = $("#engTriviaTime");
+      if (!fill || st.locked) return;
+      const left = Math.max(0, 1 - (performance.now() - st.shownAt) / TRIVIA_BONUS_MS);
+      fill.style.transform = `scaleX(${left})`;
+      fill.classList.toggle("is-low", left < 0.3);
+      if (left > 0) run.frame(tick);
+    }
+
+    function answer(q, options, btn) {
+      if (st.locked) return;
+      st.locked = true;
+      const choice = options[Number(btn.dataset.k)];
+      const ok = choice === q.answer;
+      $$(".eng-trivia-option").forEach((b) => {
+        b.disabled = true;
+        if (options[Number(b.dataset.k)] === q.answer) b.classList.add("is-right");
+      });
+      if (!ok) btn.classList.add("is-wrong");
+      if (q.q.includes("___")) {
+        $("#engTriviaText").innerHTML = questionHtml(q, q.answer, ok ? "right" : "wrong");
+        bindSpeak();
+      }
+      const feedback = $("#engFeedback");
+      if (ok) {
+        const left = Math.max(0, 1 - (performance.now() - st.shownAt) / TRIVIA_BONUS_MS);
+        st.right++;
+        st.streak++;
+        const streak = st.streak % TRIVIA_STREAK === 0;
+        const points = TRIVIA_POINTS + Math.round(left * TRIVIA_BONUS) + (streak ? TRIVIA_STREAK_BONUS : 0);
+        st.score += points;
+        setPill("engHudScore", st.score);
+        bumpPill("engHudScore");
+        run.sfx("right");
+        feedback.innerHTML = `<span class="eng-feedback-msg is-right">${ICONS.check}<span>${esc(T("triviaRight", points))}${
+          streak ? ` · ${esc(T("triviaStreak", st.streak))}` : ""
+        }</span></span>`;
+        run.later(next, streak ? 1500 : 1100);
+      } else {
+        st.streak = 0;
+        run.sfx("wrong");
+        const last = st.i === round.length - 1;
+        const answerDir = HEBREW_RE.test(q.answer) ? "rtl" : "ltr";
+        feedback.innerHTML = `
+          <span class="eng-feedback-msg is-wrong">${ICONS.cross}<span>${esc(T("triviaAnswer"))} <bdi dir="${answerDir}">${textHtml(q.answer)}</bdi>${
+            q.why ? `<span class="eng-trivia-why">${textHtml(q.why)}</span>` : ""
+          }</span></span>
+          <button type="button" class="btn btn-primary btn-candy font-cartoon eng-next" id="engTriviaNext">${esc(T(last ? "triviaFinish" : "triviaNext"))}</button>`;
+        $("#engTriviaNext").addEventListener("click", next);
+        $("#engTriviaNext").focus({ preventScroll: true });
+      }
+      ctx.fit?.();
+    }
+
+    function next() {
+      if (!st.locked) return;
+      if (st.i < round.length - 1) {
+        st.i++;
+        show();
+        return;
+      }
+      const ratio = st.right / round.length;
+      finish(run, {
+        value: st.score,
+        label: "pointsLabel",
+        detail: T("triviaResult", st.right, round.length),
+        stars: ratio >= 0.9 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0,
+        correct: st.right,
+      });
+    }
+
+    run.on(document, "keydown", (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || !/^[1-4]$/.test(e.key)) return;
+      const btn = $$(".eng-trivia-option")[Number(e.key) - 1];
+      if (btn && !btn.disabled) {
+        e.preventDefault();
+        btn.click();
+      }
+    });
+
+    show();
+  }
+
   const GAMES = [
+    {
+      // Not a word game: its questions come from the lessons (ctx.questions),
+      // and it looks like the practice screens (`soft`).
+      id: "trivia",
+      title: "טריוויה",
+      titleEn: "Trivia",
+      desc: "שאלות על השיעור — עונים מהר ואוספים נקודות",
+      descEn: "Questions about the lesson — answer fast and collect points",
+      icon: ICONS.trivia,
+      questions: true,
+      soft: true,
+      bestValue: (v) => T("points", v),
+      play: playTrivia,
+    },
     {
       id: "hunt",
       title: "מצאו בתמונה",
@@ -2775,7 +2984,10 @@
     list: GAMES,
     find,
     fits,
-    listFor: (words) => GAMES.filter((game) => fits(game, words)),
+    // The word games a topic with these words can play (not the trivia).
+    listFor: (words) => GAMES.filter((game) => !game.questions && fits(game, words)),
+    // The fewest questions a trivia round needs.
+    MIN_QUESTIONS: 4,
     loc,
     bestText,
     usable(words) {

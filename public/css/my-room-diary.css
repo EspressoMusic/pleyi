@@ -1,0 +1,861 @@
+/* "היומן שלי" on /my-room (public/js/my-room-diary.js): the week or the
+   month, a day's goals and lessons, and the lesson picker. It lives in the
+   room's dialog (.room-dlg), made wide for the week. */
+
+.room-dlg[data-box="diary"] {
+  width: min(96vw, 1180px);
+}
+
+.dy {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #000;
+}
+
+.dy-loading {
+  margin: 18px 0;
+  font-size: 16px;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* ── The bar on top: week / month, and the arrows ── */
+
+.dy-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.dy-views {
+  display: inline-flex;
+  padding: 3px;
+  background: #d6ebff;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.dy-view {
+  padding: 6px 20px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  color: #000;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.dy-view.is-on {
+  background: var(--memyellow);
+  box-shadow: inset 0 0 0 2px var(--ink);
+}
+
+.dy-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dy-range {
+  min-width: 9.5em;
+  font-size: 17px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.dy-arrow,
+.dy-today,
+.dy-x {
+  display: grid;
+  place-items: center;
+  font: inherit;
+  color: #000;
+  background: #d6ebff;
+  border: 3px solid var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.2s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.dy-arrow {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.dy-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+.dy-today {
+  padding: 5px 14px;
+  font-size: 14px;
+  font-weight: 900;
+  border-radius: 999px;
+}
+
+.dy-arrow:hover,
+.dy-today:hover,
+.dy-x:hover,
+.dy-add:hover,
+.dy-back:hover,
+.dy-send-all:hover,
+.dy-save-send:hover,
+.dy-pick-lesson:hover {
+  scale: 1.06;
+}
+
+/* ── Sending: the automatic switch and who gets the lessons ── */
+
+.dy-send {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  padding: 10px 14px;
+  background: #fff3c4;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.dy-auto {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.dy-auto input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dy-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 50px;
+  height: 28px;
+  background: #c5d0da;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+
+.dy-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 18px;
+  height: 18px;
+  background: #eaf5ff;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  transition: inset-inline-start 0.2s;
+}
+
+.dy-auto input:checked + .dy-switch {
+  background: var(--memteal);
+}
+
+.dy-auto input:checked + .dy-switch::after {
+  inset-inline-start: 24px;
+}
+
+.dy-auto input:focus-visible + .dy-switch {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.dy-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.dy-target select {
+  padding: 5px 10px;
+  font: inherit;
+  font-weight: 800;
+  color: #000;
+  background: #eaf5ff;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+}
+
+.dy-target-one {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* One line for each idea. */
+.dy-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dy-tips p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* ── The week: a card a day ── */
+
+.dy-week {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dy-day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 190px;
+  padding: 12px;
+  background: #f3f8fd;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.25s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.dy-day:hover {
+  scale: 1.03;
+}
+
+.dy-day.is-today {
+  background: #c8f7f0;
+}
+
+.dy-day.is-past {
+  background: #e3e9ef;
+}
+
+.dy-day-open {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  padding: 0;
+  font: inherit;
+  color: #000;
+  text-align: start;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.dy-day-open:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.dy-day-name {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.dy-day-date {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.dy-day-now {
+  padding: 1px 10px;
+  font-size: 13px;
+  font-weight: 900;
+  background: var(--memyellow);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+}
+
+.dy-goals,
+.dy-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dy-goals li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.dy-goals svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.dy-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.3;
+  background: #dccbff;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 2px 2px 0 0 var(--ink);
+}
+
+.dy-chip.is-sent {
+  background: #c9f5d9;
+}
+
+.dy-chip-icon svg,
+.dy-chip-sent svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+}
+
+.dy-chip-icon,
+.dy-chip-sent {
+  flex-shrink: 0;
+}
+
+.dy-chip-text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.dy-day-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.dy-day-foot svg {
+  width: 18px;
+  height: 18px;
+}
+
+.dy-day.is-empty .dy-day-foot {
+  justify-content: center;
+  padding: 8px;
+  border: 2px dashed var(--ink);
+  border-radius: 12px;
+}
+
+.dy-day-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dy-send-all,
+.dy-save-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 10px 22px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  color: #000;
+  background: var(--memyellow);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.2s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.dy-send-all svg,
+.dy-save-send svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ── The month ── */
+
+.dy-month {
+  --dy-cols: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dy-month--7 {
+  --dy-cols: 7;
+}
+
+.dy-month-head,
+.dy-month-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--dy-cols), minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dy-month-wd {
+  font-size: 15px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.dy-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+  min-height: 96px;
+  padding: 6px;
+  font: inherit;
+  color: #000;
+  text-align: start;
+  background: #f3f8fd;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.2s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.dy-cell:hover {
+  scale: 1.05;
+}
+
+.dy-cell.is-out {
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+.dy-cell.is-past {
+  background: #e3e9ef;
+}
+
+.dy-cell.is-today {
+  background: #c8f7f0;
+  border-width: 3px;
+}
+
+.dy-cell-num {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.dy-cell-lesson {
+  overflow: hidden;
+  padding: 2px 5px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: #dccbff;
+  border-radius: 6px;
+}
+
+.dy-cell-lesson.is-sent {
+  background: #c9f5d9;
+}
+
+.dy-cell-more {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.dy-cell-dots {
+  display: none;
+  gap: 4px;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.dy-dot {
+  width: 9px;
+  height: 9px;
+  background: #8e6cff;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+}
+
+.dy-dot--sent {
+  background: #33c46b;
+}
+
+.dy-dot--goal {
+  background: var(--memyellow);
+}
+
+/* ── A day, and the lesson picker ── */
+
+.dy-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dy-pane-head {
+  display: flex;
+}
+
+.dy-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 14px 5px 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  color: #000;
+  background: #d6ebff;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.2s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.dy-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+.dy-pane-title {
+  margin: 0;
+  font-size: clamp(1.2rem, 4.6vw, 1.45rem);
+  font-weight: 900;
+}
+
+.dy-part {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: #f3f8fd;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.dy-part-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.dy-part-title svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dy-none {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.dy-goal-list,
+.dy-lesson-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dy-goal-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dy-goal-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.dy-x {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.dy-x svg {
+  width: 17px;
+  height: 17px;
+}
+
+.dy-lesson-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #dccbff;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.dy-lesson-row.is-sent {
+  background: #c9f5d9;
+}
+
+.dy-lesson-icon svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.dy-lesson-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dy-lesson-name {
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+.dy-lesson-meta {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.dy-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 7px 16px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  color: #000;
+  background: #eaf5ff;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.2s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.dy-add svg {
+  width: 18px;
+  height: 18px;
+}
+
+.dy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.dy-actions .room-create-go {
+  margin-top: 0;
+}
+
+.dy-areas {
+  margin-bottom: 2px;
+}
+
+.dy-search {
+  position: relative;
+  display: block;
+}
+
+.dy-search svg {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 12px;
+  width: 20px;
+  height: 20px;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.dy-search input {
+  padding-inline-start: 40px;
+}
+
+.dy-pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dy-pick-stage {
+  margin: 8px 0 0;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.dy-pick-topic {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f3f8fd;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.dy-pick-topic-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.dy-pick-num {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 4px;
+  font-size: 13px;
+  font-weight: 900;
+  background: var(--memteal);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+}
+
+.dy-pick-lessons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dy-pick-lesson {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #000;
+  text-align: start;
+  background: #dccbff;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 2px 2px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.2s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.dy-pick-lesson.is-on {
+  background: #c9f5d9;
+  cursor: default;
+}
+
+.dy-pick-lesson svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dy button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ── Phones: the week as a list of days, the month with dots ── */
+
+@media (max-width: 700px) {
+  .room-dlg[data-box="diary"] .room-dlg-body {
+    padding: 12px 12px 18px;
+  }
+
+  .dy-top {
+    justify-content: center;
+  }
+
+  .dy-week {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .dy-day {
+    min-height: 0;
+  }
+
+  .dy-day:hover,
+  .dy-cell:hover {
+    scale: none;
+  }
+
+  .dy-month-head,
+  .dy-month-grid {
+    gap: 4px;
+  }
+
+  .dy-cell {
+    align-items: center;
+    min-height: 58px;
+    padding: 4px 2px;
+    border-radius: 10px;
+  }
+
+  .dy-cell-lesson,
+  .dy-cell-more {
+    display: none;
+  }
+
+  .dy-cell-dots {
+    display: flex;
+  }
+
+  .dy-range {
+    min-width: 0;
+    font-size: 15px;
+  }
+}

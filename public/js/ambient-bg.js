@@ -61,12 +61,8 @@
     return el;
   }
 
-  function init() {
-    if (document.body.classList.contains("no-ambient-bg")) return;
-    if (document.querySelector(".ambient-bg")) return;
-
-    document.documentElement.style.background = "#62ebe0";
-
+  // The layer itself: the turquoise fill, the side waves and the falling dots.
+  function build() {
     const wrap = document.createElement("div");
     wrap.className = "ambient-bg";
     wrap.setAttribute("aria-hidden", "true");
@@ -78,9 +74,29 @@
     particles.className = "ambient-bg__particles";
     wrap.appendChild(particles);
 
-    document.body.insertBefore(wrap, document.body.firstChild);
     createDots(particles);
+    return wrap;
   }
+
+  function init() {
+    if (document.body.classList.contains("no-ambient-bg")) return;
+    if (document.querySelector(".ambient-bg")) return;
+
+    document.documentElement.style.background = "#62ebe0";
+    document.body.insertBefore(build(), document.body.firstChild);
+  }
+
+  /* For the practice screens' colorful look (the "רקע צבעוני" setting):
+     mount() puts the layer on a page that has none (no-ambient-bg), where
+     CSS shows it only while that look is on; build() makes one to place
+     inside a box (the road-safety game screen). */
+  window.PleyiAmbient = {
+    build,
+    mount() {
+      if (!document.body || document.querySelector("body > .ambient-bg")) return;
+      document.body.insertBefore(build(), document.body.firstChild);
+    },
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

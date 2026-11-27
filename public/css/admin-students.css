@@ -782,7 +782,7 @@ body.adm-body {
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-.adm-student:hover:not(:has(.adm-info-btn:hover)),
+.adm-student:hover:not(:has(.adm-info-btn:hover, .adm-student-del:hover)),
 .adm-student:has(.adm-student-link:focus-visible) {
   transform: translate(-2px, -2px);
   box-shadow: 7px 8px 0 0 var(--ink);
@@ -844,6 +844,40 @@ body.adm-body {
 .adm-info-btn:active {
   transform: translate(1px, 2px);
   box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+/* The trash on a student card: sits above the card-wide link. */
+.adm-student-del {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--adm-low-soft);
+  color: var(--ink);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  cursor: pointer;
+  transition: scale 0.12s ease;
+}
+
+.adm-student-del svg {
+  width: 20px;
+  height: 20px;
+}
+
+.adm-student-del:hover,
+.adm-student-del:focus-visible {
+  scale: 1.1;
+}
+
+.adm-student-del:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .adm-student-id {
@@ -2729,6 +2763,46 @@ a.adm-fold-toggle {
   box-shadow: 2px 3px 0 0 var(--ink);
 }
 
+/* The placement test: its rectangle on the file, and in the class report
+   a row per stage with its students, the ones who haven't taken it and the
+   button that sends it to them. */
+#admPlacement {
+  margin-top: 18px;
+}
+
+.adm-class-place {
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-class-place-row {
+  gap: 10px;
+  box-shadow: 5px 6px 0 0 var(--ink);
+}
+
+.adm-class-place-send {
+  margin-top: 14px;
+}
+
+.adm-class-place + .adm-lib-heading {
+  margin-top: 22px;
+}
+
+/* "שליחת תרגול חוזר" in a topic's window. */
+.adm-class-weak-send {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 16px 0 4px;
+}
+
+.adm-class-weak-send .btn {
+  margin-top: 10px;
+}
+
 /* The class's topics: a thin one-line rectangle each — the name on one
    side, the average on the other. */
 .adm-class-topics {
@@ -2758,5 +2832,540 @@ a.adm-fold-toggle {
   .adm-class-rows > .adm-ex {
     flex-direction: row;
     align-items: center;
+  }
+}
+
+/* ── The daily report (#days) ── */
+
+/* "דוח יומי" next to "הוספת תלמיד" on the list: the same big rectangle,
+   the grid's gap between them (side by side or one under the other). */
+.adm-add-row {
+  margin: 18px 0;
+}
+
+.adm-add-row > .adm-fold-toggle {
+  margin: 0;
+}
+
+.adm-days-form {
+  margin: 18px 0 0;
+}
+
+.adm-days-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.adm-days-fields .adm-field {
+  margin: 0;
+}
+
+.adm-days-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 10px;
+}
+
+.adm-days-chip {
+  padding: 6px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--adm-field);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  color: var(--ink);
+  font-weight: 900;
+  text-decoration: none;
+  transition: scale 0.12s ease;
+}
+
+.adm-days-chip:hover,
+.adm-days-chip:focus-visible {
+  scale: 1.05;
+}
+
+.adm-days-chip.is-on {
+  background: var(--adm-accent);
+  color: #000;
+}
+
+.adm-days-tools {
+  margin: 18px 0 0;
+}
+
+.adm-days-students {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(440px, 100%), 1fr));
+  align-items: start;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.adm-days-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.adm-days-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.adm-days-name {
+  font-size: 1.3rem;
+}
+
+.adm-days-head .adm-pill {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+.adm-days-topics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin: 12px 0 0;
+}
+
+.adm-days-topic {
+  padding: 3px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--adm-soft);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.adm-days-day {
+  margin-top: 14px;
+  padding-top: 4px;
+  border-top: 2px dashed rgba(0, 0, 0, 0.2);
+}
+
+.adm-days-print-head {
+  display: none;
+}
+
+/* יומי / שבועי / חודשי */
+.adm-rep-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+.adm-rep-tab {
+  min-width: 96px;
+  padding: 8px 20px;
+  border: var(--adm-border);
+  border-radius: 999px;
+  background: var(--adm-card);
+  box-shadow: 3px 4px 0 0 var(--ink);
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+  transition: scale 0.12s ease;
+}
+
+.adm-rep-tab:hover,
+.adm-rep-tab:focus-visible {
+  scale: 1.05;
+}
+
+.adm-rep-tab.is-on {
+  background: var(--adm-accent);
+  color: #000;
+}
+
+/* The week's / month's arrows, with the student picker beside them. */
+.adm-rep-period {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 20px;
+}
+
+.adm-rep-period .adm-week {
+  margin: 0;
+}
+
+.adm-rep-period .adm-field {
+  flex: 0 1 300px;
+  margin: 0;
+}
+
+/* The written lines: one short sentence each. */
+.adm-rep-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.adm-rep-lines b {
+  font-weight: 900;
+}
+
+.adm-rep-lines .adm-lib-key {
+  margin-inline-end: 4px;
+}
+
+.adm-rep-class {
+  margin-bottom: 20px;
+}
+
+.adm-rep-section {
+  margin-bottom: 10px;
+}
+
+/* The week's seven days: a square each, the ones practiced filled. */
+.adm-rep-strip {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 46px));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-rep-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  aspect-ratio: 1;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--adm-field);
+  box-shadow: 2px 3px 0 0 var(--ink);
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.adm-rep-day svg {
+  width: 16px;
+  height: 16px;
+}
+
+.adm-rep-day.is-on {
+  background: var(--adm-accent);
+}
+
+.adm-rep-day.is-future {
+  border-style: dashed;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+}
+
+.adm-rep-weeks {
+  padding: 0;
+}
+
+.adm-rep-weeks > .adm-ex:first-child {
+  border-top: none;
+}
+
+.adm-rep-topic .adm-act-meta b {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+@media (max-width: 560px) {
+  .adm-days-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adm-days-fields .adm-field:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Printing (or saving as a PDF): the report alone, on A4, a student's
+   days running on from page to page, each day kept whole. */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  html,
+  body.adm-body {
+    background: #fff !important;
+  }
+
+  body.adm-body > *:not(.adm-main) {
+    display: none !important;
+  }
+
+  .adm-main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .adm-days-title,
+  .adm-rep-tabs,
+  .adm-days-form,
+  .adm-days-tools {
+    display: none !important;
+  }
+
+  .adm-days-print-head {
+    display: block;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .adm-card,
+  .adm-tile {
+    box-shadow: none;
+  }
+
+  .adm-tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 10px 0 16px;
+  }
+
+  .adm-tile-value {
+    font-size: 1.35rem;
+  }
+
+  .adm-days-students {
+    display: block;
+  }
+
+  .adm-days-student {
+    margin-bottom: 14px;
+  }
+
+  .adm-days-head,
+  .adm-days-day,
+  .adm-rep-lines,
+  .adm-rep-class,
+  .adm-act {
+    break-inside: avoid;
+  }
+
+  .adm-day-title {
+    break-after: avoid;
+  }
+
+  .adm-report-name {
+    text-decoration: none;
+  }
+}
+
+/* ── Who is active (#activity): three colored counts, a bar of the whole
+   class, then a card per student in each group with a square per day. ── */
+
+.adm-act-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.adm-act-lead {
+  margin: 6px 0 0;
+  text-align: center;
+  font-weight: 800;
+}
+
+.adm-act-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 20px 0 16px;
+}
+
+.adm-act-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 8px;
+  border: var(--adm-border);
+  border-radius: 18px;
+  box-shadow: 5px 6px 0 0 var(--ink);
+  color: #000;
+  font: inherit;
+  cursor: pointer;
+  transition: scale 0.12s ease;
+}
+
+.adm-act-tile:hover,
+.adm-act-tile:focus-visible {
+  scale: 1.04;
+}
+
+.adm-act-tile--good { background: var(--adm-good-soft); }
+.adm-act-tile--ok { background: var(--adm-ok-soft); }
+.adm-act-tile--low { background: var(--adm-low-soft); }
+
+.adm-act-tile-value {
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.adm-act-tile-label {
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* The whole class in one bar, a part per group. */
+.adm-act-bar {
+  display: flex;
+  height: 22px;
+  overflow: hidden;
+  border: var(--adm-border);
+  border-radius: 999px;
+  box-shadow: 3px 4px 0 0 var(--ink);
+}
+
+.adm-act-bar-part + .adm-act-bar-part {
+  border-inline-start: 3px solid var(--ink);
+}
+
+.adm-act-group {
+  margin-top: 34px;
+  padding: 0;
+  scroll-margin-top: 16px;
+}
+
+.adm-act-group .adm-lib-heading {
+  margin-bottom: 14px;
+  font-size: 1.35rem;
+}
+
+.adm-act-group-count {
+  min-width: 30px;
+  padding: 0 8px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--adm-card);
+  font-size: 1rem;
+  text-align: center;
+}
+
+.adm-act-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+.adm-act-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: var(--adm-border);
+  border-radius: 20px;
+  background: var(--adm-card);
+  box-shadow: 5px 6px 0 0 var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+  transition: scale 0.12s ease;
+}
+
+.adm-act-card:hover,
+.adm-act-card:focus-visible {
+  scale: 1.02;
+}
+
+.adm-act-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.adm-act-id {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.adm-act-name {
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.adm-act-seen {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--body);
+}
+
+.adm-act-count {
+  flex-shrink: 0;
+  padding: 2px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--adm-field);
+  font-size: 0.95rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* A square per day, oldest on the right (RTL) and today on the left. */
+.adm-act-days {
+  display: grid;
+  grid-template-columns: repeat(14, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.adm-act-day {
+  aspect-ratio: 1;
+  border: 2px solid var(--ink);
+  border-radius: 5px;
+  background: var(--adm-none-soft);
+}
+
+.adm-act-day.is-on {
+  background: var(--adm-good);
+}
+
+@media (max-width: 420px) {
+  .adm-act-tiles {
+    gap: 10px;
+  }
+
+  .adm-act-tile {
+    padding: 10px 4px;
+    border-radius: 14px;
+    box-shadow: 3px 4px 0 0 var(--ink);
+  }
+
+  .adm-act-tile-value {
+    font-size: 2rem;
+  }
+
+  .adm-act-tile-label {
+    font-size: 0.9rem;
   }
 }

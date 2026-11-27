@@ -1,0 +1,261 @@
+/* The bar of squares glued to the bottom of a student's own page
+   (student-bar.js): the flame, the map, the student's own area (a round
+   button raised out of the bar, in the middle), the prizes and the
+   books. Each square has its name under it. Loaded by the student's page
+   and by the library pages that show the bar (?from=student). */
+
+.stu-side-tiles {
+  position: fixed;
+  z-index: 130;
+  inset-inline: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  gap: 4px;
+  margin: 0;
+  padding: 7px max(8px, calc((100% - 520px) / 2)) calc(6px + env(safe-area-inset-bottom, 0px));
+  border: 0;
+  border-top: 3px solid var(--ink);
+  border-radius: 0;
+  background: var(--memyellow);
+  box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.12);
+}
+
+.stu-top-item {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 110px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stu-top-label {
+  font-size: 0.85rem;
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* The square of what's open now: pressed in. */
+.stu-top-item.is-on .stu-daily-tile {
+  transform: translate(2px, 2px);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12), 1px 1px 0 0 rgba(0, 0, 0, 0.85);
+}
+
+.stu-top-item.is-on .stu-top-label {
+  text-decoration: underline 3px;
+  text-underline-offset: 4px;
+}
+
+.stu-daily-tile.stu-map-tile {
+  background: linear-gradient(165deg, #e2f4ff, #8fd0ff);
+}
+
+.stu-daily-tile.stu-prizes-tile {
+  background: linear-gradient(165deg, #ffdbe5, #ff9fbb);
+}
+
+.stu-daily-tile.stu-library-tile {
+  background: linear-gradient(165deg, #fff7a8, #ffd23f);
+}
+
+.stu-daily-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(46px, 100%);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  background: linear-gradient(165deg, #ffd08a, #ff9440);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12), 3px 3px 0 0 rgba(0, 0, 0, 0.85);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* A shine on the top of each square. */
+.stu-daily-tile::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  inset-inline: 5px;
+  height: 36%;
+  border-radius: 10px 10px 40% 40%;
+  background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.stu-daily-tile > svg {
+  position: relative;
+  width: 70%;
+  height: 70%;
+  transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@media (hover: hover) {
+  .stu-top-item:not(.is-on):hover .stu-daily-tile {
+    transform: translateY(-2px) rotate(-4deg);
+  }
+
+  .stu-top-item:hover .stu-daily-tile > svg {
+    transform: scale(1.1);
+  }
+}
+
+.stu-top-item:focus-visible {
+  outline: none;
+}
+
+.stu-top-item:focus-visible .stu-daily-tile {
+  outline: 3px dashed var(--ink);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stu-daily-tile,
+  .stu-daily-tile > svg {
+    transition: none;
+  }
+}
+
+.stu-daily-tile-check {
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--stu-done, #1f9d55);
+  color: var(--white, #fff);
+}
+
+.stu-daily-tile-check svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* The class's square. */
+.stu-daily-tile.stu-class-tile {
+  background: linear-gradient(165deg, #d9f7e6, #86e0ae);
+}
+
+/* The middle: the student's own area — a round button raised above the
+   bar, in a bump of the bar's yellow. It takes no more room in the bar than
+   a square (the margin), so the labels stay in one line. The bump's
+   numbers follow the bar's 3px border + 7px padding on top. */
+.stu-home-item {
+  --hs: 62px;
+  position: relative;
+}
+
+.stu-home-item::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: calc(30px - var(--hs));
+  width: calc(var(--hs) + 16px);
+  height: calc(var(--hs) + 16px);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--memyellow);
+  box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.12);
+  transform: translateX(-50%);
+  clip-path: inset(-6px -6px 53px -6px);
+  pointer-events: none;
+}
+
+.stu-daily-tile.stu-home-tile {
+  z-index: 1;
+  top: -8px;
+  flex-shrink: 0;
+  width: var(--hs);
+  margin-top: calc(46px - var(--hs));
+  border-width: 3px;
+  border-radius: 50%;
+  background: linear-gradient(165deg, #c8f7f0, #3cc9b9);
+}
+
+.stu-home-tile::before {
+  top: 4px;
+  inset-inline: 12px;
+  border-radius: 50% 50% 40% 40%;
+}
+
+.stu-home-tile > .stu-top-dot {
+  top: 0;
+  inset-inline-end: 0;
+}
+
+/* A narrow phone: smaller names, so the five stay apart. */
+@media (max-width: 360px) {
+  .stu-side-tiles {
+    gap: 0;
+    padding-inline: 2px;
+  }
+
+  .stu-home-item {
+    --hs: 54px;
+  }
+
+  .stu-top-label {
+    font-size: 0.68rem;
+  }
+}
+
+/* A new sticker waits in "my prizes". */
+.stu-top-dot {
+  position: absolute;
+  top: -6px;
+  inset-inline-end: -6px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--ink, #000);
+  border-radius: 50%;
+  background: #ff6b6b;
+}
+
+body:has(.stu-side-tiles) .site-fox-dock {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+}
+
+/* On a library page (StudentBar.mount): ambient-bg.css makes every child
+   of the body position: relative, so the bar insists on staying fixed.
+   Room under the page for it; the full-screen practice screen hides it. */
+body > .stu-side-tiles {
+  position: fixed !important;
+  z-index: 130 !important;
+}
+
+html.has-stu-bar body {
+  padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+}
+
+html.has-stu-bar.eng-runner-open body {
+  padding-bottom: 0;
+}
+
+/* The page's "back to top" button sits above the bar, not on it. */
+html.has-stu-bar body .back-to-top-btn {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+}
+
+html.eng-runner-open body > .stu-side-tiles {
+  display: none;
+}

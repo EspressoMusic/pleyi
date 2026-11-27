@@ -101,26 +101,29 @@
       o("Nice to meet you, Tom."),
     ],
 
+    // Only the pronouns: am / is / are is the next topic, so no sentences.
     pronouns: [
-      c("Dan is my friend. ___ is ten.", ["He", "It", "They"], "He"),
-      c("The ball is red. ___ is new.", ["It", "He", "We"], "It"),
-      c("Tom and I are friends. ___ are in class four.", ["We", "They", "He"], "We"),
-      c("The boys are in the park. ___ are happy.", ["They", "We", "He"], "They"),
-      c("My dog is big. ___ is brown.", ["It", "We", "They"], "It"),
-      c("Ben, ___ are my best friend.", ["you", "he", "they"], "you"),
-      c("The books are on the table. ___ are new.", ["They", "It", "We"], "They"),
-      tf("Dan and Sam are here. They are in class."),
-      tf("My father is tall. It is a doctor.", "My father is tall. He is a doctor."),
-      tf("The cat is small. It is black."),
-      w("Dan and I are brothers. ___ are at home.", "We", "אנחנו"),
-      w("This is Max. ___ is my friend.", "He", "הוא"),
-      o("We are in the park."),
+      c("Sam → ___", ["he", "it", "they"], "he"),
+      c("the bag → ___", ["it", "he", "we"], "it"),
+      c("Noam and I → ___", ["we", "they", "he"], "we"),
+      c("the kids → ___", ["they", "we", "he"], "they"),
+      c("the cup and the plate → ___", ["they", "it", "we"], "they"),
+      c("Uncle Dan → ___", ["he", "we", "it"], "he"),
+      c("the horse → ___", ["it", "he", "they"], "it"),
+      tf("Avi → he"),
+      tf("the pen → he", "the pen → it"),
+      tf("Gil and Roy → we", "Gil and Roy → they"),
+      tf("Uncle Moshe and I → we"),
+      tf("the shoes → it", "the shoes → they"),
+      w("Itai → ___", "he", "איתי"),
+      w("the table → ___", "it", "השולחן"),
+      w("Avi and I → ___", "we", "אבי ואני"),
     ],
 
     possessives: [
-      c("I have a new bag. ___ bag is blue.", ["My", "His", "Their"], "My"),
-      c("Ben has a cat. ___ cat is black.", ["His", "My", "Our"], "His"),
-      c("They have a big house. ___ house is white.", ["Their", "Our", "His"], "Their"),
+      c("I am Dan. ___ bag is blue.", ["My", "His", "Their"], "My"),
+      c("This is Ben. ___ cat is black.", ["His", "My", "Our"], "His"),
+      c("They are my cousins. ___ house is white.", ["Their", "Our", "His"], "Their"),
       c("This is ___ ball.", ["Tom's", "Toms", "Tom"], "Tom's"),
       c("___ pen is this? It is Dan's.", ["Whose", "Who", "What"], "Whose"),
       c("This book is not yours. It is ___.", ["mine", "my", "me"], "mine"),
@@ -128,7 +131,7 @@
       tf("This is Sam's dog."),
       tf("This is my brother bike.", "This is my brother's bike."),
       tf("The red pencil is mine."),
-      w("We have a dog. ___ dog is small.", "Our", "שלנו"),
+      w("We are brothers. ___ dog is small.", "Our", "שלנו"),
       o("This is Ben's book."),
       o("Whose shoes are these?"),
     ],
@@ -201,10 +204,10 @@
       c("___ a book on my bed.", ["There is", "There are"], "There is"),
       c("___ five boys in the class.", ["There are", "There is"], "There are"),
       c("There ___ three cups on the table.", ["are", "is"], "are"),
-      c("There ___ any milk in the fridge.", ["isn't", "aren't"], "isn't"),
+      c("There ___ milk in the fridge.", ["isn't", "aren't"], "isn't"),
       c("___ there a pool in your school?", ["Is", "Are"], "Is"),
       c("How ___ chairs are there?", ["many", "is", "are"], "many"),
-      c("There ___ any cookies in the box.", ["aren't", "isn't"], "aren't"),
+      c("There ___ cookies on the plate.", ["aren't", "isn't"], "aren't"),
       tf("There are two cats on the sofa."),
       tf("There is four apples.", "There are four apples."),
       tf("Are there a bus stop here?", "Is there a bus stop here?"),
@@ -279,11 +282,11 @@
     prepositions: [
       c("The books are ___ the shelf.", ["on", "under", "between"], "on"),
       c("The milk is ___ the bread and the eggs.", ["between", "under", "on"], "between"),
-      c("I sit ___ my friend in class.", ["next to", "under", "in"], "next to"),
+      c("Ben is ___ his friend in class.", ["next to", "under", "in"], "next to"),
       c("The hat is ___ his head.", ["on", "in", "under"], "on"),
       c("The ball is ___ the sofa. Look down!", ["under", "on", "between"], "under"),
       c("In the word CAT, the letter A is ___ C and T.", ["between", "behind", "under"], "between"),
-      c("The car is ___ the house. We can see it from the window.", ["in front of", "in", "under"], "in front of"),
+      c("The car is ___ the house, near the door.", ["in front of", "in", "under"], "in front of"),
       fact("The moon is in the sky.", true),
       fact("The letter C is between B and D.", true),
       fact("The sky is under the ground.", false),
@@ -309,19 +312,19 @@
     ],
 
     plurals: [
-      c("I see three ___ in the sky.", ["birds", "bird", "birdes"], "birds"),
-      c("There are two ___ in the kitchen.", ["glasses", "glass", "glassies"], "glasses"),
+      c("The three ___ are in the sky.", ["birds", "bird", "birdes"], "birds"),
+      c("The two ___ are on the table.", ["glasses", "glass", "glassies"], "glasses"),
       c("The ___ are in the park.", ["men", "mans", "mens"], "men"),
-      c("A baby has small ___.", ["feet", "foots", "feets"], "feet"),
+      c("Baby ___ are small.", ["feet", "foots", "feets"], "feet"),
       c("one peach, two peach___", ["es", "s", "ies"], "es"),
       c("one city, two cit___", ["ies", "s", "es"], "ies"),
       c("one book, two book___", ["s", "es", "ies"], "s"),
-      tf("We have three cats."),
-      tf("There are five boxs.", "There are five boxes."),
+      tf("These are three cats."),
+      tf("These are five boxs.", "These are five boxes."),
       tf("Three mouses are in the house.", "Three mice are in the house."),
       w("one bench, two ___", "benches"),
       w("one tooth, many ___", "teeth"),
-      o("I have three red pencils."),
+      o("These are three red pencils."),
     ],
 
     quantifiers: [
@@ -341,15 +344,15 @@
     ],
 
     articles: [
-      c("Look! There is ___ ant on my arm.", ["an", "a"], "an"),
-      c("Dan rides ___ bike.", ["a", "an"], "a"),
-      c("We need ___ umbrella today.", ["an", "a"], "an"),
+      c("It is ___ ant.", ["an", "a"], "an"),
+      c("It is ___ blue bike.", ["a", "an"], "a"),
+      c("That is ___ old umbrella.", ["an", "a"], "an"),
       c("___ is my pencil, here in my hand.", ["This", "That", "These"], "This"),
-      c("Look at ___ birds far away in the sky!", ["those", "these", "this"], "those"),
+      c("___ birds far away are big.", ["Those", "These", "This"], "Those"),
       c("___ shoes in my hands are new.", ["These", "Those", "That"], "These"),
-      c("I see a cat. ___ cat is white.", ["The", "A", "An"], "The"),
+      c("It is a cat. ___ cat is white.", ["The", "A", "An"], "The"),
       tf("That is an old car."),
-      tf("He eats a orange.", "He eats an orange."),
+      tf("That is a owl.", "That is an owl."),
       tf("These book is good.", "This book is good."),
       w("It is ___ elephant.", "an", "a / an"),
       o("That is a big house."),
@@ -988,4 +991,57 @@
       o("We read the Torah in the synagogue."),
     ],
   };
+
+  /* ── Stage tests: at the end of every stage of the learning path
+     (ENGLISH_PATH) the student can take tests on all of its topics — many
+     kinds, each handed in once (lib/student-progress.js). The student's map
+     lists a stage's kinds (lib/english-map.js reads this file too) and
+     english-learning.js (#stage-test/<stage id>.<kind>) runs them.
+
+     A kind asks questions of the bank above (`types`: only those types;
+     none: every type) or picture words the stage's exercises teach
+     (`words`: how they are asked). A stage gets a kind only when it has
+     `min` questions for it; a test asks `size` of them, spread over the
+     stage's topics. `minutes`: a clock — when it runs out, the test is
+     handed in. ── */
+  window.ENGLISH_STAGE_TESTS = [
+    { id: "all", title: "המבחן המסכם", titleEn: "The big test", lead: "שאלות מכל הסוגים על כל הנושאים", leadEn: "All kinds of questions on every topic", size: 20, min: 8 },
+    { id: "choice", title: "מבחן אמריקאי", titleEn: "Multiple choice", lead: "בוחרים תשובה אחת מכמה", leadEn: "Choose one answer", types: ["choice"], size: 10, min: 10 },
+    { id: "truefalse", title: "נכון או לא נכון", titleEn: "True or false", lead: "מחליטים אם המשפט נכון", leadEn: "Is the sentence right?", types: ["truefalse"], size: 10, min: 6 },
+    { id: "write", title: "מבחן השלמה", titleEn: "Fill in", lead: "כותבים את המילה החסרה", leadEn: "Type the missing word", types: ["write"], size: 8, min: 5 },
+    { id: "order", title: "בונים משפטים", titleEn: "Build sentences", lead: "מסדרים את המילים במשפט", leadEn: "Put the words in order", types: ["order"], size: 8, min: 5 },
+    { id: "speed", title: "מבחן מהיר", titleEn: "Speed test", lead: "12 שאלות ו־3 דקות על השעון", leadEn: "12 questions in 3 minutes", types: ["choice", "truefalse"], size: 12, min: 20, minutes: 3 },
+    { id: "picture", title: "מבחן תמונות", titleEn: "Pictures", lead: "מה רואים בתמונה?", leadEn: "What is in the picture?", words: "picture", size: 10, min: 8 },
+    { id: "listen", title: "מבחן הקשבה", titleEn: "Listening", lead: "שומעים מילה ובוחרים תמונה", leadEn: "Hear a word, pick its picture", words: "listen", size: 10, min: 8 },
+    { id: "spell", title: "מבחן איות", titleEn: "Spelling", lead: "מסדרים אותיות למילה", leadEn: "Spell the word", words: "spell", size: 8, min: 8 },
+  ];
+
+  // A word to spell is one short word: no spaces, no long ones.
+  const SPELLABLE = /^[a-z]{3,8}$/i;
+
+  // What a stage test can ask: "topicId:index" of the bank, or
+  // "topicId@wordId" of a picture word (once, under its first topic).
+  window.ENGLISH_STAGE_POOL = function (stage, kind) {
+    const topics = new Map((window.ENGLISH_TOPICS || []).map((topic) => [topic.id, topic]));
+    if (kind.words) {
+      const seen = new Set();
+      return stage.topics.flatMap((id) =>
+        (topics.get(id)?.exercises || [])
+          .flatMap((ex) => ex.words || [])
+          .filter((word) => {
+            const v = window.ENGLISH_VOCAB?.[word];
+            if (!v || seen.has(word) || (kind.words === "spell" && !SPELLABLE.test(v.en))) return false;
+            seen.add(word);
+            return true;
+          })
+          .map((word) => `${id}@${word}`)
+      );
+    }
+    return stage.topics.flatMap((id) =>
+      (window.ENGLISH_TESTS[id] || []).map((q, i) => (!kind.types || kind.types.includes(q.type) ? `${id}:${i}` : "")).filter(Boolean)
+    );
+  };
+
+  // The kinds of test a stage has.
+  window.ENGLISH_STAGE_KINDS = (stage) => window.ENGLISH_STAGE_TESTS.filter((kind) => window.ENGLISH_STAGE_POOL(stage, kind).length >= kind.min);
 })();

@@ -321,4 +321,18 @@ html[data-visual="minimal"] .pwa-fox *,html[data-visual="minimal"] .pwa-fox::aft
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
   }
+
+  // "עכשיו באתר" in the owner's developer panel (presence.js) — every page
+  // with this file counts, so none of them needs its own tag.
+  const presence = document.createElement("script");
+  presence.src = "/js/presence.js?v=1";
+  presence.defer = true;
+  document.head.appendChild(presence);
+
+  // What people open (site-stats.js). Until it loads, hits wait in a queue.
+  if (!window.PleyiStats) window.PleyiStats = { q: [], hit: (...args) => window.PleyiStats.q?.push(args) };
+  const stats = document.createElement("script");
+  stats.src = "/js/site-stats.js?v=1";
+  stats.defer = true;
+  document.head.appendChild(stats);
 })();

@@ -2654,7 +2654,7 @@
         s.onerror = fail;
         document.head.appendChild(s);
       });
-    cityLoad = (window.RoadCity ? Promise.resolve() : add("/js/road-city.js?v=7")).then(() => add("/js/road-lessons.js?v=4")).catch(() => {});
+    cityLoad = (window.RoadCity ? Promise.resolve() : add("/js/road-city.js?v=8")).then(() => add("/js/road-lessons.js?v=6")).catch(() => {});
   }
   const city = (draw) => (o) => {
     if (!o.city) return draw(o);
@@ -2676,8 +2676,8 @@
     lifecycle, flower, photo, microbe, letter,
     plight: city(plight), clight: city(clight), lights: city(lights), sign: city(sign), signs: city(signs),
     street: city(street), crossing: city(crossing), night: city(night), parked: city(parked),
-    seatbelt, bus: city(bus), bike: city(bike),
-    rail, brake: city(brake), junction, group, reverse: city(reverse), marks, route,
+    seatbelt: city(seatbelt), bus: city(bus), bike: city(bike),
+    rail: city(rail), brake: city(brake), junction: city(junction), group: city(group), reverse: city(reverse), marks: city(marks), route: city(route),
     // Bare <g> parts (no <svg>), for the roads of /road-safety (road-traffic.js).
     carTop, kid,
   };

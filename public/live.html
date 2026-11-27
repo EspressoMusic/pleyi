@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" data-theme="light">
+<head>
+  <script src="/js/theme.js?v=2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#00C9B7" />
+  <link rel="manifest" href="/manifest.webmanifest"/>
+  <link rel="icon" href="/icons/icon.svg?v=2" type="image/svg+xml"/>
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2"/>
+  <meta name="apple-mobile-web-app-title" content="Pleyi"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <script src="/js/pwa.js?v=4"></script>
+  <title>שיעור חי — Pleyi</title>
+  <meta name="description" content="נכנסים עם הקוד מהמורה ורואים את השיעור שהמורה מציג."/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <meta name="referrer" content="no-referrer"/>
+  <link rel="stylesheet" href="/styles.css?v=80"/>
+  <link rel="stylesheet" href="/css/clean-site.css?v=110"/>
+  <link rel="stylesheet" href="/css/lesson-player.css?v=129"/>
+  <link rel="stylesheet" href="/css/live-lesson.css?v=3"/>
+</head>
+<body class="clean-site lp-host live-body">
+
+  <main class="lv-main" id="liveApp">
+    <p class="lv-loading">טוען…</p>
+  </main>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <div class="lesson-player hidden" id="lessonPlayer" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="lesson-player-backdrop" id="lessonPlayerBackdrop"></div>
+    <div class="lesson-player-shell">
+      <header class="lesson-player-top">
+        <span class="lesson-player-progress" id="lessonPlayerProgress" dir="ltr">1 / 1</span>
+        <div class="lesson-player-top-actions">
+          <div class="lesson-player-bg-wrap">
+            <button type="button" class="lesson-player-bg-btn" id="lessonPlayerBg" aria-label="רקע לשקופיות" aria-expanded="false" title="רקע לשקופיות">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.4-.3-.4-.5-.9-.5-1.4 0-1.1.9-2 2-2h2.3A4.2 4.2 0 0 0 21.5 11c0-5-4.3-9-9.5-9Z"/>
+                <circle cx="7" cy="12" r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="8.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/>
+                <circle cx="14" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+              </svg>
+            </button>
+            <div class="lesson-player-bg-menu hidden" id="lessonPlayerBgMenu" role="menu"></div>
+          </div>
+          <button type="button" class="lesson-player-pdf-toggle hidden" id="lessonPlayerPdfToggle" aria-label="הצג את מצגת ה-PDF" aria-pressed="false" title="מצגת PDF">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/>
+              <path d="M14 3v5h5"/>
+            </svg>
+          </button>
+          <button type="button" class="lesson-player-expand" id="lessonPlayerExpand" aria-label="הגדל למסך מלא" aria-pressed="false" title="מסך מלא"></button>
+          <button type="button" class="lesson-player-close" id="lessonPlayerClose" aria-label="יציאה מהשיעור">
+            <svg class="lesson-player-close-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="lesson-player-stage">
+        <button type="button" class="lesson-player-nav" id="lessonPlayerPrev" aria-label="שקופית קודמת">→</button>
+        <div class="lesson-player-slide-wrap">
+          <div class="lesson-player-slide" id="lessonPlayerSlide"></div>
+        </div>
+        <button type="button" class="lesson-player-nav" id="lessonPlayerNext" aria-label="שקופית הבאה">←</button>
+      </div>
+      <div class="lesson-player-dots" id="lessonPlayerDots"></div>
+      <div class="lesson-player-mobile-nav">
+        <button type="button" class="lesson-player-nav" id="lessonPlayerPrevMobile" aria-label="שקופית קודמת">→</button>
+        <button type="button" class="lesson-player-nav" id="lessonPlayerNextMobile" aria-label="שקופית הבאה">←</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/english-vocab.js?v=4"></script>
+  <script src="/js/lesson-sentences-he.js?v=5"></script>
+  <script src="/js/english-dict.js?v=6"></script>
+  <script src="/js/english-lessons.js?v=11"></script>
+  <script src="/js/lesson-figures.js?v=21"></script>
+  <script src="/js/subject-lessons.js?v=25"></script>
+  <script src="/js/curriculum-grades.js?v=8"></script>
+  <script src="/js/english-audio-clips.js?v=5"></script>
+  <script src="/js/speech.js?v=1"></script>
+  <script src="/js/student-progress.js?v=9"></script>
+  <script src="/js/ready-lessons.js?v=153"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/live-view.js?v=2"></script>
+</body>
+</html>

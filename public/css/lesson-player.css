@@ -34,7 +34,7 @@ body:is(.page-ready-lessons, .lp-host) {
 body:is(.page-ready-lessons, .lp-host) .svc-lesson-grid {
   grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   gap: 20px;
-  max-width: 960px;
+  max-width: none;
 }
 
 /* Phones: two smaller cards per row instead of one oversized square column */
@@ -72,9 +72,9 @@ body:is(.page-ready-lessons, .lp-host) .svc-lesson-grid {
   body:is(.page-ready-lessons, .lp-host) .svc-lesson-info-toggle {
     top: 6px;
     inset-inline-end: 6px;
-    width: 18px;
-    height: 18px;
-    font-size: 9px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
   }
 
   body:is(.page-ready-lessons, .lp-host) .svc-lesson-learned-badge,
@@ -283,8 +283,9 @@ body:is(.page-ready-lessons, .lp-host) .svc-lesson-info-toggle {
   top: 8px;
   inset-inline-end: 8px;
   z-index: 5;
-  width: 22px;
-  height: 22px;
+  width: 34px;
+  height: 34px;
+  font-size: 17px;
   border: 2px solid var(--ink);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
@@ -466,10 +467,10 @@ body:is(.page-ready-lessons, .lp-host) #toast {
 .modal-overlay > .modal.modal-lesson-info {
   --modal-fill: var(--lesson-turquoise, var(--memteal));
   background: color-mix(in srgb, var(--memteal) 12%, var(--white)) !important;
-  max-width: min(580px, 92vw);
+  max-width: min(520px, 92vw);
   width: 100%;
   text-align: start;
-  padding: 36px 34px 32px;
+  padding: 30px 22px 22px;
   overflow: visible;
 }
 
@@ -477,7 +478,7 @@ body:is(.page-ready-lessons, .lp-host) #toast {
   display: grid;
   grid-template-columns: minmax(4.5rem, 1fr) auto minmax(4.5rem, 1fr);
   align-items: center;
-  margin: 0 0 18px;
+  margin: 0 0 8px;
   min-height: 2.75rem;
 }
 
@@ -494,6 +495,12 @@ body:is(.page-ready-lessons, .lp-host) #toast {
   width: max-content;
   max-width: 100%;
   z-index: 0;
+  /* the slides' teal marker, like every dialog title */
+  background: color-mix(in srgb, var(--memteal) 45%, #fff);
+  padding-inline: 0.18em;
+  border-radius: 6px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
   paint-order: normal !important;
   -webkit-text-stroke: 0 transparent !important;
   -webkit-text-fill-color: var(--ink) !important;
@@ -522,114 +529,137 @@ body:is(.page-ready-lessons, .lp-host) #toast {
   display: none;
 }
 
+/* Subject + grades: one quiet text line ("חשבון · כיתות א'") */
 .lesson-info-meta {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  margin: 0 0 20px;
+  align-items: baseline;
+  margin: 0 0 12px;
 }
 
 .lesson-info-meta > div {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  padding: 6px 14px;
-  border: 2px solid color-mix(in srgb, var(--ink) 85%, var(--memteal));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--memteal) 62%, #ffffff);
 }
 
-.lesson-info-meta dt {
-  margin: 0;
-  font-size: 0.68rem;
+.lesson-info-meta > div:first-child dt {
+  display: none;
+}
+
+.lesson-info-meta > div + div::before {
+  content: "·";
+  margin: 0 8px;
   font-weight: 900;
-  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.lesson-info-meta :is(dt, dd) {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
   color: color-mix(in srgb, var(--ink) 70%, var(--memteal));
 }
 
-.lesson-info-meta dd {
-  margin: 0;
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: color-mix(in srgb, var(--ink) 88%, #004840);
-}
-
 .lesson-info-summary {
-  margin: 0 0 24px;
+  margin: 0 auto 18px;
   font-size: clamp(0.95rem, 2.5vw, 1.05rem);
   font-weight: 700;
   line-height: 1.65;
-  color: var(--body);
+  color: var(--ink);
   text-align: center;
-  max-width: 46ch;
-  margin-inline: auto;
-  margin-bottom: 24px;
+  max-width: 40ch;
 }
 
-.lesson-info-actions {
+/* The main action: one wide yellow button */
+#lessonInfoModal .lesson-info-open {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  overflow: visible;
-  padding-inline: 4px;
-}
-
-.lesson-info-actions .js-lesson-open {
-  flex: 2 1 240px;
-  min-width: min(100%, 240px);
-  margin: 0;
-  padding: 14px 32px;
-  font-size: clamp(1.05rem, 3vw, 1.25rem);
-  border-width: 3px !important;
-  box-shadow: none;
-  transition: transform 0.12s;
-  text-align: center;
   justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  border-width: 3px !important;
+  border-radius: 999px;
+  box-shadow: 4px 5px 0 0 var(--ink);
+  text-align: center;
 }
 
-.lesson-info-actions .js-lesson-open:hover {
+#lessonInfoModal .lesson-info-open[hidden] {
+  display: none;
+}
+
+#lessonInfoModal .lesson-info-open::before {
+  content: "";
+  width: 0.7em;
+  height: 0.8em;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+#lessonInfoModal .lesson-info-open:hover {
   transform: translateY(-1px);
 }
 
-.lesson-info-actions .js-lesson-open:active {
-  transform: translateY(1px);
-  box-shadow: none;
+#lessonInfoModal .lesson-info-open:active {
+  transform: translate(3px, 4px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+/* Share / edit / save: round icons with the word under each one */
+.lesson-info-actions {
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+  margin-top: 4px;
+  overflow: visible;
 }
 
 .lesson-info-share-btn {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 7px;
-  padding: 12px 16px;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  background: #4da6ff;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--ink);
-  font-weight: 800;
-  font-size: 0.86rem;
+  font-weight: 900;
+  font-size: 0.92rem;
+  line-height: 1.1;
   cursor: pointer;
-  box-shadow: none;
-  transition: transform 0.12s;
-  flex: 1 1 auto;
-  min-width: 0;
 }
 
-.lesson-info-share-btn:hover {
-  transform: translateY(-1px);
+.lesson-info-share-btn > svg {
+  flex-shrink: 0;
+  box-sizing: content-box;
+  width: 22px;
+  height: 22px;
+  padding: 13px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: #eaf5ff;
+  box-shadow: 3px 3px 0 0 var(--ink);
+  transition: scale 0.12s ease, translate 0.12s ease, box-shadow 0.12s ease;
 }
 
-.lesson-info-share-btn:active {
-  transform: translateY(1px);
+.lesson-info-share-btn:hover > svg {
+  scale: 1.08;
+}
+
+.lesson-info-share-btn:active > svg {
+  translate: 2px 2px;
+  box-shadow: 1px 1px 0 0 var(--ink);
 }
 
 .lesson-info-share-wrap {
   position: relative;
-}
-
-.lesson-info-mine-btn {
-  background: #7ee08c;
+  display: flex;
 }
 
 .lesson-info-mine-btn.hidden {
@@ -651,10 +681,10 @@ body:is(.page-ready-lessons, .lp-host) #toast {
   gap: 2px;
   min-width: 190px;
   padding: 8px;
-  border: 2px solid var(--ink);
+  border: 2.5px solid var(--ink);
   border-radius: 14px;
-  background: var(--white);
-  box-shadow: var(--shadow-sticker);
+  background: #eaf5ff;
+  box-shadow: 3px 4px 0 0 var(--ink);
 }
 
 .lesson-info-share-menu.hidden {
@@ -679,7 +709,7 @@ body:is(.page-ready-lessons, .lp-host) #toast {
 }
 
 .lesson-info-share-option:hover {
-  background: #f1faf9;
+  background: color-mix(in srgb, #4da6ff 22%, #eaf5ff);
 }
 
 .lesson-info-share-option svg {
@@ -689,46 +719,25 @@ body:is(.page-ready-lessons, .lp-host) #toast {
 }
 
 .lesson-info-fav-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
   position: relative;
-  width: auto;
-  min-width: 0;
-  height: auto;
-  padding: 10px;
-  margin: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  box-shadow: none;
   overflow: visible !important;
 }
 
 .lesson-info-fav-btn svg {
   display: block;
-  width: 36px;
-  height: 36px;
   overflow: visible;
 }
 
 .lesson-info-fav-btn svg path {
   fill: none;
   stroke: var(--ink);
-  stroke-width: 1.75;
+  stroke-width: 2.4;
   stroke-linejoin: round;
   stroke-linecap: round;
   paint-order: stroke fill;
+  transform-origin: center;
+  transform-box: fill-box;
   transition: fill 0.15s ease, stroke 0.15s ease, transform 0.12s ease;
-}
-
-.lesson-info-fav-btn:hover svg path {
-  transform: scale(1.08);
-}
-
-.lesson-info-fav-btn:active svg path {
-  transform: scale(0.92);
 }
 
 .lesson-info-fav-btn.is-active svg path {
@@ -2091,24 +2100,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-more[aria-pressed="true"] 
   transform: scale(0.94);
 }
 
-/* Games slide */
-.lp-slide-games {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: calc(var(--lp-fit, 1) * 16px);
-  width: 100%;
-}
-
-.lp-slide-games-intro {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: color-mix(in srgb, var(--ink) 70%, transparent);
-  max-width: 28rem;
-  line-height: 1.55;
-}
-
+/* The end slide's buttons (ready-lessons.js endActionsHtml) */
 .lp-game-options {
   display: flex;
   flex-wrap: wrap;
@@ -2161,10 +2153,12 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-more[aria-pressed="true"] 
   transform: rotate(-6deg) scale(1.06);
 }
 
-.lp-game-btn--vocabulary-duel .lp-game-btn-icon { background: #ffd84d; }
-.lp-game-btn--tower-stack .lp-game-btn-icon { background: #ff8f8f; }
-.lp-game-btn--hangman .lp-game-btn-icon { background: #7fdccf; }
-.lp-game-btn--spot-diff .lp-game-btn-icon { background: #a9c4ff; }
+.lp-end-btn--trivia .lp-game-btn-icon { background: #ffd84d; }
+.lp-end-btn--practice .lp-game-btn-icon { background: #7fdccf; }
+
+/* A soft tint, not white. */
+.lp-game-btn.lp-end-btn--trivia { background: #fff6d6; }
+.lp-game-btn.lp-end-btn--practice { background: #e3f5f2; }
 
 .lp-game-btn-label {
   font-size: calc(var(--lp-fit, 1) * 0.95rem);
@@ -2422,65 +2416,46 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-quiz-
   }
 }
 
-/* Vocabulary lessons: the picture games (they open on the Learn English
-   page) above the other games, four to a row where the slide is wide enough. */
-.lp-game-group {
+/* The end slide asks what's next: the lesson's exercises or its trivia.
+   The buttons have the cards' hard shadow and grow on hover. */
+.lp-end-actions {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: calc(var(--lp-fit, 1) * 8px);
+  gap: calc(var(--lp-fit, 1) * 10px);
   width: 100%;
+  margin-top: calc(var(--lp-fit, 1) * 18px);
 }
 
-.lp-game-group-title {
+.lp-end-ask {
   margin: 0;
-  font-size: calc(var(--lp-fit, 1) * 1.05rem);
+  font-size: calc(var(--lp-fit, 1) * 1.15rem);
   font-weight: 900;
   color: var(--ink);
 }
 
-.lp-slide-games:has(.lp-game-group) {
-  container-type: inline-size;
+.lp-end-options {
+  max-width: 440px;
 }
 
-.lp-game-options--wide {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  max-width: 800px;
+.lp-game-btn.lp-end-btn {
+  flex: 1 1 150px;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: background 0.12s, scale 0.12s;
 }
 
-/* Two per row on a narrow slide (phones). */
-@container (max-width: 460px) {
-  .lp-game-options--wide {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.lp-game-btn.lp-end-btn:hover {
+  transform: none;
+  scale: 1.05;
 }
 
-.lp-game-options--wide .lp-game-btn {
-  min-width: 0;
-  padding: calc(var(--lp-fit, 1) * 12px) calc(var(--lp-fit, 1) * 8px);
+.lp-game-btn.lp-end-btn:active {
+  scale: 0.97;
 }
 
-.lp-game-options--wide .lp-game-btn-label {
-  line-height: 1.25;
+.lp-end-btn .lp-game-btn-label {
+  font-size: calc(var(--lp-fit, 1) * 1.1rem);
 }
-
-.lp-game-options--wide .lp-game-btn-icon {
-  width: calc(var(--lp-fit, 1) * 46px);
-  height: calc(var(--lp-fit, 1) * 46px);
-  border-radius: 13px;
-}
-
-.lp-game-btn--memory .lp-game-btn-icon { background: #ffb27a; }
-.lp-game-btn--speed .lp-game-btn-icon { background: #ff9ec7; }
-.lp-game-btn--balloons .lp-game-btn-icon { background: #9be7ff; }
-.lp-game-btn--scramble .lp-game-btn-icon { background: #b9a4ff; }
-.lp-game-btn--hunt .lp-game-btn-icon { background: #9fe0a0; }
-.lp-game-btn--adventure .lp-game-btn-icon { background: #ffd57a; }
-.lp-game-btn--bingo .lp-game-btn-icon { background: #ff9f9f; }
-.lp-game-btn--sentence .lp-game-btn-icon { background: #7fdccf; }
-.lp-game-btn--dictation .lp-game-btn-icon { background: #a9c4ff; }
-.lp-game-btn--snake .lp-game-btn-icon { background: #c4e86b; }
 
 .lesson-player-dots {
   flex: 0 0 auto;
@@ -2594,8 +2569,7 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark {
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lesson-player-progress,
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-title,
 body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-body,
-body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-slide-games-intro,
-body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-game-group-title {
+body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-end-ask {
   color: var(--lp-ink);
 }
 
@@ -3367,8 +3341,8 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
     display: none;
   }
 
-  /* Two game buttons per row instead of one, so the games slide fits. */
-  .lp-game-btn {
+  /* The end slide's two buttons side by side. */
+  .lp-game-btn.lp-end-btn {
     flex-basis: 110px;
   }
 
@@ -3378,10 +3352,6 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
     height: min(88dvh, calc(100dvh - 48px));
     min-height: 0;
   }
-}
-
-.lp-slide-games-intro {
-  font-size: calc(var(--lp-fit, 1) * 1rem);
 }
 
 /* Structured English slides (renderStepsBody in ready-lessons.js): short
@@ -3462,6 +3432,22 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
 
 .lp-ex-list.is-flow {
   gap: calc(var(--lp-fit, 1) * 4px);
+}
+
+/* A crowded slide (fitSlideContent in ready-lessons.js) puts its cards side
+   by side in one row instead of shrinking them to a cut-off column. */
+.lp-compact .lp-ex-list:not(.is-flow) {
+  flex-direction: row;
+  justify-content: center;
+  width: min(100%, 40rem);
+}
+
+.lp-compact .lp-ex-list:not(.is-flow) > .lp-ex {
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  padding-inline: 10px;
+  text-align: center;
 }
 
 .lp-ex {
@@ -4041,40 +4027,55 @@ body:is(.page-ready-lessons, .lp-host) .lesson-player-shell.lp-bg-dark .lp-say.l
 .lp-chips {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: calc(var(--lp-fit, 1) * 12px);
+  /* Extra room between rows and on top for each note's piece of tape. */
+  gap: calc(var(--lp-fit, 1) * 22px) calc(var(--lp-fit, 1) * 16px);
   width: min(100%, 40rem);
+  padding: calc(var(--lp-fit, 1) * 12px) 8px 4px;
 }
 
-/* Example tags, not answers: a soft color per chip, a thick stripe and a
-   dot on the start side, so they don't read as buttons to tap. */
+/* Example tags, not answers: notes taped to the board (a soft color per
+   note, a see-through piece of tape on top), so they don't read as
+   buttons to tap. `rotate`, not `transform`, so no reveal rule cancels it. */
 .lp-chip {
   --chip-bg: #d6f3ef;
   --chip-mark: #14b8a6;
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 0.55em;
+  justify-content: center;
   min-height: calc(var(--lp-fit, 1) * clamp(64px, 14vh, 100px));
-  padding: 10px 16px;
+  padding: 12px 16px 10px;
   border: 2.5px solid var(--ink);
-  border-inline-start: 10px solid var(--chip-mark);
-  border-radius: 10px;
+  border-radius: 4px;
   background: var(--chip-bg);
-  box-shadow: 2px 3px 0 0 var(--ink);
+  box-shadow: 3px 4px 0 0 var(--ink);
   font-size: calc(var(--lp-fit, 1) * clamp(1.1rem, 3.6vh, 1.55rem));
   font-weight: 900;
-  text-align: start;
+  text-align: center;
   color: #000;
 }
 
-.lp-chip::before {
+.lp-chip::after {
   content: "";
-  flex-shrink: 0;
-  width: 0.5em;
-  height: 0.5em;
-  border-radius: 50%;
+  position: absolute;
+  top: calc(var(--lp-fit, 1) * -12px);
+  left: 50%;
+  width: clamp(48px, 30%, 90px);
+  height: calc(var(--lp-fit, 1) * 22px);
+  border: 1.5px solid rgba(0, 0, 0, 0.6);
   background: var(--chip-mark);
-  box-shadow: 0 0 0 2px var(--ink);
+  opacity: 0.55;
+  translate: -50% 0;
+  rotate: -4deg;
+  pointer-events: none;
+}
+
+.lp-chip:nth-child(3n + 2) {
+  rotate: 1.2deg;
+}
+
+.lp-chip:nth-child(3n + 2)::after {
+  rotate: 3deg;
 }
 
 .lp-chip:nth-child(4n + 2) {

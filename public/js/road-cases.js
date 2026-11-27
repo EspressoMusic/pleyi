@@ -170,7 +170,9 @@
   }
 
   // A light's states from times on: [[0, "red"], [2, "green"], ...];
-  // "blink" is a flashing green (held on while the picture stands still).
+  // "blink" is a flashing green (held on while the picture stands still) —
+  // only on the cars' light: in Israel the walkers' green doesn't flash, it
+  // turns straight to red.
   function light(type, x, y, steps) {
     return (t, still) => {
       let on = steps[0][1];
@@ -194,8 +196,9 @@
   }
 
   /* ── The cases: none of them plain (a green light and nothing else);
-     each has a catch to notice — the light that starts to flash halfway,
-     the second lane, the ambulance, the bus that pulls away. ── */
+     each has a catch to notice — the man that turns red halfway, the
+     second lane, the ambulance, the bus that pulls away. The picture stops
+     once the catch shows (the car already past the line, the honk). ── */
 
   const ASK_FOX = "האם השועל עשה נכון?";
   const ASK_CAR = "האם הנהג נהג נכון?";
@@ -203,15 +206,15 @@
   const carLight = (steps) => light("carLight", 3.85, -0.35, steps);
   const waiting = (x = 4.4) => car(path(x, WL, [["wait", 20]]), 2);
 
-  // Halfway over when the green starts to flash (the lights of both).
-  const FLASH = 1.6;
-  const flashing = () => walkLight([[0, "green"], [FLASH, "blink"], [3.4, "red"]]);
+  // Halfway over when the man turns red (the walkers' green doesn't flash).
+  const HALF = 1.6;
+  const turnsRed = () => walkLight([[0, "green"], [HALF, "red"]]);
 
   // Grandpa crosses slowly from the south side, and is still on the zebra
   // when the cars' light turns green (at GO), right in front of the car.
   const GO = 3;
   const slowly = () => path(Z, 2, [["wait", 0.2, 3], ["to", Z, -1.3, 0.5], ["wait", 9, 3]]);
-  const grandpaLights = () => [walkLight([[0, "green"], [1, "blink"], [2.2, "red"]]), carLight([[0, "red"], [GO - 0.4, "redyellow"], [GO, "green"]])];
+  const grandpaLights = () => [walkLight([[0, "green"], [1, "red"]]), carLight([[0, "red"], [GO - 0.4, "redyellow"], [GO, "green"]])];
 
   // A bus stopped at x 6.4 on the north lane; its door is a tile ahead of
   // its middle, on the sidewalk's side.
@@ -248,7 +251,7 @@
         : "חיכה רחוק משפת המדרכה, והלך לדלת רק כשהאוטובוס עצר לגמרי.",
       pause: near,
       end: edge ? stop + 0.4 : endOf(f) - 9 + 0.4,
-      cast: [sign("bus", BUS_MID - 0.8, -0.38), bs, fx, ...(edge ? [bubble(bs, "צפצוף!", 56, near + 0.1, stop), bubble(fx, "!", 66, near + 0.3, stop + 0.4)] : [])],
+      cast: [sign("bus", BUS_MID - 0.8, -0.38), bs, fx, ...(edge ? [bubble(bs, "צפצוף!", 56, near - 0.2, stop), bubble(fx, "!", 66, near - 0.1, stop + 0.4)] : [])],
     };
   }
 
@@ -296,7 +299,8 @@
         cast: [walkLight([[0, "red"]]), carLight([[0, "green"]]), car(c, 2), fe, bubble(fe, "סירנה", 56, 0, reach(s, "y", 1))],
       };
     }
-    const c = path(13, WL, [["to", 3.6, WL], ["brake", 2, WL], ["wait", 9]], DRIVE);
+    // it drives into the crossroads, and stops right in the fire engine's way
+    const c = path(13, WL, [["to", 3.6, WL], ["brake", 1, WL], ["wait", 9]], DRIVE);
     const at = reach(c, "x", 3.9);
     const s = path(0.5, -12, [["wait", at - 9.6 / 6], ["to", 0.5, -2.2], ["brake", 0.5, -1], ["wait", 9]], 6);
     const fe = service(s, 1, "fire");
@@ -306,21 +310,22 @@
       cam: [2.4, -0.5],
       say: "מכונית מגיעה לרמזור ירוק",
       why: "גם בירוק: שומעים סירנה? עוצרים ונותנים לכבאית לעבור קודם.",
-      pause: at,
+      pause: c[2][0] - 0.3,
       end: c[2][0] + 0.6,
       cast: [walkLight([[0, "red"]]), carLight([[0, "green"]]), car(c, 2), fe, bubble(fe, "סירנה", 56)],
     };
   }
 
-  // Waiting at the red: off on the red-and-yellow (`early`), or not till the green.
+  // Waiting at the red: off on the red-and-yellow (`early`), or not till the
+  // green. The picture stops with the early car already out on the zebra.
   function redYellow(early) {
-    const c = path(4.1, WL, [["wait", early ? 1.1 : 2.75], ["start", 1.5, WL, 2.4], ["to", -8, WL, 2.4]]);
+    const c = path(4.1, WL, [["wait", early ? 1.05 : 2.75], ["start", 1.5, WL, 2.4], ["to", -8, WL, 2.4]]);
     return {
       ok: !early,
       ask: ASK_CAR,
       say: "מכונית מחכה ברמזור",
       why: early ? "אדום וצהוב ביחד – עוד לא נוסעים! מתכוננים, ומחכים לירוק." : "אדום וצהוב – עוד מחכים. הנהג יצא רק כשהאור התחלף לירוק.",
-      pause: 2.2,
+      pause: 2.55,
       end: reach(c, "x", 0),
       cast: [walkLight([[0, "red"]]), carLight([[0, "red"], [1, "redyellow"], [2.7, "green"]]), car(c, 2)],
     };
@@ -330,54 +335,60 @@
     // (the first is the game's card too)
     () => {
       const f = path(Z, -1.4, [["wait", 0.5, 1], ["to", Z, 3.1]]);
-      const wl = flashing();
+      const wl = turnsRed();
       return {
         ok: true,
         say: "השועל חוצה במעבר החצייה",
-        why: "התחיל לחצות בירוק? ממשיכים בהליכה עד הצד השני – לא חוזרים אחורה.",
+        why: "התחיל לחצות בירוק, ובאמצע האיש התחלף לאדום? ממשיכים בהליכה עד הצד השני – לא חוזרים אחורה.",
         pause: reach(f, "y", 1.3),
         end: endOf(f) + 0.3,
-        cast: [wl, carLight([[0, "red"]]), waiting(), fox(f), bubble(wl, "מהבהב", 84, FLASH, 3.4)],
+        cast: [wl, carLight([[0, "red"]]), waiting(), fox(f), bubble(wl, "התחלף לאדום", 84, HALF, 3.4)],
       };
     },
     () => {
       const f = path(Z, -1.4, [["wait", 0.5, 1], ["to", Z, 0.9], ["wait", 0.35, 1], ["to", Z, -1.2, 2.6], ["wait", 3, 1]]);
-      const wl = flashing();
+      const wl = turnsRed();
       const back = f[3][0];
       return {
         ok: false,
         say: "השועל חוצה במעבר החצייה",
-        why: "באמצע הכביש לא חוזרים אחורה. ממשיכים בהליכה לצד השני.",
+        why: "האיש התחלף לאדום באמצע? לא חוזרים אחורה – ממשיכים בהליכה לצד השני.",
         pause: back + 0.3,
         end: back + 1.2,
-        cast: [wl, carLight([[0, "red"]]), waiting(), fox(f), bubble(wl, "מהבהב", 84, FLASH, 3.4)],
+        cast: [wl, carLight([[0, "red"]]), waiting(), fox(f), bubble(wl, "התחלף לאדום", 84, HALF, 3.4)],
       };
     },
+    // The cars' green flashes, turns yellow, then red, and the car stops:
+    // he goes, but his man is still red.
     () => {
-      const f = path(Z, -1.4, [["wait", 1.3, 1], ["to", Z, 3.1]]);
-      const wl = walkLight([[0, "green"], [0.4, "blink"], [3.2, "red"]]);
-      return {
-        ok: false,
-        say: "השועל רוצה לחצות את הכביש",
-        why: "ירוק מהבהב – לא מתחילים לחצות. מחכים לירוק הבא.",
-        pause: reach(f, "y", 0.2),
-        end: endOf(f) + 0.3,
-        cast: [wl, carLight([[0, "red"]]), waiting(), fox(f), bubble(wl, "מהבהב", 84, 0.4, 3.2)],
-      };
-    },
-    // Green for him, but the car is still coming.
-    () => {
-      const f = path(Z, -0.45, [["wait", 1.6, 1], ["to", Z, 3.1]]);
-      const c = path(13, WL, [["to", 7.6, WL], ["brake", 4.1, WL], ["wait", 5]], 4.6);
-      const fx = fox(f);
-      const at = reach(f, "y", 0.25);
+      const c = path(12, WL, [["to", 7.9, WL], ["brake", 4.1, WL], ["wait", 20]], DRIVE);
+      const stop = c[2][0];
+      const f = path(Z, -0.45, [["wait", stop + 0.3, 1], ["to", Z, 3.1]]);
+      const wl = walkLight([[0, "red"]]);
       return {
         ok: false,
         say: "השועל מחכה לאיש הירוק",
-        why: "גם באיש ירוק – מחכים שהמכוניות יעצרו לגמרי, ורק אז חוצים.",
+        why: "המכונית עצרה – אבל האיש עוד אדום. חוצים רק כשהאיש ירוק.",
+        pause: reach(f, "y", 0.4),
+        end: endOf(f) + 0.3,
+        cast: [wl, carLight([[0, "blink"], [0.9, "yellow"], [2.3, "red"]]), car(c, 2), fox(f), bubble(wl, "עוד אדום", 84, stop + 0.3)],
+      };
+    },
+    // Green for him, but a car comes on through its red: he steps out
+    // without looking, and it stops right by him.
+    () => {
+      const f = path(Z, -0.45, [["wait", 1.6, 1], ["to", Z, 0.25], ["wait", 1.1, 1], ["to", Z, 3.1]]);
+      const c = path(13, WL, [["to", 5.2, WL], ["brake", 3.45, WL], ["wait", 9]], 4.6);
+      const cr = car(c, 2);
+      const fx = fox(f);
+      const at = reach(c, "x", 3.7);
+      return {
+        ok: false,
+        say: "השועל מחכה לאיש הירוק",
+        why: "האיש ירוק – אבל המכונית לא עצרה! גם בירוק מסתכלים, ומחכים שהמכוניות יעצרו לגמרי.",
         pause: at,
         end: endOf(f) + 0.3,
-        cast: [walkLight([[0, "red"], [1.5, "green"]]), carLight([[0, "yellow"], [0.7, "red"]]), car(c, 2), fx, bubble(fx, "!", 66, at + 0.15, at + 1.3)],
+        cast: [walkLight([[0, "red"], [1.5, "green"]]), carLight([[0, "red"]]), cr, fx, bubble(cr, "צפצוף!", 112, at - 0.25, at + 1.2), bubble(fx, "!", 66, at - 0.15, at + 1.1)],
       };
     },
     // One car stopped for him; the other lane didn't.
@@ -386,6 +397,7 @@
       const f = path(Z, -0.45, [["wait", a[2][0] + 0.2, 1], ["to", Z, 0.95], ["wait", 2, 1], ["to", Z, 3.1]]);
       const at = reach(f, "y", 0.8);
       const b = path(-12, EL, [["wait", at - 0.75 - 9.4 / DRIVE], ["to", -2.6, EL], ["brake", 0.9, EL], ["wait", 20]], DRIVE);
+      const cb = car(b, 0);
       const fx = fox(f);
       const scare = f[2][0];
       return {
@@ -395,7 +407,7 @@
         why: "מכונית אחת עצרה – זה לא אומר שכולן עצרו. בודקים גם את הנתיב השני.",
         pause: at,
         end: reach(f, "y", 2.3),
-        cast: [car(a, 2), car(b, 0), fx, bubble(fx, "!", 66, scare, scare + 1.6)],
+        cast: [car(a, 2), cb, fx, bubble(cb, "צפצוף!", 50, at - 0.3, at + 1.4), bubble(fx, "!", 66, at - 0.1, scare + 1.6)],
       };
     },
     () => {
@@ -467,6 +479,8 @@
       const f = path(Z, -1.4, [["wait", 0.6, 1], ["to", Z, 3.1, 4.8]]);
       return {
         ok: false,
+        // a still can't show running: the question says it
+        ask: "השועל רץ במעבר החצייה. האם זה נכון?",
         say: "השועל רוצה לחצות את הכביש",
         why: "גם בירוק חוצים בהליכה, לא בריצה. בריצה אפשר ליפול.",
         pause: reach(f, "y", 0.9),
@@ -598,6 +612,7 @@
     () => {
       const c = path(12, WL, [["to", -7, WL, 3.6]]);
       const x = path(0.5, -6.5, [["to", 0.5, -3.4, DRIVE], ["brake", 0.5, -1.7], ["wait", 4]]);
+      const cx = car(x, 1);
       return {
         ok: false,
         ask: ASK_CAR,
@@ -606,7 +621,7 @@
         why: "תן זכות קדימה – נותנים למכונית בכביש השני לעבור קודם.",
         pause: reach(c, "x", 2.4),
         end: reach(c, "x", -2),
-        cast: [sign("giveway", 3.75, -0.4), car(x, 1), car(c, 2)],
+        cast: [sign("giveway", 3.75, -0.4), cx, car(c, 2), bubble(cx, "צפצוף!", 50, x[1][0], reach(c, "x", -1))],
       };
     },
     () => {
@@ -726,7 +741,7 @@
         why: "גם במעבר חצייה עוצרים על המדרכה, ומסתכלים לשני הצדדים. חוצים רק כשהמכוניות עצרו.",
         pause: at,
         end: endOf(f) + 0.3,
-        cast: [cr, fx, bubble(cr, "צפצוף!", 50, at + 0.1, at + 1.4), bubble(fx, "!", 66, at + 0.2, at + 1.2)],
+        cast: [cr, fx, bubble(cr, "צפצוף!", 50, at - 0.2, at + 1.4), bubble(fx, "!", 66, at - 0.1, at + 1.2)],
       };
     },
     // His ball rolls into the road, and he runs after it.
@@ -743,7 +758,7 @@
         why: "כדור התגלגל לכביש? לא רצים אחריו! נשארים על המדרכה, וקוראים למבוגר.",
         pause: at,
         end: c[3][0] + 0.6,
-        cast: [ball(rolls(), KICK), cr, fx, bubble(cr, "צפצוף!", 50, at + 0.2, at + 1.6), bubble(fx, "!", 66, at + 0.5, at + 1.8)],
+        cast: [ball(rolls(), KICK), cr, fx, bubble(cr, "צפצוף!", 50, at - 0.2, at + 1.6), bubble(fx, "!", 66, at - 0.1, at + 1.8)],
       };
     },
     // His ball rolls into the road: he stays on the sidewalk and calls; a
@@ -814,7 +829,7 @@
     },
     () => redYellow(true),
     () => redYellow(false),
-    // The light turns yellow while the car is still far: it stops.
+    // The green flashes, then turns yellow while the car is still far: it stops.
     () => {
       const c = path(12, WL, [["to", 7.9, WL], ["brake", 4.1, WL], ["wait", 9]], DRIVE);
       const yellow = c[1][0];
@@ -822,10 +837,10 @@
         ok: true,
         ask: ASK_CAR,
         say: "מכונית מגיעה לרמזור",
-        why: "צהוב אומר: עוצרים, אם אפשר. הנהג היה רחוק – אז הוא האט ועצר.",
+        why: "ירוק מהבהב, ואחריו צהוב: עוצרים, אם אפשר. הנהג היה רחוק – אז הוא האט ועצר.",
         pause: yellow + 1.1,
         end: c[2][0] + 0.8,
-        cast: [walkLight([[0, "red"], [yellow + 2.8, "green"]]), carLight([[0, "green"], [yellow, "yellow"], [yellow + 2, "red"]]), car(c, 2)],
+        cast: [walkLight([[0, "red"], [yellow + 2.8, "green"]]), carLight([[0, "blink"], [yellow, "yellow"], [yellow + 2, "red"]]), car(c, 2)],
       };
     },
     () => fireEngine(true),
@@ -838,10 +853,12 @@
       return {
         ok: false,
         ask: ASK_CAR,
-        cam: [1.4, 0.6],
+        // the one-way street in sight, with the cars that come down it
+        cam: [-1.8, 0.6],
         say: "מכונית נוסעת ישר בצומת",
         why: "התמרור אומר: אין כניסה. זה רחוב חד־סטרי – המכוניות בו באות רק מולך.",
-        pause: reach(c, "x", 1.2),
+        // once he is in, with the cars coming at him
+        pause: o[2][0] + 0.3,
         end: o[3][0] + 0.6,
         cast: [
           sign("noentry", -0.6, -0.45),

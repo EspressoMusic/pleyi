@@ -587,6 +587,10 @@
         ["איך קוראים לנקודה $(0, 0)$?", "", ["ראשית הצירים", "ציר x", "ציר y"]],
       ]),
     ]),
+    write("points-write", "כמה זזים?", TYPE, 3, [
+      ...W([[3, 2], [1, 4], [5, 0], [2, 5], [6, 1], [4, 3]].map(([x, y]) => ["הנקודה A – כמה זזים ימינה מהראשית?", "", x, null, { kind: "axes", points: [[x, y, "A"]] }])),
+      ...W([[2, 3], [4, 1], [0, 5], [5, 2], [1, 6], [3, 4]].map(([x, y]) => ["הנקודה A – כמה עולים למעלה מהראשית?", "", y, null, { kind: "axes", points: [[x, y, "A"]] }])),
+    ]),
     choice(
       "read",
       "קוראים גרף",
@@ -1904,11 +1908,21 @@
         ["בבוקר אני ___ לחם", "", ["אכלתי", "אכלנו", "אכלו"]],
         ["בשבוע שעבר אנחנו ___ לירושלים", "", ["נסענו", "נסעתי", "נסעו"]],
         ["אתמול הם ___ את הדלת", "", ["סגרו", "סגרנו", "סגרתי"]],
+      ])
+    ),
+    choice(
+      "who-future",
+      "מי יעשה?",
+      "בחרו את הפועל שמתאים למשפט.",
+      2,
+      C([
         ["מחר אני ___ מכתב", "", ["אכתוב", "יכתוב", "נכתוב"]],
         ["מחר אנחנו ___ כדורגל", "", ["נשחק", "אשחק", "ישחק"]],
         ["מחר הוא ___ ספר", "", ["יקרא", "אקרא", "נקרא"]],
         ["מחר אתה ___ את השיעור", "", ["תלמד", "ילמד", "אלמד"]],
         ["מחר הוא ___ את הדלת", "", ["יסגור", "אסגור", "נסגור"]],
+        ["מחר הם ___ בגינה", "", ["ישחקו", "נשחק", "אשחק"]],
+        ["בערב אתה ___ ארוחה", "", ["תאכל", "אוכל", "נאכל"]],
       ])
     ),
     truefalse(
@@ -1940,6 +1954,16 @@
         ["אתמול הם ___ על הכלב (ש־מ־ר)", "", "שמרו"],
         ["אתמול אתה ___ שיר (כ־ת־ב)", "", "כתבת"],
         ["אתמול אני ___ עוגה (א־כ־ל)", "", "אכלתי"],
+        ["אתמול הם ___ את הדלת (ס־ג־ר)", "", "סגרו"],
+        ["אתמול אנחנו ___ חשבון (ל־מ־ד)", "", "למדנו"],
+      ])
+    ),
+    write(
+      "write-future",
+      "כותבים את הפועל בעתיד",
+      "כתבו את הפועל המתאים מהשורש שבסוגריים.",
+      3,
+      W([
         ["מחר אני ___ שיר (כ־ת־ב)", "", "אכתוב", ["אכתב"]],
         ["מחר אנחנו ___ חשבון (ל־מ־ד)", "", "נלמד"],
         ["מחר הוא ___ את החלון (ס־ג־ר)", "", "יסגור", ["יסגר"]],
@@ -4115,10 +4139,12 @@
     ]),
     write("mental", "חישוב בראש", TYPE, 3, [
       ...W(
-        [[10, 1], [10, 2], [10, 3], [20, 1], [20, 2], [30, 1]].map(([a, b]) => [`חשבו בעזרת $(${a} + ${b})²$`, `${a + b}² = ___`, (a + b) ** 2])
+        [[10, 1], [10, 2], [10, 3], [20, 1], [20, 2], [30, 1], [10, 4], [40, 1]].map(([a, b]) => [`חשבו בעזרת $(${a} + ${b})²$`, `${a + b}² = ___`, (a + b) ** 2])
       ),
+    ]),
+    write("mental-diff", "חישוב בראש: הפרש ריבועים", TYPE, 3, [
       ...W(
-        [[20, 1], [20, 2], [30, 1], [30, 2], [40, 1], [50, 1]].map(([a, b]) => [`חשבו בעזרת $(${a} + ${b})(${a} - ${b})$`, `${a + b} · ${a - b} = ___`, (a + b) * (a - b)])
+        [[20, 1], [20, 2], [30, 1], [30, 2], [40, 1], [50, 1], [10, 1], [10, 2]].map(([a, b]) => [`חשבו בעזרת $(${a} + ${b})(${a} - ${b})$`, `${a + b} · ${a - b} = ___`, (a + b) * (a - b)])
       ),
     ]),
     truefalse(
@@ -4725,6 +4751,31 @@
 
   /* כישורי חיים */
 
+  // "איזה משפט נכון?": [question, [the right sentence, wrong, wrong]].
+  const sentences = (id, title, instructions, level, rows) => ({
+    id,
+    type: "sentence-choice",
+    title,
+    instructions,
+    level,
+    roundSize: 8,
+    questions: rows.map(([he, options]) => ({ he, options, answer: options[0] })),
+  });
+  // "סדרו את הכלל": whole sentences of the lesson, 4–8 words, one right order.
+  const orderRules = (id, rows) => ({
+    id,
+    type: "order",
+    title: "סדרו את הכלל",
+    instructions: "לחצו על המילים לפי הסדר ובנו משפט מהשיעור.",
+    level: 2,
+    roundSize: 8,
+    questions: rows.map((answer) => ({ answer })),
+  });
+  const SAY = ["מכבד", "פוגע"];
+  const HURT = ["פוגע", "מכבד"];
+  const IS_SAFE = ["בטוח", "מסוכן"];
+  const IS_RISK = ["מסוכן", "בטוח"];
+
   const money = longLessonTopic(
     "money",
     "ניהול כסף וקניות חכמות",
@@ -4790,6 +4841,62 @@
           ["תמיד קונים בחנות הראשונה", "", false, "כדאי להשוות מחירים"],
         ])
       ),
+      choice(
+        "situations",
+        "מה הכי חכם לעשות?",
+        PICK,
+        2,
+        C([
+          ["לדני יש 20 ₪. הוא רוצה משחק ב־50 ₪. מה כדאי?", "", ["לחסוך כל שבוע עד שיהיה מספיק", "לבקש כסף מכל החברים", "לקנות משהו אחר מיד"]],
+          ["אותו כדור עולה 40 ₪ בחנות אחת ו־30 ₪ בחנות אחרת. איפה קונים?", "", ["בחנות של 30 ₪", "בחנות של 40 ₪", "בשתי החנויות"]],
+          ["משה קיבל 100 ₪ ליום הולדת. מה חכם לעשות?", "", ["לשים חלק בצד לחיסכון", "להוציא הכול באותו יום", "לתת הכול לחבר"]],
+          ["לנעליים של אריאל אין חור, אבל הוא רוצה חדשות. מה זה?", "", ["רצון", "צורך"]],
+          ["לדוד נגמר הכסף של השבוע כבר ביום שני. מה יעזור לו?", "", ["לתכנן תקציב לכל השבוע", "לבקש עוד כסף כל יום", "לקנות עוד ממתקים"]],
+          ["בחנות יש שלט ״מבצע״ על דבר שלא צריך. מה עושים?", "", ["לא קונים", "קונים מהר", "קונים שניים"]],
+          ["נתן חוסך 10 ₪ כל שבוע. מה יקרה?", "", ["הכסף שלו יגדל לאט לאט", "הכסף שלו ייגמר", "לא יקרה כלום"]],
+          ["אבי מצא ארנק ברחוב. מה עושים?", "", ["נותנים למבוגר כדי להחזיר לבעלים", "לוקחים את הכסף", "זורקים לפח"]],
+          ["יוסי רוצה לקנות אופניים יקרים. מה עושים קודם?", "", ["משווים מחירים ומחכים יום", "קונים בחנות הראשונה", "קונים שני זוגות"]],
+          ["מה בודקים על המוצר לפני שקונים?", "", ["את המחיר", "את צבע המדף", "כמה אנשים בחנות"]],
+        ])
+      ),
+      write(
+        "count",
+        "חשבון כסף",
+        TYPE,
+        3,
+        W([
+          ["לדני יש 50 ₪. הוא קנה ספר ב־30 ₪. נשארו לו ___ ₪", "", 20],
+          ["יוסי חוסך 10 ₪ כל שבוע. אחרי 4 שבועות יש לו ___ ₪", "", 40],
+          ["משחק עולה 60 ₪. למשה יש 45 ₪. חסרים לו ___ ₪", "", 15],
+          ["כדור עולה 20 ₪. אבי קונה 3 כדורים. הוא משלם ___ ₪", "", 60],
+          ["חולצה עולה 80 ₪. יש הנחה של 20 ₪. המחיר החדש ___ ₪", "", 60],
+          ["דמי הכיס של אריאל הם 30 ₪. הוא חוסך חצי. הוא חוסך ___ ₪", "", 15],
+          ["עט עולה 5 ₪ ומחברת עולה 7 ₪. ביחד ___ ₪", "", 12],
+          ["דוד נתן למוכר 50 ₪. הקניה עלתה 35 ₪. העודף ___ ₪", "", 15],
+          ["נתן רוצה אופניים ב־200 ₪. הוא חוסך 50 ₪ בחודש. הוא יקנה אחרי ___ חודשים", "", 4],
+          ["לחם עולה 9 ₪ בחנות אחת ו־7 ₪ בחנות אחרת. בשנייה חוסכים ___ ₪", "", 2],
+        ])
+      ),
+      sentences("sentences", "איזה משפט נכון?", "בחרו את המשפט הנכון.", 2, [
+        ["מה נכון על תקציב?", ["תקציב מראה כמה כסף נכנס וכמה יוצא", "תקציב הוא רק למבוגרים", "תקציב אומר להוציא הכול"]],
+        ["מה נכון על חיסכון?", ["חיסכון עוזר לקנות משהו גדול בעתיד", "חיסכון זה להוציא מהר", "חוסכים רק כשיש הרבה כסף"]],
+        ["מה נכון על מבצעים?", ["מבצע טוב רק אם באמת צריך את הדבר", "כל מבצע חוסך כסף", "חייבים לקנות בכל מבצע"]],
+        ["מה נכון על צורך?", ["אוכל ובגדים הם צורך", "ממתק הוא צורך", "צעצוע הוא צורך"]],
+        ["מה נכון על השוואת מחירים?", ["אותו דבר יכול לעלות פחות בחנות אחרת", "המחיר שווה בכל החנויות", "הכי יקר הוא תמיד הכי טוב"]],
+        ["מה נכון על הכנסה והוצאה?", ["כדאי להוציא פחות ממה שמקבלים", "כדאי להוציא יותר ממה שמקבלים", "הכנסה והוצאה הן אותו דבר"]],
+        ["מה נכון על ריבית?", ["הבנק מוסיף כסף לחיסכון", "הבנק לוקח את כל החיסכון", "ריבית היא מחיר של ממתק"]],
+        ["מה נכון על קניה גדולה?", ["כדאי לחכות ולחשוב לפני שקונים", "קונים מיד בלי לחשוב", "שואלים רק את המוכר"]],
+      ]),
+      orderRules("rules", [
+        "קודם בודקים אם זה צורך או רצון",
+        "חוסכים קצת כסף כל שבוע",
+        "משווים מחירים לפני שקונים",
+        "לא קונים כל מבצע",
+        "תקציב עוזר לתכנן את הכסף",
+        "לפני קניה גדולה מחכים יום",
+        "גם סכום קטן הוא חיסכון",
+        "הבנק מוסיף ריבית על החיסכון",
+      ]),
     ]
   );
 
@@ -4856,6 +4963,62 @@
           ["שגרה קבועה עוזרת להרגיש רגועים", "", true],
         ])
       ),
+      choice(
+        "situations",
+        "מה הייתם עושים?",
+        PICK,
+        2,
+        C([
+          ["לאורי יש מבחן מחר ומשחק כדורגל היום. מה קודם?", "", ["לומדים ואז משחקים", "משחקים כל הערב", "לא לומדים בכלל"]],
+          ["לדני יש 3 משימות. אחת צריך להגיש מחר. במה מתחילים?", "", ["במשימה של מחר", "במשימה הכי קלה", "במשימה הכי כיפית"]],
+          ["יוסי לא מצליח להתחיל שיעורי בית. מה יעזור?", "", ["להתחיל רק 5 דקות", "לחכות שיהיה לו חשק", "לראות סרט קודם"]],
+          ["הטלפון מצפצף כל הזמן בזמן הלימוד. מה עושים?", "", ["שמים אותו בחדר אחר", "עונים לכל הודעה", "מגבירים את הצפצוף"]],
+          ["משה צריך לקרוא ספר שלם בשבוע. איך כדאי?", "", ["לקרוא כמה עמודים כל יום", "לקרוא הכול בלילה האחרון", "לא לקרוא בכלל"]],
+          ["דוד למד שעה ברצף והתעייף. מה כדאי?", "", ["לקחת הפסקה קצרה", "להמשיך עוד שעתיים", "לוותר על הכול"]],
+          ["אריאל מאחר לבית הספר כל בוקר. מה יעזור?", "", ["להכין את התיק בערב", "לקום מאוחר יותר", "לצאת בלי לאכול"]],
+          ["נתן רוצה ללמוד לנגן. איך מתחילים?", "", ["מתרגלים קצת כל יום", "מנגנים פעם בחודש", "מחכים לחופש הגדול"]],
+          ["מה עושים בערב כדי שהבוקר יהיה רגוע?", "", ["מכינים בגדים ותיק", "רואים מסך עד מאוחר", "לא עושים כלום"]],
+          ["לאבי יש יום עמוס. מה כדאי לכתוב?", "", ["רשימת משימות לפי הסדר", "רק את המשחקים", "שום דבר"]],
+        ])
+      ),
+      write(
+        "minutes",
+        "חשבון זמן",
+        TYPE,
+        3,
+        W([
+          ["שעה אחת היא ___ דקות", "", 60],
+          ["חצי שעה היא ___ דקות", "", 30],
+          ["רבע שעה היא ___ דקות", "", 15],
+          ["שיעורי בית 30 דקות ועוד קריאה 15 דקות. ביחד ___ דקות", "", 45],
+          ["יוסי לומד 20 דקות ונח 5 דקות. ביחד ___ דקות", "", 25],
+          ["משה קורא 10 דקות כל יום. בשבוע של 7 ימים הוא קורא ___ דקות", "", 70],
+          ["יש 4 משימות. כל משימה 10 דקות. ביחד ___ דקות", "", 40],
+          ["אריאל ישן מ־9 בערב עד 7 בבוקר. הוא ישן ___ שעות", "", 10],
+          ["משימה של 60 דקות מחלקים ל־3 חלקים שווים. כל חלק ___ דקות", "", 20],
+          ["נתן שיחק במחשב 90 דקות. זה שעה ועוד ___ דקות", "", 30],
+        ])
+      ),
+      sentences("sentences", "איזה משפט נכון?", "בחרו את המשפט הנכון.", 2, [
+        ["מה נכון על לוח זמנים?", ["לוח זמנים עוזר לזכור מה לעשות", "לוח זמנים הוא רק לבית הספר", "בלוח זמנים אין זמן למנוחה"]],
+        ["מה נכון על דחיינות?", ["דחיינות גורמת ללחץ ברגע האחרון", "דחיינות עוזרת לסיים מהר", "דחיינות היא סוג של תכנון"]],
+        ["מה נכון על הפסקות?", ["הפסקה קצרה נותנת כוח להמשיך", "הפסקות הן בזבוז זמן", "צריך הפסקה כל דקה"]],
+        ["מה נכון על סדר עדיפויות?", ["מה שדחוף וחשוב עושים קודם", "מה שכיף עושים קודם", "כל המשימות שוות"]],
+        ["מה נכון על יעד גדול?", ["מחלקים אותו לצעדים קטנים", "עושים אותו ביום אחד", "מוותרים עליו מיד"]],
+        ["מה נכון על שינה?", ["שינה טובה עוזרת ללמוד", "שינה היא בזבוז זמן", "לפני מבחן לא ישנים"]],
+        ["מה נכון על הסחות דעת?", ["מרחיקים אותן בזמן הלימוד", "הן עוזרות להתרכז", "אי אפשר להימנע מהן"]],
+        ["מה נכון על איזון?", ["צריך זמן ללימודים, למשחק ולמנוחה", "צריך רק ללמוד", "צריך רק לשחק"]],
+      ]),
+      orderRules("rules", [
+        "קודם עושים את המשימה הכי חשובה",
+        "מחלקים משימה גדולה לחלקים קטנים",
+        "הפסקה קצרה עוזרת להתרכז",
+        "רושמים את המשימות בלוח זמנים",
+        "מכבים התראות בזמן הלימוד",
+        "משאירים זמן גם למשחק ולמנוחה",
+        "מתחילים חמש דקות ואז ממשיכים",
+        "לוח זמנים טוב כולל גם מנוחה",
+      ]),
     ]
   );
 
@@ -4922,6 +5085,62 @@
           ["נשימה עמוקה עוזרת להירגע", "", true],
         ])
       ),
+      choice(
+        "kind",
+        "משפט מכבד או פוגע?",
+        "קראו את המשפט ובחרו: מכבד או פוגע?",
+        1,
+        C([
+          ["״אפשר בבקשה את העיפרון?״", "", SAY],
+          ["״אתה לא יודע כלום!״", "", HURT],
+          ["״תודה שעזרת לי״", "", SAY],
+          ["״זוז מפה!״", "", HURT],
+          ["״סליחה, לא התכוונתי״", "", SAY],
+          ["״איזה משחק משעמם בחרת״", "", HURT],
+          ["״רוצה לשחק איתנו?״", "", SAY],
+          ["״אני עצוב כשצוחקים עליי״", "", SAY],
+          ["״אתה תמיד הורס הכול״", "", HURT],
+          ["״בוא נחשוב ביחד על פתרון״", "", SAY],
+        ])
+      ),
+      choice(
+        "situations",
+        "מה הייתם עושים?",
+        PICK,
+        2,
+        C([
+          ["שני חברים רבים מי ישחק ראשון. מה פתרון טוב?", "", ["כל אחד בתורו", "מי שצועק חזק מתחיל", "אף אחד לא משחק"]],
+          ["חבר מדבר ואתם רוצים להגיד משהו. מה עושים?", "", ["מחכים שיסיים", "קוטעים אותו", "מדברים יותר חזק"]],
+          ["ילד חדש בכיתה יושב לבד. מה עושים?", "", ["מזמינים אותו לשחק", "מתעלמים ממנו", "צוחקים עליו"]],
+          ["לא בטוח שהבנתם מה חבר אמר. מה עושים?", "", ["חוזרים במילים שלנו ושואלים", "עושים כאילו הבנו", "הולכים משם"]],
+          ["אתם מאוד כועסים על חבר. מה עושים קודם?", "", ["נושמים עמוק ונרגעים", "צועקים עליו", "שולחים לו הודעה מעליבה"]],
+          ["בקבוצה לא מסכימים על שם לקבוצה. מה עושים?", "", ["כל אחד מציע ובוחרים ביחד", "אחד מחליט לבד", "מפרקים את הקבוצה"]],
+          ["פגעתם בחבר בלי כוונה. מה עושים?", "", ["מבקשים סליחה", "אומרים שזה לא קרה", "מאשימים אותו"]],
+          ["חבר חושב אחרת מכם. מה נכון?", "", ["מקשיבים לדעה שלו בכבוד", "אומרים לו שהוא טיפש", "מפסיקים להיות חברים"]],
+          ["רואים שמציקים לילד בהפסקה. מה עושים?", "", ["קוראים למבוגר", "מצטרפים לצחוק", "מצלמים"]],
+          ["איך יודעים שחבר עצוב גם בלי מילים?", "", ["לפי שפת הגוף שלו", "לפי הבגדים שלו", "לפי התיק שלו"]],
+        ])
+      ),
+      sentences("say", "מה הכי טוב להגיד?", "קראו מה קרה ובחרו מה הכי טוב להגיד.", 2, [
+        ["חבר לקח לכם את הכדור בלי לשאול", ["״בבקשה תשאל לפני שאתה לוקח״", "״גנב! אני לא מדבר איתך״", "״קח, לא אכפת לי משום דבר״"]],
+        ["חבר טעה בתשובה בכיתה", ["״לא נורא, כולם טועים״", "״איזו טעות מצחיקה!״", "״אתה תמיד טועה״"]],
+        ["שני חברים כבר משחקים ואתם רוצים להצטרף", ["״אפשר להצטרף אליכם?״", "״תנו לי את המשחק!״", "״המשחק שלכם משעמם״"]],
+        ["דרכתם בטעות על הרגל של חבר", ["״סליחה, אתה בסדר?״", "״למה הרגל שלך שם?״", "״לא קרה כלום, די״"]],
+        ["חבר מספר לכם שהוא עצוב", ["״אני מקשיב, מה קרה?״", "״זה לא חשוב״", "״רגע, אני בטלפון״"]],
+        ["אתם וחבר רוצים לשחק במשחקים שונים", ["״בוא נשחק קצת בזה וקצת בזה״", "״רק מה שאני רוצה!״", "״אז אני הולך הביתה״"]],
+        ["חבר עזר לכם בשיעורי הבית", ["״תודה רבה, עזרת לי מאוד״", "״הייתי מצליח גם בלעדיך״", "״לא ביקשתי עזרה״"]],
+        ["אתם כועסים מאוד על אח שלכם", ["״אני צריך רגע להירגע ואז נדבר״", "״אתה הכי גרוע!״", "״לא אדבר איתך לעולם״"]],
+      ]),
+      orderRules("rules", [
+        "מקשיבים בלי להפריע לחבר",
+        "מדברים בטון רגוע ונעים",
+        "נרגעים לפני שמדברים על הבעיה",
+        "בפשרה כל צד מוותר קצת",
+        "מבקשים סליחה כשפוגעים בטעות",
+        "שואלים איך הייתי מרגיש במקומו",
+        "כל צד מספר איך הוא מרגיש",
+        "גם חברים טובים לא תמיד מסכימים",
+      ]),
     ]
   );
 
@@ -4987,6 +5206,62 @@
           ["ככל שמדווחים מהר קל יותר לפתור", "", true],
         ])
       ),
+      choice(
+        "safe",
+        "בטוח או מסוכן?",
+        "קראו ובחרו: בטוח או מסוכן?",
+        1,
+        C([
+          ["לשלוח לזר את כתובת הבית", "", IS_RISK],
+          ["לספר להורה על הודעה מפחידה", "", IS_SAFE],
+          ["לפתוח קישור מהודעה של מישהו לא מוכר", "", IS_RISK],
+          ["לבחור סיסמה ארוכה עם ספרות וסימנים", "", IS_SAFE],
+          ["להיפגש לבד עם מישהו שהכרנו רק ברשת", "", IS_RISK],
+          ["לחסום מישהו שמעליב אותנו", "", IS_SAFE],
+          ["לספר את הסיסמה לחבר מהכיתה", "", IS_RISK],
+          ["לשאול מבוגר לפני שמורידים משחק", "", IS_SAFE],
+          ["לשלוח לזר תמונה של הבית", "", IS_RISK],
+          ["לצאת מהחשבון במחשב של הספרייה", "", IS_SAFE],
+        ])
+      ),
+      choice(
+        "situations",
+        "מה עושים?",
+        PICK,
+        2,
+        C([
+          ["מישהו במשחק כותב: ״אל תספר להורים שלך שאנחנו מדברים״. מה עושים?", "", ["מספרים מיד למבוגר", "שומרים סוד", "ממשיכים לדבר איתו"]],
+          ["קופצת הודעה: ״זכית בטלפון! לחץ כאן״. מה עושים?", "", ["לא לוחצים ומספרים למבוגר", "לוחצים מהר", "שולחים לחברים"]],
+          ["חבר שלח תמונה מעליבה של ילד מהכיתה. מה עושים?", "", ["לא מעבירים הלאה ומספרים למבוגר", "שולחים לכל הקבוצה", "כותבים עוד עלבון"]],
+          ["מישהו לא מוכר מבקש להיות חבר שלכם ברשת. מה עושים?", "", ["לא מאשרים ושואלים מבוגר", "מאשרים מיד", "שולחים לו את הטלפון"]],
+          ["שכחתם לצאת מהחשבון במחשב של בית הספר. מה עושים?", "", ["חוזרים ויוצאים מהחשבון", "לא חשוב, ממשיכים", "כותבים את הסיסמה על הלוח"]],
+          ["אתר מבקש את מספר הטלפון של אבא. מה עושים?", "", ["שואלים את אבא קודם", "כותבים אותו מיד", "שולחים גם את הכתובת"]],
+          ["מעליבים אתכם בקבוצת הכיתה. מה עושים?", "", ["שומרים צילום מסך ומספרים למבוגר", "מעליבים בחזרה", "שותקים ולא מספרים לאף אחד"]],
+          ["ראיתם ברשת משהו שהפחיד אתכם. מה עושים?", "", ["סוגרים ומספרים להורה", "ממשיכים לראות", "שומרים את זה בסוד"]],
+          ["שיחקתם במחשב כבר שעתיים. מה כדאי?", "", ["הפסקה ומשחק בחוץ", "להמשיך עד הלילה", "לעבור למסך אחר"]],
+          ["חבר מבקש את הסיסמה שלכם ״רק לרגע״. מה עושים?", "", ["לא נותנים, גם לא לחבר", "נותנים כי הוא חבר", "נותנים חצי סיסמה"]],
+        ])
+      ),
+      sentences("sentences", "איזה משפט נכון?", "בחרו את המשפט הנכון.", 2, [
+        ["מה נכון על סיסמה?", ["סיסמה טובה ארוכה וקשה לניחוש", "הסיסמה הכי טובה היא 1234", "כדאי שהסיסמה תהיה השם שלי"]],
+        ["מה נכון על זרים ברשת?", ["לא תמיד יודעים מי באמת כותב", "כל מי שנחמד הוא חבר", "זרים ברשת הם תמיד ילדים"]],
+        ["מה נכון על דיווח?", ["מותר וחשוב לספר למבוגר", "מי שמספר הוא חלש", "מספרים רק אחרי שבוע"]],
+        ["מה נכון על מידע אישי?", ["כתובת וטלפון לא משתפים ברשת", "את הכתובת אפשר לשלוח לכולם", "מידע אישי הוא רק השם הפרטי"]],
+        ["מה נכון על תמונות ברשת?", ["תמונה שנשלחה יכולה להישאר לתמיד", "תמונה ברשת נמחקת לבד", "תמונות ברשת רואים רק חברים"]],
+        ["מה נכון על בריונות ברשת?", ["לא עונים ומספרים למבוגר", "עונים בעלבון חזק יותר", "זה לא באמת פוגע"]],
+        ["מה נכון על קישורים?", ["לא לוחצים על קישור מזר", "כל קישור הוא בטוח", "קישור עם פרס הוא תמיד אמיתי"]],
+        ["מה נכון על זמן מסך?", ["כדאי לעשות הפסקות ולזוז", "מסך לפני השינה עוזר לישון", "אפשר לשחק בלי הגבלה"]],
+      ]),
+      orderRules("rules", [
+        "לא משתפים כתובת וטלפון ברשת",
+        "את הסיסמה לא מספרים לחברים",
+        "על הודעה חשודה מספרים למבוגר",
+        "לא נפגשים עם זר בלי מבוגר",
+        "לא לוחצים על קישור מזר",
+        "שומרים צילום מסך ומדווחים",
+        "חוסמים מי שמעליב אותנו",
+        "עושים הפסקות מהמסך ויוצאים לשחק",
+      ]),
     ]
   );
 
@@ -6310,6 +6585,12 @@
       2,
       C(range(2, 9).map((n) => ["פרקו לגורמים", `x² - ${n * n}`, withWrong(`(x + ${n})(x - ${n})`, [`(x - ${n})²`, `(x + ${n})²`, `(x + ${n * n})(x - 1)`])]))
     ),
+    write("squares-write", "מה חסר בסוגריים?", TYPE, 3, [
+      ...W([2, 3, 4, 5, 6, 7, 8, 9].map((n) => ["פרקו לגורמים – מה המספר החסר?", `x² - ${n * n} = (x + ___)(x - ${n})`, n])),
+      ...W(
+        [[1, 2], [2, 3], [1, 5], [2, 4], [3, 4], [3, 5]].map(([a, b]) => ["פרקו לגורמים – מה המספר החסר?", `x² + ${a + b}x + ${a * b} = (x + ${a})(x + ___)`, b])
+      ),
+    ]),
     choice("trinomial", "טרינום", PICK, 3, [
       ...C(
         [[1, 2], [2, 3], [1, 5], [2, 4], [3, 4], [2, 5], [3, 5], [1, 6]].map(([a, b]) => [
@@ -6761,6 +7042,14 @@
         ["$y = x² - 4x$. מה x של הקדקוד?", "", [2, 4, -2]],
       ])
     ),
+    write("axes-write", "מוצאים חיתוך וקדקוד", TYPE, 3, [
+      ...W(
+        [-9, -4, 5, 3, -1, 7].map((c) => ["איפה הפרבולה חותכת את ציר y? כתבו את y.", `y = x² ${c < 0 ? "-" : "+"} ${Math.abs(c)}`, c])
+      ),
+      ...W(
+        [[2, 6], [1, 5], [-2, 4], [0, 8], [3, 7], [-4, 2]].map(([a, b]) => [`השורשים הם ${a} ו־${b}. מה x של הקדקוד?`, "", (a + b) / 2])
+      ),
+    ]),
     truefalse(
       "check",
       "נכון או לא נכון",
@@ -8908,7 +9197,7 @@
       C([
         ["מה עושים?", "", ["עומדים ומחכים", "חוצים", "רצים"], { kind: "plight", on: "red" }],
         ["מה עושים?", "", ["מסתכלים – ואז חוצים", "עומדים כל הזמן", "חוזרים הביתה"], { kind: "plight", on: "green" }],
-        ["האיש מהבהב ואנחנו על המדרכה. מה עושים?", "", ["מחכים לירוק הבא", "מתחילים לחצות", "רצים מהר"], { kind: "plight", on: "blink" }],
+        ["האיש התחלף לאדום ואנחנו באמצע הכביש. מה עושים?", "", ["ממשיכים בהליכה לצד השני", "חוזרים אחורה", "עוצרים באמצע"], { kind: "plight", on: "red" }],
         ["למי הרמזור הזה?", "", ["למכוניות", "להולכי רגל", "לאופניים בלבד"], { kind: "clight", on: "all" }],
         ["מה עושות המכוניות?", "", ["עוצרות", "נוסעות", "צופרות"], { kind: "clight", on: "red" }],
         ["מה עושות המכוניות?", "", ["נוסעות", "עוצרות", "חונות"], { kind: "clight", on: "green" }],
@@ -8939,7 +9228,7 @@
       T([
         ["באיש אדום עומדים ומחכים", "", true],
         ["באיש ירוק חוצים בלי להסתכל", "", false, "גם בירוק – קודם מסתכלים"],
-        ["ירוק מהבהב – לא מתחילים לחצות", "", true],
+        ["האיש התחלף לאדום באמצע – ממשיכים לצד השני", "", true],
         ["ברמזור של המכוניות יש שלושה צבעים", "", true],
         ["ברמזור של הולכי רגל יש שלושה צבעים", "", false, "יש בו שני צבעים – אדום וירוק"],
         ["על הכפתור לוחצים שוב ושוב בלי הפסקה", "", false, "לוחצים פעם אחת ומחכים"],
@@ -9749,8 +10038,8 @@
         ["האיש ירוק. ממה עוד נזהרים?", "", ["ממכוניות שפונות", "מכלום – הכל בטוח", "מהרמזור"]],
         ["מה אומר איתות של מכונית?", "", ["היא עומדת לפנות", "היא עוצרת לחנות", "היא מתקלקלת"]],
         ["הגענו לאי תנועה והאיש אדום. מה עושים?", "", ["עוצרים ומחכים לירוק", "ממשיכים מהר", "חוזרים אחורה בריצה"]],
-        ["הירוק מהבהב ועוד לא התחלנו לחצות. מה עושים?", "", ["מחכים לירוק הבא", "רצים מהר", "מתחילים לחצות"]],
-        ["הירוק מהבהב ואנחנו באמצע. מה עושים?", "", ["ממשיכים בהליכה לצד השני", "חוזרים אחורה", "עוצרים באמצע"]],
+        ["האיש התחלף לאדום ואנחנו באמצע. מה עושים?", "", ["ממשיכים בהליכה לצד השני", "חוזרים אחורה", "עוצרים באמצע"]],
+        ["המכוניות עצרו, אבל האיש עוד אדום. מה עושים?", "", ["מחכים לאיש הירוק", "חוצים מהר", "רצים באלכסון"]],
         ["איפה חוצים ליד כיכר?", "", ["במעבר החצייה שלפני הכיכר", "בתוך הכיכר", "באמצע הכיכר"]],
         ["מה עושה המכונית הצהובה בתמונה?", "", ["פונה – לכיוון מעבר החצייה", "חונה", "נוסעת אחורה"], { kind: "junction" }],
       ])
@@ -9764,7 +10053,7 @@
         ["דני חוצה במעבר החצייה של הצומת", true],
         ["יוסי חוצה באלכסון באמצע הצומת", false],
         ["רון מחכה למכונית שמאותתת", true],
-        ["אבי מתחיל לחצות בירוק מהבהב", false],
+        ["אבי חוצה כי המכוניות עצרו – והאיש עוד אדום", false],
         ["משה מחכה על אי התנועה לירוק הבא", true],
         ["תומר חוצה בתוך הכיכר", false],
         ["איתי יוצר קשר עין עם נהג שפונה", true],
@@ -9781,7 +10070,7 @@
         ["באיש ירוק אין צורך להסתכל", "", false, "גם בירוק – מסתכלים על מכוניות שפונות"],
         ["נהג שפונה חייב לתת להולכי רגל לעבור", "", true],
         ["על אי תנועה מחכים לירוק הבא", "", true],
-        ["ירוק מהבהב – מתחילים לחצות מהר", "", false, "ירוק מהבהב – לא מתחילים לחצות"],
+        ["האיש הירוק מהבהב לפני שהוא מתחלף לאדום", "", false, "האיש הירוק מתחלף ישר לאדום, בלי להבהב"],
         ["מעברי החצייה בכיכר נמצאים לפני הכיכר", "", true],
         ["איתות הוא אור כתום שמהבהב", "", true],
         ["לפינה שממול מגיעים באלכסון", "", false, "חוצים פעמיים – כל פעם רחוב אחד"],
@@ -10264,7 +10553,7 @@
         ["הגענו לאי התנועה. מה עכשיו?", "", ["עוצרים ובודקים שוב", "ממשיכים בריצה", "יושבים על הכביש"]],
         ["על האי האיש אדום. מה עושים?", "", ["מחכים על האי", "רצים אחרי החברים", "חוזרים בריצה"]],
         ["נפל לנו משהו באמצע החצייה. מה עושים?", "", ["ממשיכים לצד השני ומבקשים עזרה", "חוזרים להרים", "עוצרים באמצע"]],
-        ["האיש הירוק מהבהב ואנחנו כבר בכביש. מה עושים?", "", ["ממשיכים מהר לצד או לאי", "חוזרים אחורה", "עוצרים באמצע"], { kind: "plight", on: "blink" }],
+        ["האיש התחלף לאדום ואנחנו כבר בכביש. מה עושים?", "", ["ממשיכים מהר לצד או לאי", "חוזרים אחורה", "עוצרים באמצע"], { kind: "plight", on: "red" }],
       ])
     ),
     choice(
@@ -10280,7 +10569,7 @@
         ["משה עומד באמצע האי ולא על הקצה", true],
         ["תומר חוזר אחורה באמצע החצייה", false],
         ["איתי מחכה לאיש הירוק של החלק השני", true],
-        ["עידו מתחיל לחצות כשהאיש הירוק מהבהב", false],
+        ["עידו חוצה כשהאיש אדום, כי המכונית הקרובה עצרה", false],
       ])
     ),
     truefalse(
@@ -10294,7 +10583,7 @@
         ["מכונית שעצרה מסתירה את הנתיב שלידה", "", true],
         ["על אי התנועה עומדים על הקצה", "", false, "עומדים באמצע האי"],
         ["בכביש רחב יש לפעמים שני רמזורים", "", true],
-        ["ירוק מהבהב ועוד לא התחלנו – מחכים", "", true],
+        ["האיש התחלף לאדום ואנחנו בכביש – ממשיכים לצד או לאי", "", true],
         ["נפל משהו באמצע – חוזרים להרים", "", false, "לא חוזרים; מגיעים לצד ומבקשים עזרה"],
         ["חוצים מהר – בלי לרוץ", "", true],
       ])
@@ -10482,7 +10771,7 @@
     },
     lifeskills: {
       title: "כישורי חיים",
-      topics: [money, timeManage, communication, safety],
+      topics: [money, timeManage, communication, safety].map((tp) => Object.assign(tp, { allKinds: true })),
       path: [
         { title: "כסף וזמן", topics: ["money", "time"] },
         { title: "אנשים ורשת", topics: ["communication", "safety"] },
@@ -10534,10 +10823,277 @@
         { title: "רוכבים", topics: ["road-bike", "road-ride", "road-electric"] },
         { title: "עצמאים בשטח", topics: ["road-city", "road-busy", "road-free", "road-why", "road-wide", "road-junction", "road-route"] },
         { title: "אחריות בדרך", topics: ["road-speed", "road-focus", "road-choice", "road-help"] },
-        { title: "בכל השנה", topics: ["road-winter", "road-holiday"] },
+        // Last but not hard: its own tile color (english-learning.css data-level).
+        { title: "בכל השנה", topics: ["road-winter", "road-holiday"], level: 3 },
       ],
     },
   };
+
+  /* ---------- every lesson: five kinds of practice of its own ---------- */
+
+  // In a topic of a few lessons, the lesson each exercise practices
+  // (topic id → { exercise id: lesson id }). An exercise that's not here
+  // mixes the lessons, so it shows under "the whole topic" (english-learning.js
+  // practiceSets); every lesson gets its own set.
+  const LESSON_OF = {
+    // חשבון
+    numbers: { sign: "numbers-1", place: "numbers-2", build: "numbers-2" },
+    addition: { place: "addition-1", add: "addition-2", sub: "addition-3" },
+    measure: { ruler: "measure-1" },
+    estimate: { rules: "estimate-1", tens: "estimate-1", hundreds: "estimate-1", estimate: "estimate-2", sensible: "estimate-2" },
+    multiplication: { what: "multiplication-1", table: "multiplication-2", check: "multiplication-2", write: "multiplication-2" },
+    division: { what: "division-1", facts: "division-1", remainder: "division-2" },
+    "long-ops": { steps: "long-ops-1", "mult-one": "long-ops-1", "mult-two": "long-ops-1", division: "long-ops-2", remainder: "long-ops-2" },
+    divisibility: { by: "divisibility-1", which: "divisibility-1", prime: "divisibility-2", divisors: "divisibility-2" },
+    fractions: { pie: "fractions-1", multiply: "fractions-4", "mixed-picture": "fractions-5", mixed: "fractions-5", divide: "fractions-6" },
+    shapes: { shapes: "shapes-1", measure: "shapes-2", write: "shapes-2" },
+    quads: { names: "quads-1", triangle: "quads-2", parallelogram: "quads-2", trapezoid: "quads-2" },
+    solids: { names: "solids-1", volume: "solids-2", more: "solids-2", nets: "nets-1", prism: "prism-1" },
+    angles: { kinds: "angles-1", missing: "angles-2" },
+    lines: { kinds: "lines-1", angles: "lines-2", find: "lines-2" },
+    decimals: { read: "decimals-1", check: "decimals-2", write: "decimals-2", shift: "decimals-3" },
+    percent: { write: "percent-2" },
+    circle: { parts: "circle-1", chords: "circle-3", "chords-check": "circle-3" },
+    graphs: { points: "graphs-1", "points-write": "graphs-1", read: "graphs-2" },
+    average: { steps: "average-1", compute: "average-1", graph: "average-1", median: "average-2", mode: "average-2", kinds: "average-2" },
+    negatives: { compare: "negatives-1" },
+    powers: { value: "powers-1", parts: "powers-1", roots: "powers-2" },
+    equations: { solve: "equations-1" },
+    algebra: { substitute: "algebra-1", collect: "algebra-1", distribute: "algebra-2" },
+    "short-mult": { "sum-square": "short-mult-1", mental: "short-mult-1", diff: "short-mult-2", "mental-diff": "short-mult-2" },
+    factoring: { gcf: "factoring-1", common: "factoring-1", letter: "factoring-1", squares: "factoring-2", "squares-write": "factoring-2", trinomial: "factoring-2" },
+    systems: { what: "systems-1", substitute: "systems-1", add: "systems-2", solve: "systems-2" },
+    quadratic: { zero: "quadratic-1", factor: "quadratic-1", abc: "quadratic-2", inside: "quadratic-2", "how-many": "quadratic-2" },
+    parabola: { values: "parabola-1", axes: "parabola-2", "axes-write": "parabola-2" },
+    ratio: { ratio: "ratio-1" },
+    pythagoras: { hyp: "pythagoras-1", write: "pythagoras-2" },
+    congruence: { rules: "congruence-1" },
+    similarity: { what: "similarity-1", find: "similarity-2", use: "similarity-2" },
+    trig: { ratios: "trig-1", solve: "trig-2" },
+    symmetry: { lines: "symmetry-1", moves: "symmetry-2" },
+    // לשון
+    "he-reading": { "question-words": "reading-1" },
+    "text-types": { fact: "text-types-2" },
+    grammar: { kinds: "grammar-1", sentence: "grammar-1", gender: "grammar-2", plural: "grammar-3", pronouns: "he-pronouns-1", smichut: "grammar-4", possessive: "grammar-5" },
+    "he-numbers": { gender: "he-numbers-1", check: "he-numbers-1", more: "he-numbers-2", order: "he-numbers-2" },
+    sentence: { subject: "sentence-1", predicate: "sentence-1", adverbs: "sentence-2", object: "sentence-3", "object-check": "sentence-3" },
+    "complex-sentence": { joined: "complex-sentence-1", complex: "complex-sentence-2" },
+    words: { synonyms: "words-1", opposites: "words-1", idioms: "words-2", figurative: "words-3", registers: "registers-1", formation: "word-formation-1" },
+    spelling: { first: "spelling-1", second: "spelling-2" },
+    writing: { marks: "writing-1", connectors: "writing-2", summary: "writing-3", letter: "letter-1" },
+    "he-tenses": { when: "he-tenses-1", who: "he-tenses-2", write: "he-tenses-2", "who-future": "he-tenses-3", "write-future": "he-tenses-3" },
+    roots: { root: "roots-1", family: "roots-1", binyan: "roots-2", passive: "roots-3", mishkal: "roots-4", gizra: "roots-5", "action-noun": "action-noun-1" },
+    // מדעים
+    plants: { flower: "pollination-1", food: "photosynthesis-1" },
+    animals: { groups: "animals-1", food: "animals-2", cycle: "life-cycle-1" },
+    ecology: { chain: "ecology-1", protect: "ecology-2", adapt: "adaptation-1", "adapt-check": "adaptation-1" },
+    technology: { what: "technology-1", materials: "technology-2", design: "technology-3" },
+    ai: { what: "ai-1", learn: "ai-2", uses: "ai-3", prompt: "ai-4", safe: "ai-5" },
+    nutrition: { food: "nutrition-1", health: "nutrition-2" },
+    weather: { basics: "weather-1", tools: "weather-2", graph: "weather-2" },
+    water: { cycle: "water-1", save: "water-2" },
+    earth: { rocks: "earth-1", layers: "earth-2" },
+    "light-sound": { light: "light-sound-1", sound: "light-sound-2" },
+    magnets: { attract: "magnets-1", poles: "magnets-2" },
+    electricity: { circuit: "electricity-1", materials: "electricity-2" },
+    forces: { push: "forces-1", gravity: "forces-2", machines: "forces-3" },
+    matter: { states: "matter-1", changes: "matter-2" },
+    substances: { mix: "substances-1", separate: "substances-1", atoms: "substances-2" },
+    elements: { atom: "elements-1", table: "elements-2" },
+    reactions: { changes: "reactions-1", write: "reactions-2", mass: "reactions-3" },
+    acids: { kind: "acids-1", ph: "acids-2" },
+    heat: { temp: "heat-1", ways: "heat-2" },
+    "solar-system": { space: "solar-system-1", time: "solar-system-2" },
+    cells: { microbes: "microbes-1", "microbes-check": "microbes-1" },
+    heredity: { traits: "heredity-1", genes: "heredity-2" },
+    // גאוגרפיה
+    homeland: { home: "homeland-1", community: "homeland-2" },
+    civics: { rules: "civics-1", democracy: "civics-2" },
+    "map-skills": { directions: "map-skills-1", legend: "map-skills-2" },
+    "israel-map": { regions: "israel-map-1" },
+    settlements: { kinds: "settlements-1", jerusalem: "settlements-2" },
+    "israel-climate": { seasons: "israel-climate-1", "north-south": "israel-climate-2" },
+    mediterranean: { sea: "mediterranean-1", life: "mediterranean-2" },
+    "world-map": { continents: "world-map-1", climate: "world-map-2" },
+    globalization: { connect: "globalization-1", environment: "globalization-2" },
+    population: { where: "population-1", growth: "population-2" },
+    "earth-motion": { seasons: "earth-motion-1", time: "earth-motion-2" },
+    landforms: { weathering: "landforms-1", erosion: "landforms-2" },
+    "israel-water": { sources: "israel-water-1", solutions: "israel-water-2" },
+    // היסטוריה
+    "jewish-history": { first: "jewish-history-1", second: "jewish-history-2" },
+    "first-temple": { kings: "first-temple-1", split: "first-temple-2" },
+    "return-zion": { cyrus: "return-zion-1", ezra: "return-zion-2" },
+    "second-temple": { hanukkah: "second-temple-1", herod: "herod-1", destruction: "second-temple-2", "bar-kochba": "bar-kochba-1" },
+    "mishnah-talmud": { mishnah: "mishnah-talmud-1", talmud: "mishnah-talmud-2" },
+    diaspora: { sages: "diaspora-1", communities: "diaspora-2" },
+    "middle-ages": { society: "middle-ages-1" },
+    "early-modern": { new: "early-modern-1", jews: "early-modern-2" },
+    "changing-world": { revolutions: "changing-world-1", jews: "changing-world-2" },
+    yishuv: { old: "yishuv-1", moshavot: "yishuv-2" },
+    "world-wars": { first: "world-wars-1", second: "world-wars-2" },
+    zionism: { herzl: "zionism-1", state: "zionism-2" },
+    "israel-wars": { first: "israel-wars-1", later: "israel-wars-2" },
+  };
+
+  // The kinds a lesson's own practice is built of, in the order they are
+  // added until it has five: matching its words, its quiz questions, true or
+  // false about its words, ordering its sentences, spelling its words with
+  // letter tiles, and (math) typing its quiz's number answers.
+  const LESSON_KINDS = 5;
+  // Vowel marks (not the maqaf, ־, which is part of the word).
+  const NIKUD = /[֑-ֽֿ-ׇ]/g;
+  const HAS_NIKUD = /[֑-ֽֿ-ׇ]/;
+  const plain = (s) => String(s || "").replace(/\*\*/g, "").trim();
+  // Text with math, a blank, English or an arrow can't be cut into word chips.
+  const chipSafe = (s) => /[א-ת]/.test(s) && !/[$|{}_=<>→A-Za-z]/.test(s);
+  const isNumber = (s) => /^-?\d+(\.\d+)?$/.test(String(s).trim());
+
+  // A lesson's sentences, for "build the sentence": the true sentences of its
+  // own true / false exercises, then its slides' lines and Hebrew examples.
+  // Only whole sentences of 4 to 8 words: no lists, quotes or vowel marks,
+  // and not the second half of a sentence ("כי…", "ויש…", "כשהוא…").
+  const HALF_START = /^(אבל|כי|לכן|או|גם|עם|רק|אז|אם|כמו|בלי|עד|אחרי|לפני|ככל|יותר|פחות|כך)$|^כש|^ו/;
+  function lessonSentences(lesson, own) {
+    const out = new Set();
+    const add = (s) => {
+      const text = plain(s).replace(/\s+/g, " ").replace(/[.!]$/, "");
+      const words = text.split(" ");
+      if (!chipSafe(text) || HAS_NIKUD.test(text) || /[,:;״„”"()/–-]/.test(text) || HALF_START.test(words[0])) return;
+      if (words.length < 4 || words.length > 8 || words.some((w) => !/[א-ת\d]/.test(w))) return;
+      out.add(text);
+    };
+    own.filter((ex) => ex.type === "truefalse").forEach((ex) => ex.questions.forEach((q) => q.correct && !q.fig && add(q.text)));
+    (lesson?.slides || []).forEach((slide) => {
+      (slide.lines || []).forEach(add);
+      (slide.examples || []).forEach((ex) => add(Array.isArray(ex) ? ex[0] : ex));
+      (slide.points || []).forEach(add);
+    });
+    return [...out];
+  }
+
+  function lessonPractice(tp, lessonId, own) {
+    const lesson = LESSONS.find((l) => l.id === lessonId);
+    // A long lesson (כישורי חיים, גוף האדם…) has its words on the topic's board.
+    const vocab = lesson ? lesson.vocab || [] : (tp.exercises.find((ex) => ex.id === "words")?.pairs || []).map((p) => [p.a, p.b]);
+    const meanings = vocab.map(([, b]) => b);
+    const math = lesson?.subject === "math";
+    const id = (kind) => `${lessonId}-${kind}`;
+    const made = {
+      match: () =>
+        vocab.length >= 3 && { id: id("words"), type: "match", title: "מילים חשובות – התאמה", instructions: "לחצו על מילה ואז על ההסבר שלה.", level: 1, boardSize: Math.min(6, vocab.length), pairs: vocab.map(([a, b]) => ({ a, b })) },
+      choice: () => {
+        const rows = (lesson?.quiz || []).filter(([, , options, k]) => options?.length >= 2 && options[k] != null);
+        return (
+          rows.length >= 4 &&
+          choice(
+            id("quiz"),
+            "שאלות מהשיעור",
+            PICK,
+            1,
+            rows.map(([text, exercise, options, k]) => ({ text, ...(exercise && { math: exercise }), options: options.map(String), answer: String(options[k]) }))
+          )
+        );
+      },
+      truefalse: () =>
+        vocab.length >= 3 &&
+        meanings.length >= 2 &&
+        truefalse(
+          id("meaning"),
+          "מה פירוש המילה? נכון או לא נכון",
+          "האם ההסבר מתאים למילה? בחרו: נכון או לא נכון.",
+          2,
+          vocab.flatMap(([term, meaning], i) => {
+            const other = meanings[(i + 1) % meanings.length];
+            const line = (m) => `״${term}״ – ${m}`;
+            return other === meaning ? [{ text: line(meaning), correct: true }] : [{ text: line(meaning), correct: true }, { text: line(other), correct: false, fix: line(meaning) }];
+          })
+        ),
+      order: () => {
+        const rows = lessonSentences(lesson, own);
+        return rows.length >= 4 && { id: id("order"), type: "order", title: "סדרו את המשפט", instructions: "לחצו על המילים לפי הסדר ובנו משפט מהשיעור.", level: 2, roundSize: Math.min(8, rows.length), questions: rows.map((answer) => ({ answer })) };
+      },
+      letters: () => {
+        const words = vocab
+          .map(([term, meaning]) => [term.replace(NIKUD, "").trim(), meaning])
+          .filter(([term, meaning]) => {
+            const n = term.replace(/[^א-ת]/g, "").length;
+            return /^[א-ת][א-ת ״׳'"־-]*$/.test(term) && n >= 2 && n <= 12 && !meaning.replace(NIKUD, "").includes(term);
+          });
+        return (
+          words.length >= 4 && {
+            id: id("letters"),
+            type: "letters",
+            title: "בונים את המילה",
+            instructions: "קראו את ההסבר ולחצו על האותיות לפי הסדר.",
+            level: 2,
+            roundSize: Math.min(8, words.length),
+            questions: words.map(([term, meaning], i) => {
+              // A short word gets two letters of another word as decoys.
+              const other = words[(i + 1) % words.length][0].replace(/[^א-ת]/g, "");
+              const extra = term.length <= 4 && other !== term ? [...other].slice(0, 2) : [];
+              return { text: meaning, answer: term, ...(extra.length && { extra }) };
+            }),
+          }
+        );
+      },
+      write: () => {
+        const rows = (lesson?.quiz || []).filter(([, , options, k]) => math && options?.[k] != null && isNumber(options[k]));
+        return rows.length >= 4 && write(id("write"), "כותבים את התשובה", TYPE, 3, rows.map(([text, exercise, options, k]) => ({ text, ...(exercise && { math: exercise }), answer: String(options[k]) })));
+      },
+      // The word with its own meaning, and with two other words' meanings.
+      "sentence-choice": () =>
+        vocab.length >= 3 && {
+          id: id("sentence"),
+          type: "sentence-choice",
+          title: "איזה משפט נכון?",
+          instructions: "בחרו את המשפט שמסביר נכון את המילה.",
+          level: 2,
+          roundSize: Math.min(8, vocab.length),
+          questions: vocab.map(([term, meaning], i) => {
+            const line = (m) => `״${term}״ – ${m}`;
+            const others = [1, 2].map((d) => meanings[(i + d) % meanings.length]).filter((m) => m !== meaning);
+            return { he: `מה זה ״${term}״?`, answer: line(meaning), options: [...new Set([line(meaning), ...others.map(line)])] };
+          }),
+        },
+    };
+    const kinds = new Set(own.map((ex) => ex.type));
+    const extra = [];
+    // A topic with many exercises of its own (כישורי חיים) still gets every
+    // kind it can, so none of its earlier ones drop out.
+    const limit = tp.allKinds ? Infinity : LESSON_KINDS;
+    Object.keys(made).forEach((kind) => {
+      if (kinds.size >= limit || kinds.has(kind)) return;
+      const ex = made[kind]();
+      if (!ex) return;
+      kinds.add(kind);
+      extra.push(ex);
+    });
+    return extra;
+  }
+
+  const done = new Set();
+  Object.values(AREAS).forEach((area) =>
+    area.topics.forEach((tp) => {
+      if (done.has(tp)) return;
+      done.add(tp);
+      if (tp.lessons.length < 2) {
+        tp.exercises.push(...lessonPractice(tp, tp.lessons[0], tp.exercises));
+        return;
+      }
+      // A few lessons: each one's own matching board takes the place of the
+      // topic's board of all their words.
+      const map = LESSON_OF[tp.id] || {};
+      const list = tp.exercises.filter((ex) => ex.id !== "words");
+      list.forEach((ex) => {
+        if (tp.lessons.includes(map[ex.id])) ex.lesson = map[ex.id];
+      });
+      const added = tp.lessons.flatMap((lessonId) =>
+        lessonPractice(tp, lessonId, list.filter((ex) => ex.lesson === lessonId)).map((ex) => ({ ...ex, lesson: lessonId }))
+      );
+      tp.exercises = [...list, ...added];
+    })
+  );
 
   // A fixed id for every question (english-learning.js itemKey), so the
   // runner knows which ones a student had even when two share a text.

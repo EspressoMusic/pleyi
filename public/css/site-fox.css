@@ -211,8 +211,8 @@
   transition: opacity 0.3s ease, scale 0.3s ease, translate 0.3s ease, visibility 0s 0.3s;
 }
 
-/* The button that turns the guide on and off (site-fox.js), at the bottom of
-   the list the fox opens. */
+/* The button that shows the page's guide (site-fox.js), at the bottom of the
+   list the fox opens. */
 .site-guide-btn {
   flex-shrink: 0;
   align-self: center;
@@ -227,15 +227,11 @@
   -webkit-text-fill-color: #000;
   -webkit-text-stroke: 0;
   text-shadow: none;
-  background: #eaf5ff;
+  background: #ffa8cf;
   border: 3px solid var(--ink, #000);
   border-radius: 999px;
   box-shadow: 3px 4px 0 var(--ink, #000);
   cursor: pointer;
-}
-
-.site-guide-btn[aria-pressed="true"] {
-  background: var(--memteal, #00e5cc);
 }
 
 .site-guide-btn:active {
@@ -320,6 +316,16 @@ body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="
   border-bottom: 0;
 }
 
+/* On wide screens a big title's fox stands taller than the room above it,
+   and the hero clips its top — the title moves down just enough for the
+   whole fox (its height is ~1.1× its width). :where() keeps page rules
+   (English page, my room) in charge. */
+@media (min-width: 701px) {
+  :where(.clean-section--hero:not(#home)) .site-fox-perch--line {
+    margin-top: max(0px, calc(min(1.43em, 161px) - 0.18em - 94px));
+  }
+}
+
 /* On phones the title sits right under the navbar, which would hide the
    fox's ears — the title moves down to make room. */
 @media (max-width: 700px) {
@@ -397,7 +403,7 @@ body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="
   max-height: calc(100dvh - 32px);
   margin-top: min(8vh, 64px);
   padding: 16px 18px 12px;
-  background: #eaf5ff;
+  background: #b9e2ff;
   border: 3px solid var(--ink, #000);
   border-radius: 24px;
   box-shadow: 6px 8px 0 var(--ink, #000);
@@ -409,11 +415,18 @@ body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="
   }
 }
 
+/* Fox | title in the middle | X — the two sides the same width, so the title
+   sits in the true middle of the box. */
 .site-search-head {
-  display: flex;
+  display: grid;
+  grid-template-columns: 46px 1fr 46px;
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
+}
+
+.site-search-head .site-search-close {
+  justify-self: end;
 }
 
 .site-search-fox {
@@ -427,8 +440,9 @@ body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="
 }
 
 .site-search-title {
-  flex: 1;
+  min-width: 0;
   margin: 0;
+  text-align: center;
   font-size: 24px;
   font-weight: 900;
   line-height: 1.2;
@@ -447,7 +461,7 @@ body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="
   width: 40px;
   height: 40px;
   padding: 0;
-  background: var(--memyellow, #ffe066);
+  background: #ff5a5a;
   border: 3px solid var(--ink, #000);
   border-radius: 50%;
   box-shadow: 3px 4px 0 var(--ink, #000);
@@ -502,7 +516,7 @@ body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="
   font-size: 18px;
   font-weight: 700;
   color: #000;
-  background: #fff;
+  background: #fff3f8;
   border: 3px solid var(--ink, #000);
   border-radius: 16px;
   box-shadow: 3px 4px 0 var(--ink, #000);
@@ -580,6 +594,369 @@ body:has(.modal-overlay:not(.hidden), .lesson-player:not(.hidden), [aria-modal="
 html.site-search-open,
 html.site-search-open body {
   overflow: hidden;
+}
+
+/* The search, or the talk with the fox ("שאלו את השועל", site-fox.js): one
+   of the two shows in the box. */
+.site-search-view,
+.site-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.site-search.is-chat .site-search-view,
+.site-search:not(.is-chat) .site-chat {
+  display: none;
+}
+
+.site-search-view .site-search-results {
+  min-height: 0;
+}
+
+/* The bottom row: "AI" (the talk with the fox) beside "הפעלת מדריך". */
+.site-search-actions {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 4px;
+}
+
+.site-search-actions .site-guide-btn {
+  margin: 0;
+}
+
+/* Same pill as the guide button, in teal. */
+.site-ask-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 6px;
+  padding-inline: 7px 14px;
+  font: 900 15px/1.1 var(--font-sans, system-ui, sans-serif);
+  color: #000;
+  -webkit-text-fill-color: #000;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 55%, #fff);
+  border: 3px solid var(--ink, #000);
+  border-radius: 999px;
+  box-shadow: 3px 4px 0 var(--ink, #000);
+  cursor: pointer;
+  transition: scale 0.15s ease;
+}
+
+.site-ask-btn:hover,
+.site-search-actions .site-guide-btn:hover {
+  scale: 1.05;
+}
+
+.site-search-actions .site-guide-btn {
+  transition: scale 0.15s ease;
+}
+
+.site-ask-btn:active,
+.site-chat-send:active,
+.site-chat-chip:active,
+.site-chat-foot button:active {
+  translate: 2px 3px;
+  box-shadow: 1px 1px 0 var(--ink, #000);
+}
+
+.site-ask-btn-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ink, #000);
+}
+
+.site-ask-btn-icon svg {
+  width: 15px;
+  height: 15px;
+  fill: #fff;
+}
+
+.site-ask-btn-text {
+  direction: ltr;
+}
+
+/* Tall enough for a talk, and the same height all along it. */
+.site-search.is-chat .site-search-box {
+  height: min(660px, calc(100dvh - 32px - min(8vh, 64px)));
+}
+
+@media (max-width: 700px) {
+  .site-search.is-chat .site-search-box {
+    height: calc(100dvh - 32px);
+  }
+}
+
+.site-chat {
+  flex: 1;
+}
+
+.site-chat-log {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 4px 4px 8px;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.site-chat-msg {
+  position: relative;
+  max-width: 88%;
+  padding: 10px 14px;
+  color: #000;
+  border: 3px solid var(--ink, #000);
+  border-radius: 18px;
+  box-shadow: 3px 4px 0 var(--ink, #000);
+}
+
+/* The fox on the start side (right), the reader on the other. */
+.site-chat-msg--fox {
+  align-self: flex-start;
+  background: #fff1d9;
+  border-start-start-radius: 6px;
+}
+
+.site-chat-msg--me {
+  align-self: flex-end;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 35%, #eaf5ff);
+  border-start-end-radius: 6px;
+}
+
+.site-chat-text {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.site-chat-line {
+  display: block;
+}
+
+.site-chat-links {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 2px;
+  padding: 0;
+  list-style: none;
+}
+
+.site-chat-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  color: #000;
+  text-decoration: none;
+  background: color-mix(in srgb, var(--memyellow, #ffe066) 55%, #fff);
+  border: 2.5px solid var(--ink, #000);
+  border-radius: 12px;
+  box-shadow: 2px 3px 0 var(--ink, #000);
+  transition: scale 0.15s ease;
+}
+
+.site-chat-link:hover,
+.site-chat-link:focus-visible {
+  scale: 1.03;
+  outline: none;
+}
+
+.site-chat-link:focus-visible {
+  box-shadow: 2px 3px 0 var(--ink, #000), 0 0 0 3px var(--memteal, #00e5cc);
+}
+
+.site-chat-link-title {
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.site-chat-link-kind {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+}
+
+.site-chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.site-chat-chip {
+  padding: 6px 12px;
+  font: 800 15px/1.2 var(--font-sans, system-ui, sans-serif);
+  color: #000;
+  -webkit-text-fill-color: #000;
+  background: #ffd6e8;
+  border: 2.5px solid var(--ink, #000);
+  border-radius: 999px;
+  box-shadow: 2px 3px 0 var(--ink, #000);
+  cursor: pointer;
+  transition: scale 0.15s ease;
+}
+
+.site-chat-chip:hover {
+  scale: 1.05;
+}
+
+/* The fox is writing: three dots. */
+.site-chat-typing {
+  display: flex;
+  gap: 6px;
+  padding: 14px 16px;
+}
+
+.site-chat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ink, #000);
+  animation: site-chat-dot 1s ease-in-out infinite;
+}
+
+.site-chat-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.site-chat-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes site-chat-dot {
+  0%, 60%, 100% { translate: 0 0; opacity: 0.45; }
+  30% { translate: 0 -5px; opacity: 1; }
+}
+
+.site-chat-form {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.site-chat-input {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 11px 14px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  color: #000;
+  background: #fff3f8;
+  border: 3px solid var(--ink, #000);
+  border-radius: 16px;
+  box-shadow: 3px 4px 0 var(--ink, #000);
+  outline: none;
+}
+
+.site-chat-input:focus-visible {
+  box-shadow: 3px 4px 0 var(--ink, #000), 0 0 0 4px var(--memyellow, #ffe066);
+}
+
+.site-chat-send {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  padding: 0;
+  background: color-mix(in srgb, var(--memteal, #00e5cc) 55%, #fff);
+  border: 3px solid var(--ink, #000);
+  border-radius: 16px;
+  box-shadow: 3px 4px 0 var(--ink, #000);
+  cursor: pointer;
+  transition: scale 0.15s ease;
+}
+
+.site-chat-send:hover:not(:disabled) {
+  scale: 1.05;
+}
+
+.site-chat-send:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.site-chat-send svg,
+.site-chat-back svg {
+  fill: none;
+  stroke: var(--ink, #000);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.site-chat-send svg {
+  width: 26px;
+  height: 26px;
+}
+
+.site-chat-foot {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.site-chat-foot button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  font: 800 15px/1.2 var(--font-sans, system-ui, sans-serif);
+  color: #000;
+  -webkit-text-fill-color: #000;
+  background: #fff1d9;
+  border: 2.5px solid var(--ink, #000);
+  border-radius: 999px;
+  box-shadow: 2px 3px 0 var(--ink, #000);
+  cursor: pointer;
+  transition: scale 0.15s ease;
+}
+
+.site-chat-foot button:hover {
+  scale: 1.04;
+}
+
+.site-chat-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* The fox in the box's top hops when it answers. */
+.site-search-fox.is-talk {
+  animation: site-search-fox-talk 0.5s ease-out;
+}
+
+@keyframes site-search-fox-talk {
+  0%, 100% { translate: 0 0; scale: 1; }
+  35% { translate: 0 -8px; scale: 0.96 1.06; }
+  70% { translate: 0 0; scale: 1.08 0.92; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-chat-dot,
+  .site-search-fox.is-talk {
+    animation: none;
+  }
 }
 
 /* The guide (site-fox.js). !important: see .site-fox-dock. Above an open
